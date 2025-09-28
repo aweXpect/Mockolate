@@ -11,20 +11,39 @@ internal static partial class SourceGeneration
 		namespace Mockerade;
 
 		#nullable enable
+		/// <summary>
+		///     Create new mocks by calling <see cref="Mock.For{T}" />.
+		/// </summary>
 		public static partial class Mock
 		{
+			/// <summary>
+			///     Create a new mock for <typeparamref name="T" /> with the default <see cref="MockBehavior" />.
+			/// </summary>
+			/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+			/// <remarks>
+			///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			/// </remarks>
 			public static Mock<T> For<T>()
 			{
 				var generator = new MockGenerator();
 				return generator.Get<T>(MockBehavior.Default)
-					?? throw new NotSupportedException("Could not generate Mock<T>");
+					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
 			}
 			
+			/// <summary>
+			///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
+			/// </summary>
+			/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+			/// <remarks>
+			///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			///     <para />
+			///     The behavior of the mock with regards to the setups and the actual calls is determined by the <see cref="MockBehavior" />.
+			/// </remarks>
 			public static Mock<T> For<T>(MockBehavior mockBehavior)
 			{
 				var generator = new MockGenerator();
 				return generator.Get<T>(mockBehavior)
-					?? throw new NotSupportedException("Could not generate Mock<T>");
+					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
 			}
 			
 			private partial class MockGenerator
