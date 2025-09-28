@@ -49,7 +49,7 @@ Mockerade provides flexible argument matching for method setups and verification
 - `With.Out<T>(valueFactory)`: Matches and sets out parameters.
 
 ```csharp
-mock.Setup.AddUser(With<string>.Matching(name => name.StartsWith("A")))
+mock.Setup.AddUser(With.Matching<string>(name => name.StartsWith("A")))
     .Returns(new User(Guid.NewGuid(), "Alicia"));
 
 mock.Setup.TryDelete(With.Any<Guid>(), With.Out<User?>(() => new User(id, "Alice")))

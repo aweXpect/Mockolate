@@ -13,6 +13,18 @@ public static class With
 	public static Parameter<T> Any<T>() => new AnyParameter<T>();
 
 	/// <summary>
+	///     Matches parameters of type <typeparamref name="T" />, if the <paramref name="predicate" /> returns
+	///     <see langword="true" />
+	/// </summary>
+	public static Parameter<T> Matching<T>(Func<T, bool> predicate)
+		=> new PredicateParameter<T>(predicate);
+
+	private sealed class PredicateParameter<T>(Func<T, bool> predicate) : With.Parameter<T>
+	{
+		protected override bool Matches(T value) => predicate(value);
+	}
+
+	/// <summary>
 	///     Matches any <see langword="out"/> parameter of type <typeparamref name="T" />.
 	/// </summary>
 	public static OutParameter<T> Out<T>(Func<T> setter) => new OutParameter<T>(setter);
@@ -168,23 +180,5 @@ public static class With
 		{
 			return true;
 		}
-	}
-}
-
-/// <summary>
-///     Allows the specification of a matching condition for an argument in a method invocation or setup.
-/// </summary>
-public static class With<T>
-{
-	/// <summary>
-	///     Matches parameters of type <typeparamref name="T" />, if the <paramref name="predicate" /> returns
-	///     <see langword="true" />
-	/// </summary>
-	public static With.Parameter<T> Matching(Func<T, bool> predicate)
-		=> new PredicateParameter(predicate);
-
-	private sealed class PredicateParameter(Func<T, bool> predicate) : With.Parameter<T>
-	{
-		protected override bool Matches(T value) => predicate(value);
 	}
 }

@@ -34,7 +34,7 @@ public sealed class WithTests
 	[InlineData(1, false)]
 	public async Task WithMatching_CheckForNull_ShouldReturnExpectedResult(int? value, bool expectedResult)
 	{
-		With.Parameter<int?> sut = With<int?>.Matching(v => v is null);
+		With.Parameter<int?> sut = With.Matching<int?>(v => v is null);
 
 		bool result = sut.Matches(value);
 
@@ -46,7 +46,7 @@ public sealed class WithTests
 	[InlineData("foo")]
 	public async Task WithMatching_DifferentType_ShouldReturnFalse(object? value)
 	{
-		With.Parameter<int?> sut = With<int?>.Matching(_ => true);
+		With.Parameter<int?> sut = With.Matching<int?>(_ => true);
 
 		bool result = sut.Matches(value);
 
@@ -58,7 +58,7 @@ public sealed class WithTests
 	[InlineData(false)]
 	public async Task WithMatching_ShouldReturnPredicateValue(bool predicateValue)
 	{
-		With.Parameter<string> sut = With<string>.Matching(_ => predicateValue);
+		With.Parameter<string> sut = With.Matching<string>(_ => predicateValue);
 
 		bool result = sut.Matches("foo");
 

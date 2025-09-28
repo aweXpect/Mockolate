@@ -29,7 +29,7 @@ public class ExampleTests
 		var mock = Mock.For<IExampleRepository>();
 
 		mock.Setup.AddUser(
-				With<string>.Matching(x => x == "Alice"))
+				With.Matching<string>(x => x == "Alice"))
 			.Returns(new User(id, "Alice"));
 
 		var result = mock.Object.AddUser(name);

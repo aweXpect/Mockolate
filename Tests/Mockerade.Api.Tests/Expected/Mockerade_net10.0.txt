@@ -60,6 +60,7 @@ namespace Mockerade
     public static class With
     {
         public static Mockerade.With.Parameter<T> Any<T>() { }
+        public static Mockerade.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate) { }
         public static Mockerade.With.InvocationOutParameter<T> Out<T>() { }
         public static Mockerade.With.OutParameter<T> Out<T>(System.Func<T> setter) { }
         public static Mockerade.With.InvocationRefParameter<T> Ref<T>() { }
@@ -103,10 +104,6 @@ namespace Mockerade
             public RefParameter(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
             public override bool Matches(object? value) { }
         }
-    }
-    public static class With<T>
-    {
-        public static Mockerade.With.Parameter<T> Matching(System.Func<T, bool> predicate) { }
     }
 }
 namespace Mockerade.Invocations
