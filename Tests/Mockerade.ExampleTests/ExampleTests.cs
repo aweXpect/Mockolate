@@ -17,7 +17,7 @@ public class ExampleTests
 		var result = mock.Object.AddUser("Bob");
 
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		await That(mock.Invoked.AddUser("Bob").Invocations).HasCount(1);
+		await That(mock.Invoked.AddUser("Bob").Once()).IsTrue();
 	}
 
 	[Theory]
@@ -35,7 +35,7 @@ public class ExampleTests
 		var result = mock.Object.AddUser(name);
 
 		await That(result).IsEqualTo(expectResult ? new User(id, "Alice") : null);
-		await That(mock.Invoked.AddUser(name).Invocations).HasCount(1);
+		await That(mock.Invoked.AddUser(name).Once()).IsTrue();
 	}
 
 	[Theory]
@@ -55,7 +55,7 @@ public class ExampleTests
 
 		await That(deletedUser).IsEqualTo(new User(id, "Alice"));
 		await That(result).IsEqualTo(returnValue);
-		await That(mock.Invoked.TryDelete(id, With.Out<User?>()).Invocations).HasCount(1);
+		await That(mock.Invoked.TryDelete(id, With.Out<User?>()).Once()).IsTrue();
 	}
 
 	[Fact]
@@ -97,7 +97,7 @@ public class ExampleTests
 		var result = mock.ObjectForIOrderRepository.AddOrder("foo");
 		
 		await That(result.Name).IsEqualTo("Order1");
-		await That(mock.InvokedOnIOrderRepository.AddOrder("foo").Invocations).HasCount(1);
+		await That(mock.InvokedOnIOrderRepository.AddOrder("foo").Once()).IsTrue();
 		await That(mock.Object).Is<IExampleRepository>();
 		await That(mock.Object).Is<IOrderRepository>();
 	}

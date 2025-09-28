@@ -3,12 +3,53 @@
 /// <summary>
 ///     The expectation contains the matching invocations for verification.
 /// </summary>
-public class CheckResult(Invocation[] invocations)
+public class CheckResult : ICheckResult
 {
+	private readonly Invocation[] _invocations;
+
+	/// <inheritdoc cref="CheckResult" />
+	public CheckResult(Invocation[] invocations)
+	{
+		this._invocations = invocations;
+	}
+
+	/// <inheritdoc cref="ICheckResult.Invocations" />
+	Invocation[] ICheckResult.Invocations => _invocations;
+
 	/// <summary>
-	///     The matching invocations.
+	/// …at least the expected number of <paramref name="times" />.
 	/// </summary>
-	public Invocation[] Invocations { get; } = invocations;
+	public bool AtLeast(int times) => _invocations.Length >= times;
+
+	/// <summary>
+	/// …at least once.
+	/// </summary>
+	public bool AtLeastOnce() => _invocations.Length >= 1;
+
+	/// <summary>
+	/// …at most the expected number of <paramref name="times" />.
+	/// </summary>
+	public bool AtMost(int times) => _invocations.Length <= times;
+
+	/// <summary>
+	/// …at most once.
+	/// </summary>
+	public bool AtMostOnce() => _invocations.Length <= 1;
+
+	/// <summary>
+	/// …exactly the expected number of <paramref name="times" />.
+	/// </summary>
+	public bool Exactly(int times) => _invocations.Length == times;
+
+	/// <summary>
+	/// …exactly once.
+	/// </summary>
+	public bool Once() => _invocations.Length == 1;
+
+	/// <summary>
+	/// …never.
+	/// </summary>
+	public bool Never() => _invocations.Length == 0;
 
 	/// <summary>
 	///     A property expectation returns the getter or setter <see cref="CheckResult"/> for the given <paramref name="propertyName"/>.

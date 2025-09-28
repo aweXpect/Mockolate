@@ -2,16 +2,26 @@
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
 namespace Mockerade.Checks
 {
-    public class CheckResult
+    public class CheckResult : Mockerade.Checks.ICheckResult
     {
         public CheckResult(Mockerade.Checks.Invocation[] invocations) { }
-        public Mockerade.Checks.Invocation[] Invocations { get; }
+        public bool AtLeast(int times) { }
+        public bool AtLeastOnce() { }
+        public bool AtMost(int times) { }
+        public bool AtMostOnce() { }
+        public bool Exactly(int times) { }
+        public bool Never() { }
+        public bool Once() { }
         public class Property<T>
         {
             public Property(Mockerade.Checks.IMockAccessed mockAccessed, string propertyName) { }
             public Mockerade.Checks.CheckResult Getter() { }
             public Mockerade.Checks.CheckResult Setter(Mockerade.With.Parameter<T> value) { }
         }
+    }
+    public interface ICheckResult
+    {
+        Mockerade.Checks.Invocation[] Invocations { get; }
     }
     public interface IMockAccessed
     {
