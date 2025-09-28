@@ -5,7 +5,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Mockerade_Mockerade&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Mockerade_Mockerade)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Mockerade_Mockerade&metric=coverage)](https://sonarcloud.io/summary/overall?id=Mockerade_Mockerade)
 
-**Mockerade** is a modern, strongly-typed mocking framework for .NET, powered by source generators. It enables fast, compile-time validated mocks for interfaces and classes, supporting .NET Standard 2.0, .NET 8, .NET 10, and .NET Framework 4.8.
+**Mockerade** is a modern, strongly-typed mocking library for .NET, powered by source generators. It enables fast, compile-time validated mocks for interfaces and classes, supporting .NET Standard 2.0, .NET 8, .NET 10, and .NET Framework 4.8.
 
 - **Source generator-based**: No runtime proxy generation, fast and reliable.
 - **Strongly-typed**: Setup and verify mocks with full IntelliSense and compile-time safety.
