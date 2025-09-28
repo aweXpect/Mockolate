@@ -1,10 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
-using Mockerade.SourceGenerators.Entities;
-using Mockerade.SourceGenerators.Internals;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Mockerade.SourceGenerators.Entities;
+using Mockerade.SourceGenerators.Internals;
 
 namespace Mockerade.SourceGenerators;
 
@@ -51,14 +51,82 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
 	{
-		foreach (var mockToGenerate in mocksToGenerate)
+		var namedMocksToGenerate = CreateNames(mocksToGenerate);
+		foreach (var mockToGenerate in namedMocksToGenerate)
 		{
-			string result = SourceGeneration.GetMockClass(mockToGenerate);
+			string result = SourceGeneration.GetMockClass(mockToGenerate.Name, mockToGenerate.MockClass);
 			// Create a separate class file for each mock
-			context.AddSource(mockToGenerate.FileName, SourceText.From(result, Encoding.UTF8));
+			var fileName = $"For{mockToGenerate.Name}.g.cs";
+			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
+		}
+		
+		foreach (var (name, extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
+		{
+			string result = SourceGeneration.GetExtensionClass(extensionToGenerate);
+			// Create a separate class file for each mock
+			var fileName = $"ExtensionsFor{name}.g.cs";
+			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
 		}
 
-		context.AddSource("Mock.Registration.g.cs",
-			SourceText.From(SourceGeneration.RegisterMocks(mocksToGenerate), Encoding.UTF8));
+		context.AddSource("MockRegistration.g.cs",
+			SourceText.From(SourceGeneration.RegisterMocks(namedMocksToGenerate), Encoding.UTF8));
+	}
+
+	private static string GetFileName(Class @class)
+		=> $"{@class.Namespace}_{@class.ClassName}".Replace(".", "_");
+
+	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)
+	{
+		HashSet<(string, string)> classNames = new();
+		var result = new List<(string Name, Class MockClass)>();
+		foreach (var mockToGenerate in mocksToGenerate)
+		{
+			if (classNames.Add((mockToGenerate.Namespace, mockToGenerate.ClassName)))
+			{
+				int suffix = 1;
+				var actualName = mockToGenerate.ClassName;
+				while (result.Any(r => r.Name == actualName))
+				{
+					actualName = $"{mockToGenerate.ClassName}_{suffix++}";
+				}
+				result.Add((actualName, mockToGenerate));
+			}
+			foreach (var item in mockToGenerate.AdditionalImplementations)
+			{
+				if (classNames.Add((item.Namespace, item.ClassName)))
+				{
+					int suffix = 1;
+					var actualName = item.ClassName;
+					while (result.Any(r => r.Name == actualName))
+					{
+						actualName = $"{item.ClassName}_{suffix++}";
+					}
+					result.Add((actualName, item));
+				}
+			}
+		}
+
+		return result;
+	}
+	private static (string Name, MockClass MockClass)[] CreateNames(ImmutableArray<MockClass> mocksToGenerate)
+	{
+		var result = new (string Name, MockClass MockClass)[mocksToGenerate.Length];
+		for(int i=0;i< mocksToGenerate.Length; i++)
+		{
+			MockClass mockClass = mocksToGenerate[i];
+			string name = mockClass.ClassName;
+			if (mockClass.AdditionalImplementations.Any())
+			{
+				name += "_" + string.Join("_", mockClass.AdditionalImplementations.Select(t => t.ClassName));
+			}
+			int suffix = 1;
+			var actualName = name;
+			while (result.Any(r => r.Name == actualName))
+			{
+				actualName = $"{name}_{suffix++}";
+			}
+			result[i] = (actualName, mockClass);
+		}
+		return result;
 	}
 }

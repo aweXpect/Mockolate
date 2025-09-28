@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using Mockerade.Invocations;
+using Mockerade.Checks;
 
 namespace Mockerade.Setup;
 

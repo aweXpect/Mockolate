@@ -1,63 +1,63 @@
-﻿using Mockerade.SourceGenerators.Entities;
+﻿using System.Text;
+using Mockerade.SourceGenerators.Entities;
 
 namespace Mockerade.SourceGenerators.Internals;
 
 internal static partial class SourceGeneration
 {
-	public static string RegisterMocks(ICollection<MockClass> mocks)
+	public static string RegisterMocks(ICollection<(string Name, MockClass MockClass)> mocks)
 	{
-		string result = """
-		                using System;
-		                """;
-		foreach (string? @namespace in mocks.Select(x => x.Namespace).Distinct().OrderBy(x => x))
+		var sb = new StringBuilder();
+		sb.AppendLine("using System;");
+		foreach (string? @namespace in mocks.Select(x => x.MockClass.Namespace).Distinct().OrderBy(x => x))
 		{
-			result += $$"""
-
-			            using {{@namespace}};
-			            """;
+			sb.Append("using ").Append(@namespace).AppendLine(";");
 		}
 
-		result += """
-
-		          namespace Mockerade;
-
-		          #nullable enable
-		          public static partial class Mock
-		          {
-		          	private partial class MockGenerator
-		          	{
-		          		partial void Generate<T>(MockBehavior mockBehavior)
-		          		{
-
-		          """;
+		sb.AppendLine();
+		sb.AppendLine("namespace Mockerade;");
+		sb.AppendLine();
+		sb.AppendLine("#nullable enable");
+		sb.AppendLine("public static partial class Mock");
+		sb.AppendLine("{");
+		sb.AppendLine("\tprivate partial class MockGenerator");
+		sb.AppendLine("\t{");
+		sb.AppendLine("\t\tpartial void Generate(MockBehavior mockBehavior, params Type[] types)");
+		sb.AppendLine("\t\t{");
 		int index = 0;
-		foreach (MockClass mock in mocks)
+		foreach (var mock in mocks)
 		{
+			string prefix;
 			if (index++ > 0)
 			{
-				result += "			else ";
+				sb.Append("\t\t\telse ");
+				prefix = "\t\t\t         ";
 			}
 			else
 			{
-				result += "			";
+				sb.Append("\t\t\t");
+				prefix = "\t\t\t    ";
 			}
 
-			result += $$"""
-			            if (typeof(T) == typeof({{mock.ClassName}}))
-			            			{
-			            				_value = new For{{mock.ClassName}}.Mock(mockBehavior) as Mock<T>;
-			            			}
-
-			            """;
+			sb.Append("if (types.Length == ").Append(mock.MockClass.AdditionalImplementations.Count + 1).Append(" &&")
+				.AppendLine();
+			sb.Append(prefix).Append("types[0] == typeof(").Append(mock.MockClass.ClassName).Append(")");
+			int idx = 1;
+			foreach (var item in mock.MockClass.AdditionalImplementations)
+			{
+				sb.AppendLine(" &&");
+				sb.Append(prefix).Append("types[").Append(idx++).Append("] == typeof(").Append(item.ClassName).Append(")");
+			}
+			sb.AppendLine(")");
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t_value = new For").Append(mock.Name).Append(".Mock(mockBehavior);").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
 		}
 
-		result += """
-		              
-		          		}
-		          	}
-		          }
-		          #nullable disable
-		          """;
-		return result;
+		sb.AppendLine("\t\t}");
+		sb.AppendLine("\t}");
+		sb.AppendLine("}");
+		sb.AppendLine("#nullable disable");
+		return sb.ToString();
 	}
 }

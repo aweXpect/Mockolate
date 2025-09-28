@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Mockerade.Invocations;
+using Mockerade.Checks;
 
 namespace Mockerade.Setup;
 

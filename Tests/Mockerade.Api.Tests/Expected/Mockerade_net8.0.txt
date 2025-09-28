@@ -1,10 +1,67 @@
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/vbreuss/Mockerade.git")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
+namespace Mockerade.Checks
+{
+    public class CheckResult
+    {
+        public CheckResult(Mockerade.Checks.Invocation[] invocations) { }
+        public Mockerade.Checks.Invocation[] Invocations { get; }
+        public class Property<T>
+        {
+            public Property(Mockerade.Checks.IMockChecks mockInvocations, string propertyName) { }
+            public Mockerade.Checks.CheckResult Getter() { }
+            public Mockerade.Checks.CheckResult Setter(Mockerade.With.Parameter<T> value) { }
+        }
+    }
+    public interface IMockChecks
+    {
+        bool IsAlreadyInvoked { get; }
+        Mockerade.Checks.Invocation[] Method(string methodName, params Mockerade.With.Parameter[] parameters);
+        Mockerade.Checks.Invocation[] PropertyGetter(string propertyName);
+        Mockerade.Checks.Invocation[] PropertySetter(string propertyName, Mockerade.With.Parameter value);
+    }
+    public class Invocation
+    {
+        public Invocation() { }
+    }
+    public class MethodInvocation : Mockerade.Checks.Invocation
+    {
+        public MethodInvocation(string name, object?[] parameters) { }
+        public string Name { get; }
+        public object?[] Parameters { get; }
+    }
+    public class MockChecks<T> : Mockerade.Checks.IMockChecks
+    {
+        public MockChecks() { }
+        public System.Collections.Generic.IReadOnlyList<Mockerade.Checks.Invocation> Invocations { get; }
+        public class Proxy : Mockerade.Checks.MockChecks<T>, Mockerade.Checks.IMockChecks
+        {
+            public Proxy(Mockerade.Checks.IMockChecks inner) { }
+        }
+    }
+    public class PropertyGetterInvocation : Mockerade.Checks.Invocation
+    {
+        public PropertyGetterInvocation(string propertyName) { }
+        public string Name { get; }
+    }
+    public class PropertySetterInvocation : Mockerade.Checks.Invocation
+    {
+        public PropertySetterInvocation(string propertyName, object? value) { }
+        public string Name { get; }
+        public object? Value { get; }
+    }
+}
 namespace Mockerade.Events
 {
-    public class MockRaises<T> : Mockerade.IMockRaises
+    public interface IMockRaises
     {
-        public MockRaises(Mockerade.Setup.MockSetup<T> setup) { }
+        void AddEvent(string name, object? target, System.Reflection.MethodInfo? method);
+        void Raise(string eventName, params object?[] parameters);
+        void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method);
+    }
+    public class MockRaises<T> : Mockerade.Events.IMockRaises
+    {
+        public MockRaises(Mockerade.Setup.IMockSetup setup) { }
     }
 }
 namespace Mockerade.Exceptions
@@ -24,17 +81,13 @@ namespace Mockerade
 {
     public interface IMock
     {
-        Mockerade.IMockRaises Raises { get; }
+        Mockerade.Checks.IMockChecks Check { get; }
+        Mockerade.Events.IMockRaises Raise { get; }
+        Mockerade.Setup.IMockSetup Setup { get; }
         Mockerade.Setup.MethodSetupResult Execute(string methodName, params object?[] parameters);
         Mockerade.Setup.MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[] parameters);
         TResult Get<TResult>(string propertyName);
         void Set(string propertyName, object? value);
-    }
-    public interface IMockRaises
-    {
-        void AddEvent(string name, object? target, System.Reflection.MethodInfo? method);
-        void Raises(string eventName, params object?[] parameters);
-        void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method);
     }
     public class MockBehavior : System.IEquatable<Mockerade.MockBehavior>
     {
@@ -51,11 +104,15 @@ namespace Mockerade
     {
         protected Mock(Mockerade.MockBehavior behavior) { }
         public Mockerade.MockBehavior Behavior { get; }
-        public Mockerade.Invocations.MockInvocations<T> Invoked { get; }
+        public Mockerade.Checks.MockChecks<T> Check { get; }
         public abstract T Object { get; }
-        public Mockerade.Events.MockRaises<T> Raises { get; }
-        public Mockerade.Setup.MockSetup<T> Setup { get; }
+        public Mockerade.Events.MockRaises<T> Raise { get; }
+        public Mockerade.Setup.MockSetups<T> Setup { get; }
         public static T op_Implicit(Mockerade.Mock<T> mock) { }
+    }
+    public abstract class Mock<T, T2> : Mockerade.Mock<T>
+    {
+        protected Mock(Mockerade.MockBehavior behavior) { }
     }
     public static class With
     {
@@ -106,70 +163,28 @@ namespace Mockerade
         }
     }
 }
-namespace Mockerade.Invocations
-{
-    public interface IMockInvocations
-    {
-        Mockerade.Invocations.Invocation[] Method(string methodName, params Mockerade.With.Parameter[] parameters);
-        Mockerade.Invocations.Invocation[] PropertyGetter(string propertyName);
-        Mockerade.Invocations.Invocation[] PropertySetter(string propertyName, Mockerade.With.Parameter value);
-    }
-    public class Invocation
-    {
-        public Invocation() { }
-    }
-    public class InvocationResult
-    {
-        public InvocationResult(Mockerade.Invocations.Invocation[] invocations) { }
-        public Mockerade.Invocations.Invocation[] Invocations { get; }
-        public class Property<T>
-        {
-            public Property(Mockerade.Invocations.IMockInvocations mockInvocations, string propertyName) { }
-            public Mockerade.Invocations.InvocationResult Getter() { }
-            public Mockerade.Invocations.InvocationResult Setter(Mockerade.With.Parameter<T> value) { }
-        }
-    }
-    public class MethodInvocation : Mockerade.Invocations.Invocation
-    {
-        public MethodInvocation(string name, object?[] parameters) { }
-        public string Name { get; }
-        public object?[] Parameters { get; }
-    }
-    public class MockInvocations<T> : Mockerade.Invocations.IMockInvocations
-    {
-        public MockInvocations() { }
-        public System.Collections.Generic.IReadOnlyList<Mockerade.Invocations.Invocation> Invocations { get; }
-    }
-    public class PropertyGetterInvocation : Mockerade.Invocations.Invocation
-    {
-        public PropertyGetterInvocation(string propertyName) { }
-        public string Name { get; }
-    }
-    public class PropertySetterInvocation : Mockerade.Invocations.Invocation
-    {
-        public PropertySetterInvocation(string propertyName, object? value) { }
-        public string Name { get; }
-        public object? Value { get; }
-    }
-}
 namespace Mockerade.Setup
 {
     public interface IMethodSetup
     {
         int InvocationCount { get; }
-        bool Matches(Mockerade.Invocations.Invocation invocation);
+        bool Matches(Mockerade.Checks.Invocation invocation);
     }
     public interface IMockSetup
     {
+        Mockerade.IMock Mock { get; }
+        void AddEvent(string eventName, object? target, System.Reflection.MethodInfo method);
+        System.Collections.Generic.IEnumerable<System.ValueTuple<object?, System.Reflection.MethodInfo>> GetEventHandlers(string eventName);
         void RegisterMethod(Mockerade.Setup.MethodSetup methodSetup);
         void RegisterProperty(string propertyName, Mockerade.Setup.PropertySetup propertySetup);
+        void RemoveEvent(string eventName, object? target, System.Reflection.MethodInfo method);
     }
     public abstract class MethodSetup : Mockerade.Setup.IMethodSetup
     {
         protected MethodSetup() { }
-        protected abstract void ExecuteCallback(Mockerade.Invocations.Invocation invocation);
-        protected abstract TResult GetReturnValue<TResult>(Mockerade.Invocations.Invocation invocation, Mockerade.MockBehavior behavior);
-        protected abstract bool IsMatch(Mockerade.Invocations.Invocation invocation);
+        protected abstract void ExecuteCallback(Mockerade.Checks.Invocation invocation);
+        protected abstract TResult GetReturnValue<TResult>(Mockerade.Checks.Invocation invocation, Mockerade.MockBehavior behavior);
+        protected abstract bool IsMatch(Mockerade.Checks.Invocation invocation);
         protected abstract T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior);
         protected abstract T SetRefParameter<T>(string parameterName, Mockerade.MockBehavior behavior, T value);
     }
@@ -188,9 +203,9 @@ namespace Mockerade.Setup
     {
         public MethodWithReturnValueSetup(string name) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn> Callback(System.Action callback) { }
-        protected override void ExecuteCallback(Mockerade.Invocations.Invocation invocation) { }
-        protected override TResult GetReturnValue<TResult>(Mockerade.Invocations.Invocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Invocations.Invocation invocation) { }
+        protected override void ExecuteCallback(Mockerade.Checks.Invocation invocation) { }
+        protected override TResult GetReturnValue<TResult>(Mockerade.Checks.Invocation invocation, Mockerade.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn> Returns(System.Func<TReturn> callback) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn> Returns(TReturn returnValue) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
@@ -201,9 +216,9 @@ namespace Mockerade.Setup
         public MethodWithReturnValueSetup(string name, Mockerade.With.NamedParameter match1) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1> Callback(System.Action callback) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1> Callback(System.Action<T1> callback) { }
-        protected override void ExecuteCallback(Mockerade.Invocations.Invocation invocation) { }
-        protected override TResult GetReturnValue<TResult>(Mockerade.Invocations.Invocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Invocations.Invocation invocation) { }
+        protected override void ExecuteCallback(Mockerade.Checks.Invocation invocation) { }
+        protected override TResult GetReturnValue<TResult>(Mockerade.Checks.Invocation invocation, Mockerade.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1> Returns(System.Func<TReturn> callback) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1> Returns(System.Func<T1, TReturn> callback) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1> Returns(TReturn returnValue) { }
@@ -215,9 +230,9 @@ namespace Mockerade.Setup
         public MethodWithReturnValueSetup(string name, Mockerade.With.NamedParameter match1, Mockerade.With.NamedParameter match2) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1, T2> Callback(System.Action callback) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1, T2> Callback(System.Action<T1, T2> callback) { }
-        protected override void ExecuteCallback(Mockerade.Invocations.Invocation invocation) { }
-        protected override TResult GetReturnValue<TResult>(Mockerade.Invocations.Invocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Invocations.Invocation invocation) { }
+        protected override void ExecuteCallback(Mockerade.Checks.Invocation invocation) { }
+        protected override TResult GetReturnValue<TResult>(Mockerade.Checks.Invocation invocation, Mockerade.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1, T2> Returns(System.Func<TReturn> callback) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1, T2> Returns(System.Func<T1, T2, TReturn> callback) { }
         public Mockerade.Setup.MethodWithReturnValueSetup<TReturn, T1, T2> Returns(TReturn returnValue) { }
@@ -228,9 +243,9 @@ namespace Mockerade.Setup
     {
         public MethodWithoutReturnValueSetup(string name) { }
         public Mockerade.Setup.MethodWithoutReturnValueSetup Callback(System.Action callback) { }
-        protected override void ExecuteCallback(Mockerade.Invocations.Invocation invocation) { }
-        protected override TResult GetReturnValue<TResult>(Mockerade.Invocations.Invocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Invocations.Invocation invocation) { }
+        protected override void ExecuteCallback(Mockerade.Checks.Invocation invocation) { }
+        protected override TResult GetReturnValue<TResult>(Mockerade.Checks.Invocation invocation, Mockerade.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, Mockerade.MockBehavior behavior, T value) { }
     }
@@ -239,9 +254,9 @@ namespace Mockerade.Setup
         public MethodWithoutReturnValueSetup(string name, Mockerade.With.NamedParameter match1) { }
         public Mockerade.Setup.MethodWithoutReturnValueSetup<T1> Callback(System.Action callback) { }
         public Mockerade.Setup.MethodWithoutReturnValueSetup<T1> Callback(System.Action<T1> callback) { }
-        protected override void ExecuteCallback(Mockerade.Invocations.Invocation invocation) { }
-        protected override TResult GetReturnValue<TResult>(Mockerade.Invocations.Invocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Invocations.Invocation invocation) { }
+        protected override void ExecuteCallback(Mockerade.Checks.Invocation invocation) { }
+        protected override TResult GetReturnValue<TResult>(Mockerade.Checks.Invocation invocation, Mockerade.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, Mockerade.MockBehavior behavior, T value) { }
     }
@@ -250,15 +265,19 @@ namespace Mockerade.Setup
         public MethodWithoutReturnValueSetup(string name, Mockerade.With.NamedParameter match1, Mockerade.With.NamedParameter match2) { }
         public Mockerade.Setup.MethodWithoutReturnValueSetup<T1, T2> Callback(System.Action callback) { }
         public Mockerade.Setup.MethodWithoutReturnValueSetup<T1, T2> Callback(System.Action<T1, T2> callback) { }
-        protected override void ExecuteCallback(Mockerade.Invocations.Invocation invocation) { }
-        protected override TResult GetReturnValue<TResult>(Mockerade.Invocations.Invocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Invocations.Invocation invocation) { }
+        protected override void ExecuteCallback(Mockerade.Checks.Invocation invocation) { }
+        protected override TResult GetReturnValue<TResult>(Mockerade.Checks.Invocation invocation, Mockerade.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, Mockerade.MockBehavior behavior, T value) { }
     }
-    public class MockSetup<T> : Mockerade.Setup.IMockSetup
+    public class MockSetups<T> : Mockerade.Setup.IMockSetup
     {
-        public MockSetup(Mockerade.Mock<T> mock) { }
+        public MockSetups(Mockerade.IMock mock) { }
+        public class Proxy : Mockerade.Setup.MockSetups<T>, Mockerade.Setup.IMockSetup
+        {
+            public Proxy(Mockerade.Setup.IMockSetup inner) { }
+        }
     }
     public abstract class PropertySetup
     {

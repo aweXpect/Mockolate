@@ -1,4 +1,4 @@
-﻿using Mockerade.Invocations;
+﻿using Mockerade.Checks;
 using Mockerade.Setup;
 using Mockerade.Tests.TestHelpers;
 
@@ -60,13 +60,13 @@ public class MockTests
 		sut.Hidden.Get<int>("my-get-property");
 		sut.Hidden.Set("my-set-property", 42);
 
-		await That(sut.Invoked.Invocations).HasCount(3);
-		await That(sut.Invoked.Invocations).HasItem()
+		await That(sut.Check.Invocations).HasCount(3);
+		await That(sut.Check.Invocations).HasItem()
 			.Matching<MethodInvocation>(invocation
 				=> invocation.Name == "my-method" && invocation.Parameters.Length == 0);
-		await That(sut.Invoked.Invocations).HasItem()
+		await That(sut.Check.Invocations).HasItem()
 			.Matching<PropertyGetterInvocation>(invocation => invocation.Name == "my-get-property");
-		await That(sut.Invoked.Invocations).HasItem()
+		await That(sut.Check.Invocations).HasItem()
 			.Matching<PropertySetterInvocation>(invocation
 				=> invocation.Name == "my-set-property" && Equals(invocation.Value, 42));
 	}

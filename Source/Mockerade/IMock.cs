@@ -1,4 +1,6 @@
 ﻿using System;
+using Mockerade.Checks;
+using Mockerade.Events;
 using Mockerade.Setup;
 
 namespace Mockerade;
@@ -29,7 +31,17 @@ public interface IMock
 	void Set(string propertyName, object? value);
 
 	/// <summary>
-	///     Gets the interface used to raise events on the mock object.
+	///     Raise events on the mock object.
 	/// </summary>
-	IMockRaises Raises { get; }
+	IMockRaises Raise { get; }
+
+	/// <summary>
+	///     Setup the mock object.
+	/// </summary>
+	IMockSetup Setup { get; }
+
+	/// <summary>
+	///     Check what happened with the mocked instance.
+	/// </summary>
+	IMockChecks Check { get; }
 }

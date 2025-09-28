@@ -1,4 +1,4 @@
-﻿namespace Mockerade.Invocations;
+﻿namespace Mockerade.Checks;
 
 /// <summary>
 ///     Base class for invocations.

@@ -8,9 +8,9 @@ namespace Mockerade.SourceGenerators.Internals;
 #pragma warning disable S3779 // Cognitive Complexity of methods should not be too high
 internal static partial class SourceGeneration
 {
-	public static string GetMockClass(MockClass mockClass)
+	public static string GetMockClass(string name, MockClass mockClass)
 	{
-		string[] namespaces = mockClass.GetNamespaces();
+		string[] namespaces = mockClass.GetAllNamespaces();
 		StringBuilder sb = new();
 		foreach (string @namespace in namespaces)
 		{
@@ -18,79 +18,173 @@ internal static partial class SourceGeneration
 		}
 
 		sb.Append("""
+		          using Mockerade.Checks;
 		          using Mockerade.Events;
-		          using Mockerade.Invocations;
 		          using Mockerade.Setup;
 
 		          namespace Mockerade;
 
 		          #nullable enable
-
+		          
 		          """);
-		sb.Append("public static class For").Append(mockClass.ClassName).AppendLine();
+		sb.Append("public static class For").Append(name).AppendLine();
 		sb.AppendLine("{");
-
-		AppendMockObject(sb, mockClass, namespaces);
-		sb.AppendLine();
 		
-		AppendMock(sb, mockClass);
+		AppendMock(sb, name, mockClass);
 		sb.AppendLine();
 
-		AppendRaisesExtensions(sb, mockClass, namespaces);
-		sb.AppendLine();
+		AppendMockObject(sb, name, mockClass, namespaces);
+		if (mockClass.AdditionalImplementations.Any())
+		{
+			sb.AppendLine();
 
-		AppendSetupExtensions(sb, mockClass, namespaces);
-		sb.AppendLine();
-
-		AppendInvocationExtensions(sb, mockClass, namespaces);
-		sb.AppendLine();
+			AppendMockExtensions(sb, name, mockClass, namespaces);
+		}
 
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
 	}
 
-	private static void AppendMockObject(StringBuilder sb, MockClass mockClass, string[] namespaces)
+	private static void AppendMock(StringBuilder sb, string name, MockClass mockClass)
 	{
-		sb.Append("\tpublic partial class MockObject(IMock mock)")
-			.Append(" : ").AppendLine(mockClass.ClassName);
+		sb.Append("\tpublic class Mock : Mock<").Append(mockClass.ClassName);
+		foreach (var item in mockClass.AdditionalImplementations)
+		{
+			sb.Append(", ").Append(item.ClassName);
+		}
+		sb.AppendLine(">");
+		sb.AppendLine("\t{");
+		sb.Append("\t\tpublic Mock(MockBehavior mockBehavior) : base(mockBehavior)").AppendLine();
+		sb.AppendLine("\t\t{");
+		sb.Append("\t\t\tObject = new MockObject(this);").AppendLine();
+		sb.AppendLine("\t\t}");
+		sb.AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassName).Append(string.Join(", ", mockClass.AdditionalImplementations.Select(x => x.ClassName))).AppendLine("}.Object\" />");
+		sb.Append("\t\tpublic override ").Append(mockClass.ClassName).AppendLine(" Object { get; }");
+		sb.AppendLine("\t}");
+	}
+
+	private static void AppendMockObject(StringBuilder sb, string name, MockClass mockClass, string[] namespaces)
+	{
+		sb.Append("\tpublic partial class MockObject(IMock mock) :").AppendLine()
+			.Append("\t\t").Append(mockClass.ClassName);
+		foreach (var additional in mockClass.AdditionalImplementations)
+		{
+			sb.AppendLine(",").Append("\t\t").Append(additional.ClassName);
+		}
+		sb.AppendLine().AppendLine("\t{");
+		
+		ImplementClass(sb, mockClass, namespaces, false);
+		foreach (var additional in mockClass.AdditionalImplementations)
+		{
+			sb.AppendLine();
+			ImplementClass(sb, additional, namespaces, true);
+		}
+
+		sb.AppendLine("\t}");
+	}
+
+	private static void AppendMockExtensions(StringBuilder sb, string name, MockClass mockClass, string[] namespaces)
+	{
+		sb.Append("\textension(Mock<").Append(mockClass.ClassName);
+		foreach (var item in mockClass.AdditionalImplementations)
+		{
+			sb.Append(", ").Append(item.ClassName);
+		}
+		sb.AppendLine("> mock)");
 		sb.AppendLine("\t{");
 		int count = 0;
-
-		foreach (Event @event in mockClass.Events)
+		foreach (var @class in mockClass.AdditionalImplementations)
 		{
 			if (count++ > 0)
 			{
 				sb.AppendLine();
 			}
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(mockClass.ClassName).Append('.').Append(@event.Name).AppendLine("\" />");
-			sb.Append("\t\t").Append(@event.Accessibility.ToVisibilityString()).Append(' ');
-			if (!mockClass.IsInterface && @event.IsVirtual)
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Setup the mock for <see cref=\"").Append(@class.ClassName).Append("\" />").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic MockSetups<").Append(@class.ClassName).Append("> Setup").Append(@class.ClassName).AppendLine();
+			sb.Append("\t\t\t=> new MockSetups<").Append(@class.ClassName).Append(">.Proxy(mock.Setup);").AppendLine();
+			if (@class.Events.Any())
 			{
-				sb.Append("override ");
+				sb.AppendLine();
+				sb.Append("\t\t/// <summary>").AppendLine();
+				sb.Append("\t\t///     Raise events on the mock for <see cref=\"").Append(@class.ClassName).Append("\" />").AppendLine();
+				sb.Append("\t\t/// </summary>").AppendLine();
+				sb.Append("\t\tpublic MockRaises<").Append(@class.ClassName).Append("> Raise").Append(@class.ClassName).AppendLine();
+				sb.Append("\t\t\t=> new MockRaises<").Append(@class.ClassName).Append(">(mock.Setup);").AppendLine();
 			}
-			sb.Append("event ").Append(@event.Type.GetMinimizedString(namespaces))
-				.Append("? ").Append(@event.Name).AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Check what happened with the mocked instance for <see cref=\"").Append(@class.ClassName).Append("\" />").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic MockChecks<").Append(@class.ClassName).Append("> Check").Append(@class.ClassName).AppendLine();
+			sb.Append("\t\t\t=> new MockChecks<").Append(@class.ClassName).Append(">.Proxy(mock.Check);").AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Checks what happened with the mocked instance for <see cref=\"").Append(@class.ClassName).Append("\" />").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ").Append(@class.ClassName).Append(" ObjectFor").Append(@class.ClassName).AppendLine();
+			sb.Append("\t\t\t=> (").Append(@class.ClassName).Append(")mock.Object;").AppendLine();
+		}
+		sb.AppendLine("\t}");
+	}
+
+	private static void ImplementClass(StringBuilder sb, Class @class, string[] namespaces, bool explicitInterfaceImplementation)
+	{
+		sb.Append("\t\t# region ").Append(@class.ClassName).AppendLine();
+		int count = 0;
+		foreach (Event @event in @class.Events)
+		{
+			if (count++ > 0)
+			{
+				sb.AppendLine();
+			}
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName).Append('.').Append(@event.Name).AppendLine("\" />");
+			if (explicitInterfaceImplementation)
+			{
+				sb.Append("\t\tevent ").Append(@event.Type.GetMinimizedString(namespaces))
+					.Append("? ").Append(@class.ClassName).Append('.').Append(@event.Name).AppendLine();
+			}
+			else
+			{
+				sb.Append("\t\t").Append(@event.Accessibility.ToVisibilityString()).Append(' ');
+				if (!@class.IsInterface && @event.IsVirtual)
+				{
+					sb.Append("override ");
+				}
+				sb.Append("event ").Append(@event.Type.GetMinimizedString(namespaces))
+					.Append("? ").Append(@event.Name).AppendLine();
+			}
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\tadd => mock.Raises.AddEvent(nameof(").Append(@event.Name).Append("), value?.Target, value?.Method);").AppendLine();
-			sb.Append("\t\t\tremove => mock.Raises.RemoveEvent(nameof(").Append(@event.Name).Append("), value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\tadd => mock.Raise.AddEvent(\"").Append(@event.Name).Append("\", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\tremove => mock.Raise.RemoveEvent(\"").Append(@event.Name).Append("\", value?.Target, value?.Method);").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
 
-		foreach (Property property in mockClass.Properties)
+		foreach (Property property in @class.Properties)
 		{
 			if (count++ > 0)
 			{
 				sb.AppendLine();
 			}
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(mockClass.ClassName).Append('.').Append(property.Name).AppendLine("\" />");
-			sb.Append("\t\t").Append(property.Accessibility.ToVisibilityString()).Append(' ');
-			if (!mockClass.IsInterface && property.IsVirtual)
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName).Append('.').Append(property.Name).AppendLine("\" />");
+			if (explicitInterfaceImplementation)
 			{
-				sb.Append("override ");
+				sb.Append("\t\t").Append(property.Type.GetMinimizedString(namespaces))
+					.Append(" ").Append(@class.ClassName).Append('.').Append(property.Name).AppendLine();
 			}
-			sb.Append(property.Type.GetMinimizedString(namespaces))
-				.Append(" ").Append(property.Name).AppendLine();
+			else
+			{
+				sb.Append("\t\t").Append(property.Accessibility.ToVisibilityString()).Append(' ');
+				if (!@class.IsInterface && property.IsVirtual)
+				{
+					sb.Append("override ");
+				}
+				sb.Append(property.Type.GetMinimizedString(namespaces))
+					.Append(" ").Append(property.Name).AppendLine();
+			}
 			sb.AppendLine("\t\t{");
 			if (property.Getter != null && property.Getter.Value.Accessibility != Microsoft.CodeAnalysis.Accessibility.Private)
 			{
@@ -103,7 +197,7 @@ internal static partial class SourceGeneration
 				sb.AppendLine("\t\t\t{");
 				sb.Append("\t\t\t\treturn mock.Get<")
 					.Append(property.Type.GetMinimizedString(namespaces))
-					.Append(">(nameof(").Append(property.Name).AppendLine("));");
+					.Append(">(\"").Append(property.Name).AppendLine("\");");
 				sb.AppendLine("\t\t\t}");
 			}
 			if (property.Setter != null && property.Setter.Value.Accessibility != Microsoft.CodeAnalysis.Accessibility.Private)
@@ -115,31 +209,39 @@ internal static partial class SourceGeneration
 				}
 				sb.AppendLine("set");
 				sb.AppendLine("\t\t\t{");
-				sb.Append("\t\t\t\tmock.Set(nameof(").Append(property.Name).AppendLine("), value);");
+				sb.Append("\t\t\t\tmock.Set(\"").Append(property.Name).AppendLine("\", value);");
 				sb.AppendLine("\t\t\t}");
 			}
 
 			sb.AppendLine("\t\t}");
 		}
 
-		foreach (Method method in mockClass.Methods)
+		foreach (Method method in @class.Methods)
 		{
 			if (count++ > 0)
 			{
 				sb.AppendLine();
 			}
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(mockClass.ClassName).Append('.').Append(method.Name)
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName).Append('.').Append(method.Name)
 				.Append('(').Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
 				.AppendLine(")\" />");
-			sb.Append("\t\t");
-			sb.Append(method.Accessibility.ToVisibilityString()).Append(' ');
-			if (!mockClass.IsInterface && method.IsVirtual)
+			if (explicitInterfaceImplementation)
 			{
-				sb.Append("override ");
+				sb.Append("\t\t");
+				sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
+					.Append(@class.ClassName).Append('.').Append(method.Name).Append('(');
 			}
-			sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
-				.Append(method.Name).Append('(');
+			else
+			{
+				sb.Append("\t\t").Append(method.Accessibility.ToVisibilityString()).Append(' ');
+				if (!@class.IsInterface && method.IsVirtual)
+				{
+					sb.Append("override ");
+				}
+				sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
+					.Append(method.Name).Append('(');
+			}
 			int index = 0;
 			foreach (MethodParameter parameter in method.Parameters)
 			{
@@ -159,7 +261,7 @@ internal static partial class SourceGeneration
 			{
 				sb.Append("\t\t\tvar result = mock.Execute<")
 					.Append(method.ReturnType.GetMinimizedString(namespaces))
-					.Append(">(nameof(").Append(method.Name).Append(")");
+					.Append(">(\"").Append(method.Name).Append("\"");
 				foreach (MethodParameter p in method.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -169,7 +271,7 @@ internal static partial class SourceGeneration
 			}
 			else
 			{
-				sb.Append("\t\t\tvar result = mock.Execute(nameof(").Append(method.Name).Append(")");
+				sb.Append("\t\t\tvar result = mock.Execute(\"").Append(method.Name).Append("\"");
 				foreach (MethodParameter p in method.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -202,244 +304,7 @@ internal static partial class SourceGeneration
 
 			sb.AppendLine("\t\t}");
 		}
-
-		sb.AppendLine("\t}");
-	}
-
-	private static void AppendMock(StringBuilder sb, MockClass mockClass)
-	{
-		sb.Append("\tpublic class Mock : Mock<").Append(mockClass.ClassName).AppendLine(">");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\tpublic Mock(MockBehavior mockBehavior) : base(mockBehavior)");
-		sb.AppendLine("\t\t{");
-		sb.AppendLine("\t\t\tObject = new MockObject(this);");
-		sb.AppendLine("\t\t}");
-		sb.AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassName).AppendLine("}.Object\" />");
-		sb.Append("\t\tpublic override ").Append(mockClass.ClassName).AppendLine(" Object { get; }");
-		sb.AppendLine("\t}");
-	}
-
-	private static void AppendRaisesExtensions(StringBuilder sb, MockClass mockClass, string[] namespaces)
-	{
-		sb.Append("\textension(MockRaises<").Append(mockClass.ClassName).AppendLine("> mock)");
-		sb.AppendLine("\t{");
-		int count = 0;
-		foreach (Event @event in mockClass.Events)
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Raises the <see cref=\"").Append(mockClass.ClassName).Append(".").Append(@event.Name).Append("\"/> event.").AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(").Append(string.Join(", ", @event.Delegate.Parameters.Select(p => p.Type.GetMinimizedString(namespaces) + " " + p.Name))).Append(")").AppendLine();
-			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\t((IMockRaises)mock).Raises(\"").Append(@event.Name).Append("\", ").Append(string.Join(", ", @event.Delegate.Parameters.Select(p => p.Name))).Append(");").AppendLine();
-			sb.AppendLine("\t\t}");
-		}
-		sb.AppendLine("\t}");
-	}
-
-	private static void AppendSetupExtensions(StringBuilder sb, MockClass mockClass, string[] namespaces)
-	{
-		sb.Append("\textension(MockSetup<").Append(mockClass.ClassName).AppendLine("> mock)");
-		sb.AppendLine("\t{");
-		int count = 0;
-		foreach (Property property in mockClass.Properties)
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Setup for the property <see cref=\"").Append(mockClass.ClassName).Append(".").Append(property.Name).Append("\"/>.").AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic PropertySetup<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ")
-				.Append(property.Name).AppendLine();
-
-			sb.AppendLine("\t\t{");
-			sb.AppendLine("\t\t\tget");
-			sb.AppendLine("\t\t\t{");
-			sb.Append("\t\t\t\tvar setup = new PropertySetup<").Append(property.Type.GetMinimizedString(namespaces)).Append(">();").AppendLine();
-			sb.AppendLine("\t\t\t\tif (mock is IMockSetup mockSetup)");
-			sb.AppendLine("\t\t\t\t{");
-			sb.Append("\t\t\t\t\tmockSetup.RegisterProperty(\"").Append(property.Name).Append("\", setup);").AppendLine();
-			sb.AppendLine("\t\t\t\t}");
-			sb.AppendLine("\t\t\t\treturn setup;");
-			sb.AppendLine("\t\t\t}");
-			sb.AppendLine("\t\t}");
-		}
-
-		foreach (Method method in mockClass.Methods)
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Setup for the method <see cref=\"").Append(mockClass.ClassName).Append(".").Append(method.Name).Append("(").Append(string.Join(", ", method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces)))).Append(")\"/> with the given ").Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".").AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			if (method.ReturnType != Type.Void)
-			{
-				sb.Append("\t\tpublic MethodWithReturnValueSetup<")
-					.Append(method.ReturnType.GetMinimizedString(namespaces));
-				foreach (MethodParameter parameter in method.Parameters)
-				{
-					sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
-				}
-
-				sb.Append("> ");
-				sb.Append(method.Name).Append("(");
-			}
-			else
-			{
-				sb.Append("\t\tpublic MethodWithoutReturnValueSetup");
-				if (method.Parameters.Count > 0)
-				{
-					sb.Append('<');
-					int index = 0;
-					foreach (MethodParameter parameter in method.Parameters)
-					{
-						if (index++ > 0)
-						{
-							sb.Append(", ");
-						}
-
-						sb.Append(parameter.Type.GetMinimizedString(namespaces));
-					}
-
-					sb.Append('>');
-				}
-
-				sb.Append(' ').Append(method.Name).Append("(");
-			}
-			int i = 0;
-			foreach (MethodParameter parameter in method.Parameters)
-			{
-				if (i++ > 0)
-				{
-					sb.Append(", ");
-				}
-				sb.Append(parameter.RefKind switch {
-					RefKind.Ref => "With.RefParameter<",
-					RefKind.Out => "With.OutParameter<",
-					_ => "With.Parameter<"
-				}).Append(parameter.Type.GetMinimizedString(namespaces))
-					.Append("> ").Append(parameter.Name);
-			}
-
-
-			sb.Append(")").AppendLine();
-			sb.AppendLine("\t\t{");
-
-			if (method.ReturnType != Type.Void)
-			{
-				sb.Append("\t\t\tvar setup = new MethodWithReturnValueSetup<")
-					.Append(method.ReturnType.GetMinimizedString(namespaces));
-				foreach (MethodParameter parameter in method.Parameters)
-				{
-					sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
-				}
-
-				sb.Append(">");
-			}
-			else
-			{
-				sb.Append("\t\t\tvar setup = new MethodWithoutReturnValueSetup");
-
-				if (method.Parameters.Count > 0)
-				{
-					sb.Append('<');
-					int index = 0;
-					foreach (MethodParameter parameter in method.Parameters)
-					{
-						if (index++ > 0)
-						{
-							sb.Append(", ");
-						}
-
-						sb.Append(parameter.Type.GetMinimizedString(namespaces));
-					}
-
-					sb.Append('>');
-				}
-
-			}
-
-			sb.Append("(nameof(").Append(mockClass.ClassName).Append(".").Append(method.Name).Append(")");
-			foreach (string name in method.Parameters.Select(p => p.Name))
-			{
-				sb.Append(", new With.NamedParameter(\"").Append(name).Append("\", ").Append(name).Append(")");
-			}
-			sb.Append(");").AppendLine();
-			sb.AppendLine("\t\t\tif (mock is IMockSetup mockSetup)");
-			sb.AppendLine("\t\t\t{");
-			sb.AppendLine("\t\t\t\tmockSetup.RegisterMethod(setup);");
-			sb.AppendLine("\t\t\t}");
-			sb.AppendLine("\t\t\treturn setup;");
-			sb.AppendLine("\t\t}");
-		}
-		sb.AppendLine("\t}");
-	}
-
-	private static void AppendInvocationExtensions(StringBuilder sb, MockClass mockClass, string[] namespaces)
-	{
-		sb.Append("\textension(MockInvocations<").Append(mockClass.ClassName).AppendLine("> mock)");
-		sb.AppendLine("\t{");
-		int count = 0;
-		foreach (Property property in mockClass.Properties)
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(mockClass.ClassName).Append(".").Append(property.Name).Append("\"/>.").AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic InvocationResult.Property<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ").Append(property.Name).AppendLine();
-
-			sb.Append("\t\t\t=> new InvocationResult.Property<").Append(property.Type.GetMinimizedString(namespaces)).Append(">(mock, \"").Append(property.Name).Append("\");");
-		}
-
-		foreach (Method method in mockClass.Methods)
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"").Append(mockClass.ClassName).Append(".").Append(method.Name).Append("(").Append(string.Join(", ", method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces)))).Append(")\"/> with the given ").Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".").AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic InvocationResult ").Append(method.Name).Append("(");
-			int i = 0;
-			foreach (MethodParameter parameter in method.Parameters)
-			{
-				if (i++ > 0)
-				{
-					sb.Append(", ");
-				}
-				sb.Append(parameter.RefKind switch
-				{
-					RefKind.Ref => "With.InvocationRefParameter<",
-					RefKind.Out => "With.InvocationOutParameter<",
-					_ => "With.Parameter<"
-				}).Append(parameter.Type.GetMinimizedString(namespaces))
-					.Append("> ").Append(parameter.Name);
-			}
-
-			sb.Append(")").AppendLine();
-			sb.Append("\t\t\t=> new InvocationResult(((IMockInvocations)mock).Method(\"").Append(method.Name).Append("\"");
-
-			foreach (MethodParameter parameter in method.Parameters)
-			{
-				sb.Append(", ");
-				sb.Append(parameter.Name);
-			}
-			sb.AppendLine("));");
-		}
-		sb.AppendLine("\t}");
+		sb.Append("\t\t# endregion ").Append(@class.ClassName).AppendLine();
 	}
 }
 #pragma warning restore S3779 // Cognitive Complexity of methods should not be too high

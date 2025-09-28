@@ -7,10 +7,10 @@ namespace Mockerade.Events;
 /// <summary>
 ///     Allows raising events on the mock.
 /// </summary>
-public class MockRaises<T>(MockSetup<T> setup) : IMockRaises
+public class MockRaises<T>(IMockSetup setup) : IMockRaises
 {
-	/// <inheritdoc cref="IMockRaises.Raises(string, object?[])" />
-	void IMockRaises.Raises(string eventName, params object?[] parameters)
+	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
+	void IMockRaises.Raise(string eventName, params object?[] parameters)
 	{
 		foreach (var(target, method) in setup.GetEventHandlers(eventName))
 		{

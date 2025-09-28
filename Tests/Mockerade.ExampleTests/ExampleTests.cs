@@ -17,7 +17,7 @@ public class ExampleTests
 		var result = mock.Object.AddUser("Bob");
 
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		await That(mock.Invoked.AddUser("Bob").Invocations).HasCount(1);
+		await That(mock.Check.AddUser("Bob").Invocations).HasCount(1);
 	}
 
 	[Theory]
@@ -35,7 +35,7 @@ public class ExampleTests
 		var result = mock.Object.AddUser(name);
 
 		await That(result).IsEqualTo(expectResult ? new User(id, "Alice") : null);
-		await That(mock.Invoked.AddUser(name).Invocations).HasCount(1);
+		await That(mock.Check.AddUser(name).Invocations).HasCount(1);
 	}
 
 	[Theory]
@@ -55,7 +55,7 @@ public class ExampleTests
 
 		await That(deletedUser).IsEqualTo(new User(id, "Alice"));
 		await That(result).IsEqualTo(returnValue);
-		await That(mock.Invoked.TryDelete(id, With.Out<User?>()).Invocations).HasCount(1);
+		await That(mock.Check.TryDelete(id, With.Out<User?>()).Invocations).HasCount(1);
 	}
 
 	[Fact]
@@ -66,12 +66,12 @@ public class ExampleTests
 		var id = Guid.NewGuid();
 		var mock = Mock.For<IExampleRepository>();
 
-		mock.Raises.UsersChanged(this, eventArgs);
+		mock.Raise.UsersChanged(this, eventArgs);
 		mock.Object.UsersChanged += Register;
-		mock.Raises.UsersChanged(this, eventArgs);
-		mock.Raises.UsersChanged(this, eventArgs);
+		mock.Raise.UsersChanged(this, eventArgs);
+		mock.Raise.UsersChanged(this, eventArgs);
 		mock.Object.UsersChanged -= Register;
-		mock.Raises.UsersChanged(this, eventArgs);
+		mock.Raise.UsersChanged(this, eventArgs);
 
 		await That(raiseCount).IsEqualTo(2);
 
@@ -82,5 +82,23 @@ public class ExampleTests
 				raiseCount++;
 			}
 		}
+	}
+
+	[Fact]
+	public async Task WithAdditionalInterface_ShouldWork()
+	{
+		var eventArgs = EventArgs.Empty;
+		var id = Guid.NewGuid();
+		var mock = Mock.For<IExampleRepository, IOrderRepository>();
+		mock.SetupIOrderRepository
+			.AddOrder(With.Any<string>())
+			.Returns(new Order(id, "Order1"));
+
+		var result = mock.ObjectForIOrderRepository.AddOrder("foo");
+		
+		await That(result.Name).IsEqualTo("Order1");
+		await That(mock.CheckIOrderRepository.AddOrder("foo").Invocations).HasCount(1);
+		await That(mock.Object).Is<IExampleRepository>();
+		await That(mock.Object).Is<IOrderRepository>();
 	}
 }

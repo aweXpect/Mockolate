@@ -1,4 +1,4 @@
-﻿using Mockerade.Invocations;
+﻿using Mockerade.Checks;
 
 namespace Mockerade.Setup;
 

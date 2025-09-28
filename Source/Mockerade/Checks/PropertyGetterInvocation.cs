@@ -1,4 +1,4 @@
-﻿namespace Mockerade.Invocations;
+﻿namespace Mockerade.Checks;
 
 /// <summary>
 ///     An invocation of a property getter.

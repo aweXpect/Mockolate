@@ -45,15 +45,52 @@ internal static partial class SourceGeneration
 				return generator.Get<T>(mockBehavior)
 					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
 			}
+		
+			/// <summary>
+			///     Create a new mock for <typeparamref name="T" /> that also implements interface <typeparamref name="T2" /> with the default <see cref="MockBehavior" />.
+			/// </summary>
+			/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+			/// <typeparam name="T2">Additional interface that is implemented by the mock.</typeparam>
+			/// <remarks>
+			///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			/// </remarks>
+			public static Mock<T, T2> For<T, T2>()
+			{
+				var generator = new MockGenerator();
+				return generator.Get<T, T2>(MockBehavior.Default)
+					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
+			}
+			
+			/// <summary>
+			///     Create a new mock for <typeparamref name="T" /> that also implements interface <typeparamref name="T2" /> with the given <paramref name="mockBehavior" />.
+			/// </summary>
+			/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+			/// <typeparam name="T2">Additional interface that is implemented by the mock.</typeparam>
+			/// <remarks>
+			///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			///     <para />
+			///     The behavior of the mock with regards to the setups and the actual calls is determined by the <see cref="MockBehavior" />.
+			/// </remarks>
+			public static Mock<T, T2> For<T, T2>(MockBehavior mockBehavior)
+			{
+				var generator = new MockGenerator();
+				return generator.Get<T, T2>(mockBehavior)
+					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
+			}
 			
 			private partial class MockGenerator
 			{
 				private object? _value;
-				partial void Generate<T>(MockBehavior mockBehavior);
+				partial void Generate(MockBehavior mockBehavior, params Type[] types);
 				public Mock<T>? Get<T>(MockBehavior mockBehavior)
 				{
-					Generate<T>(mockBehavior);
+					Generate(mockBehavior, typeof(T));
 					return _value as Mock<T>;
+				}
+				public Mock<T, T2>? Get<T, T2>(MockBehavior mockBehavior)
+				{
+					Generate(mockBehavior, typeof(T), typeof(T2));
+					return _value as Mock<T, T2>;
 				}
 			}
 		}
