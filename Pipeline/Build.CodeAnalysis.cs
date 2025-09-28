@@ -16,7 +16,7 @@ partial class Build
 		.Executes(() =>
 		{
 			SonarScannerTasks.SonarScannerBegin(s => s
-				.SetOrganization("Mockerade")
+				.SetOrganization("mockerade")
 				.SetProjectKey("Mockerade_Mockerade")
 				.AddVSTestReports(TestResultsDirectory / "*.trx")
 				.AddOpenCoverPaths(TestResultsDirectory / "reports" / "OpenCover.xml")

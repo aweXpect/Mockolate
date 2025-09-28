@@ -32,9 +32,9 @@ namespace Mockerade
     }
     public interface IMockRaises
     {
-        void AddEvent(string name, object? target, System.Reflection.MethodInfo method);
+        void AddEvent(string name, object? target, System.Reflection.MethodInfo? method);
         void Raises(string eventName, params object?[] parameters);
-        void RemoveEvent(string name, object? target, System.Reflection.MethodInfo method);
+        void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method);
     }
     public class MockBehavior : System.IEquatable<Mockerade.MockBehavior>
     {

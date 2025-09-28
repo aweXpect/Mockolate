@@ -13,8 +13,6 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             pull-requests: write
-        env:
-            STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         steps:
             -   uses: actions/checkout@v5
                 with:
@@ -25,8 +23,8 @@ jobs:
                     dotnet-version: |
                         8.0.x
                         10.0.x
-            -   name: Upload mutation dashboard and create comment
-                run: ./build.sh MutationTestDashboard
+            -   name: Create mutation test comment
+                run: ./build.sh MutationTestComment
                 env:
                     GithubToken: ${{ secrets.GITHUB_TOKEN }}
                     WorkflowRunId: ${{ github.event.workflow_run.id }}

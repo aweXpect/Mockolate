@@ -35,6 +35,13 @@ partial class Build
 		.After(BenchmarkDotNet)
 		.Executes(async () =>
 		{
+			if (!File.Exists(ArtifactsDirectory / "Benchmarks" / "results" /
+															 "Mockerade.Benchmarks.HappyCaseBenchmarks-report-github.md"))
+			{
+				Log.Information("Skip benchmark result, because no report file was generated.");
+				return;
+			}
+
 			string fileContent = await File.ReadAllTextAsync(ArtifactsDirectory / "Benchmarks" / "results" /
 			                                                 "Mockerade.Benchmarks.HappyCaseBenchmarks-report-github.md");
 			Log.Information("Report:\n {FileContent}", fileContent);
@@ -47,6 +54,13 @@ partial class Build
 	Target BenchmarkComment => _ => _
 		.Executes(async () =>
 		{
+			if (!File.Exists(ArtifactsDirectory / "Benchmarks" / "results" /
+															 "Mockerade.Benchmarks.HappyCaseBenchmarks-report-github.md"))
+			{
+				Log.Information("Skip benchmark comment, because no report file was generated.");
+				return;
+			}
+
 			await "Benchmarks".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
 			if (!File.Exists(ArtifactsDirectory / "PR.txt"))
 			{
