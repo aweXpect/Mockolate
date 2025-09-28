@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Vienna"
+    commit-message:
+      prefix: chore
+
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Vienna"
+    commit-message:
+      prefix: chore
+    groups:
+      nuke:
+        patterns:
+          - "Nuke*"
+      xunit:
+        patterns:
+          - "xunit*"
+      aweXpect:
+        patterns:
+          - "aweXpect*"

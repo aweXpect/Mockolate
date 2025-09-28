@@ -1,0 +1,39 @@
+<Project>
+
+	<Import Project="$(MSBuildThisFileDirectory)/../Directory.Build.props"
+			Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')"/>
+
+	<PropertyGroup>
+		<TargetFrameworks>net10.0;net8.0;net48</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OutputType>exe</OutputType>
+		<LangVersion>preview</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<SignAssembly>False</SignAssembly>
+		<NoWarn>701;1702;CA1845</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="xunit.v3"/>
+		<PackageReference Include="xunit.runner.visualstudio">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
+		<PackageReference Include="Nullable">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.collector">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="aweXpect"/>
+	</ItemGroup>
+
+</Project>

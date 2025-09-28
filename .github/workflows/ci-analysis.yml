@@ -1,0 +1,54 @@
+name: CI-Analysis
+
+on:
+    workflow_dispatch:
+    workflow_run:
+        workflows: [ "CI" ]
+        types:
+            - completed
+
+jobs:
+    mutation-tests:
+        name: "Mutation tests"
+        runs-on: ubuntu-latest
+        permissions:
+            pull-requests: write
+        env:
+            STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        steps:
+            -   uses: actions/checkout@v5
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        8.0.x
+                        10.0.x
+            -   name: Upload mutation dashboard and create comment
+                run: ./build.sh MutationTestDashboard
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
+                    WorkflowRunId: ${{ github.event.workflow_run.id }}
+    
+    benchmarks:
+        name: "Benchmarks"
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            -   uses: actions/checkout@v5
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        8.0.x
+                        10.0.x
+            -   name: Create benchmark comment
+                run: ./build.sh BenchmarkComment
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
+                    WorkflowRunId: ${{ github.event.workflow_run.id }}

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Mocking Framework for .NET.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="$(MSBuildProjectDirectory)\..\Mockerade.SourceGenerators\bin\$(Configuration)\netstandard2.0\Mockerade.SourceGenerators.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="IsExternalInit">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+</Project>
