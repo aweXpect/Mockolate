@@ -8,17 +8,19 @@ namespace Mockerade.Checks
         public Mockerade.Checks.Invocation[] Invocations { get; }
         public class Property<T>
         {
-            public Property(Mockerade.Checks.IMockChecks mockInvocations, string propertyName) { }
+            public Property(Mockerade.Checks.IMockAccessed mockAccessed, string propertyName) { }
             public Mockerade.Checks.CheckResult Getter() { }
             public Mockerade.Checks.CheckResult Setter(Mockerade.With.Parameter<T> value) { }
         }
     }
-    public interface IMockChecks
+    public interface IMockAccessed
     {
-        bool IsAlreadyInvoked { get; }
-        Mockerade.Checks.Invocation[] Method(string methodName, params Mockerade.With.Parameter[] parameters);
         Mockerade.Checks.Invocation[] PropertyGetter(string propertyName);
         Mockerade.Checks.Invocation[] PropertySetter(string propertyName, Mockerade.With.Parameter value);
+    }
+    public interface IMockInvoked
+    {
+        Mockerade.Checks.Invocation[] Method(string methodName, params Mockerade.With.Parameter[] parameters);
     }
     public class Invocation
     {
@@ -30,13 +32,26 @@ namespace Mockerade.Checks
         public string Name { get; }
         public object?[] Parameters { get; }
     }
-    public class MockChecks<T> : Mockerade.Checks.IMockChecks
+    public class MockAccessed<T> : Mockerade.Checks.IMockAccessed
     {
-        public MockChecks() { }
-        public System.Collections.Generic.IReadOnlyList<Mockerade.Checks.Invocation> Invocations { get; }
-        public class Proxy : Mockerade.Checks.MockChecks<T>, Mockerade.Checks.IMockChecks
+        public MockAccessed(Mockerade.Checks.MockInvocations invocations) { }
+        public class Proxy : Mockerade.Checks.MockAccessed<T>, Mockerade.Checks.IMockAccessed
         {
-            public Proxy(Mockerade.Checks.IMockChecks inner) { }
+            public Proxy(Mockerade.Checks.IMockAccessed inner, Mockerade.Checks.MockInvocations invocations) { }
+        }
+    }
+    public class MockInvocations
+    {
+        public MockInvocations() { }
+        public System.Collections.Generic.IReadOnlyList<Mockerade.Checks.Invocation> Invocations { get; }
+        public bool IsAlreadyInvoked { get; }
+    }
+    public class MockInvoked<T> : Mockerade.Checks.IMockInvoked
+    {
+        public MockInvoked(Mockerade.Checks.MockInvocations invocations) { }
+        public class Proxy : Mockerade.Checks.MockInvoked<T>, Mockerade.Checks.IMockInvoked
+        {
+            public Proxy(Mockerade.Checks.IMockInvoked inner, Mockerade.Checks.MockInvocations invocations) { }
         }
     }
     public class PropertyGetterInvocation : Mockerade.Checks.Invocation
@@ -81,7 +96,9 @@ namespace Mockerade
 {
     public interface IMock
     {
-        Mockerade.Checks.IMockChecks Check { get; }
+        Mockerade.MockBehavior Behavior { get; }
+        Mockerade.Checks.IMockInvoked Check { get; }
+        Mockerade.Checks.MockInvocations Invocations { get; }
         Mockerade.Events.IMockRaises Raise { get; }
         Mockerade.Setup.IMockSetup Setup { get; }
         Mockerade.Setup.MethodSetupResult Execute(string methodName, params object?[] parameters);
@@ -103,8 +120,8 @@ namespace Mockerade
     public abstract class Mock<T> : Mockerade.IMock
     {
         protected Mock(Mockerade.MockBehavior behavior) { }
-        public Mockerade.MockBehavior Behavior { get; }
-        public Mockerade.Checks.MockChecks<T> Check { get; }
+        public Mockerade.Checks.MockAccessed<T> Accessed { get; }
+        public Mockerade.Checks.MockInvoked<T> Invoked { get; }
         public abstract T Object { get; }
         public Mockerade.Events.MockRaises<T> Raise { get; }
         public Mockerade.Setup.MockSetups<T> Setup { get; }

@@ -13,15 +13,15 @@ public class CheckResult(Invocation[] invocations)
 	/// <summary>
 	///     A property expectation returns the getter or setter <see cref="CheckResult"/> for the given <paramref name="propertyName"/>.
 	/// </summary>
-	public class Property<T>(IMockChecks mockInvocations, string propertyName)
+	public class Property<T>(IMockAccessed mockAccessed, string propertyName)
 	{
 		/// <summary>
 		/// The expectation for the property getter invocations.
 		/// </summary>
-		public CheckResult Getter() => new CheckResult(mockInvocations.PropertyGetter(propertyName));
+		public CheckResult Getter() => new CheckResult(mockAccessed.PropertyGetter(propertyName));
 		/// <summary>
 		/// The expectation for the property setter invocations matching the specified <paramref name="value"/>.
 		/// </summary>
-		public CheckResult Setter(With.Parameter<T> value) => new CheckResult(mockInvocations.PropertySetter(propertyName, value));
+		public CheckResult Setter(With.Parameter<T> value) => new CheckResult(mockAccessed.PropertySetter(propertyName, value));
 	}
 }

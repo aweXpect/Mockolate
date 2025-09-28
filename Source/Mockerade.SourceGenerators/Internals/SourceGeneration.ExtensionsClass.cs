@@ -35,7 +35,10 @@ internal static partial class SourceGeneration
 		AppendSetupExtensions(sb, mockClass, namespaces);
 		sb.AppendLine();
 
-		AppendInvocationExtensions(sb, mockClass, namespaces);
+		AppendInvokedExtensions(sb, mockClass, namespaces);
+		sb.AppendLine();
+
+		AppendAccessedExtensions(sb, mockClass, namespaces);
 		sb.AppendLine();
 
 		sb.AppendLine("}");
@@ -207,25 +210,11 @@ internal static partial class SourceGeneration
 		sb.AppendLine("\t}");
 	}
 
-	private static void AppendInvocationExtensions(StringBuilder sb, Class mockClass, string[] namespaces)
+	private static void AppendInvokedExtensions(StringBuilder sb, Class mockClass, string[] namespaces)
 	{
-		sb.Append("\textension(MockChecks<").Append(mockClass.ClassName).AppendLine("> mock)");
+		sb.Append("\textension(MockInvoked<").Append(mockClass.ClassName).AppendLine("> mock)");
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Property property in mockClass.Properties)
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(mockClass.ClassName).Append(".").Append(property.Name).Append("\"/>.").AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult.Property<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ").Append(property.Name).AppendLine();
-
-			sb.Append("\t\t\t=> new CheckResult.Property<").Append(property.Type.GetMinimizedString(namespaces)).Append(">(mock, \"").Append(property.Name).Append("\");");
-		}
-
 		foreach (Method method in mockClass.Methods)
 		{
 			if (count++ > 0)
@@ -253,7 +242,7 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append(")").AppendLine();
-			sb.Append("\t\t\t=> new CheckResult(((IMockChecks)mock).Method(\"").Append(method.Name).Append("\"");
+			sb.Append("\t\t\t=> new CheckResult(((IMockInvoked)mock).Method(\"").Append(method.Name).Append("\"");
 
 			foreach (MethodParameter parameter in method.Parameters)
 			{
@@ -261,6 +250,27 @@ internal static partial class SourceGeneration
 				sb.Append(parameter.Name);
 			}
 			sb.AppendLine("));");
+		}
+		sb.AppendLine("\t}");
+	}
+
+	private static void AppendAccessedExtensions(StringBuilder sb, Class mockClass, string[] namespaces)
+	{
+		sb.Append("\textension(MockAccessed<").Append(mockClass.ClassName).AppendLine("> mock)");
+		sb.AppendLine("\t{");
+		int count = 0;
+		foreach (Property property in mockClass.Properties)
+		{
+			if (count++ > 0)
+			{
+				sb.AppendLine();
+			}
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(mockClass.ClassName).Append(".").Append(property.Name).Append("\"/>.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic CheckResult.Property<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ").Append(property.Name).AppendLine();
+
+			sb.Append("\t\t\t=> new CheckResult.Property<").Append(property.Type.GetMinimizedString(namespaces)).Append(">(mock, \"").Append(property.Name).Append("\");");
 		}
 		sb.AppendLine("\t}");
 	}
