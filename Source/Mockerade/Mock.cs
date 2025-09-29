@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using Mockerade.Checks;
 using Mockerade.Events;
 using Mockerade.Exceptions;
@@ -19,8 +20,9 @@ public abstract class Mock<T> : IMock
 		_behavior = behavior;
 		Invoked = new MockInvoked<T>(((IMock)this).Invocations);
 		Accessed = new MockAccessed<T>(((IMock)this).Invocations);
+		Event = new MockEvent<T>(((IMock)this).Invocations);
 		Setup = new MockSetups<T>(this);
-		Raise = new MockRaises<T>(Setup);
+		Raise = new MockRaises<T>(Setup, ((IMock)this).Invocations);
 	}
 
 	/// <summary>
@@ -37,6 +39,11 @@ public abstract class Mock<T> : IMock
 	///     Check which properties were accessed on the mocked instance for <typeparamref name="T"/>.
 	/// </summary>
 	public MockAccessed<T> Accessed { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T"/>.
+	/// </summary>
+	public MockEvent<T> Event { get; private set; }
 
 	/// <summary>
 	///     Exposes the mocked object instance of type <typeparamref name="T"/>.

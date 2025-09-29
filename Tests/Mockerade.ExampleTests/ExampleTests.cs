@@ -95,10 +95,25 @@ public class ExampleTests
 			.Returns(new Order(id, "Order1"));
 
 		var result = mock.ObjectForIOrderRepository.AddOrder("foo");
-		
+
 		await That(result.Name).IsEqualTo("Order1");
 		await That(mock.InvokedOnIOrderRepository.AddOrder("foo").Once()).IsTrue();
 		await That(mock.Object).Is<IExampleRepository>();
 		await That(mock.Object).Is<IOrderRepository>();
+	}
+
+	[Fact]
+	public async Task XXX()
+	{
+		bool isCalled = false;
+		var id = Guid.NewGuid();
+		var mock = Mock.For<IExampleRepository, IOrderRepository>();
+		mock.SetupIOrderRepository
+			.SaveChanges()
+			.Callback(() => isCalled = true);
+
+		var result = mock.Object.SaveChanges();
+
+		await That(isCalled).IsFalse();
 	}
 }

@@ -1,4 +1,7 @@
-﻿namespace Mockerade.Checks;
+﻿using System;
+using System.Reflection;
+
+namespace Mockerade.Checks;
 
 /// <summary>
 ///     An invocation of a method.

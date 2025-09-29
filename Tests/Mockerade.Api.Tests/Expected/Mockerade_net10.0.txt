@@ -12,12 +12,32 @@ namespace Mockerade.Checks
         public bool Exactly(int times) { }
         public bool Never() { }
         public bool Once() { }
+        public class Event<T>
+        {
+            public Event(Mockerade.Checks.IMockEvent mockEvent, string eventName) { }
+            public Mockerade.Checks.CheckResult Subscribed() { }
+            public Mockerade.Checks.CheckResult Unsubscribed() { }
+        }
         public class Property<T>
         {
             public Property(Mockerade.Checks.IMockAccessed mockAccessed, string propertyName) { }
             public Mockerade.Checks.CheckResult Getter() { }
             public Mockerade.Checks.CheckResult Setter(Mockerade.With.Parameter<T> value) { }
         }
+    }
+    public class EventSubscription : Mockerade.Checks.Invocation
+    {
+        public EventSubscription(string name, object? target, System.Reflection.MethodInfo method) { }
+        public System.Reflection.MethodInfo Method { get; }
+        public string Name { get; }
+        public object? Target { get; }
+    }
+    public class EventUnsubscription : Mockerade.Checks.Invocation
+    {
+        public EventUnsubscription(string name, object? target, System.Reflection.MethodInfo method) { }
+        public System.Reflection.MethodInfo Method { get; }
+        public string Name { get; }
+        public object? Target { get; }
     }
     public interface ICheckResult
     {
@@ -27,6 +47,11 @@ namespace Mockerade.Checks
     {
         Mockerade.Checks.Invocation[] PropertyGetter(string propertyName);
         Mockerade.Checks.Invocation[] PropertySetter(string propertyName, Mockerade.With.Parameter value);
+    }
+    public interface IMockEvent
+    {
+        Mockerade.Checks.Invocation[] Subscribed(string eventName);
+        Mockerade.Checks.Invocation[] Unsubscribed(string eventName);
     }
     public interface IMockInvoked
     {
@@ -48,6 +73,14 @@ namespace Mockerade.Checks
         public class Proxy : Mockerade.Checks.MockAccessed<T>, Mockerade.Checks.IMockAccessed
         {
             public Proxy(Mockerade.Checks.IMockAccessed inner, Mockerade.Checks.MockInvocations invocations) { }
+        }
+    }
+    public class MockEvent<T> : Mockerade.Checks.IMockEvent
+    {
+        public MockEvent(Mockerade.Checks.MockInvocations invocations) { }
+        public class Proxy : Mockerade.Checks.MockEvent<T>, Mockerade.Checks.IMockEvent
+        {
+            public Proxy(Mockerade.Checks.IMockEvent inner, Mockerade.Checks.MockInvocations invocations) { }
         }
     }
     public class MockInvocations
@@ -86,7 +119,7 @@ namespace Mockerade.Events
     }
     public class MockRaises<T> : Mockerade.Events.IMockRaises
     {
-        public MockRaises(Mockerade.Setup.IMockSetup setup) { }
+        public MockRaises(Mockerade.Setup.IMockSetup setup, Mockerade.Checks.MockInvocations invocations) { }
     }
 }
 namespace Mockerade.Exceptions
@@ -131,6 +164,7 @@ namespace Mockerade
     {
         protected Mock(Mockerade.MockBehavior behavior) { }
         public Mockerade.Checks.MockAccessed<T> Accessed { get; }
+        public Mockerade.Checks.MockEvent<T> Event { get; }
         public Mockerade.Checks.MockInvoked<T> Invoked { get; }
         public abstract T Object { get; }
         public Mockerade.Events.MockRaises<T> Raise { get; }

@@ -41,6 +41,8 @@ internal static partial class SourceGeneration
 		AppendAccessedExtensions(sb, mockClass, namespaces);
 		sb.AppendLine();
 
+		AppendEventExtensions(sb, mockClass, namespaces);
+
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
@@ -271,6 +273,27 @@ internal static partial class SourceGeneration
 			sb.Append("\t\tpublic CheckResult.Property<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ").Append(property.Name).AppendLine();
 
 			sb.Append("\t\t\t=> new CheckResult.Property<").Append(property.Type.GetMinimizedString(namespaces)).Append(">(mock, \"").Append(@class.GetFullName(property.Name)).Append("\");");
+		}
+		sb.AppendLine("\t}");
+	}
+
+	private static void AppendEventExtensions(StringBuilder sb, Class @class, string[] namespaces)
+	{
+		sb.Append("\textension(MockEvent<").Append(@class.ClassName).AppendLine("> mock)");
+		sb.AppendLine("\t{");
+		int count = 0;
+		foreach (Event @event in @class.Events)
+		{
+			if (count++ > 0)
+			{
+				sb.AppendLine();
+			}
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Validates the subscriptions or unsubscription for the event <see cref=\"").Append(@class.ClassName).Append(".").Append(@event.Name).Append("\"/>.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic CheckResult.Event<").Append(@event.Type.GetMinimizedString(namespaces)).Append("> ").Append(@event.Name).AppendLine();
+
+			sb.Append("\t\t\t=> new CheckResult.Event<").Append(@event.Type.GetMinimizedString(namespaces)).Append(">(mock, \"").Append(@class.GetFullName(@event.Name)).Append("\");");
 		}
 		sb.AppendLine("\t}");
 	}

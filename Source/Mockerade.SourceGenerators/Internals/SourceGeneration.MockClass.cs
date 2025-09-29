@@ -113,7 +113,7 @@ internal static partial class SourceGeneration
 				sb.Append("\t\t///     Raise events on the mock for <see cref=\"").Append(@class.ClassName).Append("\" />").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic MockRaises<").Append(@class.ClassName).Append("> RaiseOn").Append(@class.ClassName).AppendLine();
-				sb.Append("\t\t\t=> new MockRaises<").Append(@class.ClassName).Append(">(mock.Setup);").AppendLine();
+				sb.Append("\t\t\t=> new MockRaises<").Append(@class.ClassName).Append(">(mock.Setup, ((IMock)mock).Invocations);").AppendLine();
 			}
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();

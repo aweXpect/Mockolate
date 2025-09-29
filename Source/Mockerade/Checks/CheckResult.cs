@@ -65,4 +65,19 @@ public class CheckResult : ICheckResult
 		/// </summary>
 		public CheckResult Setter(With.Parameter<T> value) => new CheckResult(mockAccessed.PropertySetter(propertyName, value));
 	}
+
+	/// <summary>
+	///     An event expectation returns the subscription or unsubscription <see cref="CheckResult"/> for the given <paramref name="eventName"/>.
+	/// </summary>
+	public class Event<T>(IMockEvent mockEvent, string eventName)
+	{
+		/// <summary>
+		/// The expectation for the subscription invocations.
+		/// </summary>
+		public CheckResult Subscribed() => new CheckResult(mockEvent.Subscribed(eventName));
+		/// <summary>
+		/// The expectation for the unsubscription invocations.
+		/// </summary>
+		public CheckResult Unsubscribed() => new CheckResult(mockEvent.Unsubscribed(eventName));
+	}
 }

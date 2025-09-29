@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Mockerade.Checks;
 using Mockerade.Setup;
 
 namespace Mockerade.Events;
@@ -7,7 +8,7 @@ namespace Mockerade.Events;
 /// <summary>
 ///     Allows raising events on the mock.
 /// </summary>
-public class MockRaises<T>(IMockSetup setup) : IMockRaises
+public class MockRaises<T>(IMockSetup setup, Checks.MockInvocations invocations) : IMockRaises
 {
 	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 	void IMockRaises.Raise(string eventName, params object?[] parameters)
@@ -27,6 +28,7 @@ public class MockRaises<T>(IMockSetup setup) : IMockRaises
 			return;
 		}
 
+		invocations.RegisterInvocation(new EventSubscription(name, target, method));
 		setup.AddEvent(name, target, method);
 	}
 
@@ -39,6 +41,7 @@ public class MockRaises<T>(IMockSetup setup) : IMockRaises
 			return;
 		}
 
+		invocations.RegisterInvocation(new EventUnsubscription(name, target, method));
 		setup.RemoveEvent(name, target, method);
 	}
 }
