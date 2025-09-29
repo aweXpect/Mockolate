@@ -75,4 +75,9 @@ internal record Class
 			}
 		}
 	}
+
+	internal string GetFullName(string name)
+	{
+		return $"{Namespace}.{ClassName}.{name}";
+	}
 }

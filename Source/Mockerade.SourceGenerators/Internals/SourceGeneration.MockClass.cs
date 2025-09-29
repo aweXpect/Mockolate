@@ -164,8 +164,8 @@ internal static partial class SourceGeneration
 					.Append("? ").Append(@event.Name).AppendLine();
 			}
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\tadd => mock.Raise.AddEvent(\"").Append(@event.Name).Append("\", value?.Target, value?.Method);").AppendLine();
-			sb.Append("\t\t\tremove => mock.Raise.RemoveEvent(\"").Append(@event.Name).Append("\", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\tadd => mock.Raise.AddEvent(\"").Append(@class.GetFullName(@event.Name)).Append("\", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\tremove => mock.Raise.RemoveEvent(\"").Append(@class.GetFullName(@event.Name)).Append("\", value?.Target, value?.Method);").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
 
@@ -203,7 +203,7 @@ internal static partial class SourceGeneration
 				sb.AppendLine("\t\t\t{");
 				sb.Append("\t\t\t\treturn mock.Get<")
 					.Append(property.Type.GetMinimizedString(namespaces))
-					.Append(">(\"").Append(property.Name).AppendLine("\");");
+					.Append(">(\"").Append(@class.GetFullName(property.Name)).AppendLine("\");");
 				sb.AppendLine("\t\t\t}");
 			}
 			if (property.Setter != null && property.Setter.Value.Accessibility != Microsoft.CodeAnalysis.Accessibility.Private)
@@ -215,7 +215,7 @@ internal static partial class SourceGeneration
 				}
 				sb.AppendLine("set");
 				sb.AppendLine("\t\t\t{");
-				sb.Append("\t\t\t\tmock.Set(\"").Append(property.Name).AppendLine("\", value);");
+				sb.Append("\t\t\t\tmock.Set(\"").Append(@class.GetFullName(property.Name)).AppendLine("\", value);");
 				sb.AppendLine("\t\t\t}");
 			}
 
@@ -267,7 +267,7 @@ internal static partial class SourceGeneration
 			{
 				sb.Append("\t\t\tvar result = mock.Execute<")
 					.Append(method.ReturnType.GetMinimizedString(namespaces))
-					.Append(">(\"").Append(method.Name).Append("\"");
+					.Append(">(\"").Append(@class.GetFullName(method.Name)).Append("\"");
 				foreach (MethodParameter p in method.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -277,7 +277,7 @@ internal static partial class SourceGeneration
 			}
 			else
 			{
-				sb.Append("\t\t\tvar result = mock.Execute(\"").Append(method.Name).Append("\"");
+				sb.Append("\t\t\tvar result = mock.Execute(\"").Append(@class.GetFullName(method.Name)).Append("\"");
 				foreach (MethodParameter p in method.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
