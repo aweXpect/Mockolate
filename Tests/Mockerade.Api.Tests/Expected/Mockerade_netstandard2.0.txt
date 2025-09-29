@@ -1,5 +1,103 @@
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/vbreuss/Mockerade.git")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName=".NET Standard 2.0")]
+namespace Mockerade
+{
+    public static class BaseClass
+    {
+        public static Mockerade.BaseClass.ConstructorParameters WithConstructorParameters(params object?[] parameters) { }
+        public class ConstructorParameters : System.IEquatable<Mockerade.BaseClass.ConstructorParameters>
+        {
+            public ConstructorParameters(object?[] Parameters) { }
+            public object?[] Parameters { get; init; }
+        }
+    }
+    public interface IMock
+    {
+        Mockerade.MockBehavior Behavior { get; }
+        Mockerade.Checks.IMockInvoked Check { get; }
+        Mockerade.Checks.MockInvocations Invocations { get; }
+        Mockerade.Events.IMockRaises Raise { get; }
+        Mockerade.Setup.IMockSetup Setup { get; }
+        Mockerade.Setup.MethodSetupResult Execute(string methodName, params object?[] parameters);
+        Mockerade.Setup.MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[] parameters);
+        TResult Get<TResult>(string propertyName);
+        void Set(string propertyName, object? value);
+    }
+    public class MockBehavior : System.IEquatable<Mockerade.MockBehavior>
+    {
+        public MockBehavior() { }
+        public Mockerade.MockBehavior.IDefaultValueGenerator DefaultValueGenerator { get; init; }
+        public bool ThrowWhenNotSetup { get; init; }
+        public static Mockerade.MockBehavior Default { get; }
+        public interface IDefaultValueGenerator
+        {
+            T Generate<T>();
+        }
+    }
+    public abstract class Mock<T> : Mockerade.IMock
+    {
+        protected Mock(Mockerade.MockBehavior behavior) { }
+        public Mockerade.Checks.MockAccessed<T> Accessed { get; }
+        public Mockerade.Checks.MockEvent<T> Event { get; }
+        public Mockerade.Checks.MockInvoked<T> Invoked { get; }
+        public abstract T Object { get; }
+        public Mockerade.Events.MockRaises<T> Raise { get; }
+        public Mockerade.Setup.MockSetups<T> Setup { get; }
+        public static T op_Implicit(Mockerade.Mock<T> mock) { }
+    }
+    public abstract class Mock<T, T2> : Mockerade.Mock<T>
+    {
+        protected Mock(Mockerade.MockBehavior behavior) { }
+    }
+    public static class With
+    {
+        public static Mockerade.With.Parameter<T> Any<T>() { }
+        public static Mockerade.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate) { }
+        public static Mockerade.With.InvocationOutParameter<T> Out<T>() { }
+        public static Mockerade.With.OutParameter<T> Out<T>(System.Func<T> setter) { }
+        public static Mockerade.With.InvocationRefParameter<T> Ref<T>() { }
+        public static Mockerade.With.RefParameter<T> Ref<T>(System.Func<T, T> setter) { }
+        public static Mockerade.With.RefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
+        public class InvocationOutParameter<T> : Mockerade.With.Parameter
+        {
+            public InvocationOutParameter() { }
+            public override bool Matches(object? value) { }
+        }
+        public class InvocationRefParameter<T> : Mockerade.With.Parameter
+        {
+            public InvocationRefParameter() { }
+            public override bool Matches(object? value) { }
+        }
+        public class NamedParameter : System.IEquatable<Mockerade.With.NamedParameter>
+        {
+            public NamedParameter(string Name, Mockerade.With.Parameter Parameter) { }
+            public string Name { get; init; }
+            public Mockerade.With.Parameter Parameter { get; init; }
+        }
+        public class OutParameter<T> : Mockerade.With.Parameter
+        {
+            public OutParameter(System.Func<T> setter) { }
+            public override bool Matches(object? value) { }
+        }
+        public abstract class Parameter
+        {
+            protected Parameter() { }
+            public abstract bool Matches(object? value);
+        }
+        public abstract class Parameter<T> : Mockerade.With.Parameter
+        {
+            protected Parameter() { }
+            protected abstract bool Matches(T value);
+            public override bool Matches(object? value) { }
+            public static Mockerade.With.Parameter<T> op_Implicit(T value) { }
+        }
+        public class RefParameter<T> : Mockerade.With.Parameter
+        {
+            public RefParameter(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
+            public override bool Matches(object? value) { }
+        }
+    }
+}
 namespace Mockerade.Checks
 {
     public class CheckResult : Mockerade.Checks.ICheckResult
@@ -133,95 +231,6 @@ namespace Mockerade.Exceptions
     {
         public MockNotSetupException(string message) { }
         public MockNotSetupException(string message, System.Exception innerException) { }
-    }
-}
-namespace Mockerade
-{
-    public interface IMock
-    {
-        Mockerade.MockBehavior Behavior { get; }
-        Mockerade.Checks.IMockInvoked Check { get; }
-        Mockerade.Checks.MockInvocations Invocations { get; }
-        Mockerade.Events.IMockRaises Raise { get; }
-        Mockerade.Setup.IMockSetup Setup { get; }
-        Mockerade.Setup.MethodSetupResult Execute(string methodName, params object?[] parameters);
-        Mockerade.Setup.MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[] parameters);
-        TResult Get<TResult>(string propertyName);
-        void Set(string propertyName, object? value);
-    }
-    public class MockBehavior : System.IEquatable<Mockerade.MockBehavior>
-    {
-        public MockBehavior() { }
-        public Mockerade.MockBehavior.IDefaultValueGenerator DefaultValueGenerator { get; init; }
-        public bool ThrowWhenNotSetup { get; init; }
-        public static Mockerade.MockBehavior Default { get; }
-        public interface IDefaultValueGenerator
-        {
-            T Generate<T>();
-        }
-    }
-    public abstract class Mock<T> : Mockerade.IMock
-    {
-        protected Mock(Mockerade.MockBehavior behavior) { }
-        public Mockerade.Checks.MockAccessed<T> Accessed { get; }
-        public Mockerade.Checks.MockEvent<T> Event { get; }
-        public Mockerade.Checks.MockInvoked<T> Invoked { get; }
-        public abstract T Object { get; }
-        public Mockerade.Events.MockRaises<T> Raise { get; }
-        public Mockerade.Setup.MockSetups<T> Setup { get; }
-        public static T op_Implicit(Mockerade.Mock<T> mock) { }
-    }
-    public abstract class Mock<T, T2> : Mockerade.Mock<T>
-    {
-        protected Mock(Mockerade.MockBehavior behavior) { }
-    }
-    public static class With
-    {
-        public static Mockerade.With.Parameter<T> Any<T>() { }
-        public static Mockerade.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate) { }
-        public static Mockerade.With.InvocationOutParameter<T> Out<T>() { }
-        public static Mockerade.With.OutParameter<T> Out<T>(System.Func<T> setter) { }
-        public static Mockerade.With.InvocationRefParameter<T> Ref<T>() { }
-        public static Mockerade.With.RefParameter<T> Ref<T>(System.Func<T, T> setter) { }
-        public static Mockerade.With.RefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
-        public class InvocationOutParameter<T> : Mockerade.With.Parameter
-        {
-            public InvocationOutParameter() { }
-            public override bool Matches(object? value) { }
-        }
-        public class InvocationRefParameter<T> : Mockerade.With.Parameter
-        {
-            public InvocationRefParameter() { }
-            public override bool Matches(object? value) { }
-        }
-        public class NamedParameter : System.IEquatable<Mockerade.With.NamedParameter>
-        {
-            public NamedParameter(string Name, Mockerade.With.Parameter Parameter) { }
-            public string Name { get; init; }
-            public Mockerade.With.Parameter Parameter { get; init; }
-        }
-        public class OutParameter<T> : Mockerade.With.Parameter
-        {
-            public OutParameter(System.Func<T> setter) { }
-            public override bool Matches(object? value) { }
-        }
-        public abstract class Parameter
-        {
-            protected Parameter() { }
-            public abstract bool Matches(object? value);
-        }
-        public abstract class Parameter<T> : Mockerade.With.Parameter
-        {
-            protected Parameter() { }
-            protected abstract bool Matches(T value);
-            public override bool Matches(object? value) { }
-            public static Mockerade.With.Parameter<T> op_Implicit(T value) { }
-        }
-        public class RefParameter<T> : Mockerade.With.Parameter
-        {
-            public RefParameter(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
-            public override bool Matches(object? value) { }
-        }
     }
 }
 namespace Mockerade.Setup

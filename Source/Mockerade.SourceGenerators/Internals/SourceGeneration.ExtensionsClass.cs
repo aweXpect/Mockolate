@@ -8,9 +8,9 @@ namespace Mockerade.SourceGenerators.Internals;
 #pragma warning disable S3779 // Cognitive Complexity of methods should not be too high
 internal static partial class SourceGeneration
 {
-	public static string GetExtensionClass(Class mockClass)
+	public static string GetExtensionClass(Class @class)
 	{
-		string[] namespaces = mockClass.GetClassNamespaces();
+		string[] namespaces = @class.GetClassNamespaces();
 		StringBuilder sb = new();
 		foreach (string @namespace in namespaces)
 		{
@@ -27,21 +27,36 @@ internal static partial class SourceGeneration
 		          #nullable enable
 
 		          """);
-		sb.Append("public static class ExtensionsFor").Append(mockClass.ClassName).AppendLine();
+		sb.Append("public static class ExtensionsFor").Append(@class.ClassName).AppendLine();
 		sb.AppendLine("{");
-		AppendRaisesExtensions(sb, mockClass, namespaces);
-		sb.AppendLine();
+		if (@class.Events.Any())
+		{
+			AppendRaisesExtensions(sb, @class, namespaces);
+			sb.AppendLine();
+		}
 
-		AppendSetupExtensions(sb, mockClass, namespaces);
-		sb.AppendLine();
+		if (@class.Methods.Any() || @class.Properties.Any())
+		{
+			AppendSetupExtensions(sb, @class, namespaces);
+			sb.AppendLine();
+		}
 
-		AppendInvokedExtensions(sb, mockClass, namespaces);
-		sb.AppendLine();
+		if (@class.Methods.Any())
+		{
+			AppendInvokedExtensions(sb, @class, namespaces);
+			sb.AppendLine();
+		}
 
-		AppendAccessedExtensions(sb, mockClass, namespaces);
-		sb.AppendLine();
+		if (@class.Properties.Any())
+		{
+			AppendAccessedExtensions(sb, @class, namespaces);
+			sb.AppendLine();
+		}
 
-		AppendEventExtensions(sb, mockClass, namespaces);
+		if (@class.Events.Any())
+		{
+			AppendEventExtensions(sb, @class, namespaces);
+		}
 
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");

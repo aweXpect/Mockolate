@@ -34,6 +34,6 @@
 		<PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4"/>
 		<PackageVersion Include="coverlet.collector" Version="6.0.4"/>
 		<PackageVersion Include="PublicApiGenerator" Version="11.4.6"/>
-		<PackageVersion Include="aweXpect" Version="2.25.0"/>
+		<PackageVersion Include="aweXpect" Version="2.26.0"/>
 	</ItemGroup>
 </Project>

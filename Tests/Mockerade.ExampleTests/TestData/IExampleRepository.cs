@@ -1,5 +1,19 @@
 ﻿namespace Mockerade.Tests.Dummy;
 
+public class MyClass
+{
+	public int Value { get; }
+	public MyClass(int value)
+	{
+		Value = value;
+	}
+
+	public virtual int MyMethod()
+	{
+		return Value * 2;
+	}
+}
+
 public interface IExampleRepository
 {
 	event EventHandler UsersChanged;

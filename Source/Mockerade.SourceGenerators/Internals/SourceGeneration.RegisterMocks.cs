@@ -22,7 +22,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine("{");
 		sb.AppendLine("\tprivate partial class MockGenerator");
 		sb.AppendLine("\t{");
-		sb.AppendLine("\t\tpartial void Generate(MockBehavior mockBehavior, params Type[] types)");
+		sb.AppendLine("\t\tpartial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types)");
 		sb.AppendLine("\t\t{");
 		int index = 0;
 		foreach (var mock in mocks)
@@ -50,7 +50,7 @@ internal static partial class SourceGeneration
 			}
 			sb.AppendLine(")");
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t_value = new For").Append(mock.Name).Append(".Mock(mockBehavior);").AppendLine();
+			sb.Append("\t\t\t\t_value = new For").Append(mock.Name).Append(".Mock(constructorParameters, mockBehavior);").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 		}
 

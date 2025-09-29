@@ -23,10 +23,10 @@ internal static partial class SourceGeneration
 			/// <remarks>
 			///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 			/// </remarks>
-			public static Mock<T> For<T>()
+			public static Mock<T> For<T>(BaseClass.ConstructorParameters? constructorParameters = null)
 			{
 				var generator = new MockGenerator();
-				return generator.Get<T>(MockBehavior.Default)
+				return generator.Get<T>(constructorParameters, MockBehavior.Default)
 					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
 			}
 			
@@ -42,7 +42,23 @@ internal static partial class SourceGeneration
 			public static Mock<T> For<T>(MockBehavior mockBehavior)
 			{
 				var generator = new MockGenerator();
-				return generator.Get<T>(mockBehavior)
+				return generator.Get<T>(null, mockBehavior)
+					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
+			}
+			
+			/// <summary>
+			///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
+			/// </summary>
+			/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+			/// <remarks>
+			///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			///     <para />
+			///     The behavior of the mock with regards to the setups and the actual calls is determined by the <see cref="MockBehavior" />.
+			/// </remarks>
+			public static Mock<T> For<T>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior)
+			{
+				var generator = new MockGenerator();
+				return generator.Get<T>(constructorParameters, mockBehavior)
 					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
 			}
 		
@@ -57,7 +73,7 @@ internal static partial class SourceGeneration
 			public static Mock<T, T2> For<T, T2>()
 			{
 				var generator = new MockGenerator();
-				return generator.Get<T, T2>(MockBehavior.Default)
+				return generator.Get<T, T2>(null, MockBehavior.Default)
 					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
 			}
 			
@@ -74,22 +90,22 @@ internal static partial class SourceGeneration
 			public static Mock<T, T2> For<T, T2>(MockBehavior mockBehavior)
 			{
 				var generator = new MockGenerator();
-				return generator.Get<T, T2>(mockBehavior)
+				return generator.Get<T, T2>(null, mockBehavior)
 					?? throw new NotSupportedException("Could not generate Mock<T>. Did the source generator run correctly?");
 			}
 			
 			private partial class MockGenerator
 			{
 				private object? _value;
-				partial void Generate(MockBehavior mockBehavior, params Type[] types);
-				public Mock<T>? Get<T>(MockBehavior mockBehavior)
+				partial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types);
+				public Mock<T>? Get<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior)
 				{
-					Generate(mockBehavior, typeof(T));
+					Generate(constructorParameters, mockBehavior, typeof(T));
 					return _value as Mock<T>;
 				}
-				public Mock<T, T2>? Get<T, T2>(MockBehavior mockBehavior)
+				public Mock<T, T2>? Get<T, T2>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior)
 				{
-					Generate(mockBehavior, typeof(T), typeof(T2));
+					Generate(constructorParameters, mockBehavior, typeof(T), typeof(T2));
 					return _value as Mock<T, T2>;
 				}
 			}
