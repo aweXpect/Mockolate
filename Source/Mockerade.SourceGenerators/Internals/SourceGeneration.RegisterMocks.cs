@@ -8,6 +8,7 @@ internal static partial class SourceGeneration
 	public static string RegisterMocks(ICollection<(string Name, MockClass MockClass)> mocks)
 	{
 		var sb = new StringBuilder();
+		sb.AppendLine(Header);
 		sb.AppendLine("using System;");
 		foreach (string? @namespace in mocks.Select(x => x.MockClass.Namespace).Distinct().OrderBy(x => x))
 		{

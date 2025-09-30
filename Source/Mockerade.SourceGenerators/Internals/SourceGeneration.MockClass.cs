@@ -12,6 +12,7 @@ internal static partial class SourceGeneration
 	{
 		string[] namespaces = mockClass.GetAllNamespaces();
 		StringBuilder sb = new();
+		sb.AppendLine(Header);
 		foreach (string @namespace in namespaces)
 		{
 			sb.Append("using ").Append(@namespace).AppendLine(";");
