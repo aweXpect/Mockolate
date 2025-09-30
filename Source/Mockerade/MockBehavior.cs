@@ -15,31 +15,34 @@ public record MockBehavior
 	public static MockBehavior Default => _globalDefault;
 
 	/// <summary>
-	/// Specifies whether an exception is thrown when an operation is attempted without prior setup.
+	///     Specifies whether an exception is thrown when an operation is attempted without prior setup.
 	/// </summary>
-	/// <remarks>If set to <see langword="false"/>, the value from the <see cref="DefaultValueGenerator"/> is used for return values of methods or properties.</remarks>
+	/// <remarks>
+	///     If set to <see langword="false"/>, the value from the <see cref="DefaultValueGenerator"/> is used for return values of methods or properties.
+	/// </remarks>
 	public bool ThrowWhenNotSetup { get; init; }
 
 	/// <summary>
-	/// The generator for default values when not specified by a setup.
+	///     The generator for default values when not specified by a setup.
 	/// </summary>
 	/// <remarks>
-	/// If <see cref="ThrowWhenNotSetup"/> is not set to <see langword="false" />, an exception is thrown in such cases.<para/>
-	/// The default implementation has a fixed set of objects with a not-<see langword="null" /> value:<br />
-	/// - <see cref="Task"/><br />
-	/// - <see cref="CancellationToken"/>
+	///     If <see cref="ThrowWhenNotSetup"/> is not set to <see langword="false" />, an exception is thrown in such cases.<para/>
+	///     The default implementation has a fixed set of objects with a not-<see langword="null" /> value:<br />
+	///     - <see cref="Task"/><br />
+	///     - <see cref="CancellationToken"/>
 	/// </remarks>
-	public IDefaultValueGenerator DefaultValueGenerator { get; init; } = new ReturnDefaultDefaultValueGenerator();
+	public IDefaultValueGenerator DefaultValueGenerator { get; init; }
+		= new ReturnDefaultDefaultValueGenerator();
 
 	private static MockBehavior _globalDefault = new MockBehavior();
 
 	/// <summary>
-	/// Defines a mechanism for generating default values of a specified type.
+	///     Defines a mechanism for generating default values of a specified type.
 	/// </summary>
 	public interface IDefaultValueGenerator
 	{
 		/// <summary>
-		/// Generates a default value of the specified type.
+		///     Generates a default value of the specified type.
 		/// </summary>
 		T Generate<T>();
 	}
@@ -50,6 +53,8 @@ public record MockBehavior
 			[
 				(typeof(Task), Task.CompletedTask),
 				(typeof(CancellationToken), CancellationToken.None),
+				// When changing this array, please also update the documentation
+				// of <see cref="MockBehavior.DefaultValueGenerator"/>!
 			];
 
 		/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}" />
