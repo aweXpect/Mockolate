@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Reflection;
 using Mockerade.Checks;
 using Mockerade.Events;
 using Mockerade.Exceptions;
@@ -18,10 +17,10 @@ public abstract class Mock<T> : IMock
 	protected Mock(MockBehavior behavior)
 	{
 		_behavior = behavior;
-		Invoked = new MockInvoked<T>(((IMock)this).Invocations);
+		Setup = new MockSetups<T>(this);
 		Accessed = new MockAccessed<T>(((IMock)this).Invocations);
 		Event = new MockEvent<T>(((IMock)this).Invocations);
-		Setup = new MockSetups<T>(this);
+		Invoked = new MockInvoked<T>(((IMock)this).Invocations);
 		Raise = new MockRaises<T>(Setup, ((IMock)this).Invocations);
 	}
 
@@ -43,7 +42,7 @@ public abstract class Mock<T> : IMock
 	/// <summary>
 	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T"/>.
 	/// </summary>
-	public MockEvent<T> Event { get; private set; }
+	public MockEvent<T> Event { get; }
 
 	/// <summary>
 	///     Exposes the mocked object instance of type <typeparamref name="T"/>.
@@ -63,13 +62,16 @@ public abstract class Mock<T> : IMock
 	#region IMock
 
 	/// <inheritdoc cref="IMock.Check" />
-	IMockInvoked IMock.Check => Invoked;
+	IMockInvoked IMock.Check
+		=> Invoked;
 
 	/// <inheritdoc cref="IMock.Raise" />
-	IMockRaises IMock.Raise => Raise;
+	IMockRaises IMock.Raise
+		=> Raise;
 
 	/// <inheritdoc cref="IMock.Setup" />
-	IMockSetup IMock.Setup => Setup;
+	IMockSetup IMock.Setup
+		=> Setup;
 
 	/// <inheritdoc cref="IMock.Invocations" />
 	MockInvocations IMock.Invocations { get; } = new();
@@ -147,5 +149,9 @@ public abstract class Mock<T, T2> : Mock<T>
 	/// <inheritdoc cref="Mock{T}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
+		if (!typeof(T2).IsInterface)
+		{
+			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
 	}
 }

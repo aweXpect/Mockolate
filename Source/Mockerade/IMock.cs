@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using Mockerade.Checks;
+﻿using Mockerade.Checks;
 using Mockerade.Events;
 using Mockerade.Setup;
 
@@ -32,7 +30,7 @@ public interface IMock
 	void Set(string propertyName, object? value);
 
 	/// <summary>
-	/// Gets the behavior settings used by this mock instance.
+	///     Gets the behavior settings used by this mock instance.
 	/// </summary>
 	MockBehavior Behavior { get; }
 

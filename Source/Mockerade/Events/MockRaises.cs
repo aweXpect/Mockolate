@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using Mockerade.Checks;
 using Mockerade.Setup;
 

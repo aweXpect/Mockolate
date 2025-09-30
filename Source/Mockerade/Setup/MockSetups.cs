@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Mockerade.Checks;
+using Mockerade.Exceptions;
 
 namespace Mockerade.Setup;
 
@@ -122,6 +123,11 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	{
 		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
 		{
+			if (mock.Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
+			}
+
 			matchingSetup = new PropertySetup.Default();
 			_propertySetups.Add(propertyName, matchingSetup);
 		}
