@@ -10,7 +10,7 @@ public class MockTests
 	public async Task Execute_MethodWithoutReturnValue_ShouldIncreaseInvocationCountOfRegisteredSetup()
 	{
 		var sut = new MyMock<string>("foo");
-		MethodWithoutReturnValueSetup setup = new("my-method");
+		VoidMethodSetup setup = new("my-method");
 
 		sut.HiddenSetup.RegisterMethod(setup);
 
@@ -24,7 +24,7 @@ public class MockTests
 		Execute_MethodWithReturnValue_ShouldIncreaseInvocationCountOfRegisteredSetupAndReturnRegisteredValue()
 	{
 		var sut = new MyMock<string>("foo");
-		MethodWithReturnValueSetup<int> setup = new("my-method");
+		ReturnMethodSetup<int> setup = new("my-method");
 		setup.Returns(42);
 
 		sut.HiddenSetup.RegisterMethod(setup);
@@ -54,7 +54,7 @@ public class MockTests
 	public async Task Invocations_ShouldReturnAllInvocations()
 	{
 		MyMock<string> sut = new("foo");
-		sut.HiddenSetup.RegisterMethod(new MethodWithReturnValueSetup<int>("my-method").Returns(0));
+		sut.HiddenSetup.RegisterMethod(new ReturnMethodSetup<int>("my-method").Returns(0));
 
 		int value = sut.Hidden.Execute<int>("my-method").Result;
 		sut.Hidden.Get<int>("my-get-property");
@@ -75,7 +75,7 @@ public class MockTests
 	public async Task RegisterMethod_AfterExecution_ShouldThrowNotSupportedException()
 	{
 		var sut = new MyMock<string>("foo");
-		MethodWithoutReturnValueSetup setup = new("my-method");
+		VoidMethodSetup setup = new("my-method");
 
 		sut.Hidden.Execute("my-method");
 

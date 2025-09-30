@@ -3,7 +3,7 @@ using Mockerade.Tests.TestHelpers;
 
 namespace Mockerade.Tests.Setup;
 
-public class MethodWithReturnValueSetupTests
+public class ReturnMethodSetupTests
 {
 	public sealed class WithoutParametersTests
 	{
@@ -14,7 +14,7 @@ public class MethodWithReturnValueSetupTests
 		{
 			var mock = new MyMock<int>(3);
 			bool isCalled = false;
-			var sut = new MethodWithReturnValueSetup<int>("FooMethod");
+			var sut = new ReturnMethodSetup<int>("FooMethod");
 			sut.Callback(() => { isCalled = true; });
 			mock.HiddenSetup.RegisterMethod(sut);
 
@@ -29,7 +29,7 @@ public class MethodWithReturnValueSetupTests
 		public async Task Returns_ForMatchingMethod_ShouldReturnExpectedValue(string calledMethod, int expectedValue)
 		{
 			var mock = new MyMock<int>(3);
-			var sut = new MethodWithReturnValueSetup<int>("FooMethod");
+			var sut = new ReturnMethodSetup<int>("FooMethod");
 			sut.Returns(42);
 			mock.HiddenSetup.RegisterMethod(sut);
 
@@ -44,7 +44,7 @@ public class MethodWithReturnValueSetupTests
 		public async Task Returns_WithCallback_ForMatchingMethod_ShouldReturnExpectedValue(string calledMethod, int expectedValue)
 		{
 			var mock = new MyMock<int>(3);
-			var sut = new MethodWithReturnValueSetup<int>("FooMethod");
+			var sut = new ReturnMethodSetup<int>("FooMethod");
 			sut.Returns(() => 42);
 			mock.HiddenSetup.RegisterMethod(sut);
 
@@ -62,7 +62,7 @@ public class MethodWithReturnValueSetupTests
 		{
 			var mock = new MyMock<int>(3);
 			bool isCalled = false;
-			var sut = new MethodWithReturnValueSetup<int, string>("FooMethod", new With.NamedParameter("x", With.Any<string>()));
+			var sut = new ReturnMethodSetup<int, string>("FooMethod", new With.NamedParameter("x", With.Any<string>()));
 			sut.Callback(() => { isCalled = true; });
 			mock.HiddenSetup.RegisterMethod(sut);
 
@@ -77,7 +77,7 @@ public class MethodWithReturnValueSetupTests
 		public async Task Returns_ForMatchingMethod_ShouldReturnExpectedValue(string calledMethod, int expectedValue)
 		{
 			var mock = new MyMock<int>(3);
-			var sut = new MethodWithReturnValueSetup<int, string>("FooMethod", new With.NamedParameter("x", With.Any<string>()));
+			var sut = new ReturnMethodSetup<int, string>("FooMethod", new With.NamedParameter("x", With.Any<string>()));
 			sut.Returns(42);
 			mock.HiddenSetup.RegisterMethod(sut);
 
@@ -92,7 +92,7 @@ public class MethodWithReturnValueSetupTests
 		public async Task Returns_WithCallback_ForMatchingMethod_ShouldReturnExpectedValue(string calledMethod, int expectedValue)
 		{
 			var mock = new MyMock<int>(3);
-			var sut = new MethodWithReturnValueSetup<int, string>("FooMethod", new With.NamedParameter("x", With.Any<string>()));
+			var sut = new ReturnMethodSetup<int, string>("FooMethod", new With.NamedParameter("x", With.Any<string>()));
 			sut.Returns(() => 42);
 			mock.HiddenSetup.RegisterMethod(sut);
 
@@ -106,7 +106,7 @@ public class MethodWithReturnValueSetupTests
 		{
 			string receivedParameter = string.Empty;
 			var mock = new MyMock<int>(3);
-			var sut = new MethodWithReturnValueSetup<int, string>("FooMethod", new With.NamedParameter("x", With.Any<string>()));
+			var sut = new ReturnMethodSetup<int, string>("FooMethod", new With.NamedParameter("x", With.Any<string>()));
 			sut.Returns(p => {
 				receivedParameter = p;
 				return 42;

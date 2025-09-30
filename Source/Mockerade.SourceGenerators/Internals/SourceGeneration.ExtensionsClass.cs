@@ -126,7 +126,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t/// </summary>").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{
-				sb.Append("\t\tpublic MethodWithReturnValueSetup<")
+				sb.Append("\t\tpublic ReturnMethodSetup<")
 					.Append(method.ReturnType.GetMinimizedString(namespaces));
 				foreach (MethodParameter parameter in method.Parameters)
 				{
@@ -138,7 +138,7 @@ internal static partial class SourceGeneration
 			}
 			else
 			{
-				sb.Append("\t\tpublic MethodWithoutReturnValueSetup");
+				sb.Append("\t\tpublic VoidMethodSetup");
 				if (method.Parameters.Count > 0)
 				{
 					sb.Append('<');
@@ -179,7 +179,7 @@ internal static partial class SourceGeneration
 
 			if (method.ReturnType != Type.Void)
 			{
-				sb.Append("\t\t\tvar setup = new MethodWithReturnValueSetup<")
+				sb.Append("\t\t\tvar setup = new ReturnMethodSetup<")
 					.Append(method.ReturnType.GetMinimizedString(namespaces));
 				foreach (MethodParameter parameter in method.Parameters)
 				{
@@ -190,7 +190,7 @@ internal static partial class SourceGeneration
 			}
 			else
 			{
-				sb.Append("\t\t\tvar setup = new MethodWithoutReturnValueSetup");
+				sb.Append("\t\t\tvar setup = new VoidMethodSetup");
 
 				if (method.Parameters.Count > 0)
 				{

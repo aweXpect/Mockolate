@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
-
-namespace Mockerade.Setup;
+﻿namespace Mockerade.Setup;
 
 internal static class MethodSetupExtensions
 {
