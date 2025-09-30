@@ -4,7 +4,7 @@ namespace Mockerade
 {
     public static class BaseClass
     {
-        public static Mockerade.BaseClass.ConstructorParameters WithConstructorParameters(params object?[] parameters) { }
+        public static Mockerade.BaseClass.ConstructorParameters WithConstructorParameters(params object?[]? parameters) { }
         public class ConstructorParameters : System.IEquatable<Mockerade.BaseClass.ConstructorParameters>
         {
             public ConstructorParameters(object?[] Parameters) { }
