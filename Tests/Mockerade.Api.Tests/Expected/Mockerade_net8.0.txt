@@ -53,19 +53,19 @@ namespace Mockerade
     {
         public static Mockerade.With.Parameter<T> Any<T>() { }
         public static Mockerade.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate) { }
-        public static Mockerade.With.InvocationOutParameter<T> Out<T>() { }
+        public static Mockerade.With.InvokedOutParameter<T> Out<T>() { }
         public static Mockerade.With.OutParameter<T> Out<T>(System.Func<T> setter) { }
-        public static Mockerade.With.InvocationRefParameter<T> Ref<T>() { }
+        public static Mockerade.With.InvokedRefParameter<T> Ref<T>() { }
         public static Mockerade.With.RefParameter<T> Ref<T>(System.Func<T, T> setter) { }
         public static Mockerade.With.RefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
-        public class InvocationOutParameter<T> : Mockerade.With.Parameter
+        public class InvokedOutParameter<T> : Mockerade.With.Parameter
         {
-            public InvocationOutParameter() { }
+            public InvokedOutParameter() { }
             public override bool Matches(object? value) { }
         }
-        public class InvocationRefParameter<T> : Mockerade.With.Parameter
+        public class InvokedRefParameter<T> : Mockerade.With.Parameter
         {
-            public InvocationRefParameter() { }
+            public InvokedRefParameter() { }
             public override bool Matches(object? value) { }
         }
         public class NamedParameter : System.IEquatable<Mockerade.With.NamedParameter>
@@ -77,6 +77,7 @@ namespace Mockerade
         public class OutParameter<T> : Mockerade.With.Parameter
         {
             public OutParameter(System.Func<T> setter) { }
+            public T GetValue() { }
             public override bool Matches(object? value) { }
         }
         public abstract class Parameter
@@ -94,6 +95,7 @@ namespace Mockerade
         public class RefParameter<T> : Mockerade.With.Parameter
         {
             public RefParameter(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
+            public T GetValue(T value) { }
             public override bool Matches(object? value) { }
         }
     }

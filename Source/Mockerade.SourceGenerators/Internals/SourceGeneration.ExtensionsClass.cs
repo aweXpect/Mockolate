@@ -251,8 +251,8 @@ internal static partial class SourceGeneration
 				}
 				sb.Append(parameter.RefKind switch
 				{
-					RefKind.Ref => "With.InvocationRefParameter<",
-					RefKind.Out => "With.InvocationOutParameter<",
+					RefKind.Ref => "With.InvokedRefParameter<",
+					RefKind.Out => "With.InvokedOutParameter<",
 					_ => "With.Parameter<"
 				}).Append(parameter.Type.GetMinimizedString(namespaces))
 					.Append("> ").Append(parameter.Name);
