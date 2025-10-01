@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Mockerade.Checks;
+using Mockerade.Exceptions;
 
 namespace Mockerade.Setup;
 
@@ -18,14 +19,22 @@ public abstract class MethodSetup : IMethodSetup
 	internal TResult Invoke<TResult>(Invocation invocation, MockBehavior behavior)
 	{
 		Interlocked.Increment(ref _invocationCount);
-		ExecuteCallback(invocation);
-		return GetReturnValue<TResult>(invocation, behavior);
+		if (invocation is MethodInvocation methodInvocation)
+		{
+			ExecuteCallback(methodInvocation, behavior);
+			return GetReturnValue<TResult>(methodInvocation, behavior);
+		}
+
+		throw new MockException("Invalid registered invocation for a method.");
 	}
 
-	internal void Invoke(Invocation invocation)
+	internal void Invoke(Invocation invocation, MockBehavior behavior)
 	{
 		Interlocked.Increment(ref _invocationCount);
-		ExecuteCallback(invocation);
+		if (invocation is MethodInvocation methodInvocation)
+		{
+			ExecuteCallback(methodInvocation, behavior);
+		}
 	}
 
 	/// <summary>
@@ -35,7 +44,7 @@ public abstract class MethodSetup : IMethodSetup
 	/// If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	/// is generated using the current <paramref name="behavior"/>.
 	/// </remarks>
-	internal protected abstract T SetOutParameter<T>(string parameterName, MockBehavior behavior);
+	protected internal abstract T SetOutParameter<T>(string parameterName, MockBehavior behavior);
 
 	/// <summary>
 	/// Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value"/> and returns its generated value of type <typeparamref name="T"/>.
@@ -44,17 +53,17 @@ public abstract class MethodSetup : IMethodSetup
 	/// If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	/// is generated using the current <paramref name="behavior"/>.
 	/// </remarks>
-	internal protected abstract T SetRefParameter<T>(string parameterName, MockBehavior behavior, T value);
+	protected internal abstract T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior);
 
 	/// <summary>
 	///     Execute a potentially registered callback.
 	/// </summary>
-	protected abstract void ExecuteCallback(Invocation invocation);
+	protected abstract void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior);
 
 	/// <summary>
 	///     Gets the registered return value.
 	/// </summary>
-	protected abstract TResult GetReturnValue<TResult>(Invocation invocation, MockBehavior behavior);
+	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior);
 
 	/// <inheritdoc cref="IMethodSetup.Matches(Invocation)" />
 	bool IMethodSetup.Matches(Invocation invocation)
@@ -109,5 +118,16 @@ public abstract class MethodSetup : IMethodSetup
 			}
 		}
 		return true;
+	}
+	internal static bool TryCast<T>(object? value, out T result, MockBehavior behavior)
+	{
+		if (value is T typedValue)
+		{
+			result = typedValue;
+			return true;
+		}
+
+		result = behavior.DefaultValueGenerator.Generate<T>();
+		return value is null;
 	}
 }

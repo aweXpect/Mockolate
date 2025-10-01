@@ -29,7 +29,7 @@ public class MethodSetupResult(MethodSetup? setup, MockBehavior behavior)
 	{
 		if (setup is not null)
 		{
-			return setup.SetRefParameter<T>(parameterName, behavior, value);
+			return setup.SetRefParameter<T>(parameterName, value, behavior);
 		}
 
 		return behavior.DefaultValueGenerator.Generate<T>();

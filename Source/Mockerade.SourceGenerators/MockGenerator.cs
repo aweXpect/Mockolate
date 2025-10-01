@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
+using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -59,12 +60,28 @@ public class MockGenerator : IIncrementalGenerator
 			var fileName = $"For{mockToGenerate.Name}.g.cs";
 			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
 		}
+
+		HashSet<(int, bool)> methodSetups = new();
 		
 		foreach (var (name, extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
 		{
+			foreach (var item in (mocksToGenerate
+				.SelectMany(m => m.Methods)
+				.Where(m => m.Parameters.Count > 4)
+				.Select(m => (m.Parameters.Count, m.ReturnType == Entities.Type.Void))))
+			{
+				methodSetups.Add(item);
+			}
 			string result = SourceGeneration.GetExtensionClass(name, extensionToGenerate);
-			// Create a separate class file for each mock
+			// Create a separate class file for each mock extension
 			var fileName = $"ExtensionsFor{name}.g.cs";
+			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
+		}
+
+		if (methodSetups.Any())
+		{
+			string result = SourceGeneration.GetMethodSetups(methodSetups);
+			var fileName = $"MethodSetups.g.cs";
 			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
 		}
 

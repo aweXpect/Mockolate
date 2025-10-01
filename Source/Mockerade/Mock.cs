@@ -106,7 +106,7 @@ public abstract class Mock<T> : IMock
 			throw new MockNotSetupException($"The method '{methodName}({string.Join(",", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
 		}
 
-		matchingSetup?.Invoke(invocation);
+		matchingSetup?.Invoke(invocation, _behavior);
 		return new MethodSetupResult(matchingSetup, _behavior);
 	}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Mockerade.Checks;
+using Mockerade.Exceptions;
 
 namespace Mockerade.Setup;
 
@@ -19,13 +20,13 @@ public class VoidMethodSetup(string name) : MethodSetup
 		return this;
 	}
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(Invocation)" />
-	protected override void ExecuteCallback(Invocation invocation) => _callback?.Invoke();
+	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
+	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior) => _callback?.Invoke();
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(Invocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(Invocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
-		=> throw new NotSupportedException("The setup does not support return values");
+		=> throw new MockException("The method setup does not support return values.");
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
 	protected override bool IsMatch(Invocation invocation)
@@ -33,12 +34,12 @@ public class VoidMethodSetup(string name) : MethodSetup
 		   methodInvocation.Parameters.Length == 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	internal protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 		=> behavior.DefaultValueGenerator.Generate<T>();
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, MockBehavior, T)" />
-	internal protected override T SetRefParameter<T>(string parameterName, MockBehavior behavior, T value)
-		=> behavior.DefaultValueGenerator.Generate<T>();
+	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
+	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+		=> value;
 }
 
 /// <summary>
@@ -66,23 +67,19 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 		return this;
 	}
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(Invocation)" />
-	protected override void ExecuteCallback(Invocation invocation)
+	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
+	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (invocation is MethodInvocation methodInvocation &&
-			methodInvocation.Parameters[0].TryCast<T1>(out var p1))
+		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior))
 		{
 			_callback?.Invoke(p1);
-			return;
 		}
-
-		throw new NotSupportedException("The method type does not match");
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(Invocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(Invocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
-		=> throw new NotSupportedException("The setup does not support return values");
+		=> throw new MockException("The method setup does not support return values.");
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
 	protected override bool IsMatch(Invocation invocation)
@@ -90,23 +87,25 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 		   Matches([match1], methodInvocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	internal protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
+
 		return behavior.DefaultValueGenerator.Generate<T>();
 	}
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, MockBehavior, T)" />
-	internal protected override T SetRefParameter<T>(string parameterName, MockBehavior behavior, T value)
+	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
+	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
-		return behavior.DefaultValueGenerator.Generate<T>();
+
+		return value;
 	}
 }
 
@@ -135,24 +134,20 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 		return this;
 	}
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(Invocation)" />
-	protected override void ExecuteCallback(Invocation invocation)
+	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
+	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (invocation is MethodInvocation methodInvocation &&
-			methodInvocation.Parameters[0].TryCast<T1>(out var p1) &&
-			methodInvocation.Parameters[1].TryCast<T2>(out var p2))
+		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
+			TryCast<T2>(invocation.Parameters[1], out var p2, behavior))
 		{
 			_callback?.Invoke(p1, p2);
-			return;
 		}
-
-		throw new NotSupportedException("The method type does not match");
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(Invocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(Invocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
-		=> throw new NotSupportedException("The setup does not support return values");
+		=> throw new MockException("The method setup does not support return values.");
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
 	protected override bool IsMatch(Invocation invocation)
@@ -160,7 +155,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 		   Matches([match1, match2], methodInvocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	internal protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -170,15 +165,15 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 		return behavior.DefaultValueGenerator.Generate<T>();
 	}
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, MockBehavior, T)" />
-	internal protected override T SetRefParameter<T>(string parameterName, MockBehavior behavior, T value)
+	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
+	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return value;
 	}
 }
 
@@ -207,25 +202,21 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 		return this;
 	}
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(Invocation)" />
-	protected override void ExecuteCallback(Invocation invocation)
+	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
+	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (invocation is MethodInvocation methodInvocation &&
-			methodInvocation.Parameters[0].TryCast<T1>(out var p1) &&
-			methodInvocation.Parameters[1].TryCast<T2>(out var p2) &&
-			methodInvocation.Parameters[2].TryCast<T3>(out var p3))
+		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
+			TryCast<T2>(invocation.Parameters[1], out var p2, behavior) &&
+			TryCast<T3>(invocation.Parameters[2], out var p3, behavior))
 		{
 			_callback?.Invoke(p1, p2, p3);
-			return;
 		}
-
-		throw new NotSupportedException("The method type does not match");
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(Invocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(Invocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
-		=> throw new NotSupportedException("The setup does not support return values");
+		=> throw new MockException("The method setup does not support return values.");
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
 	protected override bool IsMatch(Invocation invocation)
@@ -233,7 +224,7 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 		   Matches([match1, match2, match3], methodInvocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	internal protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -243,15 +234,15 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 		return behavior.DefaultValueGenerator.Generate<T>();
 	}
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, MockBehavior, T)" />
-	internal protected override T SetRefParameter<T>(string parameterName, MockBehavior behavior, T value)
+	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
+	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return value;
 	}
 }
 
@@ -280,26 +271,22 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 		return this;
 	}
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(Invocation)" />
-	protected override void ExecuteCallback(Invocation invocation)
+	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
+	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (invocation is MethodInvocation methodInvocation &&
-			methodInvocation.Parameters[0].TryCast<T1>(out var p1) &&
-			methodInvocation.Parameters[1].TryCast<T2>(out var p2) &&
-			methodInvocation.Parameters[2].TryCast<T3>(out var p3) &&
-			methodInvocation.Parameters[3].TryCast<T4>(out var p4))
+		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
+			TryCast<T2>(invocation.Parameters[1], out var p2, behavior) &&
+			TryCast<T3>(invocation.Parameters[2], out var p3, behavior) &&
+			TryCast<T4>(invocation.Parameters[3], out var p4, behavior))
 		{
 			_callback?.Invoke(p1, p2, p3, p4);
-			return;
 		}
-
-		throw new NotSupportedException("The method type does not match");
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(Invocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(Invocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
-		=> throw new NotSupportedException("The setup does not support return values");
+		=> throw new MockException("The method setup does not support return values.");
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
 	protected override bool IsMatch(Invocation invocation)
@@ -307,7 +294,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 		   Matches([match1, match2, match3, match4], methodInvocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	internal protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3, match4], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -317,14 +304,14 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 		return behavior.DefaultValueGenerator.Generate<T>();
 	}
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, MockBehavior, T)" />
-	internal protected override T SetRefParameter<T>(string parameterName, MockBehavior behavior, T value)
+	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
+	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3, match4], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return value;
 	}
 }
