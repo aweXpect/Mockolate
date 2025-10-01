@@ -49,6 +49,15 @@ namespace Mockerade
     {
         protected Mock(Mockerade.MockBehavior behavior) { }
     }
+    public class ProtectedMock<T> : Mockerade.IMock
+    {
+        public ProtectedMock(Mockerade.Mock<T> mock) { }
+        public Mockerade.Checks.MockAccessed<T>.Protected Accessed { get; }
+        public Mockerade.Checks.MockEvent<T>.Protected Event { get; }
+        public Mockerade.Checks.MockInvoked<T>.Protected Invoked { get; }
+        public Mockerade.Events.MockRaises<T>.Protected Raise { get; }
+        public Mockerade.Setup.MockSetups<T>.Protected Setup { get; }
+    }
     public static class With
     {
         public static Mockerade.With.Parameter<T> Any<T>() { }
@@ -170,6 +179,10 @@ namespace Mockerade.Checks
     public class MockAccessed<T> : Mockerade.Checks.IMockAccessed
     {
         public MockAccessed(Mockerade.Checks.MockInvocations invocations) { }
+        public class Protected : Mockerade.Checks.MockAccessed<T>, Mockerade.Checks.IMockAccessed
+        {
+            public Protected(Mockerade.Checks.IMockAccessed inner, Mockerade.Checks.MockInvocations invocations) { }
+        }
         public class Proxy : Mockerade.Checks.MockAccessed<T>, Mockerade.Checks.IMockAccessed
         {
             public Proxy(Mockerade.Checks.IMockAccessed inner, Mockerade.Checks.MockInvocations invocations) { }
@@ -178,6 +191,10 @@ namespace Mockerade.Checks
     public class MockEvent<T> : Mockerade.Checks.IMockEvent
     {
         public MockEvent(Mockerade.Checks.MockInvocations invocations) { }
+        public class Protected : Mockerade.Checks.MockEvent<T>, Mockerade.Checks.IMockEvent
+        {
+            public Protected(Mockerade.Checks.IMockEvent inner, Mockerade.Checks.MockInvocations invocations) { }
+        }
         public class Proxy : Mockerade.Checks.MockEvent<T>, Mockerade.Checks.IMockEvent
         {
             public Proxy(Mockerade.Checks.IMockEvent inner, Mockerade.Checks.MockInvocations invocations) { }
@@ -192,6 +209,10 @@ namespace Mockerade.Checks
     public class MockInvoked<T> : Mockerade.Checks.IMockInvoked
     {
         public MockInvoked(Mockerade.Checks.MockInvocations invocations) { }
+        public class Protected : Mockerade.Checks.MockInvoked<T>, Mockerade.Checks.IMockInvoked
+        {
+            public Protected(Mockerade.Checks.IMockInvoked inner, Mockerade.Checks.MockInvocations invocations) { }
+        }
         public class Proxy : Mockerade.Checks.MockInvoked<T>, Mockerade.Checks.IMockInvoked
         {
             public Proxy(Mockerade.Checks.IMockInvoked inner, Mockerade.Checks.MockInvocations invocations) { }
@@ -220,6 +241,10 @@ namespace Mockerade.Events
     public class MockRaises<T> : Mockerade.Events.IMockRaises
     {
         public MockRaises(Mockerade.Setup.IMockSetup setup, Mockerade.Checks.MockInvocations invocations) { }
+        public class Protected : Mockerade.Events.MockRaises<T>, Mockerade.Events.IMockRaises
+        {
+            public Protected(Mockerade.Events.IMockRaises inner, Mockerade.Setup.IMockSetup setup, Mockerade.Checks.MockInvocations invocations) { }
+        }
     }
 }
 namespace Mockerade.Exceptions
@@ -280,6 +305,10 @@ namespace Mockerade.Setup
     public class MockSetups<T> : Mockerade.Setup.IMockSetup
     {
         public MockSetups(Mockerade.IMock mock) { }
+        public class Protected : Mockerade.Setup.MockSetups<T>, Mockerade.Setup.IMockSetup
+        {
+            public Protected(Mockerade.Setup.IMockSetup inner) { }
+        }
         public class Proxy : Mockerade.Setup.MockSetups<T>, Mockerade.Setup.IMockSetup
         {
             public Proxy(Mockerade.Setup.IMockSetup inner) { }

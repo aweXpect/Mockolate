@@ -133,9 +133,9 @@ internal static partial class SourceGeneration
 			Accessibility.Private => "private",
 			Accessibility.Protected => "protected",
 			Accessibility.Internal => "internal",
-			Accessibility.ProtectedOrInternal => "protected internal",
+			Accessibility.ProtectedOrInternal => "protected",
 			Accessibility.Public => "public",
-			Accessibility.ProtectedAndInternal => "protected internal",
+			Accessibility.ProtectedAndInternal => "private protected",
 			_ => throw new ArgumentOutOfRangeException(nameof(accessibility), accessibility, null)
 		};
 

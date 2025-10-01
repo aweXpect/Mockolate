@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using Mockerade.Checks;
 using Mockerade.Events;
 using Mockerade.Exceptions;
@@ -23,11 +24,6 @@ public abstract class Mock<T> : IMock
 		Invoked = new MockInvoked<T>(((IMock)this).Invocations);
 		Raise = new MockRaises<T>(Setup, ((IMock)this).Invocations);
 	}
-
-	/// <summary>
-	/// Gets the behavior settings used by this mock instance.
-	/// </summary>
-	MockBehavior IMock.Behavior => _behavior;
 
 	/// <summary>
 	///     Check which methods got invoked on the mocked instance for <typeparamref name="T"/>.
@@ -55,11 +51,16 @@ public abstract class Mock<T> : IMock
 	public MockRaises<T> Raise { get; }
 
 	/// <summary>
-	///     Setup the mock for <typeparamref name="T"/>.
+	///     Sets up the mock for <typeparamref name="T"/>.
 	/// </summary>
 	public MockSetups<T> Setup { get; }
 
 	#region IMock
+
+	/// <summary>
+	/// Gets the behavior settings used by this mock instance.
+	/// </summary>
+	MockBehavior IMock.Behavior => _behavior;
 
 	/// <inheritdoc cref="IMock.Check" />
 	IMockInvoked IMock.Check

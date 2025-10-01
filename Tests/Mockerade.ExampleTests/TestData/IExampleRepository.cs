@@ -8,9 +8,16 @@ public class MyClass
 		Value = value;
 	}
 
-	public virtual int MyMethod()
+	protected virtual int Multiplier { get; set; } = 3;
+
+	protected virtual int Foo(int value)
 	{
-		return Value * 2;
+		return value * Multiplier;
+	}
+
+	public virtual int MyMethod(int value)
+	{
+		return 2 * Foo(value);
 	}
 }
 

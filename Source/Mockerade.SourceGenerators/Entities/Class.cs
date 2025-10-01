@@ -21,17 +21,17 @@ internal record Class
 			type.GetMembers().OfType<IMethodSymbol>()
 				// Exclude getter/setter methods
 				.Where(x => x.AssociatedSymbol is null)
-				.Where(x => IsInterface || x.IsVirtual)
+				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => new Method(x))
 				.ToArray());
 		Properties = new EquatableArray<Property>(
 			type.GetMembers().OfType<IPropertySymbol>()
-				.Where(x => IsInterface || x.IsVirtual)
+				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => new Property(x))
 				.ToArray());
 		Events = new EquatableArray<Event>(
 			type.GetMembers().OfType<IEventSymbol>()
-				.Where(x => IsInterface || x.IsVirtual)
+				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => (x, (x.Type as INamedTypeSymbol)?.DelegateInvokeMethod))
 				.Where(x => x.DelegateInvokeMethod is not null)
 				.Select(x => new Event(x.x, x.DelegateInvokeMethod!))

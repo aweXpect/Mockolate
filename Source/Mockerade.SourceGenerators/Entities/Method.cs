@@ -9,14 +9,14 @@ internal readonly record struct Method
 	public Method(IMethodSymbol methodSymbol)
 	{
 		Accessibility = methodSymbol.DeclaredAccessibility;
-		IsVirtual = methodSymbol.IsVirtual;
+		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : new Type(methodSymbol.ReturnType);
 		Name = methodSymbol.Name;
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 	}
 
-	public bool IsVirtual { get; }
+	public bool UseOverride { get; }
 
 	public Accessibility Accessibility { get; }
 	public Type ReturnType { get; }

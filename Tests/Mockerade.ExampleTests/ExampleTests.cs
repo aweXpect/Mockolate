@@ -1,4 +1,7 @@
-﻿using Mockerade.Tests.Dummy;
+﻿using System.Net;
+using System.Net.Http;
+using System.Threading;
+using Mockerade.Tests.Dummy;
 
 namespace Mockerade.ExampleTests;
 
@@ -20,18 +23,38 @@ public class ExampleTests
 		await That(mock.Invoked.AddUser("Bob").Once());
 	}
 
+#if NET8_0_OR_GREATER
+	[Theory]
+	[InlineData(HttpStatusCode.OK)]
+	[InlineData(HttpStatusCode.NotFound)]
+	[InlineData(HttpStatusCode.ServiceUnavailable)]
+	public async Task HttpClientTest(System.Net.HttpStatusCode statusCode)
+	{
+		var mock = Mock.For<HttpMessageHandler>();
+		mock.Protected.Setup
+			.SendAsync(With.Any<HttpRequestMessage>(), With.Any<CancellationToken>())
+			.Returns(Task.FromResult(new HttpResponseMessage(statusCode)));
+
+		var httpClient = new HttpClient(mock.Object);
+
+		var result = await httpClient.GetAsync("https://www.example.com", TestContext.Current.CancellationToken);
+
+		await That(result.StatusCode).IsEqualTo(statusCode);
+	}
+#endif
+
 	[Fact]
 	public async Task BaseClassWithConstructorParameters()
 	{
 		var id = Guid.NewGuid();
 		var mock = Mock.For<MyClass>(BaseClass.WithConstructorParameters(3));
 
-		mock.Setup.MyMethod().Returns(5);
+		mock.Setup.MyMethod(With.Any<int>()).Returns(5);
 		
-		var result = mock.Object.MyMethod();
+		var result = mock.Object.MyMethod(3);
 
 		await That(result).IsEqualTo(5);
-		await That(mock.Invoked.MyMethod().Once());
+		await That(mock.Invoked.MyMethod(With.Any<int>()).Once());
 	}
 
 	[Theory]

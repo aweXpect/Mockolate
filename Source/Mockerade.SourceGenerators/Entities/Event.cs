@@ -7,7 +7,7 @@ internal readonly record struct Event
 	public Event(IEventSymbol eventSymbol, IMethodSymbol delegateInvokeMethod)
 	{
 		Accessibility = eventSymbol.DeclaredAccessibility;
-		IsVirtual = eventSymbol.IsVirtual;
+		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
 		Name = eventSymbol.Name;
 		Type = new Type(eventSymbol.Type);
 		Delegate = new Method(delegateInvokeMethod);
@@ -17,7 +17,7 @@ internal readonly record struct Event
 
 	public Type Type { get; }
 
-	public bool IsVirtual { get; }
+	public bool UseOverride { get; }
 
 	public Accessibility Accessibility { get; }
 	public string Name { get; }

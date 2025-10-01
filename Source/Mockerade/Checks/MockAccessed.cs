@@ -6,14 +6,28 @@ using Mockerade.Setup;
 namespace Mockerade.Checks;
 
 /// <summary>
-///     The invocations of the <see cref="Mock{T}" />
+///     Check which properties were accessed on the mocked instance for <typeparamref name="T"/>.
 /// </summary>
 public class MockAccessed<T>(MockInvocations invocations) : IMockAccessed
 {
 	/// <summary>
-	/// A proxy implementation of <see cref="IMockAccessed"/> that forwards all calls to the provided <paramref name="inner"/> instance.
+	///     A proxy implementation of <see cref="IMockAccessed"/> that forwards all calls to the provided <paramref name="inner"/> instance.
 	/// </summary>
 	public class Proxy(IMockAccessed inner, MockInvocations invocations) : MockAccessed<T>(invocations), IMockAccessed
+	{
+		/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
+		Invocation[] IMockAccessed.PropertyGetter(string propertyName)
+			=> inner.PropertyGetter(propertyName);
+
+		/// <inheritdoc cref="IMockAccessed.PropertySetter(string, With.Parameter)" />
+		Invocation[] IMockAccessed.PropertySetter(string propertyName, With.Parameter value)
+			=> inner.PropertySetter(propertyName, value);
+	}
+
+	/// <summary>
+	///     Check which protected properties were accessed on the mocked instance for <typeparamref name="T"/>.
+	/// </summary>
+	public class Protected(IMockAccessed inner, MockInvocations invocations) : MockAccessed<T>(invocations), IMockAccessed
 	{
 		/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
 		Invocation[] IMockAccessed.PropertyGetter(string propertyName)

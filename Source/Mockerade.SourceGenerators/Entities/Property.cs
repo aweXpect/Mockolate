@@ -9,7 +9,7 @@ internal readonly record struct Property
 	public Property(IPropertySymbol propertySymbol)
 	{
 		Accessibility = propertySymbol.DeclaredAccessibility;
-		IsVirtual = propertySymbol.IsVirtual;
+		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
 		Name = propertySymbol.Name;
 		Type = new Type(propertySymbol.Type);
 		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod);
@@ -22,7 +22,7 @@ internal readonly record struct Property
 
 	public Method? Getter { get; }
 
-	public bool IsVirtual { get; }
+	public bool UseOverride { get; }
 
 	public Accessibility Accessibility { get; }
 	public string Name { get; }

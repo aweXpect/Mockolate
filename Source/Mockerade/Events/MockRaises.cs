@@ -5,10 +5,28 @@ using Mockerade.Setup;
 namespace Mockerade.Events;
 
 /// <summary>
-///     Allows raising events on the mock.
+///     Raise events on the mock for <typeparamref name="T"/>.
 /// </summary>
-public class MockRaises<T>(IMockSetup setup, Checks.MockInvocations invocations) : IMockRaises
+public class MockRaises<T>(IMockSetup setup, MockInvocations invocations) : IMockRaises
 {
+	/// <summary>
+	///     Raise protected events on the mock for <typeparamref name="T"/>.
+	/// </summary>
+	public class Protected(IMockRaises inner, IMockSetup setup, MockInvocations invocations) : MockRaises<T>(setup, invocations), IMockRaises
+	{
+		/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
+		void IMockRaises.Raise(string eventName, params object?[] parameters)
+			=> inner.Raise(eventName, parameters);
+
+		/// <inheritdoc cref="IMockRaises.AddEvent(string, object?, MethodInfo?)" />
+		void IMockRaises.AddEvent(string name, object? target, MethodInfo? method)
+			=> inner.AddEvent(name, target, method);
+
+		/// <inheritdoc cref="IMockRaises.RemoveEvent(string, object?, MethodInfo?)" />
+		void IMockRaises.RemoveEvent(string name, object? target, MethodInfo? method)
+			=> inner.RemoveEvent(name, target, method);
+	}
+
 	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 	void IMockRaises.Raise(string eventName, params object?[] parameters)
 	{

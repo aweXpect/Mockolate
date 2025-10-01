@@ -45,7 +45,7 @@ public interface IMock
 	IMockRaises Raise { get; }
 
 	/// <summary>
-	///     Setup the mock object.
+	///     Sets up the mock object.
 	/// </summary>
 	IMockSetup Setup { get; }
 
