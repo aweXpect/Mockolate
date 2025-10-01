@@ -8,7 +8,7 @@ namespace Mockerade.SourceGenerators.Internals;
 #pragma warning disable S3779 // Cognitive Complexity of methods should not be too high
 internal static partial class SourceGeneration
 {
-	public static string GetExtensionClass(Class @class)
+	public static string GetExtensionClass(string name, Class @class)
 	{
 		string[] namespaces = @class.GetClassNamespaces();
 		StringBuilder sb = new();
@@ -28,7 +28,7 @@ internal static partial class SourceGeneration
 		          #nullable enable
 
 		          """);
-		sb.Append("public static class ExtensionsFor").Append(@class.ClassName).AppendLine();
+		sb.Append("public static class ExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
 		if (@class.Events.Any())
 		{

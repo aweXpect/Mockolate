@@ -10,6 +10,12 @@ internal record Class
 		Namespace = type.ContainingNamespace.ToString();
 		ClassName = type.Name;
 
+		if (type.ContainingType is not null)
+		{
+			ContainingType = new Type(type.ContainingType);
+			ClassName = type.ContainingType.Name + "." + ClassName;
+		}
+
 		IsInterface = type.TypeKind == TypeKind.Interface;
 		Methods = new EquatableArray<Method>(
 			type.GetMembers().OfType<IMethodSymbol>()
@@ -32,6 +38,8 @@ internal record Class
 				.ToArray());
 	}
 
+	public Type? ContainingType { get; }
+
 	public EquatableArray<Method> Methods { get; }
 
 	public EquatableArray<Property> Properties { get; }
@@ -41,6 +49,9 @@ internal record Class
 	public bool IsInterface { get; }
 	public string Namespace { get; }
 	public string ClassName { get; }
+
+	public string GetClassNameWithoutDots()
+		=> ClassName.Replace(".", "");
 
 	public string[] GetClassNamespaces() => EnumerateNamespaces().Distinct().OrderBy(n => n).ToArray();
 	internal IEnumerable<string> EnumerateNamespaces()

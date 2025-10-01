@@ -43,7 +43,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockNotSetupException>()
 			.WithMessage("""
-			             The method 'Mockerade.Tests.IMyService.Double(System.Int32)' was invoked without prior setup.
+			             The method 'Mockerade.Tests.MockTests.IMyService.Double(System.Int32)' was invoked without prior setup.
 			             """);
 	}
 
@@ -78,7 +78,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
-			             The method 'Mockerade.Tests.IMyService.SetIsValid(System.Boolean)' was invoked without prior setup.
+			             The method 'Mockerade.Tests.MockTests.IMyService.SetIsValid(System.Boolean)' was invoked without prior setup.
 			             """);
 	}
 }

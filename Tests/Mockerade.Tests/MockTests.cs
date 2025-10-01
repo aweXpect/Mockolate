@@ -34,22 +34,22 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("""
-			             The second generic type argument 'Mockerade.Tests.MyBaseClass' is no interface.
+			             The second generic type argument 'Mockerade.Tests.MockTests+MyBaseClass' is no interface.
 			             """);
 	}
-}
 
-public interface IMyService
-{
-	public bool? IsValid { get; set; }
-	public int Counter { get; set; }
+	public interface IMyService
+	{
+		public bool? IsValid { get; set; }
+		public int Counter { get; set; }
 
-	public int Double(int value);
+		public int Double(int value);
 
-	public void SetIsValid(bool isValid);
-}
+		public void SetIsValid(bool isValid);
+	}
 
-public class MyBaseClass
-{
-	public virtual string VirtualMethod() => "Base";
+	public class MyBaseClass
+	{
+		public virtual string VirtualMethod() => "Base";
+	}
 }

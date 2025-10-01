@@ -3,7 +3,7 @@
 	"profiles": {
 		"Generators": {
 			"commandName": "DebugRoslynComponent",
-			"targetProject": "../../Tests/Mockerade.ExampleTests/Mockerade.ExampleTests.csproj"
+			"targetProject": "../../Tests/Mockerade.Tests/Mockerade.Tests.csproj"
 		}
 	}
 }

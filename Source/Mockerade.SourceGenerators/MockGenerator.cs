@@ -42,8 +42,8 @@ public class MockGenerator : IIncrementalGenerator
 				.Where(t => t is not null)
 				.Cast<ITypeSymbol>()
 				.ToArray();
-			MockClass mockClassClass = new(types);
-			return mockClassClass;
+			MockClass mockClass = new(types);
+			return mockClass;
 		}
 
 		return null;
@@ -62,7 +62,7 @@ public class MockGenerator : IIncrementalGenerator
 		
 		foreach (var (name, extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
 		{
-			string result = SourceGeneration.GetExtensionClass(extensionToGenerate);
+			string result = SourceGeneration.GetExtensionClass(name, extensionToGenerate);
 			// Create a separate class file for each mock
 			var fileName = $"ExtensionsFor{name}.g.cs";
 			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
@@ -71,9 +71,6 @@ public class MockGenerator : IIncrementalGenerator
 		context.AddSource("MockRegistration.g.cs",
 			SourceText.From(SourceGeneration.RegisterMocks(namedMocksToGenerate), Encoding.UTF8));
 	}
-
-	private static string GetFileName(Class @class)
-		=> $"{@class.Namespace}_{@class.ClassName}".Replace(".", "_");
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)
 	{
@@ -84,10 +81,10 @@ public class MockGenerator : IIncrementalGenerator
 			if (classNames.Add((mockToGenerate.Namespace, mockToGenerate.ClassName)))
 			{
 				int suffix = 1;
-				var actualName = mockToGenerate.ClassName;
+				var actualName = mockToGenerate.GetClassNameWithoutDots();
 				while (result.Any(r => r.Name == actualName))
 				{
-					actualName = $"{mockToGenerate.ClassName}_{suffix++}";
+					actualName = $"{mockToGenerate.GetClassNameWithoutDots()}_{suffix++}";
 				}
 				result.Add((actualName, mockToGenerate));
 			}
@@ -96,10 +93,10 @@ public class MockGenerator : IIncrementalGenerator
 				if (classNames.Add((item.Namespace, item.ClassName)))
 				{
 					int suffix = 1;
-					var actualName = item.ClassName;
+					var actualName = item.GetClassNameWithoutDots();
 					while (result.Any(r => r.Name == actualName))
 					{
-						actualName = $"{item.ClassName}_{suffix++}";
+						actualName = $"{item.GetClassNameWithoutDots()}_{suffix++}";
 					}
 					result.Add((actualName, item));
 				}
@@ -114,10 +111,10 @@ public class MockGenerator : IIncrementalGenerator
 		for(int i=0;i< mocksToGenerate.Length; i++)
 		{
 			MockClass mockClass = mocksToGenerate[i];
-			string name = mockClass.ClassName;
+			string name = mockClass.GetClassNameWithoutDots();
 			if (mockClass.AdditionalImplementations.Any())
 			{
-				name += "_" + string.Join("_", mockClass.AdditionalImplementations.Select(t => t.ClassName));
+				name += "_" + string.Join("_", mockClass.AdditionalImplementations.Select(t => t.GetClassNameWithoutDots()));
 			}
 			int suffix = 1;
 			var actualName = name;

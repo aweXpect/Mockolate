@@ -68,7 +68,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
-			             The property 'Mockerade.Tests.IMyService.IsValid' was accessed without prior setup.
+			             The property 'Mockerade.Tests.MockTests.IMyService.IsValid' was accessed without prior setup.
 			             """);
 	}
 
@@ -87,7 +87,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
-			             The property 'Mockerade.Tests.IMyService.IsValid' was accessed without prior setup.
+			             The property 'Mockerade.Tests.MockTests.IMyService.IsValid' was accessed without prior setup.
 			             """);
 	}
 
