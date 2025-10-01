@@ -6,7 +6,7 @@
 		<PackageVersion Include="Mockerade" Version="0.3.0"/>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageVersion Include="IsExternalInit" Version="1.0.3" />
+		<PackageVersion Include="IsExternalInit" Version="1.0.3"/>
 		<PackageVersion Include="Nullable" Version="1.3.1"/>
 	</ItemGroup>
 	<ItemGroup>

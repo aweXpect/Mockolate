@@ -58,6 +58,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockerade.Benchmarks", "Benchmarks\Mockerade.Benchmarks\Mockerade.Benchmarks.csproj", "{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockerade.SourceGenerators.Tests", "Tests\Mockerade.SourceGenerators.Tests\Mockerade.SourceGenerators.Tests.csproj", "{8440D1D6-AA09-7F54-4720-081A614D6B1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,10 @@ Global
 		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +110,7 @@ Global
 		{EA828A6C-5C01-4950-9F67-F53847CE3DDF} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
 		{AE6D610D-F141-CB0A-EBE4-EB44B2E60AE0} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
 		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5} = {C9A4A9DF-72F3-404B-8616-32EB0D2A6482}
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8D05DD33-55B6-4A6D-BB7A-68C505BBA67E}
