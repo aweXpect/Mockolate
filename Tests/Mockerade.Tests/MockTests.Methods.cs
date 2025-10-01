@@ -1,4 +1,5 @@
 ﻿using Mockerade.Exceptions;
+using Mockerade.Setup;
 
 namespace Mockerade.Tests;
 
@@ -11,7 +12,7 @@ public sealed partial class MockTests
 	{
 		var sut = Mock.For<IMyService>();
 		sut.Setup.Double(With.Any<int>()).Returns(1);
-
+		
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
 			sut.Object.Double(i);

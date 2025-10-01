@@ -3,7 +3,7 @@
 /// <summary>
 /// A result of a method setup invocation.
 /// </summary>
-public class MethodSetupResult(MethodSetup? setup, MockBehavior behavior)
+public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 {
 	/// <summary>
 	/// Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type <typeparamref name="T"/>.
@@ -39,7 +39,7 @@ public class MethodSetupResult(MethodSetup? setup, MockBehavior behavior)
 /// <summary>
 /// A result of a method setup invocation with return type <typeparamref name="TResult"/>.
 /// </summary>
-public class MethodSetupResult<TResult>(MethodSetup? setup, MockBehavior behavior, TResult result) : MethodSetupResult(setup, behavior)
+public class MethodSetupResult<TResult>(IMethodSetup? setup, MockBehavior behavior, TResult result) : MethodSetupResult(setup, behavior)
 {
 	/// <summary>
 	/// The return value of the setup method.

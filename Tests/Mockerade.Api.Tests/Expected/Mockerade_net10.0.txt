@@ -18,8 +18,8 @@ namespace Mockerade
         Mockerade.Checks.MockInvocations Invocations { get; }
         Mockerade.Events.IMockRaises Raise { get; }
         Mockerade.Setup.IMockSetup Setup { get; }
-        Mockerade.Setup.MethodSetupResult Execute(string methodName, params object?[] parameters);
-        Mockerade.Setup.MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[] parameters);
+        Mockerade.Setup.MethodSetupResult Execute(string methodName, params object?[]? parameters);
+        Mockerade.Setup.MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[]? parameters);
         TResult Get<TResult>(string propertyName);
         void Set(string propertyName, object? value);
     }
@@ -241,6 +241,8 @@ namespace Mockerade.Setup
     {
         int InvocationCount { get; }
         bool Matches(Mockerade.Checks.Invocation invocation);
+        T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior);
+        T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior);
     }
     public interface IMockSetup
     {
@@ -256,19 +258,23 @@ namespace Mockerade.Setup
         protected MethodSetup() { }
         protected abstract void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior);
         protected abstract TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior);
-        protected abstract bool IsMatch(Mockerade.Checks.Invocation invocation);
+        protected abstract bool IsMatch(Mockerade.Checks.MethodInvocation invocation);
         protected abstract T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior);
         protected abstract T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior);
+        protected static bool HasOutParameter<T>(Mockerade.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockerade.With.OutParameter<T>? parameter) { }
+        protected static bool HasRefParameter<T>(Mockerade.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockerade.With.RefParameter<T>? parameter) { }
+        protected static bool Matches(Mockerade.With.NamedParameter[] namedParameters, object?[] values) { }
+        protected static bool TryCast<T>(object? value, out T result, Mockerade.MockBehavior behavior) { }
     }
     public class MethodSetupResult
     {
-        public MethodSetupResult(Mockerade.Setup.MethodSetup? setup, Mockerade.MockBehavior behavior) { }
+        public MethodSetupResult(Mockerade.Setup.IMethodSetup? setup, Mockerade.MockBehavior behavior) { }
         public T SetOutParameter<T>(string parameterName) { }
         public T SetRefParameter<T>(string parameterName, T value) { }
     }
     public class MethodSetupResult<TResult> : Mockerade.Setup.MethodSetupResult
     {
-        public MethodSetupResult(Mockerade.Setup.MethodSetup? setup, Mockerade.MockBehavior behavior, TResult result) { }
+        public MethodSetupResult(Mockerade.Setup.IMethodSetup? setup, Mockerade.MockBehavior behavior, TResult result) { }
         public TResult Result { get; }
     }
     public class MockSetups<T> : Mockerade.Setup.IMockSetup
@@ -302,7 +308,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn> Callback(System.Action callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn> Returns(System.Func<TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn> Returns(TReturn returnValue) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
@@ -315,7 +321,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1> Callback(System.Action<T1> callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1> Returns(System.Func<TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1> Returns(System.Func<T1, TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1> Returns(TReturn returnValue) { }
@@ -329,7 +335,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2> Callback(System.Action<T1, T2> callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2> Returns(System.Func<TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2> Returns(System.Func<T1, T2, TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue) { }
@@ -343,7 +349,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Callback(System.Action<T1, T2, T3> callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Returns(System.Func<TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Returns(System.Func<T1, T2, T3, TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue) { }
@@ -357,7 +363,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Callback(System.Action<T1, T2, T3, T4> callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(System.Func<TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TReturn> callback) { }
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue) { }
@@ -370,7 +376,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.VoidMethodSetup Callback(System.Action callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
     }
@@ -381,7 +387,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.VoidMethodSetup<T1> Callback(System.Action<T1> callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
     }
@@ -392,7 +398,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.VoidMethodSetup<T1, T2> Callback(System.Action<T1, T2> callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
     }
@@ -403,7 +409,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.VoidMethodSetup<T1, T2, T3> Callback(System.Action<T1, T2, T3> callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
     }
@@ -414,7 +420,7 @@ namespace Mockerade.Setup
         public Mockerade.Setup.VoidMethodSetup<T1, T2, T3, T4> Callback(System.Action<T1, T2, T3, T4> callback) { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockerade.Checks.Invocation invocation) { }
+        protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
     }

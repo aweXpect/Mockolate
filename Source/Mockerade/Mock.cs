@@ -77,8 +77,9 @@ public abstract class Mock<T> : IMock
 	MockInvocations IMock.Invocations { get; } = new();
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
-	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[] parameters)
+	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
 	{
+		parameters ??= [null];
 		Invocation invocation = ((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
@@ -96,8 +97,9 @@ public abstract class Mock<T> : IMock
 	}
 
 	/// <inheritdoc cref="IMock.Execute(string, object?[])" />
-	MethodSetupResult IMock.Execute(string methodName, params object?[] parameters)
+	MethodSetupResult IMock.Execute(string methodName, params object?[]? parameters)
 	{
+		parameters ??= [null];
 		Invocation invocation = ((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reflection;
-
-namespace Mockerade.Checks;
+﻿namespace Mockerade.Checks;
 
 /// <summary>
 ///     An invocation of a method.
@@ -16,5 +13,5 @@ public class MethodInvocation(string name, object?[] parameters) : Invocation
 	/// <summary>
 	///     The parameters of the method.
 	/// </summary>
-	public object?[] Parameters { get; } = parameters ?? [null];
+	public object?[] Parameters { get; } = parameters;
 }

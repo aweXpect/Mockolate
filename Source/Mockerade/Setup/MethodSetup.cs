@@ -37,23 +37,33 @@ public abstract class MethodSetup : IMethodSetup
 		}
 	}
 
-	/// <summary>
-	/// Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type <typeparamref name="T"/>.
-	/// </summary>
-	/// <remarks>
-	/// If a setup is configured, the value is generated according to the setup; otherwise, a default value
-	/// is generated using the current <paramref name="behavior"/>.
-	/// </remarks>
-	protected internal abstract T SetOutParameter<T>(string parameterName, MockBehavior behavior);
+	/// <inheritdoc cref="IMethodSetup.SetOutParameter{T}(string, MockBehavior)" />
+	T IMethodSetup.SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	{
+		return SetOutParameter<T>(parameterName, behavior);
+	}
 
 	/// <summary>
-	/// Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value"/> and returns its generated value of type <typeparamref name="T"/>.
+	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type <typeparamref name="T"/>.
 	/// </summary>
 	/// <remarks>
-	/// If a setup is configured, the value is generated according to the setup; otherwise, a default value
-	/// is generated using the current <paramref name="behavior"/>.
+	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
+	///     is generated using the current <paramref name="behavior"/>.
 	/// </remarks>
-	protected internal abstract T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior);
+	protected abstract T SetOutParameter<T>(string parameterName, MockBehavior behavior);
+
+	/// <inheritdoc cref="IMethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
+	T IMethodSetup.SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+		=> SetRefParameter<T>(parameterName, value, behavior);
+
+	/// <summary>
+	///     Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value"/> and returns its generated value of type <typeparamref name="T"/>.
+	/// </summary>
+	/// <remarks>
+	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
+	///     is generated using the current <paramref name="behavior"/>.
+	/// </remarks>
+	protected abstract T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior);
 
 	/// <summary>
 	///     Execute a potentially registered callback.
@@ -67,14 +77,17 @@ public abstract class MethodSetup : IMethodSetup
 
 	/// <inheritdoc cref="IMethodSetup.Matches(Invocation)" />
 	bool IMethodSetup.Matches(Invocation invocation)
-		=> IsMatch(invocation);
+		=> invocation is MethodInvocation methodInvocation && IsMatch(methodInvocation);
 
 	/// <summary>
 	///     Checks if the <paramref name="invocation" /> matches the setup.
 	/// </summary>
-	protected abstract bool IsMatch(Invocation invocation);
+	protected abstract bool IsMatch(MethodInvocation invocation);
 
-	internal static bool HasRefParameter<T>(With.NamedParameter[] namedParameters, string parameterName, [NotNullWhen(true)] out With.RefParameter<T>? parameter)
+	/// <summary>
+	///   Determines whether the specified collection of named parameters contains a reference parameter of the given name and type.
+	/// </summary>
+	protected static bool HasRefParameter<T>(With.NamedParameter[] namedParameters, string parameterName, [NotNullWhen(true)] out With.RefParameter<T>? parameter)
 	{
 		foreach (var namedParameter in namedParameters)
 		{
@@ -89,7 +102,10 @@ public abstract class MethodSetup : IMethodSetup
 		return false;
 	}
 
-	internal static bool HasOutParameter<T>(With.NamedParameter[] namedParameters, string parameterName, [NotNullWhen(true)] out With.OutParameter<T>? parameter)
+	/// <summary>
+	///     Determines whether the specified collection of named parameters contains an out parameter with the given name and type.
+	/// </summary>
+	protected static bool HasOutParameter<T>(With.NamedParameter[] namedParameters, string parameterName, [NotNullWhen(true)] out With.OutParameter<T>? parameter)
 	{
 		foreach (var namedParameter in namedParameters)
 		{
@@ -104,7 +120,15 @@ public abstract class MethodSetup : IMethodSetup
 		return false;
 	}
 
-	internal static bool Matches(With.NamedParameter[] namedParameters, object?[] values)
+	/// <summary>
+	///     Determines whether each value in the specified array matches the corresponding named parameter according to the
+	///     parameter's matching criteria.
+	/// </summary>
+	/// <remarks>
+	///     The method returns false if the lengths of the namedParameters and values arrays do not match.
+	///     Each value is compared to its corresponding named parameter using the parameter's matching logic.
+	/// </remarks>
+	protected static bool Matches(With.NamedParameter[] namedParameters, object?[] values)
 	{
 		if (namedParameters.Length != values.Length)
 		{
@@ -119,7 +143,16 @@ public abstract class MethodSetup : IMethodSetup
 		}
 		return true;
 	}
-	internal static bool TryCast<T>(object? value, out T result, MockBehavior behavior)
+
+	/// <summary>
+	///     Attempts to cast the specified value to the type parameter T, returning a value that
+	///     indicates whether the cast was successful.
+	/// </summary>
+	/// <remarks>
+	///     If value is not of type T and is not null, result is set to the default value for type T as
+	///     provided by the behavior's <see cref="MockBehavior.DefaultValueGenerator" />.
+	/// </remarks>
+	protected static bool TryCast<T>(object? value, out T result, MockBehavior behavior)
 	{
 		if (value is T typedValue)
 		{

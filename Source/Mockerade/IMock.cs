@@ -12,12 +12,12 @@ public interface IMock
 	/// <summary>
 	///     Executes the method with <paramref name="methodName"/> and the matching <paramref name="parameters"/> and gets the setup return value.
 	/// </summary>
-	MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[] parameters);
+	MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[]? parameters);
 
 	/// <summary>
 	///     Executes the method with <paramref name="methodName"/> and the matching <paramref name="parameters"/> returning <see langword="void" />.
 	/// </summary>
-	MethodSetupResult Execute(string methodName, params object?[] parameters);
+	MethodSetupResult Execute(string methodName, params object?[]? parameters);
 
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName"/>.

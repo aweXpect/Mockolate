@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Mockerade.Checks;
+using Mockerade.Exceptions;
 
 namespace Mockerade.Setup;
 
@@ -21,7 +23,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn> Returns(Func<TReturn> callback)
 	{
@@ -51,26 +53,25 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (_returnCallback() is TResult result)
+		if (_returnCallback() is not TResult result)
 		{
-			return result;
+			throw new MockException($"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
 		}
 
-		throw new NotSupportedException("The method type does not match");
+		return result;
 	}
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   methodInvocation.Parameters.Length == 0;
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 		=> behavior.DefaultValueGenerator.Generate<T>();
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
-		=> behavior.DefaultValueGenerator.Generate<T>();
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+		=> value;
 }
 
 /// <summary>
@@ -101,7 +102,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1> Returns(Func<T1, TReturn> callback)
 	{
@@ -110,7 +111,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1> Returns(Func<TReturn> callback)
 	{
@@ -145,23 +146,26 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
-			_returnCallback(p1) is TResult result)
+		if (!TryCast<T1>(invocation.Parameters[0], out var p1, behavior))
 		{
-			_callback?.Invoke(p1);
-			return result;
+			throw new MockException($"The input parameter only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
 		}
 
-		throw new NotSupportedException("The method type does not match");
+		if (_returnCallback(p1) is not TResult result)
+		{
+			throw new MockException($"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
+		}
+
+		_callback?.Invoke(p1);
+		return result;
 	}
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   methodInvocation.Parameters.Length == 1 && match1.Parameter.Matches(methodInvocation.Parameters[0]);
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && Matches([match1], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -172,14 +176,14 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return value;
 	}
 }
 
@@ -211,7 +215,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback)
 	{
@@ -220,7 +224,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2> Returns(Func<TReturn> callback)
 	{
@@ -256,24 +260,31 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
-			TryCast<T2>(invocation.Parameters[1], out var p2, behavior) &&
-			_returnCallback(p1, p2) is TResult result)
+		if (!TryCast<T1>(invocation.Parameters[0], out var p1, behavior))
 		{
-			_callback?.Invoke(p1, p2);
-			return result;
+			throw new MockException($"The input parameter 1 only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
 		}
 
-		throw new NotSupportedException("The method type does not match");
+		if (!TryCast<T2>(invocation.Parameters[1], out var p2, behavior))
+		{
+			throw new MockException($"The input parameter 2 only supports '{typeof(T2)}', but is '{invocation.Parameters[1]?.GetType()}'.");
+		}
+
+		if (_returnCallback(p1, p2) is not TResult result)
+		{
+			throw new MockException($"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
+		}
+
+		_callback?.Invoke(p1, p2);
+		return result;
 	}
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   Matches([match1, match2], methodInvocation.Parameters);
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && Matches([match1, match2], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -284,14 +295,14 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return value;
 	}
 }
 
@@ -323,7 +334,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback)
 	{
@@ -332,7 +343,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<TReturn> callback)
 	{
@@ -369,25 +380,36 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
-			TryCast<T2>(invocation.Parameters[1], out var p2, behavior) &&
-			TryCast<T3>(invocation.Parameters[2], out var p3, behavior) &&
-			_returnCallback(p1, p2, p3) is TResult result)
+		if (!TryCast<T1>(invocation.Parameters[0], out var p1, behavior))
+		{
+			throw new MockException($"The input parameter 1 only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
+		}
+
+		if (!TryCast<T2>(invocation.Parameters[1], out var p2, behavior))
+		{
+			throw new MockException($"The input parameter 2 only supports '{typeof(T2)}', but is '{invocation.Parameters[1]?.GetType()}'.");
+		}
+
+		if (!TryCast<T3>(invocation.Parameters[2], out var p3, behavior))
+		{
+			throw new MockException($"The input parameter 3 only supports '{typeof(T3)}', but is '{invocation.Parameters[2]?.GetType()}'.");
+		}
+
+		if (_returnCallback(p1, p2, p3) is TResult result)
 		{
 			_callback?.Invoke(p1, p2, p3);
 			return result;
 		}
 
-		throw new NotSupportedException("The method type does not match");
+		throw new MockException($"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
 	}
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   Matches([match1, match2, match3], methodInvocation.Parameters);
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -398,14 +420,14 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return value;
 	}
 }
 
@@ -437,7 +459,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback)
 	{
@@ -446,7 +468,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to get the return value for this method.
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback)
 	{
@@ -484,26 +506,41 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
-			TryCast<T2>(invocation.Parameters[1], out var p2, behavior) &&
-			TryCast<T3>(invocation.Parameters[2], out var p3, behavior) &&
-			TryCast<T4>(invocation.Parameters[3], out var p4, behavior) &&
-			_returnCallback(p1, p2, p3, p4) is TResult result)
+		if (!TryCast<T1>(invocation.Parameters[0], out var p1, behavior))
+		{
+			throw new MockException($"The input parameter 1 only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
+		}
+
+		if (!TryCast<T2>(invocation.Parameters[1], out var p2, behavior))
+		{
+			throw new MockException($"The input parameter 2 only supports '{typeof(T2)}', but is '{invocation.Parameters[1]?.GetType()}'.");
+		}
+
+		if (!TryCast<T3>(invocation.Parameters[2], out var p3, behavior))
+		{
+			throw new MockException($"The input parameter 3 only supports '{typeof(T3)}', but is '{invocation.Parameters[2]?.GetType()}'.");
+		}
+
+		if (!TryCast<T4>(invocation.Parameters[3], out var p4, behavior))
+		{
+			throw new MockException($"The input parameter 4 only supports '{typeof(T4)}', but is '{invocation.Parameters[3]?.GetType()}'.");
+		}
+
+		if (_returnCallback(p1, p2, p3, p4) is TResult result)
 		{
 			_callback?.Invoke(p1, p2, p3, p4);
 			return result;
 		}
 
-		throw new NotSupportedException("The method type does not match");
+		throw new MockException($"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
 	}
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   Matches([match1, match2, match3, match4], methodInvocation.Parameters);
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3, match4], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -514,13 +551,13 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3, match4], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return value;
 	}
 }

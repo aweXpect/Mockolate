@@ -5,7 +5,7 @@ using Mockerade.Exceptions;
 namespace Mockerade.Setup;
 
 /// <summary>
-///     Setup for a method returning <see langword="void" />
+///     Setup for a method returning <see langword="void" />.
 /// </summary>
 public class VoidMethodSetup(string name) : MethodSetup
 {
@@ -21,24 +21,24 @@ public class VoidMethodSetup(string name) : MethodSetup
 	}
 
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
-	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior) => _callback?.Invoke();
+	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
+		=> _callback?.Invoke();
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   methodInvocation.Parameters.Length == 0;
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 		=> behavior.DefaultValueGenerator.Generate<T>();
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 		=> value;
 }
 
@@ -81,13 +81,12 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   Matches([match1], methodInvocation.Parameters);
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && Matches([match1], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -98,7 +97,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -149,13 +148,12 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   Matches([match1, match2], methodInvocation.Parameters);
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && Matches([match1, match2], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -166,7 +164,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -218,13 +216,12 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   Matches([match1, match2, match3], methodInvocation.Parameters);
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -235,7 +232,7 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -288,13 +285,12 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(Invocation)" />
-	protected override bool IsMatch(Invocation invocation)
-		=> invocation is MethodInvocation methodInvocation && methodInvocation.Name.Equals(name) &&
-		   Matches([match1, match2, match3, match4], methodInvocation.Parameters);
+	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
+	protected override bool IsMatch(MethodInvocation invocation)
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected internal override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3, match4], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -305,7 +301,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected internal override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3, match4], parameterName, out With.RefParameter<T>? refParameter))
 		{
