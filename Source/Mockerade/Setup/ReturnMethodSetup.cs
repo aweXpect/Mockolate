@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Mockerade.Checks;
 using Mockerade.Exceptions;
 
@@ -10,7 +13,8 @@ namespace Mockerade.Setup;
 public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 {
 	private Action? _callback;
-	private Func<TReturn>? _returnCallback;
+	private List<Func<TReturn>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -26,7 +30,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	/// </summary>
 	public ReturnMethodSetup<TReturn> Returns(Func<TReturn> callback)
 	{
-		_returnCallback = callback;
+		_returnCallbacks.Add(callback);
 		return this;
 	}
 
@@ -35,7 +39,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	/// </summary>
 	public ReturnMethodSetup<TReturn> Returns(TReturn returnValue)
 	{
-		_returnCallback = () => returnValue;
+		_returnCallbacks.Add(() => returnValue);
 		return this;
 	}
 
@@ -47,12 +51,14 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
-		if (_returnCallback is null)
+		if (_returnCallbacks.Count == 0)
 		{
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (_returnCallback() is not TResult result)
+		var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+		var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		if (returnCallback() is not TResult result)
 		{
 			throw new MockException($"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
 		}
@@ -80,7 +86,8 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	: MethodSetup
 {
 	private Action<T1>? _callback;
-	private Func<T1, TReturn>? _returnCallback;
+	private List<Func<T1, TReturn>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -105,7 +112,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1> Returns(Func<T1, TReturn> callback)
 	{
-		_returnCallback = callback;
+		_returnCallbacks.Add(callback);
 		return this;
 	}
 
@@ -114,7 +121,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1> Returns(Func<TReturn> callback)
 	{
-		_returnCallback = _ => callback();
+		_returnCallbacks.Add(_ => callback());
 		return this;
 	}
 
@@ -123,7 +130,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1> Returns(TReturn returnValue)
 	{
-		_returnCallback = _ => returnValue;
+		_returnCallbacks.Add(_ => returnValue);
 		return this;
 	}
 
@@ -140,7 +147,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
-		if (_returnCallback is null)
+		if (_returnCallbacks.Count == 0)
 		{
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
@@ -150,7 +157,9 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 			throw new MockException($"The input parameter only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
 		}
 
-		if (_returnCallback(p1) is not TResult result)
+		var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+		var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		if (returnCallback(p1) is not TResult result)
 		{
 			throw new MockException($"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
 		}
@@ -193,7 +202,8 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	: MethodSetup
 {
 	private Action<T1, T2>? _callback;
-	private Func<T1, T2, TReturn>? _returnCallback;
+	private List<Func<T1, T2, TReturn>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -218,7 +228,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback)
 	{
-		_returnCallback = callback;
+		_returnCallbacks.Add(callback);
 		return this;
 	}
 
@@ -227,7 +237,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2> Returns(Func<TReturn> callback)
 	{
-		_returnCallback = (_, _) => callback();
+		_returnCallbacks.Add((_, _) => callback());
 		return this;
 	}
 
@@ -236,7 +246,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue)
 	{
-		_returnCallback = (_, _) => returnValue;
+		_returnCallbacks.Add((_, _) => returnValue);
 		return this;
 	}
 
@@ -254,7 +264,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
-		if (_returnCallback is null)
+		if (_returnCallbacks.Count == 0)
 		{
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
@@ -269,7 +279,9 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 			throw new MockException($"The input parameter 2 only supports '{typeof(T2)}', but is '{invocation.Parameters[1]?.GetType()}'.");
 		}
 
-		if (_returnCallback(p1, p2) is not TResult result)
+		var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+		var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		if (returnCallback(p1, p2) is not TResult result)
 		{
 			throw new MockException($"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
 		}
@@ -312,7 +324,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	: MethodSetup
 {
 	private Action<T1, T2, T3>? _callback;
-	private Func<T1, T2, T3, TReturn>? _returnCallback;
+	private List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -337,7 +350,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback)
 	{
-		_returnCallback = callback;
+		_returnCallbacks.Add(callback);
 		return this;
 	}
 
@@ -346,7 +359,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<TReturn> callback)
 	{
-		_returnCallback = (_, _, _) => callback();
+		_returnCallbacks.Add((_, _, _) => callback());
 		return this;
 	}
 
@@ -355,7 +368,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue)
 	{
-		_returnCallback = (_, _, _) => returnValue;
+		_returnCallbacks.Add((_, _, _) => returnValue);
 		return this;
 	}
 
@@ -374,7 +387,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
-		if (_returnCallback is null)
+		if (_returnCallbacks.Count == 0)
 		{
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
@@ -394,7 +407,9 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 			throw new MockException($"The input parameter 3 only supports '{typeof(T3)}', but is '{invocation.Parameters[2]?.GetType()}'.");
 		}
 
-		if (_returnCallback(p1, p2, p3) is TResult result)
+		var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+		var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		if (returnCallback(p1, p2, p3) is TResult result)
 		{
 			_callback?.Invoke(p1, p2, p3);
 			return result;
@@ -437,7 +452,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	: MethodSetup
 {
 	private Action<T1, T2, T3, T4>? _callback;
-	private Func<T1, T2, T3, T4, TReturn>? _returnCallback;
+	private List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -462,7 +478,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback)
 	{
-		_returnCallback = callback;
+		_returnCallbacks.Add(callback);
 		return this;
 	}
 
@@ -471,7 +487,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback)
 	{
-		_returnCallback = (_, _, _, _) => callback();
+		_returnCallbacks.Add((_, _, _, _) => callback());
 		return this;
 	}
 
@@ -480,7 +496,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue)
 	{
-		_returnCallback = (_, _, _, _) => returnValue;
+		_returnCallbacks.Add((_, _, _, _) => returnValue);
 		return this;
 	}
 
@@ -500,7 +516,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
-		if (_returnCallback is null)
+		if (_returnCallbacks.Count == 0)
 		{
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
@@ -525,7 +541,9 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 			throw new MockException($"The input parameter 4 only supports '{typeof(T4)}', but is '{invocation.Parameters[3]?.GetType()}'.");
 		}
 
-		if (_returnCallback(p1, p2, p3, p4) is TResult result)
+		var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+		var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		if (returnCallback(p1, p2, p3, p4) is TResult result)
 		{
 			_callback?.Invoke(p1, p2, p3, p4);
 			return result;

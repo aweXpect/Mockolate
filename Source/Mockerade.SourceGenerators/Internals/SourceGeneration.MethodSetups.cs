@@ -10,6 +10,8 @@ internal static partial class SourceGeneration
 		sb.AppendLine(Header);
 		sb.Append("""
 		          using System;
+		          using System.Collections.Generic;
+		          using System.Threading;
 		          using Mockerade.Checks;
 		          using Mockerade.Exceptions;
 
@@ -171,7 +173,8 @@ internal static partial class SourceGeneration
 		sb.Append(") : MethodSetup").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate Action<").Append(typeParams).Append(">? _callback;").AppendLine();
-		sb.Append("\tprivate Func<").Append(typeParams).Append(", TReturn>? _returnCallback;").AppendLine();
+		sb.Append("\tprivate List<Func<").Append(typeParams).Append(", TReturn>> _returnCallbacks = [];").AppendLine();
+		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to execute when the method is called.")
@@ -204,7 +207,7 @@ internal static partial class SourceGeneration
 		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Returns(Func<")
 			.Append(typeParams).Append(", TReturn> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallback = callback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(callback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -215,9 +218,9 @@ internal static partial class SourceGeneration
 		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Returns(Func<TReturn> callback)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallback = (")
+		sb.Append("\t\t_returnCallbacks.Add((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
-			.Append(") => callback();").AppendLine();
+			.Append(") => callback());").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -227,9 +230,9 @@ internal static partial class SourceGeneration
 		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Returns(TReturn returnValue)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallback = (")
+		sb.Append("\t\t_returnCallbacks.Add((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
-			.Append(") => returnValue;").AppendLine();
+			.Append(") => returnValue);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -263,7 +266,7 @@ internal static partial class SourceGeneration
 			.AppendLine();
 		sb.Append("\t\twhere TResult : default").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\tif (_returnCallback is null)").AppendLine();
+		sb.Append("\t\tif (_returnCallbacks.Count == 0)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\treturn behavior.DefaultValueGenerator.Generate<TResult>();").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -280,7 +283,9 @@ internal static partial class SourceGeneration
 			sb.AppendLine();
 		}
 
-		sb.Append("\t\tif (_returnCallback(")
+		sb.Append("\t\tvar index = Interlocked.Increment(ref _currentReturnCallbackIndex);").AppendLine();
+		sb.Append("\t\tvar returnCallback = _returnCallbacks[index % _returnCallbacks.Count];").AppendLine();
+		sb.Append("\t\tif (returnCallback(")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}")))
 			.Append(") is TResult result)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
