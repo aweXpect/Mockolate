@@ -7,7 +7,7 @@
 		<Authors>Mockerade</Authors>
 		<Description>A modern, strongly-typed mocking library for .NET, powered by source generators.</Description>
 		<Copyright>Copyright (c) 2025 - $([System.DateTime]::Now.ToString('yyyy')) Valentin Breuß</Copyright>
-		<RepositoryUrl>https://github.com/vbreuss/Mockerade.git</RepositoryUrl>
+		<RepositoryUrl>https://github.com/Mockerade/Mockerade.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>Docs/logo_256x256.png</PackageIcon>

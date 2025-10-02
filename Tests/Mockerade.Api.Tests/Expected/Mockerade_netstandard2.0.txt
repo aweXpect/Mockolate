@@ -1,4 +1,4 @@
-[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/vbreuss/Mockerade.git")]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Mockerade/Mockerade.git")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName=".NET Standard 2.0")]
 namespace Mockerade
 {
