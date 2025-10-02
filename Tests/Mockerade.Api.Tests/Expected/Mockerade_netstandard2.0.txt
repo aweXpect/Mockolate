@@ -58,6 +58,23 @@ namespace Mockerade
         public Mockerade.Events.MockRaises<T>.Protected Raise { get; }
         public Mockerade.Setup.MockSetups<T>.Protected Setup { get; }
     }
+    public static class ReturnsAsyncExtensions
+    {
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, TReturn returnValue) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> setup, System.Func<TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> setup, System.Func<T1, TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> setup, TReturn returnValue) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> setup, System.Func<TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> setup, System.Func<T1, T2, TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> setup, TReturn returnValue) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> setup, System.Func<TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> setup, System.Func<T1, T2, T3, TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> setup, TReturn returnValue) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> setup, System.Func<TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> setup, System.Func<T1, T2, T3, T4, TReturn> callback) { }
+        public static Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockerade.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> setup, TReturn returnValue) { }
+    }
     public static class With
     {
         public static Mockerade.With.Parameter<T> Any<T>() { }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using Mockerade.Checks;
 using Mockerade.Exceptions;
 

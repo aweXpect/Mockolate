@@ -19,4 +19,15 @@ public sealed class BaseClassTests
 
 		await That(result.Parameters).HasSingle().Which.IsNull();
 	}
+
+	[Fact]
+	public async Task ConstructorWithInitSetter_ShouldSetParameters()
+	{
+		var result = new BaseClass.ConstructorParameters([2, "bar",])
+		{
+			Parameters = [1, "foo",]
+		};
+
+		await That(result.Parameters).IsEqualTo([1, "foo"]);
+	}
 }

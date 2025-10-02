@@ -1,6 +1,6 @@
 ﻿namespace Mockerade.Tests.Dummy;
 
-public class MyClass
+public abstract class MyClass
 {
 	public int Value { get; }
 	public MyClass(int value)

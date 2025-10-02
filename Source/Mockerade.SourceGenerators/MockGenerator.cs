@@ -85,6 +85,13 @@ public class MockGenerator : IIncrementalGenerator
 			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
 		}
 
+		if (methodSetups.Any(x => !x.Item2))
+		{
+			string result = SourceGeneration.GetReturnsAsyncExtensions(methodSetups.Where(x => !x.Item2).Select(x => x.Item1).ToArray());
+			var fileName = $"ReturnsAsyncExtensions.g.cs";
+			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
+		}
+
 		context.AddSource("MockRegistration.g.cs",
 			SourceText.From(SourceGeneration.RegisterMocks(namedMocksToGenerate), Encoding.UTF8));
 	}
