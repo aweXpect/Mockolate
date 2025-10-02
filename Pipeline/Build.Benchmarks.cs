@@ -54,6 +54,7 @@ partial class Build
 	Target BenchmarkComment => _ => _
 		.Executes(async () =>
 		{
+			await "Benchmarks".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
 			if (!File.Exists(ArtifactsDirectory / "Benchmarks" / "results" /
 															 "Mockerade.Benchmarks.HappyCaseBenchmarks-report-github.md"))
 			{
@@ -61,7 +62,6 @@ partial class Build
 				return;
 			}
 
-			await "Benchmarks".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
 			if (!File.Exists(ArtifactsDirectory / "PR.txt"))
 			{
 				Log.Information("Skip writing a comment, as no PR number was specified.");

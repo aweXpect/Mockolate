@@ -38,7 +38,7 @@
         "Compile",
         "DotNetUnitTests",
         "MutationComment",
-        "MutationTestDashboard",
+        "MutationTestComment",
         "MutationTestExecution",
         "MutationTests",
         "Pack",
