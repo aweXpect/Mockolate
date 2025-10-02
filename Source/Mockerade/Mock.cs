@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using Mockerade.Checks;
 using Mockerade.Events;
 using Mockerade.Exceptions;
 using Mockerade.Setup;
+using static Mockerade.BaseClass;
 
 namespace Mockerade;
 
@@ -142,12 +144,41 @@ public abstract class Mock<T> : IMock
 	{
 		return mock.Object;
 	}
+
+	/// <summary>
+	///     Attempts to create an instance of the specified type using the provided constructor parameters.
+	/// </summary>
+	protected TObject TryCreate<TObject>(BaseClass.ConstructorParameters? constructorParameters)
+	{
+		if (constructorParameters is null)
+		{
+			try
+			{
+				return (TObject)Activator.CreateInstance(typeof(TObject), [this,])!;
+			}
+			catch
+			{
+				throw new MockException($"Could not create an instance of '{typeof(TObject)}' without constructor parameters.");
+			}
+		}
+		else
+		{
+			try
+			{
+				return (TObject)Activator.CreateInstance(typeof(TObject), [this, .. constructorParameters.Parameters])!;
+			}
+			catch
+			{
+				throw new MockException($"Could not create an instance of '{typeof(TObject)}' with {constructorParameters.Parameters.Length} parameters ({string.Join(", ", constructorParameters.Parameters)}).");
+			}
+		}
+	}
 }
 
 /// <summary>
-///     A mock for type <typeparamref name="T" /> that also implements interface <typeparamref name="T2"/>.
+///     A mock for type <typeparamref name="T1" /> that also implements interface <typeparamref name="T2"/>.
 /// </summary>
-public abstract class Mock<T, T2> : Mock<T>
+public abstract class Mock<T1, T2> : Mock<T1>
 {
 	/// <inheritdoc cref="Mock{T}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
@@ -155,6 +186,111 @@ public abstract class Mock<T, T2> : Mock<T>
 		if (!typeof(T2).IsInterface)
 		{
 			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
+	}
+}
+
+/// <summary>
+///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2"/> and <typeparamref name="T3"/>.
+/// </summary>
+public abstract class Mock<T1, T2, T3> : Mock<T1, T2>
+{
+	/// <inheritdoc cref="Mock{T}" />
+	protected Mock(MockBehavior behavior) : base(behavior)
+	{
+		if (!typeof(T3).IsInterface)
+		{
+			throw new MockException($"The third generic type argument '{typeof(T3)}' is no interface.");
+		}
+	}
+}
+
+/// <summary>
+///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2"/>, <typeparamref name="T3"/> and <typeparamref name="T4"/>.
+/// </summary>
+public abstract class Mock<T1, T2, T3, T4> : Mock<T1, T2, T3>
+{
+	/// <inheritdoc cref="Mock{T}" />
+	protected Mock(MockBehavior behavior) : base(behavior)
+	{
+		if (!typeof(T4).IsInterface)
+		{
+			throw new MockException($"The fourth generic type argument '{typeof(T4)}' is no interface.");
+		}
+	}
+}
+
+/// <summary>
+///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2"/>, <typeparamref name="T3"/>, <typeparamref name="T4"/> and <typeparamref name="T5"/>.
+/// </summary>
+public abstract class Mock<T1, T2, T3, T4, T5> : Mock<T1, T2, T3, T4>
+{
+	/// <inheritdoc cref="Mock{T}" />
+	protected Mock(MockBehavior behavior) : base(behavior)
+	{
+		if (!typeof(T5).IsInterface)
+		{
+			throw new MockException($"The fifth generic type argument '{typeof(T5)}' is no interface.");
+		}
+	}
+}
+
+/// <summary>
+///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2"/>, <typeparamref name="T3"/>, <typeparamref name="T4"/>, <typeparamref name="T5"/> and <typeparamref name="T6"/>.
+/// </summary>
+public abstract class Mock<T1, T2, T3, T4, T5, T6> : Mock<T1, T2, T3, T4, T5>
+{
+	/// <inheritdoc cref="Mock{T}" />
+	protected Mock(MockBehavior behavior) : base(behavior)
+	{
+		if (!typeof(T6).IsInterface)
+		{
+			throw new MockException($"The sixth generic type argument '{typeof(T6)}' is no interface.");
+		}
+	}
+}
+
+/// <summary>
+///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2"/>, <typeparamref name="T3"/>, <typeparamref name="T4"/>, <typeparamref name="T5"/>, <typeparamref name="T6"/> and <typeparamref name="T7"/>.
+/// </summary>
+public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : Mock<T1, T2, T3, T4, T5, T6>
+{
+	/// <inheritdoc cref="Mock{T}" />
+	protected Mock(MockBehavior behavior) : base(behavior)
+	{
+		if (!typeof(T7).IsInterface)
+		{
+			throw new MockException($"The seventh generic type argument '{typeof(T7)}' is no interface.");
+		}
+	}
+}
+
+/// <summary>
+///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2"/>, <typeparamref name="T3"/>, <typeparamref name="T4"/>, <typeparamref name="T5"/>, <typeparamref name="T6"/>, <typeparamref name="T7"/> and <typeparamref name="T8"/>.
+/// </summary>
+public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : Mock<T1, T2, T3, T4, T5, T6, T7>
+{
+	/// <inheritdoc cref="Mock{T}" />
+	protected Mock(MockBehavior behavior) : base(behavior)
+	{
+		if (!typeof(T8).IsInterface)
+		{
+			throw new MockException($"The eighth generic type argument '{typeof(T8)}' is no interface.");
+		}
+	}
+}
+
+/// <summary>
+///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2"/>, <typeparamref name="T3"/>, <typeparamref name="T4"/>, <typeparamref name="T5"/>, <typeparamref name="T6"/>, <typeparamref name="T7"/>, <typeparamref name="T8"/> and <typeparamref name="T9"/>.
+/// </summary>
+public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> : Mock<T1, T2, T3, T4, T5, T6, T7, T8>
+{
+	/// <inheritdoc cref="Mock{T}" />
+	protected Mock(MockBehavior behavior) : base(behavior)
+	{
+		if (!typeof(T9).IsInterface)
+		{
+			throw new MockException($"The ninth generic type argument '{typeof(T9)}' is no interface.");
 		}
 	}
 }

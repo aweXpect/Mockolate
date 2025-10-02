@@ -67,14 +67,7 @@ internal static partial class SourceGeneration
 		sb.Append("\t\t/// <inheritdoc cref=\"Mock\" />").AppendLine();
 		sb.Append("\t\tpublic Mock(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior) : base(mockBehavior)").AppendLine();
 		sb.AppendLine("\t\t{");
-		sb.AppendLine("\t\t\tif (constructorParameters is null)");
-		sb.AppendLine("\t\t\t{");
-		sb.Append("\t\t\t\tObject = (MockObject)Activator.CreateInstance(typeof(MockObject), [this, ])!;").AppendLine();
-		sb.AppendLine("\t\t\t}");
-		sb.AppendLine("\t\t\telse");
-		sb.AppendLine("\t\t\t{");
-		sb.Append("\t\t\t\tObject = (MockObject)Activator.CreateInstance(typeof(MockObject), [this, ..constructorParameters.Parameters])!;").AppendLine();
-		sb.AppendLine("\t\t\t}");
+		sb.Append("\t\t\tObject = TryCreate<MockObject>(constructorParameters);").AppendLine();
 		sb.AppendLine("\t\t}");
 		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassName).Append(string.Join(", ", mockClass.AdditionalImplementations.Select(x => x.ClassName))).AppendLine("}.Object\" />");

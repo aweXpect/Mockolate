@@ -11,16 +11,15 @@ public class ExampleTests
 	public async Task WithAny_ShouldAlwaysMatch()
 	{
 		var id = Guid.NewGuid();
-		var mock = Mock.For<IExampleRepository>();
-
-		mock.Setup.AddUser(
+		var mock = Mock.For<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
+		mock.SetupIExampleRepository.AddUser(
 				With.Any<string>())
 			.Returns(new User(id, "Alice"));
-
-		var result = mock.Object.AddUser("Bob");
-
+		
+		var result = mock.ObjectForIExampleRepository.AddUser("Bob");
+		
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		await That(mock.Invoked.AddUser("Bob").Once());
+		await That(mock.InvokedOnIExampleRepository.AddUser("Bob").Once());
 	}
 
 #if NET8_0_OR_GREATER
