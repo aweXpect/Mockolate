@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Mockerade.Exceptions;
 using Mockerade.Setup;
+using static Mockerade.Tests.Setup.ReturnMethodSetupTests;
 
 namespace Mockerade.Tests.Setup;
 
@@ -35,6 +36,53 @@ public class VoidMethodSetupTests
 
 	public class With0Parameters
 	{
+		[Fact]
+		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method0()
+				.DoesNotThrow()
+				.Throws(new Exception("foo"))
+				.DoesNotThrow();
+
+			sut.Object.Method0();
+			var result1 = Record.Exception(() => sut.Object.Method0());
+			sut.Object.Method0();
+			sut.Object.Method0();
+			var result2 = Record.Exception(() => sut.Object.Method0());
+			sut.Object.Method0();
+
+			await That(result1).HasMessage("foo");
+			await That(result2).HasMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method0().Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method0();
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method0().Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method0();
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
@@ -93,6 +141,66 @@ public class VoidMethodSetupTests
 
 	public class With1Parameters
 	{
+		[Fact]
+		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>())
+				.DoesNotThrow()
+				.Throws(new Exception("foo"))
+				.DoesNotThrow();
+
+			sut.Object.Method1(1);
+			var result1 = Record.Exception(() => sut.Object.Method1(2));
+			sut.Object.Method1(3);
+			sut.Object.Method1(4);
+			var result2 = Record.Exception(() => sut.Object.Method1(5));
+			sut.Object.Method1(6);
+
+			await That(result1).HasMessage("foo");
+			await That(result2).HasMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>()).Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method1(1);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>()).Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method1(1);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>()).Throws(v1 => new Exception($"foo-{v1}"));
+
+			void Act()
+				=> sut.Object.Method1(1);
+
+			await That(Act).ThrowsException().WithMessage("foo-1");
+		}
+
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
@@ -260,6 +368,69 @@ public class VoidMethodSetupTests
 
 	public class With2Parameters
 	{
+		[Fact]
+		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.DoesNotThrow()
+				.Throws(new Exception("foo"))
+				.DoesNotThrow();
+
+			sut.Object.Method2(1, 2);
+			var result1 = Record.Exception(() => sut.Object.Method2(2, 3));
+			sut.Object.Method2(3, 4);
+			sut.Object.Method2(4, 5);
+			var result2 = Record.Exception(() => sut.Object.Method2(5, 6));
+			sut.Object.Method2(6, 7);
+
+			await That(result1).HasMessage("foo");
+			await That(result2).HasMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method2(1, 2);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method2(1, 2);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
+
+			void Act()
+				=> sut.Object.Method2(1, 2);
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2");
+		}
+
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
@@ -447,6 +618,69 @@ public class VoidMethodSetupTests
 
 	public class With3Parameters
 	{
+		[Fact]
+		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.DoesNotThrow()
+				.Throws(new Exception("foo"))
+				.DoesNotThrow();
+
+			sut.Object.Method3(1, 2, 3);
+			var result1 = Record.Exception(() => sut.Object.Method3(2, 3, 4));
+			sut.Object.Method3(3, 4, 5);
+			sut.Object.Method3(4, 5, 6);
+			var result2 = Record.Exception(() => sut.Object.Method3(5, 6, 7));
+			sut.Object.Method3(6, 7, 8);
+
+			await That(result1).HasMessage("foo");
+			await That(result2).HasMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method3(1, 2, 3);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method3(1, 2, 3);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
+
+			void Act()
+				=> sut.Object.Method3(1, 2, 3);
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3");
+		}
+
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
@@ -649,6 +883,69 @@ public class VoidMethodSetupTests
 
 	public class With4Parameters
 	{
+		[Fact]
+		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.DoesNotThrow()
+				.Throws(new Exception("foo"))
+				.DoesNotThrow();
+
+			sut.Object.Method4(1, 2, 3, 4);
+			var result1 = Record.Exception(() => sut.Object.Method4(2, 3, 4, 5));
+			sut.Object.Method4(3, 4, 5, 6);
+			sut.Object.Method4(4, 5, 6, 7);
+			var result2 = Record.Exception(() => sut.Object.Method4(5, 6, 7, 8));
+			sut.Object.Method4(6, 7, 8, 9);
+
+			await That(result1).HasMessage("foo");
+			await That(result2).HasMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method4(1, 2, 3, 4);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method4(1, 2, 3, 4);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
+
+			void Act()
+				=> sut.Object.Method4(1, 2, 3, 4);
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4");
+		}
+
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
@@ -866,6 +1163,69 @@ public class VoidMethodSetupTests
 
 	public class With5Parameters
 	{
+		[Fact]
+		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.DoesNotThrow()
+				.Throws(new Exception("foo"))
+				.DoesNotThrow();
+
+			sut.Object.Method5(1, 2, 3, 4, 5);
+			var result1 = Record.Exception(() => sut.Object.Method5(2, 3, 4, 5, 6));
+			sut.Object.Method5(3, 4, 5, 6, 7);
+			sut.Object.Method5(4, 5, 6, 7, 8);
+			var result2 = Record.Exception(() => sut.Object.Method5(5, 6, 7, 8, 9));
+			sut.Object.Method5(6, 7, 8, 9, 10);
+
+			await That(result1).HasMessage("foo");
+			await That(result2).HasMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
+
+			void Act()
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4-5");
+		}
+
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{

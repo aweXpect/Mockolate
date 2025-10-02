@@ -40,6 +40,7 @@ internal static partial class SourceGeneration
 	private static void AppendVoidMethod(StringBuilder sb, int numberOfParameters)
 	{
 		string typeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"));
+		string values = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"v{i}"));
 		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Setup for a method with ").Append(numberOfParameters).Append(" parameters ");
 		for (int i = 1; i < numberOfParameters - 1; i++)
@@ -59,6 +60,8 @@ internal static partial class SourceGeneration
 		sb.Append(") : MethodSetup").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate Action<").Append(typeParams).Append(">? _callback;").AppendLine();
+		sb.Append("\tprivate List<Action<").Append(typeParams).Append(">> _returnCallbacks = [];").AppendLine();
+		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to execute when the method is called.")
@@ -83,6 +86,55 @@ internal static partial class SourceGeneration
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers an iteration in the sequence of method invocations, that does not throw.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> DoesNotThrow()")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => { });").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws(Func<")
+			.Append(typeParams).Append(", Exception> callback)").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((").Append(values).Append(") => throw callback(").Append(values).Append("));").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws(Func<Exception> callback)")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => throw callback());").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.").AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws(Exception exception)")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => throw exception);").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)\" />")
 			.AppendLine();
 		sb.Append("\tprotected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)")
@@ -103,6 +155,14 @@ internal static partial class SourceGeneration
 		sb.Append("\t\t\t_callback?.Invoke(")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(");")
 			.AppendLine();
+		sb.Append("\t\t\tif (_returnCallbacks.Count > 0)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tvar index = Interlocked.Increment(ref _currentReturnCallbackIndex);").AppendLine();
+		sb.Append("\t\t\t\tvar returnCallback = _returnCallbacks[index % _returnCallbacks.Count];").AppendLine();
+		sb.Append("\t\t\t\treturnCallback(")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(");")
+			.AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -154,6 +214,7 @@ internal static partial class SourceGeneration
 	private static void AppendReturnMethod(StringBuilder sb, int numberOfParameters)
 	{
 		string typeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"));
+		string values = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"v{i}"));
 		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Setup for a method with ").Append(numberOfParameters).Append(" parameters ");
 		for (int i = 1; i < numberOfParameters - 1; i++)
@@ -233,6 +294,42 @@ internal static partial class SourceGeneration
 		sb.Append("\t\t_returnCallbacks.Add((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => returnValue);").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Func<")
+			.Append(typeParams).Append(", Exception> callback)").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((").Append(values).Append(") => throw callback(").Append(values).Append("));").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Func<Exception> callback)")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => throw callback());").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.").AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Exception exception)")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => throw exception);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();

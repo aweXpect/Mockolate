@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using Mockerade.Checks;
 using Mockerade.Exceptions;
 
@@ -10,6 +12,8 @@ namespace Mockerade.Setup;
 public class VoidMethodSetup(string name) : MethodSetup
 {
 	private Action? _callback;
+	private List<Action> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -20,9 +24,44 @@ public class VoidMethodSetup(string name) : MethodSetup
 		return this;
 	}
 
+	/// <summary>
+	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	/// </summary>
+	public VoidMethodSetup DoesNotThrow()
+	{
+		_returnCallbacks.Add(() => { });
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup Throws(Exception exception)
+	{
+		_returnCallbacks.Add(() => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add(() => throw callback());
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
-		=> _callback?.Invoke();
+	{
+		_callback?.Invoke();
+		if (_returnCallbacks.Count > 0)
+		{
+			var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+			var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+			returnCallback();
+		}
+	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
@@ -48,6 +87,8 @@ public class VoidMethodSetup(string name) : MethodSetup
 public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : MethodSetup
 {
 	private Action<T1>? _callback;
+	private List<Action<T1>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -67,12 +108,54 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 		return this;
 	}
 
+	/// <summary>
+	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	/// </summary>
+	public VoidMethodSetup<T1> DoesNotThrow()
+	{
+		_returnCallbacks.Add(_ => { });
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1> Throws(Exception exception)
+	{
+		_returnCallbacks.Add(_ => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add(_ => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1> Throws(Func<T1, Exception> callback)
+	{
+		_returnCallbacks.Add(v1 => throw callback(v1));
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
 		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior))
 		{
 			_callback?.Invoke(p1);
+			if (_returnCallbacks.Count > 0)
+			{
+				var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				returnCallback(p1);
+			}
 		}
 	}
 
@@ -114,6 +197,8 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, With.NamedParameter match2) : MethodSetup
 {
 	private Action<T1, T2>? _callback;
+	private List<Action<T1, T2>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -133,6 +218,42 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 		return this;
 	}
 
+	/// <summary>
+	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	/// </summary>
+	public VoidMethodSetup<T1, T2> DoesNotThrow()
+	{
+		_returnCallbacks.Add((_, _) => { });
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2> Throws(Func<T1, T2, Exception> callback)
+	{
+		_returnCallbacks.Add((v1, v2) => throw callback(v1, v2));
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -140,6 +261,12 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 			TryCast<T2>(invocation.Parameters[1], out var p2, behavior))
 		{
 			_callback?.Invoke(p1, p2);
+			if (_returnCallbacks.Count > 0)
+			{
+				var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				returnCallback(p1, p2);
+			}
 		}
 	}
 
@@ -181,6 +308,8 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1, With.NamedParameter match2, With.NamedParameter match3) : MethodSetup
 {
 	private Action<T1, T2, T3>? _callback;
+	private List<Action<T1, T2, T3>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -200,6 +329,42 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 		return this;
 	}
 
+	/// <summary>
+	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	/// </summary>
+	public VoidMethodSetup<T1, T2, T3> DoesNotThrow()
+	{
+		_returnCallbacks.Add((_, _, _) => { });
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2, T3> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2, T3> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
+	{
+		_returnCallbacks.Add((v1, v2, v3) => throw callback(v1, v2, v3));
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -208,6 +373,12 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 			TryCast<T3>(invocation.Parameters[2], out var p3, behavior))
 		{
 			_callback?.Invoke(p1, p2, p3);
+			if (_returnCallbacks.Count > 0)
+			{
+				var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				returnCallback(p1, p2, p3);
+			}
 		}
 	}
 
@@ -249,6 +420,8 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter match1, With.NamedParameter match2, With.NamedParameter match3, With.NamedParameter match4) : MethodSetup
 {
 	private Action<T1, T2, T3, T4>? _callback;
+	private List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
+	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -268,6 +441,42 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 		return this;
 	}
 
+	/// <summary>
+	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	/// </summary>
+	public VoidMethodSetup<T1, T2, T3, T4> DoesNotThrow()
+	{
+		_returnCallbacks.Add((_, _, _, _) => { });
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2, T3, T4> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _, _, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2, T3, T4> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _, _, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public VoidMethodSetup<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
+	{
+		_returnCallbacks.Add((v1, v2, v3, v4) => throw callback(v1, v2, v3, v4));
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -277,6 +486,12 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 			TryCast<T4>(invocation.Parameters[3], out var p4, behavior))
 		{
 			_callback?.Invoke(p1, p2, p3, p4);
+			if (_returnCallbacks.Count > 0)
+			{
+				var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				returnCallback(p1, p2, p3, p4);
+			}
 		}
 	}
 

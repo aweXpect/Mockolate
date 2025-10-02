@@ -373,6 +373,8 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn> Returns(TReturn returnValue) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn> Throws(System.Exception exception) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn> Throws(System.Func<System.Exception> callback) { }
     }
     public class ReturnMethodSetup<TReturn, T1> : Mockerade.Setup.MethodSetup
     {
@@ -387,6 +389,9 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1> Returns(TReturn returnValue) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Exception exception) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Func<System.Exception> callback) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Func<T1, System.Exception> callback) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2> : Mockerade.Setup.MethodSetup
     {
@@ -401,6 +406,9 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Exception exception) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Func<System.Exception> callback) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockerade.Setup.MethodSetup
     {
@@ -415,6 +423,9 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Exception exception) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Func<System.Exception> callback) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockerade.Setup.MethodSetup
     {
@@ -429,59 +440,81 @@ namespace Mockerade.Setup
         public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Exception exception) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Func<System.Exception> callback) { }
+        public Mockerade.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback) { }
     }
     public class VoidMethodSetup : Mockerade.Setup.MethodSetup
     {
         public VoidMethodSetup(string name) { }
         public Mockerade.Setup.VoidMethodSetup Callback(System.Action callback) { }
+        public Mockerade.Setup.VoidMethodSetup DoesNotThrow() { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.VoidMethodSetup Throws(System.Exception exception) { }
+        public Mockerade.Setup.VoidMethodSetup Throws(System.Func<System.Exception> callback) { }
     }
     public class VoidMethodSetup<T1> : Mockerade.Setup.MethodSetup
     {
         public VoidMethodSetup(string name, Mockerade.With.NamedParameter match1) { }
         public Mockerade.Setup.VoidMethodSetup<T1> Callback(System.Action callback) { }
         public Mockerade.Setup.VoidMethodSetup<T1> Callback(System.Action<T1> callback) { }
+        public Mockerade.Setup.VoidMethodSetup<T1> DoesNotThrow() { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.VoidMethodSetup<T1> Throws(System.Exception exception) { }
+        public Mockerade.Setup.VoidMethodSetup<T1> Throws(System.Func<System.Exception> callback) { }
+        public Mockerade.Setup.VoidMethodSetup<T1> Throws(System.Func<T1, System.Exception> callback) { }
     }
     public class VoidMethodSetup<T1, T2> : Mockerade.Setup.MethodSetup
     {
         public VoidMethodSetup(string name, Mockerade.With.NamedParameter match1, Mockerade.With.NamedParameter match2) { }
         public Mockerade.Setup.VoidMethodSetup<T1, T2> Callback(System.Action callback) { }
         public Mockerade.Setup.VoidMethodSetup<T1, T2> Callback(System.Action<T1, T2> callback) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2> DoesNotThrow() { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2> Throws(System.Exception exception) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2> Throws(System.Func<System.Exception> callback) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2> Throws(System.Func<T1, T2, System.Exception> callback) { }
     }
     public class VoidMethodSetup<T1, T2, T3> : Mockerade.Setup.MethodSetup
     {
         public VoidMethodSetup(string name, Mockerade.With.NamedParameter match1, Mockerade.With.NamedParameter match2, Mockerade.With.NamedParameter match3) { }
         public Mockerade.Setup.VoidMethodSetup<T1, T2, T3> Callback(System.Action callback) { }
         public Mockerade.Setup.VoidMethodSetup<T1, T2, T3> Callback(System.Action<T1, T2, T3> callback) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2, T3> DoesNotThrow() { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Exception exception) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Func<System.Exception> callback) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback) { }
     }
     public class VoidMethodSetup<T1, T2, T3, T4> : Mockerade.Setup.MethodSetup
     {
         public VoidMethodSetup(string name, Mockerade.With.NamedParameter match1, Mockerade.With.NamedParameter match2, Mockerade.With.NamedParameter match3, Mockerade.With.NamedParameter match4) { }
         public Mockerade.Setup.VoidMethodSetup<T1, T2, T3, T4> Callback(System.Action callback) { }
         public Mockerade.Setup.VoidMethodSetup<T1, T2, T3, T4> Callback(System.Action<T1, T2, T3, T4> callback) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2, T3, T4> DoesNotThrow() { }
         protected override void ExecuteCallback(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override TResult GetReturnValue<TResult>(Mockerade.Checks.MethodInvocation invocation, Mockerade.MockBehavior behavior) { }
         protected override bool IsMatch(Mockerade.Checks.MethodInvocation invocation) { }
         protected override T SetOutParameter<T>(string parameterName, Mockerade.MockBehavior behavior) { }
         protected override T SetRefParameter<T>(string parameterName, T value, Mockerade.MockBehavior behavior) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Exception exception) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Func<System.Exception> callback) { }
+        public Mockerade.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback) { }
     }
 }

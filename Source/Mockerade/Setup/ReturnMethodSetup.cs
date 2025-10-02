@@ -43,6 +43,24 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 		return this;
 	}
 
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn> Throws(Exception exception)
+	{
+		_returnCallbacks.Add(() => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add(() => throw callback());
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 		=> _callback?.Invoke();
@@ -131,6 +149,33 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	public ReturnMethodSetup<TReturn, T1> Returns(TReturn returnValue)
 	{
 		_returnCallbacks.Add(_ => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1> Throws(Exception exception)
+	{
+		_returnCallbacks.Add(_ => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add(_ => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1> Throws(Func<T1, Exception> callback)
+	{
+		_returnCallbacks.Add(v1 => throw callback(v1));
 		return this;
 	}
 
@@ -247,6 +292,33 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	public ReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue)
 	{
 		_returnCallbacks.Add((_, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2> Throws(Func<T1, T2, Exception> callback)
+	{
+		_returnCallbacks.Add((v1, v2) => throw callback(v1, v2));
 		return this;
 	}
 
@@ -369,6 +441,33 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue)
 	{
 		_returnCallbacks.Add((_, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2, T3> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2, T3> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
+	{
+		_returnCallbacks.Add((v1, v2, v3) => throw callback(v1, v2, v3));
 		return this;
 	}
 
@@ -497,6 +596,33 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue)
 	{
 		_returnCallbacks.Add((_, _, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _, _, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _, _, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
+	{
+		_returnCallbacks.Add((v1, v2, v3, v4) => throw callback(v1, v2, v3, v4));
 		return this;
 	}
 

@@ -51,7 +51,52 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Object.Method0();
 			}
 
-			await That(result).IsEqualTo([4, 3, 2, 4, 3, 2, 4, 3, 2, 4, ]);
+			await That(result).IsEqualTo([4, 3, 2, 4, 3, 2, 4, 3, 2, 4,]);
+		}
+
+		[Fact]
+		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method0()
+				.Returns(4)
+				.Throws(new Exception("foo"))
+				.Returns(() => 2);
+
+			var result1 = sut.Object.Method0();
+			var result2 = Record.Exception(() => sut.Object.Method0());
+			var result3 = sut.Object.Method0();
+
+			await That(result1).IsEqualTo(4);
+			await That(result2).HasMessage("foo");
+			await That(result3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method0().Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method0();
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method0().Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method0();
+
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		[Fact]
@@ -248,6 +293,67 @@ public class ReturnMethodSetupTests
 			}
 
 			await That(result).IsEqualTo([4, 3, 20, 4, 3, 50, 4, 3, 80, 4, ]);
+		}
+
+		[Fact]
+		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>())
+				.Returns(4)
+				.Throws(new Exception("foo"))
+				.Returns(() => 2);
+
+			var result1 = sut.Object.Method1(1);
+			var result2 = Record.Exception(() => sut.Object.Method1(2));
+			var result3 = sut.Object.Method1(3);
+
+			await That(result1).IsEqualTo(4);
+			await That(result2).HasMessage("foo");
+			await That(result3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method1(1);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method1(1);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>())
+				.Throws(v1 => new Exception("foo-"+v1));
+
+			void Act()
+				=> sut.Object.Method1(42);
+
+			await That(Act).ThrowsException().WithMessage("foo-42");
 		}
 
 		[Fact]
@@ -525,6 +631,67 @@ public class ReturnMethodSetupTests
 			}
 
 			await That(result).IsEqualTo([4, 3, 16, 4, 3, 25, 4, 3, 34, 4,]);
+		}
+
+		[Fact]
+		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Returns(4)
+				.Throws(new Exception("foo"))
+				.Returns(() => 2);
+
+			var result1 = sut.Object.Method2(1, 2);
+			var result2 = Record.Exception(() => sut.Object.Method2(2, 3));
+			var result3 = sut.Object.Method2(3, 4);
+
+			await That(result1).IsEqualTo(4);
+			await That(result2).HasMessage("foo");
+			await That(result3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method2(1, 2);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method2(1, 2);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
+
+			void Act()
+				=> sut.Object.Method2(1, 2);
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2");
 		}
 
 		[Fact]
@@ -834,6 +1001,67 @@ public class ReturnMethodSetupTests
 			}
 
 			await That(result).IsEqualTo([4, 3, 22, 4, 3, 40, 4, 3, 58, 4,]);
+		}
+
+		[Fact]
+		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(4)
+				.Throws(new Exception("foo"))
+				.Returns(() => 2);
+
+			var result1 = sut.Object.Method3(1, 2, 3);
+			var result2 = Record.Exception(() => sut.Object.Method3(2, 3, 4));
+			var result3 = sut.Object.Method3(3, 4, 5);
+
+			await That(result1).IsEqualTo(4);
+			await That(result2).HasMessage("foo");
+			await That(result3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method3(1, 2, 3);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method3(1, 2, 3);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
+
+			void Act()
+				=> sut.Object.Method3(1, 2, 3);
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3");
 		}
 
 		[Fact]
@@ -1177,6 +1405,67 @@ public class ReturnMethodSetupTests
 			}
 
 			await That(result).IsEqualTo([4, 3, 30, 4, 3, 60, 4, 3, 90, 4,]);
+		}
+
+		[Fact]
+		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(4)
+				.Throws(new Exception("foo"))
+				.Returns(() => 2);
+
+			var result1 = sut.Object.Method4(1, 2, 3, 4);
+			var result2 = Record.Exception(() => sut.Object.Method4(2, 3, 4, 5));
+			var result3 = sut.Object.Method4(3, 4, 5, 6);
+
+			await That(result1).IsEqualTo(4);
+			await That(result2).HasMessage("foo");
+			await That(result3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method4(1, 2, 3, 4);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method4(1, 2, 3, 4);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
+
+			void Act()
+				=> sut.Object.Method4(1, 2, 3, 4);
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4");
 		}
 
 		[Fact]
@@ -1551,6 +1840,67 @@ public class ReturnMethodSetupTests
 			}
 
 			await That(result).IsEqualTo([4, 3, 40, 4, 3, 85, 4, 3, 130, 4,]);
+		}
+
+		[Fact]
+		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(4)
+				.Throws(new Exception("foo"))
+				.Returns(() => 2);
+
+			var result1 = sut.Object.Method5(1, 2, 3, 4, 5);
+			var result2 = Record.Exception(() => sut.Object.Method5(2, 3, 4, 5, 6));
+			var result3 = sut.Object.Method5(3, 4, 5, 6, 7);
+
+			await That(result1).IsEqualTo(4);
+			await That(result2).HasMessage("foo");
+			await That(result3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
+
+			void Act()
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4-5");
 		}
 
 		[Fact]
