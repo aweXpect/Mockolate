@@ -1,4 +1,6 @@
-﻿namespace Mockerade.Checks;
+﻿using System.Diagnostics.Contracts;
+
+namespace Mockerade.Checks;
 
 /// <summary>
 ///     The expectation contains the matching invocations for verification.
@@ -17,39 +19,46 @@ public class CheckResult : ICheckResult
 	Invocation[] ICheckResult.Invocations => _invocations;
 
 	/// <summary>
-	/// …at least the expected number of <paramref name="times" />.
+	///     …at least the expected number of <paramref name="times" />.
 	/// </summary>
+	[Pure]
 	public bool AtLeast(int times) => _invocations.Length >= times;
 
 	/// <summary>
-	/// …at least once.
+	///     …at least once.
 	/// </summary>
+	[Pure]
 	public bool AtLeastOnce() => _invocations.Length >= 1;
 
 	/// <summary>
-	/// …at most the expected number of <paramref name="times" />.
+	///     …at most the expected number of <paramref name="times" />.
 	/// </summary>
+	[Pure]
 	public bool AtMost(int times) => _invocations.Length <= times;
 
 	/// <summary>
-	/// …at most once.
+	///     …at most once.
 	/// </summary>
+	[Pure]
 	public bool AtMostOnce() => _invocations.Length <= 1;
 
 	/// <summary>
-	/// …exactly the expected number of <paramref name="times" />.
+	///     …exactly the expected number of <paramref name="times" />.
 	/// </summary>
+	[Pure]
 	public bool Exactly(int times) => _invocations.Length == times;
 
 	/// <summary>
-	/// …exactly once.
+	///     …never.
 	/// </summary>
-	public bool Once() => _invocations.Length == 1;
+	[Pure]
+	public bool Never() => _invocations.Length == 0;
 
 	/// <summary>
-	/// …never.
+	///     …exactly once.
 	/// </summary>
-	public bool Never() => _invocations.Length == 0;
+	[Pure]
+	public bool Once() => _invocations.Length == 1;
 
 	/// <summary>
 	///     A property expectation returns the getter or setter <see cref="CheckResult"/> for the given <paramref name="propertyName"/>.
@@ -57,12 +66,14 @@ public class CheckResult : ICheckResult
 	public class Property<T>(IMockAccessed mockAccessed, string propertyName)
 	{
 		/// <summary>
-		/// The expectation for the property getter invocations.
+		///     The expectation for the property getter invocations.
 		/// </summary>
+		[Pure]
 		public CheckResult Getter() => new CheckResult(mockAccessed.PropertyGetter(propertyName));
 		/// <summary>
-		/// The expectation for the property setter invocations matching the specified <paramref name="value"/>.
+		///     The expectation for the property setter invocations matching the specified <paramref name="value"/>.
 		/// </summary>
+		[Pure]
 		public CheckResult Setter(With.Parameter<T> value) => new CheckResult(mockAccessed.PropertySetter(propertyName, value));
 	}
 
@@ -72,12 +83,14 @@ public class CheckResult : ICheckResult
 	public class Event<T>(IMockEvent mockEvent, string eventName)
 	{
 		/// <summary>
-		/// The expectation for the subscription invocations.
+		///     The expectation for the subscription invocations.
 		/// </summary>
+		[Pure]
 		public CheckResult Subscribed() => new CheckResult(mockEvent.Subscribed(eventName));
 		/// <summary>
-		/// The expectation for the unsubscription invocations.
+		///     The expectation for the unsubscription invocations.
 		/// </summary>
+		[Pure]
 		public CheckResult Unsubscribed() => new CheckResult(mockEvent.Unsubscribed(eventName));
 	}
 }
