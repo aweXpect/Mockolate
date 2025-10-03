@@ -5,10 +5,54 @@ namespace Mockerade.SourceGenerators.Entities;
 
 internal record Class
 {
+	private string GetTypeName(ITypeSymbol type, List<string> additionalNamespaces)
+	{
+		if (type is INamedTypeSymbol namedType)
+		{
+			if (namedType.IsGenericType)
+			{
+				additionalNamespaces.AddRange(namedType.TypeArguments
+					.Select(t => t.ContainingNamespace.ToString()));
+				return namedType.Name + "<" + string.Join(",", namedType.TypeArguments.Select(t => GetTypeName(t, additionalNamespaces))) + ">";
+			}
+			return namedType.SpecialType switch
+			{
+				SpecialType.System_Int32 => "int",
+				SpecialType.System_Int64 => "long",
+				SpecialType.System_Int16 => "short",
+				SpecialType.System_UInt32 => "uint",
+				SpecialType.System_UInt64 => "ulong",
+				SpecialType.System_UInt16 => "ushort",
+				_ => type.Name
+			};
+		}
+		else
+		{
+			return type.Name;
+		}
+	}
+	public static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
+	{
+		var current = type;
+		while (current != null)
+		{
+			yield return current;
+			if (current.TypeKind == TypeKind.Interface)
+			{
+				foreach (var @interface in current.Interfaces)
+				{
+					yield return @interface;
+				}
+			}
+			current = current.BaseType;
+		}
+	}
+
 	public Class(ITypeSymbol type)
 	{
+		List<string> additionalNamespaces = [];
 		Namespace = type.ContainingNamespace.ToString();
-		ClassName = type.Name;
+		ClassName = GetTypeName(type, additionalNamespaces);
 
 		if (type.ContainingType is not null)
 		{
@@ -17,30 +61,53 @@ internal record Class
 		}
 
 		IsInterface = type.TypeKind == TypeKind.Interface;
-		Methods = new EquatableArray<Method>(
-			type.GetMembers().OfType<IMethodSymbol>()
+		var y = GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IMethodSymbol>())
 				// Exclude getter/setter methods
-				.Where(x => x.AssociatedSymbol is null)
+				.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
+				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract).ToList();
+		var methods = GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IMethodSymbol>())
+				// Exclude getter/setter methods
+				.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
 				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => new Method(x))
-				.ToArray());
+				.Distinct()
+				.ToList();
+		for (int i = 0; i < methods.Count; i++)
+		{
+			var method = methods[i];
+			if (methods.Take(i)
+				.Any(m => 
+					m.Name == method.Name &&
+					m.Parameters.Count == method.Parameters.Count &&
+					m.Parameters.SequenceEqual(method.Parameters)))
+			{
+				methods[i] = method with { ExplicitImplementation = method.ContainingType };
+			}
+		}
+		Methods = new EquatableArray<Method>(methods.ToArray());
 		Properties = new EquatableArray<Property>(
-			type.GetMembers().OfType<IPropertySymbol>()
+			GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IPropertySymbol>())
+				.Where(x => !x.IsSealed)
 				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => new Property(x))
+				.Distinct()
 				.ToArray());
 		Events = new EquatableArray<Event>(
-			type.GetMembers().OfType<IEventSymbol>()
+			GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IEventSymbol>())
+				.Where(x => !x.IsSealed)
 				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => (x, (x.Type as INamedTypeSymbol)?.DelegateInvokeMethod))
 				.Where(x => x.DelegateInvokeMethod is not null)
 				.Select(x => new Event(x.x, x.DelegateInvokeMethod!))
+				.Distinct()
 				.ToArray());
+		AdditionalNamespaces = new EquatableArray<string>(additionalNamespaces.Distinct().ToArray());
 	}
 
 	public Type? ContainingType { get; }
 
 	public EquatableArray<Method> Methods { get; }
+	public EquatableArray<string> AdditionalNamespaces { get; }
 
 	public EquatableArray<Property> Properties { get; }
 
@@ -51,7 +118,10 @@ internal record Class
 	public string ClassName { get; }
 
 	public string GetClassNameWithoutDots()
-		=> ClassName.Replace(".", "");
+		=> ClassName
+		.Replace(".", "")
+		.Replace("<", "")
+		.Replace(">", "");
 
 	public string[] GetClassNamespaces() => EnumerateNamespaces().Distinct().OrderBy(n => n).ToArray();
 	internal IEnumerable<string> EnumerateNamespaces()

@@ -241,7 +241,7 @@ internal static partial class SourceGeneration
 					sb.Append("override ");
 				}
 				sb.Append(property.Type.GetMinimizedString(namespaces))
-					.Append(" ").Append(property.Name).AppendLine();
+					.Append(" ").Append((property.IndexerParameter is not null ? property.Name.Replace("[]", $"[{property.IndexerParameter.Value.Type.GetMinimizedString(namespaces)} {property.IndexerParameter.Value.Name}]") : property.Name)).AppendLine();
 			}
 			sb.AppendLine("\t\t{");
 			if (property.Getter != null && property.Getter.Value.Accessibility != Microsoft.CodeAnalysis.Accessibility.Private)
@@ -292,13 +292,22 @@ internal static partial class SourceGeneration
 			}
 			else
 			{
-				sb.Append("\t\t").Append(method.Accessibility.ToVisibilityString()).Append(' ');
-				if (!@class.IsInterface && method.UseOverride)
+				sb.Append("\t\t");
+				if (method.ExplicitImplementation is null)
 				{
-					sb.Append("override ");
+					sb.Append(method.Accessibility.ToVisibilityString()).Append(' ');
+					if (!@class.IsInterface && method.UseOverride)
+					{
+						sb.Append("override ");
+					}
+					sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
+						.Append(method.Name).Append('(');
 				}
-				sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
-					.Append(method.Name).Append('(');
+				else
+				{
+					sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
+						.Append(method.ExplicitImplementation).Append('.').Append(method.Name).Append('(');
+				}
 			}
 			int index = 0;
 			foreach (MethodParameter parameter in method.Parameters)

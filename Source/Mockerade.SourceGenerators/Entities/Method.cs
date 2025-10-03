@@ -1,10 +1,9 @@
-﻿using System.Text;
-using Mockerade.SourceGenerators.Internals;
+﻿using Mockerade.SourceGenerators.Internals;
 using Microsoft.CodeAnalysis;
 
 namespace Mockerade.SourceGenerators.Entities;
 
-internal readonly record struct Method
+internal record struct Method
 {
 	public Method(IMethodSymbol methodSymbol)
 	{
@@ -12,6 +11,7 @@ internal readonly record struct Method
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : new Type(methodSymbol.ReturnType);
 		Name = methodSymbol.Name;
+		ContainingType = methodSymbol.ContainingType.Name;
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 	}
@@ -21,5 +21,7 @@ internal readonly record struct Method
 	public Accessibility Accessibility { get; }
 	public Type ReturnType { get; }
 	public string Name { get; }
+	public string ContainingType { get; }
 	public EquatableArray<MethodParameter> Parameters { get; }
+	public string? ExplicitImplementation { get; set; }
 }

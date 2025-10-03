@@ -12,7 +12,7 @@ internal readonly record struct Type
 	internal Type(ITypeSymbol typeSymbol)
 	{
 		Fullname = typeSymbol.ToDisplayString();
-		Namespace = typeSymbol.ContainingNamespace.ToString();
+		Namespace = typeSymbol.ContainingNamespace?.ToString();
 	}
 
 	public string? Namespace { get; }

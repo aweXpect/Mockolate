@@ -12,10 +12,17 @@ internal readonly record struct Property
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
 		Name = propertySymbol.Name;
 		Type = new Type(propertySymbol.Type);
+		IsIndexer = propertySymbol.IsIndexer;
+		if (IsIndexer && propertySymbol.Parameters.Length > 0)
+		{
+			IndexerParameter = new MethodParameter(propertySymbol.Parameters[0]);
+		}
 		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod);
 		Setter = propertySymbol.SetMethod is null ? null : new Method(propertySymbol.SetMethod);
 	}
 
+	public bool IsIndexer { get; }
+	public MethodParameter? IndexerParameter { get; }
 	public Type Type { get; }
 
 	public Method? Setter { get; }

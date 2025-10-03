@@ -104,11 +104,11 @@ internal static partial class SourceGeneration
 	private static void AppendSetupExtensions(StringBuilder sb, Class @class, string[] namespaces, bool isProtected = false)
 	{
 		var methodPredicate = isProtected
-			? new Func<Method, bool>(e => e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Method, bool>(e => e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Method, bool>(e => e.ExplicitImplementation is null && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Method, bool>(e => e.ExplicitImplementation is null && e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 		var propertyPredicate = isProtected
-			? new Func<Property, bool>(e => e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Property, bool>(e => e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Property, bool>(e => !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Property, bool>(e => !e.IsIndexer && e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 		if (!@class.Properties.Any(propertyPredicate) &&
 			!@class.Methods.Any(methodPredicate))
 		{
@@ -128,7 +128,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Setup for the property <see cref=\"").Append(@class.ClassName).Append(".").Append(property.Name).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic PropertySetup<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ")
-				.Append(property.Name).AppendLine();
+				.Append((property.IndexerParameter is not null ? property.Name.Replace("[]", $"[With.Parameter<{property.IndexerParameter.Value.Type.GetMinimizedString(namespaces)}> {property.IndexerParameter.Value.Name}]") : property.Name)).AppendLine();
 
 			sb.AppendLine("\t\t{");
 			sb.AppendLine("\t\t\tget");
@@ -260,8 +260,8 @@ internal static partial class SourceGeneration
 	private static void AppendInvokedExtensions(StringBuilder sb, Class @class, string[] namespaces, bool isProtected = false)
 	{
 		var predicate = isProtected
-			? new Func<Method, bool>(e => e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Method, bool>(e => e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Method, bool>(e => e.ExplicitImplementation is null && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Method, bool>(e => e.ExplicitImplementation is null && e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 		if (!@class.Methods.Any(predicate))
 		{
 			return;
@@ -313,8 +313,8 @@ internal static partial class SourceGeneration
 	private static void AppendAccessedExtensions(StringBuilder sb, Class @class, string[] namespaces, bool isProtected = false)
 	{
 		var predicate = isProtected
-			? new Func<Property, bool>(e => e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Property, bool>(e => e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Property, bool>(e => !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Property, bool>(e => !e.IsIndexer && e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 		if (!@class.Properties.Any(predicate))
 		{
 			return;

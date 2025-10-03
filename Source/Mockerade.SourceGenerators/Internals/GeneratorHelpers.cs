@@ -11,7 +11,6 @@ internal static class GeneratorHelpers
 		{
 			Expression: MemberAccessExpressionSyntax
 			{
-				Expression: IdentifierNameSyntax { Identifier.Text: "Mock", },
 				Name: GenericNameSyntax { Identifier.Text : "For", }
 			}
 		};
@@ -26,7 +25,8 @@ internal static class GeneratorHelpers
 			ISymbol? symbol = semanticModel.GetSymbolInfo(syntaxNode).Symbol;
 			genericNameSyntax = value;
 			return symbol?.ContainingType.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
-			       symbol.ContainingType.ContainingNamespace.Name == "Mockerade";
+			       symbol.ContainingType.ContainingNamespace.Name == "Mockerade" &&
+				   symbol.ContainingType.Name == "Mock";
 		}
 
 		genericNameSyntax = null;
