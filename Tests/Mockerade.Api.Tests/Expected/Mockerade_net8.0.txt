@@ -263,7 +263,8 @@ namespace Mockerade.Checks
     public class MockInvocations
     {
         public MockInvocations() { }
-        public System.Collections.Generic.IReadOnlyList<Mockerade.Checks.Invocation> Invocations { get; }
+        public int Count { get; }
+        public System.Collections.Generic.IEnumerable<Mockerade.Checks.Invocation> Invocations { get; }
         public bool IsAlreadyInvoked { get; }
     }
     public class MockInvoked<T> : Mockerade.Checks.IMockInvoked
@@ -318,6 +319,26 @@ namespace Mockerade.Exceptions
     {
         public MockNotSetupException(string message) { }
         public MockNotSetupException(string message, System.Exception innerException) { }
+    }
+}
+namespace Mockerade.Monitor
+{
+    public abstract class MockMonitor
+    {
+        public MockMonitor(Mockerade.IMock mock) { }
+        protected Mockerade.Checks.MockInvocations Invocations { get; }
+        public System.IDisposable Run() { }
+    }
+    public static class MockMonitorExtensions
+    {
+        public static Mockerade.Monitor.MockMonitor<T> Monitor<T>(this Mockerade.Mock<T> mock) { }
+    }
+    public class MockMonitor<T> : Mockerade.Monitor.MockMonitor
+    {
+        public MockMonitor(Mockerade.IMock mock) { }
+        public Mockerade.Checks.MockAccessed<T> Accessed { get; }
+        public Mockerade.Checks.MockEvent<T> Event { get; }
+        public Mockerade.Checks.MockInvoked<T> Invoked { get; }
     }
 }
 namespace Mockerade.Setup
