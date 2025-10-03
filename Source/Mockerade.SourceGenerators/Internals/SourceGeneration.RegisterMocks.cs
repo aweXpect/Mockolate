@@ -10,7 +10,7 @@ internal static partial class SourceGeneration
 		var sb = new StringBuilder();
 		sb.AppendLine(Header);
 		sb.AppendLine("using System;");
-		foreach (string? @namespace in mocks.Select(x => x.MockClass.Namespace).Distinct().OrderBy(x => x))
+		foreach (string? @namespace in mocks.Select(x => x.MockClass.Namespace).Where(x => x != "System").Distinct().OrderBy(x => x))
 		{
 			sb.Append("using ").Append(@namespace).AppendLine(";");
 		}
