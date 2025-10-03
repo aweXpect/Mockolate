@@ -134,7 +134,7 @@ partial class Build
 				continue;
 			}
 
-			if (line.StartsWith('|') && line.Contains("_mockerade") && line.EndsWith('|'))
+			if (line.StartsWith('|') && line.Contains("_Mockerade", StringComparison.OrdinalIgnoreCase) && line.EndsWith('|'))
 			{
 				MakeLineBold(sb, line);
 				continue;
