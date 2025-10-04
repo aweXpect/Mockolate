@@ -26,7 +26,7 @@ partial class Build
 
 	Target MutationTests => _ => _
 		.DependsOn(MutationTestExecution)
-		.DependsOn(MutationComment);
+		.DependsOn(MutationTestComment);
 
 	Target MutationTestExecution => _ => _
 		.DependsOn(Compile)
@@ -108,7 +108,7 @@ partial class Build
 			}
 		});
 
-	Target MutationComment => _ => _
+	Target MutationTestComment => _ => _
 		.After(MutationTestExecution)
 		.OnlyWhenDynamic(() => GitHubActions.IsPullRequest)
 		.Executes(() =>
