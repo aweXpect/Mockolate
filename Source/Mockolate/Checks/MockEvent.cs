@@ -16,12 +16,12 @@ public class MockEvent<T>(MockInvocations invocations) : IMockEvent
 	public class Proxy(IMockEvent inner, MockInvocations invocations) : MockEvent<T>(invocations), IMockEvent
 	{
 		/// <inheritdoc cref="IMockEvent.Subscribed(string)" />
-		Invocation[] IMockEvent.Subscribed(string propertyName)
-			=> inner.Subscribed(propertyName);
+		IInvocation[] IMockEvent.Subscribed(string eventName)
+			=> inner.Subscribed(eventName);
 
 		/// <inheritdoc cref="IMockEvent.Unsubscribed(string)" />
-		Invocation[] IMockEvent.Unsubscribed(string propertyName)
-			=> inner.Unsubscribed(propertyName);
+		IInvocation[] IMockEvent.Unsubscribed(string eventName)
+			=> inner.Unsubscribed(eventName);
 	}
 
 	/// <summary>
@@ -30,29 +30,29 @@ public class MockEvent<T>(MockInvocations invocations) : IMockEvent
 	public class Protected(IMockEvent inner, MockInvocations invocations) : MockEvent<T>(invocations), IMockEvent
 	{
 		/// <inheritdoc cref="IMockEvent.Subscribed(string)" />
-		Invocation[] IMockEvent.Subscribed(string propertyName)
-			=> inner.Subscribed(propertyName);
+		IInvocation[] IMockEvent.Subscribed(string eventName)
+			=> inner.Subscribed(eventName);
 
 		/// <inheritdoc cref="IMockEvent.Unsubscribed(string)" />
-		Invocation[] IMockEvent.Unsubscribed(string propertyName)
-			=> inner.Unsubscribed(propertyName);
+		IInvocation[] IMockEvent.Unsubscribed(string eventName)
+			=> inner.Unsubscribed(eventName);
 	}
 
 	/// <inheritdoc cref="IMockEvent.Subscribed(string)"/>
-	Invocation[] IMockEvent.Subscribed(string propertyName)
+	IInvocation[] IMockEvent.Subscribed(string eventName)
 	{
 		return invocations.Invocations
 			.OfType<EventSubscription>()
-			.Where(@event => @event.Name.Equals(propertyName))
+			.Where(@event => @event.Name.Equals(eventName))
 			.ToArray();
 	}
 
 	/// <inheritdoc cref="IMockEvent.Unsubscribed(string)"/>
-	Invocation[] IMockEvent.Unsubscribed(string propertyName)
+	IInvocation[] IMockEvent.Unsubscribed(string eventName)
 	{
 		return invocations.Invocations
 			.OfType<EventUnsubscription>()
-			.Where(@event => @event.Name.Equals(propertyName))
+			.Where(@event => @event.Name.Equals(eventName))
 			.ToArray();
 	}
 }

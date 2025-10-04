@@ -5,7 +5,7 @@ using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Internals;
 
-#pragma warning disable S3779 // Cognitive Complexity of methods should not be too high
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class SourceGeneration
 {
 	public static string GetExtensionClass(string name, Class @class)
@@ -35,7 +35,7 @@ internal static partial class SourceGeneration
 		AppendAccessedExtensions(sb, @class, namespaces);
 		AppendEventExtensions(sb, @class, namespaces);
 
-		if (AppendProtectedMock(sb, @class, namespaces))
+		if (AppendProtectedMock(sb, @class))
 		{
 			AppendRaisesExtensions(sb, @class, namespaces, true);
 			AppendSetupExtensions(sb, @class, namespaces, true);
@@ -49,7 +49,7 @@ internal static partial class SourceGeneration
 		return sb.ToString();
 	}
 
-	private static bool AppendProtectedMock(StringBuilder sb, Class @class, string[] namespaces)
+	private static bool AppendProtectedMock(StringBuilder sb, Class @class)
 	{
 		if (@class.Events.All(@event => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
 			@class.Methods.All(method => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
@@ -368,4 +368,4 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 	}
 }
-#pragma warning restore S3779 // Cognitive Complexity of methods should not be too high
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

@@ -5,7 +5,7 @@ using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Internals;
 
-#pragma warning disable S3779 // Cognitive Complexity of methods should not be too high
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class SourceGeneration
 {
 	public static string GetMockClass(string name, MockClass mockClass)
@@ -28,15 +28,15 @@ internal static partial class SourceGeneration
 		sb.Append("public static class For").Append(name).AppendLine();
 		sb.AppendLine("{");
 		
-		AppendMock(sb, name, mockClass);
+		AppendMock(sb, mockClass);
 		sb.AppendLine();
 
-		AppendMockObject(sb, name, mockClass, namespaces);
+		AppendMockObject(sb, mockClass, namespaces);
 		if (mockClass.AdditionalImplementations.Any())
 		{
 			sb.AppendLine();
 
-			AppendMockExtensions(sb, name, mockClass, namespaces);
+			AppendMockExtensions(sb, mockClass);
 		}
 
 		sb.AppendLine("}");
@@ -44,7 +44,7 @@ internal static partial class SourceGeneration
 		return sb.ToString();
 	}
 
-	private static void AppendMock(StringBuilder sb, string name, MockClass mockClass)
+	private static void AppendMock(StringBuilder sb, MockClass mockClass)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.ClassName).Append("\" />");
@@ -72,7 +72,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine("\t}");
 	}
 
-	private static void AppendMockObject(StringBuilder sb, string name, MockClass mockClass, string[] namespaces)
+	private static void AppendMockObject(StringBuilder sb, MockClass mockClass, string[] namespaces)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     The actual mock object implementing <see cref=\"").Append(mockClass.ClassName).Append("\" />");
@@ -137,7 +137,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine("\t}");
 	}
 
-	private static void AppendMockExtensions(StringBuilder sb, string name, MockClass mockClass, string[] namespaces)
+	private static void AppendMockExtensions(StringBuilder sb, MockClass mockClass)
 	{
 		sb.Append("\textension(Mock<").Append(mockClass.ClassName);
 		foreach (var item in mockClass.AdditionalImplementations)
@@ -374,4 +374,4 @@ internal static partial class SourceGeneration
 		sb.Append("\t\t# endregion ").Append(@class.ClassName).AppendLine();
 	}
 }
-#pragma warning restore S3779 // Cognitive Complexity of methods should not be too high
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

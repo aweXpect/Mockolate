@@ -12,7 +12,7 @@ namespace Mockolate.Setup;
 public class VoidMethodSetup(string name) : MethodSetup
 {
 	private Action? _callback;
-	private List<Action> _returnCallbacks = [];
+	private readonly List<Action> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -87,7 +87,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : MethodSetup
 {
 	private Action<T1>? _callback;
-	private List<Action<T1>> _returnCallbacks = [];
+	private readonly List<Action<T1>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -197,7 +197,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, With.NamedParameter match2) : MethodSetup
 {
 	private Action<T1, T2>? _callback;
-	private List<Action<T1, T2>> _returnCallbacks = [];
+	private readonly List<Action<T1, T2>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -308,7 +308,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1, With.NamedParameter match2, With.NamedParameter match3) : MethodSetup
 {
 	private Action<T1, T2, T3>? _callback;
-	private List<Action<T1, T2, T3>> _returnCallbacks = [];
+	private readonly List<Action<T1, T2, T3>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -420,7 +420,7 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter match1, With.NamedParameter match2, With.NamedParameter match3, With.NamedParameter match4) : MethodSetup
 {
 	private Action<T1, T2, T3, T4>? _callback;
-	private List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
+	private readonly List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>

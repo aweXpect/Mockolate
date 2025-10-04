@@ -8,5 +8,5 @@ public interface ICheckResult
 	/// <summary>
 	/// The matching invocations.
 	/// </summary>
-	Invocation[] Invocations { get; }
+	IInvocation[] Invocations { get; }
 }

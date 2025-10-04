@@ -16,7 +16,7 @@ public abstract class MethodSetup : IMethodSetup
 	/// <inheritdoc cref="IMethodSetup.InvocationCount" />
 	int IMethodSetup.InvocationCount => _invocationCount;
 
-	internal TResult Invoke<TResult>(Invocation invocation, MockBehavior behavior)
+	internal TResult Invoke<TResult>(IInvocation invocation, MockBehavior behavior)
 	{
 		Interlocked.Increment(ref _invocationCount);
 		if (invocation is MethodInvocation methodInvocation)
@@ -28,7 +28,7 @@ public abstract class MethodSetup : IMethodSetup
 		throw new MockException("Invalid registered invocation for a method.");
 	}
 
-	internal void Invoke(Invocation invocation, MockBehavior behavior)
+	internal void Invoke(IInvocation invocation, MockBehavior behavior)
 	{
 		Interlocked.Increment(ref _invocationCount);
 		if (invocation is MethodInvocation methodInvocation)
@@ -75,8 +75,8 @@ public abstract class MethodSetup : IMethodSetup
 	/// </summary>
 	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior);
 
-	/// <inheritdoc cref="IMethodSetup.Matches(Invocation)" />
-	bool IMethodSetup.Matches(Invocation invocation)
+	/// <inheritdoc cref="IMethodSetup.Matches(IInvocation)" />
+	bool IMethodSetup.Matches(IInvocation invocation)
 		=> invocation is MethodInvocation methodInvocation && IsMatch(methodInvocation);
 
 	/// <summary>

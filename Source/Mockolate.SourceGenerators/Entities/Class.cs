@@ -61,10 +61,6 @@ internal record Class
 		}
 
 		IsInterface = type.TypeKind == TypeKind.Interface;
-		var y = GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IMethodSymbol>())
-				// Exclude getter/setter methods
-				.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
-				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract).ToList();
 		var methods = GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IMethodSymbol>())
 				// Exclude getter/setter methods
 				.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
@@ -141,6 +137,7 @@ internal record Class
 				yield return @namespace!;
 			}
 		}
+#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
 		foreach (Property property in Properties)
 		{
 			if (property.Type.Namespace != null)
@@ -155,6 +152,7 @@ internal record Class
 				yield return @event.Type.Namespace;
 			}
 		}
+#pragma warning restore S3267
 	}
 
 	internal string GetFullName(string name)
