@@ -8,7 +8,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<OutputType>exe</OutputType>
 		<LangVersion>preview</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -18,8 +17,18 @@
 		<NoWarn>701;1702;CA1845</NoWarn>
 	</PropertyGroup>
 
-	<ItemGroup>
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
+		<OutputType>exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<PackageReference Include="xunit.v3"/>
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+		<PackageReference Include="xunit"/>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="xunit.runner.visualstudio">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
