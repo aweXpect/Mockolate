@@ -112,16 +112,18 @@ public class MockGenerator : IIncrementalGenerator
 				}
 				result.Add((actualName, mockToGenerate));
 			}
-			foreach (var item in mockToGenerate.AdditionalImplementations
-				.Where(item => classNames.Add((item.Namespace, item.ClassName))))
+			foreach (var item in mockToGenerate.AdditionalImplementations)
 			{
-				int suffix = 1;
-				var actualName = item.GetClassNameWithoutDots();
-				while (result.Any(r => r.Name == actualName))
+				if (classNames.Add((item.Namespace, item.ClassName)))
 				{
-					actualName = $"{item.GetClassNameWithoutDots()}_{suffix++}";
+					int suffix = 1;
+					var actualName = item.GetClassNameWithoutDots();
+					while (result.Any(r => r.Name == actualName))
+					{
+						actualName = $"{item.GetClassNameWithoutDots()}_{suffix++}";
+					}
+					result.Add((actualName, item));
 				}
-				result.Add((actualName, item));
 			}
 		}
 
