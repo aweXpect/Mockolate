@@ -16,7 +16,7 @@ partial class Build
 		.Executes(() =>
 		{
 			SonarScannerTasks.SonarScannerBegin(s => s
-				.SetOrganization("mockerade")
+				.SetOrganization("awexpect")
 				.SetProjectKey("aweXpect_Mockolate")
 				.AddVSTestReports(TestResultsDirectory / "*.trx")
 				.AddOpenCoverPaths(TestResultsDirectory / "reports" / "OpenCover.xml")
