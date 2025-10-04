@@ -17,6 +17,7 @@ partial class Build
 	Project[] UnitTestProjects =>
 	[
 		Solution.Tests.Mockolate_Tests,
+		Solution.Tests.Mockolate_SourceGenerators_Tests,
 	];
 
 	Target DotNetUnitTests => _ => _
