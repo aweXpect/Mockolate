@@ -1,0 +1,118 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11018.127
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9CC57AD0-4984-4618-96EA-01FFFCCD84FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{99D141BC-CCD6-4EEF-99DA-828CEF1F8928}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+		LICENSE = LICENSE
+		Mockolate.sln.DotSettings = Mockolate.sln.DotSettings
+		nuget.config = nuget.config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1308040E-AFD3-4404-81E0-CC3746984A6F}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Directory.Build.props = Tests\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{5C4FFB48-47DD-438D-AB04-CAFBF307160C}"
+	ProjectSection(SolutionItems) = preProject
+		Source\Directory.Build.props = Source\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "Pipeline\Build.csproj", "{2BD65F2F-F433-4C2D-8A7E-600039B3B7E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{E448FD37-2BB0-4E46-9D2C-4CF3C6B8FA6D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{DFD09AAE-5400-42DA-BF53-A06D27390BC7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{7819A5D7-30A2-4ADE-A84B-C1791BF9F21F}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\ci-analysis.yml = .github\workflows\ci-analysis.yml
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate", "Source\Mockolate\Mockolate.csproj", "{DA22A80F-C009-481F-A8D0-FB895BEA525B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.Tests", "Tests\Mockolate.Tests\Mockolate.Tests.csproj", "{494F4BA5-02EE-4656-9D5E-BF9BB25C49E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.Api.Tests", "Tests\Mockolate.Api.Tests\Mockolate.Api.Tests.csproj", "{EA828A6C-5C01-4950-9F67-F53847CE3DDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.SourceGenerators", "Source\Mockolate.SourceGenerators\Mockolate.SourceGenerators.csproj", "{886F343E-59AE-44BF-B3CD-32716C96BAEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.ExampleTests", "Tests\Mockolate.ExampleTests\Mockolate.ExampleTests.csproj", "{AE6D610D-F141-CB0A-EBE4-EB44B2E60AE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{C9A4A9DF-72F3-404B-8616-32EB0D2A6482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.Benchmarks", "Benchmarks\Mockolate.Benchmarks\Mockolate.Benchmarks.csproj", "{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.SourceGenerators.Tests", "Tests\Mockolate.SourceGenerators.Tests\Mockolate.SourceGenerators.Tests.csproj", "{8440D1D6-AA09-7F54-4720-081A614D6B1E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2BD65F2F-F433-4C2D-8A7E-600039B3B7E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BD65F2F-F433-4C2D-8A7E-600039B3B7E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA22A80F-C009-481F-A8D0-FB895BEA525B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA22A80F-C009-481F-A8D0-FB895BEA525B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA22A80F-C009-481F-A8D0-FB895BEA525B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA22A80F-C009-481F-A8D0-FB895BEA525B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{494F4BA5-02EE-4656-9D5E-BF9BB25C49E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{494F4BA5-02EE-4656-9D5E-BF9BB25C49E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{494F4BA5-02EE-4656-9D5E-BF9BB25C49E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{494F4BA5-02EE-4656-9D5E-BF9BB25C49E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA828A6C-5C01-4950-9F67-F53847CE3DDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA828A6C-5C01-4950-9F67-F53847CE3DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA828A6C-5C01-4950-9F67-F53847CE3DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA828A6C-5C01-4950-9F67-F53847CE3DDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{886F343E-59AE-44BF-B3CD-32716C96BAEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{886F343E-59AE-44BF-B3CD-32716C96BAEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{886F343E-59AE-44BF-B3CD-32716C96BAEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{886F343E-59AE-44BF-B3CD-32716C96BAEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE6D610D-F141-CB0A-EBE4-EB44B2E60AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE6D610D-F141-CB0A-EBE4-EB44B2E60AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE6D610D-F141-CB0A-EBE4-EB44B2E60AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE6D610D-F141-CB0A-EBE4-EB44B2E60AE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1308040E-AFD3-4404-81E0-CC3746984A6F} = {99D141BC-CCD6-4EEF-99DA-828CEF1F8928}
+		{5C4FFB48-47DD-438D-AB04-CAFBF307160C} = {99D141BC-CCD6-4EEF-99DA-828CEF1F8928}
+		{2BD65F2F-F433-4C2D-8A7E-600039B3B7E8} = {E448FD37-2BB0-4E46-9D2C-4CF3C6B8FA6D}
+		{DFD09AAE-5400-42DA-BF53-A06D27390BC7} = {99D141BC-CCD6-4EEF-99DA-828CEF1F8928}
+		{7819A5D7-30A2-4ADE-A84B-C1791BF9F21F} = {DFD09AAE-5400-42DA-BF53-A06D27390BC7}
+		{494F4BA5-02EE-4656-9D5E-BF9BB25C49E8} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
+		{EA828A6C-5C01-4950-9F67-F53847CE3DDF} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
+		{AE6D610D-F141-CB0A-EBE4-EB44B2E60AE0} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
+		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5} = {C9A4A9DF-72F3-404B-8616-32EB0D2A6482}
+		{8440D1D6-AA09-7F54-4720-081A614D6B1E} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8D05DD33-55B6-4A6D-BB7A-68C505BBA67E}
+	EndGlobalSection
+EndGlobal

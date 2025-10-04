@@ -16,7 +16,7 @@ partial class Build
 
 	Project[] UnitTestProjects =>
 	[
-		Solution.Tests.Mockerade_Tests,
+		Solution.Tests.Mockolate_Tests,
 	];
 
 	Target DotNetUnitTests => _ => _

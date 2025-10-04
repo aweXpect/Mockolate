@@ -1,0 +1,570 @@
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/aweXpect/Mockolate.git")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
+namespace Mockolate
+{
+    public static class BaseClass
+    {
+        public static Mockolate.BaseClass.ConstructorParameters WithConstructorParameters(params object?[]? parameters) { }
+        public class ConstructorParameters : System.IEquatable<Mockolate.BaseClass.ConstructorParameters>
+        {
+            public ConstructorParameters(object?[] Parameters) { }
+            public object?[] Parameters { get; init; }
+        }
+    }
+    public interface IMock
+    {
+        Mockolate.MockBehavior Behavior { get; }
+        Mockolate.Checks.IMockInvoked Check { get; }
+        Mockolate.Checks.MockInvocations Invocations { get; }
+        Mockolate.Events.IMockRaises Raise { get; }
+        Mockolate.Setup.IMockSetup Setup { get; }
+        Mockolate.Setup.MethodSetupResult Execute(string methodName, params object?[]? parameters);
+        Mockolate.Setup.MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[]? parameters);
+        TResult Get<TResult>(string propertyName);
+        void Set(string propertyName, object? value);
+    }
+    public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
+    {
+        public MockBehavior() { }
+        public Mockolate.MockBehavior.IDefaultValueGenerator DefaultValueGenerator { get; init; }
+        public bool ThrowWhenNotSetup { get; init; }
+        public static Mockolate.MockBehavior Default { get; }
+        public interface IDefaultValueGenerator
+        {
+            T Generate<T>();
+        }
+    }
+    public abstract class Mock<T> : Mockolate.IMock
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+        public Mockolate.Checks.MockAccessed<T> Accessed { get; }
+        public Mockolate.Checks.MockEvent<T> Event { get; }
+        public Mockolate.Checks.MockInvoked<T> Invoked { get; }
+        public abstract T Object { get; }
+        public Mockolate.Events.MockRaises<T> Raise { get; }
+        public Mockolate.Setup.MockSetups<T> Setup { get; }
+        protected TObject TryCreate<TObject>(Mockolate.BaseClass.ConstructorParameters? constructorParameters) { }
+        public static T op_Implicit(Mockolate.Mock<T> mock) { }
+    }
+    public abstract class Mock<T1, T2> : Mockolate.Mock<T1>
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+    }
+    public abstract class Mock<T1, T2, T3> : Mockolate.Mock<T1, T2>
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+    }
+    public abstract class Mock<T1, T2, T3, T4> : Mockolate.Mock<T1, T2, T3>
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+    }
+    public abstract class Mock<T1, T2, T3, T4, T5> : Mockolate.Mock<T1, T2, T3, T4>
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+    }
+    public abstract class Mock<T1, T2, T3, T4, T5, T6> : Mockolate.Mock<T1, T2, T3, T4, T5>
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+    }
+    public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : Mockolate.Mock<T1, T2, T3, T4, T5, T6>
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+    }
+    public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : Mockolate.Mock<T1, T2, T3, T4, T5, T6, T7>
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+    }
+    public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> : Mockolate.Mock<T1, T2, T3, T4, T5, T6, T7, T8>
+    {
+        protected Mock(Mockolate.MockBehavior behavior) { }
+    }
+    public class ProtectedMock<T> : Mockolate.IMock
+    {
+        public ProtectedMock(Mockolate.Mock<T> mock) { }
+        public Mockolate.Checks.MockAccessed<T>.Protected Accessed { get; }
+        public Mockolate.Checks.MockEvent<T>.Protected Event { get; }
+        public Mockolate.Checks.MockInvoked<T>.Protected Invoked { get; }
+        public Mockolate.Events.MockRaises<T>.Protected Raise { get; }
+        public Mockolate.Setup.MockSetups<T>.Protected Setup { get; }
+    }
+    public static class ReturnsAsyncExtensions
+    {
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> setup, System.Func<T1, TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1> setup, System.Func<T1, TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> setup, System.Func<T1, T2, TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2> setup, System.Func<T1, T2, TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> setup, System.Func<T1, T2, T3, TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3> setup, System.Func<T1, T2, T3, TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> setup, System.Func<T1, T2, T3, T4, TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> setup, TReturn returnValue) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> setup, System.Func<T1, T2, T3, T4, TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> setup, TReturn returnValue) { }
+    }
+    public static class With
+    {
+        public static Mockolate.With.Parameter<T> Any<T>() { }
+        public static Mockolate.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate) { }
+        public static Mockolate.With.InvokedOutParameter<T> Out<T>() { }
+        public static Mockolate.With.OutParameter<T> Out<T>(System.Func<T> setter) { }
+        public static Mockolate.With.InvokedRefParameter<T> Ref<T>() { }
+        public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, T> setter) { }
+        public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
+        public class InvokedOutParameter<T> : Mockolate.With.Parameter
+        {
+            public InvokedOutParameter() { }
+            public override bool Matches(object? value) { }
+        }
+        public class InvokedRefParameter<T> : Mockolate.With.Parameter
+        {
+            public InvokedRefParameter() { }
+            public override bool Matches(object? value) { }
+        }
+        public class NamedParameter : System.IEquatable<Mockolate.With.NamedParameter>
+        {
+            public NamedParameter(string Name, Mockolate.With.Parameter Parameter) { }
+            public string Name { get; init; }
+            public Mockolate.With.Parameter Parameter { get; init; }
+        }
+        public class OutParameter<T> : Mockolate.With.Parameter
+        {
+            public OutParameter(System.Func<T> setter) { }
+            public T GetValue() { }
+            public override bool Matches(object? value) { }
+        }
+        public abstract class Parameter
+        {
+            protected Parameter() { }
+            public abstract bool Matches(object? value);
+        }
+        public abstract class Parameter<T> : Mockolate.With.Parameter
+        {
+            protected Parameter() { }
+            protected abstract bool Matches(T value);
+            public override bool Matches(object? value) { }
+            public static Mockolate.With.Parameter<T> op_Implicit(T value) { }
+        }
+        public class RefParameter<T> : Mockolate.With.Parameter
+        {
+            public RefParameter(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
+            public T GetValue(T value) { }
+            public override bool Matches(object? value) { }
+        }
+    }
+}
+namespace Mockolate.Checks
+{
+    public class CheckResult : Mockolate.Checks.ICheckResult
+    {
+        public CheckResult(Mockolate.Checks.Invocation[] invocations) { }
+        public bool AtLeast(int times) { }
+        public bool AtLeastOnce() { }
+        public bool AtMost(int times) { }
+        public bool AtMostOnce() { }
+        public bool Exactly(int times) { }
+        public bool Never() { }
+        public bool Once() { }
+        public class Event<T>
+        {
+            public Event(Mockolate.Checks.IMockEvent mockEvent, string eventName) { }
+            public Mockolate.Checks.CheckResult Subscribed() { }
+            public Mockolate.Checks.CheckResult Unsubscribed() { }
+        }
+        public class Property<T>
+        {
+            public Property(Mockolate.Checks.IMockAccessed mockAccessed, string propertyName) { }
+            public Mockolate.Checks.CheckResult Getter() { }
+            public Mockolate.Checks.CheckResult Setter(Mockolate.With.Parameter<T> value) { }
+        }
+    }
+    public class EventSubscription : Mockolate.Checks.Invocation
+    {
+        public EventSubscription(string name, object? target, System.Reflection.MethodInfo method) { }
+        public System.Reflection.MethodInfo Method { get; }
+        public string Name { get; }
+        public object? Target { get; }
+    }
+    public class EventUnsubscription : Mockolate.Checks.Invocation
+    {
+        public EventUnsubscription(string name, object? target, System.Reflection.MethodInfo method) { }
+        public System.Reflection.MethodInfo Method { get; }
+        public string Name { get; }
+        public object? Target { get; }
+    }
+    public interface ICheckResult
+    {
+        Mockolate.Checks.Invocation[] Invocations { get; }
+    }
+    public interface IMockAccessed
+    {
+        Mockolate.Checks.Invocation[] PropertyGetter(string propertyName);
+        Mockolate.Checks.Invocation[] PropertySetter(string propertyName, Mockolate.With.Parameter value);
+    }
+    public interface IMockEvent
+    {
+        Mockolate.Checks.Invocation[] Subscribed(string eventName);
+        Mockolate.Checks.Invocation[] Unsubscribed(string eventName);
+    }
+    public interface IMockInvoked
+    {
+        Mockolate.Checks.Invocation[] Method(string methodName, params Mockolate.With.Parameter[] parameters);
+    }
+    public class Invocation
+    {
+        public Invocation() { }
+    }
+    public class MethodInvocation : Mockolate.Checks.Invocation
+    {
+        public MethodInvocation(string name, object?[] parameters) { }
+        public string Name { get; }
+        public object?[] Parameters { get; }
+    }
+    public class MockAccessed<T> : Mockolate.Checks.IMockAccessed
+    {
+        public MockAccessed(Mockolate.Checks.MockInvocations invocations) { }
+        public class Protected : Mockolate.Checks.MockAccessed<T>, Mockolate.Checks.IMockAccessed
+        {
+            public Protected(Mockolate.Checks.IMockAccessed inner, Mockolate.Checks.MockInvocations invocations) { }
+        }
+        public class Proxy : Mockolate.Checks.MockAccessed<T>, Mockolate.Checks.IMockAccessed
+        {
+            public Proxy(Mockolate.Checks.IMockAccessed inner, Mockolate.Checks.MockInvocations invocations) { }
+        }
+    }
+    public class MockEvent<T> : Mockolate.Checks.IMockEvent
+    {
+        public MockEvent(Mockolate.Checks.MockInvocations invocations) { }
+        public class Protected : Mockolate.Checks.MockEvent<T>, Mockolate.Checks.IMockEvent
+        {
+            public Protected(Mockolate.Checks.IMockEvent inner, Mockolate.Checks.MockInvocations invocations) { }
+        }
+        public class Proxy : Mockolate.Checks.MockEvent<T>, Mockolate.Checks.IMockEvent
+        {
+            public Proxy(Mockolate.Checks.IMockEvent inner, Mockolate.Checks.MockInvocations invocations) { }
+        }
+    }
+    public class MockInvocations
+    {
+        public MockInvocations() { }
+        public int Count { get; }
+        public System.Collections.Generic.IEnumerable<Mockolate.Checks.Invocation> Invocations { get; }
+        public bool IsAlreadyInvoked { get; }
+    }
+    public class MockInvoked<T> : Mockolate.Checks.IMockInvoked
+    {
+        public MockInvoked(Mockolate.Checks.MockInvocations invocations) { }
+        public class Protected : Mockolate.Checks.MockInvoked<T>, Mockolate.Checks.IMockInvoked
+        {
+            public Protected(Mockolate.Checks.IMockInvoked inner, Mockolate.Checks.MockInvocations invocations) { }
+        }
+        public class Proxy : Mockolate.Checks.MockInvoked<T>, Mockolate.Checks.IMockInvoked
+        {
+            public Proxy(Mockolate.Checks.IMockInvoked inner, Mockolate.Checks.MockInvocations invocations) { }
+        }
+    }
+    public class PropertyGetterInvocation : Mockolate.Checks.Invocation
+    {
+        public PropertyGetterInvocation(string propertyName) { }
+        public string Name { get; }
+    }
+    public class PropertySetterInvocation : Mockolate.Checks.Invocation
+    {
+        public PropertySetterInvocation(string propertyName, object? value) { }
+        public string Name { get; }
+        public object? Value { get; }
+    }
+}
+namespace Mockolate.Events
+{
+    public interface IMockRaises
+    {
+        void AddEvent(string name, object? target, System.Reflection.MethodInfo? method);
+        void Raise(string eventName, params object?[] parameters);
+        void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method);
+    }
+    public class MockRaises<T> : Mockolate.Events.IMockRaises
+    {
+        public MockRaises(Mockolate.Setup.IMockSetup setup, Mockolate.Checks.MockInvocations invocations) { }
+        public class Protected : Mockolate.Events.MockRaises<T>, Mockolate.Events.IMockRaises
+        {
+            public Protected(Mockolate.Events.IMockRaises inner, Mockolate.Setup.IMockSetup setup, Mockolate.Checks.MockInvocations invocations) { }
+        }
+    }
+}
+namespace Mockolate.Exceptions
+{
+    public class MockException : System.Exception
+    {
+        public MockException(string message) { }
+        public MockException(string message, System.Exception innerException) { }
+    }
+    public class MockNotSetupException : Mockolate.Exceptions.MockException
+    {
+        public MockNotSetupException(string message) { }
+        public MockNotSetupException(string message, System.Exception innerException) { }
+    }
+}
+namespace Mockolate.Monitor
+{
+    public abstract class MockMonitor
+    {
+        public MockMonitor(Mockolate.IMock mock) { }
+        protected Mockolate.Checks.MockInvocations Invocations { get; }
+        public System.IDisposable Run() { }
+    }
+    public static class MockMonitorExtensions
+    {
+        public static Mockolate.Monitor.MockMonitor<T> Monitor<T>(this Mockolate.Mock<T> mock) { }
+    }
+    public class MockMonitor<T> : Mockolate.Monitor.MockMonitor
+    {
+        public MockMonitor(Mockolate.IMock mock) { }
+        public Mockolate.Checks.MockAccessed<T> Accessed { get; }
+        public Mockolate.Checks.MockEvent<T> Event { get; }
+        public Mockolate.Checks.MockInvoked<T> Invoked { get; }
+    }
+}
+namespace Mockolate.Setup
+{
+    public interface IMethodSetup
+    {
+        int InvocationCount { get; }
+        bool Matches(Mockolate.Checks.Invocation invocation);
+        T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
+        T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
+    }
+    public interface IMockSetup
+    {
+        Mockolate.IMock Mock { get; }
+        void AddEvent(string eventName, object? target, System.Reflection.MethodInfo method);
+        System.Collections.Generic.IEnumerable<System.ValueTuple<object?, System.Reflection.MethodInfo>> GetEventHandlers(string eventName);
+        void RegisterMethod(Mockolate.Setup.MethodSetup methodSetup);
+        void RegisterProperty(string propertyName, Mockolate.Setup.PropertySetup propertySetup);
+        void RemoveEvent(string eventName, object? target, System.Reflection.MethodInfo method);
+    }
+    public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
+    {
+        protected MethodSetup() { }
+        protected abstract void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior);
+        protected abstract TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior);
+        protected abstract bool IsMatch(Mockolate.Checks.MethodInvocation invocation);
+        protected abstract T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
+        protected abstract T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
+        protected static bool HasOutParameter<T>(Mockolate.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.With.OutParameter<T>? parameter) { }
+        protected static bool HasRefParameter<T>(Mockolate.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.With.RefParameter<T>? parameter) { }
+        protected static bool Matches(Mockolate.With.NamedParameter[] namedParameters, object?[] values) { }
+        protected static bool TryCast<T>(object? value, out T result, Mockolate.MockBehavior behavior) { }
+    }
+    public class MethodSetupResult
+    {
+        public MethodSetupResult(Mockolate.Setup.IMethodSetup? setup, Mockolate.MockBehavior behavior) { }
+        public T SetOutParameter<T>(string parameterName) { }
+        public T SetRefParameter<T>(string parameterName, T value) { }
+    }
+    public class MethodSetupResult<TResult> : Mockolate.Setup.MethodSetupResult
+    {
+        public MethodSetupResult(Mockolate.Setup.IMethodSetup? setup, Mockolate.MockBehavior behavior, TResult result) { }
+        public TResult Result { get; }
+    }
+    public class MockSetups<T> : Mockolate.Setup.IMockSetup
+    {
+        public MockSetups(Mockolate.IMock mock) { }
+        public class Protected : Mockolate.Setup.MockSetups<T>, Mockolate.Setup.IMockSetup
+        {
+            public Protected(Mockolate.Setup.IMockSetup inner) { }
+        }
+        public class Proxy : Mockolate.Setup.MockSetups<T>, Mockolate.Setup.IMockSetup
+        {
+            public Proxy(Mockolate.Setup.IMockSetup inner) { }
+        }
+    }
+    public abstract class PropertySetup
+    {
+        protected PropertySetup() { }
+        public int GetterInvocationCount { get; }
+        public int SetterInvocationCount { get; }
+        protected abstract TResult InvokeGetter<TResult>();
+        protected abstract void InvokeSetter(object? value);
+    }
+    public class PropertySetup<T> : Mockolate.Setup.PropertySetup
+    {
+        public PropertySetup() { }
+        public Mockolate.Setup.PropertySetup<T> InitializeWith(T value) { }
+        protected override TResult InvokeGetter<TResult>() { }
+        protected override void InvokeSetter(object? value) { }
+        public Mockolate.Setup.PropertySetup<T> OnGet(System.Action callback) { }
+        public Mockolate.Setup.PropertySetup<T> OnSet(System.Action<T> callback) { }
+    }
+    public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup
+    {
+        public ReturnMethodSetup(string name) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn> Callback(System.Action callback) { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn> Returns(System.Func<TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn> Returns(TReturn returnValue) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn> Throws(System.Exception exception) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn> Throws(System.Func<System.Exception> callback) { }
+    }
+    public class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup
+    {
+        public ReturnMethodSetup(string name, Mockolate.With.NamedParameter match1) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Callback(System.Action callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Callback(System.Action<T1> callback) { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Returns(System.Func<TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Returns(System.Func<T1, TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Returns(TReturn returnValue) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Exception exception) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Func<T1, System.Exception> callback) { }
+    }
+    public class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup
+    {
+        public ReturnMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Callback(System.Action callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Callback(System.Action<T1, T2> callback) { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Returns(System.Func<TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Returns(System.Func<T1, T2, TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Exception exception) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback) { }
+    }
+    public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup
+    {
+        public ReturnMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2, Mockolate.With.NamedParameter match3) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Callback(System.Action callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Callback(System.Action<T1, T2, T3> callback) { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Returns(System.Func<TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Returns(System.Func<T1, T2, T3, TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Exception exception) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback) { }
+    }
+    public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup
+    {
+        public ReturnMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2, Mockolate.With.NamedParameter match3, Mockolate.With.NamedParameter match4) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Callback(System.Action callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Callback(System.Action<T1, T2, T3, T4> callback) { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(System.Func<TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Exception exception) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback) { }
+    }
+    public class VoidMethodSetup : Mockolate.Setup.MethodSetup
+    {
+        public VoidMethodSetup(string name) { }
+        public Mockolate.Setup.VoidMethodSetup Callback(System.Action callback) { }
+        public Mockolate.Setup.VoidMethodSetup DoesNotThrow() { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.VoidMethodSetup Throws(System.Exception exception) { }
+        public Mockolate.Setup.VoidMethodSetup Throws(System.Func<System.Exception> callback) { }
+    }
+    public class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup
+    {
+        public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1) { }
+        public Mockolate.Setup.VoidMethodSetup<T1> Callback(System.Action callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1> Callback(System.Action<T1> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1> DoesNotThrow() { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.VoidMethodSetup<T1> Throws(System.Exception exception) { }
+        public Mockolate.Setup.VoidMethodSetup<T1> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1> Throws(System.Func<T1, System.Exception> callback) { }
+    }
+    public class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup
+    {
+        public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2> Callback(System.Action callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2> Callback(System.Action<T1, T2> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2> DoesNotThrow() { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2> Throws(System.Exception exception) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2> Throws(System.Func<T1, T2, System.Exception> callback) { }
+    }
+    public class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup
+    {
+        public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2, Mockolate.With.NamedParameter match3) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Callback(System.Action callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Callback(System.Action<T1, T2, T3> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> DoesNotThrow() { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Exception exception) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback) { }
+    }
+    public class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup
+    {
+        public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2, Mockolate.With.NamedParameter match3, Mockolate.With.NamedParameter match4) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Callback(System.Action callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Callback(System.Action<T1, T2, T3, T4> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> DoesNotThrow() { }
+        protected override void ExecuteCallback(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Checks.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Checks.MethodInvocation invocation) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Exception exception) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback) { }
+    }
+}

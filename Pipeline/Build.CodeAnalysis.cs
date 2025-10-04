@@ -17,7 +17,7 @@ partial class Build
 		{
 			SonarScannerTasks.SonarScannerBegin(s => s
 				.SetOrganization("mockerade")
-				.SetProjectKey("Mockerade_Mockerade")
+				.SetProjectKey("aweXpect_Mockolate")
 				.AddVSTestReports(TestResultsDirectory / "*.trx")
 				.AddOpenCoverPaths(TestResultsDirectory / "reports" / "OpenCover.xml")
 				.SetPullRequestOrBranchName(GitHubActions, GitVersion)

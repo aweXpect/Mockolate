@@ -45,7 +45,7 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.Mockerade, [Solution.Tests.Mockerade_Tests,]
+					Solution.Mockolate, [Solution.Tests.Mockolate_Tests,]
 				},
 			};
 
@@ -64,7 +64,7 @@ partial class Build
 				                      {
 				                      	"stryker-config": {
 				                      		"project-info": {
-				                      			"name": "github.com/Mockerade/Mockerade",
+				                      			"name": "github.com/aweXpect/Mockolate",
 				                      			"module": "{{project.Key.Name}}",
 				                      			"version": "{{branchName}}"
 				                      		},
@@ -137,7 +137,7 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.Mockerade, [Solution.Tests.Mockerade_Tests,]
+					Solution.Mockolate, [Solution.Tests.Mockolate_Tests,]
 				},
 			};
 
@@ -152,7 +152,7 @@ partial class Build
 					Credentials tokenAuth = new(GithubToken);
 					gitHubClient.Credentials = tokenAuth;
 					IReadOnlyList<IssueComment> comments =
-						await gitHubClient.Issue.Comment.GetAllForIssue("Mockerade", "Mockerade", prId);
+						await gitHubClient.Issue.Comment.GetAllForIssue("aweXpect", "Mockolate", prId);
 					long? commentId = null;
 					Log.Information($"Found {comments.Count} comments");
 					foreach (IssueComment comment in comments)
@@ -167,12 +167,12 @@ partial class Build
 					if (commentId == null)
 					{
 						Log.Information($"Create comment:\n{body}");
-						await gitHubClient.Issue.Comment.Create("Mockerade", "Mockerade", prId, body);
+						await gitHubClient.Issue.Comment.Create("aweXpect", "Mockolate", prId, body);
 					}
 					else
 					{
 						Log.Information($"Update comment:\n{body}");
-						await gitHubClient.Issue.Comment.Update("Mockerade", "Mockerade", commentId.Value, body);
+						await gitHubClient.Issue.Comment.Update("aweXpect", "Mockolate", commentId.Value, body);
 					}
 				}
 			}

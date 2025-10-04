@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
@@ -50,10 +50,10 @@ public static class BuildExtensions
 		}
 
 		using HttpClient client = new();
-		client.DefaultRequestHeaders.UserAgent.ParseAdd("Mockerade");
+		client.DefaultRequestHeaders.UserAgent.ParseAdd("Mockolate");
 		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
 		HttpResponseMessage response = await client.GetAsync(
-			$"https://api.github.com/repos/Mockerade/Mockerade/actions/runs/{runId}/artifacts");
+			$"https://api.github.com/repos/aweXpect/Mockolate/actions/runs/{runId}/artifacts");
 
 		string responseContent = await response.Content.ReadAsStringAsync();
 		if (!response.IsSuccessStatusCode)
@@ -72,7 +72,7 @@ public static class BuildExtensions
 				{
 					long artifactId = artifact.GetProperty("id").GetInt64();
 					HttpResponseMessage fileResponse = await client.GetAsync(
-						$"https://api.github.com/repos/Mockerade/Mockerade/actions/artifacts/{artifactId}/zip");
+						$"https://api.github.com/repos/aweXpect/Mockolate/actions/artifacts/{artifactId}/zip");
 					if (fileResponse.IsSuccessStatusCode)
 					{
 						using ZipArchive archive = new(await fileResponse.Content.ReadAsStreamAsync());

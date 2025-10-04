@@ -3,7 +3,7 @@
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageVersion Include="Mockerade" Version="0.3.0"/>
+		<PackageVersion Include="Mockolate" Version="0.3.0"/>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="IsExternalInit" Version="1.0.3"/>

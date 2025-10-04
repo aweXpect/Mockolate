@@ -22,13 +22,13 @@ partial class Build
 			benchmarkDirectory.CreateOrCleanDirectory();
 
 			DotNetBuild(s => s
-				.SetProjectFile(Solution.Benchmarks.Mockerade_Benchmarks)
+				.SetProjectFile(Solution.Benchmarks.Mockolate_Benchmarks)
 				.SetConfiguration(Configuration.Release)
 				.EnableNoLogo());
 
 			DotNet(
-				$"{Solution.Benchmarks.Mockerade_Benchmarks.Name}.dll --exporters json --filter * --artifacts \"{benchmarkDirectory}\"",
-				Solution.Benchmarks.Mockerade_Benchmarks.Directory / "bin" / "Release");
+				$"{Solution.Benchmarks.Mockolate_Benchmarks.Name}.dll --exporters json --filter * --artifacts \"{benchmarkDirectory}\"",
+				Solution.Benchmarks.Mockolate_Benchmarks.Directory / "bin" / "Release");
 		});
 
 	Target BenchmarkResult => _ => _
@@ -36,14 +36,14 @@ partial class Build
 		.Executes(async () =>
 		{
 			if (!File.Exists(ArtifactsDirectory / "Benchmarks" / "results" /
-															 "Mockerade.Benchmarks.HappyCaseBenchmarks-report-github.md"))
+															 "Mockolate.Benchmarks.HappyCaseBenchmarks-report-github.md"))
 			{
 				Log.Information("Skip benchmark result, because no report file was generated.");
 				return;
 			}
 
 			string fileContent = await File.ReadAllTextAsync(ArtifactsDirectory / "Benchmarks" / "results" /
-			                                                 "Mockerade.Benchmarks.HappyCaseBenchmarks-report-github.md");
+			                                                 "Mockolate.Benchmarks.HappyCaseBenchmarks-report-github.md");
 			Log.Information("Report:\n {FileContent}", fileContent);
 			if (GitHubActions?.IsPullRequest == true)
 			{
@@ -56,7 +56,7 @@ partial class Build
 		{
 			await "Benchmarks".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
 			if (!File.Exists(ArtifactsDirectory / "Benchmarks" / "results" /
-															 "Mockerade.Benchmarks.HappyCaseBenchmarks-report-github.md"))
+															 "Mockolate.Benchmarks.HappyCaseBenchmarks-report-github.md"))
 			{
 				Log.Information("Skip benchmark comment, because no report file was generated.");
 				return;
@@ -77,7 +77,7 @@ partial class Build
 				Credentials tokenAuth = new(GithubToken);
 				gitHubClient.Credentials = tokenAuth;
 				IReadOnlyList<IssueComment> comments =
-					await gitHubClient.Issue.Comment.GetAllForIssue("Mockerade", "Mockerade", prId);
+					await gitHubClient.Issue.Comment.GetAllForIssue("aweXpect", "Mockolate", prId);
 				long? commentId = null;
 				Log.Information($"Found {comments.Count} comments");
 				foreach (IssueComment comment in comments)
@@ -92,12 +92,12 @@ partial class Build
 				if (commentId == null)
 				{
 					Log.Information($"Create comment:\n{body}");
-					await gitHubClient.Issue.Comment.Create("Mockerade", "Mockerade", prId, body);
+					await gitHubClient.Issue.Comment.Create("aweXpect", "Mockolate", prId, body);
 				}
 				else
 				{
 					Log.Information($"Update comment:\n{body}");
-					await gitHubClient.Issue.Comment.Update("Mockerade", "Mockerade", commentId.Value, body);
+					await gitHubClient.Issue.Comment.Update("aweXpect", "Mockolate", commentId.Value, body);
 				}
 			}
 		});
@@ -109,7 +109,7 @@ partial class Build
 	string CreateBenchmarkCommentBody()
 	{
 		string[] fileContent = File.ReadAllLines(ArtifactsDirectory / "Benchmarks" / "results" /
-		                                         "Mockerade.Benchmarks.HappyCaseBenchmarks-report-github.md");
+		                                         "Mockolate.Benchmarks.HappyCaseBenchmarks-report-github.md");
 		StringBuilder sb = new();
 		sb.AppendLine("## :rocket: Benchmark Results");
 		sb.AppendLine("<details>");
@@ -134,7 +134,7 @@ partial class Build
 				continue;
 			}
 
-			if (line.StartsWith('|') && line.Contains("_Mockerade", StringComparison.OrdinalIgnoreCase) && line.EndsWith('|'))
+			if (line.StartsWith('|') && line.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase) && line.EndsWith('|'))
 			{
 				MakeLineBold(sb, line);
 				continue;

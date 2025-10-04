@@ -20,6 +20,6 @@ partial class Build
 				.AddReports(TestResultsDirectory / "**/coverage.cobertura.xml")
 				.AddReportTypes(ReportTypes.OpenCover)
 				.AddFileFilters("-*.g.cs")
-				.SetAssemblyFilters("+Mockerade*"));
+				.SetAssemblyFilters("+Mockolate*"));
 		});
 }

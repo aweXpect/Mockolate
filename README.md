@@ -1,11 +1,11 @@
-# Mockerade
+# Mockolate
 
-[![Nuget](https://img.shields.io/nuget/v/Mockerade)](https://www.nuget.org/packages/Mockerade)
-[![Build](https://github.com/Mockerade/Mockerade/actions/workflows/build.yml/badge.svg)](https://github.com/Mockerade/Mockerade/actions/workflows/build.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Mockerade_Mockerade&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Mockerade_Mockerade)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Mockerade_Mockerade&metric=coverage)](https://sonarcloud.io/summary/overall?id=Mockerade_Mockerade)
+[![Nuget](https://img.shields.io/nuget/v/Mockolate)](https://www.nuget.org/packages/Mockolate)
+[![Build](https://github.com/aweXpect/Mockolate/actions/workflows/build.yml/badge.svg)](https://github.com/aweXpect/Mockolate/actions/workflows/build.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=aweXpect_Mockolate&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=aweXpect_Mockolate)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=aweXpect_Mockolate&metric=coverage)](https://sonarcloud.io/summary/overall?id=aweXpect_Mockolate)
 
-**Mockerade** is a modern, strongly-typed mocking library for .NET, powered by source generators. It enables fast, compile-time validated mocks for interfaces and classes, supporting .NET Standard 2.0, .NET 8, .NET 10, and .NET Framework 4.8.
+**Mockolate** is a modern, strongly-typed mocking library for .NET, powered by source generators. It enables fast, compile-time validated mocks for interfaces and classes, supporting .NET Standard 2.0, .NET 8, .NET 10, and .NET Framework 4.8.
 
 - **Source generator-based**: No runtime proxy generation, fast and reliable.
 - **Strongly-typed**: Setup and verify mocks with full IntelliSense and compile-time safety.
@@ -14,14 +14,14 @@
 
 ## Getting Started
 
-1. Install the [`Mockerade`](https://www.nuget.org/packages/Mockerade) nuget package
+1. Install the [`Mockolate`](https://www.nuget.org/packages/Mockolate) nuget package
    ```ps
-   dotnet add package Mockerade
+   dotnet add package Mockolate
    ```
 
 2. Create a mock
    ```csharp
-   using Mockerade;
+   using Mockolate;
    
    var mock = Mock.For<IMyInterface>();
    ```
@@ -43,7 +43,7 @@ mock.Setup.Property.Get().Returns(42);
 
 ### Argument Matching
 
-Mockerade provides flexible argument matching for method setups and verifications:
+Mockolate provides flexible argument matching for method setups and verifications:
 - `With.Any<T>()`: Matches any value of type `T`.
 - `With.Matching<T>(predicate)`: Matches values based on a predicate.
 - `With.Out<T>(valueFactory)`: Matches and sets out parameters.
