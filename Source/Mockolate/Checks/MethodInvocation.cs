@@ -3,7 +3,7 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     An invocation of a method.
 /// </summary>
-public class MethodInvocation(string name, object?[] parameters) : Invocation
+public class MethodInvocation(string name, object?[] parameters) : IInvocation
 {
 	/// <summary>
 	///     The name of the method.

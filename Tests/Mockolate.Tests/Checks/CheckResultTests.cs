@@ -16,7 +16,7 @@ public class CheckResultTests
 	public async Task AtLeast_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
 		var invocations = Enumerable.Range(0, count)
-			.Select(_ => new Invocation())
+			.Select(_ => new MyInvocation())
 			.ToArray();
 		var sut = new CheckResult(invocations);
 
@@ -33,7 +33,7 @@ public class CheckResultTests
 	public async Task AtLeastOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
 		var invocations = Enumerable.Range(0, count)
-			.Select(_ => new Invocation())
+			.Select(_ => new MyInvocation())
 			.ToArray();
 		var sut = new CheckResult(invocations);
 
@@ -50,7 +50,7 @@ public class CheckResultTests
 	public async Task AtMost_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
 		var invocations = Enumerable.Range(0, count)
-			.Select(_ => new Invocation())
+			.Select(_ => new MyInvocation())
 			.ToArray();
 		var sut = new CheckResult(invocations);
 
@@ -67,7 +67,7 @@ public class CheckResultTests
 	public async Task AtMostOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
 		var invocations = Enumerable.Range(0, count)
-			.Select(_ => new Invocation())
+			.Select(_ => new MyInvocation())
 			.ToArray();
 		var sut = new CheckResult(invocations);
 
@@ -84,7 +84,7 @@ public class CheckResultTests
 	public async Task Exactly_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
 		var invocations = Enumerable.Range(0, count)
-			.Select(_ => new Invocation())
+			.Select(_ => new MyInvocation())
 			.ToArray();
 		var sut = new CheckResult(invocations);
 
@@ -101,7 +101,7 @@ public class CheckResultTests
 	public async Task Never_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
 		var invocations = Enumerable.Range(0, count)
-			.Select(_ => new Invocation())
+			.Select(_ => new MyInvocation())
 			.ToArray();
 		var sut = new CheckResult(invocations);
 
@@ -118,12 +118,16 @@ public class CheckResultTests
 	public async Task Once_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
 		var invocations = Enumerable.Range(0, count)
-			.Select(_ => new Invocation())
+			.Select(_ => new MyInvocation())
 			.ToArray();
 		var sut = new CheckResult(invocations);
 
 		var result = sut.Once();
 
 		await That(result).IsEqualTo(expectedResult);
+	}
+
+	private class MyInvocation : IInvocation
+	{
 	}
 }

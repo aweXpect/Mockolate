@@ -5,7 +5,7 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     A subscription to an event.
 /// </summary>
-public class EventSubscription(string name, object? target, MethodInfo method) : Invocation
+public class EventSubscription(string name, object? target, MethodInfo method) : IInvocation
 {
 	/// <summary>
 	///     The name of the event.

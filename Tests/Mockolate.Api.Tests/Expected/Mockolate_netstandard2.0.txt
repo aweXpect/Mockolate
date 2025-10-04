@@ -159,7 +159,7 @@ namespace Mockolate.Checks
 {
     public class CheckResult : Mockolate.Checks.ICheckResult
     {
-        public CheckResult(Mockolate.Checks.Invocation[] invocations) { }
+        public CheckResult(Mockolate.Checks.IInvocation[] invocations) { }
         public bool AtLeast(int times) { }
         public bool AtLeastOnce() { }
         public bool AtMost(int times) { }
@@ -180,14 +180,14 @@ namespace Mockolate.Checks
             public Mockolate.Checks.CheckResult Setter(Mockolate.With.Parameter<T> value) { }
         }
     }
-    public class EventSubscription : Mockolate.Checks.Invocation
+    public class EventSubscription : Mockolate.Checks.IInvocation
     {
         public EventSubscription(string name, object? target, System.Reflection.MethodInfo method) { }
         public System.Reflection.MethodInfo Method { get; }
         public string Name { get; }
         public object? Target { get; }
     }
-    public class EventUnsubscription : Mockolate.Checks.Invocation
+    public class EventUnsubscription : Mockolate.Checks.IInvocation
     {
         public EventUnsubscription(string name, object? target, System.Reflection.MethodInfo method) { }
         public System.Reflection.MethodInfo Method { get; }
@@ -196,27 +196,24 @@ namespace Mockolate.Checks
     }
     public interface ICheckResult
     {
-        Mockolate.Checks.Invocation[] Invocations { get; }
+        Mockolate.Checks.IInvocation[] Invocations { get; }
     }
+    public interface IInvocation { }
     public interface IMockAccessed
     {
-        Mockolate.Checks.Invocation[] PropertyGetter(string propertyName);
-        Mockolate.Checks.Invocation[] PropertySetter(string propertyName, Mockolate.With.Parameter value);
+        Mockolate.Checks.IInvocation[] PropertyGetter(string propertyName);
+        Mockolate.Checks.IInvocation[] PropertySetter(string propertyName, Mockolate.With.Parameter value);
     }
     public interface IMockEvent
     {
-        Mockolate.Checks.Invocation[] Subscribed(string eventName);
-        Mockolate.Checks.Invocation[] Unsubscribed(string eventName);
+        Mockolate.Checks.IInvocation[] Subscribed(string eventName);
+        Mockolate.Checks.IInvocation[] Unsubscribed(string eventName);
     }
     public interface IMockInvoked
     {
-        Mockolate.Checks.Invocation[] Method(string methodName, params Mockolate.With.Parameter[] parameters);
+        Mockolate.Checks.IInvocation[] Method(string methodName, params Mockolate.With.Parameter[] parameters);
     }
-    public class Invocation
-    {
-        public Invocation() { }
-    }
-    public class MethodInvocation : Mockolate.Checks.Invocation
+    public class MethodInvocation : Mockolate.Checks.IInvocation
     {
         public MethodInvocation(string name, object?[] parameters) { }
         public string Name { get; }
@@ -250,7 +247,7 @@ namespace Mockolate.Checks
     {
         public MockInvocations() { }
         public int Count { get; }
-        public System.Collections.Generic.IEnumerable<Mockolate.Checks.Invocation> Invocations { get; }
+        public System.Collections.Generic.IEnumerable<Mockolate.Checks.IInvocation> Invocations { get; }
         public bool IsAlreadyInvoked { get; }
     }
     public class MockInvoked<T> : Mockolate.Checks.IMockInvoked
@@ -265,12 +262,12 @@ namespace Mockolate.Checks
             public Proxy(Mockolate.Checks.IMockInvoked inner, Mockolate.Checks.MockInvocations invocations) { }
         }
     }
-    public class PropertyGetterInvocation : Mockolate.Checks.Invocation
+    public class PropertyGetterInvocation : Mockolate.Checks.IInvocation
     {
         public PropertyGetterInvocation(string propertyName) { }
         public string Name { get; }
     }
-    public class PropertySetterInvocation : Mockolate.Checks.Invocation
+    public class PropertySetterInvocation : Mockolate.Checks.IInvocation
     {
         public PropertySetterInvocation(string propertyName, object? value) { }
         public string Name { get; }
@@ -311,7 +308,7 @@ namespace Mockolate.Monitor
 {
     public abstract class MockMonitor
     {
-        public MockMonitor(Mockolate.IMock mock) { }
+        protected MockMonitor(Mockolate.IMock mock) { }
         protected Mockolate.Checks.MockInvocations Invocations { get; }
         public System.IDisposable Run() { }
     }
@@ -332,7 +329,7 @@ namespace Mockolate.Setup
     public interface IMethodSetup
     {
         int InvocationCount { get; }
-        bool Matches(Mockolate.Checks.Invocation invocation);
+        bool Matches(Mockolate.Checks.IInvocation invocation);
         T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
         T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
     }

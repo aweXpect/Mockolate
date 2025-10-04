@@ -3,7 +3,7 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     An invocation of a property setter.
 /// </summary>
-public class PropertySetterInvocation(string propertyName, object? value) : Invocation
+public class PropertySetterInvocation(string propertyName, object? value) : IInvocation
 {
 	/// <summary>
 	///     The name of the property.
