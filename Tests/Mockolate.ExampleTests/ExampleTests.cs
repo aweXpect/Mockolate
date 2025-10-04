@@ -36,7 +36,7 @@ public class ExampleTests
 
 		var httpClient = new HttpClient(mock.Object);
 
-		var result = await httpClient.GetAsync("https://www.example.com", TestContext.Current.CancellationToken);
+		var result = await httpClient.GetAsync("https://www.example.com");
 
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
