@@ -40,6 +40,7 @@ partial class Build
 
 			DotNetToolInstall(_ => _
 				.SetPackageName("dotnet-stryker")
+				.SetVersion("4.7.0")
 				.SetToolInstallationPath(toolPath));
 
 			Dictionary<Project, Project[]> projects = new()
@@ -58,6 +59,7 @@ partial class Build
 					branchName = "release/" + version;
 					Log.Information("Use release branch analysis for '{BranchName}'", branchName);
 				}
+
 				File.WriteAllText(ArtifactsDirectory / "BranchName.txt", branchName);
 
 				string configText = $$"""
@@ -119,16 +121,19 @@ partial class Build
 			}
 
 			string body = "## :alien: Mutation Results"
-			              + Environment.NewLine
-			              + MutationCommentBody;
+						  + Environment.NewLine
+						  + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/pull/{prId}/merge)"
+						  + Environment.NewLine
+						  + MutationCommentBody;
 			File.WriteAllText(ArtifactsDirectory / "PR_Comment.md", body);
 
 			if (prId != null)
-			{				File.WriteAllText(ArtifactsDirectory / "PR.txt", prId.Value.ToString());
+			{
+				File.WriteAllText(ArtifactsDirectory / "PR.txt", prId.Value.ToString());
 			}
 		});
 
-	Target MutationTestComment => _ => _
+	Target MutationTestDashboard => _ => _
 		.After(MutationTestExecution)
 		.Executes(async () =>
 		{
@@ -140,6 +145,19 @@ partial class Build
 					Solution.Mockolate, [Solution.Tests.Mockolate_Tests,]
 				},
 			};
+			string apiKey = Environment.GetEnvironmentVariable("STRYKER_DASHBOARD_API_KEY");
+			string branchName = File.ReadAllText(ArtifactsDirectory / "BranchName.txt");
+			foreach (KeyValuePair<Project, Project[]> project in projects)
+			{
+				string reportComment =
+					File.ReadAllText(ArtifactsDirectory / "Stryker" / "reports" / "mutation-report.json");
+				using HttpClient client = new();
+				client.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
+				// https://stryker-mutator.io/docs/General/dashboard/#send-a-report-via-curl
+				await client.PutAsync(
+					$"https://dashboard.stryker-mutator.io/api/reports/github.com/aweXpect/Mockolate/{branchName}?module={project.Key.Name}",
+					new StringContent(reportComment, new MediaTypeHeaderValue("application/json")));
+			}
 
 			if (File.Exists(ArtifactsDirectory / "PR.txt"))
 			{
@@ -208,8 +226,8 @@ partial class Build
 			}
 
 			if (count == 0 &&
-			    line.StartsWith("|") &&
-			    line.Contains("| N\\/A"))
+				line.StartsWith("|") &&
+				line.Contains("| N\\/A"))
 			{
 				continue;
 			}
