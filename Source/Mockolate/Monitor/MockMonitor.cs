@@ -24,7 +24,7 @@ public abstract class MockMonitor
 	private int _monitoringStart = -1;
 
 	/// <inheritdoc cref="MockMonitor{T}" />
-	public MockMonitor(IMock mock)
+	protected MockMonitor(IMock mock)
 	{
 		_monitoredInvocations = mock.Invocations;
 		Invocations = new();

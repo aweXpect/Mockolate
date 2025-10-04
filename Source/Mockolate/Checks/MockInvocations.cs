@@ -19,14 +19,14 @@ public class MockInvocations
 	/// </summary>
 	public int Count => _invocations.Count;
 
-	private readonly List<Invocation> _invocations = [];
+	private readonly List<IInvocation> _invocations = [];
 
 	/// <summary>
 	///     The registered invocations of the mock.
 	/// </summary>
-	public IEnumerable<Invocation> Invocations => _invocations;
+	public IEnumerable<IInvocation> Invocations => _invocations;
 
-	internal Invocation RegisterInvocation(Invocation invocation)
+	internal IInvocation RegisterInvocation(IInvocation invocation)
 	{
 		_invocations.Add(invocation);
 		return invocation;

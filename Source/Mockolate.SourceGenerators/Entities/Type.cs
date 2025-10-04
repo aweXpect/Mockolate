@@ -25,6 +25,7 @@ internal readonly record struct Type
 
 	public string GetMinimizedString(string[] namespaces)
 	{
+#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
 		foreach (string? @namespace in namespaces.OrderByDescending(x => x.Length))
 		{
 			if (Fullname.StartsWith(@namespace + "."))
@@ -32,6 +33,7 @@ internal readonly record struct Type
 				return Fullname.Substring(@namespace.Length + 1);
 			}
 		}
+#pragma warning restore S3267
 
 		return Fullname;
 	}

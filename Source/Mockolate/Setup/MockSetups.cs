@@ -133,7 +133,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	internal MethodSetup? GetMethodSetup(Invocation invocation)
+	internal MethodSetup? GetMethodSetup(IInvocation invocation)
 	{
 		return _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
 	}

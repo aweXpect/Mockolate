@@ -22,13 +22,13 @@ public abstract class PropertySetup
 	/// </summary>
 	public int GetterInvocationCount => _getterInvocationCount;
 
-	internal void InvokeSetter(Invocation invocation, object? value)
+	internal void InvokeSetter(IInvocation invocation, object? value)
 	{
 		Interlocked.Increment(ref _setterInvocationCount);
 		InvokeSetter(value);
 	}
 
-	internal TResult InvokeGetter<TResult>(Invocation invocation)
+	internal TResult InvokeGetter<TResult>(IInvocation invocation)
 	{
 		Interlocked.Increment(ref _getterInvocationCount);
 		return InvokeGetter<TResult>();

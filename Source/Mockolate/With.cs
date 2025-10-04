@@ -138,6 +138,7 @@ public static class With
 		public T GetValue() => setter();
 	}
 
+#pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
 	///     Matches any <see langword="out"/> parameter.
 	/// </summary>
@@ -151,6 +152,7 @@ public static class With
 			return true;
 		}
 	}
+#pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
 	///     Matches a method <see langword="ref"/> parameter against an expectation.
@@ -175,6 +177,7 @@ public static class With
 		public T GetValue(T value) => setter(value);
 	}
 
+#pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
 	///     Matches a method <see langword="out"/> parameter against an expectation.
 	/// </summary>
@@ -188,6 +191,7 @@ public static class With
 			return true;
 		}
 	}
+#pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
 	///     A named <see cref="Parameter"/>.

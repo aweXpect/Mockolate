@@ -84,7 +84,7 @@ public abstract class Mock<T> : IMock
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null];
-		Invocation invocation = ((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
+		IInvocation invocation = ((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null)
@@ -104,7 +104,7 @@ public abstract class Mock<T> : IMock
 	MethodSetupResult IMock.Execute(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null];
-		Invocation invocation = ((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
+		IInvocation invocation = ((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
@@ -119,7 +119,7 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Set(string, object?)" />
 	void IMock.Set(string propertyName, object? value)
 	{
-		Invocation invocation = ((IMock)this).Invocations.RegisterInvocation(new PropertySetterInvocation(propertyName, value));
+		IInvocation invocation = ((IMock)this).Invocations.RegisterInvocation(new PropertySetterInvocation(propertyName, value));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		matchingSetup.InvokeSetter(invocation, value);
 	}
@@ -127,7 +127,7 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
 	TResult IMock.Get<TResult>(string propertyName)
 	{
-		Invocation invocation = ((IMock)this).Invocations.RegisterInvocation(new PropertyGetterInvocation(propertyName));
+		IInvocation invocation = ((IMock)this).Invocations.RegisterInvocation(new PropertyGetterInvocation(propertyName));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		return matchingSetup.InvokeGetter<TResult>(invocation);
 	}
@@ -221,6 +221,7 @@ public abstract class Mock<T1, T2, T3, T4> : Mock<T1, T2, T3>
 	}
 }
 
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
 ///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2"/>, <typeparamref name="T3"/>, <typeparamref name="T4"/> and <typeparamref name="T5"/>.
 /// </summary>
@@ -295,3 +296,4 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> : Mock<T1, T2, T3
 		}
 	}
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters

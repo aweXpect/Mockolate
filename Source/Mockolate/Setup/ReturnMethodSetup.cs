@@ -13,7 +13,7 @@ namespace Mockolate.Setup;
 public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 {
 	private Action? _callback;
-	private List<Func<TReturn>> _returnCallbacks = [];
+	private readonly List<Func<TReturn>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -104,7 +104,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	: MethodSetup
 {
 	private Action<T1>? _callback;
-	private List<Func<T1, TReturn>> _returnCallbacks = [];
+	private readonly List<Func<T1, TReturn>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -247,7 +247,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	: MethodSetup
 {
 	private Action<T1, T2>? _callback;
-	private List<Func<T1, T2, TReturn>> _returnCallbacks = [];
+	private readonly List<Func<T1, T2, TReturn>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -396,7 +396,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	: MethodSetup
 {
 	private Action<T1, T2, T3>? _callback;
-	private List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
+	private readonly List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -544,6 +544,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(string name, With.NamedParam
 	}
 }
 
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <typeparamref name="TReturn" />.
 /// </summary>
@@ -551,7 +552,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 	: MethodSetup
 {
 	private Action<T1, T2, T3, T4>? _callback;
-	private List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
+	private readonly List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
 	int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -704,3 +705,4 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(string name, With.NamedP
 		return value;
 	}
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
