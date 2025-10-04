@@ -36,22 +36,21 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			bool isCalled = false;
+			MyReturnMethodSetup setup = new("foo");
+			setup.Callback(() => { isCalled = true; }).Returns(3);
+			MethodInvocation invocation = new("foo", Array.Empty<object?>());
 
-			sut.Setup.Method0()
-				.Returns(4)
-				.Returns(3)
-				.Returns(() => 2);
+			void Act()
+				=> setup.GetReturnValue<string>(invocation);
 
-			var result = new int[10];
-			for (int i = 0; i < 10; i++)
-			{
-				result[i] = sut.Object.Method0();
-			}
-
-			await That(result).IsEqualTo([4, 3, 2, 4, 3, 2, 4, 3, 2, 4,]);
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             """);
+			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
 		}
 
 		[Fact]
@@ -64,9 +63,9 @@ public class ReturnMethodSetupTests
 				.Throws(new Exception("foo"))
 				.Returns(() => 2);
 
-			var result1 = sut.Object.Method0();
-			var result2 = Record.Exception(() => sut.Object.Method0());
-			var result3 = sut.Object.Method0();
+			int result1 = sut.Object.Method0();
+			Exception? result2 = Record.Exception(() => sut.Object.Method0());
+			int result3 = sut.Object.Method0();
 
 			await That(result1).IsEqualTo(4);
 			await That(result2).HasMessage("foo");
@@ -74,16 +73,76 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task Throws_ShouldReturnExpectedValue()
+		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
-			sut.Setup.Method0().Throws(new Exception("foo"));
+			sut.Setup.Method0()
+				.Returns(4)
+				.Returns(3)
+				.Returns(() => 2);
 
-			void Act()
-				=> sut.Object.Method0();
+			int[] result = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut.Object.Method0();
+			}
 
-			await That(Act).ThrowsException().WithMessage("foo");
+			await That(result).IsEqualTo([4, 3, 2, 4, 3, 2, 4, 3, 2, 4,]);
+		}
+
+		[Fact]
+		public async Task Returns_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method0().Returns(() => 4);
+
+			int result = sut.Object.Method0();
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method0().Returns(4);
+
+			int result = sut.Object.Method0();
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_WithoutSetup_ShouldReturnDefault()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			int result = sut.Object.Method0();
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task SetOutParameter_ShouldReturnDefaultValue()
+		{
+			MyReturnMethodSetup setup = new("foo");
+
+			int result = setup.SetOutParameter<int>("p0");
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task SetRefParameter_ShouldReturnValue()
+		{
+			MyReturnMethodSetup setup = new("foo");
+
+			int result = setup.SetRefParameter("p0", 4);
+
+			await That(result).IsEqualTo(4);
 		}
 
 		[Fact]
@@ -100,88 +159,31 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task Returns_ShouldReturnExpectedValue()
+		public async Task Throws_ShouldReturnExpectedValue()
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
-			sut.Setup.Method0().Returns(4);
-
-			var result = sut.Object.Method0();
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method0().Returns(() => 4);
-
-			var result = sut.Object.Method0();
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_WithoutSetup_ShouldReturnDefault()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			var result = sut.Object.Method0();
-
-			await That(result).IsEqualTo(0);
-		}
-
-		[Fact]
-		public async Task SetOutParameter_ShouldReturnDefaultValue()
-		{
-			var setup = new MyReturnMethodSetup("foo");
-
-			var result = setup.SetOutParameter<int>("p0");
-
-			await That(result).IsEqualTo(0);
-		}
-
-		[Fact]
-		public async Task SetRefParameter_ShouldReturnValue()
-		{
-			var setup = new MyReturnMethodSetup("foo");
-
-			var result = setup.SetRefParameter<int>("p0", 4);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
-		{
-			bool isCalled = false;
-			var setup = new MyReturnMethodSetup("foo");
-			setup.Callback(() => { isCalled = true; }).Returns(3);
-			var invocation = new MethodInvocation("foo", Array.Empty<object?>());
+			sut.Setup.Method0().Throws(new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<string>(invocation);
+				=> sut.Object.Method0();
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The return callback only supports 'System.Int32' and not 'System.String'.
-				""");
-			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		private class MyReturnMethodSetup(string name) : ReturnMethodSetup<int>(name)
 		{
 			public T SetOutParameter<T>(string parameterName)
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+
 			public T SetRefParameter<T>(string parameterName, T value)
 				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+
 			public T GetReturnValue<T>(MethodInvocation invocation)
 				=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 		}
 	}
-	
+
 	public class With1Parameters
 	{
 		[Fact]
@@ -277,22 +279,37 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+		public async Task GetReturnValue_InvalidInputType_ShouldThrowMockException()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			MyReturnMethodSetup<int> setup = new("foo");
+			setup.Returns(x => 3 * x);
+			MethodInvocation invocation = new("foo", ["2",]);
 
-			sut.Setup.Method1(With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns(v => 10 * v);
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
 
-			var result = new int[10];
-			for (int i = 0; i < 10; i++)
-			{
-				result[i] = sut.Object.Method1(i);
-			}
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
 
-			await That(result).IsEqualTo([4, 3, 20, 4, 3, 50, 4, 3, 80, 4, ]);
+		[Fact]
+		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		{
+			bool isCalled = false;
+			MyReturnMethodSetup<int> setup = new("foo");
+			setup.Callback(() => { isCalled = true; }).Returns(x => 3 * x);
+			MethodInvocation invocation = new("foo", [2,]);
+
+			void Act()
+				=> setup.GetReturnValue<string>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             """);
+			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
 		}
 
 		[Fact]
@@ -305,9 +322,9 @@ public class ReturnMethodSetupTests
 				.Throws(new Exception("foo"))
 				.Returns(() => 2);
 
-			var result1 = sut.Object.Method1(1);
-			var result2 = Record.Exception(() => sut.Object.Method1(2));
-			var result3 = sut.Object.Method1(3);
+			int result1 = sut.Object.Method1(1);
+			Exception? result2 = Record.Exception(() => sut.Object.Method1(2));
+			int result3 = sut.Object.Method1(3);
 
 			await That(result1).IsEqualTo(4);
 			await That(result2).HasMessage("foo");
@@ -315,91 +332,22 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task Throws_ShouldReturnExpectedValue()
+		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
-				.Throws(new Exception("foo"));
+				.Returns(4)
+				.Returns(() => 3)
+				.Returns(v => 10 * v);
 
-			void Act()
-				=> sut.Object.Method1(1);
+			int[] result = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut.Object.Method1(i);
+			}
 
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method1(With.Any<int>())
-				.Throws(() => new Exception("foo"));
-
-			void Act()
-				=> sut.Object.Method1(1);
-
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method1(With.Any<int>())
-				.Throws(v1 => new Exception("foo-"+v1));
-
-			void Act()
-				=> sut.Object.Method1(42);
-
-			await That(Act).ThrowsException().WithMessage("foo-42");
-		}
-
-		[Fact]
-		public async Task Returns_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method1(With.Any<int>()).Returns(4);
-
-			var result = sut.Object.Method1(3);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method1(With.Any<int>()).Returns(() => 4);
-
-			var result = sut.Object.Method1(3);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method1(With.Any<int>()).Returns(x => 4 * x);
-
-			var result = sut.Object.Method1(3);
-
-			await That(result).IsEqualTo(12);
-		}
-
-		[Fact]
-		public async Task Returns_WithoutSetup_ShouldReturnDefault()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			var result = sut.Object.Method1(3);
-
-			await That(result).IsEqualTo(0);
+			await That(result).IsEqualTo([4, 3, 20, 4, 3, 50, 4, 3, 80, 4,]);
 		}
 
 		[Fact]
@@ -446,11 +394,57 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
+		public async Task Returns_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>()).Returns(() => 4);
+
+			int result = sut.Object.Method1(3);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>()).Returns(x => 4 * x);
+
+			int result = sut.Object.Method1(3);
+
+			await That(result).IsEqualTo(12);
+		}
+
+		[Fact]
+		public async Task Returns_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>()).Returns(4);
+
+			int result = sut.Object.Method1(3);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_WithoutSetup_ShouldReturnDefault()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			int result = sut.Object.Method1(3);
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task SetOutParameter_ShouldReturnDefaultValue()
 		{
-			var setup = new MyReturnMethodSetup<int>("foo");
+			MyReturnMethodSetup<int> setup = new("foo");
 
-			var result = setup.SetOutParameter<int>("p1");
+			int result = setup.SetOutParameter<int>("p1");
 
 			await That(result).IsEqualTo(0);
 		}
@@ -458,45 +452,53 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task SetRefParameter_ShouldReturnValue()
 		{
-			var setup = new MyReturnMethodSetup<int>("foo");
+			MyReturnMethodSetup<int> setup = new("foo");
 
-			var result = setup.SetRefParameter<int>("p1", 4);
+			int result = setup.SetRefParameter("p1", 4);
 
 			await That(result).IsEqualTo(4);
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			bool isCalled = false;
-			var setup = new MyReturnMethodSetup<int>("foo");
-			setup.Callback(() => { isCalled = true; }).Returns(x => 3 * x);
-			var invocation = new MethodInvocation("foo", [2]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>())
+				.Throws(() => new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<string>(invocation);
+				=> sut.Object.Method1(1);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The return callback only supports 'System.Int32' and not 'System.String'.
-				""");
-			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType_ShouldThrowMockException()
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int>("foo");
-			setup.Returns(x => 3 * x);
-			var invocation = new MethodInvocation("foo", ["2"]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>())
+				.Throws(v1 => new Exception("foo-" + v1));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method1(42);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo-42");
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method1(With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> sut.Object.Method1(1);
+
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		private class MyReturnMethodSetup<T1>(string name)
@@ -504,8 +506,10 @@ public class ReturnMethodSetupTests
 		{
 			public T SetOutParameter<T>(string parameterName)
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+
 			public T SetRefParameter<T>(string parameterName, T value)
 				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+
 			public T GetReturnValue<T>(MethodInvocation invocation)
 				=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 		}
@@ -527,21 +531,6 @@ public class ReturnMethodSetupTests
 			await That(isCalled).IsTrue();
 		}
 
-		[Fact]
-		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
-		{
-			bool isCalled = false;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
-				.Callback(() => { isCalled = true; });
-
-			sut.Object.Method1(1);
-			sut.Object.Method2(1, 2, false);
-
-			await That(isCalled).IsFalse();
-		}
-
 		[Theory]
 		[InlineData(false, false)]
 		[InlineData(true, false)]
@@ -555,6 +544,21 @@ public class ReturnMethodSetupTests
 				.Callback(() => { isCalled = true; });
 
 			sut.Object.Method2(1, 2);
+
+			await That(isCalled).IsFalse();
+		}
+
+		[Fact]
+		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
+		{
+			bool isCalled = false;
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Callback(() => { isCalled = true; });
+
+			sut.Object.Method1(1);
+			sut.Object.Method2(1, 2, false);
 
 			await That(isCalled).IsFalse();
 		}
@@ -582,21 +586,6 @@ public class ReturnMethodSetupTests
 			await That(receivedValue2).IsEqualTo(4);
 		}
 
-		[Fact]
-		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
-		{
-			bool isCalled = false;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
-				.Callback((v1, v2) => { isCalled = true; });
-
-			sut.Object.Method1(1);
-			sut.Object.Method2(1, 2, false);
-
-			await That(isCalled).IsFalse();
-		}
-
 		[Theory]
 		[InlineData(false, false)]
 		[InlineData(true, false)]
@@ -615,22 +604,68 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
+			bool isCalled = false;
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns((v1, v2) => 10 + v1 + v2);
+				.Callback((v1, v2) => { isCalled = true; });
 
-			var result = new int[10];
-			for (int i = 0; i < 10; i++)
-			{
-				result[i] = sut.Object.Method2(i, 2 * i);
-			}
+			sut.Object.Method1(1);
+			sut.Object.Method2(1, 2, false);
 
-			await That(result).IsEqualTo([4, 3, 16, 4, 3, 25, 4, 3, 34, 4,]);
+			await That(isCalled).IsFalse();
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
+		{
+			MyReturnMethodSetup<int, int> setup = new("foo");
+			setup.Returns((x, y) => 3 * x);
+			MethodInvocation invocation = new("foo", ["1", 2,]);
+
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 1 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
+		{
+			MyReturnMethodSetup<int, int> setup = new("foo");
+			setup.Returns((x, y) => 3 * x);
+			MethodInvocation invocation = new("foo", [1, "2",]);
+
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 2 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		{
+			bool isCalled = false;
+			MyReturnMethodSetup<int, int> setup = new("foo");
+			setup.Callback(() => { isCalled = true; }).Returns(3);
+			MethodInvocation invocation = new("foo", [2, 3,]);
+
+			void Act()
+				=> setup.GetReturnValue<string>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             """);
+			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
 		}
 
 		[Fact]
@@ -643,9 +678,9 @@ public class ReturnMethodSetupTests
 				.Throws(new Exception("foo"))
 				.Returns(() => 2);
 
-			var result1 = sut.Object.Method2(1, 2);
-			var result2 = Record.Exception(() => sut.Object.Method2(2, 3));
-			var result3 = sut.Object.Method2(3, 4);
+			int result1 = sut.Object.Method2(1, 2);
+			Exception? result2 = Record.Exception(() => sut.Object.Method2(2, 3));
+			int result3 = sut.Object.Method2(3, 4);
 
 			await That(result1).IsEqualTo(4);
 			await That(result2).HasMessage("foo");
@@ -653,91 +688,22 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task Throws_ShouldReturnExpectedValue()
+		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
-				.Throws(new Exception("foo"));
+				.Returns(4)
+				.Returns(() => 3)
+				.Returns((v1, v2) => 10 + v1 + v2);
 
-			void Act()
-				=> sut.Object.Method2(1, 2);
+			int[] result = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut.Object.Method2(i, 2 * i);
+			}
 
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
-				.Throws(() => new Exception("foo"));
-
-			void Act()
-				=> sut.Object.Method2(1, 2);
-
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
-				.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
-
-			void Act()
-				=> sut.Object.Method2(1, 2);
-
-			await That(Act).ThrowsException().WithMessage("foo-1-2");
-		}
-
-		[Fact]
-		public async Task Returns_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns(4);
-
-			var result = sut.Object.Method2(2, 3);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns(() => 4);
-
-			var result = sut.Object.Method2(2, 3);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns((x, y) => 4 * x * y);
-
-			var result = sut.Object.Method2(2, 3);
-
-			await That(result).IsEqualTo(24);
-		}
-
-		[Fact]
-		public async Task Returns_WithoutSetup_ShouldReturnDefault()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			var result = sut.Object.Method2(2, 3);
-
-			await That(result).IsEqualTo(0);
+			await That(result).IsEqualTo([4, 3, 16, 4, 3, 25, 4, 3, 34, 4,]);
 		}
 
 		[Fact]
@@ -793,11 +759,57 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
+		public async Task Returns_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns(() => 4);
+
+			int result = sut.Object.Method2(2, 3);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns((x, y) => 4 * x * y);
+
+			int result = sut.Object.Method2(2, 3);
+
+			await That(result).IsEqualTo(24);
+		}
+
+		[Fact]
+		public async Task Returns_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns(4);
+
+			int result = sut.Object.Method2(2, 3);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_WithoutSetup_ShouldReturnDefault()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			int result = sut.Object.Method2(2, 3);
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task SetOutParameter_ShouldReturnDefaultValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int>("foo");
+			MyReturnMethodSetup<int, int> setup = new("foo");
 
-			var result = setup.SetOutParameter<int>("p1");
+			int result = setup.SetOutParameter<int>("p1");
 
 			await That(result).IsEqualTo(0);
 		}
@@ -805,61 +817,53 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task SetRefParameter_ShouldReturnValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int>("foo");
+			MyReturnMethodSetup<int, int> setup = new("foo");
 
-			var result = setup.SetRefParameter<int>("p1", 4);
+			int result = setup.SetRefParameter("p1", 4);
 
 			await That(result).IsEqualTo(4);
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			bool isCalled = false;
-			var setup = new MyReturnMethodSetup<int, int>("foo");
-			setup.Callback(() => { isCalled = true; }).Returns(3);
-			var invocation = new MethodInvocation("foo", [2, 3]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<string>(invocation);
+				=> sut.Object.Method2(1, 2);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The return callback only supports 'System.Int32' and not 'System.String'.
-				""");
-			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int>("foo");
-			setup.Returns((x, y) => 3 * x);
-			var invocation = new MethodInvocation("foo", ["1", 2]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method2(1, 2);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 1 only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo-1-2");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
+		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int>("foo");
-			setup.Returns((x, y) => 3 * x);
-			var invocation = new MethodInvocation("foo", [1, "2"]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method2(1, 2);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 2 only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		private class MyReturnMethodSetup<T1, T2>(string name)
@@ -869,8 +873,10 @@ public class ReturnMethodSetupTests
 		{
 			public T SetOutParameter<T>(string parameterName)
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+
 			public T SetRefParameter<T>(string parameterName, T value)
 				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+
 			public T GetReturnValue<T>(MethodInvocation invocation)
 				=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 		}
@@ -892,6 +898,26 @@ public class ReturnMethodSetupTests
 			await That(isCalled).IsTrue();
 		}
 
+		[Theory]
+		[InlineData(false, false, false)]
+		[InlineData(true, true, false)]
+		[InlineData(true, false, true)]
+		[InlineData(false, true, true)]
+		public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2,
+			bool isMatch3)
+		{
+			bool isCalled = false;
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+					With.Matching<int>(v => isMatch3))
+				.Callback(() => { isCalled = true; });
+
+			sut.Object.Method3(1, 2, 3);
+
+			await That(isCalled).IsFalse();
+		}
+
 		[Fact]
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
@@ -903,24 +929,6 @@ public class ReturnMethodSetupTests
 
 			sut.Object.Method2(1, 2);
 			sut.Object.Method3(1, 2, 3, false);
-
-			await That(isCalled).IsFalse();
-		}
-
-		[Theory]
-		[InlineData(false, false, false)]
-		[InlineData(true, true, false)]
-		[InlineData(true, false, true)]
-		[InlineData(false, true, true)]
-		public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2, bool isMatch3)
-		{
-			bool isCalled = false;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2), With.Matching<int>(v => isMatch3))
-				.Callback(() => { isCalled = true; });
-
-			sut.Object.Method3(1, 2, 3);
 
 			await That(isCalled).IsFalse();
 		}
@@ -951,6 +959,26 @@ public class ReturnMethodSetupTests
 			await That(receivedValue3).IsEqualTo(6);
 		}
 
+		[Theory]
+		[InlineData(false, false, false)]
+		[InlineData(true, true, false)]
+		[InlineData(true, false, true)]
+		[InlineData(false, true, true)]
+		public async Task CallbackWithValue_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2,
+			bool isMatch3)
+		{
+			bool isCalled = false;
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+					With.Matching<int>(v => isMatch3))
+				.Callback((v1, v2, v3) => { isCalled = true; });
+
+			sut.Object.Method3(1, 2, 3);
+
+			await That(isCalled).IsFalse();
+		}
+
 		[Fact]
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
@@ -966,41 +994,70 @@ public class ReturnMethodSetupTests
 			await That(isCalled).IsFalse();
 		}
 
-		[Theory]
-		[InlineData(false, false, false)]
-		[InlineData(true, true, false)]
-		[InlineData(true, false, true)]
-		[InlineData(false, true, true)]
-		public async Task CallbackWithValue_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2, bool isMatch3)
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 		{
-			bool isCalled = false;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			MyReturnMethodSetup<int, int, int> setup = new("foo");
+			setup.Returns((x, y, z) => 3 * x);
+			MethodInvocation invocation = new("foo", ["1", 2, 3,]);
 
-			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2), With.Matching<int>(v => isMatch3))
-				.Callback((v1, v2, v3) => { isCalled = true; });
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
 
-			sut.Object.Method3(1, 2, 3);
-
-			await That(isCalled).IsFalse();
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 1 only supports 'System.Int32', but is 'System.String'.
+				             """);
 		}
 
 		[Fact]
-		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+		public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			MyReturnMethodSetup<int, int, int> setup = new("foo");
+			setup.Returns((x, y, z) => 3 * x);
+			MethodInvocation invocation = new("foo", [1, "2", 3,]);
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns((v1, v2, v3) => 10 + v1 + v2 + v3);
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
 
-			var result = new int[10];
-			for (int i = 0; i < 10; i++)
-			{
-				result[i] = sut.Object.Method3(i, 2 * i, 3 * i);
-			}
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 2 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
 
-			await That(result).IsEqualTo([4, 3, 22, 4, 3, 40, 4, 3, 58, 4,]);
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
+		{
+			MyReturnMethodSetup<int, int, int> setup = new("foo");
+			setup.Returns((x, y, z) => 3 * x);
+			MethodInvocation invocation = new("foo", [1, 2, "3",]);
+
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 3 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		{
+			bool isCalled = false;
+			MyReturnMethodSetup<int, int, int> setup = new("foo");
+			setup.Callback(() => { isCalled = true; }).Returns(3);
+			MethodInvocation invocation = new("foo", [1, 2, 3,]);
+
+			void Act()
+				=> setup.GetReturnValue<string>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             """);
+			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
 		}
 
 		[Fact]
@@ -1013,9 +1070,9 @@ public class ReturnMethodSetupTests
 				.Throws(new Exception("foo"))
 				.Returns(() => 2);
 
-			var result1 = sut.Object.Method3(1, 2, 3);
-			var result2 = Record.Exception(() => sut.Object.Method3(2, 3, 4));
-			var result3 = sut.Object.Method3(3, 4, 5);
+			int result1 = sut.Object.Method3(1, 2, 3);
+			Exception? result2 = Record.Exception(() => sut.Object.Method3(2, 3, 4));
+			int result3 = sut.Object.Method3(3, 4, 5);
 
 			await That(result1).IsEqualTo(4);
 			await That(result2).HasMessage("foo");
@@ -1023,94 +1080,22 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task Throws_ShouldReturnExpectedValue()
+		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws(new Exception("foo"));
+				.Returns(4)
+				.Returns(() => 3)
+				.Returns((v1, v2, v3) => 10 + v1 + v2 + v3);
 
-			void Act()
-				=> sut.Object.Method3(1, 2, 3);
+			int[] result = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut.Object.Method3(i, 2 * i, 3 * i);
+			}
 
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws(() => new Exception("foo"));
-
-			void Act()
-				=> sut.Object.Method3(1, 2, 3);
-
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
-
-			void Act()
-				=> sut.Object.Method3(1, 2, 3);
-
-			await That(Act).ThrowsException().WithMessage("foo-1-2-3");
-		}
-
-		[Fact]
-		public async Task Returns_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4);
-
-			var result = sut.Object.Method3(1, 2, 3);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(() => 4);
-
-			var result = sut.Object.Method3(1, 2, 3);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns((x, y, z) => 4 * x * y * z);
-
-			var result = sut.Object.Method3(2, 3, 4);
-
-			await That(result).IsEqualTo(96);
-		}
-
-		[Fact]
-		public async Task Returns_WithoutSetup_ShouldReturnDefault()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			var result = sut.Object.Method3(2, 3, 4);
-
-			await That(result).IsEqualTo(0);
+			await That(result).IsEqualTo([4, 3, 22, 4, 3, 40, 4, 3, 58, 4,]);
 		}
 
 		[Fact]
@@ -1151,7 +1136,8 @@ public class ReturnMethodSetupTests
 			bool isCalled = false;
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
-			sut.Setup.Method3WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+			sut.Setup.Method3WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
+					With.Ref<int>(v => v * 10))
 				.Callback((v1, v2, v3) =>
 				{
 					isCalled = true;
@@ -1175,11 +1161,60 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
+		public async Task Returns_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(() => 4);
+
+			int result = sut.Object.Method3(1, 2, 3);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns((x, y, z) => 4 * x * y * z);
+
+			int result = sut.Object.Method3(2, 3, 4);
+
+			await That(result).IsEqualTo(96);
+		}
+
+		[Fact]
+		public async Task Returns_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(4);
+
+			int result = sut.Object.Method3(1, 2, 3);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_WithoutSetup_ShouldReturnDefault()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			int result = sut.Object.Method3(2, 3, 4);
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task SetOutParameter_ShouldReturnDefaultValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int>("foo");
+			MyReturnMethodSetup<int, int, int> setup = new("foo");
 
-			var result = setup.SetOutParameter<int>("p1");
+			int result = setup.SetOutParameter<int>("p1");
 
 			await That(result).IsEqualTo(0);
 		}
@@ -1187,77 +1222,53 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task SetRefParameter_ShouldReturnValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int>("foo");
+			MyReturnMethodSetup<int, int, int> setup = new("foo");
 
-			var result = setup.SetRefParameter<int>("p1", 4);
+			int result = setup.SetRefParameter("p1", 4);
 
 			await That(result).IsEqualTo(4);
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			bool isCalled = false;
-			var setup = new MyReturnMethodSetup<int, int, int>("foo");
-			setup.Callback(() => { isCalled = true; }).Returns(3);
-			var invocation = new MethodInvocation("foo", [1, 2, 3]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<string>(invocation);
+				=> sut.Object.Method3(1, 2, 3);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The return callback only supports 'System.Int32' and not 'System.String'.
-				""");
-			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int>("foo");
-			setup.Returns((x, y, z) => 3 * x);
-			var invocation = new MethodInvocation("foo", ["1", 2, 3]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method3(1, 2, 3);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 1 only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
+		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int>("foo");
-			setup.Returns((x, y, z) => 3 * x);
-			var invocation = new MethodInvocation("foo", [1, "2", 3]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method3(1, 2, 3);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 2 only supports 'System.Int32', but is 'System.String'.
-				""");
-		}
-
-		[Fact]
-		public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
-		{
-			var setup = new MyReturnMethodSetup<int, int, int>("foo");
-			setup.Returns((x, y, z) => 3 * x);
-			var invocation = new MethodInvocation("foo", [1, 2, "3"]);
-
-			void Act()
-				=> setup.GetReturnValue<int>(invocation);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 3 only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		private class MyReturnMethodSetup<T1, T2, T3>(string name)
@@ -1268,8 +1279,10 @@ public class ReturnMethodSetupTests
 		{
 			public T SetOutParameter<T>(string parameterName)
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+
 			public T SetRefParameter<T>(string parameterName, T value)
 				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+
 			public T GetReturnValue<T>(MethodInvocation invocation)
 				=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 		}
@@ -1291,6 +1304,27 @@ public class ReturnMethodSetupTests
 			await That(isCalled).IsTrue();
 		}
 
+		[Theory]
+		[InlineData(false, false, false, false)]
+		[InlineData(true, true, true, false)]
+		[InlineData(true, true, false, true)]
+		[InlineData(true, false, true, true)]
+		[InlineData(false, true, true, true)]
+		public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2,
+			bool isMatch3, bool isMatch4)
+		{
+			bool isCalled = false;
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
+				.Callback(() => { isCalled = true; });
+
+			sut.Object.Method4(1, 2, 3, 4);
+
+			await That(isCalled).IsFalse();
+		}
+
 		[Fact]
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
@@ -1302,25 +1336,6 @@ public class ReturnMethodSetupTests
 
 			sut.Object.Method3(1, 2, 3);
 			sut.Object.Method4(1, 2, 3, false);
-
-			await That(isCalled).IsFalse();
-		}
-
-		[Theory]
-		[InlineData(false, false, false, false)]
-		[InlineData(true, true, true, false)]
-		[InlineData(true, true, false, true)]
-		[InlineData(true, false, true, true)]
-		[InlineData(false, true, true, true)]
-		public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2, bool isMatch3, bool isMatch4)
-		{
-			bool isCalled = false;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2), With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
-				.Callback(() => { isCalled = true; });
-
-			sut.Object.Method4(1, 2, 3, 4);
 
 			await That(isCalled).IsFalse();
 		}
@@ -1354,6 +1369,27 @@ public class ReturnMethodSetupTests
 			await That(receivedValue4).IsEqualTo(8);
 		}
 
+		[Theory]
+		[InlineData(false, false, false, false)]
+		[InlineData(true, true, true, false)]
+		[InlineData(true, true, false, true)]
+		[InlineData(true, false, true, true)]
+		[InlineData(false, true, true, true)]
+		public async Task CallbackWithValue_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2,
+			bool isMatch3, bool isMatch4)
+		{
+			bool isCalled = false;
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
+				.Callback((v1, v2, v3, v4) => { isCalled = true; });
+
+			sut.Object.Method4(1, 2, 3, 4);
+
+			await That(isCalled).IsFalse();
+		}
+
 		[Fact]
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
@@ -1369,42 +1405,86 @@ public class ReturnMethodSetupTests
 			await That(isCalled).IsFalse();
 		}
 
-		[Theory]
-		[InlineData(false, false, false, false)]
-		[InlineData(true, true, true, false)]
-		[InlineData(true, true, false, true)]
-		[InlineData(true, false, true, true)]
-		[InlineData(false, true, true, true)]
-		public async Task CallbackWithValue_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2, bool isMatch3, bool isMatch4)
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 		{
-			bool isCalled = false;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
+			MethodInvocation invocation = new("foo", ["1", 2, 3, 4,]);
 
-			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2), With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
-				.Callback((v1, v2, v3, v4) => { isCalled = true; });
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
 
-			sut.Object.Method4(1, 2, 3, 4);
-
-			await That(isCalled).IsFalse();
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 1 only supports 'System.Int32', but is 'System.String'.
+				             """);
 		}
 
 		[Fact]
-		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+		public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
+			MethodInvocation invocation = new("foo", [1, "2", 3, 4,]);
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns((v1, v2, v3, v4) => 10 + v1 + v2 + v3 + v4);
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
 
-			var result = new int[10];
-			for (int i = 0; i < 10; i++)
-			{
-				result[i] = sut.Object.Method4(i, 2 * i, 3 * i, 4 * i);
-			}
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 2 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
 
-			await That(result).IsEqualTo([4, 3, 30, 4, 3, 60, 4, 3, 90, 4,]);
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
+		{
+			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
+			MethodInvocation invocation = new("foo", [1, 2, "3", 4,]);
+
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 3 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType4_ShouldThrowMockException()
+		{
+			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
+			MethodInvocation invocation = new("foo", [1, 2, 3, "4",]);
+
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 4 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		{
+			bool isCalled = false;
+			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
+			setup.Callback(() => { isCalled = true; }).Returns(3);
+			MethodInvocation invocation = new("foo", [1, 2, 3, 4,]);
+
+			void Act()
+				=> setup.GetReturnValue<string>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             """);
+			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
 		}
 
 		[Fact]
@@ -1417,9 +1497,9 @@ public class ReturnMethodSetupTests
 				.Throws(new Exception("foo"))
 				.Returns(() => 2);
 
-			var result1 = sut.Object.Method4(1, 2, 3, 4);
-			var result2 = Record.Exception(() => sut.Object.Method4(2, 3, 4, 5));
-			var result3 = sut.Object.Method4(3, 4, 5, 6);
+			int result1 = sut.Object.Method4(1, 2, 3, 4);
+			Exception? result2 = Record.Exception(() => sut.Object.Method4(2, 3, 4, 5));
+			int result3 = sut.Object.Method4(3, 4, 5, 6);
 
 			await That(result1).IsEqualTo(4);
 			await That(result2).HasMessage("foo");
@@ -1427,94 +1507,22 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task Throws_ShouldReturnExpectedValue()
+		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws(new Exception("foo"));
+				.Returns(4)
+				.Returns(() => 3)
+				.Returns((v1, v2, v3, v4) => 10 + v1 + v2 + v3 + v4);
 
-			void Act()
-				=> sut.Object.Method4(1, 2, 3, 4);
+			int[] result = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut.Object.Method4(i, 2 * i, 3 * i, 4 * i);
+			}
 
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws(() => new Exception("foo"));
-
-			void Act()
-				=> sut.Object.Method4(1, 2, 3, 4);
-
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
-
-			void Act()
-				=> sut.Object.Method4(1, 2, 3, 4);
-
-			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4");
-		}
-
-		[Fact]
-		public async Task Returns_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4);
-
-			var result = sut.Object.Method4(1, 2, 3, 4);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(() => 4);
-
-			var result = sut.Object.Method4(1, 2, 3, 4);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns((x, y, z, a) => 4 * x * y * z * a);
-
-			var result = sut.Object.Method4(2, 3, 4, 5);
-
-			await That(result).IsEqualTo(480);
-		}
-
-		[Fact]
-		public async Task Returns_WithoutSetup_ShouldReturnDefault()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			var result = sut.Object.Method4(2, 3, 4, 5);
-
-			await That(result).IsEqualTo(0);
+			await That(result).IsEqualTo([4, 3, 30, 4, 3, 60, 4, 3, 90, 4,]);
 		}
 
 		[Fact]
@@ -1527,7 +1535,8 @@ public class ReturnMethodSetupTests
 			bool isCalled = false;
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
-			sut.Setup.Method4WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6), With.Out(() => 8))
+			sut.Setup.Method4WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
+					With.Out(() => 8))
 				.Callback((v1, v2, v3, v4) =>
 				{
 					isCalled = true;
@@ -1560,7 +1569,8 @@ public class ReturnMethodSetupTests
 			bool isCalled = false;
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
-			sut.Setup.Method4WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+			sut.Setup.Method4WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
+					With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
 				.Callback((v1, v2, v3, v4) =>
 				{
 					isCalled = true;
@@ -1588,11 +1598,60 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
+		public async Task Returns_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(() => 4);
+
+			int result = sut.Object.Method4(1, 2, 3, 4);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns((x, y, z, a) => 4 * x * y * z * a);
+
+			int result = sut.Object.Method4(2, 3, 4, 5);
+
+			await That(result).IsEqualTo(480);
+		}
+
+		[Fact]
+		public async Task Returns_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(4);
+
+			int result = sut.Object.Method4(1, 2, 3, 4);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_WithoutSetup_ShouldReturnDefault()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			int result = sut.Object.Method4(2, 3, 4, 5);
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task SetOutParameter_ShouldReturnDefaultValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int, int>("foo");
+			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 
-			var result = setup.SetOutParameter<int>("p1");
+			int result = setup.SetOutParameter<int>("p1");
 
 			await That(result).IsEqualTo(0);
 		}
@@ -1600,93 +1659,53 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task SetRefParameter_ShouldReturnValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int, int>("foo");
+			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 
-			var result = setup.SetRefParameter<int>("p1", 4);
+			int result = setup.SetRefParameter("p1", 4);
 
 			await That(result).IsEqualTo(4);
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			bool isCalled = false;
-			var setup = new MyReturnMethodSetup<int, int, int, int>("foo");
-			setup.Callback(() => { isCalled = true; }).Returns(3);
-			var invocation = new MethodInvocation("foo", [1, 2, 3, 4]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<string>(invocation);
+				=> sut.Object.Method4(1, 2, 3, 4);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The return callback only supports 'System.Int32' and not 'System.String'.
-				""");
-			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			var invocation = new MethodInvocation("foo", ["1", 2, 3, 4]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method4(1, 2, 3, 4);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 1 only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
+		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			var invocation = new MethodInvocation("foo", [1, "2", 3, 4]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method4(1, 2, 3, 4);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 2 only supports 'System.Int32', but is 'System.String'.
-				""");
-		}
-
-		[Fact]
-		public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
-		{
-			var setup = new MyReturnMethodSetup<int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			var invocation = new MethodInvocation("foo", [1, 2, "3", 4]);
-
-			void Act()
-				=> setup.GetReturnValue<int>(invocation);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 3 only supports 'System.Int32', but is 'System.String'.
-				""");
-		}
-
-		[Fact]
-		public async Task GetReturnValue_InvalidInputType4_ShouldThrowMockException()
-		{
-			var setup = new MyReturnMethodSetup<int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			var invocation = new MethodInvocation("foo", [1, 2, 3, "4"]);
-
-			void Act()
-				=> setup.GetReturnValue<int>(invocation);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 4 only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		private class MyReturnMethodSetup<T1, T2, T3, T4>(string name)
@@ -1698,8 +1717,10 @@ public class ReturnMethodSetupTests
 		{
 			public T SetOutParameter<T>(string parameterName)
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+
 			public T SetRefParameter<T>(string parameterName, T value)
 				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+
 			public T GetReturnValue<T>(MethodInvocation invocation)
 				=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 		}
@@ -1721,6 +1742,29 @@ public class ReturnMethodSetupTests
 			await That(isCalled).IsTrue();
 		}
 
+		[Theory]
+		[InlineData(false, false, false, false, false)]
+		[InlineData(true, true, true, true, false)]
+		[InlineData(true, true, true, false, true)]
+		[InlineData(true, true, false, true, true)]
+		[InlineData(true, false, true, true, true)]
+		[InlineData(false, true, true, true, true)]
+		public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2,
+			bool isMatch3, bool isMatch4, bool isMatch5)
+		{
+			bool isCalled = false;
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4),
+					With.Matching<int>(v => isMatch5))
+				.Callback(() => { isCalled = true; });
+
+			sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(isCalled).IsFalse();
+		}
+
 		[Fact]
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
@@ -1732,26 +1776,6 @@ public class ReturnMethodSetupTests
 
 			sut.Object.Method4(1, 2, 3, 4);
 			sut.Object.Method5(1, 2, 3, 4, 5, false);
-
-			await That(isCalled).IsFalse();
-		}
-
-		[Theory]
-		[InlineData(false, false, false, false, false)]
-		[InlineData(true, true, true, true, false)]
-		[InlineData(true, true, true, false, true)]
-		[InlineData(true, true, false, true, true)]
-		[InlineData(true, false, true, true, true)]
-		[InlineData(false, true, true, true, true)]
-		public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2, bool isMatch3, bool isMatch4, bool isMatch5)
-		{
-			bool isCalled = false;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2), With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4), With.Matching<int>(v => isMatch5))
-				.Callback(() => { isCalled = true; });
-
-			sut.Object.Method5(1, 2, 3, 4, 5);
 
 			await That(isCalled).IsFalse();
 		}
@@ -1788,6 +1812,29 @@ public class ReturnMethodSetupTests
 			await That(receivedValue5).IsEqualTo(10);
 		}
 
+		[Theory]
+		[InlineData(false, false, false, false, false)]
+		[InlineData(true, true, true, true, false)]
+		[InlineData(true, true, true, false, true)]
+		[InlineData(true, true, false, true, true)]
+		[InlineData(true, false, true, true, true)]
+		[InlineData(false, true, true, true, true)]
+		public async Task CallbackWithValue_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2,
+			bool isMatch3, bool isMatch4, bool isMatch5)
+		{
+			bool isCalled = false;
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4),
+					With.Matching<int>(v => isMatch5))
+				.Callback((v1, v2, v3, v4, v5) => { isCalled = true; });
+
+			sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(isCalled).IsFalse();
+		}
+
 		[Fact]
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
@@ -1803,43 +1850,102 @@ public class ReturnMethodSetupTests
 			await That(isCalled).IsFalse();
 		}
 
-		[Theory]
-		[InlineData(false, false, false, false, false)]
-		[InlineData(true, true, true, true, false)]
-		[InlineData(true, true, true, false, true)]
-		[InlineData(true, true, false, true, true)]
-		[InlineData(true, false, true, true, true)]
-		[InlineData(false, true, true, true, true)]
-		public async Task CallbackWithValue_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2, bool isMatch3, bool isMatch4, bool isMatch5)
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 		{
-			bool isCalled = false;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
+			MethodInvocation invocation = new("foo", ["1", 2, 3, 4, 5,]);
 
-			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2), With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4), With.Matching<int>(v => isMatch5))
-				.Callback((v1, v2, v3, v4, v5) => { isCalled = true; });
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
 
-			sut.Object.Method5(1, 2, 3, 4, 5);
-
-			await That(isCalled).IsFalse();
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 1 only supports 'System.Int32', but is 'System.String'.
+				             """);
 		}
 
 		[Fact]
-		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+		public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
+			MethodInvocation invocation = new("foo", [1, "2", 3, 4, 5,]);
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns((v1, v2, v3, v4, v5) => 10 + v1 + v2 + v3 + v4 + v5);
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
 
-			var result = new int[10];
-			for (int i = 0; i < 10; i++)
-			{
-				result[i] = sut.Object.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
-			}
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 2 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
 
-			await That(result).IsEqualTo([4, 3, 40, 4, 3, 85, 4, 3, 130, 4,]);
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
+		{
+			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
+			MethodInvocation invocation = new("foo", [1, 2, "3", 4, 5,]);
+
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 3 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType4_ShouldThrowMockException()
+		{
+			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
+			MethodInvocation invocation = new("foo", [1, 2, 3, "4", 5,]);
+
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 4 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidInputType5_ShouldThrowMockException()
+		{
+			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
+			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
+			MethodInvocation invocation = new("foo", [1, 2, 3, 4, "5",]);
+
+			void Act()
+				=> setup.GetReturnValue<int>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The input parameter 5 only supports 'System.Int32', but is 'System.String'.
+				             """);
+		}
+
+		[Fact]
+		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		{
+			bool isCalled = false;
+			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
+			setup.Callback(() => { isCalled = true; }).Returns(3);
+			MethodInvocation invocation = new("foo", [1, 2, 3, 4, 5,]);
+
+			void Act()
+				=> setup.GetReturnValue<string>(invocation);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             """);
+			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
 		}
 
 		[Fact]
@@ -1852,9 +1958,9 @@ public class ReturnMethodSetupTests
 				.Throws(new Exception("foo"))
 				.Returns(() => 2);
 
-			var result1 = sut.Object.Method5(1, 2, 3, 4, 5);
-			var result2 = Record.Exception(() => sut.Object.Method5(2, 3, 4, 5, 6));
-			var result3 = sut.Object.Method5(3, 4, 5, 6, 7);
+			int result1 = sut.Object.Method5(1, 2, 3, 4, 5);
+			Exception? result2 = Record.Exception(() => sut.Object.Method5(2, 3, 4, 5, 6));
+			int result3 = sut.Object.Method5(3, 4, 5, 6, 7);
 
 			await That(result1).IsEqualTo(4);
 			await That(result2).HasMessage("foo");
@@ -1862,94 +1968,22 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
-		public async Task Throws_ShouldReturnExpectedValue()
+		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws(new Exception("foo"));
+				.Returns(4)
+				.Returns(() => 3)
+				.Returns((v1, v2, v3, v4, v5) => 10 + v1 + v2 + v3 + v4 + v5);
 
-			void Act()
-				=> sut.Object.Method5(1, 2, 3, 4, 5);
+			int[] result = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut.Object.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+			}
 
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws(() => new Exception("foo"));
-
-			void Act()
-				=> sut.Object.Method5(1, 2, 3, 4, 5);
-
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
-
-			void Act()
-				=> sut.Object.Method5(1, 2, 3, 4, 5);
-
-			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4-5");
-		}
-
-		[Fact]
-		public async Task Returns_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4);
-
-			var result = sut.Object.Method5(1, 2, 3, 4, 5);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_Callback_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(() => 4);
-
-			var result = sut.Object.Method5(1, 2, 3, 4, 5);
-
-			await That(result).IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns((x, y, z, a, b) => 4 * x * y * z * a * b);
-
-			var result = sut.Object.Method5(2, 3, 4, 5, 6);
-
-			await That(result).IsEqualTo(2880);
-		}
-
-		[Fact]
-		public async Task Returns_WithoutSetup_ShouldReturnDefault()
-		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
-
-			var result = sut.Object.Method5(2, 3, 4, 5, 6);
-
-			await That(result).IsEqualTo(0);
+			await That(result).IsEqualTo([4, 3, 40, 4, 3, 85, 4, 3, 130, 4,]);
 		}
 
 		[Fact]
@@ -1963,7 +1997,8 @@ public class ReturnMethodSetupTests
 			bool isCalled = false;
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
-			sut.Setup.Method5WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6), With.Out(() => 8), With.Out(() => 10))
+			sut.Setup.Method5WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
+					With.Out(() => 8), With.Out(() => 10))
 				.Callback((v1, v2, v3, v4, v5) =>
 				{
 					isCalled = true;
@@ -1974,7 +2009,8 @@ public class ReturnMethodSetupTests
 					receivedValue5 = v5;
 				});
 
-			sut.Object.Method5WithOutParameter(out int value1, out int value2, out int value3, out int value4, out int value5);
+			sut.Object.Method5WithOutParameter(out int value1, out int value2, out int value3, out int value4,
+				out int value5);
 
 			await That(isCalled).IsTrue();
 			await That(value1).IsEqualTo(2);
@@ -2000,7 +2036,8 @@ public class ReturnMethodSetupTests
 			bool isCalled = false;
 			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
 
-			sut.Setup.Method5WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+			sut.Setup.Method5WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
+					With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
 				.Callback((v1, v2, v3, v4, v5) =>
 				{
 					isCalled = true;
@@ -2032,11 +2069,60 @@ public class ReturnMethodSetupTests
 		}
 
 		[Fact]
+		public async Task Returns_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(() => 4);
+
+			int result = sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns((x, y, z, a, b) => 4 * x * y * z * a * b);
+
+			int result = sut.Object.Method5(2, 3, 4, 5, 6);
+
+			await That(result).IsEqualTo(2880);
+		}
+
+		[Fact]
+		public async Task Returns_ShouldReturnExpectedValue()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(4);
+
+			int result = sut.Object.Method5(1, 2, 3, 4, 5);
+
+			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task Returns_WithoutSetup_ShouldReturnDefault()
+		{
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			int result = sut.Object.Method5(2, 3, 4, 5, 6);
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task SetOutParameter_ShouldReturnDefaultValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int, int, int>("foo");
+			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 
-			var result = setup.SetOutParameter<int>("p1");
+			int result = setup.SetOutParameter<int>("p1");
 
 			await That(result).IsEqualTo(0);
 		}
@@ -2044,109 +2130,53 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task SetRefParameter_ShouldReturnValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int, int, int>("foo");
+			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 
-			var result = setup.SetRefParameter<int>("p1", 4);
+			int result = setup.SetRefParameter("p1", 4);
 
 			await That(result).IsEqualTo(4);
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			bool isCalled = false;
-			var setup = new MyReturnMethodSetup<int, int, int, int, int>("foo");
-			setup.Callback(() => { isCalled = true; }).Returns(3);
-			var invocation = new MethodInvocation("foo", [1, 2, 3, 4, 5]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<string>(invocation);
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The return callback only supports 'System.Int32' and not 'System.String'.
-				""");
-			await That(isCalled).IsFalse().Because("The callback should only be executed on success!");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
+		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			var invocation = new MethodInvocation("foo", ["1", 2, 3, 4, 5]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 1 only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4-5");
 		}
 
 		[Fact]
-		public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
+		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			var setup = new MyReturnMethodSetup<int, int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			var invocation = new MethodInvocation("foo", [1, "2", 3, 4, 5]);
+			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+
+			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
 
 			void Act()
-				=> setup.GetReturnValue<int>(invocation);
+				=> sut.Object.Method5(1, 2, 3, 4, 5);
 
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 2 only supports 'System.Int32', but is 'System.String'.
-				""");
-		}
-
-		[Fact]
-		public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
-		{
-			var setup = new MyReturnMethodSetup<int, int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			var invocation = new MethodInvocation("foo", [1, 2, "3", 4, 5]);
-
-			void Act()
-				=> setup.GetReturnValue<int>(invocation);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 3 only supports 'System.Int32', but is 'System.String'.
-				""");
-		}
-
-		[Fact]
-		public async Task GetReturnValue_InvalidInputType4_ShouldThrowMockException()
-		{
-			var setup = new MyReturnMethodSetup<int, int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			var invocation = new MethodInvocation("foo", [1, 2, 3, "4", 5]);
-
-			void Act()
-				=> setup.GetReturnValue<int>(invocation);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 4 only supports 'System.Int32', but is 'System.String'.
-				""");
-		}
-
-		[Fact]
-		public async Task GetReturnValue_InvalidInputType5_ShouldThrowMockException()
-		{
-			var setup = new MyReturnMethodSetup<int, int, int, int, int>("foo");
-			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			var invocation = new MethodInvocation("foo", [1, 2, 3, 4, "5"]);
-
-			void Act()
-				=> setup.GetReturnValue<int>(invocation);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				The input parameter 5 only supports 'System.Int32', but is 'System.String'.
-				""");
+			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
 		private class MyReturnMethodSetup<T1, T2, T3, T4, T5>(string name)
@@ -2159,8 +2189,10 @@ public class ReturnMethodSetupTests
 		{
 			public T SetOutParameter<T>(string parameterName)
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+
 			public T SetRefParameter<T>(string parameterName, T value)
 				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+
 			public T GetReturnValue<T>(MethodInvocation invocation)
 				=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 		}

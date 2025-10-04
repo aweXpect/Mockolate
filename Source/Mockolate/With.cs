@@ -21,37 +21,38 @@ public static class With
 		=> new PredicateParameter<T>(predicate);
 
 	/// <summary>
-	///     Matches any <see langword="out"/> parameter of type <typeparamref name="T" /> and
-	///     uses the <paramref name="setter"/> to set the value when the method is invoked.
+	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
+	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
 	public static OutParameter<T> Out<T>(Func<T> setter)
-		=> new OutParameter<T>(setter);
+		=> new(setter);
 
 	/// <summary>
-	///     Matches any <see langword="out"/> parameter of type <typeparamref name="T" />.
+	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
 	public static InvokedOutParameter<T> Out<T>()
-		=> new InvokedOutParameter<T>();
+		=> new();
 
 	/// <summary>
-	///     Matches any <see langword="ref"/> parameter of type <typeparamref name="T" /> and
-	///     uses the <paramref name="setter"/> to set the value when the method is invoked.
+	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" /> and
+	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
 	public static RefParameter<T> Ref<T>(Func<T, T> setter)
-		=> new RefParameter<T>(_ => true, setter);
+		=> new(_ => true, setter);
 
 	/// <summary>
-	///     Matches a <see langword="ref"/> parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate"/> and
-	///     uses the <paramref name="setter"/> to set the value when the method is invoked.
+	///     Matches a <see langword="ref" /> parameter of type <typeparamref name="T" /> that satisfies the
+	///     <paramref name="predicate" /> and
+	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
 	public static RefParameter<T> Ref<T>(Func<T, bool> predicate, Func<T, T> setter)
-		=> new RefParameter<T>(predicate, setter);
+		=> new(predicate, setter);
 
 	/// <summary>
-	///     Matches any <see langword="ref"/> parameter of type <typeparamref name="T" />.
+	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
 	public static InvokedRefParameter<T> Ref<T>()
-		=> new InvokedRefParameter<T>();
+		=> new();
 
 	/// <summary>
 	///     Matches a method parameter against an expectation.
@@ -62,7 +63,8 @@ public static class With
 		///     Checks if the <paramref name="value" /> is a matching parameter.
 		/// </summary>
 		/// <returns>
-		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter; otherwise <see langword="false" />.
+		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter; otherwise
+		///     <see langword="false" />.
 		/// </returns>
 		public abstract bool Matches(object? value);
 	}
@@ -90,7 +92,7 @@ public static class With
 		}
 
 		/// <summary>
-		///     Verifies the expectation for the <paramref name="value"/>.
+		///     Verifies the expectation for the <paramref name="value" />.
 		/// </summary>
 		protected abstract bool Matches(T value);
 
@@ -116,7 +118,7 @@ public static class With
 	}
 
 	/// <summary>
-	///     Matches an <see langword="out"/> parameter against an expectation.
+	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
 	public class OutParameter<T>(Func<T> setter) : Parameter
 	{
@@ -127,35 +129,29 @@ public static class With
 		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
 		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
 		/// </returns>
-		public override bool Matches(object? value)
-		{
-			return true;
-		}
+		public override bool Matches(object? value) => true;
 
 		/// <summary>
-		///     Retrieves the value to which the <see langword="out"/> parameter should be set.
+		///     Retrieves the value to which the <see langword="out" /> parameter should be set.
 		/// </summary>
 		public T GetValue() => setter();
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
-	///     Matches any <see langword="out"/> parameter.
+	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
-	public class InvokedOutParameter<T>() : Parameter
+	public class InvokedOutParameter<T> : Parameter
 	{
 		/// <summary>
-		///     Matches any <paramref name="value"/>.
+		///     Matches any <paramref name="value" />.
 		/// </summary>
-		public override bool Matches(object? value)
-		{
-			return true;
-		}
+		public override bool Matches(object? value) => true;
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
-	///     Matches a method <see langword="ref"/> parameter against an expectation.
+	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
 	public class RefParameter<T>(Func<T, bool> predicate, Func<T, T> setter) : Parameter
 	{
@@ -166,38 +162,32 @@ public static class With
 		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
 		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
 		/// </returns>
-		public override bool Matches(object? value)
-		{
-			return value is T typedValue && predicate(typedValue);
-		}
+		public override bool Matches(object? value) => value is T typedValue && predicate(typedValue);
 
 		/// <summary>
-		///     Retrieves the value to which the <see langword="ref"/> parameter should be set.
+		///     Retrieves the value to which the <see langword="ref" /> parameter should be set.
 		/// </summary>
 		public T GetValue(T value) => setter(value);
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
-	///     Matches a method <see langword="out"/> parameter against an expectation.
+	///     Matches a method <see langword="out" /> parameter against an expectation.
 	/// </summary>
-	public class InvokedRefParameter<T>() : Parameter
+	public class InvokedRefParameter<T> : Parameter
 	{
 		/// <summary>
-		///     Matches any <paramref name="value"/>.
+		///     Matches any <paramref name="value" />.
 		/// </summary>
-		public override bool Matches(object? value)
-		{
-			return true;
-		}
+		public override bool Matches(object? value) => true;
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
-	///     A named <see cref="Parameter"/>.
+	///     A named <see cref="Parameter" />.
 	/// </summary>
-	/// <param name="Name">The name of the <paramref name="Parameter"/>.</param>
-	/// <param name="Parameter">The actual <see cref="Parameter"/>.</param>
+	/// <param name="Name">The name of the <paramref name="Parameter" />.</param>
+	/// <param name="Parameter">The actual <see cref="Parameter" />.</param>
 	public record NamedParameter(string Name, Parameter Parameter);
 
 	private sealed class AnyParameter<T> : Parameter<T>
@@ -205,7 +195,7 @@ public static class With
 		protected override bool Matches(T value) => true;
 	}
 
-	private sealed class PredicateParameter<T>(Func<T, bool> predicate) : With.Parameter<T>
+	private sealed class PredicateParameter<T>(Func<T, bool> predicate) : Parameter<T>
 	{
 		protected override bool Matches(T value) => predicate(value);
 	}

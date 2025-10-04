@@ -11,8 +11,8 @@ internal static class GeneratorHelpers
 		{
 			Expression: MemberAccessExpressionSyntax
 			{
-				Name: GenericNameSyntax { Identifier.Text : "For", }
-			}
+				Name: GenericNameSyntax { Identifier.Text : "For", },
+			},
 		};
 
 	internal static bool TryExtractGenericNameSyntax(this SyntaxNode syntaxNode,
@@ -26,7 +26,7 @@ internal static class GeneratorHelpers
 			genericNameSyntax = value;
 			return symbol?.ContainingType.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
 			       symbol.ContainingType.ContainingNamespace.Name == "Mockolate" &&
-				   symbol.ContainingType.Name == "Mock";
+			       symbol.ContainingType.Name == "Mock";
 		}
 
 		genericNameSyntax = null;

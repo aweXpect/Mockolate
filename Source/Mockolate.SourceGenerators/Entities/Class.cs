@@ -1,53 +1,10 @@
-using Mockolate.SourceGenerators.Internals;
 using Microsoft.CodeAnalysis;
+using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
 internal record Class
 {
-	private string GetTypeName(ITypeSymbol type, List<string> additionalNamespaces)
-	{
-		if (type is INamedTypeSymbol namedType)
-		{
-			if (namedType.IsGenericType)
-			{
-				additionalNamespaces.AddRange(namedType.TypeArguments
-					.Select(t => t.ContainingNamespace.ToString()));
-				return namedType.Name + "<" + string.Join(",", namedType.TypeArguments.Select(t => GetTypeName(t, additionalNamespaces))) + ">";
-			}
-			return namedType.SpecialType switch
-			{
-				SpecialType.System_Int32 => "int",
-				SpecialType.System_Int64 => "long",
-				SpecialType.System_Int16 => "short",
-				SpecialType.System_UInt32 => "uint",
-				SpecialType.System_UInt64 => "ulong",
-				SpecialType.System_UInt16 => "ushort",
-				_ => type.Name
-			};
-		}
-		else
-		{
-			return type.Name;
-		}
-	}
-	public static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
-	{
-		var current = type;
-		while (current != null)
-		{
-			yield return current;
-			if (current.TypeKind == TypeKind.Interface)
-			{
-				foreach (var @interface in current.Interfaces)
-				{
-					yield return @interface;
-				}
-			}
-			current = current.BaseType;
-		}
-	}
-
 	public Class(ITypeSymbol type)
 	{
 		List<string> additionalNamespaces = [];
@@ -61,25 +18,29 @@ internal record Class
 		}
 
 		IsInterface = type.TypeKind == TypeKind.Interface;
-		var methods = GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IMethodSymbol>())
-				// Exclude getter/setter methods
-				.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
-				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-				.Select(x => new Method(x))
-				.Distinct()
-				.ToList();
+		List<Method> methods = GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IMethodSymbol>())
+			// Exclude getter/setter methods
+			.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
+			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Select(x => new Method(x))
+			.Distinct()
+			.ToList();
 		for (int i = 0; i < methods.Count; i++)
 		{
-			var method = methods[i];
+			Method method = methods[i];
 			if (methods.Take(i)
-				.Any(m => 
-					m.Name == method.Name &&
-					m.Parameters.Count == method.Parameters.Count &&
-					m.Parameters.SequenceEqual(method.Parameters)))
+			    .Any(m =>
+				    m.Name == method.Name &&
+				    m.Parameters.Count == method.Parameters.Count &&
+				    m.Parameters.SequenceEqual(method.Parameters)))
 			{
-				methods[i] = method with { ExplicitImplementation = method.ContainingType };
+				methods[i] = method with
+				{
+					ExplicitImplementation = method.ContainingType,
+				};
 			}
 		}
+
 		Methods = new EquatableArray<Method>(methods.ToArray());
 		Properties = new EquatableArray<Property>(
 			GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IPropertySymbol>())
@@ -113,13 +74,59 @@ internal record Class
 	public string Namespace { get; }
 	public string ClassName { get; }
 
+	private string GetTypeName(ITypeSymbol type, List<string> additionalNamespaces)
+	{
+		if (type is INamedTypeSymbol namedType)
+		{
+			if (namedType.IsGenericType)
+			{
+				additionalNamespaces.AddRange(namedType.TypeArguments
+					.Select(t => t.ContainingNamespace.ToString()));
+				return namedType.Name + "<" + string.Join(",",
+					namedType.TypeArguments.Select(t => GetTypeName(t, additionalNamespaces))) + ">";
+			}
+
+			return namedType.SpecialType switch
+			{
+				SpecialType.System_Int32 => "int",
+				SpecialType.System_Int64 => "long",
+				SpecialType.System_Int16 => "short",
+				SpecialType.System_UInt32 => "uint",
+				SpecialType.System_UInt64 => "ulong",
+				SpecialType.System_UInt16 => "ushort",
+				_ => type.Name,
+			};
+		}
+
+		return type.Name;
+	}
+
+	public static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
+	{
+		ITypeSymbol? current = type;
+		while (current != null)
+		{
+			yield return current;
+			if (current.TypeKind == TypeKind.Interface)
+			{
+				foreach (INamedTypeSymbol? @interface in current.Interfaces)
+				{
+					yield return @interface;
+				}
+			}
+
+			current = current.BaseType;
+		}
+	}
+
 	public string GetClassNameWithoutDots()
 		=> ClassName
-		.Replace(".", "")
-		.Replace("<", "")
-		.Replace(">", "");
+			.Replace(".", "")
+			.Replace("<", "")
+			.Replace(">", "");
 
 	public string[] GetClassNamespaces() => EnumerateNamespaces().Distinct().OrderBy(n => n).ToArray();
+
 	internal IEnumerable<string> EnumerateNamespaces()
 	{
 		yield return Namespace;
@@ -145,6 +152,7 @@ internal record Class
 				yield return property.Type.Namespace;
 			}
 		}
+
 		foreach (Event @event in Events)
 		{
 			if (@event.Type.Namespace != null)
@@ -155,8 +163,5 @@ internal record Class
 #pragma warning restore S3267
 	}
 
-	internal string GetFullName(string name)
-	{
-		return $"{Namespace}.{ClassName}.{name}";
-	}
+	internal string GetFullName(string name) => $"{Namespace}.{ClassName}.{name}";
 }

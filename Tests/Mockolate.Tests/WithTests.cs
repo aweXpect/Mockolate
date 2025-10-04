@@ -96,21 +96,9 @@ public sealed class WithTests
 	{
 		With.OutParameter<int?> sut = With.Out(() => value);
 
-		var result = sut.GetValue();
+		int? result = sut.GetValue();
 
 		await That(result).IsEqualTo(value);
-	}
-
-	[Theory]
-	[InlineData(42L)]
-	[InlineData("foo")]
-	public async Task WithRef_Invoked_ShouldAlwaysMatch(object? value)
-	{
-		With.InvokedRefParameter<int?> sut = With.Ref<int?>();
-
-		bool result = sut.Matches(value);
-
-		await That(result).IsTrue();
 	}
 
 	[Theory]
@@ -123,6 +111,18 @@ public sealed class WithTests
 		bool result = sut.Matches(value);
 
 		await That(result).IsFalse();
+	}
+
+	[Theory]
+	[InlineData(42L)]
+	[InlineData("foo")]
+	public async Task WithRef_Invoked_ShouldAlwaysMatch(object? value)
+	{
+		With.InvokedRefParameter<int?> sut = With.Ref<int?>();
+
+		bool result = sut.Matches(value);
+
+		await That(result).IsTrue();
 	}
 
 	[Theory]
@@ -144,7 +144,7 @@ public sealed class WithTests
 	{
 		With.RefParameter<int?> sut = With.Ref<int?>(v => v * 2);
 
-		var result = sut.GetValue(value);
+		int? result = sut.GetValue(value);
 
 		await That(result).IsEqualTo(2 * value);
 	}

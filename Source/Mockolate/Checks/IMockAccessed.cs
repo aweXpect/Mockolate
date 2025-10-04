@@ -6,12 +6,13 @@ namespace Mockolate.Checks;
 public interface IMockAccessed
 {
 	/// <summary>
-	/// Counts the invocations for the getter of property with the given <paramref name="propertyName"/>.
+	///     Counts the invocations for the getter of property with the given <paramref name="propertyName" />.
 	/// </summary>
 	IInvocation[] PropertyGetter(string propertyName);
 
 	/// <summary>
-	/// Counts the invocations for the setter of property with the given <paramref name="propertyName"/> with the matching <paramref name="value"/>.
+	///     Counts the invocations for the setter of property with the given <paramref name="propertyName" /> with the matching
+	///     <paramref name="value" />.
 	/// </summary>
 	IInvocation[] PropertySetter(string propertyName, With.Parameter value);
 }

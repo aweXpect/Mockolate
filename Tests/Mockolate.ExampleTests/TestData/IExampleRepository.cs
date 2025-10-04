@@ -2,23 +2,18 @@ namespace Mockolate.Tests.Dummy;
 
 public abstract class MyClass
 {
-	public int Value { get; }
 	public MyClass(int value)
 	{
 		Value = value;
 	}
 
+	public int Value { get; }
+
 	protected virtual int Multiplier { get; set; } = 3;
 
-	protected virtual int Foo(int value)
-	{
-		return value * Multiplier;
-	}
+	protected virtual int Foo(int value) => value * Multiplier;
 
-	public virtual int MyMethod(int value)
-	{
-		return 2 * Foo(value);
-	}
+	public virtual int MyMethod(int value) => 2 * Foo(value);
 }
 
 public interface IExampleRepository
@@ -34,6 +29,7 @@ public interface IExampleRepository
 
 	event MyDelegate MyEvent;
 }
+
 public interface IOrderRepository
 {
 	event EventHandler OrdersChanged;

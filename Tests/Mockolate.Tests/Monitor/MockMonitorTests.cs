@@ -5,37 +5,38 @@ namespace Mockolate.Tests.Monitor;
 public sealed class MockMonitorTests
 {
 	[Fact]
-	public async Task Run_ShouldMonitorInvocationsDuringTheRun()
+	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
 	{
-		var mock = Mock.For<IMyService>();
-		var monitor = mock.Monitor();
+		Mock<IMyService> mock = Mock.For<IMyService>();
+		MockMonitor<IMyService> monitor = mock.Monitor();
 
 		mock.Object.IsValid(1);
 		mock.Object.IsValid(2);
-		using (monitor.Run())
-		{
-			mock.Object.IsValid(3);
-			mock.Object.IsValid(4);
-		}
+		IDisposable disposable = monitor.Run();
+		mock.Object.IsValid(3);
+		mock.Object.IsValid(4);
+		disposable.Dispose();
 		mock.Object.IsValid(5);
+		mock.Object.IsValid(6);
+		disposable.Dispose();
+		mock.Object.IsValid(7);
+		mock.Object.IsValid(8);
 
 		await That(monitor.Invoked.IsValid(1).Never());
 		await That(monitor.Invoked.IsValid(2).Never());
 		await That(monitor.Invoked.IsValid(3).Once());
 		await That(monitor.Invoked.IsValid(4).Once());
 		await That(monitor.Invoked.IsValid(5).Never());
-		await That(mock.Invoked.IsValid(1).Once());
-		await That(mock.Invoked.IsValid(2).Once());
-		await That(mock.Invoked.IsValid(3).Once());
-		await That(mock.Invoked.IsValid(4).Once());
-		await That(mock.Invoked.IsValid(5).Once());
+		await That(monitor.Invoked.IsValid(6).Never());
+		await That(monitor.Invoked.IsValid(7).Never());
+		await That(monitor.Invoked.IsValid(8).Never());
 	}
 
 	[Fact]
 	public async Task MultipleRun_ShouldMonitorInvocationsDuringTheRun()
 	{
-		var mock = Mock.For<IMyService>();
-		var monitor = mock.Monitor();
+		Mock<IMyService> mock = Mock.For<IMyService>();
+		MockMonitor<IMyService> monitor = mock.Monitor();
 
 		mock.Object.IsValid(1);
 		mock.Object.IsValid(2);
@@ -44,6 +45,7 @@ public sealed class MockMonitorTests
 			mock.Object.IsValid(3);
 			mock.Object.IsValid(4);
 		}
+
 		mock.Object.IsValid(5);
 		mock.Object.IsValid(6);
 		using (monitor.Run())
@@ -51,6 +53,7 @@ public sealed class MockMonitorTests
 			mock.Object.IsValid(7);
 			mock.Object.IsValid(8);
 		}
+
 		mock.Object.IsValid(9);
 		mock.Object.IsValid(10);
 
@@ -69,13 +72,13 @@ public sealed class MockMonitorTests
 	[Fact]
 	public async Task NestedRun_ShouldThrowInvalidOperationException()
 	{
-		var mock = Mock.For<IMyService>();
-		var monitor = mock.Monitor();
+		Mock<IMyService> mock = Mock.For<IMyService>();
+		MockMonitor<IMyService> monitor = mock.Monitor();
 
 		void Act()
 			=> monitor.Run();
 
-		var outerRun = monitor.Run();
+		IDisposable outerRun = monitor.Run();
 
 		await That(Act).Throws<InvalidOperationException>()
 			.WithMessage("Monitoring is already running. Dispose the previous scope before starting a new one.");
@@ -86,31 +89,31 @@ public sealed class MockMonitorTests
 	}
 
 	[Fact]
-	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
+	public async Task Run_ShouldMonitorInvocationsDuringTheRun()
 	{
-		var mock = Mock.For<IMyService>();
-		var monitor = mock.Monitor();
+		Mock<IMyService> mock = Mock.For<IMyService>();
+		MockMonitor<IMyService> monitor = mock.Monitor();
 
 		mock.Object.IsValid(1);
 		mock.Object.IsValid(2);
-		var disposable = monitor.Run();
-		mock.Object.IsValid(3);
-		mock.Object.IsValid(4);
-		disposable.Dispose();
+		using (monitor.Run())
+		{
+			mock.Object.IsValid(3);
+			mock.Object.IsValid(4);
+		}
+
 		mock.Object.IsValid(5);
-		mock.Object.IsValid(6);
-		disposable.Dispose();
-		mock.Object.IsValid(7);
-		mock.Object.IsValid(8);
 
 		await That(monitor.Invoked.IsValid(1).Never());
 		await That(monitor.Invoked.IsValid(2).Never());
 		await That(monitor.Invoked.IsValid(3).Once());
 		await That(monitor.Invoked.IsValid(4).Once());
 		await That(monitor.Invoked.IsValid(5).Never());
-		await That(monitor.Invoked.IsValid(6).Never());
-		await That(monitor.Invoked.IsValid(7).Never());
-		await That(monitor.Invoked.IsValid(8).Never());
+		await That(mock.Invoked.IsValid(1).Once());
+		await That(mock.Invoked.IsValid(2).Once());
+		await That(mock.Invoked.IsValid(3).Once());
+		await That(mock.Invoked.IsValid(4).Once());
+		await That(mock.Invoked.IsValid(5).Once());
 	}
 
 	public interface IMyService

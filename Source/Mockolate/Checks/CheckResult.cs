@@ -12,7 +12,7 @@ public class CheckResult : ICheckResult
 	/// <inheritdoc cref="CheckResult" />
 	public CheckResult(IInvocation[] invocations)
 	{
-		this._invocations = invocations;
+		_invocations = invocations;
 	}
 
 	/// <inheritdoc cref="ICheckResult.Invocations" />
@@ -61,7 +61,8 @@ public class CheckResult : ICheckResult
 	public bool Once() => _invocations.Length == 1;
 
 	/// <summary>
-	///     A property expectation returns the getter or setter <see cref="CheckResult"/> for the given <paramref name="propertyName"/>.
+	///     A property expectation returns the getter or setter <see cref="CheckResult" /> for the given
+	///     <paramref name="propertyName" />.
 	/// </summary>
 	public class Property<T>(IMockAccessed mockAccessed, string propertyName)
 	{
@@ -69,17 +70,19 @@ public class CheckResult : ICheckResult
 		///     The expectation for the property getter invocations.
 		/// </summary>
 		[Pure]
-		public CheckResult Getter() => new CheckResult(mockAccessed.PropertyGetter(propertyName));
+		public CheckResult Getter() => new(mockAccessed.PropertyGetter(propertyName));
+
 		/// <summary>
-		///     The expectation for the property setter invocations matching the specified <paramref name="value"/>.
+		///     The expectation for the property setter invocations matching the specified <paramref name="value" />.
 		/// </summary>
 		[Pure]
-		public CheckResult Setter(With.Parameter<T> value) => new CheckResult(mockAccessed.PropertySetter(propertyName, value));
+		public CheckResult Setter(With.Parameter<T> value) => new(mockAccessed.PropertySetter(propertyName, value));
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
-	///     An event expectation returns the subscription or unsubscription <see cref="CheckResult"/> for the given <paramref name="eventName"/>.
+	///     An event expectation returns the subscription or unsubscription <see cref="CheckResult" /> for the given
+	///     <paramref name="eventName" />.
 	/// </summary>
 	public class Event<T>(IMockEvent mockEvent, string eventName)
 	{
@@ -87,12 +90,13 @@ public class CheckResult : ICheckResult
 		///     The expectation for the subscription invocations.
 		/// </summary>
 		[Pure]
-		public CheckResult Subscribed() => new CheckResult(mockEvent.Subscribed(eventName));
+		public CheckResult Subscribed() => new(mockEvent.Subscribed(eventName));
+
 		/// <summary>
 		///     The expectation for the unsubscription invocations.
 		/// </summary>
 		[Pure]
-		public CheckResult Unsubscribed() => new CheckResult(mockEvent.Unsubscribed(eventName));
+		public CheckResult Unsubscribed() => new(mockEvent.Unsubscribed(eventName));
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 }

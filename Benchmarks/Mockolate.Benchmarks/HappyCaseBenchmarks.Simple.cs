@@ -4,7 +4,7 @@ using FakeItEasy;
 using NSubstitute;
 
 namespace Mockolate.Benchmarks;
-
+#pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the simple case of an interface mock, setup a single method that gets called and verified to be called once.<br />
 /// </summary>
@@ -71,3 +71,4 @@ public partial class HappyCaseBenchmarks
 		bool MyFunc(int value);
 	}
 }
+#pragma warning restore CA1822 // Mark members as static

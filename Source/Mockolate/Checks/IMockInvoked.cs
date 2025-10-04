@@ -6,7 +6,8 @@ namespace Mockolate.Checks;
 public interface IMockInvoked
 {
 	/// <summary>
-	/// Counts the invocations of a method with the given <paramref name="methodName"/> and matching <paramref name="parameters"/>.
+	///     Counts the invocations of a method with the given <paramref name="methodName" /> and matching
+	///     <paramref name="parameters" />.
 	/// </summary>
 	IInvocation[] Method(string methodName, params With.Parameter[] parameters);
 }

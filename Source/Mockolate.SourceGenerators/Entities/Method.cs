@@ -1,5 +1,5 @@
-using Mockolate.SourceGenerators.Internals;
 using Microsoft.CodeAnalysis;
+using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 

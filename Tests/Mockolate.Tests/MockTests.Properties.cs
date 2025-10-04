@@ -1,7 +1,4 @@
-using Mockolate.Checks;
 using Mockolate.Exceptions;
-using Mockolate.Setup;
-using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
 
@@ -10,7 +7,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Get_ShouldIncreaseInvocationCountOfGetter()
 	{
-		var sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.For<IMyService>();
 
 		_ = sut.Object.Counter;
 
@@ -21,36 +18,12 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Get_ShouldReturnInitializedValue()
 	{
-		var sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.For<IMyService>();
 		sut.Setup.Counter.InitializeWith(24);
 
-		var result = sut.Object.Counter;
+		int result = sut.Object.Counter;
 
 		await That(result).IsEqualTo(24);
-	}
-
-	[Fact]
-	public async Task Set_ShouldIncreaseInvocationCountOfGetter()
-	{
-		var sut = Mock.For<IMyService>();
-
-		sut.Object.Counter = 42;
-
-		await That(sut.Accessed.Counter.Getter().Never());
-		await That(sut.Accessed.Counter.Setter(With.Any<int>()).Once());
-	}
-
-	[Fact]
-	public async Task Set_ShouldUpdateValueForNextGet()
-	{
-		var sut = Mock.For<IMyService>();
-
-		var result1 = sut.Object.Counter;
-		sut.Object.Counter = 5;
-		var result2 = sut.Object.Counter;
-
-		await That(result1).IsEqualTo(0);
-		await That(result2).IsEqualTo(5);
 	}
 
 	[Theory]
@@ -58,9 +31,9 @@ public sealed partial class MockTests
 	[InlineData(false)]
 	public async Task Get_ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
-		var sut = Mock.For<IMyService>(MockBehavior.Default with
+		Mock<IMyService> sut = Mock.For<IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = throwWhenNotSetup
+			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
 
 		void Act()
@@ -72,14 +45,25 @@ public sealed partial class MockTests
 			             """);
 	}
 
+	[Fact]
+	public async Task Set_ShouldIncreaseInvocationCountOfGetter()
+	{
+		Mock<IMyService> sut = Mock.For<IMyService>();
+
+		sut.Object.Counter = 42;
+
+		await That(sut.Accessed.Counter.Getter().Never());
+		await That(sut.Accessed.Counter.Setter(With.Any<int>()).Once());
+	}
+
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
 	public async Task Set_ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
-		var sut = Mock.For<IMyService>(MockBehavior.Default with
+		Mock<IMyService> sut = Mock.For<IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = throwWhenNotSetup
+			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
 
 		void Act()
@@ -92,14 +76,27 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task Set_ShouldUpdateValueForNextGet()
+	{
+		Mock<IMyService> sut = Mock.For<IMyService>();
+
+		int result1 = sut.Object.Counter;
+		sut.Object.Counter = 5;
+		int result2 = sut.Object.Counter;
+
+		await That(result1).IsEqualTo(0);
+		await That(result2).IsEqualTo(5);
+	}
+
+	[Fact]
 	public async Task Set_WithNull_ShouldUpdateValueForNextGet()
 	{
-		var sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.For<IMyService>();
 		sut.Setup.IsValid.InitializeWith(true);
 
-		var result1 = sut.Object.IsValid;
+		bool? result1 = sut.Object.IsValid;
 		sut.Object.IsValid = null;
-		var result2 = sut.Object.IsValid;
+		bool? result2 = sut.Object.IsValid;
 
 		await That(result1).IsEqualTo(true);
 		await That(result2).IsEqualTo(null);
