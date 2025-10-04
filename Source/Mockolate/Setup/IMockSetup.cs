@@ -24,19 +24,21 @@ public interface IMockSetup
 	void RegisterProperty(string propertyName, PropertySetup propertySetup);
 
 	/// <summary>
-	/// Gets all event handlers registered for the specified <paramref name="eventName"/>.
+	///     Gets all event handlers registered for the specified <paramref name="eventName" />.
 	/// </summary>
 	/// <param name="eventName"></param>
 	/// <returns></returns>
 	IEnumerable<(object?, MethodInfo)> GetEventHandlers(string eventName);
 
 	/// <summary>
-	/// Registers an event handler <paramref name="method"/> on <paramref name="target"/> for the specified <paramref name="eventName"/>.
+	///     Registers an event handler <paramref name="method" /> on <paramref name="target" /> for the specified
+	///     <paramref name="eventName" />.
 	/// </summary>
 	void AddEvent(string eventName, object? target, MethodInfo method);
 
 	/// <summary>
-	/// Removes a previously registered event handler <paramref name="method"/> on <paramref name="target"/> for the specified <paramref name="eventName"/>.
+	///     Removes a previously registered event handler <paramref name="method" /> on <paramref name="target" /> for the
+	///     specified <paramref name="eventName" />.
 	/// </summary>
 	void RemoveEvent(string eventName, object? target, MethodInfo method);
 }

@@ -6,6 +6,19 @@ namespace Mockolate.Tests;
 public sealed partial class MockTests
 {
 	[Fact]
+	public async Task For_2Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
+	{
+		MockBehavior behavior = new()
+		{
+			ThrowWhenNotSetup = true,
+		};
+
+		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService>(behavior: behavior);
+
+		await That(((IMock)sut).Behavior).IsSameAs(behavior);
+	}
+
+	[Fact]
 	public async Task For_2Arguments_SecondIsClass_ShouldThrow()
 	{
 		void Act()
@@ -16,14 +29,14 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task For_2Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
+	public async Task For_3Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 	{
-		var behavior = new MockBehavior
+		MockBehavior behavior = new()
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		};
 
-		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService>(behavior: behavior);
+		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService>(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -39,14 +52,14 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task For_3Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
+	public async Task For_4Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 	{
-		var behavior = new MockBehavior
+		MockBehavior behavior = new()
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		};
 
-		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService>(behavior: behavior);
+		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService, IMyService>(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -62,14 +75,15 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task For_4Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
+	public async Task For_5Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 	{
-		var behavior = new MockBehavior
+		MockBehavior behavior = new()
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		};
 
-		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService, IMyService>(behavior: behavior);
+		Mock<MyBaseClass> sut =
+			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -85,14 +99,15 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task For_5Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
+	public async Task For_6Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 	{
-		var behavior = new MockBehavior
+		MockBehavior behavior = new()
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		};
 
-		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
+		Mock<MyBaseClass> sut =
+			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -108,14 +123,16 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task For_6Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
+	public async Task For_7Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 	{
-		var behavior = new MockBehavior
+		MockBehavior behavior = new()
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		};
 
-		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
+		Mock<MyBaseClass> sut =
+			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(
+				behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -131,14 +148,16 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task For_7Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
+	public async Task For_8Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 	{
-		var behavior = new MockBehavior
+		MockBehavior behavior = new()
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		};
 
-		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
+		Mock<MyBaseClass> sut =
+			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(
+				behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -147,21 +166,25 @@ public sealed partial class MockTests
 	public async Task For_8Arguments_SecondIsClass_ShouldThrow()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					MyBaseClass>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The eighth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
-	public async Task For_8Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
+	public async Task For_9Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 	{
-		var behavior = new MockBehavior
+		MockBehavior behavior = new()
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		};
 
-		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
+		Mock<MyBaseClass> sut =
+			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+				IMyService>(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -170,22 +193,11 @@ public sealed partial class MockTests
 	public async Task For_9Arguments_SecondIsClass_ShouldThrow()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService, MyBaseClass>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The ninth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task For_9Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
-	{
-		var behavior = new MockBehavior
-		{
-			ThrowWhenNotSetup = true
-		};
-
-		Mock<MyBaseClass> sut = new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
-
-		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
 }

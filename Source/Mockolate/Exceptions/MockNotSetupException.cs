@@ -3,7 +3,7 @@ using System;
 namespace Mockolate.Exceptions;
 
 /// <summary>
-/// Represents an exception that is thrown when a mock object is used without being properly set up.
+///     Represents an exception that is thrown when a mock object is used without being properly set up.
 /// </summary>
 public class MockNotSetupException : MockException
 {

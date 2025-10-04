@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Mockolate.Checks;
 
 namespace Mockolate.Tests.Checks;
@@ -15,12 +12,12 @@ public class CheckResultTests
 	[InlineData(2, 1, true)]
 	public async Task AtLeast_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		var invocations = Enumerable.Range(0, count)
+		MyInvocation[] invocations = Enumerable.Range(0, count)
 			.Select(_ => new MyInvocation())
 			.ToArray();
-		var sut = new CheckResult(invocations);
+		CheckResult sut = new(invocations);
 
-		var result = sut.AtLeast(times);
+		bool result = sut.AtLeast(times);
 
 		await That(result).IsEqualTo(expectedResult);
 	}
@@ -32,12 +29,12 @@ public class CheckResultTests
 	[InlineData(3, true)]
 	public async Task AtLeastOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		var invocations = Enumerable.Range(0, count)
+		MyInvocation[] invocations = Enumerable.Range(0, count)
 			.Select(_ => new MyInvocation())
 			.ToArray();
-		var sut = new CheckResult(invocations);
+		CheckResult sut = new(invocations);
 
-		var result = sut.AtLeastOnce();
+		bool result = sut.AtLeastOnce();
 
 		await That(result).IsEqualTo(expectedResult);
 	}
@@ -49,12 +46,12 @@ public class CheckResultTests
 	[InlineData(2, 3, true)]
 	public async Task AtMost_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		var invocations = Enumerable.Range(0, count)
+		MyInvocation[] invocations = Enumerable.Range(0, count)
 			.Select(_ => new MyInvocation())
 			.ToArray();
-		var sut = new CheckResult(invocations);
+		CheckResult sut = new(invocations);
 
-		var result = sut.AtMost(times);
+		bool result = sut.AtMost(times);
 
 		await That(result).IsEqualTo(expectedResult);
 	}
@@ -66,12 +63,12 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task AtMostOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		var invocations = Enumerable.Range(0, count)
+		MyInvocation[] invocations = Enumerable.Range(0, count)
 			.Select(_ => new MyInvocation())
 			.ToArray();
-		var sut = new CheckResult(invocations);
+		CheckResult sut = new(invocations);
 
-		var result = sut.AtMostOnce();
+		bool result = sut.AtMostOnce();
 
 		await That(result).IsEqualTo(expectedResult);
 	}
@@ -83,12 +80,12 @@ public class CheckResultTests
 	[InlineData(2, 1, false)]
 	public async Task Exactly_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		var invocations = Enumerable.Range(0, count)
+		MyInvocation[] invocations = Enumerable.Range(0, count)
 			.Select(_ => new MyInvocation())
 			.ToArray();
-		var sut = new CheckResult(invocations);
+		CheckResult sut = new(invocations);
 
-		var result = sut.Exactly(times);
+		bool result = sut.Exactly(times);
 
 		await That(result).IsEqualTo(expectedResult);
 	}
@@ -100,12 +97,12 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task Never_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		var invocations = Enumerable.Range(0, count)
+		MyInvocation[] invocations = Enumerable.Range(0, count)
 			.Select(_ => new MyInvocation())
 			.ToArray();
-		var sut = new CheckResult(invocations);
+		CheckResult sut = new(invocations);
 
-		var result = sut.Never();
+		bool result = sut.Never();
 
 		await That(result).IsEqualTo(expectedResult);
 	}
@@ -117,12 +114,12 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task Once_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		var invocations = Enumerable.Range(0, count)
+		MyInvocation[] invocations = Enumerable.Range(0, count)
 			.Select(_ => new MyInvocation())
 			.ToArray();
-		var sut = new CheckResult(invocations);
+		CheckResult sut = new(invocations);
 
-		var result = sut.Once();
+		bool result = sut.Once();
 
 		await That(result).IsEqualTo(expectedResult);
 	}

@@ -9,12 +9,48 @@ using Mockolate.Exceptions;
 namespace Mockolate.Setup;
 
 /// <summary>
-///     Sets up the mock for <typeparamref name="T"/>.
+///     Sets up the mock for <typeparamref name="T" />.
 /// </summary>
 public class MockSetups<T>(IMock mock) : IMockSetup
 {
+	private readonly List<MethodSetup> _methodSetups = [];
+
+	private readonly Dictionary<string, PropertySetup> _propertySetups = [];
+	private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _eventHandlers;
+
 	/// <summary>
-	///     A proxy implementation of <see cref="IMockSetup"/> that forwards all calls to the provided <paramref name="inner"/> instance.
+	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
+	///     or returns <see langword="null" /> if no matching setup is found.
+	/// </summary>
+	internal MethodSetup? GetMethodSetup(IInvocation invocation)
+		=> _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
+
+	/// <summary>
+	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
+	/// </summary>
+	/// <remarks>
+	///     If the specified property name does not have an associated setup, a default configuration is
+	///     created and stored for future retrievals, so that getter and setter work in tandem.
+	/// </remarks>
+	internal PropertySetup GetPropertySetup(string propertyName)
+	{
+		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
+		{
+			if (mock.Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
+			}
+
+			matchingSetup = new PropertySetup.Default();
+			_propertySetups.Add(propertyName, matchingSetup);
+		}
+
+		return matchingSetup;
+	}
+
+	/// <summary>
+	///     A proxy implementation of <see cref="IMockSetup" /> that forwards all calls to the provided
+	///     <paramref name="inner" /> instance.
 	/// </summary>
 	public class Proxy(IMockSetup inner) : MockSetups<T>(inner.Mock), IMockSetup
 	{
@@ -40,7 +76,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	}
 
 	/// <summary>
-	///     Sets up the protected elements of the mock for <typeparamref name="T"/>.
+	///     Sets up the protected elements of the mock for <typeparamref name="T" />.
 	/// </summary>
 	public class Protected(IMockSetup inner) : MockSetups<T>(inner.Mock), IMockSetup
 	{
@@ -64,10 +100,6 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 		void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
 			=> inner.RemoveEvent(eventName, target, method);
 	}
-
-	private readonly Dictionary<string, PropertySetup> _propertySetups = [];
-	private readonly List<MethodSetup> _methodSetups = [];
-	private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _eventHandlers;
 
 	#region IMockSetup
 
@@ -110,6 +142,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			{
 				continue;
 			}
+
 			yield return (target, method);
 		}
 	}
@@ -123,41 +156,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 
 	/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
 	void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
-	{
-		_eventHandlers?.TryRemove((target, method, eventName), out _);
-	}
+		=> _eventHandlers?.TryRemove((target, method, eventName), out _);
 
 	#endregion IMockSetup
-
-	/// <summary>
-	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
-	///     or returns <see langword="null" /> if no matching setup is found.
-	/// </summary>
-	internal MethodSetup? GetMethodSetup(IInvocation invocation)
-	{
-		return _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
-	}
-
-	/// <summary>
-	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
-	/// </summary>
-	/// <remarks>
-	///     If the specified property name does not have an associated setup, a default configuration is
-	///     created and stored for future retrievals, so that getter and setter work in tandem.
-	/// </remarks>
-	internal PropertySetup GetPropertySetup(string propertyName)
-	{
-		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
-		{
-			if (mock.Behavior.ThrowWhenNotSetup)
-			{
-				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
-			}
-
-			matchingSetup = new PropertySetup.Default();
-			_propertySetups.Add(propertyName, matchingSetup);
-		}
-
-		return matchingSetup;
-	}
 }

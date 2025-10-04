@@ -8,9 +8,9 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Behavior_ShouldBeSet()
 	{
-		var sut = new MyMock<string>("", MockBehavior.Default with
+		MyMock<string> sut = new("", MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		});
 
 		await That(sut.Hidden.Behavior.ThrowWhenNotSetup).IsTrue();

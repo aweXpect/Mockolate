@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 
 namespace Mockolate.Checks;
 
@@ -9,6 +7,8 @@ namespace Mockolate.Checks;
 /// </summary>
 public class MockInvocations
 {
+	private readonly List<IInvocation> _invocations = [];
+
 	/// <summary>
 	///     Indicates whether (at least) one invocation was already triggered.
 	/// </summary>
@@ -18,8 +18,6 @@ public class MockInvocations
 	///     The number of invocations contained in the collection.
 	/// </summary>
 	public int Count => _invocations.Count;
-
-	private readonly List<IInvocation> _invocations = [];
 
 	/// <summary>
 	///     The registered invocations of the mock.

@@ -1,5 +1,3 @@
-using System.Text;
-using Mockolate.SourceGenerators.Internals;
 using Microsoft.CodeAnalysis;
 
 namespace Mockolate.SourceGenerators.Entities;
@@ -17,6 +15,7 @@ internal readonly record struct Property
 		{
 			IndexerParameter = new MethodParameter(propertySymbol.Parameters[0]);
 		}
+
 		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod);
 		Setter = propertySymbol.SetMethod is null ? null : new Method(propertySymbol.SetMethod);
 	}

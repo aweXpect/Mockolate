@@ -12,7 +12,8 @@ internal record MockClass : Class
 
 		if (!IsInterface && types[0] is INamedTypeSymbol namedTypeSymbol)
 		{
-			Constructors = new EquatableArray<Method>(namedTypeSymbol.Constructors.Select(x => new Method(x)).ToArray());
+			Constructors =
+				new EquatableArray<Method>(namedTypeSymbol.Constructors.Select(x => new Method(x)).ToArray());
 		}
 	}
 

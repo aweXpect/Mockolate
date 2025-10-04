@@ -11,9 +11,9 @@ namespace Mockolate.Setup;
 /// </summary>
 public class VoidMethodSetup(string name) : MethodSetup
 {
-	private Action? _callback;
 	private readonly List<Action> _returnCallbacks = [];
-	int _currentReturnCallbackIndex = -1;
+	private Action? _callback;
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -34,7 +34,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 	}
 
 	/// <summary>
-	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
 	public VoidMethodSetup Throws(Exception exception)
 	{
@@ -57,8 +57,8 @@ public class VoidMethodSetup(string name) : MethodSetup
 		_callback?.Invoke();
 		if (_returnCallbacks.Count > 0)
 		{
-			var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-			var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+			Action? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 			returnCallback();
 		}
 	}
@@ -86,9 +86,9 @@ public class VoidMethodSetup(string name) : MethodSetup
 /// </summary>
 public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : MethodSetup
 {
-	private Action<T1>? _callback;
 	private readonly List<Action<T1>> _returnCallbacks = [];
-	int _currentReturnCallbackIndex = -1;
+	private Action<T1>? _callback;
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -118,7 +118,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	}
 
 	/// <summary>
-	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
 	public VoidMethodSetup<T1> Throws(Exception exception)
 	{
@@ -147,13 +147,13 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior))
+		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
 		{
 			_callback?.Invoke(p1);
 			if (_returnCallbacks.Count > 0)
 			{
-				var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				Action<T1>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				returnCallback(p1);
 			}
 		}
@@ -166,12 +166,12 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -182,7 +182,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -192,20 +192,21 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 }
 
 /// <summary>
-///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning <see langword="void" />.
+///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
+///     <see langword="void" />.
 /// </summary>
 public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, With.NamedParameter match2) : MethodSetup
 {
-	private Action<T1, T2>? _callback;
 	private readonly List<Action<T1, T2>> _returnCallbacks = [];
-	int _currentReturnCallbackIndex = -1;
+	private Action<T1, T2>? _callback;
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
 	public VoidMethodSetup<T1, T2> Callback(Action callback)
 	{
-		_callback = (_,_) => callback();
+		_callback = (_, _) => callback();
 		return this;
 	}
 
@@ -228,7 +229,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	}
 
 	/// <summary>
-	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
 	public VoidMethodSetup<T1, T2> Throws(Exception exception)
 	{
@@ -257,14 +258,14 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
-			TryCast<T2>(invocation.Parameters[1], out var p2, behavior))
+		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
+		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior))
 		{
 			_callback?.Invoke(p1, p2);
 			if (_returnCallbacks.Count > 0)
 			{
-				var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				Action<T1, T2>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				returnCallback(p1, p2);
 			}
 		}
@@ -277,12 +278,12 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -293,7 +294,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -303,13 +304,18 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 }
 
 /// <summary>
-///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and <typeparamref name="T3" /> returning <see langword="void" />.
+///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
+///     <typeparamref name="T3" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1, With.NamedParameter match2, With.NamedParameter match3) : MethodSetup
+public class VoidMethodSetup<T1, T2, T3>(
+	string name,
+	With.NamedParameter match1,
+	With.NamedParameter match2,
+	With.NamedParameter match3) : MethodSetup
 {
-	private Action<T1, T2, T3>? _callback;
 	private readonly List<Action<T1, T2, T3>> _returnCallbacks = [];
-	int _currentReturnCallbackIndex = -1;
+	private Action<T1, T2, T3>? _callback;
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -339,7 +345,7 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 	}
 
 	/// <summary>
-	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
 	public VoidMethodSetup<T1, T2, T3> Throws(Exception exception)
 	{
@@ -368,15 +374,15 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
-			TryCast<T2>(invocation.Parameters[1], out var p2, behavior) &&
-			TryCast<T3>(invocation.Parameters[2], out var p3, behavior))
+		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
+		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior) &&
+		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior))
 		{
 			_callback?.Invoke(p1, p2, p3);
 			if (_returnCallbacks.Count > 0)
 			{
-				var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				Action<T1, T2, T3>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				returnCallback(p1, p2, p3);
 			}
 		}
@@ -389,12 +395,12 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2, match3], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2, match3], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2, match3,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -405,7 +411,7 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2, match3], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2, match3,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -415,13 +421,19 @@ public class VoidMethodSetup<T1, T2, T3>(string name, With.NamedParameter match1
 }
 
 /// <summary>
-///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <see langword="void" />.
+///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
+///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter match1, With.NamedParameter match2, With.NamedParameter match3, With.NamedParameter match4) : MethodSetup
+public class VoidMethodSetup<T1, T2, T3, T4>(
+	string name,
+	With.NamedParameter match1,
+	With.NamedParameter match2,
+	With.NamedParameter match3,
+	With.NamedParameter match4) : MethodSetup
 {
-	private Action<T1, T2, T3, T4>? _callback;
 	private readonly List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
-	int _currentReturnCallbackIndex = -1;
+	private Action<T1, T2, T3, T4>? _callback;
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -451,7 +463,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 	}
 
 	/// <summary>
-	///     Registers an <paramref name="exception"/> to throw when the method is invoked.
+	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
 	public VoidMethodSetup<T1, T2, T3, T4> Throws(Exception exception)
 	{
@@ -480,16 +492,16 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out var p1, behavior) &&
-			TryCast<T2>(invocation.Parameters[1], out var p2, behavior) &&
-			TryCast<T3>(invocation.Parameters[2], out var p3, behavior) &&
-			TryCast<T4>(invocation.Parameters[3], out var p4, behavior))
+		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
+		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior) &&
+		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior) &&
+		    TryCast<T4>(invocation.Parameters[3], out T4? p4, behavior))
 		{
 			_callback?.Invoke(p1, p2, p3, p4);
 			if (_returnCallbacks.Count > 0)
 			{
-				var index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				var returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				Action<T1, T2, T3, T4>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				returnCallback(p1, p2, p3, p4);
 			}
 		}
@@ -502,12 +514,12 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2, match3, match4], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2, match3, match4,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -518,7 +530,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(string name, With.NamedParameter ma
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2, match3, match4], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2, match3, match4,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}

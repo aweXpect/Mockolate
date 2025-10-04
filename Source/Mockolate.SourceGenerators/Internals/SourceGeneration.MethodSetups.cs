@@ -100,18 +100,21 @@ internal static partial class SourceGeneration
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
+		sb.Append(
+				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws(Func<")
 			.Append(typeParams).Append(", Exception> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((").Append(values).Append(") => throw callback(").Append(values).Append("));").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((").Append(values).Append(") => throw callback(").Append(values)
+			.Append("));").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
+		sb.Append(
+				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws(Func<Exception> callback)")
@@ -124,7 +127,8 @@ internal static partial class SourceGeneration
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.").AppendLine();
+		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
+			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws(Exception exception)")
 			.AppendLine();
@@ -298,21 +302,25 @@ internal static partial class SourceGeneration
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
+		sb.Append(
+				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Func<")
 			.Append(typeParams).Append(", Exception> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((").Append(values).Append(") => throw callback(").Append(values).Append("));").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((").Append(values).Append(") => throw callback(").Append(values)
+			.Append("));").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
+		sb.Append(
+				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Func<Exception> callback)")
+		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams)
+			.Append("> Throws(Func<Exception> callback)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_returnCallbacks.Add((")
@@ -322,7 +330,8 @@ internal static partial class SourceGeneration
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.").AppendLine();
+		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
+			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Exception exception)")
 			.AppendLine();

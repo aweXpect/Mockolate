@@ -16,7 +16,7 @@ public static class Generator
 		PortableExecutableReference[] references =
 		[
 			MetadataReference.CreateFromFile(typeof(MockBehavior).Assembly.Location),
-			..assemblyTypes.Select(t => MetadataReference.CreateFromFile(t.Assembly.Location))
+			..assemblyTypes.Select(t => MetadataReference.CreateFromFile(t.Assembly.Location)),
 		];
 
 		CSharpCompilation compilation = CSharpCompilation.Create(
