@@ -16,11 +16,11 @@ public class MockAccessed<T>(MockInvocations invocations) : IMockAccessed
 	public class Proxy(IMockAccessed inner, MockInvocations invocations) : MockAccessed<T>(invocations), IMockAccessed
 	{
 		/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
-		Invocation[] IMockAccessed.PropertyGetter(string propertyName)
+		IInvocation[] IMockAccessed.PropertyGetter(string propertyName)
 			=> inner.PropertyGetter(propertyName);
 
 		/// <inheritdoc cref="IMockAccessed.PropertySetter(string, With.Parameter)" />
-		Invocation[] IMockAccessed.PropertySetter(string propertyName, With.Parameter value)
+		IInvocation[] IMockAccessed.PropertySetter(string propertyName, With.Parameter value)
 			=> inner.PropertySetter(propertyName, value);
 	}
 
@@ -30,16 +30,16 @@ public class MockAccessed<T>(MockInvocations invocations) : IMockAccessed
 	public class Protected(IMockAccessed inner, MockInvocations invocations) : MockAccessed<T>(invocations), IMockAccessed
 	{
 		/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
-		Invocation[] IMockAccessed.PropertyGetter(string propertyName)
+		IInvocation[] IMockAccessed.PropertyGetter(string propertyName)
 			=> inner.PropertyGetter(propertyName);
 
 		/// <inheritdoc cref="IMockAccessed.PropertySetter(string, With.Parameter)" />
-		Invocation[] IMockAccessed.PropertySetter(string propertyName, With.Parameter value)
+		IInvocation[] IMockAccessed.PropertySetter(string propertyName, With.Parameter value)
 			=> inner.PropertySetter(propertyName, value);
 	}
 
 	/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)"/>
-	Invocation[] IMockAccessed.PropertyGetter(string propertyName)
+	IInvocation[] IMockAccessed.PropertyGetter(string propertyName)
 	{
 		return invocations.Invocations
 			.OfType<PropertyGetterInvocation>()
@@ -48,7 +48,7 @@ public class MockAccessed<T>(MockInvocations invocations) : IMockAccessed
 	}
 
 	/// <inheritdoc cref="IMockAccessed.PropertySetter(string, With.Parameter)"/>
-	Invocation[] IMockAccessed.PropertySetter(string propertyName, With.Parameter value)
+	IInvocation[] IMockAccessed.PropertySetter(string propertyName, With.Parameter value)
 	{
 		return invocations.Invocations
 			.OfType<PropertySetterInvocation>()

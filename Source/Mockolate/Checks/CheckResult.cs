@@ -7,16 +7,16 @@ namespace Mockolate.Checks;
 /// </summary>
 public class CheckResult : ICheckResult
 {
-	private readonly Invocation[] _invocations;
+	private readonly IInvocation[] _invocations;
 
 	/// <inheritdoc cref="CheckResult" />
-	public CheckResult(Invocation[] invocations)
+	public CheckResult(IInvocation[] invocations)
 	{
 		this._invocations = invocations;
 	}
 
 	/// <inheritdoc cref="ICheckResult.Invocations" />
-	Invocation[] ICheckResult.Invocations => _invocations;
+	IInvocation[] ICheckResult.Invocations => _invocations;
 
 	/// <summary>
 	///     …at least the expected number of <paramref name="times" />.
@@ -77,6 +77,7 @@ public class CheckResult : ICheckResult
 		public CheckResult Setter(With.Parameter<T> value) => new CheckResult(mockAccessed.PropertySetter(propertyName, value));
 	}
 
+#pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
 	///     An event expectation returns the subscription or unsubscription <see cref="CheckResult"/> for the given <paramref name="eventName"/>.
 	/// </summary>
@@ -93,4 +94,5 @@ public class CheckResult : ICheckResult
 		[Pure]
 		public CheckResult Unsubscribed() => new CheckResult(mockEvent.Unsubscribed(eventName));
 	}
+#pragma warning restore S2326 // Unused type parameters should be removed
 }

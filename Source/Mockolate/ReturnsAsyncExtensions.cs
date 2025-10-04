@@ -9,6 +9,7 @@ namespace Mockolate;
 /// </summary>
 public static class ReturnsAsyncExtensions
 {
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 	/// <summary>
 	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
 	/// </summary>
@@ -178,4 +179,5 @@ public static class ReturnsAsyncExtensions
 	public static ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> setup, Func<T1, T2, T3, T4, TReturn> callback)
 		=> setup.Returns((v1, v2, v3, v4) => ValueTask.FromResult(callback(v1, v2, v3, v4)));
 #endif
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -7,7 +8,7 @@ namespace Mockolate.SourceGenerators.Tests.TestHelpers;
 
 public static class Generator
 {
-	public static GeneratorResult Run(string source)
+	public static GeneratorResult Run(string source, params Type[] assemblyTypes)
 	{
 		MockGenerator generator = new();
 		CSharpParseOptions parseOptions = new(LanguageVersion.Latest);
@@ -15,6 +16,7 @@ public static class Generator
 		PortableExecutableReference[] references =
 		[
 			MetadataReference.CreateFromFile(typeof(MockBehavior).Assembly.Location),
+			..assemblyTypes.Select(t => MetadataReference.CreateFromFile(t.Assembly.Location))
 		];
 
 		CSharpCompilation compilation = CSharpCompilation.Create(
@@ -28,10 +30,9 @@ public static class Generator
 			out ImmutableArray<Diagnostic> diagnostics);
 
 		GeneratorDriverRunResult runResult = driver.GetRunResult();
-		GeneratedSource[] generatedSources = runResult.Results
-			.SelectMany(runResult => runResult.GeneratedSources
-				.Select(source => new GeneratedSource(source.HintName, source.SourceText.ToString())))
-			.ToArray();
+		Dictionary<string, string> generatedSources = runResult.Results
+			.SelectMany(runResult => runResult.GeneratedSources)
+			.ToDictionary(source => source.HintName, source => source.SourceText.ToString());
 		string[] diagnosticMessages = diagnostics.Select(d => d.ToString()).ToArray();
 		return new GeneratorResult(generatedSources, diagnosticMessages);
 	}

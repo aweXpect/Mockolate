@@ -16,7 +16,7 @@ public class MockInvoked<T>(MockInvocations invocations) : IMockInvoked
 	public class Proxy(IMockInvoked inner, MockInvocations invocations) : MockInvoked<T>(invocations), IMockInvoked
 	{
 		/// <inheritdoc cref="IMockInvoked.Method(string, With.Parameter[])" />
-		Invocation[] IMockInvoked.Method(string methodName, params With.Parameter[] parameters)
+		IInvocation[] IMockInvoked.Method(string methodName, params With.Parameter[] parameters)
 			=> inner.Method(methodName, parameters);
 	}
 
@@ -26,12 +26,12 @@ public class MockInvoked<T>(MockInvocations invocations) : IMockInvoked
 	public class Protected(IMockInvoked inner, MockInvocations invocations) : MockInvoked<T>(invocations), IMockInvoked
 	{
 		/// <inheritdoc cref="IMockInvoked.Method(string, With.Parameter[])" />
-		Invocation[] IMockInvoked.Method(string methodName, params With.Parameter[] parameters)
+		IInvocation[] IMockInvoked.Method(string methodName, params With.Parameter[] parameters)
 			=> inner.Method(methodName, parameters);
 	}
 
 	/// <inheritdoc cref="IMockInvoked.Method(string, With.Parameter[])"/>
-	Invocation[] IMockInvoked.Method(string methodName, params With.Parameter[] parameters)
+	IInvocation[] IMockInvoked.Method(string methodName, params With.Parameter[] parameters)
 	{
 		return invocations.Invocations
 			.OfType<MethodInvocation>()
