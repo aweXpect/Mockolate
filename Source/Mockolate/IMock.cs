@@ -30,11 +30,6 @@ public interface IMock
 	IMockSetup Setup { get; }
 
 	/// <summary>
-	///     Check what happened with the mocked instance.
-	/// </summary>
-	IMockInvoked Check { get; }
-
-	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>

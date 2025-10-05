@@ -111,10 +111,6 @@ public abstract class Mock<T> : IMock
 	/// </summary>
 	MockBehavior IMock.Behavior => _behavior;
 
-	/// <inheritdoc cref="IMock.Check" />
-	IMockInvoked IMock.Check
-		=> Invoked;
-
 	/// <inheritdoc cref="IMock.Raise" />
 	IMockRaises IMock.Raise
 		=> Raise;
@@ -139,7 +135,7 @@ public abstract class Mock<T> : IMock
 			if (_behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().ToString() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
 			return new MethodSetupResult<TResult>(matchingSetup, _behavior,
@@ -161,7 +157,7 @@ public abstract class Mock<T> : IMock
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
+				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().ToString() ?? "<null>"))})' was invoked without prior setup.");
 		}
 
 		matchingSetup?.Invoke(invocation, _behavior);

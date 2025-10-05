@@ -58,10 +58,6 @@ public class ProtectedMock<T>(Mock<T> mock) : IMock
 	MockBehavior IMock.Behavior
 		=> _inner.Behavior;
 
-	/// <inheritdoc cref="IMock.Check" />
-	IMockInvoked IMock.Check
-		=> _inner.Check;
-
 	/// <inheritdoc cref="IMock.Raise" />
 	IMockRaises IMock.Raise
 		=> _inner.Raise;

@@ -14,8 +14,7 @@ namespace Mockolate
     public interface IMock
     {
         Mockolate.MockBehavior Behavior { get; }
-        Mockolate.Checks.IMockInvoked Check { get; }
-        Mockolate.Checks.MockChecks Checks { get; }
+        Mockolate.Checks.Checks Checks { get; }
         Mockolate.Events.IMockRaises Raise { get; }
         Mockolate.Setup.IMockSetup Setup { get; }
         Mockolate.Setup.MethodSetupResult Execute(string methodName, params object?[]? parameters);
@@ -38,6 +37,7 @@ namespace Mockolate
     {
         protected Mock(Mockolate.MockBehavior behavior) { }
         public Mockolate.Checks.MockAccessed<T> Accessed { get; }
+        public Mockolate.Checks.MockCheck<T> Check { get; }
         public Mockolate.Checks.MockEvent<T> Event { get; }
         public Mockolate.Checks.MockInvoked<T> Invoked { get; }
         public abstract T Object { get; }
@@ -150,7 +150,7 @@ namespace Mockolate.Checks
 {
     public class CheckResult
     {
-        public CheckResult(Mockolate.Checks.MockChecks checks, Mockolate.Checks.Interactions.IInteraction[] interactions) { }
+        public CheckResult(Mockolate.Checks.Checks checks, Mockolate.Checks.Interactions.IInteraction[] interactions) { }
         public bool AtLeast(int times) { }
         public bool AtLeastOnce() { }
         public bool AtMost(int times) { }
@@ -171,6 +171,12 @@ namespace Mockolate.Checks
             public Mockolate.Checks.CheckResult Setter(Mockolate.With.Parameter<T> value) { }
         }
     }
+    public class Checks
+    {
+        public Checks() { }
+        public int Count { get; }
+        public System.Collections.Generic.IEnumerable<Mockolate.Checks.Interactions.IInteraction> Interactions { get; }
+    }
     public interface IMockAccessed
     {
         Mockolate.Checks.CheckResult PropertyGetter(string propertyName);
@@ -187,44 +193,43 @@ namespace Mockolate.Checks
     }
     public class MockAccessed<T> : Mockolate.Checks.IMockAccessed
     {
-        public MockAccessed(Mockolate.Checks.MockChecks checks) { }
+        public MockAccessed(Mockolate.Checks.Checks checks) { }
         public class Protected : Mockolate.Checks.MockAccessed<T>, Mockolate.Checks.IMockAccessed
         {
-            public Protected(Mockolate.Checks.IMockAccessed inner, Mockolate.Checks.MockChecks checks) { }
+            public Protected(Mockolate.Checks.IMockAccessed inner, Mockolate.Checks.Checks checks) { }
         }
         public class Proxy : Mockolate.Checks.MockAccessed<T>, Mockolate.Checks.IMockAccessed
         {
-            public Proxy(Mockolate.Checks.IMockAccessed inner, Mockolate.Checks.MockChecks checks) { }
+            public Proxy(Mockolate.Checks.IMockAccessed inner, Mockolate.Checks.Checks checks) { }
         }
     }
-    public class MockChecks
+    public class MockCheck<T>
     {
-        public MockChecks() { }
-        public int Count { get; }
-        public System.Collections.Generic.IEnumerable<Mockolate.Checks.Interactions.IInteraction> Interactions { get; }
+        public MockCheck(Mockolate.Checks.Checks checks) { }
+        public bool AllInteractionsVerified { get; }
     }
     public class MockEvent<T> : Mockolate.Checks.IMockEvent
     {
-        public MockEvent(Mockolate.Checks.MockChecks checks) { }
+        public MockEvent(Mockolate.Checks.Checks checks) { }
         public class Protected : Mockolate.Checks.MockEvent<T>, Mockolate.Checks.IMockEvent
         {
-            public Protected(Mockolate.Checks.IMockEvent inner, Mockolate.Checks.MockChecks checks) { }
+            public Protected(Mockolate.Checks.IMockEvent inner, Mockolate.Checks.Checks checks) { }
         }
         public class Proxy : Mockolate.Checks.MockEvent<T>, Mockolate.Checks.IMockEvent
         {
-            public Proxy(Mockolate.Checks.IMockEvent inner, Mockolate.Checks.MockChecks checks) { }
+            public Proxy(Mockolate.Checks.IMockEvent inner, Mockolate.Checks.Checks checks) { }
         }
     }
     public class MockInvoked<T> : Mockolate.Checks.IMockInvoked
     {
-        public MockInvoked(Mockolate.Checks.MockChecks checks) { }
+        public MockInvoked(Mockolate.Checks.Checks checks) { }
         public class Protected : Mockolate.Checks.MockInvoked<T>, Mockolate.Checks.IMockInvoked
         {
-            public Protected(Mockolate.Checks.IMockInvoked inner, Mockolate.Checks.MockChecks checks) { }
+            public Protected(Mockolate.Checks.IMockInvoked inner, Mockolate.Checks.Checks checks) { }
         }
         public class Proxy : Mockolate.Checks.MockInvoked<T>, Mockolate.Checks.IMockInvoked
         {
-            public Proxy(Mockolate.Checks.IMockInvoked inner, Mockolate.Checks.MockChecks checks) { }
+            public Proxy(Mockolate.Checks.IMockInvoked inner, Mockolate.Checks.Checks checks) { }
         }
     }
 }
@@ -273,10 +278,10 @@ namespace Mockolate.Events
     }
     public class MockRaises<T> : Mockolate.Events.IMockRaises
     {
-        public MockRaises(Mockolate.Setup.IMockSetup setup, Mockolate.Checks.MockChecks checks) { }
+        public MockRaises(Mockolate.Setup.IMockSetup setup, Mockolate.Checks.Checks checks) { }
         public class Protected : Mockolate.Events.MockRaises<T>, Mockolate.Events.IMockRaises
         {
-            public Protected(Mockolate.Events.IMockRaises inner, Mockolate.Setup.IMockSetup setup, Mockolate.Checks.MockChecks checks) { }
+            public Protected(Mockolate.Events.IMockRaises inner, Mockolate.Setup.IMockSetup setup, Mockolate.Checks.Checks checks) { }
         }
     }
 }
@@ -298,7 +303,7 @@ namespace Mockolate.Monitor
     public abstract class MockMonitor
     {
         protected MockMonitor(Mockolate.IMock mock) { }
-        protected Mockolate.Checks.MockChecks Invocations { get; }
+        protected Mockolate.Checks.Checks Invocations { get; }
         public System.IDisposable Run() { }
     }
     public static class MockMonitorExtensions
