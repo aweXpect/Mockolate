@@ -71,29 +71,29 @@ public abstract class Mock<T> : IMock
 	/// <summary>
 	///     Attempts to create an instance of the specified type using the provided constructor parameters.
 	/// </summary>
-	protected TObject TryCreate<TObject>(ConstructorParameters? constructorParameters)
+	protected TObject Create<TObject>(ConstructorParameters? constructorParameters)
 	{
-		if (constructorParameters is null)
+		if (constructorParameters?.Parameters.Length > 0)
 		{
 			try
 			{
-				return (TObject)Activator.CreateInstance(typeof(TObject), this)!;
+				return (TObject)Activator.CreateInstance(typeof(TObject), [this, .. constructorParameters.Parameters,])!;
 			}
 			catch
 			{
 				throw new MockException(
-					$"Could not create an instance of '{typeof(TObject)}' without constructor parameters.");
+					$"Could not create an instance of '{typeof(TObject)}' with {constructorParameters.Parameters.Length} parameters ({string.Join(", ", constructorParameters.Parameters)}).");
 			}
 		}
 
 		try
 		{
-			return (TObject)Activator.CreateInstance(typeof(TObject), [this, .. constructorParameters.Parameters,])!;
+			return (TObject)Activator.CreateInstance(typeof(TObject), this)!;
 		}
 		catch
 		{
 			throw new MockException(
-				$"Could not create an instance of '{typeof(TObject)}' with {constructorParameters.Parameters.Length} parameters ({string.Join(", ", constructorParameters.Parameters)}).");
+				$"Could not create an instance of '{typeof(TObject)}' without constructor parameters.");
 		}
 	}
 
@@ -132,7 +132,7 @@ public abstract class Mock<T> : IMock
 			if (_behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(",", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
 			}
 
 			return new MethodSetupResult<TResult>(matchingSetup, _behavior,
@@ -154,7 +154,7 @@ public abstract class Mock<T> : IMock
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(",", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
+				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
 		}
 
 		matchingSetup?.Invoke(invocation, _behavior);

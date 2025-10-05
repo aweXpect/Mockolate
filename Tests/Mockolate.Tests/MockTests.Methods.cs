@@ -10,14 +10,14 @@ public sealed partial class MockTests
 	public async Task Execute_MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<IMyService> sut = Mock.For<IMyService>();
-		sut.Setup.Double(With.Any<int>()).Returns(1);
+		sut.Setup.Multiply(With.Any<int>(), With.Any<int>()).Returns(1);
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
-			sut.Object.Double(i);
+			sut.Object.Multiply(i, 4);
 		}
 
-		await That(sut.Invoked.Double(With.Any<int>()).Exactly(numberOfInvocations));
+		await That(sut.Invoked.Multiply(With.Any<int>(), With.Any<int>()).Exactly(numberOfInvocations));
 	}
 
 	[Theory]
@@ -26,14 +26,14 @@ public sealed partial class MockTests
 	public async Task Execute_VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<IMyService> sut = Mock.For<IMyService>();
-		sut.Setup.SetIsValid(With.Any<bool>());
+		sut.Setup.SetIsValid(With.Any<bool>(), With.Any<Func<bool>>());
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
-			sut.Object.SetIsValid(i % 2 == 0);
+			sut.Object.SetIsValid(i % 2 == 0, () => true);
 		}
 
-		await That(sut.Invoked.SetIsValid(With.Any<bool>()).Exactly(numberOfInvocations));
+		await That(sut.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>>()).Exactly(numberOfInvocations));
 	}
 
 	[Theory]
@@ -48,11 +48,11 @@ public sealed partial class MockTests
 		});
 
 		void Act()
-			=> sut.Object.SetIsValid(true);
+			=> sut.Object.SetIsValid(true, () => true);
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
-			             The method 'Mockolate.Tests.MockTests.IMyService.SetIsValid(System.Boolean)' was invoked without prior setup.
+			             The method 'Mockolate.Tests.MockTests.IMyService.SetIsValid(System.Boolean, System.Func`1[System.Boolean])' was invoked without prior setup.
 			             """);
 	}
 
@@ -65,11 +65,11 @@ public sealed partial class MockTests
 		});
 
 		void Act()
-			=> sut.Object.Double(3);
+			=> sut.Object.Multiply(3, 4);
 
 		await That(Act).Throws<MockNotSetupException>()
 			.WithMessage("""
-			             The method 'Mockolate.Tests.MockTests.IMyService.Double(System.Int32)' was invoked without prior setup.
+			             The method 'Mockolate.Tests.MockTests.IMyService.Multiply(System.Int32, System.Int32)' was invoked without prior setup.
 			             """);
 	}
 
@@ -78,7 +78,7 @@ public sealed partial class MockTests
 	{
 		Mock<IMyService> sut = Mock.For<IMyService>();
 
-		int result = sut.Object.Double(3);
+		int result = sut.Object.Multiply(3, 4);
 
 		await That(result).IsEqualTo(default(int));
 	}

@@ -43,7 +43,7 @@ namespace Mockolate
         public abstract T Object { get; }
         public Mockolate.Events.MockRaises<T> Raise { get; }
         public Mockolate.Setup.MockSetups<T> Setup { get; }
-        protected TObject TryCreate<TObject>(Mockolate.BaseClass.ConstructorParameters? constructorParameters) { }
+        protected TObject Create<TObject>(Mockolate.BaseClass.ConstructorParameters? constructorParameters) { }
         public static T op_Implicit(Mockolate.Mock<T> mock) { }
     }
     public abstract class Mock<T1, T2> : Mockolate.Mock<T1>

@@ -69,7 +69,7 @@ internal static partial class SourceGeneration
 				"\t\tpublic Mock(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior) : base(mockBehavior)")
 			.AppendLine();
 		sb.AppendLine("\t\t{");
-		sb.Append("\t\t\tObject = TryCreate<MockObject>(constructorParameters);").AppendLine();
+		sb.Append("\t\t\tObject = Create<MockObject>(constructorParameters);").AppendLine();
 		sb.AppendLine("\t\t}");
 		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassName)
