@@ -2,7 +2,7 @@ using Mockolate.Checks;
 using Mockolate.Events;
 using Mockolate.Setup;
 
-namespace Mockolate;
+namespace Mockolate.Protected;
 
 /// <summary>
 ///     Provides protected access to mock setup, invocation, and event tracking features for the specified type parameter.

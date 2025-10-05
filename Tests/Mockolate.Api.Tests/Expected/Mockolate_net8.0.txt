@@ -78,15 +78,6 @@ namespace Mockolate
     {
         protected Mock(Mockolate.MockBehavior behavior) { }
     }
-    public class ProtectedMock<T> : Mockolate.IMock
-    {
-        public ProtectedMock(Mockolate.Mock<T> mock) { }
-        public Mockolate.Checks.MockAccessed<T>.Protected Accessed { get; }
-        public Mockolate.Checks.MockEvent<T>.Protected Event { get; }
-        public Mockolate.Checks.MockInvoked<T>.Protected Invoked { get; }
-        public Mockolate.Events.MockRaises<T>.Protected Raise { get; }
-        public Mockolate.Setup.MockSetups<T>.Protected Setup { get; }
-    }
     public static class ReturnsAsyncExtensions
     {
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
@@ -336,6 +327,18 @@ namespace Mockolate.Monitor
         public Mockolate.Checks.MockAccessed<T> Accessed { get; }
         public Mockolate.Checks.MockEvent<T> Event { get; }
         public Mockolate.Checks.MockInvoked<T> Invoked { get; }
+    }
+}
+namespace Mockolate.Protected
+{
+    public class ProtectedMock<T> : Mockolate.IMock
+    {
+        public ProtectedMock(Mockolate.Mock<T> mock) { }
+        public Mockolate.Checks.MockAccessed<T>.Protected Accessed { get; }
+        public Mockolate.Checks.MockEvent<T>.Protected Event { get; }
+        public Mockolate.Checks.MockInvoked<T>.Protected Invoked { get; }
+        public Mockolate.Events.MockRaises<T>.Protected Raise { get; }
+        public Mockolate.Setup.MockSetups<T>.Protected Setup { get; }
     }
 }
 namespace Mockolate.Setup
