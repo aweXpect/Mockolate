@@ -30,11 +30,19 @@ partial class Build
 			sb.AppendLine(lines.First());
 			sb.AppendLine(
 				$"[![Changelog](https://img.shields.io/badge/Changelog-v{version}-blue)](https://github.com/aweXpect/Mockolate/releases/tag/v{version})");
+			bool foundBadge = false;
 			foreach (string line in lines.Skip(1))
 			{
+				if (!foundBadge && string.IsNullOrWhiteSpace(line))
+				{
+					// Skip empty lines before the badges
+					continue;
+				}
+
 				if (line.StartsWith("[![Build](https://github.com/aweXpect/Mockolate/actions/workflows/build.yml") ||
 				    line.StartsWith("[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure"))
 				{
+					foundBadge = true;
 					continue;
 				}
 
