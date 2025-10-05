@@ -11,8 +11,8 @@ namespace Mockolate.Setup;
 /// </summary>
 public class VoidMethodSetup(string name) : MethodSetup
 {
+	private readonly List<Action> _callbacks = [];
 	private readonly List<Action> _returnCallbacks = [];
-	private Action? _callback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -20,7 +20,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 	/// </summary>
 	public VoidMethodSetup Callback(Action callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -54,7 +54,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		_callback?.Invoke();
+		_callbacks.ForEach(callback => callback.Invoke());
 		if (_returnCallbacks.Count > 0)
 		{
 			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
@@ -86,8 +86,8 @@ public class VoidMethodSetup(string name) : MethodSetup
 /// </summary>
 public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : MethodSetup
 {
+	private readonly List<Action<T1>> _callbacks = [];
 	private readonly List<Action<T1>> _returnCallbacks = [];
-	private Action<T1>? _callback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -95,7 +95,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// </summary>
 	public VoidMethodSetup<T1> Callback(Action callback)
 	{
-		_callback = _ => callback();
+		_callbacks.Add(_ => callback());
 		return this;
 	}
 
@@ -104,7 +104,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// </summary>
 	public VoidMethodSetup<T1> Callback(Action<T1> callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -149,7 +149,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	{
 		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
 		{
-			_callback?.Invoke(p1);
+			_callbacks.ForEach(callback => callback.Invoke(p1));
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
@@ -197,8 +197,8 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 /// </summary>
 public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, With.NamedParameter match2) : MethodSetup
 {
+	private readonly List<Action<T1, T2>> _callbacks = [];
 	private readonly List<Action<T1, T2>> _returnCallbacks = [];
-	private Action<T1, T2>? _callback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -206,7 +206,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	/// </summary>
 	public VoidMethodSetup<T1, T2> Callback(Action callback)
 	{
-		_callback = (_, _) => callback();
+		_callbacks.Add((_, _) => callback());
 		return this;
 	}
 
@@ -215,7 +215,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	/// </summary>
 	public VoidMethodSetup<T1, T2> Callback(Action<T1, T2> callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -261,7 +261,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
 		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior))
 		{
-			_callback?.Invoke(p1, p2);
+			_callbacks.ForEach(callback => callback.Invoke(p1, p2));
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
@@ -313,8 +313,8 @@ public class VoidMethodSetup<T1, T2, T3>(
 	With.NamedParameter match2,
 	With.NamedParameter match3) : MethodSetup
 {
+	private readonly List<Action<T1, T2, T3>> _callbacks = [];
 	private readonly List<Action<T1, T2, T3>> _returnCallbacks = [];
-	private Action<T1, T2, T3>? _callback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -322,7 +322,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 	/// </summary>
 	public VoidMethodSetup<T1, T2, T3> Callback(Action callback)
 	{
-		_callback = (_, _, _) => callback();
+		_callbacks.Add((_, _, _) => callback());
 		return this;
 	}
 
@@ -331,7 +331,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 	/// </summary>
 	public VoidMethodSetup<T1, T2, T3> Callback(Action<T1, T2, T3> callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -378,7 +378,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior) &&
 		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior))
 		{
-			_callback?.Invoke(p1, p2, p3);
+			_callbacks.ForEach(callback => callback.Invoke(p1, p2, p3));
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
@@ -431,8 +431,8 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	With.NamedParameter match3,
 	With.NamedParameter match4) : MethodSetup
 {
+	private readonly List<Action<T1, T2, T3, T4>> _callbacks = [];
 	private readonly List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
-	private Action<T1, T2, T3, T4>? _callback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -440,7 +440,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	/// </summary>
 	public VoidMethodSetup<T1, T2, T3, T4> Callback(Action callback)
 	{
-		_callback = (_, _, _, _) => callback();
+		_callbacks.Add((_, _, _, _) => callback());
 		return this;
 	}
 
@@ -449,7 +449,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	/// </summary>
 	public VoidMethodSetup<T1, T2, T3, T4> Callback(Action<T1, T2, T3, T4> callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -497,7 +497,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior) &&
 		    TryCast<T4>(invocation.Parameters[3], out T4? p4, behavior))
 		{
-			_callback?.Invoke(p1, p2, p3, p4);
+			_callbacks.ForEach(callback => callback.Invoke(p1, p2, p3, p4));
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
