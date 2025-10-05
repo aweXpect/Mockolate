@@ -49,6 +49,8 @@ public sealed class ProtectedMockTests
 		await That(mock.Protected.Event.MyEvent.Unsubscribed().Once());
 	}
 
+#pragma warning disable CS0067 // Event is never used
+#pragma warning disable CA1070 // Do not declare event fields as virtual
 	public abstract class MyProtectedClass
 	{
 		public delegate void MyEventHandler(object? sender, EventArgs e);
@@ -69,4 +71,6 @@ public sealed class ProtectedMockTests
 		public void UnregisterEvent(MyEventHandler callback)
 			=> MyEvent -= callback;
 	}
+#pragma warning restore CA1070 // Do not declare event fields as virtual
+#pragma warning restore CS0067 // Event is never used
 }
