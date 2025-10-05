@@ -24,25 +24,25 @@ public class ProtectedMock<T>(Mock<T> mock) : IMock
 	///     Check which methods got invoked on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
 	public MockInvoked<T>.Protected Invoked
-		=> new(_mock.Invoked, _inner.Invocations);
+		=> new(_mock.Invoked, _inner.Checks);
 
 	/// <summary>
 	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
 	public MockAccessed<T>.Protected Accessed
-		=> new(_mock.Accessed, _inner.Invocations);
+		=> new(_mock.Accessed, _inner.Checks);
 
 	/// <summary>
 	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
 	public MockEvent<T>.Protected Event
-		=> new(_mock.Event, _inner.Invocations);
+		=> new(_mock.Event, _inner.Checks);
 
 	/// <summary>
 	///     Raise events on the mock for <typeparamref name="T" />.
 	/// </summary>
 	public MockRaises<T>.Protected Raise
-		=> new(_mock.Raise, _mock.Setup, _inner.Invocations);
+		=> new(_mock.Raise, _mock.Setup, _inner.Checks);
 
 	/// <summary>
 	///     Sets up the mock for <typeparamref name="T" />.
@@ -70,9 +70,9 @@ public class ProtectedMock<T>(Mock<T> mock) : IMock
 	IMockSetup IMock.Setup
 		=> _inner.Setup;
 
-	/// <inheritdoc cref="IMock.Invocations" />
-	MockChecks IMock.Invocations
-		=> _inner.Invocations;
+	/// <inheritdoc cref="IMock.Checks" />
+	MockChecks IMock.Checks
+		=> _inner.Checks;
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)

@@ -109,7 +109,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
 	void IMockSetup.RegisterMethod(MethodSetup methodSetup)
 	{
-		if (mock.Invocations.Count > 0)
+		if (mock.Checks.Count > 0)
 		{
 			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
 		}
@@ -120,7 +120,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
 	void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
 	{
-		if (mock.Invocations.Count > 0)
+		if (mock.Checks.Count > 0)
 		{
 			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
 		}

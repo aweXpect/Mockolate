@@ -22,7 +22,7 @@ public abstract class MockMonitor
 	/// <inheritdoc cref="MockMonitor{T}" />
 	protected MockMonitor(IMock mock)
 	{
-		_monitoredInvocations = mock.Invocations;
+		_monitoredInvocations = mock.Checks;
 		Invocations = new MockChecks();
 	}
 

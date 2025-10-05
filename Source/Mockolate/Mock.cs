@@ -21,10 +21,10 @@ public abstract class Mock<T> : IMock
 	{
 		_behavior = behavior;
 		Setup = new MockSetups<T>(this);
-		Accessed = new MockAccessed<T>(((IMock)this).Invocations);
-		Event = new MockEvent<T>(((IMock)this).Invocations);
-		Invoked = new MockInvoked<T>(((IMock)this).Invocations);
-		Raise = new MockRaises<T>(Setup, ((IMock)this).Invocations);
+		Accessed = new MockAccessed<T>(((IMock)this).Checks);
+		Event = new MockEvent<T>(((IMock)this).Checks);
+		Invoked = new MockInvoked<T>(((IMock)this).Checks);
+		Raise = new MockRaises<T>(Setup, ((IMock)this).Checks);
 	}
 
 	/// <summary>
@@ -117,15 +117,15 @@ public abstract class Mock<T> : IMock
 	IMockSetup IMock.Setup
 		=> Setup;
 
-	/// <inheritdoc cref="IMock.Invocations" />
-	MockChecks IMock.Invocations { get; } = new();
+	/// <inheritdoc cref="IMock.Checks" />
+	MockChecks IMock.Checks { get; } = new();
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null,];
 		IInteraction invocation =
-			((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
+			((IMock)this).Checks.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null)
@@ -149,7 +149,7 @@ public abstract class Mock<T> : IMock
 	{
 		parameters ??= [null,];
 		IInteraction invocation =
-			((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
+			((IMock)this).Checks.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
@@ -166,7 +166,7 @@ public abstract class Mock<T> : IMock
 	void IMock.Set(string propertyName, object? value)
 	{
 		IInteraction invocation =
-			((IMock)this).Invocations.RegisterInvocation(new PropertySetterAccess(propertyName, value));
+			((IMock)this).Checks.RegisterInvocation(new PropertySetterAccess(propertyName, value));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		matchingSetup.InvokeSetter(invocation, value);
 	}
@@ -175,7 +175,7 @@ public abstract class Mock<T> : IMock
 	TResult IMock.Get<TResult>(string propertyName)
 	{
 		IInteraction invocation =
-			((IMock)this).Invocations.RegisterInvocation(new PropertyGetterAccess(propertyName));
+			((IMock)this).Checks.RegisterInvocation(new PropertyGetterAccess(propertyName));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		return matchingSetup.InvokeGetter<TResult>(invocation);
 	}

@@ -15,9 +15,9 @@ public interface IMock
 	MockBehavior Behavior { get; }
 
 	/// <summary>
-	///     Gets the collection of invocations recorded by the mock object.
+	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	MockChecks Invocations { get; }
+	MockChecks Checks { get; }
 
 	/// <summary>
 	///     Raise events on the mock object.

@@ -22,7 +22,7 @@ public class MockInvoked<T>(MockChecks checks) : IMockInvoked
 	///     A proxy implementation of <see cref="IMockInvoked" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockInvoked inner, MockChecks invocations) : MockInvoked<T>(invocations), IMockInvoked
+	public class Proxy(IMockInvoked inner, MockChecks checks) : MockInvoked<T>(checks), IMockInvoked
 	{
 		/// <inheritdoc cref="IMockInvoked.Method(string, With.Parameter[])" />
 		CheckResult IMockInvoked.Method(string methodName, params With.Parameter[] parameters)
@@ -32,7 +32,7 @@ public class MockInvoked<T>(MockChecks checks) : IMockInvoked
 	/// <summary>
 	///     Check which protected methods got invoked on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
-	public class Protected(IMockInvoked inner, MockChecks invocations) : MockInvoked<T>(invocations), IMockInvoked
+	public class Protected(IMockInvoked inner, MockChecks checks) : MockInvoked<T>(checks), IMockInvoked
 	{
 		/// <inheritdoc cref="IMockInvoked.Method(string, With.Parameter[])" />
 		CheckResult IMockInvoked.Method(string methodName, params With.Parameter[] parameters)

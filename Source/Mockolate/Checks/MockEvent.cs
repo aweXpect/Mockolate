@@ -26,7 +26,7 @@ public class MockEvent<T>(MockChecks checks) : IMockEvent
 	///     A proxy implementation of <see cref="IMockEvent" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockEvent inner, MockChecks invocations) : MockEvent<T>(invocations), IMockEvent
+	public class Proxy(IMockEvent inner, MockChecks checks) : MockEvent<T>(checks), IMockEvent
 	{
 		/// <inheritdoc cref="IMockEvent.Subscribed(string)" />
 		CheckResult IMockEvent.Subscribed(string eventName)
@@ -40,7 +40,7 @@ public class MockEvent<T>(MockChecks checks) : IMockEvent
 	/// <summary>
 	///     Check which protected events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
-	public class Protected(IMockEvent inner, MockChecks invocations) : MockEvent<T>(invocations), IMockEvent
+	public class Protected(IMockEvent inner, MockChecks checks) : MockEvent<T>(checks), IMockEvent
 	{
 		/// <inheritdoc cref="IMockEvent.Subscribed(string)" />
 		CheckResult IMockEvent.Subscribed(string eventName)

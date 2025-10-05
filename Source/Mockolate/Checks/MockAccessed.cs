@@ -26,7 +26,7 @@ public class MockAccessed<T>(MockChecks checks) : IMockAccessed
 	///     A proxy implementation of <see cref="IMockAccessed" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockAccessed inner, MockChecks invocations) : MockAccessed<T>(invocations), IMockAccessed
+	public class Proxy(IMockAccessed inner, MockChecks checks) : MockAccessed<T>(checks), IMockAccessed
 	{
 		/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
 		CheckResult IMockAccessed.PropertyGetter(string propertyName)
@@ -40,8 +40,8 @@ public class MockAccessed<T>(MockChecks checks) : IMockAccessed
 	/// <summary>
 	///     Check which protected properties were accessed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
-	public class Protected(IMockAccessed inner, MockChecks invocations)
-		: MockAccessed<T>(invocations), IMockAccessed
+	public class Protected(IMockAccessed inner, MockChecks checks)
+		: MockAccessed<T>(checks), IMockAccessed
 	{
 		/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
 		CheckResult IMockAccessed.PropertyGetter(string propertyName)
