@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Mockolate.Events;
+﻿using Mockolate.Events;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Tests.Events;
@@ -37,9 +34,8 @@ public sealed class MockRaisesTests
 	[Fact]
 	public async Task Subscription_ShouldBeRegistered()
 	{
-		int callCount = 0;
 		var mock = Mock.For<IRaiseEvent>();
-		EventHandler handler = (s, e) => { callCount++; };
+		EventHandler handler = (s, e) => { };
 
 		mock.Object.SomeEvent += handler;
 		mock.Object.SomeEvent += handler;
@@ -51,9 +47,8 @@ public sealed class MockRaisesTests
 	[Fact]
 	public async Task Unsubscription_ShouldBeRegistered()
 	{
-		int callCount = 0;
 		var mock = Mock.For<IRaiseEvent>();
-		EventHandler handler = (s, e) => { callCount++; };
+		EventHandler handler = (s, e) => { };
 
 		mock.Object.SomeEvent -= handler;
 
