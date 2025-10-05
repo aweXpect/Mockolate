@@ -28,14 +28,15 @@ partial class Build
 			StringBuilder sb = new();
 			string[] lines = File.ReadAllLines(Solution.Directory / "README.md");
 			sb.AppendLine(lines.First());
+			sb.AppendLine("![Mockolate logo](https://raw.githubusercontent.com/aweXpect/Mockolate/main/Docs/logo_256x256.png)  ");
 			sb.AppendLine(
 				$"[![Changelog](https://img.shields.io/badge/Changelog-v{version}-blue)](https://github.com/aweXpect/Mockolate/releases/tag/v{version})");
 			bool foundBadge = false;
 			foreach (string line in lines.Skip(1))
 			{
-				if (!foundBadge && string.IsNullOrWhiteSpace(line))
+				if (!foundBadge && (string.IsNullOrWhiteSpace(line) || line.StartsWith("<img")))
 				{
-					// Skip empty lines before the badges
+					// Skip empty lines or images before the badges
 					continue;
 				}
 
