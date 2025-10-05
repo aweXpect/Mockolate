@@ -1,5 +1,6 @@
 using System.Reflection;
 using Mockolate.Checks;
+using Mockolate.Exceptions;
 using Mockolate.Setup;
 
 namespace Mockolate.Events;
@@ -23,8 +24,7 @@ public class MockRaises<T>(IMockSetup setup, MockInvocations invocations) : IMoc
 	{
 		if (method is null)
 		{
-			// TODO: Throw exception?
-			return;
+			throw new MockException("The method of an event subscription may not be null.");
 		}
 
 		invocations.RegisterInvocation(new EventSubscription(name, target, method));
@@ -36,8 +36,7 @@ public class MockRaises<T>(IMockSetup setup, MockInvocations invocations) : IMoc
 	{
 		if (method is null)
 		{
-			// TODO: Throw exception?
-			return;
+			throw new MockException("The method of an event unsubscription may not be null.");
 		}
 
 		invocations.RegisterInvocation(new EventUnsubscription(name, target, method));
