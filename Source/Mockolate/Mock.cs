@@ -34,7 +34,7 @@ public abstract class Mock<T> : IMock
 	public MockAccessed<T> Accessed { get; }
 
 	/// <summary>
-	///     Sets up the mock for <typeparamref name="T" />.
+	///     Additional checks on the mocked instance.
 	/// </summary>
 	public MockCheck Check { get; }
 
