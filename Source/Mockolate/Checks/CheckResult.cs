@@ -1,64 +1,81 @@
 using System.Diagnostics.Contracts;
+using Mockolate.Checks.Interactions;
 
 namespace Mockolate.Checks;
 
 /// <summary>
-///     The expectation contains the matching invocations for verification.
+///     The expectation contains the matching interactions for verification.
 /// </summary>
 public class CheckResult : ICheckResult
 {
-	private readonly IInvocation[] _invocations;
+	private readonly MockChecks _checks;
+	private readonly IInteraction[] _interactions;
 
 	/// <inheritdoc cref="CheckResult" />
-	public CheckResult(IInvocation[] invocations)
+	public CheckResult(MockChecks checks, IInteraction[] interactions)
 	{
-		_invocations = invocations;
+		_checks = checks;
+		_interactions = interactions;
 	}
 
-	/// <inheritdoc cref="ICheckResult.Invocations" />
-	IInvocation[] ICheckResult.Invocations => _invocations;
+	/// <inheritdoc cref="ICheckResult.Interactions" />
+	IInteraction[] ICheckResult.Interactions => _interactions;
 
 	/// <summary>
 	///     …at least the expected number of <paramref name="times" />.
 	/// </summary>
-	[Pure]
-	public bool AtLeast(int times) => _invocations.Length >= times;
+	public bool AtLeast(int times)
+	{
+		return _interactions.Length >= times;
+	}
 
 	/// <summary>
 	///     …at least once.
 	/// </summary>
-	[Pure]
-	public bool AtLeastOnce() => _invocations.Length >= 1;
+	public bool AtLeastOnce()
+	{
+		return _interactions.Length >= 1;
+	}
 
 	/// <summary>
 	///     …at most the expected number of <paramref name="times" />.
 	/// </summary>
-	[Pure]
-	public bool AtMost(int times) => _invocations.Length <= times;
+	public bool AtMost(int times)
+	{
+		return _interactions.Length <= times;
+	}
 
 	/// <summary>
 	///     …at most once.
 	/// </summary>
-	[Pure]
-	public bool AtMostOnce() => _invocations.Length <= 1;
+	public bool AtMostOnce()
+	{
+		return _interactions.Length <= 1;
+	}
 
 	/// <summary>
 	///     …exactly the expected number of <paramref name="times" />.
 	/// </summary>
-	[Pure]
-	public bool Exactly(int times) => _invocations.Length == times;
+	public bool Exactly(int times)
+	{
+		return _interactions.Length == times;
+	}
 
 	/// <summary>
 	///     …never.
 	/// </summary>
-	[Pure]
-	public bool Never() => _invocations.Length == 0;
+	public bool Never()
+	{
+		return _interactions.Length == 0;
+	}
 
 	/// <summary>
 	///     …exactly once.
 	/// </summary>
-	[Pure]
-	public bool Once() => _invocations.Length == 1;
+	public bool Once()
+	{
+		return _interactions.Length == 1;
+	}
 
 	/// <summary>
 	///     A property expectation returns the getter or setter <see cref="CheckResult" /> for the given
@@ -67,16 +84,14 @@ public class CheckResult : ICheckResult
 	public class Property<T>(IMockAccessed mockAccessed, string propertyName)
 	{
 		/// <summary>
-		///     The expectation for the property getter invocations.
+		///     The expectation for the property getter access.
 		/// </summary>
-		[Pure]
-		public CheckResult Getter() => new(mockAccessed.PropertyGetter(propertyName));
+		public CheckResult Getter() => mockAccessed.PropertyGetter(propertyName);
 
 		/// <summary>
-		///     The expectation for the property setter invocations matching the specified <paramref name="value" />.
+		///     The expectation for the property setter access matching the specified <paramref name="value" />.
 		/// </summary>
-		[Pure]
-		public CheckResult Setter(With.Parameter<T> value) => new(mockAccessed.PropertySetter(propertyName, value));
+		public CheckResult Setter(With.Parameter<T> value) => mockAccessed.PropertySetter(propertyName, value);
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
@@ -87,16 +102,14 @@ public class CheckResult : ICheckResult
 	public class Event<T>(IMockEvent mockEvent, string eventName)
 	{
 		/// <summary>
-		///     The expectation for the subscription invocations.
+		///     The expectation for the subscriptions for the event.
 		/// </summary>
-		[Pure]
-		public CheckResult Subscribed() => new(mockEvent.Subscribed(eventName));
+		public CheckResult Subscribed() => mockEvent.Subscribed(eventName);
 
 		/// <summary>
-		///     The expectation for the unsubscription invocations.
+		///     The expectation for the unsubscriptions from the event.
 		/// </summary>
-		[Pure]
-		public CheckResult Unsubscribed() => new(mockEvent.Unsubscribed(eventName));
+		public CheckResult Unsubscribed() => mockEvent.Unsubscribed(eventName);
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 }

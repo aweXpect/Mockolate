@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Setup;
@@ -22,7 +22,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	internal MethodSetup? GetMethodSetup(IInvocation invocation)
+	internal MethodSetup? GetMethodSetup(IInteraction invocation)
 		=> _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
 
 	/// <summary>
@@ -109,7 +109,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
 	void IMockSetup.RegisterMethod(MethodSetup methodSetup)
 	{
-		if (mock.Invocations.IsAlreadyInvoked)
+		if (mock.Invocations.Count > 0)
 		{
 			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
 		}
@@ -120,7 +120,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
 	void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
 	{
-		if (mock.Invocations.IsAlreadyInvoked)
+		if (mock.Invocations.Count > 0)
 		{
 			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
 		}

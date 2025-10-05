@@ -1,3 +1,5 @@
+using Mockolate.Checks.Interactions;
+
 namespace Mockolate.Checks;
 
 /// <summary>
@@ -8,5 +10,5 @@ public interface ICheckResult
 	/// <summary>
 	///     The matching invocations.
 	/// </summary>
-	IInvocation[] Invocations { get; }
+	IInteraction[] Interactions { get; }
 }

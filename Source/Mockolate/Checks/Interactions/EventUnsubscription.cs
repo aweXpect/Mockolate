@@ -1,11 +1,11 @@
 using System.Reflection;
 
-namespace Mockolate.Checks;
+namespace Mockolate.Checks.Interactions;
 
 /// <summary>
 ///     An unsubscription from an event.
 /// </summary>
-public class EventUnsubscription(string name, object? target, MethodInfo method) : IInvocation
+public class EventUnsubscription(string name, object? target, MethodInfo method) : IInteraction
 {
 	/// <summary>
 	///     The name of the event.

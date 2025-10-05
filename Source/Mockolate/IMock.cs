@@ -17,7 +17,7 @@ public interface IMock
 	/// <summary>
 	///     Gets the collection of invocations recorded by the mock object.
 	/// </summary>
-	MockInvocations Invocations { get; }
+	MockChecks Invocations { get; }
 
 	/// <summary>
 	///     Raise events on the mock object.

@@ -1,4 +1,4 @@
-using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 
 namespace Mockolate.Setup;
 
@@ -15,7 +15,7 @@ public interface IMethodSetup
 	/// <summary>
 	///     Checks if the <paramref name="invocation" /> matches the setup.
 	/// </summary>
-	bool Matches(IInvocation invocation);
+	bool Matches(IInteraction invocation);
 
 	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type

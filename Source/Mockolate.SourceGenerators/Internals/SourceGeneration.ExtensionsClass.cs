@@ -352,7 +352,7 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append(")").AppendLine();
-			sb.Append("\t\t\t=> new CheckResult(((IMockInvoked)mock).Method(\"").Append(@class.GetFullName(method.Name))
+			sb.Append("\t\t\t=> ((IMockInvoked)mock).Method(\"").Append(@class.GetFullName(method.Name))
 				.Append("\"");
 
 			foreach (MethodParameter parameter in method.Parameters)
@@ -361,7 +361,7 @@ internal static partial class SourceGeneration
 				sb.Append(parameter.Name);
 			}
 
-			sb.AppendLine("));");
+			sb.AppendLine(");");
 		}
 
 		sb.AppendLine("\t}");

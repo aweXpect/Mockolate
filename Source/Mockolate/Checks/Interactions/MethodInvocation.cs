@@ -1,9 +1,9 @@
-namespace Mockolate.Checks;
+namespace Mockolate.Checks.Interactions;
 
 /// <summary>
 ///     An invocation of a method.
 /// </summary>
-public class MethodInvocation(string name, object?[] parameters) : IInvocation
+public class MethodInvocation(string name, object?[] parameters) : IInteraction
 {
 	/// <summary>
 	///     The name of the method.

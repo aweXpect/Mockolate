@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 using Mockolate.Events;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
@@ -117,13 +118,13 @@ public abstract class Mock<T> : IMock
 		=> Setup;
 
 	/// <inheritdoc cref="IMock.Invocations" />
-	MockInvocations IMock.Invocations { get; } = new();
+	MockChecks IMock.Invocations { get; } = new();
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null,];
-		IInvocation invocation =
+		IInteraction invocation =
 			((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
@@ -147,7 +148,7 @@ public abstract class Mock<T> : IMock
 	MethodSetupResult IMock.Execute(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null,];
-		IInvocation invocation =
+		IInteraction invocation =
 			((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
@@ -164,8 +165,8 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Set(string, object?)" />
 	void IMock.Set(string propertyName, object? value)
 	{
-		IInvocation invocation =
-			((IMock)this).Invocations.RegisterInvocation(new PropertySetterInvocation(propertyName, value));
+		IInteraction invocation =
+			((IMock)this).Invocations.RegisterInvocation(new PropertySetterAccess(propertyName, value));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		matchingSetup.InvokeSetter(invocation, value);
 	}
@@ -173,8 +174,8 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
 	TResult IMock.Get<TResult>(string propertyName)
 	{
-		IInvocation invocation =
-			((IMock)this).Invocations.RegisterInvocation(new PropertyGetterInvocation(propertyName));
+		IInteraction invocation =
+			((IMock)this).Invocations.RegisterInvocation(new PropertyGetterAccess(propertyName));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		return matchingSetup.InvokeGetter<TResult>(invocation);
 	}

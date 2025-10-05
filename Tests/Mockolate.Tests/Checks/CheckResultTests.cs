@@ -1,5 +1,6 @@
 using System.Linq;
 using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 
 namespace Mockolate.Tests.Checks;
 
@@ -12,10 +13,10 @@ public class CheckResultTests
 	[InlineData(2, 1, true)]
 	public async Task AtLeast_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		MyInvocation[] invocations = Enumerable.Range(0, count)
-			.Select(_ => new MyInvocation())
+		MyInteraction[] interactions = Enumerable.Range(0, count)
+			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(invocations);
+		CheckResult sut = new(new MockChecks(), interactions);
 
 		bool result = sut.AtLeast(times);
 
@@ -29,10 +30,10 @@ public class CheckResultTests
 	[InlineData(3, true)]
 	public async Task AtLeastOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		MyInvocation[] invocations = Enumerable.Range(0, count)
-			.Select(_ => new MyInvocation())
+		MyInteraction[] interactions = Enumerable.Range(0, count)
+			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(invocations);
+		CheckResult sut = new(new MockChecks(), interactions);
 
 		bool result = sut.AtLeastOnce();
 
@@ -46,10 +47,10 @@ public class CheckResultTests
 	[InlineData(2, 3, true)]
 	public async Task AtMost_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		MyInvocation[] invocations = Enumerable.Range(0, count)
-			.Select(_ => new MyInvocation())
+		MyInteraction[] interactions = Enumerable.Range(0, count)
+			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(invocations);
+		CheckResult sut = new(new MockChecks(), interactions);
 
 		bool result = sut.AtMost(times);
 
@@ -63,10 +64,10 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task AtMostOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		MyInvocation[] invocations = Enumerable.Range(0, count)
-			.Select(_ => new MyInvocation())
+		MyInteraction[] interactions = Enumerable.Range(0, count)
+			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(invocations);
+		CheckResult sut = new(new MockChecks(), interactions);
 
 		bool result = sut.AtMostOnce();
 
@@ -80,10 +81,10 @@ public class CheckResultTests
 	[InlineData(2, 1, false)]
 	public async Task Exactly_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		MyInvocation[] invocations = Enumerable.Range(0, count)
-			.Select(_ => new MyInvocation())
+		MyInteraction[] interactions = Enumerable.Range(0, count)
+			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(invocations);
+		CheckResult sut = new(new MockChecks(), interactions);
 
 		bool result = sut.Exactly(times);
 
@@ -97,10 +98,10 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task Never_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		MyInvocation[] invocations = Enumerable.Range(0, count)
-			.Select(_ => new MyInvocation())
+		MyInteraction[] interactions = Enumerable.Range(0, count)
+			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(invocations);
+		CheckResult sut = new(new MockChecks(), interactions);
 
 		bool result = sut.Never();
 
@@ -114,17 +115,17 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task Once_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		MyInvocation[] invocations = Enumerable.Range(0, count)
-			.Select(_ => new MyInvocation())
+		MyInteraction[] interactions = Enumerable.Range(0, count)
+			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(invocations);
+		CheckResult sut = new(new MockChecks(), interactions);
 
 		bool result = sut.Once();
 
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	private class MyInvocation : IInvocation
+	private class MyInteraction : IInteraction
 	{
 	}
 }

@@ -1,5 +1,6 @@
 using System.Reflection;
 using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
 
@@ -8,7 +9,7 @@ namespace Mockolate.Events;
 /// <summary>
 ///     Raise events on the mock for <typeparamref name="T" />.
 /// </summary>
-public class MockRaises<T>(IMockSetup setup, MockInvocations invocations) : IMockRaises
+public class MockRaises<T>(IMockSetup setup, MockChecks invocations) : IMockRaises
 {
 	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 	void IMockRaises.Raise(string eventName, params object?[] parameters)
@@ -46,7 +47,7 @@ public class MockRaises<T>(IMockSetup setup, MockInvocations invocations) : IMoc
 	/// <summary>
 	///     Raise protected events on the mock for <typeparamref name="T" />.
 	/// </summary>
-	public class Protected(IMockRaises inner, IMockSetup setup, MockInvocations invocations)
+	public class Protected(IMockRaises inner, IMockSetup setup, MockChecks invocations)
 		: MockRaises<T>(setup, invocations), IMockRaises
 	{
 		/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
