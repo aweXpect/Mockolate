@@ -247,7 +247,7 @@ internal static partial class SourceGeneration
 					sb.Append("override ");
 				}
 
-				sb.Append("event ").Append(@event.Type.GetMinimizedString(namespaces))
+				sb.Append("event ").Append(@event.Type.GetMinimizedString(namespaces).TrimEnd('?'))
 					.Append("? ").Append(@event.Name).AppendLine();
 			}
 

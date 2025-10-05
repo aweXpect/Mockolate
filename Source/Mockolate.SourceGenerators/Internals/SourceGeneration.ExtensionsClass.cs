@@ -11,7 +11,7 @@ internal static partial class SourceGeneration
 	public static string GetExtensionClass(string name, Class @class)
 	{
 		string[] namespaces =
-			[.. @class.GetClassNamespaces(), "Mockolate.Checks", "Mockolate.Events", "Mockolate.Setup",];
+			[.. @class.GetClassNamespaces(), "Mockolate.Checks", "Mockolate.Events", "Mockolate.Protected", "Mockolate.Setup",];
 		StringBuilder sb = new();
 		sb.AppendLine(Header);
 		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
