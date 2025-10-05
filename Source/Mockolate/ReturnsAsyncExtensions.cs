@@ -109,6 +109,7 @@ public static class ReturnsAsyncExtensions
 		=> setup.Returns((v1, v2, v3, v4) => Task.FromResult(callback(v1, v2, v3, v4)));
 
 #if NET8_0_OR_GREATER
+#pragma warning disable CA2012 // Use ValueTasks correctly
 	/// <summary>
 	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
 	/// </summary>
@@ -192,6 +193,7 @@ public static class ReturnsAsyncExtensions
 	/// </summary>
 	public static ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> setup, Func<T1, T2, T3, T4, TReturn> callback)
 		=> setup.Returns((v1, v2, v3, v4) => ValueTask.FromResult(callback(v1, v2, v3, v4)));
+#pragma warning restore CA2012 // Use ValueTasks correctly
 #endif
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters
 }
