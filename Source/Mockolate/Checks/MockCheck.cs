@@ -1,6 +1,3 @@
-using System.Linq;
-using Mockolate.Checks.Interactions;
-
 namespace Mockolate.Checks;
 
 /// <summary>
