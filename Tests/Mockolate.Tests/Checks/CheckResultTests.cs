@@ -16,7 +16,7 @@ public class CheckResultTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(new MockChecks(), interactions);
+		CheckResult sut = new(new Mockolate.Checks.Checks(), interactions);
 
 		bool result = sut.AtLeast(times);
 
@@ -33,7 +33,7 @@ public class CheckResultTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(new MockChecks(), interactions);
+		CheckResult sut = new(new Mockolate.Checks.Checks(), interactions);
 
 		bool result = sut.AtLeastOnce();
 
@@ -50,7 +50,7 @@ public class CheckResultTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(new MockChecks(), interactions);
+		CheckResult sut = new(new Mockolate.Checks.Checks(), interactions);
 
 		bool result = sut.AtMost(times);
 
@@ -67,7 +67,7 @@ public class CheckResultTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(new MockChecks(), interactions);
+		CheckResult sut = new(new Mockolate.Checks.Checks(), interactions);
 
 		bool result = sut.AtMostOnce();
 
@@ -84,7 +84,7 @@ public class CheckResultTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(new MockChecks(), interactions);
+		CheckResult sut = new(new Mockolate.Checks.Checks(), interactions);
 
 		bool result = sut.Exactly(times);
 
@@ -101,7 +101,7 @@ public class CheckResultTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(new MockChecks(), interactions);
+		CheckResult sut = new(new Mockolate.Checks.Checks(), interactions);
 
 		bool result = sut.Never();
 
@@ -118,7 +118,7 @@ public class CheckResultTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult sut = new(new MockChecks(), interactions);
+		CheckResult sut = new(new Mockolate.Checks.Checks(), interactions);
 
 		bool result = sut.Once();
 

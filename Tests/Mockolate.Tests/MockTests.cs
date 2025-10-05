@@ -80,9 +80,9 @@ public sealed partial class MockTests
 		public bool? IsValid { get; set; }
 		public int Counter { get; set; }
 
-		public int Multiply(int value, int multiplier);
+		public int Multiply(int value, int? multiplier);
 
-		public void SetIsValid(bool isValid, Func<bool> predicate);
+		public void SetIsValid(bool isValid, Func<bool>? predicate);
 	}
 
 	public class MyBaseClass

@@ -22,6 +22,7 @@ public abstract class Mock<T> : IMock
 		_behavior = behavior;
 		Setup = new MockSetups<T>(this);
 		Accessed = new MockAccessed<T>(((IMock)this).Checks);
+		Check = new MockCheck(((IMock)this).Checks);
 		Event = new MockEvent<T>(((IMock)this).Checks);
 		Invoked = new MockInvoked<T>(((IMock)this).Checks);
 		Raise = new MockRaises<T>(Setup, ((IMock)this).Checks);
@@ -31,6 +32,11 @@ public abstract class Mock<T> : IMock
 	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
 	public MockAccessed<T> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
 
 	/// <summary>
 	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
@@ -105,10 +111,6 @@ public abstract class Mock<T> : IMock
 	/// </summary>
 	MockBehavior IMock.Behavior => _behavior;
 
-	/// <inheritdoc cref="IMock.Check" />
-	IMockInvoked IMock.Check
-		=> Invoked;
-
 	/// <inheritdoc cref="IMock.Raise" />
 	IMockRaises IMock.Raise
 		=> Raise;
@@ -118,7 +120,7 @@ public abstract class Mock<T> : IMock
 		=> Setup;
 
 	/// <inheritdoc cref="IMock.Checks" />
-	MockChecks IMock.Checks { get; } = new();
+	Checks.Checks IMock.Checks { get; } = new();
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
@@ -133,7 +135,7 @@ public abstract class Mock<T> : IMock
 			if (_behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().ToString() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
 			return new MethodSetupResult<TResult>(matchingSetup, _behavior,
@@ -155,7 +157,7 @@ public abstract class Mock<T> : IMock
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType()))})' was invoked without prior setup.");
+				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().ToString() ?? "<null>"))})' was invoked without prior setup.");
 		}
 
 		matchingSetup?.Invoke(invocation, _behavior);

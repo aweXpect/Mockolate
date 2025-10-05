@@ -17,7 +17,7 @@ public interface IMock
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	MockChecks Checks { get; }
+	Checks.Checks Checks { get; }
 
 	/// <summary>
 	///     Raise events on the mock object.
@@ -28,11 +28,6 @@ public interface IMock
 	///     Sets up the mock object.
 	/// </summary>
 	IMockSetup Setup { get; }
-
-	/// <summary>
-	///     Check what happened with the mocked instance.
-	/// </summary>
-	IMockInvoked Check { get; }
 
 	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets

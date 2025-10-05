@@ -16,20 +16,20 @@ namespace Mockolate.Monitor;
 /// </remarks>
 public abstract class MockMonitor
 {
-	private readonly MockChecks _monitoredInvocations;
+	private readonly Checks.Checks _monitoredInvocations;
 	private int _monitoringStart = -1;
 
 	/// <inheritdoc cref="MockMonitor{T}" />
 	protected MockMonitor(IMock mock)
 	{
 		_monitoredInvocations = mock.Checks;
-		Invocations = new MockChecks();
+		Invocations = new Checks.Checks();
 	}
 
 	/// <summary>
 	///     The invocations that were recorded during the monitoring session.
 	/// </summary>
-	protected MockChecks Invocations { get; }
+	protected Checks.Checks Invocations { get; }
 
 	/// <summary>
 	///     Begins monitoring invocations and returns a scope that ends monitoring when disposed.

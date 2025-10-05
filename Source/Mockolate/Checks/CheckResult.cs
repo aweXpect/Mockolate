@@ -6,26 +6,24 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     The expectation contains the matching interactions for verification.
 /// </summary>
-public class CheckResult : ICheckResult
+public class CheckResult
 {
-	private readonly MockChecks _checks;
+	private readonly Checks _checks;
 	private readonly IInteraction[] _interactions;
 
 	/// <inheritdoc cref="CheckResult" />
-	public CheckResult(MockChecks checks, IInteraction[] interactions)
+	public CheckResult(Checks checks, IInteraction[] interactions)
 	{
 		_checks = checks;
 		_interactions = interactions;
 	}
-
-	/// <inheritdoc cref="ICheckResult.Interactions" />
-	IInteraction[] ICheckResult.Interactions => _interactions;
 
 	/// <summary>
 	///     …at least the expected number of <paramref name="times" />.
 	/// </summary>
 	public bool AtLeast(int times)
 	{
+		_checks.Verified(_interactions);
 		return _interactions.Length >= times;
 	}
 
@@ -34,6 +32,7 @@ public class CheckResult : ICheckResult
 	/// </summary>
 	public bool AtLeastOnce()
 	{
+		_checks.Verified(_interactions);
 		return _interactions.Length >= 1;
 	}
 
@@ -42,6 +41,7 @@ public class CheckResult : ICheckResult
 	/// </summary>
 	public bool AtMost(int times)
 	{
+		_checks.Verified(_interactions);
 		return _interactions.Length <= times;
 	}
 
@@ -50,6 +50,7 @@ public class CheckResult : ICheckResult
 	/// </summary>
 	public bool AtMostOnce()
 	{
+		_checks.Verified(_interactions);
 		return _interactions.Length <= 1;
 	}
 
@@ -58,6 +59,7 @@ public class CheckResult : ICheckResult
 	/// </summary>
 	public bool Exactly(int times)
 	{
+		_checks.Verified(_interactions);
 		return _interactions.Length == times;
 	}
 
@@ -66,6 +68,7 @@ public class CheckResult : ICheckResult
 	/// </summary>
 	public bool Never()
 	{
+		_checks.Verified(_interactions);
 		return _interactions.Length == 0;
 	}
 
@@ -74,6 +77,7 @@ public class CheckResult : ICheckResult
 	/// </summary>
 	public bool Once()
 	{
+		_checks.Verified(_interactions);
 		return _interactions.Length == 1;
 	}
 

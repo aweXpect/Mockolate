@@ -6,7 +6,7 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
 /// </summary>
-public class MockAccessed<T>(MockChecks checks) : IMockAccessed
+public class MockAccessed<T>(Checks checks) : IMockAccessed
 {
 	/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
 	CheckResult IMockAccessed.PropertyGetter(string propertyName) => new(checks,
@@ -26,7 +26,7 @@ public class MockAccessed<T>(MockChecks checks) : IMockAccessed
 	///     A proxy implementation of <see cref="IMockAccessed" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockAccessed inner, MockChecks checks) : MockAccessed<T>(checks), IMockAccessed
+	public class Proxy(IMockAccessed inner, Checks checks) : MockAccessed<T>(checks), IMockAccessed
 	{
 		/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
 		CheckResult IMockAccessed.PropertyGetter(string propertyName)
@@ -40,7 +40,7 @@ public class MockAccessed<T>(MockChecks checks) : IMockAccessed
 	/// <summary>
 	///     Check which protected properties were accessed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
-	public class Protected(IMockAccessed inner, MockChecks checks)
+	public class Protected(IMockAccessed inner, Checks checks)
 		: MockAccessed<T>(checks), IMockAccessed
 	{
 		/// <inheritdoc cref="IMockAccessed.PropertyGetter(string)" />
