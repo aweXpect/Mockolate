@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 using Mockolate.Events;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
@@ -20,10 +21,10 @@ public abstract class Mock<T> : IMock
 	{
 		_behavior = behavior;
 		Setup = new MockSetups<T>(this);
-		Accessed = new MockAccessed<T>(((IMock)this).Invocations);
-		Event = new MockEvent<T>(((IMock)this).Invocations);
-		Invoked = new MockInvoked<T>(((IMock)this).Invocations);
-		Raise = new MockRaises<T>(Setup, ((IMock)this).Invocations);
+		Accessed = new MockAccessed<T>(((IMock)this).Checks);
+		Event = new MockEvent<T>(((IMock)this).Checks);
+		Invoked = new MockInvoked<T>(((IMock)this).Checks);
+		Raise = new MockRaises<T>(Setup, ((IMock)this).Checks);
 	}
 
 	/// <summary>
@@ -116,15 +117,15 @@ public abstract class Mock<T> : IMock
 	IMockSetup IMock.Setup
 		=> Setup;
 
-	/// <inheritdoc cref="IMock.Invocations" />
-	MockInvocations IMock.Invocations { get; } = new();
+	/// <inheritdoc cref="IMock.Checks" />
+	MockChecks IMock.Checks { get; } = new();
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null,];
-		IInvocation invocation =
-			((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
+		IInteraction invocation =
+			((IMock)this).Checks.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null)
@@ -147,8 +148,8 @@ public abstract class Mock<T> : IMock
 	MethodSetupResult IMock.Execute(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null,];
-		IInvocation invocation =
-			((IMock)this).Invocations.RegisterInvocation(new MethodInvocation(methodName, parameters));
+		IInteraction invocation =
+			((IMock)this).Checks.RegisterInvocation(new MethodInvocation(methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
@@ -164,8 +165,8 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Set(string, object?)" />
 	void IMock.Set(string propertyName, object? value)
 	{
-		IInvocation invocation =
-			((IMock)this).Invocations.RegisterInvocation(new PropertySetterInvocation(propertyName, value));
+		IInteraction invocation =
+			((IMock)this).Checks.RegisterInvocation(new PropertySetterAccess(propertyName, value));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		matchingSetup.InvokeSetter(invocation, value);
 	}
@@ -173,8 +174,8 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
 	TResult IMock.Get<TResult>(string propertyName)
 	{
-		IInvocation invocation =
-			((IMock)this).Invocations.RegisterInvocation(new PropertyGetterInvocation(propertyName));
+		IInteraction invocation =
+			((IMock)this).Checks.RegisterInvocation(new PropertyGetterAccess(propertyName));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		return matchingSetup.InvokeGetter<TResult>(invocation);
 	}

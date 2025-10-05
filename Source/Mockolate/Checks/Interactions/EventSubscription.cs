@@ -1,11 +1,11 @@
 using System.Reflection;
 
-namespace Mockolate.Checks;
+namespace Mockolate.Checks.Interactions;
 
 /// <summary>
 ///     A subscription to an event.
 /// </summary>
-public class EventSubscription(string name, object? target, MethodInfo method) : IInvocation
+public class EventSubscription(string name, object? target, MethodInfo method) : IInteraction
 {
 	/// <summary>
 	///     The name of the event.

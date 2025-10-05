@@ -1,18 +1,19 @@
+using Mockolate.Checks.Interactions;
+
 namespace Mockolate.Checks;
 
 /// <summary>
-///     Allows registration of <see cref="IInvocation" /> in the mock.
+///     Get results for property access on the mock.
 /// </summary>
 public interface IMockAccessed
 {
 	/// <summary>
-	///     Counts the invocations for the getter of property with the given <paramref name="propertyName" />.
+	///     Counts the getter accesses of property <paramref name="propertyName" />.
 	/// </summary>
-	IInvocation[] PropertyGetter(string propertyName);
+	CheckResult PropertyGetter(string propertyName);
 
 	/// <summary>
-	///     Counts the invocations for the setter of property with the given <paramref name="propertyName" /> with the matching
-	///     <paramref name="value" />.
+	///     Counts the setter accesses of property <paramref name="propertyName" /> with the matching <paramref name="value" />.
 	/// </summary>
-	IInvocation[] PropertySetter(string propertyName, With.Parameter value);
+	CheckResult PropertySetter(string propertyName, With.Parameter value);
 }

@@ -1,9 +1,9 @@
-namespace Mockolate.Checks;
+namespace Mockolate.Checks.Interactions;
 
 /// <summary>
-///     An invocation of a property setter.
+///     An access of a property setter.
 /// </summary>
-public class PropertySetterInvocation(string propertyName, object? value) : IInvocation
+public class PropertySetterAccess(string propertyName, object? value) : IInteraction
 {
 	/// <summary>
 	///     The name of the property.

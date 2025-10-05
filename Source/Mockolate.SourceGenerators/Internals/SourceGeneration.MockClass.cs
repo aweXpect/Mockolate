@@ -186,7 +186,7 @@ internal static partial class SourceGeneration
 				sb.Append("\t\tpublic MockRaises<").Append(@class.ClassName).Append("> RaiseOn")
 					.Append(@class.ClassName).AppendLine();
 				sb.Append("\t\t\t=> new MockRaises<").Append(@class.ClassName)
-					.Append(">(mock.Setup, ((IMock)mock).Invocations);").AppendLine();
+					.Append(">(mock.Setup, ((IMock)mock).Checks);").AppendLine();
 			}
 
 			sb.AppendLine();
@@ -197,7 +197,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\tpublic MockInvoked<").Append(@class.ClassName).Append("> InvokedOn").Append(@class.ClassName)
 				.AppendLine();
 			sb.Append("\t\t\t=> new MockInvoked<").Append(@class.ClassName)
-				.Append(">.Proxy(mock.Invoked, ((IMock)mock).Invocations);").AppendLine();
+				.Append(">.Proxy(mock.Invoked, ((IMock)mock).Checks);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Check which properties were accessed on the mocked instance for <see cref=\"")
@@ -206,7 +206,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\tpublic MockAccessed<").Append(@class.ClassName).Append("> AccessedOn")
 				.Append(@class.ClassName).AppendLine();
 			sb.Append("\t\t\t=> new MockAccessed<").Append(@class.ClassName)
-				.Append(">.Proxy(mock.Accessed, ((IMock)mock).Invocations);").AppendLine();
+				.Append(">.Proxy(mock.Accessed, ((IMock)mock).Checks);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Exposes the mocked object instance of type <see cref=\"").Append(@class.ClassName)

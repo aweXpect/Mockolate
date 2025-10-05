@@ -1,5 +1,6 @@
 using System.Reflection;
 using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
 
@@ -8,7 +9,7 @@ namespace Mockolate.Events;
 /// <summary>
 ///     Raise events on the mock for <typeparamref name="T" />.
 /// </summary>
-public class MockRaises<T>(IMockSetup setup, MockInvocations invocations) : IMockRaises
+public class MockRaises<T>(IMockSetup setup, MockChecks checks) : IMockRaises
 {
 	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 	void IMockRaises.Raise(string eventName, params object?[] parameters)
@@ -27,7 +28,7 @@ public class MockRaises<T>(IMockSetup setup, MockInvocations invocations) : IMoc
 			throw new MockException("The method of an event subscription may not be null.");
 		}
 
-		invocations.RegisterInvocation(new EventSubscription(name, target, method));
+		checks.RegisterInvocation(new EventSubscription(name, target, method));
 		setup.AddEvent(name, target, method);
 	}
 
@@ -39,15 +40,15 @@ public class MockRaises<T>(IMockSetup setup, MockInvocations invocations) : IMoc
 			throw new MockException("The method of an event unsubscription may not be null.");
 		}
 
-		invocations.RegisterInvocation(new EventUnsubscription(name, target, method));
+		checks.RegisterInvocation(new EventUnsubscription(name, target, method));
 		setup.RemoveEvent(name, target, method);
 	}
 
 	/// <summary>
 	///     Raise protected events on the mock for <typeparamref name="T" />.
 	/// </summary>
-	public class Protected(IMockRaises inner, IMockSetup setup, MockInvocations invocations)
-		: MockRaises<T>(setup, invocations), IMockRaises
+	public class Protected(IMockRaises inner, IMockSetup setup, MockChecks checks)
+		: MockRaises<T>(setup, checks), IMockRaises
 	{
 		/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 		void IMockRaises.Raise(string eventName, params object?[] parameters)

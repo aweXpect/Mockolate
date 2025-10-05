@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Setup;

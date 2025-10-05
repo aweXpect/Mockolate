@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 
 namespace Mockolate.Monitor;
 
@@ -15,20 +16,20 @@ namespace Mockolate.Monitor;
 /// </remarks>
 public abstract class MockMonitor
 {
-	private readonly MockInvocations _monitoredInvocations;
+	private readonly MockChecks _monitoredInvocations;
 	private int _monitoringStart = -1;
 
 	/// <inheritdoc cref="MockMonitor{T}" />
 	protected MockMonitor(IMock mock)
 	{
-		_monitoredInvocations = mock.Invocations;
-		Invocations = new MockInvocations();
+		_monitoredInvocations = mock.Checks;
+		Invocations = new MockChecks();
 	}
 
 	/// <summary>
 	///     The invocations that were recorded during the monitoring session.
 	/// </summary>
-	protected MockInvocations Invocations { get; }
+	protected MockChecks Invocations { get; }
 
 	/// <summary>
 	///     Begins monitoring invocations and returns a scope that ends monitoring when disposed.
@@ -55,7 +56,7 @@ public abstract class MockMonitor
 	{
 		if (_monitoringStart >= 0)
 		{
-			foreach (IInvocation? invocation in _monitoredInvocations.Invocations.Skip(_monitoringStart))
+			foreach (IInteraction? invocation in _monitoredInvocations.Interactions.Skip(_monitoringStart))
 			{
 				Invocations.RegisterInvocation(invocation);
 			}

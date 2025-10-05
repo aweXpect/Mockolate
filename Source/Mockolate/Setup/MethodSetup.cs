@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Setup;
@@ -24,11 +24,11 @@ public abstract class MethodSetup : IMethodSetup
 	T IMethodSetup.SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 		=> SetRefParameter(parameterName, value, behavior);
 
-	/// <inheritdoc cref="IMethodSetup.Matches(IInvocation)" />
-	bool IMethodSetup.Matches(IInvocation invocation)
+	/// <inheritdoc cref="IMethodSetup.Matches(IInteraction)" />
+	bool IMethodSetup.Matches(IInteraction invocation)
 		=> invocation is MethodInvocation methodInvocation && IsMatch(methodInvocation);
 
-	internal TResult Invoke<TResult>(IInvocation invocation, MockBehavior behavior)
+	internal TResult Invoke<TResult>(IInteraction invocation, MockBehavior behavior)
 	{
 		Interlocked.Increment(ref _invocationCount);
 		if (invocation is MethodInvocation methodInvocation)
@@ -40,7 +40,7 @@ public abstract class MethodSetup : IMethodSetup
 		throw new MockException("Invalid registered invocation for a method.");
 	}
 
-	internal void Invoke(IInvocation invocation, MockBehavior behavior)
+	internal void Invoke(IInteraction invocation, MockBehavior behavior)
 	{
 		Interlocked.Increment(ref _invocationCount);
 		if (invocation is MethodInvocation methodInvocation)

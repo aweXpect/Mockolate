@@ -1,4 +1,4 @@
-using Mockolate.Checks;
+using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
 

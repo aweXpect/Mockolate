@@ -1,17 +1,19 @@
+using Mockolate.Checks.Interactions;
+
 namespace Mockolate.Checks;
 
 /// <summary>
-///     Allows registration of <see cref="IInvocation" /> in the mock.
+///     Get results for event subscriptions and unsubscriptions on the mock.
 /// </summary>
 public interface IMockEvent
 {
 	/// <summary>
-	///     Counts the invocations for the subscription to an event with the given <paramref name="eventName" />.
+	///     Counts the subscriptions to the event <paramref name="eventName" />.
 	/// </summary>
-	IInvocation[] Subscribed(string eventName);
+	CheckResult Subscribed(string eventName);
 
 	/// <summary>
-	///     Counts the invocations for the unsubscription from an event with the given <paramref name="eventName" />.
+	///     Counts the unsubscriptions from the event <paramref name="eventName" />.
 	/// </summary>
-	IInvocation[] Unsubscribed(string eventName);
+	CheckResult Unsubscribed(string eventName);
 }
