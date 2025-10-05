@@ -42,5 +42,5 @@ public class Checks
 		{
 			_missingVerification.Remove(interaction);
 		}
-	}	
+	}
 }
