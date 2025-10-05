@@ -26,14 +26,14 @@ public sealed partial class MockTests
 	public async Task Execute_VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<IMyService> sut = Mock.For<IMyService>();
-		sut.Setup.SetIsValid(With.Any<bool>(), With.Any<Func<bool>>());
+		sut.Setup.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>());
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
 			sut.Object.SetIsValid(i % 2 == 0, () => true);
 		}
 
-		await That(sut.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>>()).Exactly(numberOfInvocations));
+		await That(sut.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>()).Exactly(numberOfInvocations));
 	}
 
 	[Theory]
