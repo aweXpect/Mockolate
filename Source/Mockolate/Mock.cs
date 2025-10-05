@@ -22,6 +22,7 @@ public abstract class Mock<T> : IMock
 		_behavior = behavior;
 		Setup = new MockSetups<T>(this);
 		Accessed = new MockAccessed<T>(((IMock)this).Checks);
+		Check = new MockCheck<T>(((IMock)this).Checks);
 		Event = new MockEvent<T>(((IMock)this).Checks);
 		Invoked = new MockInvoked<T>(((IMock)this).Checks);
 		Raise = new MockRaises<T>(Setup, ((IMock)this).Checks);
@@ -31,6 +32,11 @@ public abstract class Mock<T> : IMock
 	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
 	public MockAccessed<T> Accessed { get; }
+
+	/// <summary>
+	///     Sets up the mock for <typeparamref name="T" />.
+	/// </summary>
+	public MockCheck<T> Check { get; }
 
 	/// <summary>
 	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
@@ -118,7 +124,7 @@ public abstract class Mock<T> : IMock
 		=> Setup;
 
 	/// <inheritdoc cref="IMock.Checks" />
-	MockChecks IMock.Checks { get; } = new();
+	Checks.Checks IMock.Checks { get; } = new();
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)

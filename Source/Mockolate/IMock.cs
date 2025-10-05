@@ -17,7 +17,7 @@ public interface IMock
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	MockChecks Checks { get; }
+	Checks.Checks Checks { get; }
 
 	/// <summary>
 	///     Raise events on the mock object.

@@ -71,7 +71,7 @@ public class ProtectedMock<T>(Mock<T> mock) : IMock
 		=> _inner.Setup;
 
 	/// <inheritdoc cref="IMock.Checks" />
-	MockChecks IMock.Checks
+	Checks.Checks IMock.Checks
 		=> _inner.Checks;
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />

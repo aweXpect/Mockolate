@@ -148,7 +148,7 @@ namespace Mockolate
 }
 namespace Mockolate.Checks
 {
-    public class CheckResult : Mockolate.Checks.ICheckResult
+    public class CheckResult
     {
         public CheckResult(Mockolate.Checks.MockChecks checks, Mockolate.Checks.Interactions.IInteraction[] interactions) { }
         public bool AtLeast(int times) { }
@@ -170,10 +170,6 @@ namespace Mockolate.Checks
             public Mockolate.Checks.CheckResult Getter() { }
             public Mockolate.Checks.CheckResult Setter(Mockolate.With.Parameter<T> value) { }
         }
-    }
-    public interface ICheckResult
-    {
-        Mockolate.Checks.Interactions.IInteraction[] Interactions { get; }
     }
     public interface IMockAccessed
     {
