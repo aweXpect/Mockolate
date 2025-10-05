@@ -37,7 +37,7 @@ namespace Mockolate
     {
         protected Mock(Mockolate.MockBehavior behavior) { }
         public Mockolate.Checks.MockAccessed<T> Accessed { get; }
-        public Mockolate.Checks.MockCheck<T> Check { get; }
+        public Mockolate.Checks.MockCheck Check { get; }
         public Mockolate.Checks.MockEvent<T> Event { get; }
         public Mockolate.Checks.MockInvoked<T> Invoked { get; }
         public abstract T Object { get; }
@@ -203,7 +203,7 @@ namespace Mockolate.Checks
             public Proxy(Mockolate.Checks.IMockAccessed inner, Mockolate.Checks.Checks checks) { }
         }
     }
-    public class MockCheck<T>
+    public class MockCheck
     {
         public MockCheck(Mockolate.Checks.Checks checks) { }
         public bool AllInteractionsVerified { get; }

@@ -4,9 +4,9 @@ using Mockolate.Checks.Interactions;
 namespace Mockolate.Checks;
 
 /// <summary>
-///     Additional checks on the mocked instance for <typeparamref name="T" />.
+///     Additional checks on the mocked instance.
 /// </summary>
-public class MockCheck<T>(Checks checks)
+public class MockCheck(Checks checks)
 {
 	/// <summary>
 	///     Gets a value indicating whether all expected interactions have been verified.
