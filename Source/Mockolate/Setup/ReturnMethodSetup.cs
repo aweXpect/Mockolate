@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Mockolate.Checks;
 using Mockolate.Exceptions;
@@ -12,7 +13,7 @@ namespace Mockolate.Setup;
 public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 {
 	private readonly List<Func<TReturn>> _returnCallbacks = [];
-	private Action? _callback;
+	private readonly List<Action> _callbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -20,7 +21,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	/// </summary>
 	public ReturnMethodSetup<TReturn> Callback(Action callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -62,7 +63,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
-		=> _callback?.Invoke();
+		=> _callbacks.ForEach(callback => callback.Invoke());
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
@@ -104,7 +105,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	: MethodSetup
 {
 	private readonly List<Func<T1, TReturn>> _returnCallbacks = [];
-	private Action<T1>? _callback;
+	private readonly List<Action<T1>> _callbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -112,7 +113,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1> Callback(Action callback)
 	{
-		_callback = _ => callback();
+		_callbacks.Add(_ => callback());
 		return this;
 	}
 
@@ -121,7 +122,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1> Callback(Action<T1> callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -184,7 +185,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	{
 		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
 		{
-			_callback?.Invoke(p1);
+			_callbacks.ForEach(callback => callback.Invoke(p1));
 		}
 	}
 
@@ -211,7 +212,6 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 				$"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
 		}
 
-		_callback?.Invoke(p1);
 		return result;
 	}
 
@@ -250,7 +250,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	: MethodSetup
 {
 	private readonly List<Func<T1, T2, TReturn>> _returnCallbacks = [];
-	private Action<T1, T2>? _callback;
+	private readonly List<Action<T1, T2>> _callbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -258,7 +258,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2> Callback(Action callback)
 	{
-		_callback = (_, _) => callback();
+		_callbacks.Add((_, _) => callback());
 		return this;
 	}
 
@@ -267,7 +267,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2> Callback(Action<T1, T2> callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -331,7 +331,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
 		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior))
 		{
-			_callback?.Invoke(p1, p2);
+			_callbacks.ForEach(callback => callback.Invoke(p1, p2));
 		}
 	}
 
@@ -364,7 +364,6 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 				$"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.");
 		}
 
-		_callback?.Invoke(p1, p2);
 		return result;
 	}
 
@@ -407,7 +406,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	: MethodSetup
 {
 	private readonly List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
-	private Action<T1, T2, T3>? _callback;
+	private readonly List<Action<T1, T2, T3>> _callbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -415,7 +414,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Callback(Action callback)
 	{
-		_callback = (_, _, _) => callback();
+		_callbacks.Add((_, _, _) => callback());
 		return this;
 	}
 
@@ -424,7 +423,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Callback(Action<T1, T2, T3> callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -489,7 +488,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior) &&
 		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior))
 		{
-			_callback?.Invoke(p1, p2, p3);
+			_callbacks.ForEach(callback => callback.Invoke(p1, p2, p3));
 		}
 	}
 
@@ -524,7 +523,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 		Func<T1, T2, T3, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 		if (returnCallback(p1, p2, p3) is TResult result)
 		{
-			_callback?.Invoke(p1, p2, p3);
 			return result;
 		}
 
@@ -572,7 +570,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	: MethodSetup
 {
 	private readonly List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
-	private Action<T1, T2, T3, T4>? _callback;
+	private readonly List<Action<T1, T2, T3, T4>> _callbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -580,7 +578,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Callback(Action callback)
 	{
-		_callback = (_, _, _, _) => callback();
+		_callbacks.Add((_, _, _, _) => callback());
 		return this;
 	}
 
@@ -589,7 +587,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	/// </summary>
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Callback(Action<T1, T2, T3, T4> callback)
 	{
-		_callback = callback;
+		_callbacks.Add(callback);
 		return this;
 	}
 
@@ -655,7 +653,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior) &&
 		    TryCast<T4>(invocation.Parameters[3], out T4? p4, behavior))
 		{
-			_callback?.Invoke(p1, p2, p3, p4);
+			_callbacks.ForEach(callback => callback.Invoke(p1, p2, p3, p4));
 		}
 	}
 
@@ -696,7 +694,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 		Func<T1, T2, T3, T4, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 		if (returnCallback(p1, p2, p3, p4) is TResult result)
 		{
-			_callback?.Invoke(p1, p2, p3, p4);
 			return result;
 		}
 

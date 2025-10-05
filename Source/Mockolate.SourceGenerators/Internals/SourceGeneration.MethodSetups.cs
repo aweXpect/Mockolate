@@ -59,8 +59,8 @@ internal static partial class SourceGeneration
 
 		sb.Append(") : MethodSetup").AppendLine();
 		sb.Append("{").AppendLine();
-		sb.Append("\tprivate Action<").Append(typeParams).Append(">? _callback;").AppendLine();
-		sb.Append("\tprivate List<Action<").Append(typeParams).Append(">> _returnCallbacks = [];").AppendLine();
+		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _callbacks = [];").AppendLine();
+		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _returnCallbacks = [];").AppendLine();
 		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
@@ -69,9 +69,9 @@ internal static partial class SourceGeneration
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Callback(Action callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_callback = (")
+		sb.Append("\t\t_callbacks.Add((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
-			.Append(") => callback();").AppendLine();
+			.Append(") => callback());").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -82,7 +82,7 @@ internal static partial class SourceGeneration
 		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Callback(Action<").Append(typeParams)
 			.Append("> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_callback = callback;").AppendLine();
+		sb.Append("\t\t_callbacks.Add(callback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -156,8 +156,8 @@ internal static partial class SourceGeneration
 			.Append(numberOfParameters - 1).Append("], out var p").Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_callback?.Invoke(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(");")
+		sb.Append("\t\t\t_callbacks.ForEach(callback => callback.Invoke(")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append("));")
 			.AppendLine();
 		sb.Append("\t\t\tif (_returnCallbacks.Count > 0)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
@@ -237,8 +237,8 @@ internal static partial class SourceGeneration
 
 		sb.Append(") : MethodSetup").AppendLine();
 		sb.Append("{").AppendLine();
-		sb.Append("\tprivate Action<").Append(typeParams).Append(">? _callback;").AppendLine();
-		sb.Append("\tprivate List<Func<").Append(typeParams).Append(", TReturn>> _returnCallbacks = [];").AppendLine();
+		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _callbacks = [];").AppendLine();
+		sb.Append("\tprivate readonly List<Func<").Append(typeParams).Append(", TReturn>> _returnCallbacks = [];").AppendLine();
 		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
@@ -248,9 +248,9 @@ internal static partial class SourceGeneration
 		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Callback(Action callback)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_callback = (")
+		sb.Append("\t\t_callbacks.Add((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
-			.Append(") => callback();").AppendLine();
+			.Append(") => callback());").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -261,7 +261,7 @@ internal static partial class SourceGeneration
 		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Callback(Action<")
 			.Append(typeParams).Append("> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_callback = callback;").AppendLine();
+		sb.Append("\t\t_callbacks.Add(callback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -359,8 +359,8 @@ internal static partial class SourceGeneration
 			.Append(numberOfParameters - 1).Append("], out var p").Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_callback?.Invoke(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(");")
+		sb.Append("\t\t\t_callbacks.ForEach(callback => callback.Invoke(")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append("));")
 			.AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t}").AppendLine();
@@ -395,9 +395,6 @@ internal static partial class SourceGeneration
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}")))
 			.Append(") is TResult result)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_callback?.Invoke(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(");")
-			.AppendLine();
 		sb.Append("\t\t\treturn result;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
