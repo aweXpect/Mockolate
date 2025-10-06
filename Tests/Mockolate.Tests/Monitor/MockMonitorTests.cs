@@ -8,7 +8,7 @@ public sealed class MockMonitorTests
 	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
 	{
 		Mock<IMyService> mock = Mock.For<IMyService>();
-		MockMonitor<IMyService> monitor = mock.Monitor();
+		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
 
 		mock.Object.IsValid(1);
 		mock.Object.IsValid(2);
@@ -36,7 +36,7 @@ public sealed class MockMonitorTests
 	public async Task MultipleRun_ShouldMonitorInvocationsDuringTheRun()
 	{
 		Mock<IMyService> mock = Mock.For<IMyService>();
-		MockMonitor<IMyService> monitor = mock.Monitor();
+		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
 
 		mock.Object.IsValid(1);
 		mock.Object.IsValid(2);
@@ -73,7 +73,7 @@ public sealed class MockMonitorTests
 	public async Task NestedRun_ShouldThrowInvalidOperationException()
 	{
 		Mock<IMyService> mock = Mock.For<IMyService>();
-		MockMonitor<IMyService> monitor = mock.Monitor();
+		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
 
 		void Act()
 			=> monitor.Run();
@@ -92,7 +92,7 @@ public sealed class MockMonitorTests
 	public async Task Run_ShouldMonitorInvocationsDuringTheRun()
 	{
 		Mock<IMyService> mock = Mock.For<IMyService>();
-		MockMonitor<IMyService> monitor = mock.Monitor();
+		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
 
 		mock.Object.IsValid(1);
 		mock.Object.IsValid(2);

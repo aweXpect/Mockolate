@@ -6,7 +6,7 @@ namespace Mockolate.Protected;
 
 /// <summary>
 ///     Provides protected access to mock setup, invocation, and event tracking features for the specified type parameter.
-///     Enables inspection and configuration of protected members on the mocked instance of type <typeparamref name="T" />.
+///     Enables inspection and configuration of protected members on the mocked instance of type <typeparamref name="TMock" />.
 /// </summary>
 /// <remarks>
 ///     Use this class to configure and verify protected methods, properties, and events on the mocked type.
@@ -15,37 +15,38 @@ namespace Mockolate.Protected;
 ///     not possible through standard public mocking APIs. All features exposed by this class operate on the provided mock
 ///     instance.
 /// </remarks>
-public class ProtectedMock<T>(Mock<T> mock) : IMock
+public class ProtectedMock<T, TMock>(IMock inner, Checks.Checks checks, TMock mock) : IMock
+	where TMock : Mock<T>
 {
-	private readonly IMock _inner = mock;
-	private readonly Mock<T> _mock = mock;
+	private readonly IMock _inner = inner;
+	private readonly TMock _mock = mock;
 
 	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T" />.
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="TMock" />.
 	/// </summary>
-	public MockInvoked<T>.Protected Invoked
-		=> new(_mock.Invoked, _inner.Checks);
+	public MockInvoked<T, Mock<T>>.Protected Invoked
+		=> new(_mock.Invoked, checks, _mock);
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="TMock" />.
 	/// </summary>
-	public MockAccessed<T>.Protected Accessed
-		=> new(_mock.Accessed, _inner.Checks);
+	public MockAccessed<T, Mock<T>>.Protected Accessed
+		=> new(_mock.Accessed, checks, _mock);
 
 	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="TMock" />.
 	/// </summary>
-	public MockEvent<T>.Protected Event
-		=> new(_mock.Event, _inner.Checks);
+	public MockEvent<T, Mock<T>>.Protected Event
+		=> new(_mock.Event, checks, _mock);
 
 	/// <summary>
-	///     Raise events on the mock for <typeparamref name="T" />.
+	///     Raise events on the mock for <typeparamref name="TMock" />.
 	/// </summary>
 	public MockRaises<T>.Protected Raise
 		=> new(_mock.Raise, _mock.Setup, _inner.Checks);
 
 	/// <summary>
-	///     Sets up the mock for <typeparamref name="T" />.
+	///     Sets up the mock for <typeparamref name="TMock" />.
 	/// </summary>
 	public MockSetups<T>.Protected Setup
 		=> new(_inner.Setup);
@@ -58,17 +59,17 @@ public class ProtectedMock<T>(Mock<T> mock) : IMock
 	MockBehavior IMock.Behavior
 		=> _inner.Behavior;
 
+	/// <inheritdoc cref="IMock.Checks" />
+	Checks.Checks IMock.Checks
+		=> _inner.Checks;
+
 	/// <inheritdoc cref="IMock.Raise" />
 	IMockRaises IMock.Raise
-		=> _inner.Raise;
+		=> Raise;
 
 	/// <inheritdoc cref="IMock.Setup" />
 	IMockSetup IMock.Setup
 		=> _inner.Setup;
-
-	/// <inheritdoc cref="IMock.Checks" />
-	Checks.Checks IMock.Checks
-		=> _inner.Checks;
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)

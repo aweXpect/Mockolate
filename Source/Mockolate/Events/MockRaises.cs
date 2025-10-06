@@ -28,7 +28,7 @@ public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
 			throw new MockException("The method of an event subscription may not be null.");
 		}
 
-		checks.RegisterInvocation(new EventSubscription(name, target, method));
+		checks.RegisterInvocation(new EventSubscription(checks.GetNextIndex(), name, target, method));
 		setup.AddEvent(name, target, method);
 	}
 
@@ -40,7 +40,7 @@ public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
 			throw new MockException("The method of an event unsubscription may not be null.");
 		}
 
-		checks.RegisterInvocation(new EventUnsubscription(name, target, method));
+		checks.RegisterInvocation(new EventUnsubscription(checks.GetNextIndex(), name, target, method));
 		setup.RemoveEvent(name, target, method);
 	}
 

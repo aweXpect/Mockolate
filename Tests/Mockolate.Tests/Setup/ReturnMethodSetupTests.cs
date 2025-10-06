@@ -43,7 +43,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new("foo", Array.Empty<object?>());
+			MethodInvocation invocation = new(0, "foo", Array.Empty<object?>());
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -305,7 +305,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int> setup = new("foo");
 			setup.Returns(x => 3 * x);
-			MethodInvocation invocation = new("foo", ["2",]);
+			MethodInvocation invocation = new(0, "foo", ["2",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -322,7 +322,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(x => 3 * x);
-			MethodInvocation invocation = new("foo", [2,]);
+			MethodInvocation invocation = new(0, "foo", [2,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -665,7 +665,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int> setup = new("foo");
 			setup.Returns((x, y) => 3 * x);
-			MethodInvocation invocation = new("foo", ["1", 2,]);
+			MethodInvocation invocation = new(0, "foo", ["1", 2,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -681,7 +681,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int> setup = new("foo");
 			setup.Returns((x, y) => 3 * x);
-			MethodInvocation invocation = new("foo", [1, "2",]);
+			MethodInvocation invocation = new(0, "foo", [1, "2",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -698,7 +698,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int, int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new("foo", [2, 3,]);
+			MethodInvocation invocation = new(0, "foo", [2, 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -1061,7 +1061,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new("foo", ["1", 2, 3,]);
+			MethodInvocation invocation = new(0, "foo", ["1", 2, 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1077,7 +1077,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new("foo", [1, "2", 3,]);
+			MethodInvocation invocation = new(0, "foo", [1, "2", 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1093,7 +1093,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new("foo", [1, 2, "3",]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "3",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1110,7 +1110,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new("foo", [1, 2, 3,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -1492,7 +1492,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new("foo", ["1", 2, 3, 4,]);
+			MethodInvocation invocation = new(0, "foo", ["1", 2, 3, 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1508,7 +1508,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new("foo", [1, "2", 3, 4,]);
+			MethodInvocation invocation = new(0, "foo", [1, "2", 3, 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1524,7 +1524,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new("foo", [1, 2, "3", 4,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "3", 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1540,7 +1540,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new("foo", [1, 2, 3, "4",]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "4",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1557,7 +1557,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new("foo", [1, 2, 3, 4,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -1957,7 +1957,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new("foo", ["1", 2, 3, 4, 5,]);
+			MethodInvocation invocation = new(0, "foo", ["1", 2, 3, 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1973,7 +1973,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new("foo", [1, "2", 3, 4, 5,]);
+			MethodInvocation invocation = new(0, "foo", [1, "2", 3, 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1989,7 +1989,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new("foo", [1, 2, "3", 4, 5,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "3", 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2005,7 +2005,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new("foo", [1, 2, 3, "4", 5,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "4", 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2021,7 +2021,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new("foo", [1, 2, 3, 4, "5",]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, "5",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2038,7 +2038,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new("foo", [1, 2, 3, 4, 5,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
