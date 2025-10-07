@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Xml.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 

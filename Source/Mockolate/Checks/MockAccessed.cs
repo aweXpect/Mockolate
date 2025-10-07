@@ -33,8 +33,8 @@ public class MockAccessed<T, TMock>(MockInteractions interactions, TMock mock) :
 	///     A proxy implementation of <see cref="IMockAccessed{TMock}" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockAccessed<TMock> inner, MockInteractions interacctions, TMock mock)
-		: MockAccessed<T, TMock>(interacctions, mock), IMockAccessed<TMock>
+	public class Proxy(IMockAccessed<TMock> inner, MockInteractions interactions, TMock mock)
+		: MockAccessed<T, TMock>(interactions, mock), IMockAccessed<TMock>
 	{
 		/// <inheritdoc cref="IMockAccessed{TMock}.PropertyGetter(string)" />
 		CheckResult<TMock> IMockAccessed<TMock>.PropertyGetter(string propertyName)

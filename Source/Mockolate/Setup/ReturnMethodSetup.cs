@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
-using Mockolate.Internals;
 
 namespace Mockolate.Setup;
 

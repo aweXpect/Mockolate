@@ -251,7 +251,7 @@ namespace Mockolate.Checks
         }
         public class Proxy : Mockolate.Checks.MockAccessed<T, TMock>, Mockolate.Checks.IMockAccessed<TMock>
         {
-            public Proxy(Mockolate.Checks.IMockAccessed<TMock> inner, Mockolate.Interactions.MockInteractions interacctions, TMock mock) { }
+            public Proxy(Mockolate.Checks.IMockAccessed<TMock> inner, Mockolate.Interactions.MockInteractions interactions, TMock mock) { }
         }
     }
     public class MockCheck

@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 using Mockolate.Internals;
 
 namespace Mockolate;
