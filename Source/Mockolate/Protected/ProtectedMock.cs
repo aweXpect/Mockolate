@@ -6,7 +6,7 @@ namespace Mockolate.Protected;
 
 /// <summary>
 ///     Provides protected access to mock setup, invocation, and event tracking features for the specified type parameter.
-///     Enables inspection and configuration of protected members on the mocked instance of type <typeparamref name="TMock" />.
+///     Enables inspection and configuration of protected members on the mocked instance <typeparamref name="TMock" />.
 /// </summary>
 /// <remarks>
 ///     Use this class to configure and verify protected methods, properties, and events on the mocked type.

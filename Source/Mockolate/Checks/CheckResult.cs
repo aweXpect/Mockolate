@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using Mockolate.Checks.Interactions;
 
@@ -9,14 +8,14 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     The expectation contains the matching interactions for verification.
 /// </summary>
-public class CheckResult<T>
+public class CheckResult<TMock>
 {
-	private readonly T _mock;
+	private readonly TMock _mock;
 	private readonly Checks _checks;
 	private readonly IInteraction[] _interactions;
 
-	/// <inheritdoc cref="CheckResult{T}" />
-	public CheckResult(T mock, Checks checks, IInteraction[] interactions)
+	/// <inheritdoc cref="CheckResult{TMock}" />
+	public CheckResult(TMock mock, Checks checks, IInteraction[] interactions)
 	{
 		_mock = mock;
 		_checks = checks;
@@ -26,9 +25,9 @@ public class CheckResult<T>
 	/// <summary>
 	///     Supports fluent chaining of verifications in a given order.
 	/// </summary>
-	public bool Then(params Func<T, CheckResult<T>>[] orderedChecks)
+	public bool Then(params Func<TMock, CheckResult<TMock>>[] orderedChecks)
 	{
-		CheckResult<T> result = this;
+		CheckResult<TMock> result = this;
 		List<IInteraction> verified = [];
 		foreach (var check in orderedChecks)
 		{
