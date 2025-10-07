@@ -1,4 +1,4 @@
-using Mockolate.Checks.Interactions;
+using Mockolate.Interactions;
 
 namespace Mockolate.Setup;
 

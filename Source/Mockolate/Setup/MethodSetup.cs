@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
+using Mockolate.Internals;
 
 namespace Mockolate.Setup;
 
@@ -171,4 +172,10 @@ public abstract class MethodSetup : IMethodSetup
 		result = behavior.DefaultValueGenerator.Generate<T>();
 		return value is null;
 	}
+
+	/// <summary>
+	///     Returns a formatted string representation of the <typeparamref name="TResult" />.
+	/// </summary>
+	protected static string FormatType<TResult>()
+		=> typeof(TResult).FormatType();
 }

@@ -1,5 +1,5 @@
-using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.Setup;

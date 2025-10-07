@@ -1,54 +1,52 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Mockolate.Checks.Interactions;
 
-namespace Mockolate.Checks;
+namespace Mockolate.Interactions;
 
 /// <summary>
 ///     Keeps track of the interactions on the <see cref="Mock{T}" /> and its verifications.
 /// </summary>
-public class Checks
+[DebuggerDisplay("{_interactions}")]
+public class MockInteractions
 {
-	private readonly List<IInteraction> _interactions = [];
-	private int _after = -1;
+	private readonly ConcurrentDictionary<int, IInteraction> _interactions = [];
 	private int _index = -1;
 	private List<IInteraction>? _missingVerification;
 
 	/// <summary>
 	///     The number of interactions contained in the collection.
 	/// </summary>
-	public int Count => _interactions.Count - _after - 1;
+	public int Count => _interactions.Count;
 
 	/// <summary>
 	///     Gets a value indicating whether there are any missing verifications for the current context.
 	/// </summary>
 	internal bool HasMissingVerifications => _missingVerification is null
-		? _interactions.Count > _after + 1
-		: _missingVerification.Any(x => x.Index > _after);
+		? !_interactions.IsEmpty
+		: _missingVerification.Count > 0;
 
 	/// <summary>
 	///     The registered interactions of the mock.
 	/// </summary>
-	public IEnumerable<IInteraction> Interactions => _interactions.Where(x => x.Index > _after);
+	public IEnumerable<IInteraction> Interactions => _interactions.Values.OrderBy(x => x.Index);
 
 	/// <summary>
 	///     Gets the next index for an interaction.
 	/// </summary>
 	public int GetNextIndex() => Interlocked.Increment(ref _index);
 
-	internal void After(int index) => _after = index;
-
-	internal IInteraction RegisterInvocation(IInteraction interaction)
+	internal IInteraction RegisterInteraction(IInteraction interaction)
 	{
-		_interactions.Add(interaction);
+		_interactions.TryAdd(interaction.Index, interaction);
 		return interaction;
 	}
 
 	internal void Verified(IEnumerable<IInteraction> interactions)
 	{
-		_after = -1;
-		_missingVerification ??= _interactions.ToList();
+		_missingVerification ??= _interactions.Values.OrderBy(x => x.Index).ToList();
 		foreach (IInteraction? interaction in interactions)
 		{
 			_missingVerification.Remove(interaction);

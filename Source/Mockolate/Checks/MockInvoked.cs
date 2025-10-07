@@ -1,5 +1,5 @@
 using System.Linq;
-using Mockolate.Checks.Interactions;
+using Mockolate.Interactions;
 using Mockolate.Internals;
 
 namespace Mockolate.Checks;
@@ -7,12 +7,12 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     Check which methods got invoked on the mocked instance for <typeparamref name="TMock" />.
 /// </summary>
-public class MockInvoked<T, TMock>(Checks checks, TMock mock) : IMockInvoked<TMock>
+public class MockInvoked<T, TMock>(MockInteractions interactions, TMock mock) : IMockInvoked<TMock>
 {
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
 	CheckResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)
-		=> new(mock, checks,
-			checks.Interactions
+		=> new(mock, interactions,
+			interactions.Interactions
 				.OfType<MethodInvocation>()
 				.Where(method =>
 					method.Name.Equals(methodName) &&
@@ -26,8 +26,8 @@ public class MockInvoked<T, TMock>(Checks checks, TMock mock) : IMockInvoked<TMo
 	///     A proxy implementation of <see cref="IMockInvoked{TMock}" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockInvoked<TMock> inner, Checks checks, TMock mock)
-		: MockInvoked<T, TMock>(checks, mock), IMockInvoked<TMock>
+	public class Proxy(IMockInvoked<TMock> inner, MockInteractions interactions, TMock mock)
+		: MockInvoked<T, TMock>(interactions, mock), IMockInvoked<TMock>
 	{
 		/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
 		CheckResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)
@@ -37,8 +37,8 @@ public class MockInvoked<T, TMock>(Checks checks, TMock mock) : IMockInvoked<TMo
 	/// <summary>
 	///     Check which protected methods got invoked on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockInvoked<TMock> inner, Checks checks, TMock mock)
-		: MockInvoked<T, TMock>(checks, mock), IMockInvoked<TMock>
+	public class Protected(IMockInvoked<TMock> inner, MockInteractions interactions, TMock mock)
+		: MockInvoked<T, TMock>(interactions, mock), IMockInvoked<TMock>
 	{
 		/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
 		CheckResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)

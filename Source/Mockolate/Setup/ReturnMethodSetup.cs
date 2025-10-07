@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 
 namespace Mockolate.Setup;
 
@@ -95,6 +95,12 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 		=> value;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"{FormatType<TReturn>()} {name}()";
+	}
 }
 
 /// <summary>
@@ -238,6 +244,12 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 		}
 
 		return value;
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"{FormatType<TReturn>()} {name}({match1})";
 	}
 }
 
@@ -390,6 +402,12 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 		}
 
 		return value;
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"{FormatType<TReturn>()} {name}({match1}, {match2})";
 	}
 }
 
@@ -552,6 +570,12 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 		}
 
 		return value;
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"{FormatType<TReturn>()} {name}({match1}, {match2}, {match3})";
 	}
 }
 
@@ -723,6 +747,12 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 		}
 
 		return value;
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"{FormatType<TReturn>()} {name}({match1}, {match2}, {match3}, {match4})";
 	}
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters

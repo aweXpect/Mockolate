@@ -9,7 +9,7 @@ public class MockCheckTests
 	{
 		Mock<IMyService> sut = Mock.For<IMyService>();
 
-		await That(sut.Check.AllInteractionsVerified).IsTrue();
+		await That(sut.Check.AllInteractionsVerified()).IsTrue();
 	}
 
 	[Fact]
@@ -21,7 +21,7 @@ public class MockCheckTests
 		sut.Object.DoSomething(2);
 
 		await That(sut.Invoked.DoSomething(1).Once());
-		await That(sut.Check.AllInteractionsVerified).IsFalse();
+		await That(sut.Check.AllInteractionsVerified()).IsFalse();
 	}
 
 	[Fact]
@@ -33,7 +33,7 @@ public class MockCheckTests
 		sut.Object.DoSomething(2);
 
 		await That(sut.Invoked.DoSomething(With.Any<int>()).AtLeastOnce());
-		await That(sut.Check.AllInteractionsVerified).IsTrue();
+		await That(sut.Check.AllInteractionsVerified()).IsTrue();
 	}
 
 	[Fact]

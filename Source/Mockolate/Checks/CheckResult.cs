@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mockolate.Checks.Interactions;
+using Mockolate.Interactions;
 
 namespace Mockolate.Checks;
 
@@ -10,8 +10,8 @@ namespace Mockolate.Checks;
 /// </summary>
 public class CheckResult<TMock>
 {
-	private readonly Checks _checks;
-	private readonly IInteraction[] _interactions;
+	private readonly MockInteractions _interactions;
+	private readonly IInteraction[] _matchingInteractions;
 	private readonly TMock _mock;
 
 	/// <summary>
@@ -20,11 +20,11 @@ public class CheckResult<TMock>
 	public string Expectation { get; }
 
 	/// <inheritdoc cref="CheckResult{TMock}" />
-	public CheckResult(TMock mock, Checks checks, IInteraction[] interactions, string expectation)
+	public CheckResult(TMock mock, MockInteractions interactions, IInteraction[] matchingInteractions, string expectation)
 	{
 		_mock = mock;
-		_checks = checks;
 		_interactions = interactions;
+		_matchingInteractions = matchingInteractions;
 		Expectation = expectation;
 	}
 
@@ -35,21 +35,22 @@ public class CheckResult<TMock>
 	{
 		CheckResult<TMock> result = this;
 		List<IInteraction> verified = [];
+		int after = -1;
 		foreach (Func<TMock, CheckResult<TMock>>? check in orderedChecks)
 		{
-			if (result._interactions.Length == 0)
+			if (!result._matchingInteractions.Any(x => x.Index > after))
 			{
-				_checks.Verified(verified);
+				_interactions.Verified(verified);
 				return false;
 			}
 
-			verified.AddRange(result._interactions);
-			_checks.After(result._interactions.Min(x => x.Index));
+			verified.AddRange(result._matchingInteractions.Where(x => x.Index > after));
+			after = result._matchingInteractions.Min(x => x.Index);
 			result = check(_mock);
 		}
 
-		_checks.Verified(verified);
-		return result._interactions.Length >= 1;
+		_interactions.Verified(verified);
+		return result._matchingInteractions.Any(x => x.Index > after);
 	}
 
 	/// <summary>
@@ -57,8 +58,8 @@ public class CheckResult<TMock>
 	/// </summary>
 	public bool Verify(Func<IInteraction[], bool> predicate)
 	{
-		_checks.Verified(_interactions);
-		return predicate(_interactions);
+		_interactions.Verified(_matchingInteractions);
+		return predicate(_matchingInteractions);
 	}
 }
 

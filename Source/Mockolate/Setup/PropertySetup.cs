@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
-using Mockolate.Checks.Interactions;
+using Mockolate.Interactions;
+using Mockolate.Internals;
 
 namespace Mockolate.Setup;
 
@@ -149,5 +150,12 @@ public class PropertySetup<T> : PropertySetup
 			return newValue;
 		};
 		return this;
+	}
+
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"{typeof(T).FormatType()}";
 	}
 }

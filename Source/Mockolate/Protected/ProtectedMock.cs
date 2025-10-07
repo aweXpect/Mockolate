@@ -1,5 +1,6 @@
 using Mockolate.Checks;
 using Mockolate.Events;
+using Mockolate.Interactions;
 using Mockolate.Setup;
 
 namespace Mockolate.Protected;
@@ -15,7 +16,7 @@ namespace Mockolate.Protected;
 ///     not possible through standard public mocking APIs. All features exposed by this class operate on the provided mock
 ///     instance.
 /// </remarks>
-public class ProtectedMock<T, TMock>(IMock inner, Checks.Checks checks, TMock mock) : IMock
+public class ProtectedMock<T, TMock>(IMock inner, MockInteractions interactions, TMock mock) : IMock
 	where TMock : Mock<T>
 {
 	private readonly IMock _inner = inner;
@@ -25,25 +26,25 @@ public class ProtectedMock<T, TMock>(IMock inner, Checks.Checks checks, TMock mo
 	///     Check which methods got invoked on the mocked instance for <typeparamref name="TMock" />.
 	/// </summary>
 	public MockInvoked<T, Mock<T>>.Protected Invoked
-		=> new(_mock.Invoked, checks, _mock);
+		=> new(_mock.Invoked, interactions, _mock);
 
 	/// <summary>
 	///     Check which properties were accessed on the mocked instance for <typeparamref name="TMock" />.
 	/// </summary>
 	public MockAccessed<T, Mock<T>>.Protected Accessed
-		=> new(_mock.Accessed, checks, _mock);
+		=> new(_mock.Accessed, interactions, _mock);
 
 	/// <summary>
 	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="TMock" />.
 	/// </summary>
 	public MockEvent<T, Mock<T>>.Protected Event
-		=> new(_mock.Event, checks, _mock);
+		=> new(_mock.Event, interactions, _mock);
 
 	/// <summary>
 	///     Raise events on the mock for <typeparamref name="TMock" />.
 	/// </summary>
 	public MockRaises<T>.Protected Raise
-		=> new(_mock.Raise, _mock.Setup, _inner.Checks);
+		=> new(_mock.Raise, _mock.Setup, _inner.Interactions);
 
 	/// <summary>
 	///     Sets up the mock for <typeparamref name="TMock" />.
@@ -59,9 +60,9 @@ public class ProtectedMock<T, TMock>(IMock inner, Checks.Checks checks, TMock mo
 	MockBehavior IMock.Behavior
 		=> _inner.Behavior;
 
-	/// <inheritdoc cref="IMock.Checks" />
-	Checks.Checks IMock.Checks
-		=> _inner.Checks;
+	/// <inheritdoc cref="IMock.Interactions" />
+	MockInteractions IMock.Interactions
+		=> _inner.Interactions;
 
 	/// <inheritdoc cref="IMock.Raise" />
 	IMockRaises IMock.Raise
