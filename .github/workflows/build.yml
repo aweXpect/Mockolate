@@ -171,7 +171,7 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         runs-on: macos-latest
         environment: production
-        needs: [ publish-test-results, benchmarks, static-code-analysis, pack, mutation-tests ]
+        needs: [ publish-test-results, build-pages, benchmarks, static-code-analysis, pack, mutation-tests ]
         permissions:
             contents: write
         steps:
