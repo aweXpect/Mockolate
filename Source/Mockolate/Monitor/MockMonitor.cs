@@ -19,20 +19,20 @@ public abstract class MockMonitor
 	private readonly Checks.Checks _monitoredInvocations;
 	private int _monitoringStart = -1;
 
-	/// <inheritdoc cref="MockMonitor{T}" />
+	/// <inheritdoc cref="MockMonitor" />
 	protected MockMonitor(IMock mock)
 	{
 		_monitoredInvocations = mock.Checks;
-		Invocations = new Checks.Checks();
+		Checks = new Checks.Checks();
 	}
 
 	/// <summary>
-	///     The invocations that were recorded during the monitoring session.
+	///     The interactions that were recorded during the monitoring session.
 	/// </summary>
-	protected Checks.Checks Invocations { get; }
+	protected Checks.Checks Checks { get; }
 
 	/// <summary>
-	///     Begins monitoring invocations and returns a scope that ends monitoring when disposed.
+	///     Begins monitoring interactions and returns a scope that ends monitoring when disposed.
 	/// </summary>
 	/// <remarks>
 	///     Dispose the returned object to stop monitoring and finalize the session.
@@ -58,7 +58,7 @@ public abstract class MockMonitor
 		{
 			foreach (IInteraction? invocation in _monitoredInvocations.Interactions.Skip(_monitoringStart))
 			{
-				Invocations.RegisterInvocation(invocation);
+				Checks.RegisterInvocation(invocation);
 			}
 		}
 
@@ -80,28 +80,29 @@ public abstract class MockMonitor
 ///     which events were subscribed to, during a test session. Monitoring is session-based; begin a session with the Run
 ///     method and dispose the returned scope to finalize monitoring.
 /// </remarks>
-public class MockMonitor<T> : MockMonitor
+public class MockMonitor<T, TMock> : MockMonitor
+	where TMock : IMock
 {
-	/// <inheritdoc cref="MockMonitor{T}" />
-	public MockMonitor(IMock mock) : base(mock)
+	/// <inheritdoc cref="MockMonitor{T, TMock}" />
+	public MockMonitor(TMock mock) : base(mock)
 	{
-		Accessed = new MockAccessed<T>(Invocations);
-		Event = new MockEvent<T>(Invocations);
-		Invoked = new MockInvoked<T>(Invocations);
+		Accessed = new MockAccessed<T, TMock>(Checks, mock);
+		Event = new MockEvent<T, TMock>(Checks, mock);
+		Invoked = new MockInvoked<T, TMock>(Checks, mock);
 	}
 
 	/// <summary>
 	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
-	public MockAccessed<T> Accessed { get; }
+	public MockAccessed<T, TMock> Accessed { get; }
 
 	/// <summary>
 	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
-	public MockEvent<T> Event { get; }
+	public MockEvent<T, TMock> Event { get; }
 
 	/// <summary>
 	///     Check which methods got invoked on the mocked instance for <typeparamref name="T" />.
 	/// </summary>
-	public MockInvoked<T> Invoked { get; }
+	public MockInvoked<T, TMock> Invoked { get; }
 }

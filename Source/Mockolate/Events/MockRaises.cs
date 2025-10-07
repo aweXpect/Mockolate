@@ -1,5 +1,4 @@
 using System.Reflection;
-using Mockolate.Checks;
 using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
@@ -14,7 +13,7 @@ public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
 	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 	void IMockRaises.Raise(string eventName, params object?[] parameters)
 	{
-		foreach (var (target, method) in setup.GetEventHandlers(eventName))
+		foreach ((object? target, MethodInfo? method) in setup.GetEventHandlers(eventName))
 		{
 			method.Invoke(target, parameters);
 		}
@@ -28,7 +27,7 @@ public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
 			throw new MockException("The method of an event subscription may not be null.");
 		}
 
-		checks.RegisterInvocation(new EventSubscription(name, target, method));
+		checks.RegisterInvocation(new EventSubscription(checks.GetNextIndex(), name, target, method));
 		setup.AddEvent(name, target, method);
 	}
 
@@ -40,7 +39,7 @@ public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
 			throw new MockException("The method of an event unsubscription may not be null.");
 		}
 
-		checks.RegisterInvocation(new EventUnsubscription(name, target, method));
+		checks.RegisterInvocation(new EventUnsubscription(checks.GetNextIndex(), name, target, method));
 		setup.RemoveEvent(name, target, method);
 	}
 

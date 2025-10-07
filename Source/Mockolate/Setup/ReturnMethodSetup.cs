@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
@@ -12,8 +11,8 @@ namespace Mockolate.Setup;
 /// </summary>
 public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 {
-	private readonly List<Func<TReturn>> _returnCallbacks = [];
 	private readonly List<Action> _callbacks = [];
+	private readonly List<Func<TReturn>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -104,8 +103,8 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter match1)
 	: MethodSetup
 {
-	private readonly List<Func<T1, TReturn>> _returnCallbacks = [];
 	private readonly List<Action<T1>> _callbacks = [];
+	private readonly List<Func<T1, TReturn>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -183,7 +182,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
+		if (TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			_callbacks.ForEach(callback => callback.Invoke(p1));
 		}
@@ -198,7 +197,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (!TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
+		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			throw new MockException(
 				$"The input parameter only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
@@ -249,8 +248,8 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter match1, With.NamedParameter match2)
 	: MethodSetup
 {
-	private readonly List<Func<T1, T2, TReturn>> _returnCallbacks = [];
 	private readonly List<Action<T1, T2>> _callbacks = [];
+	private readonly List<Func<T1, T2, TReturn>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -328,8 +327,8 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
-		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior))
+		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1], out T2 p2, behavior))
 		{
 			_callbacks.ForEach(callback => callback.Invoke(p1, p2));
 		}
@@ -344,13 +343,13 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (!TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
+		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 1 only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
 		}
 
-		if (!TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior))
+		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 2 only supports '{typeof(T2)}', but is '{invocation.Parameters[1]?.GetType()}'.");
@@ -405,8 +404,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	With.NamedParameter match3)
 	: MethodSetup
 {
-	private readonly List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
 	private readonly List<Action<T1, T2, T3>> _callbacks = [];
+	private readonly List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -484,9 +483,9 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
-		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior) &&
-		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior))
+		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1], out T2 p2, behavior) &&
+		    TryCast(invocation.Parameters[2], out T3 p3, behavior))
 		{
 			_callbacks.ForEach(callback => callback.Invoke(p1, p2, p3));
 		}
@@ -501,19 +500,19 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (!TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
+		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 1 only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
 		}
 
-		if (!TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior))
+		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 2 only supports '{typeof(T2)}', but is '{invocation.Parameters[1]?.GetType()}'.");
 		}
 
-		if (!TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior))
+		if (!TryCast(invocation.Parameters[2], out T3 p3, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 3 only supports '{typeof(T3)}', but is '{invocation.Parameters[2]?.GetType()}'.");
@@ -569,8 +568,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	With.NamedParameter match4)
 	: MethodSetup
 {
-	private readonly List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
 	private readonly List<Action<T1, T2, T3, T4>> _callbacks = [];
+	private readonly List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -648,10 +647,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
-		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior) &&
-		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior) &&
-		    TryCast<T4>(invocation.Parameters[3], out T4? p4, behavior))
+		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1], out T2 p2, behavior) &&
+		    TryCast(invocation.Parameters[2], out T3 p3, behavior) &&
+		    TryCast(invocation.Parameters[3], out T4 p4, behavior))
 		{
 			_callbacks.ForEach(callback => callback.Invoke(p1, p2, p3, p4));
 		}
@@ -666,25 +665,25 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 			return behavior.DefaultValueGenerator.Generate<TResult>();
 		}
 
-		if (!TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
+		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 1 only supports '{typeof(T1)}', but is '{invocation.Parameters[0]?.GetType()}'.");
 		}
 
-		if (!TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior))
+		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 2 only supports '{typeof(T2)}', but is '{invocation.Parameters[1]?.GetType()}'.");
 		}
 
-		if (!TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior))
+		if (!TryCast(invocation.Parameters[2], out T3 p3, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 3 only supports '{typeof(T3)}', but is '{invocation.Parameters[2]?.GetType()}'.");
 		}
 
-		if (!TryCast<T4>(invocation.Parameters[3], out T4? p4, behavior))
+		if (!TryCast(invocation.Parameters[3], out T4 p4, behavior))
 		{
 			throw new MockException(
 				$"The input parameter 4 only supports '{typeof(T4)}', but is '{invocation.Parameters[3]?.GetType()}'.");

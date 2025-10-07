@@ -11,7 +11,13 @@ internal static partial class SourceGeneration
 	public static string GetExtensionClass(string name, Class @class)
 	{
 		string[] namespaces =
-			[.. @class.GetClassNamespaces(), "Mockolate.Checks", "Mockolate.Events", "Mockolate.Protected", "Mockolate.Setup",];
+		[
+			.. @class.GetClassNamespaces(),
+			"Mockolate.Checks",
+			"Mockolate.Events",
+			"Mockolate.Protected",
+			"Mockolate.Setup",
+		];
 		StringBuilder sb = new();
 		sb.AppendLine(Header);
 		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
@@ -27,51 +33,26 @@ internal static partial class SourceGeneration
 
 		          """);
 		sb.AppendLine();
-		sb.Append("public static class ExtensionsFor").Append(name).AppendLine();
+		sb.Append("public static class SetupExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
 
 		AppendRaisesExtensions(sb, @class, namespaces);
 		AppendSetupExtensions(sb, @class, namespaces);
-		AppendInvokedExtensions(sb, @class, namespaces);
-		AppendAccessedExtensions(sb, @class, namespaces);
-		AppendEventExtensions(sb, @class, namespaces);
 
-		if (AppendProtectedMock(sb, @class))
+		if (@class.Events.Any(@event
+			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+		    @class.Methods.Any(method
+			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+		    @class.Properties.Any(property
+			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
 		{
 			AppendRaisesExtensions(sb, @class, namespaces, true);
 			AppendSetupExtensions(sb, @class, namespaces, true);
-			AppendInvokedExtensions(sb, @class, namespaces, true);
-			AppendAccessedExtensions(sb, @class, namespaces, true);
-			AppendEventExtensions(sb, @class, namespaces, true);
 		}
 
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
-	}
-
-	private static bool AppendProtectedMock(StringBuilder sb, Class @class)
-	{
-		if (@class.Events.All(@event
-			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-		    @class.Methods.All(method
-			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-		    @class.Properties.All(property
-			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
-		{
-			return false;
-		}
-
-		sb.Append("\textension(Mock<").Append(@class.ClassName).Append(">").Append(" mock)").AppendLine();
-		sb.AppendLine("\t{");
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Allows mocking protected methods, events or properties.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic ProtectedMock<").Append(@class.ClassName).Append("> Protected").AppendLine();
-		sb.Append("\t\t\t=> new ProtectedMock<").Append(@class.ClassName).Append(">(mock);").AppendLine();
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-		return true;
 	}
 
 	private static void AppendRaisesExtensions(StringBuilder sb, Class @class, string[] namespaces,
@@ -292,153 +273,6 @@ internal static partial class SourceGeneration
 			sb.AppendLine("\t\t\t}");
 			sb.AppendLine("\t\t\treturn setup;");
 			sb.AppendLine("\t\t}");
-		}
-
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-	}
-
-	private static void AppendInvokedExtensions(StringBuilder sb, Class @class, string[] namespaces,
-		bool isProtected = false)
-	{
-		Func<Method, bool> predicate = isProtected
-			? new Func<Method, bool>(e
-				=> e.ExplicitImplementation is null &&
-				   e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Method, bool>(e
-				=> e.ExplicitImplementation is null &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
-		if (!@class.Methods.Any(predicate))
-		{
-			return;
-		}
-
-		sb.Append("\textension(MockInvoked<").Append(@class.ClassName).Append(">")
-			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
-		sb.AppendLine("\t{");
-		int count = 0;
-		foreach (Method method in @class.Methods.Where(predicate))
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"").Append(@class.ClassName)
-				.Append(".").Append(method.Name).Append("(")
-				.Append(string.Join(", ",
-					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
-				.Append(")\"/> with the given ")
-				.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".")
-				.AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult ").Append(method.Name).Append("(");
-			int i = 0;
-			foreach (MethodParameter parameter in method.Parameters)
-			{
-				if (i++ > 0)
-				{
-					sb.Append(", ");
-				}
-
-				sb.Append(parameter.RefKind switch
-					{
-						RefKind.Ref => "With.InvokedRefParameter<",
-						RefKind.Out => "With.InvokedOutParameter<",
-						_ => "With.Parameter<",
-					}).Append(parameter.Type.GetMinimizedString(namespaces))
-					.Append("> ").Append(parameter.Name);
-			}
-
-			sb.Append(")").AppendLine();
-			sb.Append("\t\t\t=> ((IMockInvoked)mock).Method(\"").Append(@class.GetFullName(method.Name))
-				.Append("\"");
-
-			foreach (MethodParameter parameter in method.Parameters)
-			{
-				sb.Append(", ");
-				sb.Append(parameter.Name);
-			}
-
-			sb.AppendLine(");");
-		}
-
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-	}
-
-	private static void AppendAccessedExtensions(StringBuilder sb, Class @class, string[] namespaces,
-		bool isProtected = false)
-	{
-		Func<Property, bool> predicate = isProtected
-			? new Func<Property, bool>(e
-				=> !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Property, bool>(e
-				=> !e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
-		if (!@class.Properties.Any(predicate))
-		{
-			return;
-		}
-
-		sb.Append("\textension(MockAccessed<").Append(@class.ClassName).Append(">")
-			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
-		sb.AppendLine("\t{");
-		int count = 0;
-		foreach (Property property in @class.Properties.Where(predicate))
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(@class.ClassName)
-				.Append(".").Append(property.Name).Append("\"/>.").AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult.Property<").Append(property.Type.GetMinimizedString(namespaces))
-				.Append("> ").Append(property.Name).AppendLine();
-			sb.Append("\t\t\t=> new CheckResult.Property<").Append(property.Type.GetMinimizedString(namespaces))
-				.Append(">(mock, \"").Append(@class.GetFullName(property.Name)).Append("\");");
-		}
-
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-	}
-
-	private static void AppendEventExtensions(StringBuilder sb, Class @class, string[] namespaces,
-		bool isProtected = false)
-	{
-		Func<Event, bool> predicate = isProtected
-			? new Func<Event, bool>(e
-				=> e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Event, bool>(e
-				=> e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
-		if (!@class.Events.Any(predicate))
-		{
-			return;
-		}
-
-		sb.Append("\textension(MockEvent<").Append(@class.ClassName).Append(">").Append(isProtected ? ".Protected" : "")
-			.Append(" mock)").AppendLine();
-		sb.AppendLine("\t{");
-		int count = 0;
-		foreach (Event @event in @class.Events.Where(predicate))
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the subscriptions or unsubscription for the event <see cref=\"")
-				.Append(@class.ClassName).Append(".").Append(@event.Name).Append("\"/>.").AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult.Event<").Append(@event.Type.GetMinimizedString(namespaces)).Append("> ")
-				.Append(@event.Name).AppendLine();
-			sb.Append("\t\t\t=> new CheckResult.Event<").Append(@event.Type.GetMinimizedString(namespaces))
-				.Append(">(mock, \"").Append(@class.GetFullName(@event.Name)).Append("\");").AppendLine();
 		}
 
 		sb.AppendLine("\t}");

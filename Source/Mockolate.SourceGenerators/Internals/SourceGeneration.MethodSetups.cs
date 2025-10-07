@@ -60,7 +60,8 @@ internal static partial class SourceGeneration
 		sb.Append(") : MethodSetup").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _callbacks = [];").AppendLine();
-		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _returnCallbacks = [];").AppendLine();
+		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _returnCallbacks = [];")
+			.AppendLine();
 		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
@@ -147,13 +148,13 @@ internal static partial class SourceGeneration
 		sb.Append("\t\tif (");
 		for (int i = 1; i < numberOfParameters; i++)
 		{
-			sb.Append("TryCast<T").Append(i).Append(">(invocation.Parameters[").Append(i - 1).Append("], out var p")
+			sb.Append("TryCast(invocation.Parameters[").Append(i - 1).Append("], out T").Append(i).Append(" p")
 				.Append(i).Append(", behavior) &&");
 			sb.AppendLine().Append("\t\t    ");
 		}
 
-		sb.Append("TryCast<T").Append(numberOfParameters).Append(">(invocation.Parameters[")
-			.Append(numberOfParameters - 1).Append("], out var p").Append(numberOfParameters).Append(", behavior))")
+		sb.Append("TryCast(invocation.Parameters[")
+			.Append(numberOfParameters - 1).Append("], out T").Append(numberOfParameters).Append(" p").Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_callbacks.ForEach(callback => callback.Invoke(")
@@ -238,7 +239,8 @@ internal static partial class SourceGeneration
 		sb.Append(") : MethodSetup").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _callbacks = [];").AppendLine();
-		sb.Append("\tprivate readonly List<Func<").Append(typeParams).Append(", TReturn>> _returnCallbacks = [];").AppendLine();
+		sb.Append("\tprivate readonly List<Func<").Append(typeParams).Append(", TReturn>> _returnCallbacks = [];")
+			.AppendLine();
 		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t/// <summary>").AppendLine();
@@ -350,13 +352,13 @@ internal static partial class SourceGeneration
 		sb.Append("\t\tif (");
 		for (int i = 1; i < numberOfParameters; i++)
 		{
-			sb.Append("TryCast<T").Append(i).Append(">(invocation.Parameters[").Append(i - 1).Append("], out var p")
+			sb.Append("TryCast(invocation.Parameters[").Append(i - 1).Append("], out T").Append(i).Append(" p")
 				.Append(i).Append(", behavior) &&");
 			sb.AppendLine().Append("\t\t    ");
 		}
 
-		sb.Append("TryCast<T").Append(numberOfParameters).Append(">(invocation.Parameters[")
-			.Append(numberOfParameters - 1).Append("], out var p").Append(numberOfParameters).Append(", behavior))")
+		sb.Append("TryCast(invocation.Parameters[")
+			.Append(numberOfParameters - 1).Append("], out T").Append(numberOfParameters).Append(" p").Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_callbacks.ForEach(callback => callback.Invoke(")
@@ -379,8 +381,8 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\tif (!TryCast<T").Append(i).Append(">(invocation.Parameters[").Append(i - 1)
-				.Append("], out var p").Append(i).Append(", behavior))").AppendLine();
+			sb.Append("\t\tif (!TryCast(invocation.Parameters[").Append(i - 1)
+				.Append("], out T").Append(i).Append(" p").Append(i).Append(", behavior))").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tthrow new MockException($\"The input parameter ").Append(i)
 				.Append(" only supports '{typeof(T").Append(i).Append(")}', but is '{invocation.Parameters[")

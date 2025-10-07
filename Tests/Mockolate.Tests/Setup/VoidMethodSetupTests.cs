@@ -1,7 +1,6 @@
 using System.Linq;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
-using static Mockolate.Tests.Setup.ReturnMethodSetupTests;
 
 namespace Mockolate.Tests.Setup;
 
@@ -154,7 +153,7 @@ public class VoidMethodSetupTests
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
 
 			public T SetRefParameter<T>(string parameterName, T value)
-				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+				=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 		}
 	}
 
@@ -400,7 +399,7 @@ public class VoidMethodSetupTests
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
 
 			public T SetRefParameter<T>(string parameterName, T value)
-				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+				=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 		}
 	}
 
@@ -669,7 +668,7 @@ public class VoidMethodSetupTests
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
 
 			public T SetRefParameter<T>(string parameterName, T value)
-				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+				=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 		}
 	}
 
@@ -958,7 +957,7 @@ public class VoidMethodSetupTests
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
 
 			public T SetRefParameter<T>(string parameterName, T value)
-				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+				=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 		}
 	}
 
@@ -1263,7 +1262,7 @@ public class VoidMethodSetupTests
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
 
 			public T SetRefParameter<T>(string parameterName, T value)
-				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+				=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 		}
 	}
 
@@ -1586,7 +1585,7 @@ public class VoidMethodSetupTests
 				=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
 
 			public T SetRefParameter<T>(string parameterName, T value)
-				=> base.SetRefParameter<T>(parameterName, value, MockBehavior.Default);
+				=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 		}
 	}
 

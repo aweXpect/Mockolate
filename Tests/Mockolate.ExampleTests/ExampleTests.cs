@@ -40,6 +40,18 @@ public class ExampleTests
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
 #endif
+	[Fact]
+	public async Task SimpleInterfaceMock()
+	{
+		Guid id = Guid.NewGuid();
+		Mock<IExampleRepository, IOrderRepository> mock = Mock.For<IExampleRepository, IOrderRepository>();
+		mock.Setup
+			.AddUser(With.Any<string>())
+			.Returns(new User(id, "Alice"));
+		User result = mock.Object.AddUser("Bob");
+		await That(result).IsEqualTo(new User(id, "Alice"));
+		await That(mock.Invoked.AddUser(With.Any<string>()).Once());
+	}
 
 	[Fact]
 	public async Task WithAdditionalInterface_ShouldWork()

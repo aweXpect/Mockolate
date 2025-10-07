@@ -25,12 +25,12 @@ public class Tests
 			     			var z = Mock.For<MyBaseClass>();
 			             }
 			         }
-
+			     
 			         public interface IMyInterface
 			         {
 			             void MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7);
 			         }
-
+			     
 			         public class MyBaseClass
 			         {
 			             protected virtual Task<int> MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7, TimeSpan v8, CancellationToken v9)
@@ -104,43 +104,6 @@ public class Tests
 	}
 
 	[Fact]
-	public async Task SameMethodInNestedInterfaces_ShouldUseExplicitImplementation()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System.Collections.Generic;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			var x = Mockolate.Mock.For<IMyInterface1>();
-			             }
-			         }
-			     
-			         public interface IMyInterface1 : IMyInterface2
-			         {
-			             void MyMethod(int v1);
-			         }
-			     
-			         public interface IMyInterface2
-			         {
-			             void MyMethod(int v1);
-			         }
-			     }
-
-			     """, typeof(IList<>));
-
-		await That(result.Diagnostics).IsEmpty();
-
-		await That(result.Sources).ContainsKey("ForIMyInterface1.g.cs").WhoseValue
-			.Contains("public void MyMethod(int v1)").And
-			.Contains("void IMyInterface2.MyMethod(int v1)");
-	}
-
-	[Fact]
 	public async Task SameMethodInMultipleInterfaces_ShouldUseExplicitImplementation()
 	{
 		GeneratorResult result = Generator
@@ -173,6 +136,43 @@ public class Tests
 		await That(result.Diagnostics).IsEmpty();
 
 		await That(result.Sources).ContainsKey("ForIMyInterface1_IMyInterface2.g.cs").WhoseValue
+			.Contains("public void MyMethod(int v1)").And
+			.Contains("void IMyInterface2.MyMethod(int v1)");
+	}
+
+	[Fact]
+	public async Task SameMethodInNestedInterfaces_ShouldUseExplicitImplementation()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			var x = Mockolate.Mock.For<IMyInterface1>();
+			             }
+			         }
+			     
+			         public interface IMyInterface1 : IMyInterface2
+			         {
+			             void MyMethod(int v1);
+			         }
+			     
+			         public interface IMyInterface2
+			         {
+			             void MyMethod(int v1);
+			         }
+			     }
+
+			     """, typeof(IList<>));
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources).ContainsKey("ForIMyInterface1.g.cs").WhoseValue
 			.Contains("public void MyMethod(int v1)").And
 			.Contains("void IMyInterface2.MyMethod(int v1)");
 	}

@@ -20,37 +20,40 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithEmptyParameters_ShouldThrowMockException()
 	{
-		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
+		MyMock<MyBaseClass> mock = new(new MyBaseClass());
 
 		void Act()
-			=> _ = mock.HiddenCreate<MyBaseClass>(BaseClass.WithConstructorParameters());
+			=> _ = mock.HiddenCreate<MyBaseClass>(WithConstructorParameters());
 
 		await That(Act).Throws<MockException>()
-			.WithMessage("Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' without constructor parameters.");
+			.WithMessage(
+				"Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' without constructor parameters.");
 	}
 
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithoutParameters_ShouldThrowMockException()
 	{
-		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
+		MyMock<MyBaseClass> mock = new(new MyBaseClass());
 
 		void Act()
 			=> _ = mock.HiddenCreate<MyBaseClass>();
 
 		await That(Act).Throws<MockException>()
-			.WithMessage("Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' without constructor parameters.");
+			.WithMessage(
+				"Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' without constructor parameters.");
 	}
 
 	[Fact]
 	public async Task Create_WithTooManyParameters_ShouldThrowMockException()
 	{
-		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
+		MyMock<MyBaseClass> mock = new(new MyBaseClass());
 
 		void Act()
-			=> _ = mock.HiddenCreate<MyBaseClass>(BaseClass.WithConstructorParameters(1, 2, "foo"));
+			=> _ = mock.HiddenCreate<MyBaseClass>(WithConstructorParameters(1, 2, "foo"));
 
 		await That(Act).Throws<MockException>()
-			.WithMessage("Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' with 3 parameters (1, 2, foo).");
+			.WithMessage(
+				"Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' with 3 parameters (1, 2, foo).");
 	}
 
 	[Fact]
@@ -96,6 +99,7 @@ public sealed partial class MockTests
 		{
 			Text = text;
 		}
+
 		public int Number { get; }
 		public string Text { get; }
 		public virtual string VirtualMethod() => Text;

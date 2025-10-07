@@ -10,43 +10,21 @@ using static Mockolate.BaseClass;
 namespace Mockolate;
 
 /// <summary>
-///     A mock for type <typeparamref name="T" />.
+///     Provides a base class for creating and managing mock objects of a specified type, supporting setup, event raising,
+///     and behavior configuration.
 /// </summary>
-public abstract class Mock<T> : IMock
+public abstract class MockBase<T> : IMock
 {
 	private readonly MockBehavior _behavior;
 
-	/// <inheritdoc cref="Mock{T}" />
-	protected Mock(MockBehavior behavior)
+	/// <inheritdoc cref="MockBase{T}" />
+	protected MockBase(MockBehavior behavior)
 	{
 		_behavior = behavior;
+		Checks.Checks checks = ((IMock)this).Checks;
 		Setup = new MockSetups<T>(this);
-		Accessed = new MockAccessed<T>(((IMock)this).Checks);
-		Check = new MockCheck(((IMock)this).Checks);
-		Event = new MockEvent<T>(((IMock)this).Checks);
-		Invoked = new MockInvoked<T>(((IMock)this).Checks);
-		Raise = new MockRaises<T>(Setup, ((IMock)this).Checks);
+		Raise = new MockRaises<T>(Setup, checks);
 	}
-
-	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
-	/// </summary>
-	public MockAccessed<T> Accessed { get; }
-
-	/// <summary>
-	///     Additional checks on the mocked instance.
-	/// </summary>
-	public MockCheck Check { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
-	/// </summary>
-	public MockEvent<T> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T" />.
-	/// </summary>
-	public MockInvoked<T> Invoked { get; }
 
 	/// <summary>
 	///     Exposes the mocked object instance of type <typeparamref name="T" />.
@@ -70,10 +48,7 @@ public abstract class Mock<T> : IMock
 	///     This does not work implicitly (but only with an explicit cast) for interfaces due to
 	///     a limitation of the C# language.
 	/// </remarks>
-	public static implicit operator T(Mock<T> mock)
-	{
-		return mock.Object;
-	}
+	public static implicit operator T(MockBase<T> mock) => mock.Object;
 
 	/// <summary>
 	///     Attempts to create an instance of the specified type using the provided constructor parameters.
@@ -84,7 +59,8 @@ public abstract class Mock<T> : IMock
 		{
 			try
 			{
-				return (TObject)Activator.CreateInstance(typeof(TObject), [this, .. constructorParameters.Parameters,])!;
+				return (TObject)Activator.CreateInstance(typeof(TObject),
+					[this, .. constructorParameters.Parameters,])!;
 			}
 			catch
 			{
@@ -111,23 +87,24 @@ public abstract class Mock<T> : IMock
 	/// </summary>
 	MockBehavior IMock.Behavior => _behavior;
 
-	/// <inheritdoc cref="IMock.Raise" />
-	IMockRaises IMock.Raise
-		=> Raise;
+	/// <inheritdoc cref="IMock.Checks" />
+	Checks.Checks IMock.Checks { get; } = new();
 
 	/// <inheritdoc cref="IMock.Setup" />
 	IMockSetup IMock.Setup
 		=> Setup;
 
-	/// <inheritdoc cref="IMock.Checks" />
-	Checks.Checks IMock.Checks { get; } = new();
+	/// <inheritdoc cref="IMock.Raise" />
+	IMockRaises IMock.Raise
+		=> Raise;
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
 	{
+		Checks.Checks? checks = ((IMock)this).Checks;
 		parameters ??= [null,];
 		IInteraction invocation =
-			((IMock)this).Checks.RegisterInvocation(new MethodInvocation(methodName, parameters));
+			checks.RegisterInvocation(new MethodInvocation(checks.GetNextIndex(), methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null)
@@ -138,7 +115,7 @@ public abstract class Mock<T> : IMock
 					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().ToString() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
-			return new MethodSetupResult<TResult>(matchingSetup, _behavior,
+			return new MethodSetupResult<TResult>(null, _behavior,
 				_behavior.DefaultValueGenerator.Generate<TResult>());
 		}
 
@@ -149,9 +126,10 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Execute(string, object?[])" />
 	MethodSetupResult IMock.Execute(string methodName, params object?[]? parameters)
 	{
+		Checks.Checks? checks = ((IMock)this).Checks;
 		parameters ??= [null,];
 		IInteraction invocation =
-			((IMock)this).Checks.RegisterInvocation(new MethodInvocation(methodName, parameters));
+			checks.RegisterInvocation(new MethodInvocation(checks.GetNextIndex(), methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
@@ -167,8 +145,9 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Set(string, object?)" />
 	void IMock.Set(string propertyName, object? value)
 	{
+		Checks.Checks? checks = ((IMock)this).Checks;
 		IInteraction invocation =
-			((IMock)this).Checks.RegisterInvocation(new PropertySetterAccess(propertyName, value));
+			checks.RegisterInvocation(new PropertySetterAccess(checks.GetNextIndex(), propertyName, value));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		matchingSetup.InvokeSetter(invocation, value);
 	}
@@ -176,8 +155,9 @@ public abstract class Mock<T> : IMock
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
 	TResult IMock.Get<TResult>(string propertyName)
 	{
+		Checks.Checks? checks = ((IMock)this).Checks;
 		IInteraction invocation =
-			((IMock)this).Checks.RegisterInvocation(new PropertyGetterAccess(propertyName));
+			checks.RegisterInvocation(new PropertyGetterAccess(checks.GetNextIndex(), propertyName));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		return matchingSetup.InvokeGetter<TResult>(invocation);
 	}
@@ -186,50 +166,188 @@ public abstract class Mock<T> : IMock
 }
 
 /// <summary>
-///     A mock for type <typeparamref name="T1" /> that also implements interface <typeparamref name="T2" />.
+///     A mock for type <typeparamref name="T" />.
 /// </summary>
-public abstract class Mock<T1, T2> : Mock<T1>
+public abstract class Mock<T> : MockBase<T>
 {
 	/// <inheritdoc cref="Mock{T}" />
+	protected Mock(MockBehavior behavior) : base(behavior)
+	{
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T, Mock<T>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T, Mock<T>>(checks, this);
+		Invoked = new MockInvoked<T, Mock<T>>(checks, this);
+	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
+	/// </summary>
+	public MockAccessed<T, Mock<T>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
+	/// </summary>
+	public MockEvent<T, Mock<T>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T" />.
+	/// </summary>
+	public MockInvoked<T, Mock<T>> Invoked { get; }
+}
+
+/// <summary>
+///     A mock for type <typeparamref name="T1" /> that also implements interface <typeparamref name="T2" />.
+/// </summary>
+public abstract class Mock<T1, T2> : MockBase<T1>
+{
+	/// <inheritdoc cref="Mock{T1, T2}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
 		if (!typeof(T2).IsInterface)
 		{
 			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
 		}
+
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T1, Mock<T1, T2>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T1, Mock<T1, T2>>(checks, this);
+		Invoked = new MockInvoked<T1, Mock<T1, T2>>(checks, this);
 	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockAccessed<T1, Mock<T1, T2>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockEvent<T1, Mock<T1, T2>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockInvoked<T1, Mock<T1, T2>> Invoked { get; }
 }
 
 /// <summary>
 ///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" />.
 /// </summary>
-public abstract class Mock<T1, T2, T3> : Mock<T1, T2>
+public abstract class Mock<T1, T2, T3> : MockBase<T1>
 {
-	/// <inheritdoc cref="Mock{T}" />
+	/// <inheritdoc cref="Mock{T1, T2, T3}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
+		if (!typeof(T2).IsInterface)
+		{
+			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
+
 		if (!typeof(T3).IsInterface)
 		{
 			throw new MockException($"The third generic type argument '{typeof(T3)}' is no interface.");
 		}
+
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T1, Mock<T1, T2, T3>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T1, Mock<T1, T2, T3>>(checks, this);
+		Invoked = new MockInvoked<T1, Mock<T1, T2, T3>>(checks, this);
 	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockAccessed<T1, Mock<T1, T2, T3>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockEvent<T1, Mock<T1, T2, T3>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockInvoked<T1, Mock<T1, T2, T3>> Invoked { get; }
 }
 
 /// <summary>
 ///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
-public abstract class Mock<T1, T2, T3, T4> : Mock<T1, T2, T3>
+public abstract class Mock<T1, T2, T3, T4> : MockBase<T1>
 {
-	/// <inheritdoc cref="Mock{T}" />
+	/// <inheritdoc cref="Mock{T1, T2, T3, T4}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
+		if (!typeof(T2).IsInterface)
+		{
+			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
+
+		if (!typeof(T3).IsInterface)
+		{
+			throw new MockException($"The third generic type argument '{typeof(T3)}' is no interface.");
+		}
+
 		if (!typeof(T4).IsInterface)
 		{
 			throw new MockException($"The fourth generic type argument '{typeof(T4)}' is no interface.");
 		}
+
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T1, Mock<T1, T2, T3, T4>>(checks, this);
+		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4>>(checks, this);
 	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockAccessed<T1, Mock<T1, T2, T3, T4>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockEvent<T1, Mock<T1, T2, T3, T4>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockInvoked<T1, Mock<T1, T2, T3, T4>> Invoked { get; }
 }
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
@@ -237,32 +355,125 @@ public abstract class Mock<T1, T2, T3, T4> : Mock<T1, T2, T3>
 ///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2" />,
 ///     <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
 /// </summary>
-public abstract class Mock<T1, T2, T3, T4, T5> : Mock<T1, T2, T3, T4>
+public abstract class Mock<T1, T2, T3, T4, T5> : MockBase<T1>
 {
-	/// <inheritdoc cref="Mock{T}" />
+	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
+		if (!typeof(T2).IsInterface)
+		{
+			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
+
+		if (!typeof(T3).IsInterface)
+		{
+			throw new MockException($"The third generic type argument '{typeof(T3)}' is no interface.");
+		}
+
+		if (!typeof(T4).IsInterface)
+		{
+			throw new MockException($"The fourth generic type argument '{typeof(T4)}' is no interface.");
+		}
+
 		if (!typeof(T5).IsInterface)
 		{
 			throw new MockException($"The fifth generic type argument '{typeof(T5)}' is no interface.");
 		}
+
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5>>(checks, this);
+		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5>>(checks, this);
 	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockEvent<T1, Mock<T1, T2, T3, T4, T5>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5>> Invoked { get; }
 }
 
 /// <summary>
 ///     A mock for type <typeparamref name="T1" /> that also implements interfaces <typeparamref name="T2" />,
 ///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" /> and <typeparamref name="T6" />.
 /// </summary>
-public abstract class Mock<T1, T2, T3, T4, T5, T6> : Mock<T1, T2, T3, T4, T5>
+public abstract class Mock<T1, T2, T3, T4, T5, T6> : MockBase<T1>
 {
-	/// <inheritdoc cref="Mock{T}" />
+	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5, T6}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
+		if (!typeof(T2).IsInterface)
+		{
+			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
+
+		if (!typeof(T3).IsInterface)
+		{
+			throw new MockException($"The third generic type argument '{typeof(T3)}' is no interface.");
+		}
+
+		if (!typeof(T4).IsInterface)
+		{
+			throw new MockException($"The fourth generic type argument '{typeof(T4)}' is no interface.");
+		}
+
+		if (!typeof(T5).IsInterface)
+		{
+			throw new MockException($"The fifth generic type argument '{typeof(T5)}' is no interface.");
+		}
+
 		if (!typeof(T6).IsInterface)
 		{
 			throw new MockException($"The sixth generic type argument '{typeof(T6)}' is no interface.");
 		}
+
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6>>(checks, this);
+		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6>>(checks, this);
 	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6>> Invoked { get; }
 }
 
 /// <summary>
@@ -270,16 +481,70 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6> : Mock<T1, T2, T3, T4, T5>
 ///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" /> and
 ///     <typeparamref name="T7" />.
 /// </summary>
-public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : Mock<T1, T2, T3, T4, T5, T6>
+public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : MockBase<T1>
 {
-	/// <inheritdoc cref="Mock{T}" />
+	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5, T6, T7}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
+		if (!typeof(T2).IsInterface)
+		{
+			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
+
+		if (!typeof(T3).IsInterface)
+		{
+			throw new MockException($"The third generic type argument '{typeof(T3)}' is no interface.");
+		}
+
+		if (!typeof(T4).IsInterface)
+		{
+			throw new MockException($"The fourth generic type argument '{typeof(T4)}' is no interface.");
+		}
+
+		if (!typeof(T5).IsInterface)
+		{
+			throw new MockException($"The fifth generic type argument '{typeof(T5)}' is no interface.");
+		}
+
+		if (!typeof(T6).IsInterface)
+		{
+			throw new MockException($"The sixth generic type argument '{typeof(T6)}' is no interface.");
+		}
+
 		if (!typeof(T7).IsInterface)
 		{
 			throw new MockException($"The seventh generic type argument '{typeof(T7)}' is no interface.");
 		}
+
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7>>(checks, this);
+		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7>>(checks, this);
 	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7>> Invoked { get; }
 }
 
 /// <summary>
@@ -287,16 +552,75 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : Mock<T1, T2, T3, T4, T5
 ///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" />,
 ///     <typeparamref name="T7" /> and <typeparamref name="T8" />.
 /// </summary>
-public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : Mock<T1, T2, T3, T4, T5, T6, T7>
+public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : MockBase<T1>
 {
-	/// <inheritdoc cref="Mock{T}" />
+	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5, T6, T7, T8}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
+		if (!typeof(T2).IsInterface)
+		{
+			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
+
+		if (!typeof(T3).IsInterface)
+		{
+			throw new MockException($"The third generic type argument '{typeof(T3)}' is no interface.");
+		}
+
+		if (!typeof(T4).IsInterface)
+		{
+			throw new MockException($"The fourth generic type argument '{typeof(T4)}' is no interface.");
+		}
+
+		if (!typeof(T5).IsInterface)
+		{
+			throw new MockException($"The fifth generic type argument '{typeof(T5)}' is no interface.");
+		}
+
+		if (!typeof(T6).IsInterface)
+		{
+			throw new MockException($"The sixth generic type argument '{typeof(T6)}' is no interface.");
+		}
+
+		if (!typeof(T7).IsInterface)
+		{
+			throw new MockException($"The seventh generic type argument '{typeof(T7)}' is no interface.");
+		}
+
 		if (!typeof(T8).IsInterface)
 		{
 			throw new MockException($"The eighth generic type argument '{typeof(T8)}' is no interface.");
 		}
+
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>>(checks, this);
+		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>>(checks, this);
 	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>> Invoked { get; }
 }
 
 /// <summary>
@@ -304,15 +628,79 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : Mock<T1, T2, T3, T4
 ///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" />,
 ///     <typeparamref name="T7" />, <typeparamref name="T8" /> and <typeparamref name="T9" />.
 /// </summary>
-public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> : Mock<T1, T2, T3, T4, T5, T6, T7, T8>
+public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> : MockBase<T1>
 {
-	/// <inheritdoc cref="Mock{T}" />
+	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5, T6, T7, T8, T9}" />
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
+		if (!typeof(T2).IsInterface)
+		{
+			throw new MockException($"The second generic type argument '{typeof(T2)}' is no interface.");
+		}
+
+		if (!typeof(T3).IsInterface)
+		{
+			throw new MockException($"The third generic type argument '{typeof(T3)}' is no interface.");
+		}
+
+		if (!typeof(T4).IsInterface)
+		{
+			throw new MockException($"The fourth generic type argument '{typeof(T4)}' is no interface.");
+		}
+
+		if (!typeof(T5).IsInterface)
+		{
+			throw new MockException($"The fifth generic type argument '{typeof(T5)}' is no interface.");
+		}
+
+		if (!typeof(T6).IsInterface)
+		{
+			throw new MockException($"The sixth generic type argument '{typeof(T6)}' is no interface.");
+		}
+
+		if (!typeof(T7).IsInterface)
+		{
+			throw new MockException($"The seventh generic type argument '{typeof(T7)}' is no interface.");
+		}
+
+		if (!typeof(T8).IsInterface)
+		{
+			throw new MockException($"The eighth generic type argument '{typeof(T8)}' is no interface.");
+		}
+
 		if (!typeof(T9).IsInterface)
 		{
 			throw new MockException($"The ninth generic type argument '{typeof(T9)}' is no interface.");
 		}
+
+		Checks.Checks? checks = ((IMock)this).Checks;
+		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(checks, this);
+		Check = new MockCheck(checks);
+		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(checks, this);
+		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(checks, this);
 	}
+
+	/// <summary>
+	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>> Accessed { get; }
+
+	/// <summary>
+	///     Additional checks on the mocked instance.
+	/// </summary>
+	public MockCheck Check { get; }
+
+	/// <summary>
+	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>> Event { get; }
+
+	/// <summary>
+	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
+	///     <typeparamref name="T2" />.
+	/// </summary>
+	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>> Invoked { get; }
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters

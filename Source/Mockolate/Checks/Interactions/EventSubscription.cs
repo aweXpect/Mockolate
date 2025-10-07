@@ -5,7 +5,7 @@ namespace Mockolate.Checks.Interactions;
 /// <summary>
 ///     A subscription to an event.
 /// </summary>
-public class EventSubscription(string name, object? target, MethodInfo method) : IInteraction
+public class EventSubscription(int index, string name, object? target, MethodInfo method) : IInteraction
 {
 	/// <summary>
 	///     The name of the event.
@@ -21,4 +21,7 @@ public class EventSubscription(string name, object? target, MethodInfo method) :
 	///     The method of the event delegate.
 	/// </summary>
 	public MethodInfo Method { get; } = method;
+
+	/// <inheritdoc cref="IInteraction.Index" />
+	public int Index { get; } = index;
 }

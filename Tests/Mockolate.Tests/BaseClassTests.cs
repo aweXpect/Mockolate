@@ -16,7 +16,7 @@ public sealed class BaseClassTests
 	[Fact]
 	public async Task WithConstructorParameters_ShouldReturnParameters()
 	{
-		object?[] parameters = new object?[]
+		object?[] parameters =
 		{
 			42, "test", null, DateTime.Now,
 		};
