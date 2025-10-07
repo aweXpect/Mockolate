@@ -25,7 +25,7 @@ public class MockInteractions
 	///     Gets a value indicating whether there are any missing verifications for the current context.
 	/// </summary>
 	internal bool HasMissingVerifications => _missingVerification is null
-		? _interactions.Count > 0
+		? !_interactions.IsEmpty
 		: _missingVerification.Count > 0;
 
 	/// <summary>

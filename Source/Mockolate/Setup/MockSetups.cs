@@ -18,19 +18,16 @@ namespace Mockolate.Setup;
 [DebuggerDisplay("({_methodSetups}, {_propertySetups}, {_eventHandlers})")]
 public class MockSetups<T>(IMock mock) : IMockSetup
 {
-	private EventSetups _eventHandlers = new EventSetups();
-	private MethodSetups _methodSetups = new MethodSetups();
-	private PropertySetups _propertySetups = new PropertySetups();
+	private readonly EventSetups _eventHandlers = new EventSetups();
+	private readonly MethodSetups _methodSetups = new MethodSetups();
+	private readonly PropertySetups _propertySetups = new PropertySetups();
 
 	/// <summary>
 	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	internal MethodSetup? GetMethodSetup(IInteraction invocation)
-	{
-		_methodSetups ??= new MethodSetups();
-		return _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
-	}
+		=> _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
@@ -41,7 +38,6 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// </remarks>
 	internal PropertySetup GetPropertySetup(string propertyName)
 	{
-		_propertySetups ??= new PropertySetups();
 		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
 		{
 			if (mock.Behavior.ThrowWhenNotSetup)
@@ -122,7 +118,6 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
 		}
 
-		_methodSetups ??= new MethodSetups();
 		_methodSetups.Add(methodSetup);
 	}
 
@@ -134,7 +129,6 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
 		}
 
-		_propertySetups ??= new PropertySetups();
 		if (!_propertySetups.TryAdd(propertyName, propertySetup))
 		{
 			throw new MockException($"You cannot setup property '{propertyName}' twice");
@@ -201,7 +195,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	}
 
 	[DebuggerDisplay("{ToString()}")]
-	private class MethodSetups
+	private sealed class MethodSetups
 	{
 		private ConcurrentQueue<MethodSetup>? _storage;
 
@@ -227,7 +221,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
-			if (_storage is null || _storage.Count == 0)
+			if (_storage is null || _storage.IsEmpty)
 			{
 				return "0 methods";
 			}
@@ -244,7 +238,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	}
 
 	[DebuggerDisplay("{ToString()}")]
-	private class PropertySetups
+	private sealed class PropertySetups
 	{
 		private ConcurrentDictionary<string, PropertySetup>? _storage;
 
@@ -266,7 +260,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
-			if (_storage is null || _storage.Count == 0)
+			if (_storage is null || _storage.IsEmpty)
 			{
 				return "0 properties";
 			}
@@ -283,7 +277,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	}
 
 	[DebuggerDisplay("{ToString()}")]
-	private class EventSetups : IEnumerable<(object?, MethodInfo, string)>
+	private sealed class EventSetups : IEnumerable<(object?, MethodInfo, string)>
 	{
 		private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _storage;
 
@@ -319,7 +313,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
-			if (_storage is null || _storage.Count == 0)
+			if (_storage is null || _storage.IsEmpty)
 			{
 				return "0 events";
 			}
