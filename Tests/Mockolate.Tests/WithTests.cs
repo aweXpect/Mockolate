@@ -83,7 +83,7 @@ public sealed class WithTests
 	}
 
 	[Fact]
-	public async Task ToString_WithRef_ShouldReturExpectednValue()
+	public async Task ToString_WithRef_ShouldReturnExpectedValue()
 	{
 		With.RefParameter<int?> sut = With.Ref<int?>(v => v * 3);
 		string expectedValue = "With.Ref<int?>(v => v * 3)";
