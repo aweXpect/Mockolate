@@ -1,4 +1,5 @@
 using Mockolate.Events;
+using Mockolate.Interactions;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -16,7 +17,7 @@ public interface IMock
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	Checks.Checks Checks { get; }
+	MockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Raise events on the mock object.

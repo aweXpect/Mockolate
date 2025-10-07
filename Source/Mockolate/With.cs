@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 using Mockolate.Internals;
 
 namespace Mockolate;
@@ -230,7 +231,14 @@ public static class With
 	/// </summary>
 	/// <param name="Name">The name of the <paramref name="Parameter" />.</param>
 	/// <param name="Parameter">The actual <see cref="Parameter" />.</param>
-	public record NamedParameter(string Name, Parameter Parameter);
+	public record NamedParameter(string Name, Parameter Parameter)
+	{
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			return $"{Parameter} {Name}";
+		}
+	}
 
 	private sealed class AnyParameter<T> : Parameter<T>
 	{

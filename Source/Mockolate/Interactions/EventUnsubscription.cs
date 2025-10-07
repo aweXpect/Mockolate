@@ -1,10 +1,12 @@
+using System.Diagnostics;
 using System.Reflection;
 
-namespace Mockolate.Checks.Interactions;
+namespace Mockolate.Interactions;
 
 /// <summary>
 ///     An unsubscription from an event.
 /// </summary>
+[DebuggerDisplay("{ToString()}")]
 public class EventUnsubscription(int index, string name, object? target, MethodInfo method) : IInteraction
 {
 	/// <summary>
@@ -24,4 +26,10 @@ public class EventUnsubscription(int index, string name, object? target, MethodI
 
 	/// <inheritdoc cref="IInteraction.Index" />
 	public int Index { get; } = index;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"[{Index}] unsubscribe from event {Name}";
+	}
 }

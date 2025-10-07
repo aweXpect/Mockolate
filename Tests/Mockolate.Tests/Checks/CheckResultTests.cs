@@ -1,6 +1,6 @@
 using System.Linq;
 using Mockolate.Checks;
-using Mockolate.Checks.Interactions;
+using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests.Checks;

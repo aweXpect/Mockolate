@@ -1,29 +1,36 @@
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using Mockolate.Checks.Interactions;
+using System.Text;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 
 namespace Mockolate.Setup;
 
 /// <summary>
 ///     Sets up the mock for <typeparamref name="T" />.
 /// </summary>
+[DebuggerDisplay("({_methodSetups}, {_propertySetups}, {_eventHandlers})")]
 public class MockSetups<T>(IMock mock) : IMockSetup
 {
-	private readonly List<MethodSetup> _methodSetups = [];
-
-	private readonly Dictionary<string, PropertySetup> _propertySetups = [];
-	private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _eventHandlers;
+	private EventSetups _eventHandlers = new EventSetups();
+	private MethodSetups _methodSetups = new MethodSetups();
+	private PropertySetups _propertySetups = new PropertySetups();
 
 	/// <summary>
 	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	internal MethodSetup? GetMethodSetup(IInteraction invocation)
-		=> _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
+	{
+		_methodSetups ??= new MethodSetups();
+		return _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
+	}
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
@@ -34,6 +41,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// </remarks>
 	internal PropertySetup GetPropertySetup(string propertyName)
 	{
+		_propertySetups ??= new PropertySetups();
 		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
 		{
 			if (mock.Behavior.ThrowWhenNotSetup)
@@ -42,7 +50,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			}
 
 			matchingSetup = new PropertySetup.Default();
-			_propertySetups.Add(propertyName, matchingSetup);
+			_propertySetups.TryAdd(propertyName, matchingSetup);
 		}
 
 		return matchingSetup;
@@ -109,23 +117,28 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
 	void IMockSetup.RegisterMethod(MethodSetup methodSetup)
 	{
-		if (mock.Checks.Count > 0)
+		if (mock.Interactions.Count > 0)
 		{
 			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
 		}
 
+		_methodSetups ??= new MethodSetups();
 		_methodSetups.Add(methodSetup);
 	}
 
 	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
 	void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
 	{
-		if (mock.Checks.Count > 0)
+		if (mock.Interactions.Count > 0)
 		{
 			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
 		}
 
-		_propertySetups.Add(propertyName, propertySetup);
+		_propertySetups ??= new PropertySetups();
+		if (!_propertySetups.TryAdd(propertyName, propertySetup))
+		{
+			throw new MockException($"You cannot setup property '{propertyName}' twice");
+		}
 	}
 
 	/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
@@ -136,7 +149,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			yield break;
 		}
 
-		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers.Keys)
+		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers)
 		{
 			if (name != eventName)
 			{
@@ -150,13 +163,175 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.AddEvent(string, object?, MethodInfo)" />
 	void IMockSetup.AddEvent(string eventName, object? target, MethodInfo method)
 	{
-		_eventHandlers ??= new ConcurrentDictionary<(object?, MethodInfo, string), bool>();
-		_eventHandlers.TryAdd((target, method, eventName), true);
+		_eventHandlers.Add(target, method, eventName);
 	}
 
 	/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
 	void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
-		=> _eventHandlers?.TryRemove((target, method, eventName), out _);
+		=> _eventHandlers.Remove(target, method, eventName);
 
 	#endregion IMockSetup
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		var sb = new StringBuilder();
+		if (_methodSetups?.Count > 0)
+		{
+			sb.Append(_methodSetups.Count).Append(_methodSetups.Count == 1 ? " method, " : " methods, ");
+		}
+
+		if (_propertySetups?.Count > 0)
+		{
+			sb.Append(_propertySetups.Count).Append(_propertySetups.Count == 1 ? " property, " : " properties, ");
+		}
+
+		if (_eventHandlers?.Count > 0)
+		{
+			sb.Append(_eventHandlers.Count).Append(_eventHandlers.Count == 1 ? " event, " : " events, ");
+		}
+
+		if (sb.Length < 2)
+		{
+			return "(none)";
+		}
+
+		sb.Length -= 2;
+		return sb.ToString();
+	}
+
+	[DebuggerDisplay("{ToString()}")]
+	private class MethodSetups
+	{
+		private ConcurrentQueue<MethodSetup>? _storage;
+
+		public void Add(MethodSetup setup)
+		{
+			_storage ??= new ConcurrentQueue<MethodSetup>();
+			_storage.Enqueue(setup);
+		}
+
+		public MethodSetup? FirstOrDefault(Func<MethodSetup, bool> predicate)
+		{
+			if (_storage is null)
+			{
+				return null;
+			}
+
+			return _storage.FirstOrDefault(predicate);
+		}
+
+		public int Count
+			=> _storage?.Count ?? 0;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			if (_storage is null || _storage.Count == 0)
+			{
+				return "0 methods";
+			}
+
+			var sb = new StringBuilder();
+			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " method:" : " methods:").AppendLine();
+			foreach (var methodSetup in _storage)
+			{
+				sb.Append(methodSetup).AppendLine();
+			}
+			sb.Length -= Environment.NewLine.Length;
+			return sb.ToString();
+		}
+	}
+
+	[DebuggerDisplay("{ToString()}")]
+	private class PropertySetups
+	{
+		private ConcurrentDictionary<string, PropertySetup>? _storage;
+
+		public bool TryAdd(string propertyName, PropertySetup setup)
+		{
+			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
+			return _storage.TryAdd(propertyName, setup);
+		}
+
+		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out PropertySetup? setup)
+		{
+			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
+			return _storage.TryGetValue(propertyName, out setup);
+		}
+
+		public int Count
+			=> _storage?.Count ?? 0;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			if (_storage is null || _storage.Count == 0)
+			{
+				return "0 properties";
+			}
+
+			var sb = new StringBuilder();
+			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " property:" : " properties:").AppendLine();
+			foreach (var item in _storage!)
+			{
+				sb.Append(item.Value).Append(' ').Append(item.Key).AppendLine();
+			}
+			sb.Length -= Environment.NewLine.Length;
+			return sb.ToString();
+		}
+	}
+
+	[DebuggerDisplay("{ToString()}")]
+	private class EventSetups : IEnumerable<(object?, MethodInfo, string)>
+	{
+		private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _storage;
+
+		public IEnumerator<(object?, MethodInfo, string)> GetEnumerator()
+		{
+			if (_storage is null)
+			{
+				yield break;
+			}
+			foreach (var item in _storage.Keys)
+			{
+				yield return item;
+			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public void Add(object? target, MethodInfo method, string eventName)
+		{
+			_storage ??= new ConcurrentDictionary<(object?, MethodInfo, string), bool>();
+			_storage.TryAdd((target, method, eventName), true);
+		}
+
+		public void Remove(object? target, MethodInfo method, string eventName)
+		{
+			_storage ??= new ConcurrentDictionary<(object?, MethodInfo, string), bool>();
+			_storage.TryRemove((target, method, eventName), out _);
+		}
+
+		public int Count
+			=> _storage?.Count ?? 0;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			if (_storage is null || _storage.Count == 0)
+			{
+				return "0 events";
+			}
+
+			var sb = new StringBuilder();
+			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " event:" : " events:").AppendLine();
+			foreach (var item in _storage.Keys)
+			{
+				sb.Append(item.Item3).AppendLine();
+			}
+			sb.Length -= Environment.NewLine.Length;
+			return sb.ToString();
+		}
+	}
 }

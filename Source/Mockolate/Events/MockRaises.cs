@@ -1,6 +1,6 @@
 using System.Reflection;
-using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 using Mockolate.Setup;
 
 namespace Mockolate.Events;
@@ -8,7 +8,7 @@ namespace Mockolate.Events;
 /// <summary>
 ///     Raise events on the mock for <typeparamref name="T" />.
 /// </summary>
-public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
+public class MockRaises<T>(IMockSetup setup, MockInteractions interactions) : IMockRaises
 {
 	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 	void IMockRaises.Raise(string eventName, params object?[] parameters)
@@ -27,7 +27,7 @@ public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
 			throw new MockException("The method of an event subscription may not be null.");
 		}
 
-		checks.RegisterInvocation(new EventSubscription(checks.GetNextIndex(), name, target, method));
+		interactions.RegisterInteraction(new EventSubscription(interactions.GetNextIndex(), name, target, method));
 		setup.AddEvent(name, target, method);
 	}
 
@@ -39,15 +39,15 @@ public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
 			throw new MockException("The method of an event unsubscription may not be null.");
 		}
 
-		checks.RegisterInvocation(new EventUnsubscription(checks.GetNextIndex(), name, target, method));
+		interactions.RegisterInteraction(new EventUnsubscription(interactions.GetNextIndex(), name, target, method));
 		setup.RemoveEvent(name, target, method);
 	}
 
 	/// <summary>
 	///     Raise protected events on the mock for <typeparamref name="T" />.
 	/// </summary>
-	public class Protected(IMockRaises inner, IMockSetup setup, Checks.Checks checks)
-		: MockRaises<T>(setup, checks), IMockRaises
+	public class Protected(IMockRaises inner, IMockSetup setup, MockInteractions interactions)
+		: MockRaises<T>(setup, interactions), IMockRaises
 	{
 		/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 		void IMockRaises.Raise(string eventName, params object?[] parameters)

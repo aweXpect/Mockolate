@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Mockolate.Checks;
-using Mockolate.Checks.Interactions;
+using Mockolate.Interactions;
 
 namespace Mockolate.Monitor;
 
@@ -16,20 +16,20 @@ namespace Mockolate.Monitor;
 /// </remarks>
 public abstract class MockMonitor
 {
-	private readonly Checks.Checks _monitoredInvocations;
+	private readonly MockInteractions _monitoredInvocations;
 	private int _monitoringStart = -1;
 
 	/// <inheritdoc cref="MockMonitor" />
 	protected MockMonitor(IMock mock)
 	{
-		_monitoredInvocations = mock.Checks;
-		Checks = new Checks.Checks();
+		_monitoredInvocations = mock.Interactions;
+		Interactions = new MockInteractions();
 	}
 
 	/// <summary>
 	///     The interactions that were recorded during the monitoring session.
 	/// </summary>
-	protected Checks.Checks Checks { get; }
+	protected MockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Begins monitoring interactions and returns a scope that ends monitoring when disposed.
@@ -58,7 +58,7 @@ public abstract class MockMonitor
 		{
 			foreach (IInteraction? invocation in _monitoredInvocations.Interactions.Skip(_monitoringStart))
 			{
-				Checks.RegisterInvocation(invocation);
+				Interactions.RegisterInteraction(invocation);
 			}
 		}
 
@@ -86,9 +86,9 @@ public class MockMonitor<T, TMock> : MockMonitor
 	/// <inheritdoc cref="MockMonitor{T, TMock}" />
 	public MockMonitor(TMock mock) : base(mock)
 	{
-		Accessed = new MockAccessed<T, TMock>(Checks, mock);
-		Event = new MockEvent<T, TMock>(Checks, mock);
-		Invoked = new MockInvoked<T, TMock>(Checks, mock);
+		Accessed = new MockAccessed<T, TMock>(Interactions, mock);
+		Event = new MockEvent<T, TMock>(Interactions, mock);
+		Invoked = new MockInvoked<T, TMock>(Interactions, mock);
 	}
 
 	/// <summary>

@@ -1,8 +1,12 @@
-namespace Mockolate.Checks.Interactions;
+using System.Diagnostics;
+using static Mockolate.With;
+
+namespace Mockolate.Interactions;
 
 /// <summary>
 ///     An access of a property getter.
 /// </summary>
+[DebuggerDisplay("{ToString()}")]
 public class PropertyGetterAccess(int index, string propertyName) : IInteraction
 {
 	/// <summary>
@@ -12,4 +16,10 @@ public class PropertyGetterAccess(int index, string propertyName) : IInteraction
 
 	/// <inheritdoc cref="IInteraction.Index" />
 	public int Index { get; } = index;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"[{Index}] get property {Name}";
+	}
 }

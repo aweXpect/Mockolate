@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
-using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 
 namespace Mockolate.Setup;
 
@@ -79,6 +80,12 @@ public class VoidMethodSetup(string name) : MethodSetup
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 		=> value;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"void {name}()";
+	}
 }
 
 /// <summary>
@@ -188,6 +195,12 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 		}
 
 		return value;
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"void {name}({match1})";
 	}
 }
 
@@ -300,6 +313,12 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 		}
 
 		return value;
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"void {name}({match1}, {match2})";
 	}
 }
 
@@ -417,6 +436,12 @@ public class VoidMethodSetup<T1, T2, T3>(
 		}
 
 		return value;
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"void {name}({match1}, {match2}, {match3})";
 	}
 }
 
@@ -536,5 +561,11 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 		}
 
 		return value;
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		return $"void {name}({match1}, {match2}, {match3}, {match4})";
 	}
 }

@@ -1,6 +1,6 @@
 using System.Linq;
 using Mockolate.Checks;
-using Mockolate.Checks.Interactions;
+using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests.Checks;
@@ -18,7 +18,7 @@ public class CheckResultExtensionsTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions, "foo");
+		CheckResult<Mock<int>> sut = new(mock, new MockInteractions(), interactions, "foo");
 
 		bool result = sut.AtLeast(times);
 
@@ -36,7 +36,7 @@ public class CheckResultExtensionsTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions, "foo");
+		CheckResult<Mock<int>> sut = new(mock, new MockInteractions(), interactions, "foo");
 
 		bool result = sut.AtLeastOnce();
 
@@ -54,7 +54,7 @@ public class CheckResultExtensionsTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions, "foo");
+		CheckResult<Mock<int>> sut = new(mock, new MockInteractions(), interactions, "foo");
 
 		bool result = sut.AtMost(times);
 
@@ -72,7 +72,7 @@ public class CheckResultExtensionsTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions, "foo");
+		CheckResult<Mock<int>> sut = new(mock, new MockInteractions(), interactions, "foo");
 
 		bool result = sut.AtMostOnce();
 
@@ -90,7 +90,7 @@ public class CheckResultExtensionsTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions, "foo");
+		CheckResult<Mock<int>> sut = new(mock, new MockInteractions(), interactions, "foo");
 
 		bool result = sut.Exactly(times);
 
@@ -108,7 +108,7 @@ public class CheckResultExtensionsTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions, "foo");
+		CheckResult<Mock<int>> sut = new(mock, new MockInteractions(), interactions, "foo");
 
 		bool result = sut.Never();
 
@@ -126,7 +126,7 @@ public class CheckResultExtensionsTests
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions, "foo");
+		CheckResult<Mock<int>> sut = new(mock, new MockInteractions(), interactions, "foo");
 
 		bool result = sut.Once();
 

@@ -1,4 +1,5 @@
 using System.Text;
+using System.Xml.Linq;
 
 namespace Mockolate.SourceGenerators.Internals;
 
@@ -12,7 +13,7 @@ internal static partial class SourceGeneration
 		          using System;
 		          using System.Collections.Generic;
 		          using System.Threading;
-		          using Mockolate.Checks.Interactions;
+		          using Mockolate.Interactions;
 		          using Mockolate.Exceptions;
 
 		          namespace Mockolate.Setup;
@@ -211,6 +212,14 @@ internal static partial class SourceGeneration
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\treturn value;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
+		sb.Append("\tpublic override string ToString()").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\treturn $\"void {name}(")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{match{x}}}")))
+			.Append(")\";").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
@@ -437,6 +446,14 @@ internal static partial class SourceGeneration
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\treturn value;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
+		sb.Append("\tpublic override string ToString()").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\treturn $\"{FormatType<TReturn>()} {name}(")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{match{x}}}")))
+			.Append(")\";").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
