@@ -1,4 +1,6 @@
-﻿namespace Mockolate.Tests.Checks;
+﻿using Mockolate.Checks;
+
+namespace Mockolate.Tests.Checks;
 
 public class MockCheckTests
 {

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using Mockolate.Checks;
 using Mockolate.Tests.Dummy;
 
 namespace Mockolate.ExampleTests;
@@ -17,8 +18,9 @@ public class ExampleTests
 
 		int result = mock.Object.MyMethod(3);
 
+		var check = mock.Invoked.MyMethod(With.Any<int>());
 		await That(result).IsEqualTo(5);
-		await That(mock.Invoked.MyMethod(With.Any<int>()).Once());
+		await That(check.Once());
 	}
 
 #if NET8_0_OR_GREATER

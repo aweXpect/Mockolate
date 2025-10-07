@@ -7,134 +7,60 @@ namespace Mockolate.Tests.Checks;
 
 public class CheckResultTests
 {
-	[Theory]
-	[InlineData(0, 0, true)]
-	[InlineData(2, 3, false)]
-	[InlineData(2, 2, true)]
-	[InlineData(2, 1, true)]
-	public async Task AtLeast_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
+	[Fact]
+	public async Task Expectation_PropertyGetter_ShouldHaveExpectedValue()
 	{
-		MyMock<int> mock = new(0);
-		MyInteraction[] interactions = Enumerable.Range(0, count)
-			.Select(_ => new MyInteraction())
-			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions);
+		Mock<IMyService> sut = Mock.For<IMyService>();
 
-		bool result = sut.AtLeast(times);
+		CheckResult<Mock<IMyService>> check = sut.Accessed.MyProperty.Getter();
 
-		await That(result).IsEqualTo(expectedResult);
+		await That(check.Expectation).IsEqualTo("accessed getter of property MyProperty");
 	}
 
-	[Theory]
-	[InlineData(0, false)]
-	[InlineData(1, true)]
-	[InlineData(2, true)]
-	[InlineData(3, true)]
-	public async Task AtLeastOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
+	[Fact]
+	public async Task Expectation_PropertySetter_ShouldHaveExpectedValue()
 	{
-		MyMock<int> mock = new(0);
-		MyInteraction[] interactions = Enumerable.Range(0, count)
-			.Select(_ => new MyInteraction())
-			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions);
+		Mock<IMyService> sut = Mock.For<IMyService>();
 
-		bool result = sut.AtLeastOnce();
+		CheckResult<Mock<IMyService>> check = sut.Accessed.MyProperty.Setter(With.Any<int>());
 
-		await That(result).IsEqualTo(expectedResult);
+		await That(check.Expectation).IsEqualTo("accessed setter of property MyProperty with value With.Any<int>()");
 	}
 
-	[Theory]
-	[InlineData(0, 0, true)]
-	[InlineData(2, 1, false)]
-	[InlineData(2, 2, true)]
-	[InlineData(2, 3, true)]
-	public async Task AtMost_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
+	[Fact]
+	public async Task Expectation_Method_ShouldHaveExpectedValue()
 	{
-		MyMock<int> mock = new(0);
-		MyInteraction[] interactions = Enumerable.Range(0, count)
-			.Select(_ => new MyInteraction())
-			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions);
+		Mock<IMyService> sut = Mock.For<IMyService>();
 
-		bool result = sut.AtMost(times);
+		CheckResult<Mock<IMyService>> check = sut.Invoked.DoSomething(With.Any<int?>(), "foo");
 
-		await That(result).IsEqualTo(expectedResult);
+		await That(check.Expectation).IsEqualTo("invoked method DoSomething(With.Any<int?>(), \"foo\")");
 	}
 
-	[Theory]
-	[InlineData(0, true)]
-	[InlineData(1, true)]
-	[InlineData(2, false)]
-	[InlineData(3, false)]
-	public async Task AtMostOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
+	[Fact]
+	public async Task Expectation_EventSubscription_ShouldHaveExpectedValue()
 	{
-		MyMock<int> mock = new(0);
-		MyInteraction[] interactions = Enumerable.Range(0, count)
-			.Select(_ => new MyInteraction())
-			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions);
+		Mock<IMyService> sut = Mock.For<IMyService>();
 
-		bool result = sut.AtMostOnce();
+		CheckResult<Mock<IMyService>> check = sut.Event.SomethingHappened.Subscribed();
 
-		await That(result).IsEqualTo(expectedResult);
+		await That(check.Expectation).IsEqualTo("subscribed to event SomethingHappened");
 	}
 
-	[Theory]
-	[InlineData(0, 0, true)]
-	[InlineData(2, 3, false)]
-	[InlineData(2, 2, true)]
-	[InlineData(2, 1, false)]
-	public async Task Exactly_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
+	[Fact]
+	public async Task Expectation_EventUnsubscription_ShouldHaveExpectedValue()
 	{
-		MyMock<int> mock = new(0);
-		MyInteraction[] interactions = Enumerable.Range(0, count)
-			.Select(_ => new MyInteraction())
-			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions);
+		Mock<IMyService> sut = Mock.For<IMyService>();
 
-		bool result = sut.Exactly(times);
+		CheckResult<Mock<IMyService>> check = sut.Event.SomethingHappened.Unsubscribed();
 
-		await That(result).IsEqualTo(expectedResult);
+		await That(check.Expectation).IsEqualTo("unsubscribed from event SomethingHappened");
 	}
 
-	[Theory]
-	[InlineData(0, true)]
-	[InlineData(1, false)]
-	[InlineData(2, false)]
-	[InlineData(3, false)]
-	public async Task Never_ShouldReturnExpectedResult(int count, bool expectedResult)
+	public interface IMyService
 	{
-		MyMock<int> mock = new(0);
-		MyInteraction[] interactions = Enumerable.Range(0, count)
-			.Select(_ => new MyInteraction())
-			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions);
-
-		bool result = sut.Never();
-
-		await That(result).IsEqualTo(expectedResult);
-	}
-
-	[Theory]
-	[InlineData(0, false)]
-	[InlineData(1, true)]
-	[InlineData(2, false)]
-	[InlineData(3, false)]
-	public async Task Once_ShouldReturnExpectedResult(int count, bool expectedResult)
-	{
-		MyMock<int> mock = new(0);
-		MyInteraction[] interactions = Enumerable.Range(0, count)
-			.Select(_ => new MyInteraction())
-			.ToArray();
-		CheckResult<Mock<int>> sut = new(mock, new Mockolate.Checks.Checks(), interactions);
-
-		bool result = sut.Once();
-
-		await That(result).IsEqualTo(expectedResult);
-	}
-
-	private class MyInteraction : IInteraction
-	{
-		public int Index => 0;
+		event EventHandler? SomethingHappened;
+		int MyProperty { get; set; }
+		void DoSomething(int? value, string otherValue);
 	}
 }

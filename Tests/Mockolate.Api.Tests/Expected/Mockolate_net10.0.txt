@@ -148,21 +148,23 @@ namespace Mockolate
     public static class With
     {
         public static Mockolate.With.Parameter<T> Any<T>() { }
-        public static Mockolate.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate) { }
+        public static Mockolate.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.With.InvokedOutParameter<T> Out<T>() { }
-        public static Mockolate.With.OutParameter<T> Out<T>(System.Func<T> setter) { }
+        public static Mockolate.With.OutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.With.InvokedRefParameter<T> Ref<T>() { }
-        public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, T> setter) { }
-        public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
+        public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public class InvokedOutParameter<T> : Mockolate.With.Parameter
         {
             public InvokedOutParameter() { }
             public override bool Matches(object? value) { }
+            public override string ToString() { }
         }
         public class InvokedRefParameter<T> : Mockolate.With.Parameter
         {
             public InvokedRefParameter() { }
             public override bool Matches(object? value) { }
+            public override string ToString() { }
         }
         public class NamedParameter : System.IEquatable<Mockolate.With.NamedParameter>
         {
@@ -172,9 +174,10 @@ namespace Mockolate
         }
         public class OutParameter<T> : Mockolate.With.Parameter
         {
-            public OutParameter(System.Func<T> setter) { }
+            public OutParameter(System.Func<T> setter, string setterExpression) { }
             public T GetValue() { }
             public override bool Matches(object? value) { }
+            public override string ToString() { }
         }
         public abstract class Parameter
         {
@@ -190,9 +193,10 @@ namespace Mockolate
         }
         public class RefParameter<T> : Mockolate.With.Parameter
         {
-            public RefParameter(System.Func<T, bool> predicate, System.Func<T, T> setter) { }
+            public RefParameter(System.Func<T, bool> predicate, System.Func<T, T> setter, string? predicateExpression, string setterExpression) { }
             public T GetValue(T value) { }
             public override bool Matches(object? value) { }
+            public override string ToString() { }
         }
     }
 }
@@ -215,7 +219,8 @@ namespace Mockolate.Checks
     }
     public class CheckResult<TMock>
     {
-        public CheckResult(TMock mock, Mockolate.Checks.Checks checks, Mockolate.Checks.Interactions.IInteraction[] interactions) { }
+        public CheckResult(TMock mock, Mockolate.Checks.Checks checks, Mockolate.Checks.Interactions.IInteraction[] interactions, string expectation) { }
+        public string Expectation { get; }
         public bool AtLeast(int times) { }
         public bool AtLeastOnce() { }
         public bool AtMost(int times) { }
@@ -224,6 +229,7 @@ namespace Mockolate.Checks
         public bool Never() { }
         public bool Once() { }
         public bool Then(params System.Func<TMock, Mockolate.Checks.CheckResult<TMock>>[] orderedChecks) { }
+        public bool Verify(System.Func<Mockolate.Checks.Interactions.IInteraction[], bool> predicate) { }
     }
     public class Checks
     {

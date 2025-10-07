@@ -1,4 +1,6 @@
-﻿namespace Mockolate.Tests.Protected;
+﻿using Mockolate.Checks;
+
+namespace Mockolate.Tests.Protected;
 
 public sealed class ProtectedMockTests
 {

@@ -1,4 +1,5 @@
-﻿using Mockolate.Events;
+﻿using Mockolate.Checks;
+using Mockolate.Events;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Tests.Events;

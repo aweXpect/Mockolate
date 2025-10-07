@@ -1,5 +1,6 @@
 using System.Linq;
 using Mockolate.Checks.Interactions;
+using Mockolate.Internals;
 
 namespace Mockolate.Checks;
 
@@ -15,7 +16,8 @@ public class MockEvent<T, TMock>(Checks checks, TMock mock) : IMockEvent<TMock>
 				.OfType<EventSubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
-				.ToArray());
+				.ToArray(),
+        $"subscribed to event {eventName.SubstringAfterLast('.')}");
 
 	/// <inheritdoc cref="IMockEvent{TMock}.Unsubscribed(string)" />
 	CheckResult<TMock> IMockEvent<TMock>.Unsubscribed(string eventName)
@@ -24,7 +26,8 @@ public class MockEvent<T, TMock>(Checks checks, TMock mock) : IMockEvent<TMock>
 				.OfType<EventUnsubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
-				.ToArray());
+				.ToArray(),
+        $"unsubscribed from event {eventName.SubstringAfterLast('.')}");
 
 	/// <summary>
 	///     A proxy implementation of <see cref="IMockEvent{TMock}" /> that forwards all calls to the provided

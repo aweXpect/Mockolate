@@ -1,5 +1,6 @@
 using System.Linq;
 using Mockolate.Checks.Interactions;
+using Mockolate.Internals;
 
 namespace Mockolate.Checks;
 
@@ -15,7 +16,8 @@ public class MockAccessed<T, TMock>(Checks checks, TMock mock) : IMockAccessed<T
 				.OfType<PropertyGetterAccess>()
 				.Where(property => property.Name.Equals(propertyName))
 				.Cast<IInteraction>()
-				.ToArray());
+				.ToArray(),
+        $"accessed getter of property {propertyName.SubstringAfterLast('.')}");
 
 	/// <inheritdoc cref="IMockAccessed{TMock}.PropertySetter(string, With.Parameter)" />
 	CheckResult<TMock> IMockAccessed<TMock>.PropertySetter(string propertyName, With.Parameter value)
@@ -24,7 +26,8 @@ public class MockAccessed<T, TMock>(Checks checks, TMock mock) : IMockAccessed<T
 				.OfType<PropertySetterAccess>()
 				.Where(property => property.Name.Equals(propertyName) && value.Matches(property.Value))
 				.Cast<IInteraction>()
-				.ToArray());
+				.ToArray(),
+        $"accessed setter of property {propertyName.SubstringAfterLast('.')} with value {value}");
 
 	/// <summary>
 	///     A proxy implementation of <see cref="IMockAccessed{TMock}" /> that forwards all calls to the provided
