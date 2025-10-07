@@ -38,7 +38,7 @@ internal static partial class SourceGeneration
 		          #nullable enable
 
 		          """);
-		sb.Append("public static class ExtensionsFor").Append(name).AppendLine();
+		sb.Append("internal static class ExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
 		if (mockClass.AdditionalImplementations.Any())
 		{

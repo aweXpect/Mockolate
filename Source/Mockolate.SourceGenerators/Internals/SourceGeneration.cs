@@ -32,7 +32,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine("/// <summary>");
 		sb.AppendLine("///     Create new mocks by calling <see cref=\"Mock.Create{T}\" />.");
 		sb.AppendLine("/// </summary>");
-		sb.AppendLine("public static partial class Mock");
+		sb.AppendLine("internal static partial class Mock");
 		sb.AppendLine("{");
 		sb.AppendLine("\t/// <summary>");
 		sb.AppendLine(

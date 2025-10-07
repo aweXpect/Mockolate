@@ -51,7 +51,7 @@ internal static partial class SourceGeneration
 		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
 			.Append(numberOfParameters).Append("\" /> returning <see langword=\"void\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
-		sb.Append("public class VoidMethodSetup<").Append(typeParams).Append(">(string name");
+		sb.Append("internal class VoidMethodSetup<").Append(typeParams).Append(">(string name");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(", With.NamedParameter match").Append(i);
@@ -238,7 +238,7 @@ internal static partial class SourceGeneration
 		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
 			.Append(numberOfParameters).Append("\" /> returning <typeparamref name=\"TReturn\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
-		sb.Append("public class ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">(string name");
+		sb.Append("internal class ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">(string name");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(", With.NamedParameter match").Append(i);

@@ -21,7 +21,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine("namespace Mockolate;");
 		sb.AppendLine();
 		sb.AppendLine("#nullable enable");
-		sb.AppendLine("public static partial class Mock");
+		sb.AppendLine("internal static partial class Mock");
 		sb.AppendLine("{");
 		sb.AppendLine("\tprivate partial class MockGenerator");
 		sb.AppendLine("\t{");
