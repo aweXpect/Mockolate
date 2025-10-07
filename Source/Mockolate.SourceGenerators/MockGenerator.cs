@@ -55,10 +55,10 @@ public class MockGenerator : IIncrementalGenerator
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
 		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate)
 		{
-			string result = SourceGeneration.GetMockClass(mockToGenerate.Name, mockToGenerate.MockClass);
-			context.AddSource($"For{mockToGenerate.Name}.g.cs", SourceText.From(result, Encoding.UTF8));
-			string extensionsResult = SourceGeneration.GetMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass);
-			context.AddSource($"For{mockToGenerate.Name}.Extensions.g.cs", SourceText.From(extensionsResult, Encoding.UTF8));
+			context.AddSource($"For{mockToGenerate.Name}.g.cs",
+				SourceText.From(SourceGeneration.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
+			context.AddSource($"For{mockToGenerate.Name}.Extensions.g.cs",
+				SourceText.From(SourceGeneration.ForMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
 		}
 
 		HashSet<(int, bool)> methodSetups = new();
@@ -66,10 +66,8 @@ public class MockGenerator : IIncrementalGenerator
 
 		foreach ((string name, Class extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
 		{
-			string result = SourceGeneration.GetExtensionClass(name, extensionToGenerate);
-			// Create a separate class file for each mock extension
-			string fileName = $"For{name}.SetupExtensions.g.cs";
-			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
+			context.AddSource($"For{name}.SetupExtensions.g.cs",
+				SourceText.From(SourceGeneration.ForMockSetupExtensions(name, extensionToGenerate), Encoding.UTF8));
 		}
 
 		foreach ((int Count, bool) item in mocksToGenerate
@@ -82,22 +80,19 @@ public class MockGenerator : IIncrementalGenerator
 
 		if (methodSetups.Any())
 		{
-			string result = SourceGeneration.GetMethodSetups(methodSetups);
-			string fileName = "MethodSetups.g.cs";
-			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
+			context.AddSource("MethodSetups.g.cs",
+				SourceText.From(SourceGeneration.GetMethodSetups(methodSetups), Encoding.UTF8));
 		}
 
 		if (methodSetups.Any(x => !x.Item2))
 		{
-			string result =
-				SourceGeneration.GetReturnsAsyncExtensions(methodSetups.Where(x => !x.Item2).Select(x => x.Item1)
-					.ToArray());
-			string fileName = "ReturnsAsyncExtensions.g.cs";
-			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
+			context.AddSource("ReturnsAsyncExtensions.g.cs",
+				SourceText.From(SourceGeneration.GetReturnsAsyncExtensions(methodSetups
+				.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
 		}
 
 		context.AddSource("MockRegistration.g.cs",
-			SourceText.From(SourceGeneration.RegisterMocks(namedMocksToGenerate), Encoding.UTF8));
+			SourceText.From(SourceGeneration.MockRegistration(namedMocksToGenerate), Encoding.UTF8));
 	}
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)

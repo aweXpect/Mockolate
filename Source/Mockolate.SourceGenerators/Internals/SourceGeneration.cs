@@ -291,7 +291,6 @@ internal static partial class SourceGeneration
 			_ => throw new ArgumentOutOfRangeException(nameof(accessibility), accessibility, null),
 		};
 
-
 	internal static string GetString(this RefKind refKind)
 		=> refKind switch
 		{

@@ -5,7 +5,7 @@ namespace Mockolate.SourceGenerators.Internals;
 
 internal static partial class SourceGeneration
 {
-	public static string RegisterMocks(ICollection<(string Name, MockClass MockClass)> mocks)
+	public static string MockRegistration(ICollection<(string Name, MockClass MockClass)> mocks)
 	{
 		StringBuilder sb = new();
 		sb.AppendLine(Header);
