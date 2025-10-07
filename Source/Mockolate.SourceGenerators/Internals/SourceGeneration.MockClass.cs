@@ -10,12 +10,6 @@ internal static partial class SourceGeneration
 {
 	public static string GetMockClass(string name, MockClass mockClass)
 	{
-		string allClasses = mockClass.ClassName;
-		if (mockClass.AdditionalImplementations.Any())
-		{
-			allClasses += ", " + string.Join(",", mockClass.AdditionalImplementations.Select(c => c.ClassName));
-		}
-
 		string[] namespaces =
 		[
 			.. mockClass.GetAllNamespaces(),
