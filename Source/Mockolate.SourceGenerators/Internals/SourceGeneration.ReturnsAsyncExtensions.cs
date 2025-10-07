@@ -35,7 +35,7 @@ internal static partial class SourceGeneration
 			sb.Append("\tpublic static ReturnMethodSetup<Task<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this ReturnMethodSetup<Task<TReturn>, ")
 				.Append(types).Append("> setup, TReturn returnValue)").AppendLine();
-			sb.Append("\t\t=> setup.Returns(Task.FromResult(returnValue));");
+			sb.Append("\t\t=> setup.Returns(Task.FromResult(returnValue));").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
@@ -45,7 +45,7 @@ internal static partial class SourceGeneration
 			sb.Append("\tpublic static ReturnMethodSetup<Task<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this ReturnMethodSetup<Task<TReturn>, ")
 				.Append(types).Append("> setup, Func<TReturn> callback)").AppendLine();
-			sb.Append("\t\t=> setup.Returns(() => Task.FromResult(callback()));");
+			sb.Append("\t\t=> setup.Returns(() => Task.FromResult(callback()));").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
@@ -56,11 +56,12 @@ internal static partial class SourceGeneration
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this ReturnMethodSetup<Task<TReturn>, ")
 				.Append(types).Append("> setup, Func<").Append(types).Append(", TReturn> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns((").Append(variables).Append(") => Task.FromResult(callback(")
-				.Append(variables).Append(")));");
+				.Append(variables).Append(")));").AppendLine();
 			sb.AppendLine();
 		}
 
 		sb.AppendLine("#if NET8_0_OR_GREATER");
+		sb.AppendLine();
 		foreach (int number in numberOfParameters)
 		{
 			string types = string.Join(", ", Enumerable.Range(1, number).Select(i => $"T{i}"));
@@ -74,7 +75,7 @@ internal static partial class SourceGeneration
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
 				.Append(">(this ReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
 				.Append("> setup, TReturn returnValue)").AppendLine();
-			sb.Append("\t\t=> setup.Returns(ValueTask.FromResult(returnValue));");
+			sb.Append("\t\t=> setup.Returns(ValueTask.FromResult(returnValue));").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
@@ -85,7 +86,7 @@ internal static partial class SourceGeneration
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
 				.Append(">(this ReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
 				.Append("> setup, Func<TReturn> callback)").AppendLine();
-			sb.Append("\t\t=> setup.Returns(() => ValueTask.FromResult(callback()));");
+			sb.Append("\t\t=> setup.Returns(() => ValueTask.FromResult(callback()));").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
@@ -97,7 +98,7 @@ internal static partial class SourceGeneration
 				.Append(">(this ReturnMethodSetup<ValueTask<TReturn>, ").Append(types).Append("> setup, Func<")
 				.Append(types).Append(", TReturn> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns((").Append(variables).Append(") => ValueTask.FromResult(callback(")
-				.Append(variables).Append(")));");
+				.Append(variables).Append(")));").AppendLine();
 			sb.AppendLine();
 		}
 
