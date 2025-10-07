@@ -30,8 +30,12 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 		sb.AppendLine("#nullable enable");
 		sb.AppendLine("/// <summary>");
-		sb.AppendLine("///     Create new mocks by calling <see cref=\"Mock.Create{T}\" />.");
+		sb.AppendLine("///     Create new mocks by calling <c>Mock.Create&lt;T&gt;()</c>. You can specify up to 9 additional interfaces that the mock should also implement.");
 		sb.AppendLine("/// </summary>");
+		sb.AppendLine("/// <remarks>");
+		sb.AppendLine("///     If your type is a class without default constructor, you can provide constructor parameters using <see cref=\"BaseClass.WithConstructorParameters(object?[])\" />.");
+		sb.AppendLine("///     You can also provide a <see cref=\"MockBehavior\"/> to specify how the mock should behave.");
+		sb.AppendLine("/// </remarks>");
 		sb.AppendLine("internal static partial class Mock");
 		sb.AppendLine("{");
 		sb.AppendLine("\t/// <summary>");
@@ -94,10 +98,12 @@ internal static partial class SourceGeneration
 			sb.AppendLine();
 			string types = string.Join(", ", Enumerable.Range(2, numberOfArguments).Select(n => $"T{n}"));
 			sb.AppendLine("\t/// <summary>");
-			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements interface ")
+			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
+				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
 				.Append(string.Join(", ",
 					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(" and <typeparamref name=\"T").Append(numberOfArguments).Append("\" />")
+				.Append(numberOfArguments > 1 ? " and " : "")
+				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />")
 				.Append(" with the default <see cref=\"MockBehavior\" />.").AppendLine();
 			sb.AppendLine("\t/// </summary>");
 			sb.AppendLine(
@@ -123,10 +129,12 @@ internal static partial class SourceGeneration
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t/// <summary>").AppendLine();
-			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements interface ")
+			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
+				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
 				.Append(string.Join(", ",
 					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(" and <typeparamref name=\"T").Append(numberOfArguments).Append("\" />")
+				.Append(numberOfArguments > 1 ? " and " : "")
+				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />")
 				.Append(" with the given <paramref name=\"mockBehavior\" />.").AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>")
@@ -152,10 +160,12 @@ internal static partial class SourceGeneration
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t/// <summary>").AppendLine();
-			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements interface ")
+			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
+				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
 				.Append(string.Join(", ",
 					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(" and <typeparamref name=\"T").Append(numberOfArguments).Append("\" />")
+				.Append(numberOfArguments > 1 ? " and " : "")
+				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />")
 				.Append(" with the given <paramref name=\"mockBehavior\" />.").AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>")
