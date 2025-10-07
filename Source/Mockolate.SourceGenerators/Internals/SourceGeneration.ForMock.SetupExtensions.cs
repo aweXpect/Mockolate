@@ -8,7 +8,7 @@ namespace Mockolate.SourceGenerators.Internals;
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class SourceGeneration
 {
-	public static string GetExtensionClass(string name, Class @class)
+	public static string ForMockSetupExtensions(string name, Class @class)
 	{
 		string[] namespaces =
 		[
