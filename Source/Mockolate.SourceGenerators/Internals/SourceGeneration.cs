@@ -247,7 +247,9 @@ internal static partial class SourceGeneration
 
 		sb.Append("\tprivate partial class MockGenerator").AppendLine();
 		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t#pragma warning disable CS0649 // Field 'field' is never assigned to, and will always have its default value 'value' ").AppendLine();
 		sb.Append("\t\tprivate object? _value;").AppendLine();
+		sb.Append("\t\t#pragma warning restore CS0649").AppendLine();
 		sb.Append(
 				"\t\tpartial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types);")
 			.AppendLine();
