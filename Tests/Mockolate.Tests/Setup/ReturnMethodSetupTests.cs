@@ -12,7 +12,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0()
 				.Callback(() => { callCount++; })
@@ -27,7 +27,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0().Callback(() => { callCount++; });
 
@@ -58,7 +58,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0()
 				.Returns(4)
@@ -79,7 +79,7 @@ public class ReturnMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0()
 				.Callback(() => { callCount1++; })
@@ -96,7 +96,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0()
 				.Returns(4)
@@ -115,7 +115,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0().Returns(() => 4);
 
@@ -127,7 +127,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0().Returns(4);
 
@@ -139,7 +139,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			int result = sut.Object.Method0();
 
@@ -169,7 +169,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0().Throws(() => new Exception("foo"));
 
@@ -182,7 +182,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method0().Throws(new Exception("foo"));
 
@@ -211,7 +211,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(() => { callCount++; })
@@ -226,7 +226,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -241,7 +241,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenParameterDoesNotMatch()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Matching<int>(v => v != 1))
 				.Callback(() => { callCount++; });
@@ -256,7 +256,7 @@ public class ReturnMethodSetupTests
 		{
 			int callCount = 0;
 			int receivedValue = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(v =>
@@ -275,7 +275,7 @@ public class ReturnMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(v => { callCount++; });
@@ -290,7 +290,7 @@ public class ReturnMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenParameterDoesNotMatch()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Matching<int>(v => v != 1))
 				.Callback(v => { callCount++; });
@@ -337,7 +337,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Returns(4)
@@ -358,7 +358,7 @@ public class ReturnMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -375,7 +375,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Returns(4)
@@ -396,7 +396,7 @@ public class ReturnMethodSetupTests
 		{
 			int receivedValue = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1WithOutParameter(With.Out(() => 3))
 				.Callback(v =>
@@ -417,7 +417,7 @@ public class ReturnMethodSetupTests
 		{
 			int receivedValue = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1WithRefParameter(With.Ref<int>(v => 3))
 				.Callback(v =>
@@ -437,7 +437,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>()).Returns(() => 4);
 
@@ -449,7 +449,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>()).Returns(x => 4 * x);
 
@@ -461,7 +461,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>()).Returns(4);
 
@@ -473,7 +473,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			int result = sut.Object.Method1(3);
 
@@ -503,7 +503,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -517,7 +517,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Throws(v1 => new Exception("foo-" + v1));
@@ -531,7 +531,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Throws(new Exception("foo"));
@@ -562,7 +562,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; })
@@ -580,7 +580,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2)
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2))
 				.Callback(() => { callCount++; });
@@ -594,7 +594,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -611,7 +611,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			int receivedValue1 = 0;
 			int receivedValue2 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2) =>
@@ -635,7 +635,7 @@ public class ReturnMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2)
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2))
 				.Callback((v1, v2) => { callCount++; });
@@ -649,7 +649,7 @@ public class ReturnMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2) => { callCount++; });
@@ -713,7 +713,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Returns(4)
@@ -734,7 +734,7 @@ public class ReturnMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -751,7 +751,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Returns(4)
@@ -773,7 +773,7 @@ public class ReturnMethodSetupTests
 			int receivedValue1 = 0;
 			int receivedValue2 = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2WithOutParameter(With.Out(() => 2), With.Out(() => 4))
 				.Callback((v1, v2) =>
@@ -798,7 +798,7 @@ public class ReturnMethodSetupTests
 			int receivedValue1 = 0;
 			int receivedValue2 = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
 				.Callback((v1, v2) =>
@@ -822,7 +822,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns(() => 4);
 
@@ -834,7 +834,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns((x, y) => 4 * x * y);
 
@@ -846,7 +846,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>()).Returns(4);
 
@@ -858,7 +858,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			int result = sut.Object.Method2(2, 3);
 
@@ -888,7 +888,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -902,7 +902,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
@@ -916,7 +916,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
@@ -949,7 +949,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; })
@@ -969,7 +969,7 @@ public class ReturnMethodSetupTests
 			bool isMatch3)
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3))
@@ -984,7 +984,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -1002,7 +1002,7 @@ public class ReturnMethodSetupTests
 			int receivedValue1 = 0;
 			int receivedValue2 = 0;
 			int receivedValue3 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3) =>
@@ -1030,7 +1030,7 @@ public class ReturnMethodSetupTests
 			bool isMatch3)
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3))
@@ -1045,7 +1045,7 @@ public class ReturnMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3) => { callCount++; });
@@ -1125,7 +1125,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4)
@@ -1146,7 +1146,7 @@ public class ReturnMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -1163,7 +1163,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4)
@@ -1186,7 +1186,7 @@ public class ReturnMethodSetupTests
 			int receivedValue2 = 0;
 			int receivedValue3 = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6))
 				.Callback((v1, v2, v3) =>
@@ -1215,7 +1215,7 @@ public class ReturnMethodSetupTests
 			int receivedValue2 = 0;
 			int receivedValue3 = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10))
@@ -1244,7 +1244,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(() => 4);
@@ -1257,7 +1257,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns((x, y, z) => 4 * x * y * z);
@@ -1270,7 +1270,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4);
@@ -1283,7 +1283,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			int result = sut.Object.Method3(2, 3, 4);
 
@@ -1313,7 +1313,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -1327,7 +1327,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
@@ -1341,7 +1341,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
@@ -1375,7 +1375,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; })
@@ -1396,7 +1396,7 @@ public class ReturnMethodSetupTests
 			bool isMatch3, bool isMatch4)
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
@@ -1411,7 +1411,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -1430,7 +1430,7 @@ public class ReturnMethodSetupTests
 			int receivedValue2 = 0;
 			int receivedValue3 = 0;
 			int receivedValue4 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4) =>
@@ -1461,7 +1461,7 @@ public class ReturnMethodSetupTests
 			bool isMatch3, bool isMatch4)
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
@@ -1476,7 +1476,7 @@ public class ReturnMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4) => { callCount++; });
@@ -1572,7 +1572,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4)
@@ -1593,7 +1593,7 @@ public class ReturnMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -1610,7 +1610,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4)
@@ -1634,7 +1634,7 @@ public class ReturnMethodSetupTests
 			int receivedValue3 = 0;
 			int receivedValue4 = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
 					With.Out(() => 8))
@@ -1668,7 +1668,7 @@ public class ReturnMethodSetupTests
 			int receivedValue3 = 0;
 			int receivedValue4 = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
@@ -1701,7 +1701,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(() => 4);
@@ -1714,7 +1714,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns((x, y, z, a) => 4 * x * y * z * a);
@@ -1727,7 +1727,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4);
@@ -1740,7 +1740,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			int result = sut.Object.Method4(2, 3, 4, 5);
 
@@ -1770,7 +1770,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -1784,7 +1784,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
@@ -1798,7 +1798,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
@@ -1833,7 +1833,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; })
@@ -1855,7 +1855,7 @@ public class ReturnMethodSetupTests
 			bool isMatch3, bool isMatch4, bool isMatch5)
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4),
@@ -1871,7 +1871,7 @@ public class ReturnMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -1891,7 +1891,7 @@ public class ReturnMethodSetupTests
 			int receivedValue3 = 0;
 			int receivedValue4 = 0;
 			int receivedValue5 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) =>
@@ -1925,7 +1925,7 @@ public class ReturnMethodSetupTests
 			bool isMatch3, bool isMatch4, bool isMatch5)
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4),
@@ -1941,7 +1941,7 @@ public class ReturnMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) => { callCount++; });
@@ -2053,7 +2053,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4)
@@ -2074,7 +2074,7 @@ public class ReturnMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -2091,7 +2091,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4)
@@ -2116,7 +2116,7 @@ public class ReturnMethodSetupTests
 			int receivedValue4 = 0;
 			int receivedValue5 = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
 					With.Out(() => 8), With.Out(() => 10))
@@ -2155,7 +2155,7 @@ public class ReturnMethodSetupTests
 			int receivedValue4 = 0;
 			int receivedValue5 = 0;
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
@@ -2192,7 +2192,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(() => 4);
@@ -2205,7 +2205,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns((x, y, z, a, b) => 4 * x * y * z * a * b);
@@ -2218,7 +2218,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Returns(4);
@@ -2231,7 +2231,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			int result = sut.Object.Method5(2, 3, 4, 5, 6);
 
@@ -2261,7 +2261,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -2275,7 +2275,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
@@ -2289,7 +2289,7 @@ public class ReturnMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IReturnMethodSetupTest> sut = Mock.For<IReturnMethodSetupTest>();
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));

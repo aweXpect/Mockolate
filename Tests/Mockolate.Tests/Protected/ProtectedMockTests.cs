@@ -8,7 +8,7 @@ public sealed class ProtectedMockTests
 	public async Task CanAccessProtectedEvents()
 	{
 		int callCount = 0;
-		Mock<MyProtectedClass> mock = Mock.For<MyProtectedClass>();
+		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
 		MyProtectedClass.MyEventHandler handler = (s, e) => callCount++;
 
 		mock.Object.RegisterEvent(handler);
@@ -23,7 +23,7 @@ public sealed class ProtectedMockTests
 	[Fact]
 	public async Task CanAccessProtectedMethods()
 	{
-		Mock<MyProtectedClass> mock = Mock.For<MyProtectedClass>();
+		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
 
 		mock.Protected.Setup.MyProtectedMethod(With.Any<string>())
 			.Returns(v => $"Hello, {v}!");
@@ -37,7 +37,7 @@ public sealed class ProtectedMockTests
 	[Fact]
 	public async Task CanAccessProtectedProperties()
 	{
-		Mock<MyProtectedClass> mock = Mock.For<MyProtectedClass>();
+		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
 
 		mock.Protected.Setup.MyProtectedProperty.InitializeWith(42);
 

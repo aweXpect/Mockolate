@@ -7,7 +7,7 @@ public class MockCheckTests
 	[Fact]
 	public async Task AllInteractionsVerified_WithoutInteractions_ShouldReturnTrue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		await That(sut.Check.AllInteractionsVerified()).IsTrue();
 	}
@@ -15,7 +15,7 @@ public class MockCheckTests
 	[Fact]
 	public async Task AllInteractionsVerified_WithUnverifiedInteractions_ShouldReturnFalse()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		sut.Object.DoSomething(1);
 		sut.Object.DoSomething(2);
@@ -27,7 +27,7 @@ public class MockCheckTests
 	[Fact]
 	public async Task AllInteractionsVerified_WithVerifiedInteractions_ShouldReturnTrue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		sut.Object.DoSomething(1);
 		sut.Object.DoSomething(2);
@@ -39,7 +39,7 @@ public class MockCheckTests
 	[Fact]
 	public async Task Then_ShouldVerifyInOrder()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		sut.Object.DoSomething(1);
 		sut.Object.DoSomething(2);
@@ -54,7 +54,7 @@ public class MockCheckTests
 	[Fact]
 	public async Task Then_WhenNoMatch_ShouldReturnFalse()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		sut.Object.DoSomething(1);
 		sut.Object.DoSomething(2);

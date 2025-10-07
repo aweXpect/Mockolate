@@ -15,7 +15,7 @@ public class VoidMethodSetupTests
 	[InlineData("Method5", 1, 2, 3, 4, 5)]
 	public async Task GetReturnValue_ShouldThrowMockException(string methodName, params int[] parameters)
 	{
-		Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 		sut.Setup.Method0();
 		sut.Setup.Method1(With.Any<int>());
@@ -39,7 +39,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method0().Callback(() => { callCount++; });
 
@@ -52,7 +52,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method0().Callback(() => { callCount++; });
 
@@ -65,7 +65,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method0()
 				.DoesNotThrow()
@@ -88,7 +88,7 @@ public class VoidMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method0()
 				.Callback(() => { callCount1++; })
@@ -124,7 +124,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method0().Throws(() => new Exception("foo"));
 
@@ -137,7 +137,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method0().Throws(new Exception("foo"));
 
@@ -163,7 +163,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -177,7 +177,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -192,7 +192,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenParameterDoesNotMatch()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Matching<int>(v => v != 1))
 				.Callback(() => { callCount++; });
@@ -207,7 +207,7 @@ public class VoidMethodSetupTests
 		{
 			int callCount = 0;
 			int receivedValue = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(v =>
@@ -226,7 +226,7 @@ public class VoidMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(v => { callCount++; });
@@ -241,7 +241,7 @@ public class VoidMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenParameterDoesNotMatch()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Matching<int>(v => v != 1))
 				.Callback(v => { callCount++; });
@@ -254,7 +254,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.DoesNotThrow()
@@ -277,7 +277,7 @@ public class VoidMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -295,7 +295,7 @@ public class VoidMethodSetupTests
 		{
 			int receivedValue = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1WithOutParameter(With.Out(() => 3))
 				.Callback(v =>
@@ -316,7 +316,7 @@ public class VoidMethodSetupTests
 		{
 			int receivedValue = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1WithRefParameter(With.Ref<int>(v => 3))
 				.Callback(v =>
@@ -356,7 +356,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>()).Throws(() => new Exception("foo"));
 
@@ -369,7 +369,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>()).Throws(v1 => new Exception($"foo-{v1}"));
 
@@ -382,7 +382,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method1(With.Any<int>()).Throws(new Exception("foo"));
 
@@ -409,7 +409,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -426,7 +426,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2)
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2))
 				.Callback(() => { callCount++; });
@@ -440,7 +440,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -457,7 +457,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			int receivedValue1 = 0;
 			int receivedValue2 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2) =>
@@ -481,7 +481,7 @@ public class VoidMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2)
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2))
 				.Callback((v1, v2) => { callCount++; });
@@ -495,7 +495,7 @@ public class VoidMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2) => { callCount++; });
@@ -509,7 +509,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.DoesNotThrow()
@@ -532,7 +532,7 @@ public class VoidMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -551,7 +551,7 @@ public class VoidMethodSetupTests
 			int receivedValue1 = 0;
 			int receivedValue2 = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2WithOutParameter(With.Out(() => 2), With.Out(() => 4))
 				.Callback((v1, v2) =>
@@ -576,7 +576,7 @@ public class VoidMethodSetupTests
 			int receivedValue1 = 0;
 			int receivedValue2 = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
 				.Callback((v1, v2) =>
@@ -620,7 +620,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -634,7 +634,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
@@ -648,7 +648,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
@@ -678,7 +678,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -697,7 +697,7 @@ public class VoidMethodSetupTests
 			bool isMatch3)
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3))
@@ -712,7 +712,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -730,7 +730,7 @@ public class VoidMethodSetupTests
 			int receivedValue1 = 0;
 			int receivedValue2 = 0;
 			int receivedValue3 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3) =>
@@ -758,7 +758,7 @@ public class VoidMethodSetupTests
 			bool isMatch3)
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3))
@@ -773,7 +773,7 @@ public class VoidMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3) => { callCount++; });
@@ -787,7 +787,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.DoesNotThrow()
@@ -810,7 +810,7 @@ public class VoidMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -830,7 +830,7 @@ public class VoidMethodSetupTests
 			int receivedValue2 = 0;
 			int receivedValue3 = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6))
 				.Callback((v1, v2, v3) =>
@@ -859,7 +859,7 @@ public class VoidMethodSetupTests
 			int receivedValue2 = 0;
 			int receivedValue3 = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10))
@@ -908,7 +908,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -922,7 +922,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
@@ -936,7 +936,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
@@ -967,7 +967,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -987,7 +987,7 @@ public class VoidMethodSetupTests
 			bool isMatch3, bool isMatch4)
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
@@ -1002,7 +1002,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -1021,7 +1021,7 @@ public class VoidMethodSetupTests
 			int receivedValue2 = 0;
 			int receivedValue3 = 0;
 			int receivedValue4 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4) =>
@@ -1052,7 +1052,7 @@ public class VoidMethodSetupTests
 			bool isMatch3, bool isMatch4)
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
@@ -1067,7 +1067,7 @@ public class VoidMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4) => { callCount++; });
@@ -1081,7 +1081,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.DoesNotThrow()
@@ -1104,7 +1104,7 @@ public class VoidMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -1125,7 +1125,7 @@ public class VoidMethodSetupTests
 			int receivedValue3 = 0;
 			int receivedValue4 = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
 					With.Out(() => 8))
@@ -1159,7 +1159,7 @@ public class VoidMethodSetupTests
 			int receivedValue3 = 0;
 			int receivedValue4 = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
@@ -1212,7 +1212,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -1226,7 +1226,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
@@ -1240,7 +1240,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
@@ -1272,7 +1272,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldExecuteWhenInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -1293,7 +1293,7 @@ public class VoidMethodSetupTests
 			bool isMatch3, bool isMatch4, bool isMatch5)
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4),
@@ -1309,7 +1309,7 @@ public class VoidMethodSetupTests
 		public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
@@ -1329,7 +1329,7 @@ public class VoidMethodSetupTests
 			int receivedValue3 = 0;
 			int receivedValue4 = 0;
 			int receivedValue5 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) =>
@@ -1363,7 +1363,7 @@ public class VoidMethodSetupTests
 			bool isMatch3, bool isMatch4, bool isMatch5)
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4),
@@ -1379,7 +1379,7 @@ public class VoidMethodSetupTests
 		public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 		{
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) => { callCount++; });
@@ -1393,7 +1393,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.DoesNotThrow()
@@ -1416,7 +1416,7 @@ public class VoidMethodSetupTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
@@ -1438,7 +1438,7 @@ public class VoidMethodSetupTests
 			int receivedValue4 = 0;
 			int receivedValue5 = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
 					With.Out(() => 8), With.Out(() => 10))
@@ -1477,7 +1477,7 @@ public class VoidMethodSetupTests
 			int receivedValue4 = 0;
 			int receivedValue5 = 0;
 			int callCount = 0;
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
@@ -1534,7 +1534,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_Callback_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
@@ -1548,7 +1548,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
@@ -1562,7 +1562,7 @@ public class VoidMethodSetupTests
 		[Fact]
 		public async Task Throws_ShouldReturnExpectedValue()
 		{
-			Mock<IVoidMethodSetupTest> sut = Mock.For<IVoidMethodSetupTest>();
+			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));

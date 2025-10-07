@@ -10,7 +10,7 @@ public class CheckResultTests
 	[Fact]
 	public async Task Expectation_PropertyGetter_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		CheckResult<Mock<IMyService>> check = sut.Accessed.MyProperty.Getter();
 
@@ -20,7 +20,7 @@ public class CheckResultTests
 	[Fact]
 	public async Task Expectation_PropertySetter_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		CheckResult<Mock<IMyService>> check = sut.Accessed.MyProperty.Setter(With.Any<int>());
 
@@ -30,7 +30,7 @@ public class CheckResultTests
 	[Fact]
 	public async Task Expectation_Method_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		CheckResult<Mock<IMyService>> check = sut.Invoked.DoSomething(With.Any<int?>(), "foo");
 
@@ -40,7 +40,7 @@ public class CheckResultTests
 	[Fact]
 	public async Task Expectation_EventSubscription_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		CheckResult<Mock<IMyService>> check = sut.Event.SomethingHappened.Subscribed();
 
@@ -50,7 +50,7 @@ public class CheckResultTests
 	[Fact]
 	public async Task Expectation_EventUnsubscription_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		CheckResult<Mock<IMyService>> check = sut.Event.SomethingHappened.Unsubscribed();
 

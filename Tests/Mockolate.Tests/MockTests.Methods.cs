@@ -10,7 +10,7 @@ public sealed partial class MockTests
 	[InlineData(42)]
 	public async Task Execute_MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 		sut.Setup.Multiply(With.Any<int>(), With.Any<int?>()).Returns(1);
 
 		for (int i = 0; i < numberOfInvocations; i++)
@@ -26,7 +26,7 @@ public sealed partial class MockTests
 	[InlineData(42)]
 	public async Task Execute_VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 		sut.Setup.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>());
 
 		for (int i = 0; i < numberOfInvocations; i++)
@@ -43,7 +43,7 @@ public sealed partial class MockTests
 	public async Task Execute_VoidMethod_ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(
 		bool throwWhenNotSetup)
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>(MockBehavior.Default with
+		Mock<IMyService> sut = Mock.Create<IMyService>(MockBehavior.Default with
 		{
 			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
@@ -60,7 +60,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Execute_WhenBehaviorIsSetToThrow_ShouldThrowMockNotSetupException()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>(MockBehavior.Default with
+		Mock<IMyService> sut = Mock.Create<IMyService>(MockBehavior.Default with
 		{
 			ThrowWhenNotSetup = true,
 		});
@@ -77,7 +77,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Execute_WhenNotSetup_ShouldReturnDefaultValue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		int result = sut.Object.Multiply(3, 4);
 

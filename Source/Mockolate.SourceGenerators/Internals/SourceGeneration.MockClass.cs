@@ -33,7 +33,7 @@ internal static partial class SourceGeneration
 
 		sb.Append("""
 
-		          namespace Mockolate;
+		          namespace Mockolate.Generated;
 
 		          #nullable enable
 
@@ -45,17 +45,48 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 
 		AppendMockObject(sb, mockClass, namespaces);
+		sb.AppendLine("}");
+		sb.AppendLine("#nullable disable");
+		return sb.ToString();
+	}
+
+	public static string GetMockExtensions(string name, MockClass mockClass)
+	{
+		string allClasses = mockClass.ClassName;
 		if (mockClass.AdditionalImplementations.Any())
 		{
-			sb.AppendLine();
-
-			AppendMockExtensions(sb, mockClass, allClasses);
+			allClasses += ", " + string.Join(",", mockClass.AdditionalImplementations.Select(c => c.ClassName));
 		}
 
-		sb.AppendLine("}");
-		sb.AppendLine();
+		string[] namespaces =
+		[
+			.. mockClass.GetAllNamespaces(),
+			"Mockolate.Checks",
+			"Mockolate.Events",
+			"Mockolate.Protected",
+			"Mockolate.Setup",
+		];
+		StringBuilder sb = new();
+		sb.AppendLine(Header);
+		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
+		{
+			sb.Append("using ").Append(@namespace).AppendLine(";");
+		}
+
+		sb.Append("""
+
+		          namespace Mockolate;
+
+		          #nullable enable
+
+		          """);
 		sb.Append("public static class ExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
+		if (mockClass.AdditionalImplementations.Any())
+		{
+			AppendMockExtensions(sb, mockClass, allClasses);
+			sb.AppendLine();
+		}
 
 		foreach (Class? @class in mockClass.GetAllClasses())
 		{

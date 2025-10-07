@@ -29,7 +29,7 @@ Framework 4.8.
    ```csharp
    using Mockolate;
    
-   var mock = Mock.For<IMyInterface>();
+   var mock = Mock.Create<IMyInterface>();
    ```
 
 ## Features

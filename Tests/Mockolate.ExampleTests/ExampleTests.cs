@@ -12,7 +12,7 @@ public class ExampleTests
 	public async Task BaseClassWithConstructorParameters()
 	{
 		Guid id = Guid.NewGuid();
-		Mock<MyClass> mock = Mock.For<MyClass>(BaseClass.WithConstructorParameters(3));
+		Mock<MyClass> mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
 
 		mock.Setup.MyMethod(With.Any<int>()).Returns(5);
 
@@ -30,7 +30,7 @@ public class ExampleTests
 	[InlineData(HttpStatusCode.ServiceUnavailable)]
 	public async Task HttpClientTest(HttpStatusCode statusCode)
 	{
-		Mock<HttpMessageHandler> mock = Mock.For<HttpMessageHandler>();
+		Mock<HttpMessageHandler> mock = Mock.Create<HttpMessageHandler>();
 		mock.Protected.Setup
 			.SendAsync(With.Any<HttpRequestMessage>(), With.Any<CancellationToken>())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
@@ -46,7 +46,7 @@ public class ExampleTests
 	public async Task SimpleInterfaceMock()
 	{
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository, IOrderRepository> mock = Mock.For<IExampleRepository, IOrderRepository>();
+		Mock<IExampleRepository, IOrderRepository> mock = Mock.Create<IExampleRepository, IOrderRepository>();
 		mock.Setup
 			.AddUser(With.Any<string>())
 			.Returns(new User(id, "Alice"));
@@ -60,7 +60,7 @@ public class ExampleTests
 	{
 		EventArgs eventArgs = EventArgs.Empty;
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository, IOrderRepository> mock = Mock.For<IExampleRepository, IOrderRepository>();
+		Mock<IExampleRepository, IOrderRepository> mock = Mock.Create<IExampleRepository, IOrderRepository>();
 		mock.SetupIOrderRepository
 			.AddOrder(With.Any<string>())
 			.Returns(new Order(id, "Order1"));
@@ -78,7 +78,7 @@ public class ExampleTests
 	{
 		Guid id = Guid.NewGuid();
 		Mock<MyClass, IExampleRepository, IOrderRepository> mock =
-			Mock.For<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
+			Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
 		mock.SetupIExampleRepository.AddUser(
 				With.Any<string>())
 			.Returns(new User(id, "Alice"));
@@ -95,7 +95,7 @@ public class ExampleTests
 		EventArgs eventArgs = EventArgs.Empty;
 		int raiseCount = 0;
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository> mock = Mock.For<IExampleRepository>();
+		Mock<IExampleRepository> mock = Mock.Create<IExampleRepository>();
 
 		mock.Raise.UsersChanged(this, eventArgs);
 		mock.Object.UsersChanged += Register;
@@ -121,7 +121,7 @@ public class ExampleTests
 	public async Task WithMatching_ShouldAlwaysMatch(string name, bool expectResult)
 	{
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository> mock = Mock.For<IExampleRepository>();
+		Mock<IExampleRepository> mock = Mock.Create<IExampleRepository>();
 
 		mock.Setup.AddUser(
 				With.Matching<string>(x => x == "Alice"))
@@ -139,7 +139,7 @@ public class ExampleTests
 	public async Task WithOut_ShouldSupportOutParameter(bool returnValue)
 	{
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository> mock = Mock.For<IExampleRepository>();
+		Mock<IExampleRepository> mock = Mock.Create<IExampleRepository>();
 
 		mock.Setup.TryDelete(
 				With.Any<Guid>(),
@@ -158,7 +158,7 @@ public class ExampleTests
 	{
 		bool isCalled = false;
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository, IOrderRepository> mock = Mock.For<IExampleRepository, IOrderRepository>();
+		Mock<IExampleRepository, IOrderRepository> mock = Mock.Create<IExampleRepository, IOrderRepository>();
 		mock.SetupIOrderRepository
 			.SaveChanges()
 			.Callback(() => isCalled = true);

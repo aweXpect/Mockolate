@@ -17,7 +17,7 @@ public partial class HappyCaseBenchmarks
 	[Benchmark]
 	public async Task Simple_Mockolate()
 	{
-		var mock = Mock.For<IMyInterface>();
+		var mock = Mock.Create<IMyInterface>();
 		mock.Setup.MyFunc(With.Any<int>()).Returns(true);
 
 		mock.Object.MyFunc(42);
