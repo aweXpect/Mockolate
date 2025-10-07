@@ -28,10 +28,10 @@ partial class Build
 			StringBuilder sb = new();
 			string[] lines = File.ReadAllLines(Solution.Directory / "README.md");
 			sb.AppendLine(lines.First());
-			sb.AppendLine("![Mockolate logo](https://raw.githubusercontent.com/aweXpect/Mockolate/main/Docs/logo_256x256.png)  ");
 			sb.AppendLine(
 				$"[![Changelog](https://img.shields.io/badge/Changelog-v{version}-blue)](https://github.com/aweXpect/Mockolate/releases/tag/v{version})");
 			bool foundBadge = false;
+			bool addedImage = false;
 			foreach (string line in lines.Skip(1))
 			{
 				if (!foundBadge && (string.IsNullOrWhiteSpace(line) || line.StartsWith("<img")))
@@ -60,6 +60,13 @@ partial class Build
 						.Replace("%2Fmain)", $"%2Frelease%2Fv{version})")
 						.Replace("/main)", $"/release/v{version})"));
 					continue;
+				}
+
+				if (foundBadge && string.IsNullOrWhiteSpace(line) && !addedImage)
+				{
+					sb.AppendLine();
+					sb.AppendLine("![Mockolate logo](https://raw.githubusercontent.com/aweXpect/Mockolate/main/Docs/logo_256x256.png)  ");
+					addedImage = true;
 				}
 
 				sb.AppendLine(line);
