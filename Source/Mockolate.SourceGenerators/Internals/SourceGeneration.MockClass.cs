@@ -33,7 +33,7 @@ internal static partial class SourceGeneration
 
 		sb.Append("""
 
-		          namespace Mockolate;
+		          namespace Mockolate.Generated;
 
 		          #nullable enable
 
@@ -45,17 +45,48 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 
 		AppendMockObject(sb, mockClass, namespaces);
+		sb.AppendLine("}");
+		sb.AppendLine("#nullable disable");
+		return sb.ToString();
+	}
+
+	public static string GetMockExtensions(string name, MockClass mockClass)
+	{
+		string allClasses = mockClass.ClassName;
 		if (mockClass.AdditionalImplementations.Any())
 		{
-			sb.AppendLine();
-
-			AppendMockExtensions(sb, mockClass, allClasses);
+			allClasses += ", " + string.Join(",", mockClass.AdditionalImplementations.Select(c => c.ClassName));
 		}
 
-		sb.AppendLine("}");
-		sb.AppendLine();
+		string[] namespaces =
+		[
+			.. mockClass.GetAllNamespaces(),
+			"Mockolate.Checks",
+			"Mockolate.Events",
+			"Mockolate.Protected",
+			"Mockolate.Setup",
+		];
+		StringBuilder sb = new();
+		sb.AppendLine(Header);
+		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
+		{
+			sb.Append("using ").Append(@namespace).AppendLine(";");
+		}
+
+		sb.Append("""
+
+		          namespace Mockolate;
+
+		          #nullable enable
+
+		          """);
 		sb.Append("public static class ExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
+		if (mockClass.AdditionalImplementations.Any())
+		{
+			AppendMockExtensions(sb, mockClass, allClasses);
+			sb.AppendLine();
+		}
 
 		foreach (Class? @class in mockClass.GetAllClasses())
 		{
@@ -198,7 +229,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassName).Append("\" />")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockSetups<").Append(@class.ClassName).Append("> Setup").Append(@class.ClassName)
+			sb.Append("\t\tpublic MockSetups<").Append(@class.ClassName).Append("> Setup").Append(@class.ClassName.Replace('.', '_'))
 				.AppendLine();
 			sb.Append("\t\t\t=> new MockSetups<").Append(@class.ClassName).Append(">.Proxy(mock.Setup);").AppendLine();
 			if (@class.Events.Any())
@@ -209,7 +240,7 @@ internal static partial class SourceGeneration
 					.Append("\" />").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic MockRaises<").Append(@class.ClassName).Append("> RaiseOn")
-					.Append(@class.ClassName).AppendLine();
+					.Append(@class.ClassName.Replace('.', '_')).AppendLine();
 				sb.Append("\t\t\t=> new MockRaises<").Append(@class.ClassName)
 					.Append(">(mock.Setup, ((IMock)mock).Interactions);").AppendLine();
 			}
@@ -220,7 +251,7 @@ internal static partial class SourceGeneration
 				.Append(@class.ClassName).Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockInvoked<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
-				.Append(">> InvokedOn").Append(@class.ClassName)
+				.Append(">> InvokedOn").Append(@class.ClassName.Replace('.', '_'))
 				.AppendLine();
 			sb.Append("\t\t\t=> new MockInvoked<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
 				.Append(">>.Proxy(mock.Invoked, ((IMock)mock).Interactions, mock);").AppendLine();
@@ -230,8 +261,7 @@ internal static partial class SourceGeneration
 				.Append(@class.ClassName).Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockAccessed<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
-				.Append(">> AccessedOn")
-				.Append(@class.ClassName).AppendLine();
+				.Append(">> AccessedOn").Append(@class.ClassName.Replace('.', '_')).AppendLine();
 			sb.Append("\t\t\t=> new MockAccessed<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
 				.Append(">>.Proxy(mock.Accessed, ((IMock)mock).Interactions, mock);").AppendLine();
 			sb.AppendLine();
@@ -241,8 +271,7 @@ internal static partial class SourceGeneration
 				.Append(@class.ClassName).Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
-				.Append(">> EventOn")
-				.Append(@class.ClassName).AppendLine();
+				.Append(">> EventOn").Append(@class.ClassName.Replace('.', '_')).AppendLine();
 			sb.Append("\t\t\t=> new MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
 				.Append(">>.Proxy(mock.Event, ((IMock)mock).Interactions, mock);").AppendLine();
 			sb.AppendLine();
@@ -250,7 +279,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Exposes the mocked object instance of type <see cref=\"").Append(@class.ClassName)
 				.Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append(@class.ClassName).Append(" ObjectFor").Append(@class.ClassName)
+			sb.Append("\t\tpublic ").Append(@class.ClassName).Append(" ObjectFor").Append(@class.ClassName.Replace('.','_'))
 				.AppendLine();
 			sb.Append("\t\t\t=> (").Append(@class.ClassName).Append(")mock.Object;").AppendLine();
 		}

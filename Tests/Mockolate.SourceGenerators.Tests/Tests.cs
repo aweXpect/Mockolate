@@ -1,8 +1,46 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 
 namespace Mockolate.SourceGenerators.Tests;
 
+public class MockFactoryTests
+{
+	[Fact]
+	public async Task Factory_ShouldGenerateMocksAndExtensions()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			                var factory = new Mock.Factory(MockBehavior.Default);
+			     			var y = factory.Create<IMyInterface>();
+			             }
+			         }
+			     
+			         public interface IMyInterface
+			         {
+			             void MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7);
+			         }
+			     }
+			     """, typeof(DateTime), typeof(Task));
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources).HasCount().AtLeast(5);
+		await That(result.Sources).ContainsKey("ForIMyInterface.g.cs");
+		await That(result.Sources).ContainsKey("ForIMyInterface.Extensions.g.cs");
+		await That(result.Sources).ContainsKey("ForIMyInterface.SetupExtensions.g.cs");
+	}
+}
 public class Tests
 {
 	[Fact]
@@ -20,9 +58,9 @@ public class Tests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var x = Mock.For<string>();
-			     			var y = Mock.For<IMyInterface>();
-			     			var z = Mock.For<MyBaseClass>();
+			     			var x = Mock.Create<string>();
+			     			var y = Mock.Create<IMyInterface>();
+			     			var z = Mock.Create<MyBaseClass>();
 			             }
 			         }
 			     
@@ -62,7 +100,7 @@ public class Tests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var mock = Mock.For<HttpMessageHandler>();
+			     			var mock = Mock.Create<HttpMessageHandler>();
 			     			var httpClient = new HttpClient(mock.Object);
 			             }
 			         }
@@ -89,7 +127,7 @@ public class Tests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var x = Mockolate.Mock.For<IList<int>>();
+			     			var x = Mockolate.Mock.Create<IList<int>>();
 			             }
 			         }
 			     }
@@ -116,7 +154,7 @@ public class Tests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var x = Mockolate.Mock.For<IMyInterface1, IMyInterface2>();
+			     			var x = Mockolate.Mock.Create<IMyInterface1, IMyInterface2>();
 			             }
 			         }
 			     
@@ -153,7 +191,7 @@ public class Tests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var x = Mockolate.Mock.For<IMyInterface1>();
+			     			var x = Mockolate.Mock.Create<IMyInterface1>();
 			             }
 			         }
 			     

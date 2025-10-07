@@ -9,7 +9,7 @@ public sealed class MockRaisesTests
 	[Fact]
 	public async Task AddEvent_WithoutMethod_ShouldThrowMockException()
 	{
-		Mock<IRaiseEvent> mock = Mock.For<IRaiseEvent>();
+		Mock<IRaiseEvent> mock = Mock.Create<IRaiseEvent>();
 		IMockRaises raises = mock.Raise;
 
 		void Act()
@@ -22,7 +22,7 @@ public sealed class MockRaisesTests
 	[Fact]
 	public async Task RemoveEvent_WithoutMethod_ShouldThrowMockException()
 	{
-		Mock<IRaiseEvent> mock = Mock.For<IRaiseEvent>();
+		Mock<IRaiseEvent> mock = Mock.Create<IRaiseEvent>();
 		IMockRaises raises = mock.Raise;
 
 		void Act()
@@ -35,7 +35,7 @@ public sealed class MockRaisesTests
 	[Fact]
 	public async Task Subscription_ShouldBeRegistered()
 	{
-		Mock<IRaiseEvent> mock = Mock.For<IRaiseEvent>();
+		Mock<IRaiseEvent> mock = Mock.Create<IRaiseEvent>();
 		EventHandler handler = (s, e) => { };
 
 		mock.Object.SomeEvent += handler;
@@ -48,7 +48,7 @@ public sealed class MockRaisesTests
 	[Fact]
 	public async Task Unsubscription_ShouldBeRegistered()
 	{
-		Mock<IRaiseEvent> mock = Mock.For<IRaiseEvent>();
+		Mock<IRaiseEvent> mock = Mock.Create<IRaiseEvent>();
 		EventHandler handler = (s, e) => { };
 
 		mock.Object.SomeEvent -= handler;
@@ -61,7 +61,7 @@ public sealed class MockRaisesTests
 	public async Task WhenUsingRaise_ShouldInvokeEvent()
 	{
 		int callCount = 0;
-		Mock<IRaiseEvent> mock = Mock.For<IRaiseEvent>();
+		Mock<IRaiseEvent> mock = Mock.Create<IRaiseEvent>();
 		EventHandler handler = (s, e) => { callCount++; };
 
 		mock.Object.SomeEvent += handler;

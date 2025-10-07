@@ -15,6 +15,7 @@ internal static partial class SourceGeneration
 		{
 			sb.Append("using ").Append(@namespace).AppendLine(";");
 		}
+		sb.AppendLine("using Mockolate.Generated;");
 
 		sb.AppendLine();
 		sb.AppendLine("namespace Mockolate;");

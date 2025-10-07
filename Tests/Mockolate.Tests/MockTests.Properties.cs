@@ -8,7 +8,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Get_ShouldIncreaseInvocationCountOfGetter()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		_ = sut.Object.Counter;
 
@@ -19,7 +19,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Get_ShouldReturnInitializedValue()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 		sut.Setup.Counter.InitializeWith(24);
 
 		int result = sut.Object.Counter;
@@ -32,7 +32,7 @@ public sealed partial class MockTests
 	[InlineData(false)]
 	public async Task Get_ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>(MockBehavior.Default with
+		Mock<IMyService> sut = Mock.Create<IMyService>(MockBehavior.Default with
 		{
 			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
@@ -49,7 +49,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Set_ShouldIncreaseInvocationCountOfGetter()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		sut.Object.Counter = 42;
 
@@ -62,7 +62,7 @@ public sealed partial class MockTests
 	[InlineData(false)]
 	public async Task Set_ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>(MockBehavior.Default with
+		Mock<IMyService> sut = Mock.Create<IMyService>(MockBehavior.Default with
 		{
 			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
@@ -79,7 +79,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Set_ShouldUpdateValueForNextGet()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		int result1 = sut.Object.Counter;
 		sut.Object.Counter = 5;
@@ -92,7 +92,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Set_WithNull_ShouldUpdateValueForNextGet()
 	{
-		Mock<IMyService> sut = Mock.For<IMyService>();
+		Mock<IMyService> sut = Mock.Create<IMyService>();
 		sut.Setup.IsValid.InitializeWith(true);
 
 		bool? result1 = sut.Object.IsValid;

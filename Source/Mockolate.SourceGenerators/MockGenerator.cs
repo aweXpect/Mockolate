@@ -56,9 +56,9 @@ public class MockGenerator : IIncrementalGenerator
 		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate)
 		{
 			string result = SourceGeneration.GetMockClass(mockToGenerate.Name, mockToGenerate.MockClass);
-			// Create a separate class file for each mock
-			string fileName = $"For{mockToGenerate.Name}.g.cs";
-			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
+			context.AddSource($"For{mockToGenerate.Name}.g.cs", SourceText.From(result, Encoding.UTF8));
+			string extensionsResult = SourceGeneration.GetMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass);
+			context.AddSource($"For{mockToGenerate.Name}.Extensions.g.cs", SourceText.From(extensionsResult, Encoding.UTF8));
 		}
 
 		HashSet<(int, bool)> methodSetups = new();
@@ -68,7 +68,7 @@ public class MockGenerator : IIncrementalGenerator
 		{
 			string result = SourceGeneration.GetExtensionClass(name, extensionToGenerate);
 			// Create a separate class file for each mock extension
-			string fileName = $"ExtensionsFor{name}.g.cs";
+			string fileName = $"For{name}.SetupExtensions.g.cs";
 			context.AddSource(fileName, SourceText.From(result, Encoding.UTF8));
 		}
 

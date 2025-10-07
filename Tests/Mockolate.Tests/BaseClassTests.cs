@@ -1,3 +1,7 @@
+using Mockolate.Checks;
+using Mockolate.Setup;
+using Mockolate.Tests.TestHelpers;
+
 namespace Mockolate.Tests;
 
 public sealed class BaseClassTests
