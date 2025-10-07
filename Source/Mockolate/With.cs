@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.CompilerServices;
+using Mockolate.Internals;
 
 namespace Mockolate;
 
@@ -17,15 +19,15 @@ public static class With
 	/// <summary>
 	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
 	/// </summary>
-	public static Parameter<T> Matching<T>(Func<T, bool> predicate)
-		=> new PredicateParameter<T>(predicate);
+	public static Parameter<T> Matching<T>(Func<T, bool> predicate, [CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
+		=> new PredicateParameter<T>(predicate, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
-	public static OutParameter<T> Out<T>(Func<T> setter)
-		=> new(setter);
+	public static OutParameter<T> Out<T>(Func<T> setter, [CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+		=> new(setter, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
@@ -37,16 +39,18 @@ public static class With
 	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
-	public static RefParameter<T> Ref<T>(Func<T, T> setter)
-		=> new(_ => true, setter);
+	public static RefParameter<T> Ref<T>(Func<T, T> setter, [CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+		=> new(_ => true, setter, null, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches a <see langword="ref" /> parameter of type <typeparamref name="T" /> that satisfies the
 	///     <paramref name="predicate" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
-	public static RefParameter<T> Ref<T>(Func<T, bool> predicate, Func<T, T> setter)
-		=> new(predicate, setter);
+	public static RefParameter<T> Ref<T>(Func<T, bool> predicate, Func<T, T> setter,
+		[CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
+		=> new(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
 
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" />.
@@ -99,7 +103,8 @@ public static class With
 		/// <summary>
 		///     Implicitly converts to a <see cref="Parameter{T}" /> that compares the <paramref name="value" /> for equality.
 		/// </summary>
-		public static implicit operator Parameter<T>(T value) => new ParameterEquals(value);
+		public static implicit operator Parameter<T>(T value)
+			=> new ParameterEquals(value);
 
 		private sealed class ParameterEquals : Parameter<T>
 		{
@@ -111,13 +116,29 @@ public static class With
 			}
 
 			protected override bool Matches(T value) => Equals(value, _value);
+
+			/// <inheritdoc cref="object.ToString()" />
+			public override string? ToString()
+			{
+				if (_value is null)
+				{
+					return "null";
+				}
+
+				if (_value is string stringValue)
+				{
+					return $"\"{stringValue.Replace("\"", "\\\"")}\"";
+				}
+
+				return _value.ToString();
+			}
 		}
 	}
 
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
-	public class OutParameter<T>(Func<T> setter) : Parameter
+	public class OutParameter<T>(Func<T> setter, string setterExpression) : Parameter
 	{
 		/// <summary>
 		///     Checks if the <paramref name="value" /> is a matching parameter.
@@ -132,6 +153,12 @@ public static class With
 		///     Retrieves the value to which the <see langword="out" /> parameter should be set.
 		/// </summary>
 		public T GetValue() => setter();
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			return $"With.Out<{typeof(T).FormatType()}>({setterExpression})";
+		}
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
@@ -144,13 +171,19 @@ public static class With
 		///     Matches any <paramref name="value" />.
 		/// </summary>
 		public override bool Matches(object? value) => true;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			return $"With.Out<{typeof(T).FormatType()}>()";
+		}
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
-	public class RefParameter<T>(Func<T, bool> predicate, Func<T, T> setter) : Parameter
+	public class RefParameter<T>(Func<T, bool> predicate, Func<T, T> setter, string? predicateExpression, string setterExpression) : Parameter
 	{
 		/// <summary>
 		///     Checks if the <paramref name="value" /> is a matching parameter.
@@ -165,6 +198,12 @@ public static class With
 		///     Retrieves the value to which the <see langword="ref" /> parameter should be set.
 		/// </summary>
 		public T GetValue(T value) => setter(value);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			return $"With.Ref<{typeof(T).FormatType()}>({(predicateExpression is null ? "" : $"{predicateExpression}, ")}{setterExpression})";
+		}
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
@@ -177,6 +216,12 @@ public static class With
 		///     Matches any <paramref name="value" />.
 		/// </summary>
 		public override bool Matches(object? value) => true;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			return $"With.Ref<{typeof(T).FormatType()}>()";
+		}
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 
@@ -190,10 +235,20 @@ public static class With
 	private sealed class AnyParameter<T> : Parameter<T>
 	{
 		protected override bool Matches(T value) => true;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			return $"With.Any<{typeof(T).FormatType()}>()";
+		}
 	}
 
-	private sealed class PredicateParameter<T>(Func<T, bool> predicate) : Parameter<T>
+	private sealed class PredicateParameter<T>(Func<T, bool> predicate, string predicateExpression) : Parameter<T>
 	{
 		protected override bool Matches(T value) => predicate(value);
+		public override string ToString()
+		{
+			return $"With.Matching<{typeof(T).FormatType()}>({predicateExpression})";
+		}
 	}
 }

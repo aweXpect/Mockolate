@@ -2,6 +2,7 @@ using aweXpect;
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using NSubstitute;
+using Mockolate.Checks;
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static

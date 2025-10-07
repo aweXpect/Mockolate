@@ -14,12 +14,18 @@ public class CheckResult<TMock>
 	private readonly IInteraction[] _interactions;
 	private readonly TMock _mock;
 
+	/// <summary>
+	///     The expectation of this check result.
+	/// </summary>
+	public string Expectation { get; }
+
 	/// <inheritdoc cref="CheckResult{TMock}" />
-	public CheckResult(TMock mock, Checks checks, IInteraction[] interactions)
+	public CheckResult(TMock mock, Checks checks, IInteraction[] interactions, string expectation)
 	{
 		_mock = mock;
 		_checks = checks;
 		_interactions = interactions;
+		Expectation = expectation;
 	}
 
 	/// <summary>
@@ -43,70 +49,16 @@ public class CheckResult<TMock>
 		}
 
 		_checks.Verified(verified);
-		return result.AtLeastOnce();
+		return result._interactions.Length >= 1;
 	}
 
 	/// <summary>
-	///     …at least the expected number of <paramref name="times" />.
+	/// Verifies that the specified <paramref name="predicate"/> holds true for the current set of interactions.
 	/// </summary>
-	public bool AtLeast(int times)
+	public bool Verify(Func<IInteraction[], bool> predicate)
 	{
 		_checks.Verified(_interactions);
-		return _interactions.Length >= times;
-	}
-
-	/// <summary>
-	///     …at least once.
-	/// </summary>
-	public bool AtLeastOnce()
-	{
-		_checks.Verified(_interactions);
-		return _interactions.Length >= 1;
-	}
-
-	/// <summary>
-	///     …at most the expected number of <paramref name="times" />.
-	/// </summary>
-	public bool AtMost(int times)
-	{
-		_checks.Verified(_interactions);
-		return _interactions.Length <= times;
-	}
-
-	/// <summary>
-	///     …at most once.
-	/// </summary>
-	public bool AtMostOnce()
-	{
-		_checks.Verified(_interactions);
-		return _interactions.Length <= 1;
-	}
-
-	/// <summary>
-	///     …exactly the expected number of <paramref name="times" />.
-	/// </summary>
-	public bool Exactly(int times)
-	{
-		_checks.Verified(_interactions);
-		return _interactions.Length == times;
-	}
-
-	/// <summary>
-	///     …never.
-	/// </summary>
-	public bool Never()
-	{
-		_checks.Verified(_interactions);
-		return _interactions.Length == 0;
-	}
-
-	/// <summary>
-	///     …exactly once.
-	/// </summary>
-	public bool Once()
-	{
-		_checks.Verified(_interactions);
-		return _interactions.Length == 1;
+		return predicate(_interactions);
 	}
 }
 

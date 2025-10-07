@@ -1,3 +1,4 @@
+using Mockolate.Checks;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Tests;

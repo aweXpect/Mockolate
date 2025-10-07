@@ -16,6 +16,83 @@ public sealed class WithTests
 		await That(result).IsEqualTo(expectMatch);
 	}
 
+	[Fact]
+	public async Task ToString_Implicit_ShouldReturnExpectedValue()
+	{
+		With.Parameter<int?> sut = 6;
+		string expectedValue = "6";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithAny_ShouldReturnExpectedValue()
+	{
+		With.Parameter<string> sut = With.Any<string>();
+		string expectedValue = "With.Any<string>()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithMatching_ShouldReturnExpectedValue()
+	{
+		With.Parameter<string> sut = With.Matching<string>(x => x.Length == 3);
+		string expectedValue = "With.Matching<string>(x => x.Length == 3)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithOut_ShouldReturnExpectedValue()
+	{
+		With.OutParameter<int> sut = With.Out<int>(() => 3);
+		string expectedValue = "With.Out<int>(() => 3)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithOut_Invoked_ShouldReturnExpectedValue()
+	{
+		With.InvokedOutParameter<int> sut = With.Out<int>();
+		string expectedValue = "With.Out<int>()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithRef_Invoked_ShouldReturnExpectedValue()
+	{
+		With.InvokedRefParameter<int> sut = With.Ref<int>();
+		string expectedValue = "With.Ref<int>()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithRef_ShouldReturnExpectedValue()
+	{
+		With.RefParameter<int?> sut = With.Ref<int?>(v => v * 3);
+		string expectedValue = "With.Ref<int?>(v => v * 3)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]

@@ -1,3 +1,4 @@
+using Mockolate.Checks;
 using Mockolate.Monitor;
 
 namespace Mockolate.Tests.Monitor;

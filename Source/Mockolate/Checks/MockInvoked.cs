@@ -1,5 +1,6 @@
 using System.Linq;
 using Mockolate.Checks.Interactions;
+using Mockolate.Internals;
 
 namespace Mockolate.Checks;
 
@@ -18,7 +19,8 @@ public class MockInvoked<T, TMock>(Checks checks, TMock mock) : IMockInvoked<TMo
 					method.Parameters.Length == parameters.Length &&
 					!parameters.Where((parameter, i) => !parameter.Matches(method.Parameters[i])).Any())
 				.Cast<IInteraction>()
-				.ToArray());
+				.ToArray(),
+        $"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
 
 	/// <summary>
 	///     A proxy implementation of <see cref="IMockInvoked{TMock}" /> that forwards all calls to the provided
