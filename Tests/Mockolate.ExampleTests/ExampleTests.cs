@@ -18,7 +18,7 @@ public class ExampleTests
 
 		int result = mock.Object.MyMethod(3);
 
-		var check = mock.Invoked.MyMethod(With.Any<int>());
+		CheckResult<Mock<MyClass>> check = mock.Invoked.MyMethod(With.Any<int>());
 		await That(result).IsEqualTo(5);
 		await That(check.Once());
 	}
