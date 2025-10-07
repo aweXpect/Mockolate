@@ -8,22 +8,23 @@ namespace Mockolate.Checks;
 /// </summary>
 public class MockAccessed<T, TMock>(Checks checks, TMock mock) : IMockAccessed<TMock>
 {
-	private readonly TMock _mock = mock;
-	private readonly Checks _checks = checks;
-
 	/// <inheritdoc cref="IMockAccessed{TMock}.PropertyGetter(string)" />
-	CheckResult<TMock> IMockAccessed<TMock>.PropertyGetter(string propertyName) => new(_mock, _checks,
-		_checks.Interactions
-			.OfType<PropertyGetterAccess>()
-			.Where(property => property.Name.Equals(propertyName))
-			.ToArray());
+	CheckResult<TMock> IMockAccessed<TMock>.PropertyGetter(string propertyName)
+		=> new(mock, checks,
+			checks.Interactions
+				.OfType<PropertyGetterAccess>()
+				.Where(property => property.Name.Equals(propertyName))
+				.Cast<IInteraction>()
+				.ToArray());
 
 	/// <inheritdoc cref="IMockAccessed{TMock}.PropertySetter(string, With.Parameter)" />
-	CheckResult<TMock> IMockAccessed<TMock>.PropertySetter(string propertyName, With.Parameter value) => new(_mock, _checks,
-		_checks.Interactions
-			.OfType<PropertySetterAccess>()
-			.Where(property => property.Name.Equals(propertyName) && value.Matches(property.Value))
-			.ToArray());
+	CheckResult<TMock> IMockAccessed<TMock>.PropertySetter(string propertyName, With.Parameter value)
+		=> new(mock, checks,
+			checks.Interactions
+				.OfType<PropertySetterAccess>()
+				.Where(property => property.Name.Equals(propertyName) && value.Matches(property.Value))
+				.Cast<IInteraction>()
+				.ToArray());
 
 	/// <summary>
 	///     A proxy implementation of <see cref="IMockAccessed{TMock}" /> that forwards all calls to the provided

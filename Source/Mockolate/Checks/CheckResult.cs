@@ -10,9 +10,9 @@ namespace Mockolate.Checks;
 /// </summary>
 public class CheckResult<TMock>
 {
-	private readonly TMock _mock;
 	private readonly Checks _checks;
 	private readonly IInteraction[] _interactions;
+	private readonly TMock _mock;
 
 	/// <inheritdoc cref="CheckResult{TMock}" />
 	public CheckResult(TMock mock, Checks checks, IInteraction[] interactions)
@@ -29,17 +29,19 @@ public class CheckResult<TMock>
 	{
 		CheckResult<TMock> result = this;
 		List<IInteraction> verified = [];
-		foreach (var check in orderedChecks)
+		foreach (Func<TMock, CheckResult<TMock>>? check in orderedChecks)
 		{
 			if (result._interactions.Length == 0)
 			{
 				_checks.Verified(verified);
 				return false;
 			}
+
 			verified.AddRange(result._interactions);
 			_checks.After(result._interactions.Min(x => x.Index));
 			result = check(_mock);
 		}
+
 		_checks.Verified(verified);
 		return result.AtLeastOnce();
 	}
@@ -127,7 +129,8 @@ public static class CheckResult
 		/// <summary>
 		///     The expectation for the property setter access matching the specified <paramref name="value" />.
 		/// </summary>
-		public CheckResult<TMock> Setter(With.Parameter<TProperty> value) => mockAccessed.PropertySetter(propertyName, value);
+		public CheckResult<TMock> Setter(With.Parameter<TProperty> value)
+			=> mockAccessed.PropertySetter(propertyName, value);
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed

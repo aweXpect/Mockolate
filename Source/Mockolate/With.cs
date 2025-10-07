@@ -99,10 +99,7 @@ public static class With
 		/// <summary>
 		///     Implicitly converts to a <see cref="Parameter{T}" /> that compares the <paramref name="value" /> for equality.
 		/// </summary>
-		public static implicit operator Parameter<T>(T value)
-		{
-			return new ParameterEquals(value);
-		}
+		public static implicit operator Parameter<T>(T value) => new ParameterEquals(value);
 
 		private sealed class ParameterEquals : Parameter<T>
 		{

@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Mockolate.Checks.Interactions;
 
 /// <summary>

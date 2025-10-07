@@ -199,9 +199,9 @@ namespace Mockolate.Checks
             public Mockolate.Checks.CheckResult<TMock> Setter(Mockolate.With.Parameter<TProperty> value) { }
         }
     }
-    public class CheckResult<T>
+    public class CheckResult<TMock>
     {
-        public CheckResult(T mock, Mockolate.Checks.Checks checks, Mockolate.Checks.Interactions.IInteraction[] interactions) { }
+        public CheckResult(TMock mock, Mockolate.Checks.Checks checks, Mockolate.Checks.Interactions.IInteraction[] interactions) { }
         public bool AtLeast(int times) { }
         public bool AtLeastOnce() { }
         public bool AtMost(int times) { }
@@ -209,7 +209,7 @@ namespace Mockolate.Checks
         public bool Exactly(int times) { }
         public bool Never() { }
         public bool Once() { }
-        public bool Then(params System.Func<T, Mockolate.Checks.CheckResult<T>>[] orderedChecks) { }
+        public bool Then(params System.Func<TMock, Mockolate.Checks.CheckResult<TMock>>[] orderedChecks) { }
     }
     public class Checks
     {

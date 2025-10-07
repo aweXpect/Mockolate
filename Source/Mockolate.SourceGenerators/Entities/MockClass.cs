@@ -22,6 +22,7 @@ internal record MockClass : Class
 	public EquatableArray<Class> AdditionalImplementations { get; }
 
 	public string[] GetAllNamespaces() => EnumerateAllNamespaces().Distinct().OrderBy(n => n).ToArray();
+
 	internal IEnumerable<Class> GetAllClasses()
 	{
 		yield return this;

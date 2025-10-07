@@ -11,19 +11,9 @@ namespace Mockolate.Checks;
 public class Checks
 {
 	private readonly List<IInteraction> _interactions = [];
-	private List<IInteraction>? _missingVerification;
-	private int _index = -1;
 	private int _after = -1;
-
-	/// <summary>
-	///     Gets the next index for an interaction.
-	/// </summary>
-	public int GetNextIndex() => Interlocked.Increment(ref _index);
-
-	internal void After(int index)
-	{
-		_after = index;
-	}
+	private int _index = -1;
+	private List<IInteraction>? _missingVerification;
 
 	/// <summary>
 	///     The number of interactions contained in the collection.
@@ -35,12 +25,19 @@ public class Checks
 	/// </summary>
 	internal bool HasMissingVerifications => _missingVerification is null
 		? _interactions.Count > _after + 1
-		: _missingVerification.Where(x => x.Index > _after).Any();
+		: _missingVerification.Any(x => x.Index > _after);
 
 	/// <summary>
 	///     The registered interactions of the mock.
 	/// </summary>
 	public IEnumerable<IInteraction> Interactions => _interactions.Where(x => x.Index > _after);
+
+	/// <summary>
+	///     Gets the next index for an interaction.
+	/// </summary>
+	public int GetNextIndex() => Interlocked.Increment(ref _index);
+
+	internal void After(int index) => _after = index;
 
 	internal IInteraction RegisterInvocation(IInteraction interaction)
 	{
@@ -52,7 +49,7 @@ public class Checks
 	{
 		_after = -1;
 		_missingVerification ??= _interactions.ToList();
-		foreach (var interaction in interactions)
+		foreach (IInteraction? interaction in interactions)
 		{
 			_missingVerification.Remove(interaction);
 		}

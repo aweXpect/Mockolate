@@ -147,7 +147,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior))
+		if (TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			_callbacks.ForEach(callback => callback.Invoke(p1));
 			if (_returnCallbacks.Count > 0)
@@ -166,12 +166,12 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1,], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -182,7 +182,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -258,8 +258,8 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
-		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior))
+		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1], out T2 p2, behavior))
 		{
 			_callbacks.ForEach(callback => callback.Invoke(p1, p2));
 			if (_returnCallbacks.Count > 0)
@@ -278,12 +278,12 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2,], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -294,7 +294,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -374,9 +374,9 @@ public class VoidMethodSetup<T1, T2, T3>(
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
-		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior) &&
-		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior))
+		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1], out T2 p2, behavior) &&
+		    TryCast(invocation.Parameters[2], out T3 p3, behavior))
 		{
 			_callbacks.ForEach(callback => callback.Invoke(p1, p2, p3));
 			if (_returnCallbacks.Count > 0)
@@ -395,12 +395,12 @@ public class VoidMethodSetup<T1, T2, T3>(
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2, match3,], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2, match3,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2, match3], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -411,7 +411,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2, match3,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2, match3], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -492,10 +492,10 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast<T1>(invocation.Parameters[0], out T1? p1, behavior) &&
-		    TryCast<T2>(invocation.Parameters[1], out T2? p2, behavior) &&
-		    TryCast<T3>(invocation.Parameters[2], out T3? p3, behavior) &&
-		    TryCast<T4>(invocation.Parameters[3], out T4? p4, behavior))
+		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1], out T2 p2, behavior) &&
+		    TryCast(invocation.Parameters[2], out T3 p3, behavior) &&
+		    TryCast(invocation.Parameters[3], out T4 p4, behavior))
 		{
 			_callbacks.ForEach(callback => callback.Invoke(p1, p2, p3, p4));
 			if (_returnCallbacks.Count > 0)
@@ -514,12 +514,12 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4,], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2, match3, match4,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2, match3, match4], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -530,7 +530,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2, match3, match4,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2, match3, match4], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}

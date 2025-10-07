@@ -11,7 +11,13 @@ internal static partial class SourceGeneration
 	public static string GetExtensionClass(string name, Class @class)
 	{
 		string[] namespaces =
-			[.. @class.GetClassNamespaces(), "Mockolate.Checks", "Mockolate.Events", "Mockolate.Protected", "Mockolate.Setup",];
+		[
+			.. @class.GetClassNamespaces(),
+			"Mockolate.Checks",
+			"Mockolate.Events",
+			"Mockolate.Protected",
+			"Mockolate.Setup",
+		];
 		StringBuilder sb = new();
 		sb.AppendLine(Header);
 		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
@@ -34,11 +40,11 @@ internal static partial class SourceGeneration
 		AppendSetupExtensions(sb, @class, namespaces);
 
 		if (@class.Events.Any(@event
-				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-			@class.Methods.Any(method
-				=> method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-			@class.Properties.Any(property
-				=> property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+		    @class.Methods.Any(method
+			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+		    @class.Properties.Any(property
+			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
 		{
 			AppendRaisesExtensions(sb, @class, namespaces, true);
 			AppendSetupExtensions(sb, @class, namespaces, true);

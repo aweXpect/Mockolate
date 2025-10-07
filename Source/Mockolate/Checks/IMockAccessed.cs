@@ -1,5 +1,3 @@
-using Mockolate.Checks.Interactions;
-
 namespace Mockolate.Checks;
 
 /// <summary>
@@ -13,7 +11,8 @@ public interface IMockAccessed<TMock>
 	CheckResult<TMock> PropertyGetter(string propertyName);
 
 	/// <summary>
-	///     Counts the setter accesses of property <paramref name="propertyName" /> with the matching <paramref name="value" />.
+	///     Counts the setter accesses of property <paramref name="propertyName" />
+	///     with the matching <paramref name="value" /> .
 	/// </summary>
 	CheckResult<TMock> PropertySetter(string propertyName, With.Parameter value);
 }

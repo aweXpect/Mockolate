@@ -1,5 +1,4 @@
 using System.Reflection;
-using Mockolate.Checks;
 using Mockolate.Checks.Interactions;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
@@ -14,7 +13,7 @@ public class MockRaises<T>(IMockSetup setup, Checks.Checks checks) : IMockRaises
 	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 	void IMockRaises.Raise(string eventName, params object?[] parameters)
 	{
-		foreach (var (target, method) in setup.GetEventHandlers(eventName))
+		foreach ((object? target, MethodInfo? method) in setup.GetEventHandlers(eventName))
 		{
 			method.Invoke(target, parameters);
 		}

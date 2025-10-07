@@ -8,18 +8,17 @@ namespace Mockolate.Checks;
 /// </summary>
 public class MockInvoked<T, TMock>(Checks checks, TMock mock) : IMockInvoked<TMock>
 {
-	private readonly TMock _mock = mock;
-	private readonly Checks _checks = checks;
-
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
-	CheckResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters) => new(_mock, _checks,
-		_checks.Interactions
-			.OfType<MethodInvocation>()
-			.Where(method =>
-				method.Name.Equals(methodName) &&
-				method.Parameters.Length == parameters.Length &&
-				!parameters.Where((parameter, i) => !parameter.Matches(method.Parameters[i])).Any())
-			.ToArray());
+	CheckResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)
+		=> new(mock, checks,
+			checks.Interactions
+				.OfType<MethodInvocation>()
+				.Where(method =>
+					method.Name.Equals(methodName) &&
+					method.Parameters.Length == parameters.Length &&
+					!parameters.Where((parameter, i) => !parameter.Matches(method.Parameters[i])).Any())
+				.Cast<IInteraction>()
+				.ToArray());
 
 	/// <summary>
 	///     A proxy implementation of <see cref="IMockInvoked{TMock}" /> that forwards all calls to the provided

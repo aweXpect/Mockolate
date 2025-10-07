@@ -28,10 +28,7 @@ public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnume
 	/// <param name="left">The first <see cref="EquatableArray{T}" /> value.</param>
 	/// <param name="right">The second <see cref="EquatableArray{T}" /> value.</param>
 	/// <returns>Whether <paramref name="left" /> and <paramref name="right" /> are equal.</returns>
-	public static bool operator ==(EquatableArray<T> left, EquatableArray<T> right)
-	{
-		return left.Equals(right);
-	}
+	public static bool operator ==(EquatableArray<T> left, EquatableArray<T> right) => left.Equals(right);
 
 	/// <summary>
 	///     Checks whether two <see cref="EquatableArray{T}" /> values are not the same.
@@ -39,10 +36,7 @@ public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnume
 	/// <param name="left">The first <see cref="EquatableArray{T}" /> value.</param>
 	/// <param name="right">The second <see cref="EquatableArray{T}" /> value.</param>
 	/// <returns>Whether <paramref name="left" /> and <paramref name="right" /> are not equal.</returns>
-	public static bool operator !=(EquatableArray<T> left, EquatableArray<T> right)
-	{
-		return !left.Equals(right);
-	}
+	public static bool operator !=(EquatableArray<T> left, EquatableArray<T> right) => !left.Equals(right);
 
 	/// <inheritdoc />
 	public bool Equals(EquatableArray<T> array) => AsSpan().SequenceEqual(array.AsSpan());

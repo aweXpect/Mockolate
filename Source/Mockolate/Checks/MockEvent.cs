@@ -8,22 +8,23 @@ namespace Mockolate.Checks;
 /// </summary>
 public class MockEvent<T, TMock>(Checks checks, TMock mock) : IMockEvent<TMock>
 {
-	private readonly TMock _mock = mock;
-	private readonly Checks _checks = checks;
-
 	/// <inheritdoc cref="IMockEvent{TMock}.Subscribed(string)" />
-	CheckResult<TMock> IMockEvent<TMock>.Subscribed(string eventName) => new(_mock, _checks,
-		_checks.Interactions
-			.OfType<EventSubscription>()
-			.Where(@event => @event.Name.Equals(eventName))
-			.ToArray());
+	CheckResult<TMock> IMockEvent<TMock>.Subscribed(string eventName)
+		=> new(mock, checks,
+			checks.Interactions
+				.OfType<EventSubscription>()
+				.Where(@event => @event.Name.Equals(eventName))
+				.Cast<IInteraction>()
+				.ToArray());
 
 	/// <inheritdoc cref="IMockEvent{TMock}.Unsubscribed(string)" />
-	CheckResult<TMock> IMockEvent<TMock>.Unsubscribed(string eventName) => new(_mock, _checks,
-		_checks.Interactions
-			.OfType<EventUnsubscription>()
-			.Where(@event => @event.Name.Equals(eventName))
-			.ToArray());
+	CheckResult<TMock> IMockEvent<TMock>.Unsubscribed(string eventName)
+		=> new(mock, checks,
+			checks.Interactions
+				.OfType<EventUnsubscription>()
+				.Where(@event => @event.Name.Equals(eventName))
+				.Cast<IInteraction>()
+				.ToArray());
 
 	/// <summary>
 	///     A proxy implementation of <see cref="IMockEvent{TMock}" /> that forwards all calls to the provided

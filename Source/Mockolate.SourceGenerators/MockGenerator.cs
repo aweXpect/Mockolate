@@ -64,7 +64,7 @@ public class MockGenerator : IIncrementalGenerator
 		HashSet<(int, bool)> methodSetups = new();
 
 
-		foreach (var (name, extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
+		foreach ((string name, Class extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
 		{
 			string result = SourceGeneration.GetExtensionClass(name, extensionToGenerate);
 			// Create a separate class file for each mock extension
@@ -73,9 +73,9 @@ public class MockGenerator : IIncrementalGenerator
 		}
 
 		foreach ((int Count, bool) item in mocksToGenerate
-					.SelectMany(m => m.Methods)
-					.Where(m => m.Parameters.Count > 4)
-					.Select(m => (m.Parameters.Count, m.ReturnType == Type.Void)))
+			         .SelectMany(m => m.Methods)
+			         .Where(m => m.Parameters.Count > 4)
+			         .Select(m => (m.Parameters.Count, m.ReturnType == Type.Void)))
 		{
 			methodSetups.Add(item);
 		}

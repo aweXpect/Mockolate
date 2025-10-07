@@ -14,7 +14,7 @@ public class CheckResultTests
 	[InlineData(2, 1, true)]
 	public async Task AtLeast_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		var mock = new MyMock<int>(0);
+		MyMock<int> mock = new(0);
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
@@ -32,7 +32,7 @@ public class CheckResultTests
 	[InlineData(3, true)]
 	public async Task AtLeastOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		var mock = new MyMock<int>(0);
+		MyMock<int> mock = new(0);
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
@@ -50,7 +50,7 @@ public class CheckResultTests
 	[InlineData(2, 3, true)]
 	public async Task AtMost_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		var mock = new MyMock<int>(0);
+		MyMock<int> mock = new(0);
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
@@ -68,7 +68,7 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task AtMostOnce_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		var mock = new MyMock<int>(0);
+		MyMock<int> mock = new(0);
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
@@ -86,7 +86,7 @@ public class CheckResultTests
 	[InlineData(2, 1, false)]
 	public async Task Exactly_ShouldReturnExpectedResult(int count, int times, bool expectedResult)
 	{
-		var mock = new MyMock<int>(0);
+		MyMock<int> mock = new(0);
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
@@ -104,7 +104,7 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task Never_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		var mock = new MyMock<int>(0);
+		MyMock<int> mock = new(0);
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();
@@ -122,7 +122,7 @@ public class CheckResultTests
 	[InlineData(3, false)]
 	public async Task Once_ShouldReturnExpectedResult(int count, bool expectedResult)
 	{
-		var mock = new MyMock<int>(0);
+		MyMock<int> mock = new(0);
 		MyInteraction[] interactions = Enumerable.Range(0, count)
 			.Select(_ => new MyInteraction())
 			.ToArray();

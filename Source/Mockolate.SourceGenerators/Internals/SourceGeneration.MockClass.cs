@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
@@ -11,13 +10,20 @@ internal static partial class SourceGeneration
 {
 	public static string GetMockClass(string name, MockClass mockClass)
 	{
-		var allClasses = mockClass.ClassName;
+		string allClasses = mockClass.ClassName;
 		if (mockClass.AdditionalImplementations.Any())
 		{
 			allClasses += ", " + string.Join(",", mockClass.AdditionalImplementations.Select(c => c.ClassName));
 		}
+
 		string[] namespaces =
-			[.. mockClass.GetAllNamespaces(), "Mockolate.Checks", "Mockolate.Events", "Mockolate.Protected", "Mockolate.Setup",];
+		[
+			.. mockClass.GetAllNamespaces(),
+			"Mockolate.Checks",
+			"Mockolate.Events",
+			"Mockolate.Protected",
+			"Mockolate.Setup",
+		];
 		StringBuilder sb = new();
 		sb.AppendLine(Header);
 		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
@@ -51,7 +57,7 @@ internal static partial class SourceGeneration
 		sb.Append("public static class ExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
 
-		foreach (var @class in mockClass.GetAllClasses())
+		foreach (Class? @class in mockClass.GetAllClasses())
 		{
 			AppendInvokedExtensions(sb, @class, namespaces, allClasses);
 			AppendAccessedExtensions(sb, @class, namespaces, allClasses);
@@ -223,16 +229,19 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Check which properties were accessed on the mocked instance for <see cref=\"")
 				.Append(@class.ClassName).Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockAccessed<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">> AccessedOn")
+			sb.Append("\t\tpublic MockAccessed<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
+				.Append(">> AccessedOn")
 				.Append(@class.ClassName).AppendLine();
 			sb.Append("\t\t\t=> new MockAccessed<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
 				.Append(">>.Proxy(mock.Accessed, ((IMock)mock).Checks, mock);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Check which events were subscribed or unsubscribed on the mocked instance for <see cref=\"")
+			sb.Append(
+					"\t\t///     Check which events were subscribed or unsubscribed on the mocked instance for <see cref=\"")
 				.Append(@class.ClassName).Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">> EventOn")
+			sb.Append("\t\tpublic MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
+				.Append(">> EventOn")
 				.Append(@class.ClassName).AppendLine();
 			sb.Append("\t\t\t=> new MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
 				.Append(">>.Proxy(mock.Event, ((IMock)mock).Checks, mock);").AppendLine();
@@ -454,14 +463,15 @@ internal static partial class SourceGeneration
 
 		sb.Append("\t\t# endregion ").Append(@class.ClassName).AppendLine();
 	}
+
 	private static bool AppendProtectedMock(StringBuilder sb, Class @class)
 	{
 		if (@class.Events.All(@event
-				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-			@class.Methods.All(method
-				=> method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-			@class.Properties.All(property
-				=> property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
+		    @class.Methods.All(method
+			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
+		    @class.Properties.All(property
+			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
 		{
 			return false;
 		}
@@ -471,8 +481,10 @@ internal static partial class SourceGeneration
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Allows mocking protected methods, events or properties.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic ProtectedMock<").Append(@class.ClassName).Append(", Mock<").Append(@class.ClassName).Append(">> Protected").AppendLine();
-		sb.Append("\t\t\t=> new ProtectedMock<").Append(@class.ClassName).Append(", Mock<").Append(@class.ClassName).Append(">>(mock, ((IMock)mock).Checks, mock);").AppendLine();
+		sb.Append("\t\tpublic ProtectedMock<").Append(@class.ClassName).Append(", Mock<").Append(@class.ClassName)
+			.Append(">> Protected").AppendLine();
+		sb.Append("\t\t\t=> new ProtectedMock<").Append(@class.ClassName).Append(", Mock<").Append(@class.ClassName)
+			.Append(">>(mock, ((IMock)mock).Checks, mock);").AppendLine();
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 		return true;
@@ -523,16 +535,17 @@ internal static partial class SourceGeneration
 				}
 
 				sb.Append(parameter.RefKind switch
-				{
-					RefKind.Ref => "With.InvokedRefParameter<",
-					RefKind.Out => "With.InvokedOutParameter<",
-					_ => "With.Parameter<",
-				}).Append(parameter.Type.GetMinimizedString(namespaces))
+					{
+						RefKind.Ref => "With.InvokedRefParameter<",
+						RefKind.Out => "With.InvokedOutParameter<",
+						_ => "With.Parameter<",
+					}).Append(parameter.Type.GetMinimizedString(namespaces))
 					.Append("> ").Append(parameter.Name);
 			}
 
 			sb.Append(")").AppendLine();
-			sb.Append("\t\t\t=> ((IMockInvoked<Mock<").Append(allClasses).Append(">>)mock).Method(\"").Append(@class.GetFullName(method.Name))
+			sb.Append("\t\t\t=> ((IMockInvoked<Mock<").Append(allClasses).Append(">>)mock).Method(\"")
+				.Append(@class.GetFullName(method.Name))
 				.Append("\"");
 
 			foreach (MethodParameter parameter in method.Parameters)
@@ -562,7 +575,8 @@ internal static partial class SourceGeneration
 			return;
 		}
 
-		sb.Append("\textension(MockAccessed<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+		sb.Append("\textension(MockAccessed<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
+			.Append(">>")
 			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
@@ -577,9 +591,11 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(@class.ClassName)
 				.Append(".").Append(property.Name).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult.Property<Mock<").Append(allClasses).Append(">, ").Append(property.Type.GetMinimizedString(namespaces))
+			sb.Append("\t\tpublic CheckResult.Property<Mock<").Append(allClasses).Append(">, ")
+				.Append(property.Type.GetMinimizedString(namespaces))
 				.Append("> ").Append(property.Name).AppendLine();
-			sb.Append("\t\t\t=> new CheckResult.Property<Mock<").Append(allClasses).Append(">, ").Append(property.Type.GetMinimizedString(namespaces))
+			sb.Append("\t\t\t=> new CheckResult.Property<Mock<").Append(allClasses).Append(">, ")
+				.Append(property.Type.GetMinimizedString(namespaces))
 				.Append(">(mock, \"").Append(@class.GetFullName(property.Name)).Append("\");");
 		}
 
@@ -600,7 +616,8 @@ internal static partial class SourceGeneration
 			return;
 		}
 
-		sb.Append("\textension(MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>").Append(isProtected ? ".Protected" : "")
+		sb.Append("\textension(MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+			.Append(isProtected ? ".Protected" : "")
 			.Append(" mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
@@ -615,9 +632,11 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Validates the subscriptions or unsubscription for the event <see cref=\"")
 				.Append(@class.ClassName).Append(".").Append(@event.Name).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult.Event<Mock<").Append(allClasses).Append(">, ").Append(@event.Type.GetMinimizedString(namespaces)).Append("> ")
+			sb.Append("\t\tpublic CheckResult.Event<Mock<").Append(allClasses).Append(">, ")
+				.Append(@event.Type.GetMinimizedString(namespaces)).Append("> ")
 				.Append(@event.Name).AppendLine();
-			sb.Append("\t\t\t=> new CheckResult.Event<Mock<").Append(allClasses).Append(">, ").Append(@event.Type.GetMinimizedString(namespaces))
+			sb.Append("\t\t\t=> new CheckResult.Event<Mock<").Append(allClasses).Append(">, ")
+				.Append(@event.Type.GetMinimizedString(namespaces))
 				.Append(">(mock, \"").Append(@class.GetFullName(@event.Name)).Append("\");").AppendLine();
 		}
 

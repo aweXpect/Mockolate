@@ -36,7 +36,8 @@ public sealed partial class MockTests
 			ThrowWhenNotSetup = true,
 		};
 
-		Mock<MyBaseClass, IMyService, IMyService> sut = new MyMock<MyBaseClass, IMyService, IMyService>(behavior: behavior);
+		Mock<MyBaseClass, IMyService, IMyService> sut =
+			new MyMock<MyBaseClass, IMyService, IMyService>(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -59,7 +60,7 @@ public sealed partial class MockTests
 			ThrowWhenNotSetup = true,
 		};
 
-		var sut = new MyMock<MyBaseClass, IMyService, IMyService, IMyService>(behavior: behavior);
+		MyMock<MyBaseClass, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -82,8 +83,7 @@ public sealed partial class MockTests
 			ThrowWhenNotSetup = true,
 		};
 
-		var sut =
-			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
+		MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -106,8 +106,7 @@ public sealed partial class MockTests
 			ThrowWhenNotSetup = true,
 		};
 
-		var sut =
-			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior: behavior);
+		MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}
@@ -130,8 +129,8 @@ public sealed partial class MockTests
 			ThrowWhenNotSetup = true,
 		};
 
-		var sut =
-			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(
+		MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService> sut =
+			new(
 				behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
@@ -155,8 +154,8 @@ public sealed partial class MockTests
 			ThrowWhenNotSetup = true,
 		};
 
-		var sut =
-			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(
+		MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService> sut =
+			new(
 				behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
@@ -182,9 +181,8 @@ public sealed partial class MockTests
 			ThrowWhenNotSetup = true,
 		};
 
-		var sut =
-			new MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
-				IMyService>(behavior: behavior);
+		MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+			IMyService> sut = new(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
 	}

@@ -136,7 +136,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			yield break;
 		}
 
-		foreach (var (target, method, name) in _eventHandlers.Keys)
+		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers.Keys)
 		{
 			if (name != eventName)
 			{
