@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Mockolate.SourceGenerators.Entities;
 
@@ -7,15 +8,21 @@ internal static partial class SourceGeneration
 {
 	public static string MockRegistration(ICollection<(string Name, MockClass MockClass)> mocks)
 	{
+		List<string> namespaces =
+		[
+			.. mocks.SelectMany(m => m.MockClass.GetAllNamespaces()),
+			"System",
+		];
+		if (mocks.Any())
+		{
+			namespaces.Add("Mockolate.Generated");
+		}
 		StringBuilder sb = new();
 		sb.AppendLine(Header);
-		sb.AppendLine("using System;");
-		foreach (string? @namespace in mocks.Select(x => x.MockClass.Namespace).Where(x => x != "System").Distinct()
-			         .OrderBy(x => x))
+		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
 		{
 			sb.Append("using ").Append(@namespace).AppendLine(";");
 		}
-		sb.AppendLine("using Mockolate.Generated;");
 
 		sb.AppendLine();
 		sb.AppendLine("namespace Mockolate;");

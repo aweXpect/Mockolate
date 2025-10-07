@@ -12,8 +12,8 @@ internal static partial class SourceGeneration
 		          using System;
 		          using System.Collections.Generic;
 		          using System.Threading;
-		          using Mockolate.Interactions;
 		          using Mockolate.Exceptions;
+		          using Mockolate.Interactions;
 
 		          namespace Mockolate.Setup;
 
