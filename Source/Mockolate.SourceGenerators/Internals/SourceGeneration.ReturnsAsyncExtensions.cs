@@ -21,7 +21,7 @@ internal static partial class SourceGeneration
 		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Extensions for setting up asynchronous return values.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
-		sb.Append("public static class ReturnsAsyncExtensions2").AppendLine();
+		sb.Append("internal static class ReturnsAsyncExtensions2").AppendLine();
 		sb.Append("{").AppendLine();
 		foreach (int number in numberOfParameters)
 		{

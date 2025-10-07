@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Mockolate.Tests.TestHelpers;
 
-namespace Mockolate.Tests.TestHelpers;
-
-public class MyServiceBase
+internal class MyServiceBase
 {
 	public virtual void DoSomething(int value, bool flag)
 	{

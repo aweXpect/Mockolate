@@ -33,7 +33,7 @@ internal static partial class SourceGeneration
 
 		          """);
 		sb.AppendLine();
-		sb.Append("public static class SetupExtensionsFor").Append(name).AppendLine();
+		sb.Append("internal static class SetupExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
 
 		AppendRaisesExtensions(sb, @class, namespaces);

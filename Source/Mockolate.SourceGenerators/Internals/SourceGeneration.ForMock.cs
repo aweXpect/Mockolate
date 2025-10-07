@@ -32,7 +32,7 @@ internal static partial class SourceGeneration
 		          #nullable enable
 
 		          """);
-		sb.Append("public static class For").Append(name).AppendLine();
+		sb.Append("internal static class For").Append(name).AppendLine();
 		sb.AppendLine("{");
 
 		AppendMock(sb, mockClass);
