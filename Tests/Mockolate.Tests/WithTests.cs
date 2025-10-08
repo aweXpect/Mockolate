@@ -16,15 +16,17 @@ public sealed class WithTests
 		await That(result).IsEqualTo(expectMatch);
 	}
 
-	[Fact]
-	public async Task ToString_Implicit_ShouldReturnExpectedValue()
+	[Theory]
+	[InlineData(null, 1)]
+	[InlineData(1, 0)]
+	public async Task ToString_Implicit2_WithNull_ShouldReturnExpectedValue(int? value, int expectedCount)
 	{
-		With.Parameter<int?> sut = 6;
-		string expectedValue = "6";
+		Mock<IMyServiceWithNullable> mock = Mock.Create<IMyServiceWithNullable>();
+		mock.Setup.DoSomething(null, true);
 
-		string? result = sut.ToString();
+		mock.Object.DoSomething(value, true);
 
-		await That(result).IsEqualTo(expectedValue);
+		await That(mock.Invoked.DoSomething(null, true)).Exactly(expectedCount);
 	}
 
 	[Fact]
@@ -224,5 +226,10 @@ public sealed class WithTests
 		int? result = sut.GetValue(value);
 
 		await That(result).IsEqualTo(2 * value);
+	}
+
+	internal interface IMyServiceWithNullable
+	{
+		void DoSomething(int? value, bool flag);
 	}
 }

@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
@@ -221,9 +222,13 @@ internal static partial class SourceGeneration
 						RefKind.Out => "With.OutParameter<",
 						_ => "With.Parameter<",
 					}).Append(parameter.Type.GetMinimizedString(namespaces))
-					.Append("> ").Append(parameter.Name);
+					.Append('>');
+				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				{
+					sb.Append('?');
+				}
+				sb.Append(' ').Append(parameter.Name);
 			}
-
 
 			sb.Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
@@ -262,9 +267,15 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append("(\"").Append(@class.GetFullName(method.Name)).Append("\"");
-			foreach (string name in method.Parameters.Select(p => p.Name))
+			foreach (var parameter in method.Parameters)
 			{
-				sb.Append(", new With.NamedParameter(\"").Append(name).Append("\", ").Append(name).Append(")");
+				sb.Append(", new With.NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
+				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				{
+					sb.Append(" ?? With.Null<").Append(parameter.Type.GetMinimizedString(namespaces))
+					.Append(">()");
+				}
+				sb.Append(")");
 			}
 
 			sb.Append(");").AppendLine();

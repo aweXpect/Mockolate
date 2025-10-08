@@ -417,12 +417,17 @@ internal static partial class SourceGeneration
 				}
 
 				sb.Append(parameter.RefKind switch
-					{
-						RefKind.Ref => "With.InvokedRefParameter<",
-						RefKind.Out => "With.InvokedOutParameter<",
-						_ => "With.Parameter<",
-					}).Append(parameter.Type.GetMinimizedString(namespaces))
-					.Append("> ").Append(parameter.Name);
+				{
+					RefKind.Ref => "With.InvokedRefParameter<",
+					RefKind.Out => "With.InvokedOutParameter<",
+					_ => "With.Parameter<",
+				}).Append(parameter.Type.GetMinimizedString(namespaces))
+					.Append('>');
+				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				{
+					sb.Append('?');
+				}
+				sb.Append(' ').Append(parameter.Name);
 			}
 
 			sb.Append(")").AppendLine();
@@ -434,6 +439,11 @@ internal static partial class SourceGeneration
 			{
 				sb.Append(", ");
 				sb.Append(parameter.Name);
+				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				{
+					sb.Append(" ?? With.Null<").Append(parameter.Type.GetMinimizedString(namespaces))
+					.Append(">()");
+				}
 			}
 
 			sb.AppendLine(");");

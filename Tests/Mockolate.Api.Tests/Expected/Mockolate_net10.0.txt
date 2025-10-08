@@ -144,6 +144,7 @@ namespace Mockolate
     {
         public static Mockolate.With.Parameter<T> Any<T>() { }
         public static Mockolate.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.With.Parameter<T> Null<T>() { }
         public static Mockolate.With.InvokedOutParameter<T> Out<T>() { }
         public static Mockolate.With.OutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.With.InvokedRefParameter<T> Ref<T>() { }
