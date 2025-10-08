@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Mockolate.Interactions;
+
 namespace Mockolate.Checks;
 
 /// <summary>
@@ -46,4 +51,28 @@ public static class CheckResultExtensions
 	/// </summary>
 	public static bool Once<TMock>(this CheckResult<TMock> checkResult)
 		=> checkResult.Verify(interactions => interactions.Length == 1);
+
+	/// <summary>
+	///     Supports fluent chaining of verifications in a given order.
+	/// </summary>
+	public static bool Then<TMock>(this CheckResult<TMock> checkResult, params Func<TMock, CheckResult<TMock>>[] orderedChecks)
+	{
+		CheckResult<TMock> result = checkResult;
+		List<IInteraction> verified = [];
+		int after = -1;
+		foreach (Func<TMock, CheckResult<TMock>>? check in orderedChecks)
+		{
+			if (!result.Verify(interactions => {
+				bool result = interactions.Any(x => x.Index > after);
+				after = result ? interactions.Where(x => x.Index > after).Min(x => x.Index) : int.MaxValue;
+				return result;
+			}))
+			{
+				return false;
+			}
+			result = check(result.Mock);
+		}
+
+		return result.Verify(interactions => interactions.Any(x => x.Index > after));
+	}
 }
