@@ -125,7 +125,7 @@ internal record Class
 			.Replace("<", "")
 			.Replace(">", "");
 
-	public string[] GetClassNamespaces() => EnumerateNamespaces().Distinct().OrderBy(n => n).ToArray();
+	public string[] GetClassNamespaces() => EnumerateNamespaces().Where(n => !n.StartsWith("<")).Distinct().OrderBy(n => n).ToArray();
 
 	internal IEnumerable<string> EnumerateNamespaces()
 	{

@@ -12,6 +12,7 @@ internal static partial class SourceGeneration
 	{
 		string[] namespaces =
 		[
+			..GlobalUsings,
 			.. @class.GetClassNamespaces(),
 			"Mockolate.Checks",
 			"Mockolate.Events",

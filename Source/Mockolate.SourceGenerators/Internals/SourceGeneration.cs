@@ -18,6 +18,16 @@ internal static partial class SourceGeneration
 
 		""";
 
+	private static readonly string[] GlobalUsings = [
+		"System",
+		"System.Collections.Generic",
+		"System.IO",
+		"System.Linq",
+		"System.Net.Http",
+		"System.Threading",
+		"System.Threading.Tasks",
+	];
+
 	public static string Mock()
 	{
 		int maxNumberOfArguments = 9;
@@ -200,7 +210,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine("{");
 		sb.AppendLine("\tprivate MockBehavior _behavior;");
 		sb.AppendLine();
-		sb.AppendLine("\t/// <inheritdoc cref=\"MockFactory\" />");
+		sb.AppendLine("\t/// <inheritdoc cref=\"Factory\" />");
 		sb.AppendLine("\tpublic Factory(MockBehavior behavior)");
 		sb.AppendLine("\t{");
 		sb.AppendLine("\t\t_behavior = behavior;");
@@ -225,10 +235,12 @@ internal static partial class SourceGeneration
 			sb.AppendLine();
 			string types = string.Join(", ", Enumerable.Range(2, numberOfArguments).Select(n => $"T{n}"));
 			sb.AppendLine("\t/// <summary>");
-			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements interface ")
+			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
+				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
 				.Append(string.Join(", ",
 					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(" and <typeparamref name=\"T").Append(numberOfArguments).Append("\" />.").AppendLine();
+				.Append(numberOfArguments > 1 ? " and " : "")
+				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />.").AppendLine();
 			sb.AppendLine("\t/// </summary>");
 			sb.AppendLine(
 				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
