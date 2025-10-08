@@ -108,7 +108,7 @@ internal static partial class SourceGeneration
 			sb.AppendLine("\t/// </summary>");
 			sb.AppendLine(
 				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			for (int i = 2; i <= numberOfArguments; i++)
+			for (int i = 2; i <= numberOfArguments + 1; i++)
 			{
 				sb.Append("\t/// <typeparam name=\"T").Append(i)
 					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
@@ -139,7 +139,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>")
 				.AppendLine();
-			for (int i = 2; i <= numberOfArguments; i++)
+			for (int i = 2; i <= numberOfArguments + 1; i++)
 			{
 				sb.Append("\t/// <typeparam name=\"T").Append(i)
 					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
@@ -170,7 +170,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>")
 				.AppendLine();
-			for (int i = 2; i <= numberOfArguments; i++)
+			for (int i = 2; i <= numberOfArguments + 1; i++)
 			{
 				sb.Append("\t/// <typeparam name=\"T").Append(i)
 					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
@@ -232,7 +232,7 @@ internal static partial class SourceGeneration
 			sb.AppendLine("\t/// </summary>");
 			sb.AppendLine(
 				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			for (int i = 2; i <= numberOfArguments; i++)
+			for (int i = 2; i <= numberOfArguments + 1; i++)
 			{
 				sb.Append("\t/// <typeparam name=\"T").Append(i)
 					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
