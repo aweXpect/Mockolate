@@ -7,6 +7,17 @@ namespace Mockolate.Tests;
 public sealed partial class MockTests
 {
 	[Fact]
+	public async Task DoubleNestedInterfaces_ShouldStillWork()
+	{
+		var mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
+		mock.Setup.IsValid.InitializeWith(true);
+
+		var result = mock.Object.IsValid;
+
+		await That(result).IsTrue();
+	}
+
+	[Fact]
 	public async Task Behavior_ShouldBeSet()
 	{
 		MyMock<string> sut = new("", MockBehavior.Default with
@@ -126,4 +137,15 @@ public sealed partial class MockTests
 
 		public int Number { get; }
 	}
+	public sealed class Nested
+	{
+		public sealed class Nested2
+		{
+			public interface IMyDoubleNestedService
+			{
+				bool IsValid { get; }
+			}
+		}
+	}
+
 }
