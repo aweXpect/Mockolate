@@ -92,6 +92,42 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task TryCast_WhenNotMatching_ShouldReturnFalse()
+	{
+		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
+		object parameter = "foo";
+
+		var result = mock.HiddenTryCast<int>(parameter, out int value);
+
+		await That(result).IsFalse();
+		await That(value).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task TryCast_WhenNullShouldReturnTrue()
+	{
+		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
+		object? parameter = null;
+
+		var result = mock.HiddenTryCast<int>(parameter, out int value);
+
+		await That(result).IsTrue();
+		await That(value).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task TryCast_WhenMatching_ShouldReturnTrue()
+	{
+		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
+		object parameter = 42;
+
+		var result = mock.HiddenTryCast<int>(parameter, out int value);
+
+		await That(result).IsTrue();
+		await That(value).IsEqualTo(42);
+	}
+
+	[Fact]
 	public async Task WithTwoGenericArguments_WhenSecondIsNoInterface_ShouldThrowMockException()
 	{
 		void Act()
