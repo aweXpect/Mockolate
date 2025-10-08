@@ -11,10 +11,15 @@ internal record Class
 		Namespace = type.ContainingNamespace.ToString();
 		ClassName = GetTypeName(type, additionalNamespaces);
 
-		if (type.ContainingType is not null)
+		var containingType = type.ContainingType;
+		if (containingType is not null)
 		{
-			ContainingType = new Type(type.ContainingType);
-			ClassName = type.ContainingType.Name + "." + ClassName;
+			ContainingType = new Type(containingType);
+			while (containingType is not null)
+			{
+				ClassName = containingType.Name + "." + ClassName;
+				containingType = containingType.ContainingType;
+			}
 		}
 
 		IsInterface = type.TypeKind == TypeKind.Interface;
