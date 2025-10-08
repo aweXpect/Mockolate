@@ -17,6 +17,29 @@ public sealed class WithTests
 	}
 
 	[Fact]
+	public async Task ToString_ImplicitFromNull_ShouldBeNull()
+	{
+		int? value = null;
+		With.Parameter<int?> sut = value;
+		string expectedValue = "null";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_NamedParameter_ShouldReturnExpectedValue()
+	{
+		var sut = new With.NamedParameter("foo", With.Out<int>());
+		string expectedValue = "With.Out<int>() foo";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
 	public async Task ToString_WithAny_ShouldReturnExpectedValue()
 	{
 		With.Parameter<string> sut = With.Any<string>();
@@ -87,6 +110,17 @@ public sealed class WithTests
 	{
 		With.RefParameter<int?> sut = With.Ref<int?>(v => v * 3);
 		string expectedValue = "With.Ref<int?>(v => v * 3)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithRef_WithPredicate_ShouldReturnExpectedValue()
+	{
+		With.RefParameter<int?> sut = With.Ref<int?>(v => v > 3, v => v * 3);
+		string expectedValue = "With.Ref<int?>(v => v > 3, v => v * 3)";
 
 		string? result = sut.ToString();
 
