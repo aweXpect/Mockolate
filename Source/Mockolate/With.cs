@@ -17,6 +17,12 @@ public static class With
 		=> new AnyParameter<T>();
 
 	/// <summary>
+	///     Matches any parameter that is <see langword="null" />.
+	/// </summary>
+	public static Parameter<T> Null<T>()
+		=> new NullParameter<T>();
+
+	/// <summary>
 	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
 	/// </summary>
 	public static Parameter<T> Matching<T>(Func<T, bool> predicate, [CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
@@ -120,17 +126,12 @@ public static class With
 			/// <inheritdoc cref="object.ToString()" />
 			public override string? ToString()
 			{
-				if (_value is null)
-				{
-					return "null";
-				}
-
 				if (_value is string stringValue)
 				{
 					return $"\"{stringValue.Replace("\"", "\\\"")}\"";
 				}
 
-				return _value.ToString();
+				return _value?.ToString();
 			}
 		}
 	}
@@ -247,6 +248,17 @@ public static class With
 		public override string ToString()
 		{
 			return $"With.Any<{typeof(T).FormatType()}>()";
+		}
+	}
+
+	private sealed class NullParameter<T> : Parameter<T>
+	{
+		protected override bool Matches(T value) => value is null;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			return $"With.Null<{typeof(T).FormatType()}>()";
 		}
 	}
 

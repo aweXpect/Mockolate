@@ -17,10 +17,10 @@ public sealed class WithTests
 	}
 
 	[Fact]
-	public async Task ToString_Implicit_ShouldReturnExpectedValue()
+	public async Task ToString_WithAny_ShouldReturnExpectedValue()
 	{
-		With.Parameter<int?> sut = 6;
-		string expectedValue = "6";
+		With.Parameter<string> sut = With.Any<string>();
+		string expectedValue = "With.Any<string>()";
 
 		string? result = sut.ToString();
 
@@ -28,10 +28,10 @@ public sealed class WithTests
 	}
 
 	[Fact]
-	public async Task ToString_WithAny_ShouldReturnExpectedValue()
+	public async Task ToString_WithNull_ShouldReturnExpectedValue()
 	{
-		With.Parameter<string> sut = With.Any<string>();
-		string expectedValue = "With.Any<string>()";
+		With.Parameter<string> sut = With.Null<string>();
+		string expectedValue = "With.Null<string>()";
 
 		string? result = sut.ToString();
 
@@ -143,6 +143,19 @@ public sealed class WithTests
 	}
 
 	[Theory]
+	[InlineData(null, 1)]
+	[InlineData(1, 0)]
+	public async Task WithNull_ShouldMatchWhenNull(int? value, int expectedCount)
+	{
+		Mock<IMyServiceWithNullable> mock = Mock.Create<IMyServiceWithNullable>();
+		mock.Setup.DoSomething(null, true);
+
+		mock.Object.DoSomething(value, true);
+
+		await That(mock.Invoked.DoSomething(null, true)).Exactly(expectedCount);
+	}
+
+	[Theory]
 	[InlineData(42L)]
 	[InlineData("foo")]
 	public async Task WithOut_Invoked_ShouldAlwaysMatch(object? value)
@@ -224,5 +237,10 @@ public sealed class WithTests
 		int? result = sut.GetValue(value);
 
 		await That(result).IsEqualTo(2 * value);
+	}
+
+	internal interface IMyServiceWithNullable
+	{
+		void DoSomething(int? value, bool flag);
 	}
 }
