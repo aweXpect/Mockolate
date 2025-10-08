@@ -131,7 +131,7 @@ public static class With
 					return $"\"{stringValue.Replace("\"", "\\\"")}\"";
 				}
 
-				return _value?.ToString();
+				return _value?.ToString() ?? "null";
 			}
 		}
 	}

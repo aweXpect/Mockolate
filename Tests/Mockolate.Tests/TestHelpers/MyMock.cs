@@ -23,6 +23,9 @@ public class MyMock<T>(T @object, MockBehavior? behavior = null) : Mock<T>(behav
 		=> this;
 
 	public override T Object => @object;
+
+	public bool HiddenTryCast<TValue>(object? value, out TValue result)
+		=> TryCast(value, out result);
 }
 
 public class MyMock<T, T2>(T @object = default!, MockBehavior? behavior = null)
