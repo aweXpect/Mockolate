@@ -104,7 +104,7 @@ internal static partial class SourceGeneration
 				sb.Append(")").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
 				sb.Append("\t\t\t\tObject = new MockObject(this");
-				for (int i=1;i<=constructor.Parameters.Count;i++)
+				for (int i = 1; i <= constructor.Parameters.Count; i++)
 				{
 					sb.Append(", p").Append(i);
 				}
