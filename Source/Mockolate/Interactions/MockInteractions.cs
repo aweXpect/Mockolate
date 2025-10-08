@@ -10,7 +10,7 @@ namespace Mockolate.Interactions;
 ///     Keeps track of the interactions on the <see cref="Mock{T}" /> and its verifications.
 /// </summary>
 [DebuggerDisplay("{_interactions}")]
-public class MockInteractions
+public class MockInteractions : IMockInteractions
 {
 	private readonly ConcurrentDictionary<int, IInteraction> _interactions = [];
 	private int _index = -1;
@@ -38,7 +38,8 @@ public class MockInteractions
 	/// </summary>
 	public int GetNextIndex() => Interlocked.Increment(ref _index);
 
-	internal IInteraction RegisterInteraction(IInteraction interaction)
+	/// <inheritdoc cref="IMockInteractions.RegisterInteraction(IInteraction)" />
+	IInteraction IMockInteractions.RegisterInteraction(IInteraction interaction)
 	{
 		_interactions.TryAdd(interaction.Index, interaction);
 		return interaction;

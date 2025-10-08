@@ -328,6 +328,10 @@ namespace Mockolate.Interactions
     {
         int Index { get; }
     }
+    public interface IMockInteractions
+    {
+        Mockolate.Interactions.IInteraction RegisterInteraction(Mockolate.Interactions.IInteraction interaction);
+    }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation : Mockolate.Interactions.IInteraction
     {
@@ -338,7 +342,7 @@ namespace Mockolate.Interactions
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{_interactions}")]
-    public class MockInteractions
+    public class MockInteractions : Mockolate.Interactions.IMockInteractions
     {
         public MockInteractions() { }
         public int Count { get; }

@@ -84,7 +84,7 @@ public abstract class MockBase<T> : IMock
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
 		IInteraction invocation =
-			interactions.RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(), methodName, parameters));
+			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(), methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null)
@@ -109,7 +109,7 @@ public abstract class MockBase<T> : IMock
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
 		IInteraction invocation =
-			interactions.RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(), methodName, parameters));
+			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(), methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
@@ -127,7 +127,7 @@ public abstract class MockBase<T> : IMock
 	{
 		MockInteractions interactions = ((IMock)this).Interactions;
 		IInteraction invocation =
-			interactions.RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(), propertyName, value));
+			((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(), propertyName, value));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		matchingSetup.InvokeSetter(invocation, value);
 	}
@@ -135,9 +135,9 @@ public abstract class MockBase<T> : IMock
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
 	TResult IMock.Get<TResult>(string propertyName)
 	{
-		MockInteractions? checks = ((IMock)this).Interactions;
+		MockInteractions? interactions = ((IMock)this).Interactions;
 		IInteraction invocation =
-			checks.RegisterInteraction(new PropertyGetterAccess(checks.GetNextIndex(), propertyName));
+			((IMockInteractions)interactions).RegisterInteraction(new PropertyGetterAccess(interactions.GetNextIndex(), propertyName));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
 		return matchingSetup.InvokeGetter<TResult>(invocation);
 	}
