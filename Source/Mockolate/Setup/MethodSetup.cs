@@ -154,12 +154,13 @@ public abstract class MethodSetup : IMethodSetup
 	}
 
 	/// <summary>
-	///     Attempts to cast the specified value to the type parameter T, returning a value that
-	///     indicates whether the cast was successful.
+	///     Attempts to cast the specified value to the type parameter <typeparamref name="T"/>,
+	///     returning a value that indicates whether the cast was successful.
 	/// </summary>
 	/// <remarks>
-	///     If value is not of type T and is not null, result is set to the default value for type T as
-	///     provided by the behavior's <see cref="MockBehavior.DefaultValueGenerator" />.
+	///     If value is not of type <typeparamref name="T" /> and is not <see langword="null" />,
+	///     result is set to the default value for type <typeparamref name="T" /> as provided
+	///     by the <paramref name="behavior" />.
 	/// </remarks>
 	protected static bool TryCast<T>(object? value, out T result, MockBehavior behavior)
 	{
