@@ -206,12 +206,13 @@ namespace Mockolate.Checks
         public static bool Exactly<TMock>(this Mockolate.Checks.CheckResult<TMock> checkResult, int times) { }
         public static bool Never<TMock>(this Mockolate.Checks.CheckResult<TMock> checkResult) { }
         public static bool Once<TMock>(this Mockolate.Checks.CheckResult<TMock> checkResult) { }
+        public static bool Then<TMock>(this Mockolate.Checks.CheckResult<TMock> checkResult, params System.Func<TMock, Mockolate.Checks.CheckResult<TMock>>[] orderedChecks) { }
     }
     public class CheckResult<TMock>
     {
         public CheckResult(TMock mock, Mockolate.Interactions.MockInteractions interactions, Mockolate.Interactions.IInteraction[] matchingInteractions, string expectation) { }
         public string Expectation { get; }
-        public bool Then(params System.Func<TMock, Mockolate.Checks.CheckResult<TMock>>[] orderedChecks) { }
+        public TMock Mock { get; }
         public bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate) { }
     }
     public interface IMockAccessed<TMock>
