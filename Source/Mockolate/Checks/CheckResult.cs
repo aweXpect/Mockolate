@@ -12,45 +12,24 @@ public class CheckResult<TMock>
 {
 	private readonly MockInteractions _interactions;
 	private readonly IInteraction[] _matchingInteractions;
-	private readonly TMock _mock;
 
 	/// <summary>
 	///     The expectation of this check result.
 	/// </summary>
 	public string Expectation { get; }
 
+	/// <summary>
+	///     The mock object for which this expectation applies.
+	/// </summary>
+	public TMock Mock { get; }
+
 	/// <inheritdoc cref="CheckResult{TMock}" />
 	public CheckResult(TMock mock, MockInteractions interactions, IInteraction[] matchingInteractions, string expectation)
 	{
-		_mock = mock;
+		Mock = mock;
 		_interactions = interactions;
 		_matchingInteractions = matchingInteractions;
 		Expectation = expectation;
-	}
-
-	/// <summary>
-	///     Supports fluent chaining of verifications in a given order.
-	/// </summary>
-	public bool Then(params Func<TMock, CheckResult<TMock>>[] orderedChecks)
-	{
-		CheckResult<TMock> result = this;
-		List<IInteraction> verified = [];
-		int after = -1;
-		foreach (Func<TMock, CheckResult<TMock>>? check in orderedChecks)
-		{
-			if (!result._matchingInteractions.Any(x => x.Index > after))
-			{
-				_interactions.Verified(verified);
-				return false;
-			}
-
-			verified.AddRange(result._matchingInteractions.Where(x => x.Index > after));
-			after = result._matchingInteractions.Min(x => x.Index);
-			result = check(_mock);
-		}
-
-		_interactions.Verified(verified);
-		return result._matchingInteractions.Any(x => x.Index > after);
 	}
 
 	/// <summary>
