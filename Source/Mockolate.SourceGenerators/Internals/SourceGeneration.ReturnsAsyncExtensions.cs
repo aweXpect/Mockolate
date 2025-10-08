@@ -10,6 +10,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine(Header);
 		sb.Append("""
 		          using System;
+		          using System.Threading.Tasks;
 		          using Mockolate.Setup;
 
 		          namespace Mockolate;

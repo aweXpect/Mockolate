@@ -12,7 +12,8 @@ internal static partial class SourceGeneration
 	{
 		string[] namespaces =
 		[
-			.. mockClass.GetAllNamespaces(),
+			..GlobalUsings,
+			..mockClass.GetAllNamespaces(),
 			"Mockolate.Checks",
 			"Mockolate.Events",
 			"Mockolate.Protected",
