@@ -19,10 +19,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
-	</PropertyGroup>
-
-	<PropertyGroup>
 		<LangVersion>preview</LangVersion>
 		<Nullable>enable</Nullable>
 		<NoWarn>$(NoWarn);1701;1702</NoWarn>
@@ -42,6 +38,12 @@
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<Nullable>annotations</Nullable>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+		<IsAotCompatible>true</IsAotCompatible>
+		<IsTrimmable>true</IsTrimmable>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 	</PropertyGroup>
 
 	<ItemGroup>
