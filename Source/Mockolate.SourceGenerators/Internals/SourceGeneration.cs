@@ -18,7 +18,7 @@ internal static partial class SourceGeneration
 
 		""";
 
-	private static string[] GlobalUsings = [
+	private static readonly string[] GlobalUsings = [
 		"System",
 		"System.Collections.Generic",
 		"System.IO",
