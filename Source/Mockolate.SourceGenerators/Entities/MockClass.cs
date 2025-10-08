@@ -13,7 +13,11 @@ internal record MockClass : Class
 		if (!IsInterface && types[0] is INamedTypeSymbol namedTypeSymbol)
 		{
 			Constructors =
-				new EquatableArray<Method>(namedTypeSymbol.Constructors.Select(x => new Method(x)).ToArray());
+				new EquatableArray<Method>(namedTypeSymbol.Constructors
+				.Where(x => x.DeclaredAccessibility == Accessibility.Protected ||
+				            x.DeclaredAccessibility == Accessibility.ProtectedOrInternal ||
+				            x.DeclaredAccessibility == Accessibility.Public)
+				.Select(x => new Method(x)).ToArray());
 		}
 	}
 

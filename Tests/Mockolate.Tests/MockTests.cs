@@ -47,7 +47,18 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Could not find any constructor that matches the 3 given parameters (foo, 1, 2).");
+				"Could not find any constructor for 'MockTests.MyBaseClassWithConstructor' that matches the 3 given parameters (foo, 1, 2).");
+	}
+
+	[Fact]
+	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
+	{
+		void Act()
+			=> _ = Mock.Create<MyBaseClassWithoutConstructor>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"Could not find any constructor at all for the base type 'MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
 	}
 
 	[Fact]
@@ -106,5 +117,13 @@ public sealed partial class MockTests
 		public int Number { get; }
 		public string Text { get; }
 		public virtual string VirtualMethod() => Text;
+	}
+
+	public class MyBaseClassWithoutConstructor
+	{
+		private MyBaseClassWithoutConstructor()
+		{ }
+
+		public int Number { get; }
 	}
 }

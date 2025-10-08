@@ -41,7 +41,10 @@ internal static partial class SourceGeneration
 		AppendMock(sb, mockClass, namespaces);
 		sb.AppendLine();
 
-		AppendMockObject(sb, mockClass, namespaces);
+		if (mockClass.IsInterface || mockClass.Constructors?.Any() == true)
+		{
+			AppendMockObject(sb, mockClass, namespaces);
+		}
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
@@ -71,7 +74,9 @@ internal static partial class SourceGeneration
 				"\t\tpublic Mock(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior) : base(mockBehavior)")
 			.AppendLine();
 		sb.AppendLine("\t\t{");
-		if (mockClass.IsInterface || mockClass.Constructors?.All(m => m.Parameters.Count == 0) != false)
+		if (mockClass.IsInterface ||
+			(mockClass.Constructors?.Count > 0 &&
+			 mockClass.Constructors.Value.All(m => m.Parameters.Count == 0)))
 		{
 			sb.Append("\t\t\tObject = new MockObject(this);").AppendLine();
 		}
@@ -108,12 +113,12 @@ internal static partial class SourceGeneration
 			}
 			sb.Append("\t\t\telse").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tthrow new MockException($\"Could not find any constructor that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", constructorParameters.Parameters)}).\");").AppendLine();
+			sb.Append("\t\t\t\tthrow new MockException($\"Could not find any constructor for '").Append(mockClass.ClassName).Append("' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", constructorParameters.Parameters)}).\");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 		}
 		else
 		{
-			sb.Append("\t\t\tthrow new MockException(\"Could not find any constructor for the base type '").Append(mockClass.ClassName).Append("'.\");").AppendLine();
+			sb.Append("\t\t\tthrow new MockException(\"Could not find any constructor at all for the base type '").Append(mockClass.ClassName).Append("'. Therefore mocking is not supported!\");").AppendLine();
 		}
 		sb.AppendLine("\t\t}");
 		sb.AppendLine();
@@ -147,14 +152,16 @@ internal static partial class SourceGeneration
 		sb.AppendLine("\t\tprivate IMock _mock;");
 		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc cref=\"MockObject\" />").AppendLine();
-		if (mockClass.IsInterface || mockClass.Constructors?.All(m => m.Parameters.Count == 0) != false)
+		if (mockClass.IsInterface ||
+			(mockClass.Constructors?.Count > 0 && 
+			 mockClass.Constructors.Value.All(m => m.Parameters.Count == 0)))
 		{
 			sb.AppendLine("\t\tpublic MockObject(IMock mock)");
 			sb.AppendLine("\t\t{");
 			sb.AppendLine("\t\t\t_mock = mock;");
 			sb.AppendLine("\t\t}");
 		}
-		else
+		else if (mockClass.Constructors?.Count > 0)
 		{
 			foreach (Method constructor in mockClass.Constructors)
 			{
