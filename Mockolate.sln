@@ -1,9 +1,11 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11018.127
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9CC57AD0-4984-4618-96EA-01FFFCCD84FA}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Directory.Build.props = Tests\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{99D141BC-CCD6-4EEF-99DA-828CEF1F8928}"
 	ProjectSection(SolutionItems) = preProject
@@ -60,6 +62,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.Benchmarks", "Ben
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.SourceGenerators.Tests", "Tests\Mockolate.SourceGenerators.Tests\Mockolate.SourceGenerators.Tests.csproj", "{8440D1D6-AA09-7F54-4720-081A614D6B1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.AotCompatibility.TestApp", "Tests\Aot\Mockolate.AotCompatibility.TestApp\Mockolate.AotCompatibility.TestApp.csproj", "{D8D97888-0AE8-4558-8CAC-0C2A3E7F9B08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aot", "Aot", "{17A2EFA6-036A-4555-B74D-EDECCEA6072D}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Aot\Directory.Build.props = Tests\Aot\Directory.Build.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,6 +105,10 @@ Global
 		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8440D1D6-AA09-7F54-4720-081A614D6B1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8D97888-0AE8-4558-8CAC-0C2A3E7F9B08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8D97888-0AE8-4558-8CAC-0C2A3E7F9B08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8D97888-0AE8-4558-8CAC-0C2A3E7F9B08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8D97888-0AE8-4558-8CAC-0C2A3E7F9B08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +124,8 @@ Global
 		{AE6D610D-F141-CB0A-EBE4-EB44B2E60AE0} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
 		{9FA49695-C53C-ABE6-6C55-7FFCF09656A5} = {C9A4A9DF-72F3-404B-8616-32EB0D2A6482}
 		{8440D1D6-AA09-7F54-4720-081A614D6B1E} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
+		{D8D97888-0AE8-4558-8CAC-0C2A3E7F9B08} = {17A2EFA6-036A-4555-B74D-EDECCEA6072D}
+		{17A2EFA6-036A-4555-B74D-EDECCEA6072D} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8D05DD33-55B6-4A6D-BB7A-68C505BBA67E}

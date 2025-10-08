@@ -1,5 +1,8 @@
 using System;
 using System.Diagnostics;
+#if NET8_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Linq;
 using Mockolate.Checks;
 using Mockolate.Events;
@@ -62,7 +65,11 @@ public abstract class MockBase<T> : IMock
 	/// <summary>
 	///     Attempts to create an instance of the specified type using the provided constructor parameters.
 	/// </summary>
+#if NET8_0_OR_GREATER
+	protected TObject Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TObject>(ConstructorParameters? constructorParameters)
+#else
 	protected TObject Create<TObject>(ConstructorParameters? constructorParameters)
+#endif
 	{
 		if (constructorParameters?.Parameters.Length > 0)
 		{
