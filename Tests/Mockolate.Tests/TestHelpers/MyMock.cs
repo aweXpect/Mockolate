@@ -23,9 +23,6 @@ public class MyMock<T>(T @object, MockBehavior? behavior = null) : Mock<T>(behav
 		=> this;
 
 	public override T Object => @object;
-
-	public TObject HiddenCreate<TObject>(ConstructorParameters? constructorParameters = null)
-		=> Create<TObject>(constructorParameters);
 }
 
 public class MyMock<T, T2>(T @object = default!, MockBehavior? behavior = null)

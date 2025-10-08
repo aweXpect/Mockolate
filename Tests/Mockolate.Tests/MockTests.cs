@@ -20,40 +20,43 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithEmptyParameters_ShouldThrowMockException()
 	{
-		MyMock<MyBaseClass> mock = new(new MyBaseClass());
-
 		void Act()
-			=> _ = mock.HiddenCreate<MyBaseClass>(WithConstructorParameters());
+			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' without constructor parameters.");
+				"No parameterless constructor found for 'MockTests.MyBaseClassWithConstructor'. Please provide constructor parameters.");
 	}
 
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithoutParameters_ShouldThrowMockException()
 	{
-		MyMock<MyBaseClass> mock = new(new MyBaseClass());
-
 		void Act()
-			=> _ = mock.HiddenCreate<MyBaseClass>();
+			=> _ = Mock.Create<MyBaseClassWithConstructor>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' without constructor parameters.");
+				"No parameterless constructor found for 'MockTests.MyBaseClassWithConstructor'. Please provide constructor parameters.");
 	}
 
 	[Fact]
 	public async Task Create_WithTooManyParameters_ShouldThrowMockException()
 	{
-		MyMock<MyBaseClass> mock = new(new MyBaseClass());
-
 		void Act()
-			=> _ = mock.HiddenCreate<MyBaseClass>(WithConstructorParameters(1, 2, "foo"));
+			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Could not create an instance of 'Mockolate.Tests.MockTests+MyBaseClass' with 3 parameters (1, 2, foo).");
+				"Could not find any constructor that matches the 3 given parameters (foo, 1, 2).");
+	}
+
+	[Fact]
+	public async Task Create_WithMatchingParameters_ShouldCreateMock()
+	{
+		Mock<MyBaseClassWithConstructor> Act()
+			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
+
+		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
 	}
 
 	[Fact]

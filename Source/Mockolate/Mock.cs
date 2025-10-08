@@ -1,8 +1,5 @@
 using System;
 using System.Diagnostics;
-#if NET8_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
 using System.Linq;
 using Mockolate.Checks;
 using Mockolate.Events;
@@ -61,40 +58,6 @@ public abstract class MockBase<T> : IMock
 	///     a limitation of the C# language.
 	/// </remarks>
 	public static implicit operator T(MockBase<T> mock) => mock.Object;
-
-	/// <summary>
-	///     Attempts to create an instance of the specified type using the provided constructor parameters.
-	/// </summary>
-#if NET8_0_OR_GREATER
-	protected TObject Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TObject>(ConstructorParameters? constructorParameters)
-#else
-	protected TObject Create<TObject>(ConstructorParameters? constructorParameters)
-#endif
-	{
-		if (constructorParameters?.Parameters.Length > 0)
-		{
-			try
-			{
-				return (TObject)Activator.CreateInstance(typeof(TObject),
-					[this, .. constructorParameters.Parameters,])!;
-			}
-			catch
-			{
-				throw new MockException(
-					$"Could not create an instance of '{typeof(TObject)}' with {constructorParameters.Parameters.Length} parameters ({string.Join(", ", constructorParameters.Parameters)}).");
-			}
-		}
-
-		try
-		{
-			return (TObject)Activator.CreateInstance(typeof(TObject), this)!;
-		}
-		catch
-		{
-			throw new MockException(
-				$"Could not create an instance of '{typeof(TObject)}' without constructor parameters.");
-		}
-	}
 
 	#region IMock
 
@@ -180,6 +143,22 @@ public abstract class MockBase<T> : IMock
 	}
 
 	#endregion IMock
+
+	/// <summary>
+	///     Attempts to cast the specified value to the type parameter <typeparamref name="TValue"/>,
+	///     returning a value that indicates whether the cast was successful.
+	/// </summary>
+	protected bool TryCast<TValue>(object? value, out TValue result)
+	{
+		if (value is TValue typedValue)
+		{
+			result = typedValue;
+			return true;
+		}
+
+		result = _behavior.DefaultValueGenerator.Generate<TValue>();
+		return value is null;
+	}
 }
 
 /// <summary>
