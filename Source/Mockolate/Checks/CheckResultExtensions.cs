@@ -58,7 +58,6 @@ public static class CheckResultExtensions
 	public static bool Then<TMock>(this CheckResult<TMock> checkResult, params Func<TMock, CheckResult<TMock>>[] orderedChecks)
 	{
 		CheckResult<TMock> result = checkResult;
-		List<IInteraction> verified = [];
 		int after = -1;
 		foreach (Func<TMock, CheckResult<TMock>>? check in orderedChecks)
 		{
