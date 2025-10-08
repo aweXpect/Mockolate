@@ -1,3 +1,5 @@
+[assembly: System.Reflection.AssemblyMetadata("IsAotCompatible", "True")]
+[assembly: System.Reflection.AssemblyMetadata("IsTrimmable", "True")]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/aweXpect/Mockolate.git")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
 namespace Mockolate
@@ -30,7 +32,7 @@ namespace Mockolate
         public abstract T Object { get; }
         public Mockolate.Events.MockRaises<T> Raise { get; }
         public Mockolate.Setup.MockSetups<T> Setup { get; }
-        protected TObject Create<TObject>(Mockolate.BaseClass.ConstructorParameters? constructorParameters) { }
+        protected TObject Create<[System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicConstructors)]  TObject>(Mockolate.BaseClass.ConstructorParameters? constructorParameters) { }
         public static T op_Implicit(Mockolate.MockBase<T> mock) { }
     }
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
