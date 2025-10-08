@@ -58,7 +58,7 @@ public abstract class MockMonitor
 		{
 			foreach (IInteraction? invocation in _monitoredInvocations.Interactions.Skip(_monitoringStart))
 			{
-				Interactions.RegisterInteraction(invocation);
+				((IMockInteractions)Interactions).RegisterInteraction(invocation);
 			}
 		}
 
