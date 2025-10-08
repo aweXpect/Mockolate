@@ -79,7 +79,7 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassName).Append("\" />")
+			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockSetups<").Append(@class.ClassName).Append("> Setup").Append(@class.ClassName.Replace('.', '_'))
@@ -89,7 +89,7 @@ internal static partial class SourceGeneration
 			{
 				sb.AppendLine();
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Raise events on the mock for <see cref=\"").Append(@class.ClassName)
+				sb.Append("\t\t///     Raise events on the mock for <see cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}'))
 					.Append("\" />").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic MockRaises<").Append(@class.ClassName).Append("> RaiseOn")
@@ -101,7 +101,7 @@ internal static partial class SourceGeneration
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Check which methods got invoked on the mocked instance for <see cref=\"")
-				.Append(@class.ClassName).Append("\" />").AppendLine();
+				.Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockInvoked<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
 				.Append(">> InvokedOn").Append(@class.ClassName.Replace('.', '_'))
@@ -111,7 +111,7 @@ internal static partial class SourceGeneration
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Check which properties were accessed on the mocked instance for <see cref=\"")
-				.Append(@class.ClassName).Append("\" />").AppendLine();
+				.Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockAccessed<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
 				.Append(">> AccessedOn").Append(@class.ClassName.Replace('.', '_')).AppendLine();
@@ -121,7 +121,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t\t///     Check which events were subscribed or unsubscribed on the mocked instance for <see cref=\"")
-				.Append(@class.ClassName).Append("\" />").AppendLine();
+				.Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses)
 				.Append(">> EventOn").Append(@class.ClassName.Replace('.', '_')).AppendLine();
@@ -129,7 +129,7 @@ internal static partial class SourceGeneration
 				.Append(">>.Proxy(mock.Event, ((IMock)mock).Interactions, mock);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Exposes the mocked object instance of type <see cref=\"").Append(@class.ClassName)
+			sb.Append("\t\t///     Exposes the mocked object instance of type <see cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}'))
 				.Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic ").Append(@class.ClassName).Append(" ObjectFor").Append(@class.ClassName.Replace('.','_'))
@@ -399,8 +399,8 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"").Append(@class.ClassName)
-				.Append(".").Append(method.Name).Append("(")
+			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}'))
+				.Append(".").Append(method.Name.Replace('<', '{').Replace('>', '}')).Append("(")
 				.Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
 				.Append(")\"/> with the given ")
@@ -480,8 +480,8 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(@class.ClassName)
-				.Append(".").Append(property.Name).Append("\"/>.").AppendLine();
+			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}'))
+				.Append(".").Append(property.Name.Replace('<', '{').Replace('>', '}')).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic CheckResult.Property<Mock<").Append(allClasses).Append(">, ")
 				.Append(property.Type.GetMinimizedString(namespaces))
@@ -522,7 +522,7 @@ internal static partial class SourceGeneration
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Validates the subscriptions or unsubscription for the event <see cref=\"")
-				.Append(@class.ClassName).Append(".").Append(@event.Name).Append("\"/>.").AppendLine();
+				.Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append(".").Append(@event.Name.Replace('<', '{').Replace('>', '}')).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic CheckResult.Event<Mock<").Append(allClasses).Append(">, ")
 				.Append(@event.Type.GetMinimizedString(namespaces)).Append("> ")

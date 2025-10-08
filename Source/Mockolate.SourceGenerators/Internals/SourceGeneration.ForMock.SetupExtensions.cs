@@ -81,7 +81,8 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.ClassName).Append(".").Append(@event.Name)
+			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}'))
+				.Append(".").Append(@event.Name.Replace('<', '{').Replace('>', '}'))
 				.Append("\"/> event.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(").Append(string.Join(", ",
@@ -131,8 +132,8 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Setup for the property <see cref=\"").Append(@class.ClassName).Append(".")
-				.Append(property.Name).Append("\"/>.").AppendLine();
+			sb.Append("\t\t///     Setup for the property <see cref=\"").Append(@class.ClassName.Replace('<','{').Replace('>', '}')).Append(".")
+				.Append(property.Name.Replace('<', '{').Replace('>', '}')).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic PropertySetup<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ")
 				.Append(property.IndexerParameter is not null
@@ -164,8 +165,8 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Setup for the method <see cref=\"").Append(@class.ClassName).Append(".")
-				.Append(method.Name).Append("(")
+			sb.Append("\t\t///     Setup for the method <see cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append(".")
+				.Append(method.Name.Replace('<', '{').Replace('>', '}')).Append("(")
 				.Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
 				.Append(")\"/> with the given ")

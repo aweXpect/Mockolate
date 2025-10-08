@@ -52,10 +52,10 @@ internal static partial class SourceGeneration
 	private static void AppendMock(StringBuilder sb, MockClass mockClass, string[] namespaces)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.ClassName).Append("\" />");
+		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />");
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
-			sb.Append(" and <see cref=\"").Append(additional.ClassName).Append("\" />");
+			sb.Append(" and <see cref=\"").Append(additional.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />");
 		}
 
 		sb.AppendLine(".");
@@ -131,11 +131,11 @@ internal static partial class SourceGeneration
 	private static void AppendMockObject(StringBuilder sb, MockClass mockClass, string[] namespaces)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The actual mock object implementing <see cref=\"").Append(mockClass.ClassName)
+		sb.Append("\t///     The actual mock object implementing <see cref=\"").Append(mockClass.ClassName.Replace('<', '{').Replace('>', '}'))
 			.Append("\" />");
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
-			sb.Append(" and <see cref=\"").Append(additional.ClassName).Append("\" />");
+			sb.Append(" and <see cref=\"").Append(additional.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />");
 		}
 
 		sb.AppendLine(".");
