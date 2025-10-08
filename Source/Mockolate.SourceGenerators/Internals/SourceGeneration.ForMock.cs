@@ -1,5 +1,4 @@
 using System.Text;
-using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
 using Type = Mockolate.SourceGenerators.Entities.Type;
