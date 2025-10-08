@@ -126,17 +126,12 @@ public static class With
 			/// <inheritdoc cref="object.ToString()" />
 			public override string? ToString()
 			{
-				if (_value is null)
-				{
-					return "null";
-				}
-
 				if (_value is string stringValue)
 				{
 					return $"\"{stringValue.Replace("\"", "\\\"")}\"";
 				}
 
-				return _value.ToString();
+				return _value?.ToString();
 			}
 		}
 	}

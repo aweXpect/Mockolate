@@ -16,24 +16,22 @@ public sealed class WithTests
 		await That(result).IsEqualTo(expectMatch);
 	}
 
-	[Theory]
-	[InlineData(null, 1)]
-	[InlineData(1, 0)]
-	public async Task ToString_Implicit2_WithNull_ShouldReturnExpectedValue(int? value, int expectedCount)
-	{
-		Mock<IMyServiceWithNullable> mock = Mock.Create<IMyServiceWithNullable>();
-		mock.Setup.DoSomething(null, true);
-
-		mock.Object.DoSomething(value, true);
-
-		await That(mock.Invoked.DoSomething(null, true)).Exactly(expectedCount);
-	}
-
 	[Fact]
 	public async Task ToString_WithAny_ShouldReturnExpectedValue()
 	{
 		With.Parameter<string> sut = With.Any<string>();
 		string expectedValue = "With.Any<string>()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithNull_ShouldReturnExpectedValue()
+	{
+		With.Parameter<string> sut = With.Null<string>();
+		string expectedValue = "With.Null<string>()";
 
 		string? result = sut.ToString();
 
@@ -142,6 +140,19 @@ public sealed class WithTests
 		bool result = sut.Matches("foo");
 
 		await That(result).IsEqualTo(predicateValue);
+	}
+
+	[Theory]
+	[InlineData(null, 1)]
+	[InlineData(1, 0)]
+	public async Task WithNull_ShouldMatchWhenNull(int? value, int expectedCount)
+	{
+		Mock<IMyServiceWithNullable> mock = Mock.Create<IMyServiceWithNullable>();
+		mock.Setup.DoSomething(null, true);
+
+		mock.Object.DoSomething(value, true);
+
+		await That(mock.Invoked.DoSomething(null, true)).Exactly(expectedCount);
 	}
 
 	[Theory]
