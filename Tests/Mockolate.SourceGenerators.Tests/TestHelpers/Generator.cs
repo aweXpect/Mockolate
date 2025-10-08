@@ -60,14 +60,14 @@ public static class Generator
 		return result;
 	}
 
-	public static List<PortableExecutableReference> GetReferences(Type[] types) =>
+	private static List<PortableExecutableReference> GetReferences(Type[] types) =>
 		AppDomain.CurrentDomain.GetAssemblies()
 			.Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
 			.Select(x => MetadataReference.CreateFromFile(x.Location))
 			.Concat([
-                MetadataReference.CreateFromFile(typeof(MockBehavior).Assembly.Location),
+				MetadataReference.CreateFromFile(typeof(MockBehavior).Assembly.Location),
 				..types.Select(t => MetadataReference.CreateFromFile(t.Assembly.Location)),
 			])
-		.Distinct()
+			.Distinct()
 			.ToList();
 }
