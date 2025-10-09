@@ -146,7 +146,7 @@ public abstract class MockBase<T> : IMock
 		MockInteractions? interactions = ((IMock)this).Interactions;
 		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new IndexerGetterAccess(interactions.GetNextIndex(), parameters));
-		IndexerSetup matchingSetup = Setup.GetIndexerSetup(parameters);
+		PropertySetup matchingSetup = Setup.GetIndexerSetup(parameters);
 		return matchingSetup.InvokeGetter<TResult>(interaction);
 	}
 
@@ -156,7 +156,7 @@ public abstract class MockBase<T> : IMock
 		MockInteractions interactions = ((IMock)this).Interactions;
 		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new IndexerSetterAccess(interactions.GetNextIndex(), parameters, value));
-		IndexerSetup matchingSetup = Setup.GetIndexerSetup(parameters);
+		PropertySetup matchingSetup = Setup.GetIndexerSetup(parameters);
 		matchingSetup.InvokeSetter(interaction, value);
 	}
 

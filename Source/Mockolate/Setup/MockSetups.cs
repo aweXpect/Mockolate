@@ -61,16 +61,16 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	///     If the specified property name does not have an associated setup, a default configuration is
 	///     created and stored for future retrievals, so that getter and setter work in tandem.
 	/// </remarks>
-	internal IndexerSetup GetIndexerSetup(object?[] parameters)
+	internal PropertySetup GetIndexerSetup(object?[] parameters)
 	{
-		if (!_indexerSetups.TryGetValue(parameters, out IndexerSetup? matchingSetup))
+		if (!_indexerSetups.TryGetValue(parameters, out PropertySetup? matchingSetup))
 		{
 			if (mock.Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException($"The indexer [{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}] was accessed without prior setup.");
 			}
 
-			matchingSetup = new IndexerSetup.Default();
+			matchingSetup = new PropertySetup.Default();
 			_indexerSetups.TryAdd(parameters, matchingSetup);
 		}
 
@@ -306,7 +306,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	{
 		private Storage? _storage;
 
-		public bool TryAdd(object?[] parameters, IndexerSetup setup)
+		public bool TryAdd(object?[] parameters, PropertySetup setup)
 		{
 			_storage ??= new Storage();
 			var storage = _storage;
@@ -324,7 +324,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			return false;
 		}
 
-		public bool TryGetValue(object?[] parameters, [NotNullWhen(true)] out IndexerSetup? setup)
+		public bool TryGetValue(object?[] parameters, [NotNullWhen(true)] out PropertySetup? setup)
 		{
 			_storage ??= new Storage();
 			var storage = _storage;
@@ -365,9 +365,9 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			/// <summary>
 			///     The value, if the storage is a leaf node.
 			/// </summary>
-			public IndexerSetup? Value { get; set; }
+			public PropertySetup? Value { get; set; }
 
-			public IEnumerable<(string Path, IndexerSetup Setup)> GetSetups()
+			public IEnumerable<(string Path, PropertySetup Setup)> GetSetups()
 			{
 				foreach (var (path, setup) in GetSetups(""))
 				{
@@ -375,7 +375,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 				}
 			}
 
-			private IEnumerable<(string, IndexerSetup)> GetSetups(string prefix)
+			private IEnumerable<(string, PropertySetup)> GetSetups(string prefix)
 			{
 				if (Value is not null)
 				{

@@ -15,7 +15,7 @@ public class IndexerSetterAccess(int index, object?[] parameters, object? value)
 	public object?[] Parameters { get; } = parameters;
 
 	/// <summary>
-	///     The value the property was being set to.
+	///     The value the indexer was being set to.
 	/// </summary>
 	public object? Value { get; } = value;
 

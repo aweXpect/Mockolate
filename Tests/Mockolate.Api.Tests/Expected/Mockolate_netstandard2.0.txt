@@ -442,24 +442,6 @@ namespace Mockolate.Setup
         void RegisterProperty(string propertyName, Mockolate.Setup.PropertySetup propertySetup);
         void RemoveEvent(string eventName, object? target, System.Reflection.MethodInfo method);
     }
-    public abstract class IndexerSetup
-    {
-        protected IndexerSetup() { }
-        public int GetterInvocationCount { get; }
-        public int SetterInvocationCount { get; }
-        protected abstract TResult InvokeGetter<TResult>();
-        protected abstract void InvokeSetter(object? value);
-    }
-    public class IndexerSetup<T> : Mockolate.Setup.IndexerSetup
-    {
-        public IndexerSetup() { }
-        public Mockolate.Setup.IndexerSetup<T> InitializeWith(T value) { }
-        protected override TResult InvokeGetter<TResult>() { }
-        protected override void InvokeSetter(object? value) { }
-        public Mockolate.Setup.IndexerSetup<T> OnGet(System.Action callback) { }
-        public Mockolate.Setup.IndexerSetup<T> OnSet(System.Action<T> callback) { }
-        public override string ToString() { }
-    }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
     {
         protected MethodSetup() { }
