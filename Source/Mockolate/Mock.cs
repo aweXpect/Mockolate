@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.Linq;
 using Mockolate.Checks;
@@ -6,7 +5,6 @@ using Mockolate.Events;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
-using static Mockolate.BaseClass;
 
 namespace Mockolate;
 

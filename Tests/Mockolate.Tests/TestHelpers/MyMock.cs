@@ -1,7 +1,6 @@
 using Mockolate.Checks;
 using Mockolate.Events;
 using Mockolate.Setup;
-using static Mockolate.BaseClass;
 
 namespace Mockolate.Tests.TestHelpers;
 

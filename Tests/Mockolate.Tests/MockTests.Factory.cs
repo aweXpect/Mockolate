@@ -1,6 +1,4 @@
-using Mockolate.Exceptions;
 using Mockolate.Tests.TestHelpers;
-using static Mockolate.BaseClass;
 
 namespace Mockolate.Tests;
 

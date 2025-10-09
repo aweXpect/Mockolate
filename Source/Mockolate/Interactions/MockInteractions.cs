@@ -19,24 +19,28 @@ public class MockInteractions : IMockInteractions
 	/// <summary>
 	///     The number of interactions contained in the collection.
 	/// </summary>
-	public int Count => _interactions.Count;
+	public int Count
+		=> _interactions.Count;
 
 	/// <summary>
 	///     Gets a value indicating whether there are any missing verifications for the current context.
 	/// </summary>
-	internal bool HasMissingVerifications => _missingVerification is null
-		? !_interactions.IsEmpty
-		: _missingVerification.Count > 0;
+	internal bool HasMissingVerifications
+		=> _missingVerification is null
+			? !_interactions.IsEmpty
+			: _missingVerification.Count > 0;
 
 	/// <summary>
 	///     The registered interactions of the mock.
 	/// </summary>
-	public IEnumerable<IInteraction> Interactions => _interactions.Values.OrderBy(x => x.Index);
+	public IEnumerable<IInteraction> Interactions
+		=> _interactions.Values.OrderBy(x => x.Index);
 
 	/// <summary>
 	///     Gets the next index for an interaction.
 	/// </summary>
-	public int GetNextIndex() => Interlocked.Increment(ref _index);
+	public int GetNextIndex()
+		=> Interlocked.Increment(ref _index);
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction(IInteraction)" />
 	IInteraction IMockInteractions.RegisterInteraction(IInteraction interaction)

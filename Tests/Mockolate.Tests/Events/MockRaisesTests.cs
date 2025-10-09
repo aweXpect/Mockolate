@@ -4,7 +4,7 @@ using Mockolate.Exceptions;
 
 namespace Mockolate.Tests.Events;
 
-public sealed class MockRaisesTests
+public sealed partial class MockRaisesTests
 {
 	[Fact]
 	public async Task AddEvent_WithoutMethod_ShouldThrowMockException()
