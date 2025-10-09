@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 
@@ -17,16 +18,16 @@ public static class With
 		=> new AnyParameter<T>();
 
 	/// <summary>
-	///     Matches any parameter that is <see langword="null" />.
-	/// </summary>
-	public static Parameter<T> Null<T>()
-		=> new NullParameter<T>();
-
-	/// <summary>
 	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
 	/// </summary>
 	public static Parameter<T> Matching<T>(Func<T, bool> predicate, [CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
 		=> new PredicateParameter<T>(predicate, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches any parameter that is <see langword="null" />.
+	/// </summary>
+	public static Parameter<T> Null<T>()
+		=> new NullParameter<T>();
 
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
@@ -63,6 +64,20 @@ public static class With
 	/// </summary>
 	public static InvokedRefParameter<T> Ref<T>()
 		=> new();
+
+	/// <summary>
+	///     Matches a parameter that is equal to <paramref name="value"/>.
+	/// </summary>
+	public static Parameter<T> Value<T>(T value, [CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
+		=> new ParameterEquals<T>(value, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches a parameter that is equal to <paramref name="value"/> according to the <paramref name="comparer"/>.
+	/// </summary>
+	public static Parameter<T> Value<T>(T value, IEqualityComparer<T> comparer,
+		[CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression(nameof(comparer))] string doNotPopulateThisValue2 = "")
+		=> new ParameterEquals<T>(value, doNotPopulateThisValue1, comparer, doNotPopulateThisValue2);
 
 	/// <summary>
 	///     Matches a method parameter against an expectation.
@@ -110,29 +125,16 @@ public static class With
 		///     Implicitly converts to a <see cref="Parameter{T}" /> that compares the <paramref name="value" /> for equality.
 		/// </summary>
 		public static implicit operator Parameter<T>(T value)
-			=> new ParameterEquals(value);
+			=> new ParameterEquals<T>(value, GetValueExpression(value));
 
-		private sealed class ParameterEquals : Parameter<T>
+		private static string GetValueExpression(T value)
 		{
-			private readonly T _value;
-
-			public ParameterEquals(T value)
+			if (value is string stringValue)
 			{
-				_value = value;
+				return $"\"{stringValue.Replace("\"", "\\\"")}\"";
 			}
 
-			protected override bool Matches(T value) => Equals(value, _value);
-
-			/// <inheritdoc cref="object.ToString()" />
-			public override string? ToString()
-			{
-				if (_value is string stringValue)
-				{
-					return $"\"{stringValue.Replace("\"", "\\\"")}\"";
-				}
-
-				return _value?.ToString() ?? "null";
-			}
+			return value?.ToString() ?? "null";
 		}
 	}
 
@@ -259,6 +261,43 @@ public static class With
 		public override string ToString()
 		{
 			return $"With.Null<{typeof(T).FormatType()}>()";
+		}
+	}
+
+	private sealed class ParameterEquals<T> : Parameter<T>
+	{
+		private readonly T _value;
+		private readonly string _valueExpression;
+		private readonly IEqualityComparer<T>? _comparer;
+		private readonly string? _comparerExpression;
+
+		public ParameterEquals(T value, string valueExpression, IEqualityComparer<T>? comparer = null, string? comparerExpression = null)
+		{
+			_value = value;
+			_valueExpression = valueExpression;
+			_comparer = comparer;
+			_comparerExpression = comparerExpression;
+		}
+
+		protected override bool Matches(T value)
+		{
+			if (_comparer is not null)
+			{
+				return _comparer.Equals(value, _value);
+			}
+
+			return EqualityComparer<T>.Default.Equals(value, _value);
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string? ToString()
+		{
+			if (_comparer is not null)
+			{
+				return $"With.Value({_valueExpression}, {_comparerExpression})";
+			}
+
+			return _valueExpression;
 		}
 	}
 

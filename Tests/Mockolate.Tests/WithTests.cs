@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Mockolate.Tests;
 
 public sealed class WithTests
@@ -10,6 +12,19 @@ public sealed class WithTests
 	public async Task ImplicitConversion_ShouldCheckForEquality(string? value, bool expectMatch)
 	{
 		With.Parameter<string> sut = "foo";
+
+		bool result = sut.Matches(value);
+
+		await That(result).IsEqualTo(expectMatch);
+	}
+
+	[Theory]
+	[InlineData(null, true)]
+	[InlineData("", false)]
+	[InlineData("foo", false)]
+	public async Task ImplicitConversionFromNull_ShouldCheckForEquality(string? value, bool expectMatch)
+	{
+		With.Parameter<string?> sut = (string?)null;
 
 		bool result = sut.Matches(value);
 
@@ -121,6 +136,28 @@ public sealed class WithTests
 	{
 		With.RefParameter<int?> sut = With.Ref<int?>(v => v > 3, v => v * 3);
 		string expectedValue = "With.Ref<int?>(v => v > 3, v => v * 3)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithValue_ShouldReturnExpectedValue()
+	{
+		With.Parameter<string> sut = With.Value("foo");
+		string expectedValue = "\"foo\"";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithValueWithComparer_ShouldReturnExpectedValue()
+	{
+		With.Parameter<int> sut = With.Value(4, new AllEqualComparer());
+		string expectedValue = "With.Value(4, new AllEqualComparer())";
 
 		string? result = sut.ToString();
 
@@ -273,8 +310,55 @@ public sealed class WithTests
 		await That(result).IsEqualTo(2 * value);
 	}
 
+	[Theory]
+	[InlineData(1, false)]
+	[InlineData(5, true)]
+	[InlineData(-5, false)]
+	[InlineData(42, false)]
+	public async Task WithValue_ShouldMatchWhenEqual(int value, bool expectMatch)
+	{
+		With.Parameter<int> sut = With.Value(5);
+
+		bool result = sut.Matches(value);
+
+		await That(result).IsEqualTo(expectMatch);
+	}
+
+	[Theory]
+	[InlineData(null, true)]
+	[InlineData("", false)]
+	[InlineData("foo", false)]
+	public async Task WithValue_Nullable_ShouldMatchWhenEqual(string? value, bool expectMatch)
+	{
+		With.Parameter<string?> sut = With.Value<string?>(null);
+
+		bool result = sut.Matches(value);
+
+		await That(result).IsEqualTo(expectMatch);
+	}
+
+	[Theory]
+	[InlineData(1)]
+	[InlineData(5)]
+	[InlineData(-42)]
+	public async Task WithValue_WithComparer_ShouldUseComparer(int value)
+	{
+		With.Parameter<int> sut = With.Value(5, new AllEqualComparer());
+
+		bool result = sut.Matches(value);
+
+		await That(result).IsTrue();
+	}
+
 	internal interface IMyServiceWithNullable
 	{
 		void DoSomething(int? value, bool flag);
+	}
+
+	internal class AllEqualComparer : IEqualityComparer<int>
+	{
+		bool IEqualityComparer<int>.Equals(int x, int y) => true;
+
+		int IEqualityComparer<int>.GetHashCode(int obj) => obj.GetHashCode();
 	}
 }
