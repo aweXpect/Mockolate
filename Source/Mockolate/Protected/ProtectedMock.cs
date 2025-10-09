@@ -88,5 +88,13 @@ public class ProtectedMock<T, TMock>(IMock inner, MockInteractions interactions,
 	TResult IMock.Get<TResult>(string propertyName)
 		=> _inner.Get<TResult>(propertyName);
 
+	/// <inheritdoc cref="IMock.GetIndexer{TResult}(object?[])" />
+	public TResult GetIndexer<TResult>(params object?[] parameters)
+		=> _inner.GetIndexer<TResult>(parameters);
+
+	/// <inheritdoc cref="IMock.SetIndexer{TResult}(TResult, object?[])" />
+	public void SetIndexer<TResult>(TResult value, params object?[] parameters)
+		=> _inner.SetIndexer<TResult>(value, parameters);
+
 	#endregion IMock
 }

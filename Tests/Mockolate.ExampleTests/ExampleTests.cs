@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -11,6 +13,7 @@ public class ExampleTests
 	[Fact]
 	public async Task BaseClassWithConstructorParameters()
 	{
+		_ = Mock.Create<IList<int>>();
 		Guid id = Guid.NewGuid();
 		Mock<MyClass> mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
 
