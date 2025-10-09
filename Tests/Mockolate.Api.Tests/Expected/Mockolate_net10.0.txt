@@ -150,6 +150,8 @@ namespace Mockolate
         public static Mockolate.With.InvokedRefParameter<T> Ref<T>() { }
         public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.With.Parameter<T> Value<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.With.Parameter<T> Value<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
         public class InvokedOutParameter<T> : Mockolate.With.Parameter
         {
             public InvokedOutParameter() { }
