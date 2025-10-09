@@ -1,4 +1,3 @@
-using Mockolate.Checks;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Tests;
@@ -18,7 +17,7 @@ public sealed partial class MockTests
 			sut.Object.Multiply(i, 4);
 		}
 
-		await That(sut.Invoked.Multiply(With.Any<int>(), With.Any<int?>()).Exactly(numberOfInvocations));
+		await That(sut.Invoked.Multiply(With.Any<int>(), With.Any<int?>())).Exactly(numberOfInvocations);
 	}
 
 	[Theory]
@@ -34,7 +33,7 @@ public sealed partial class MockTests
 			sut.Object.SetIsValid(i % 2 == 0, () => true);
 		}
 
-		await That(sut.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>()).Exactly(numberOfInvocations));
+		await That(sut.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>())).Exactly(numberOfInvocations);
 	}
 
 	[Theory]

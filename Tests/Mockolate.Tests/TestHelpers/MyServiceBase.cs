@@ -2,8 +2,5 @@
 
 internal class MyServiceBase
 {
-	public virtual void DoSomething(int value, bool flag)
-	{
-		throw new NotImplementedException();
-	}
+	public virtual void DoSomething(int value, bool flag) => throw new NotImplementedException();
 }

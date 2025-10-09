@@ -26,7 +26,6 @@ public abstract class IndexerSetup : IIndexerSetup
 	/// </summary>
 	int IIndexerSetup.GetterInvocationCount => _getterInvocationCount;
 
-
 	/// <inheritdoc cref="IIndexerSetup.Matches(IInteraction)" />
 	bool IIndexerSetup.Matches(IInteraction invocation)
 		=> invocation is IndexerGetterAccess getterAccess && IsMatch(getterAccess.Parameters) ||
@@ -113,7 +112,7 @@ public abstract class IndexerSetup : IIndexerSetup
 public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 {
 	private readonly List<Action<T1>> _getterCallbacks = [];
-	private readonly List<Action<T1, TValue>> _setterCallbacks = [];
+	private readonly List<Action<TValue, T1>> _setterCallbacks = [];
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -136,16 +135,25 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	public IndexerSetup<TValue, T1> OnSet(Action<TValue> callback)
+	public IndexerSetup<TValue, T1> OnSet(Action callback)
 	{
-		_setterCallbacks.Add((_, v) => callback(v));
+		_setterCallbacks.Add((_, _) => callback());
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	public IndexerSetup<TValue, T1> OnSet(Action<T1, TValue> callback)
+	public IndexerSetup<TValue, T1> OnSet(Action<TValue> callback)
+	{
+		_setterCallbacks.Add((v, _) => callback(v));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1> OnSet(Action<TValue, T1> callback)
 	{
 		_setterCallbacks.Add(callback);
 		return this;
@@ -168,7 +176,7 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 			indexerSetterAccess.Parameters.Length == 1 &&
 			TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke(p1, resultValue));
+			_setterCallbacks.ForEach(callback => callback.Invoke(resultValue, p1));
 		}
 	}
 
@@ -183,7 +191,7 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> match2) : IndexerSetup
 {
 	private readonly List<Action<T1, T2>> _getterCallbacks = [];
-	private readonly List<Action<T1, T2, TValue>> _setterCallbacks = [];
+	private readonly List<Action<TValue, T1, T2>> _setterCallbacks = [];
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -195,11 +203,38 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 	}
 
 	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> OnGet(Action<T1, T2> callback)
+	{
+		_getterCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> OnSet(Action callback)
+	{
+		_setterCallbacks.Add((_, _, _) => callback());
+		return this;
+	}
+
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	public IndexerSetup<TValue, T1, T2> OnSet(Action<TValue> callback)
 	{
-		_setterCallbacks.Add((_, _, v) => callback(v));
+		_setterCallbacks.Add((v, _, _) => callback(v));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> OnSet(Action<TValue, T1, T2> callback)
+	{
+		_setterCallbacks.Add(callback);
 		return this;
 	}
 
@@ -222,7 +257,7 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 			TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
 			TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke(p1, p2, resultValue));
+			_setterCallbacks.ForEach(callback => callback.Invoke(resultValue, p1, p2));
 		}
 	}
 
@@ -237,7 +272,7 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Parameter<T2> match2, With.Parameter<T3> match3) : IndexerSetup
 {
 	private readonly List<Action<T1, T2, T3>> _getterCallbacks = [];
-	private readonly List<Action<T1, T2, T3, TValue>> _setterCallbacks = [];
+	private readonly List<Action<TValue, T1, T2, T3>> _setterCallbacks = [];
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -249,11 +284,38 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 	}
 
 	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> OnGet(Action<T1, T2, T3> callback)
+	{
+		_getterCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> OnSet(Action callback)
+	{
+		_setterCallbacks.Add((_, _, _, _) => callback());
+		return this;
+	}
+
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	public IndexerSetup<TValue, T1, T2, T3> OnSet(Action<TValue> callback)
 	{
-		_setterCallbacks.Add((_, _, _, v) => callback(v));
+		_setterCallbacks.Add((v, _, _, _) => callback(v));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> OnSet(Action<TValue, T1, T2, T3> callback)
+	{
+		_setterCallbacks.Add(callback);
 		return this;
 	}
 
@@ -278,7 +340,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 			TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior) &&
 			TryCast(indexerSetterAccess.Parameters[2], out T3 p3, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke(p1, p2, p3, resultValue));
+			_setterCallbacks.ForEach(callback => callback.Invoke(resultValue, p1, p2, p3));
 		}
 	}
 

@@ -1,4 +1,3 @@
-using Mockolate.Checks;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Tests;
@@ -12,8 +11,8 @@ public sealed partial class MockTests
 
 		_ = sut.Object.Counter;
 
-		await That(sut.Accessed.Counter.Getter().Once());
-		await That(sut.Accessed.Counter.Setter(With.Any<int>()).Never());
+		await That(sut.Accessed.Counter.Getter()).Once();
+		await That(sut.Accessed.Counter.Setter(With.Any<int>())).Never();
 	}
 
 	[Fact]
@@ -53,8 +52,8 @@ public sealed partial class MockTests
 
 		sut.Object.Counter = 42;
 
-		await That(sut.Accessed.Counter.Getter().Never());
-		await That(sut.Accessed.Counter.Setter(With.Any<int>()).Once());
+		await That(sut.Accessed.Counter.Getter()).Never();
+		await That(sut.Accessed.Counter.Setter(With.Any<int>())).Once();
 	}
 
 	[Theory]
