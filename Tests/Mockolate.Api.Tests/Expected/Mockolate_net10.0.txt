@@ -22,7 +22,9 @@ namespace Mockolate
         Mockolate.Setup.MethodSetupResult Execute(string methodName, params object?[]? parameters);
         Mockolate.Setup.MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[]? parameters);
         TResult Get<TResult>(string propertyName);
+        TResult GetIndexer<TResult>(params object?[] parameters);
         void Set(string propertyName, object? value);
+        void SetIndexer<TResult>(TResult value, params object?[] parameters);
     }
     [System.Diagnostics.DebuggerDisplay("Setup: {Setup}, {_interactions.Count} interactions")]
     public abstract class MockBase<T> : Mockolate.IMock
@@ -351,6 +353,23 @@ namespace Mockolate.Interactions
         Mockolate.Interactions.IInteraction RegisterInteraction(Mockolate.Interactions.IInteraction interaction);
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
+    public class IndexerGetterAccess : Mockolate.Interactions.IInteraction
+    {
+        public IndexerGetterAccess(int index, object?[] parameters) { }
+        public int Index { get; }
+        public object?[] Parameters { get; }
+        public override string ToString() { }
+    }
+    [System.Diagnostics.DebuggerDisplay("{ToString()}")]
+    public class IndexerSetterAccess : Mockolate.Interactions.IInteraction
+    {
+        public IndexerSetterAccess(int index, object?[] parameters, object? value) { }
+        public int Index { get; }
+        public object?[] Parameters { get; }
+        public object? Value { get; }
+        public override string ToString() { }
+    }
+    [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation : Mockolate.Interactions.IInteraction
     {
         public MethodInvocation(int index, string name, object?[] parameters) { }
@@ -417,6 +436,8 @@ namespace Mockolate.Protected
         public Mockolate.Checks.MockInvoked<T, Mockolate.Mock<T>>.Protected Invoked { get; }
         public Mockolate.Events.MockRaises<T>.Protected Raise { get; }
         public Mockolate.Setup.MockSetups<T>.Protected Setup { get; }
+        public TResult GetIndexer<TResult>(params object?[] parameters) { }
+        public void SetIndexer<TResult>(TResult value, params object?[] parameters) { }
     }
 }
 namespace Mockolate.Setup
@@ -436,6 +457,24 @@ namespace Mockolate.Setup
         void RegisterMethod(Mockolate.Setup.MethodSetup methodSetup);
         void RegisterProperty(string propertyName, Mockolate.Setup.PropertySetup propertySetup);
         void RemoveEvent(string eventName, object? target, System.Reflection.MethodInfo method);
+    }
+    public abstract class IndexerSetup
+    {
+        protected IndexerSetup() { }
+        public int GetterInvocationCount { get; }
+        public int SetterInvocationCount { get; }
+        protected abstract TResult InvokeGetter<TResult>();
+        protected abstract void InvokeSetter(object? value);
+    }
+    public class IndexerSetup<T> : Mockolate.Setup.IndexerSetup
+    {
+        public IndexerSetup() { }
+        public Mockolate.Setup.IndexerSetup<T> InitializeWith(T value) { }
+        protected override TResult InvokeGetter<TResult>() { }
+        protected override void InvokeSetter(object? value) { }
+        public Mockolate.Setup.IndexerSetup<T> OnGet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<T> OnSet(System.Action<T> callback) { }
+        public override string ToString() { }
     }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
     {

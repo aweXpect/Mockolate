@@ -51,4 +51,14 @@ public interface IMock
 	///     <paramref name="value" />.
 	/// </summary>
 	void Set(string propertyName, object? value);
+
+	/// <summary>
+	///     Gets the value from the indexer with the given parameters.
+	/// </summary>
+	TResult GetIndexer<TResult>(params object?[] parameters);
+
+	/// <summary>
+	///     Sets the value of the indexer with the given parameters.
+	/// </summary>
+	void SetIndexer<TResult>(TResult value, params object?[] parameters);
 }

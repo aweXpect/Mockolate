@@ -136,9 +136,9 @@ internal static partial class SourceGeneration
 				.Append(property.Name.Replace('<', '{').Replace('>', '}')).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic PropertySetup<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ")
-				.Append(property.IndexerParameter is not null
+				.Append(property.IndexerParameters is not null
 					? property.Name.Replace("[]",
-						$"[With.Parameter<{property.IndexerParameter.Value.Type.GetMinimizedString(namespaces)}> {property.IndexerParameter.Value.Name}]")
+						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}> {p.Name}"))}]")
 					: property.Name).AppendLine();
 
 			sb.AppendLine("\t\t{");

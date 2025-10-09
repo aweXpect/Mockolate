@@ -81,10 +81,10 @@ public abstract class MockBase<T> : IMock
 	{
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
-		IInteraction invocation =
+		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(), methodName, parameters));
 
-		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
+		MethodSetup? matchingSetup = Setup.GetMethodSetup(interaction);
 		if (matchingSetup is null)
 		{
 			if (_behavior.ThrowWhenNotSetup)
@@ -98,7 +98,7 @@ public abstract class MockBase<T> : IMock
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, _behavior,
-			matchingSetup.Invoke<TResult>(invocation, _behavior));
+			matchingSetup.Invoke<TResult>(interaction, _behavior));
 	}
 
 	/// <inheritdoc cref="IMock.Execute(string, object?[])" />
@@ -106,38 +106,58 @@ public abstract class MockBase<T> : IMock
 	{
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
-		IInteraction invocation =
+		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(), methodName, parameters));
 
-		MethodSetup? matchingSetup = Setup.GetMethodSetup(invocation);
+		MethodSetup? matchingSetup = Setup.GetMethodSetup(interaction);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
 				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().ToString() ?? "<null>"))})' was invoked without prior setup.");
 		}
 
-		matchingSetup?.Invoke(invocation, _behavior);
+		matchingSetup?.Invoke(interaction, _behavior);
 		return new MethodSetupResult(matchingSetup, _behavior);
-	}
-
-	/// <inheritdoc cref="IMock.Set(string, object?)" />
-	void IMock.Set(string propertyName, object? value)
-	{
-		MockInteractions interactions = ((IMock)this).Interactions;
-		IInteraction invocation =
-			((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(), propertyName, value));
-		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
-		matchingSetup.InvokeSetter(invocation, value);
 	}
 
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
 	TResult IMock.Get<TResult>(string propertyName)
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
-		IInteraction invocation =
+		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new PropertyGetterAccess(interactions.GetNextIndex(), propertyName));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
-		return matchingSetup.InvokeGetter<TResult>(invocation);
+		return matchingSetup.InvokeGetter<TResult>(interaction);
+	}
+
+	/// <inheritdoc cref="IMock.Set(string, object?)" />
+	void IMock.Set(string propertyName, object? value)
+	{
+		MockInteractions interactions = ((IMock)this).Interactions;
+		IInteraction interaction =
+			((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(), propertyName, value));
+		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
+		matchingSetup.InvokeSetter(interaction, value);
+	}
+
+	/// <inheritdoc cref="IMock.GetIndexer{TResult}(object?[])" />
+	TResult IMock.GetIndexer<TResult>(params object?[] parameters)
+	{
+		MockInteractions? interactions = ((IMock)this).Interactions;
+		IInteraction interaction =
+			((IMockInteractions)interactions).RegisterInteraction(new IndexerGetterAccess(interactions.GetNextIndex(), parameters));
+		IndexerSetup matchingSetup = Setup.GetIndexerSetup(parameters);
+		return matchingSetup.InvokeGetter<TResult>(interaction);
+	}
+
+	/// <inheritdoc cref="IMock.SetIndexer{TResult}(TResult, object?[])" />
+	void IMock.SetIndexer<TResult>(TResult value, params object?[] parameters)
+	{
+		MockInteractions interactions = ((IMock)this).Interactions;
+		IInteraction interaction =
+			((IMockInteractions)interactions).RegisterInteraction(new IndexerSetterAccess(interactions.GetNextIndex(), parameters, value));
+		IndexerSetup matchingSetup = Setup.GetIndexerSetup(parameters);
+		matchingSetup.InvokeSetter(interaction, value);
 	}
 
 	#endregion IMock

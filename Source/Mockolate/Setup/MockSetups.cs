@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 
@@ -21,6 +22,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	private readonly EventSetups _eventHandlers = new EventSetups();
 	private readonly MethodSetups _methodSetups = new MethodSetups();
 	private readonly PropertySetups _propertySetups = new PropertySetups();
+	private readonly IndexerSetups _indexerSetups = new IndexerSetups();
 
 	/// <summary>
 	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
@@ -47,6 +49,29 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 
 			matchingSetup = new PropertySetup.Default();
 			_propertySetups.TryAdd(propertyName, matchingSetup);
+		}
+
+		return matchingSetup;
+	}
+
+	/// <summary>
+	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
+	/// </summary>
+	/// <remarks>
+	///     If the specified property name does not have an associated setup, a default configuration is
+	///     created and stored for future retrievals, so that getter and setter work in tandem.
+	/// </remarks>
+	internal IndexerSetup GetIndexerSetup(object?[] parameters)
+	{
+		if (!_indexerSetups.TryGetValue(parameters, out IndexerSetup? matchingSetup))
+		{
+			if (mock.Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException($"The indexer [{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}] was accessed without prior setup.");
+			}
+
+			matchingSetup = new IndexerSetup.Default();
+			_indexerSetups.TryAdd(parameters, matchingSetup);
 		}
 
 		return matchingSetup;
@@ -273,6 +298,125 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			}
 			sb.Length -= Environment.NewLine.Length;
 			return sb.ToString();
+		}
+	}
+
+	[DebuggerDisplay("{ToString()}")]
+	private sealed class IndexerSetups
+	{
+		private Storage? _storage;
+
+		public bool TryAdd(object?[] parameters, IndexerSetup setup)
+		{
+			_storage ??= new Storage();
+			var storage = _storage;
+			foreach (var parameter in parameters)
+			{
+				storage = storage.GetOrAdd(parameter, () => new Storage());
+			}
+
+			if (storage.Value is null)
+			{
+				Interlocked.Increment(ref _count);
+				storage.Value = setup;
+				return true;
+			}
+			return false;
+		}
+
+		public bool TryGetValue(object?[] parameters, [NotNullWhen(true)] out IndexerSetup? setup)
+		{
+			_storage ??= new Storage();
+			var storage = _storage;
+			foreach (var parameter in parameters)
+			{
+				storage = storage.GetOrAdd(parameter, () => new Storage());
+			}
+
+			setup = storage.Value;
+			return setup != null;
+		}
+
+		public int Count => _count;
+		private int _count;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			if (_storage is null || Count == 0)
+			{
+				return "0 indexers";
+			}
+
+			var sb = new StringBuilder();
+			sb.Append(Count).Append(Count == 1 ? " indexer:" : " indexers:").AppendLine();
+			foreach (var item in _storage.GetSetups())
+			{
+				sb.Append(item.Path).Append(' ').Append(item.Setup).AppendLine();
+			}
+			sb.Length -= Environment.NewLine.Length;
+			return sb.ToString();
+		}
+		private class Storage
+		{
+			private ConcurrentDictionary<object, Storage> _storage = [];
+			private Storage? _nullStorage;
+
+			/// <summary>
+			///     The value, if the storage is a leaf node.
+			/// </summary>
+			public IndexerSetup? Value { get; set; }
+
+			public IEnumerable<(string Path, IndexerSetup Setup)> GetSetups()
+			{
+				foreach (var (path, setup) in GetSetups(""))
+				{
+					yield return ($"[{path}]", setup);
+				}
+			}
+
+			private IEnumerable<(string, IndexerSetup)> GetSetups(string prefix)
+			{
+				if (Value is not null)
+				{
+					yield return (prefix.TrimStart('.'), Value);
+				}
+				foreach (var item in _storage)
+				{
+					var itemPrefix = $"{prefix}.{item.Key?.ToString() ?? "null"}";
+					foreach (var child in item.Value.GetSetups(itemPrefix))
+					{
+						yield return child;
+					}
+				}
+			}
+
+			public Storage GetOrAdd(object? key, Func<Storage> valueGenerator)
+			{
+				if (key is null)
+				{
+					if (_nullStorage is null)
+					{
+						_nullStorage = valueGenerator();
+					}
+					return _nullStorage;
+				}
+				return _storage.GetOrAdd(key, _ => valueGenerator());
+			}
+
+			public bool TryAdd(object? key, Storage value)
+			{
+				if (key is null)
+				{
+					if (_nullStorage is null)
+					{
+						_nullStorage = value;
+						return true;
+					}
+					return false;
+				}
+				return _storage.TryAdd(key, value);
+			}
 		}
 	}
 

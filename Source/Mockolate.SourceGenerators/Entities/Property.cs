@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
@@ -13,7 +14,8 @@ internal readonly record struct Property
 		IsIndexer = propertySymbol.IsIndexer;
 		if (IsIndexer && propertySymbol.Parameters.Length > 0)
 		{
-			IndexerParameter = new MethodParameter(propertySymbol.Parameters[0]);
+			IndexerParameters = new EquatableArray<MethodParameter>(
+				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
 
 		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod);
@@ -21,7 +23,7 @@ internal readonly record struct Property
 	}
 
 	public bool IsIndexer { get; }
-	public MethodParameter? IndexerParameter { get; }
+	public EquatableArray<MethodParameter>? IndexerParameters { get; }
 	public Type Type { get; }
 
 	public Method? Setter { get; }
