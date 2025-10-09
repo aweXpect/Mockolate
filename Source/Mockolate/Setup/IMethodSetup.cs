@@ -8,11 +8,6 @@ namespace Mockolate.Setup;
 public interface IMethodSetup
 {
 	/// <summary>
-	///     The number of matching invocations on the mock.
-	/// </summary>
-	int InvocationCount { get; }
-
-	/// <summary>
 	///     Checks if the <paramref name="invocation" /> matches the setup.
 	/// </summary>
 	bool Matches(IInteraction invocation);

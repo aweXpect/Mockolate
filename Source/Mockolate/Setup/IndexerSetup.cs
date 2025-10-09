@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using Mockolate.Exceptions;
 using Mockolate.Interactions;
-using Mockolate.Internals;
 
 namespace Mockolate.Setup;
 
@@ -13,19 +9,6 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class IndexerSetup : IIndexerSetup
 {
-	private int _getterInvocationCount;
-	private int _setterInvocationCount;
-
-	/// <summary>
-	///     The number of matching invocations on the property setter.
-	/// </summary>
-	int IIndexerSetup.SetterInvocationCount => _setterInvocationCount;
-
-	/// <summary>
-	///     The number of matching invocations on the property getter.
-	/// </summary>
-	int IIndexerSetup.GetterInvocationCount => _getterInvocationCount;
-
 	/// <inheritdoc cref="IIndexerSetup.Matches(IInteraction)" />
 	bool IIndexerSetup.Matches(IInteraction invocation)
 		=> invocation is IndexerGetterAccess getterAccess && IsMatch(getterAccess.Parameters) ||
@@ -33,13 +16,11 @@ public abstract class IndexerSetup : IIndexerSetup
 
 	internal void InvokeGetter<TValue>(IndexerGetterAccess getterAccess, TValue value, MockBehavior behavior)
 	{
-		Interlocked.Increment(ref _getterInvocationCount);
 		ExecuteGetterCallback(getterAccess, behavior);
 	}
 
 	internal void InvokeSetter<TValue>(IndexerSetterAccess setterAccess, TValue value, MockBehavior behavior)
 	{
-		Interlocked.Increment(ref _setterInvocationCount);
 		ExecuteSetterCallback(setterAccess, value, behavior);
 	}
 

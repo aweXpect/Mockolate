@@ -428,13 +428,10 @@ namespace Mockolate.Setup
 {
     public interface IIndexerSetup
     {
-        int GetterInvocationCount { get; }
-        int SetterInvocationCount { get; }
         bool Matches(Mockolate.Interactions.IInteraction invocation);
     }
     public interface IMethodSetup
     {
-        int InvocationCount { get; }
         bool Matches(Mockolate.Interactions.IInteraction invocation);
         T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
         T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
@@ -555,8 +552,6 @@ namespace Mockolate.Setup
     public abstract class PropertySetup
     {
         protected PropertySetup() { }
-        public int GetterInvocationCount { get; }
-        public int SetterInvocationCount { get; }
         protected abstract TResult InvokeGetter<TResult>();
         protected abstract void InvokeSetter(object? value);
     }

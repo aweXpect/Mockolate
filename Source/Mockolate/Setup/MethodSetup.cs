@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -12,11 +11,6 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class MethodSetup : IMethodSetup
 {
-	private int _invocationCount;
-
-	/// <inheritdoc cref="IMethodSetup.InvocationCount" />
-	int IMethodSetup.InvocationCount => _invocationCount;
-
 	/// <inheritdoc cref="IMethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	T IMethodSetup.SetOutParameter<T>(string parameterName, MockBehavior behavior)
 		=> SetOutParameter<T>(parameterName, behavior);
@@ -31,7 +25,6 @@ public abstract class MethodSetup : IMethodSetup
 
 	internal TResult Invoke<TResult>(IInteraction invocation, MockBehavior behavior)
 	{
-		Interlocked.Increment(ref _invocationCount);
 		if (invocation is MethodInvocation methodInvocation)
 		{
 			ExecuteCallback(methodInvocation, behavior);
@@ -43,7 +36,6 @@ public abstract class MethodSetup : IMethodSetup
 
 	internal void Invoke(IInteraction invocation, MockBehavior behavior)
 	{
-		Interlocked.Increment(ref _invocationCount);
 		if (invocation is MethodInvocation methodInvocation)
 		{
 			ExecuteCallback(methodInvocation, behavior);

@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 
@@ -36,8 +34,9 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
 	/// </summary>
 	/// <remarks>
-	///     If the specified property name does not have an associated setup, a default value is
-	///     created and stored for future retrievals, so that getter and setter work in tandem.
+	///     If the specified property name does not have an associated setup, and the mock is configured to throw when not set up,
+	///     a <see cref="MockNotSetupException"/> is thrown. Otherwise, a default value is created and stored for future retrievals,
+	///     so that getter and setter work in tandem.
 	/// </remarks>
 	internal PropertySetup GetPropertySetup(string propertyName)
 	{
@@ -315,18 +314,6 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 
 		private ValueStorage? _valueStorage;
 
-		public void Initialize(object?[] parameters, object? value)
-		{
-			_valueStorage ??= new ValueStorage();
-			var storage = _valueStorage;
-			foreach (var parameter in parameters)
-			{
-				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
-			}
-
-			storage.Value = value;
-		}
-
 		public IndexerSetup? FirstOrDefault(Func<IndexerSetup, bool> predicate)
 		{
 			if (_storage is null)
@@ -335,19 +322,6 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			}
 
 			return _storage.FirstOrDefault(predicate);
-		}
-
-		public bool TryGetValue(object?[] parameters, [NotNullWhen(true)] out object? value)
-		{
-			_valueStorage ??= new ValueStorage();
-			var storage = _valueStorage;
-			foreach (var parameter in parameters)
-			{
-				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
-			}
-
-			value = storage.Value;
-			return value != null;
 		}
 
 		public int Count => _storage?.Count ?? 0;

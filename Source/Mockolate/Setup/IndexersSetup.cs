@@ -1,7 +1,4 @@
 using System;
-using System.Threading;
-using Mockolate.Interactions;
-using Mockolate.Internals;
 
 namespace Mockolate.Setup;
 

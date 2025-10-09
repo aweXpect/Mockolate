@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using Mockolate.Checks;
 using Mockolate.Events;
 using Mockolate.Exceptions;
