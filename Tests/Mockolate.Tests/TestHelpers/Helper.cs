@@ -10,6 +10,6 @@ internal static class Helper
 {
 	public static MethodInfo GetMethodInfo()
 	{
-		return typeof(Helper).GetMethod(nameof(GetMethodInfo), BindingFlags.Static)!;
+		return typeof(Helper).GetMethod(nameof(GetMethodInfo), BindingFlags.Static | BindingFlags.Public)!;
 	}
 }

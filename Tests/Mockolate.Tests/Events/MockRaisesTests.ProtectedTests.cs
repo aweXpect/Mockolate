@@ -76,6 +76,8 @@ public sealed partial class MockRaisesTests
 			await That(callCount).IsEqualTo(2);
 		}
 
+#pragma warning disable CS0067 // Event is never used
+#pragma warning disable CA1070 // Do not declare event fields as virtual
 		public class MyRaiseEvent
 		{
 			public event EventHandler? SubscribeToSomeEvent
@@ -86,5 +88,7 @@ public sealed partial class MockRaisesTests
 
 			protected virtual event EventHandler? SomeEvent;
 		}
+#pragma warning restore CA1070 // Do not declare event fields as virtual
+#pragma warning restore CS0067 // Event is never used
 	}
 }
