@@ -8,7 +8,7 @@ namespace Mockolate;
 /// <summary>
 ///     Specify a matching condition for a method parameter.
 /// </summary>
-public static class With
+public class With
 {
 	/// <summary>
 	///     Matches any parameter of type <typeparamref name="T" />.

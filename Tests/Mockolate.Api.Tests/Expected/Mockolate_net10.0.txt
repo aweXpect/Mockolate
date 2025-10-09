@@ -140,8 +140,9 @@ namespace Mockolate
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> setup, System.Func<T1, T2, T3, T4, TReturn> callback) { }
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4> setup, TReturn returnValue) { }
     }
-    public static class With
+    public class With
     {
+        public With() { }
         public static Mockolate.With.Parameter<T> Any<T>() { }
         public static Mockolate.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.With.Parameter<T> Null<T>() { }
