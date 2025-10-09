@@ -442,6 +442,12 @@ namespace Mockolate.Protected
 }
 namespace Mockolate.Setup
 {
+    public interface IIndexerSetup
+    {
+        int GetterInvocationCount { get; }
+        int SetterInvocationCount { get; }
+        bool Matches(Mockolate.Interactions.IInteraction invocation);
+    }
     public interface IMethodSetup
     {
         int InvocationCount { get; }
@@ -454,9 +460,46 @@ namespace Mockolate.Setup
         Mockolate.IMock Mock { get; }
         void AddEvent(string eventName, object? target, System.Reflection.MethodInfo method);
         System.Collections.Generic.IEnumerable<System.ValueTuple<object?, System.Reflection.MethodInfo>> GetEventHandlers(string eventName);
+        void RegisterIndexer(Mockolate.Setup.IndexerSetup indexerSetup);
         void RegisterMethod(Mockolate.Setup.MethodSetup methodSetup);
         void RegisterProperty(string propertyName, Mockolate.Setup.PropertySetup propertySetup);
         void RemoveEvent(string eventName, object? target, System.Reflection.MethodInfo method);
+        void SetIndexerValue<TValue>(object?[] parameters, TValue value);
+    }
+    public abstract class IndexerSetup : Mockolate.Setup.IIndexerSetup
+    {
+        protected IndexerSetup() { }
+        protected abstract void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess);
+        protected abstract void ExecuteSetterCallback(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess);
+        protected abstract bool IsMatch(object?[] parameters);
+        protected static bool Matches(Mockolate.With.Parameter[] parameters, object?[] values) { }
+        protected static bool TryCast<T>(object? value, out T result, Mockolate.MockBehavior behavior) { }
+    }
+    public class IndexerSetup<T> : Mockolate.Setup.IndexerSetup
+    {
+        public IndexerSetup(params Mockolate.With.Parameter[] matches) { }
+        protected override void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess) { }
+        protected override void ExecuteSetterCallback(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess) { }
+        protected override bool IsMatch(object?[] parameters) { }
+        public override string ToString() { }
+    }
+    public class IndexersSetup<TValue, T1>
+    {
+        public IndexersSetup(Mockolate.Setup.IMockSetup mockSetup) { }
+        public Mockolate.Setup.IndexersSetup<TValue, T1> For(Mockolate.With.Parameter<T1> p1, System.Func<Mockolate.Setup.IndexerSetup, Mockolate.Setup.IndexerSetup> setup) { }
+        public Mockolate.Setup.IndexersSetup<TValue, T1> InitializeWith(T1 parameter, TValue value) { }
+    }
+    public class IndexersSetup<TValue, T1, T2>
+    {
+        public IndexersSetup(Mockolate.Setup.IMockSetup mockSetup) { }
+        public Mockolate.Setup.IndexersSetup<TValue, T1, T2> For(Mockolate.With.Parameter<T1> p1, Mockolate.With.Parameter<T2> p2, System.Func<Mockolate.Setup.IndexerSetup, Mockolate.Setup.IndexerSetup> setup) { }
+        public Mockolate.Setup.IndexersSetup<TValue, T1, T2> InitializeWith(T1 p1, T2 p2, TValue value) { }
+    }
+    public class IndexersSetup<TValue, T1, T2, T3>
+    {
+        public IndexersSetup(Mockolate.Setup.IMockSetup mockSetup) { }
+        public Mockolate.Setup.IndexersSetup<TValue, T1, T2, T3> For(Mockolate.With.Parameter<T1> p1, Mockolate.With.Parameter<T2> p2, Mockolate.With.Parameter<T3> p3, System.Func<Mockolate.Setup.IndexerSetup, Mockolate.Setup.IndexerSetup> setup) { }
+        public Mockolate.Setup.IndexersSetup<TValue, T1, T2, T3> InitializeWith(T1 p1, T2 p2, T3 p3, TValue value) { }
     }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
     {

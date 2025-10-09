@@ -40,7 +40,7 @@ public sealed partial class MockSetupsTests
 
 		for (int i = 0; i < indexerCount; i++)
 		{
-			_ = ((IMock)mock).GetIndexer<int>(i);
+			sut.RegisterIndexer(new IndexerSetup<int, int>(With.Any<int>()));
 		}
 
 		var result = mock.Setup.ToString();
