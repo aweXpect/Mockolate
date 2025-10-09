@@ -37,7 +37,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer.InitializeWith(2, "foo");
+			mock.Indexers.InitializeWith(2, "foo");
 
 			string result1 = mock.Object[2];
 			string result2 = mock.Object[3];
@@ -51,7 +51,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer.InitializeWith("foo", 1, 2, 42);
+			mock.Indexers.InitializeWith("foo", 1, 2, 42);
 
 			int result1 = mock.Object["foo", 1, 2];
 			int result2 = mock.Object["bar", 1, 2];
@@ -85,7 +85,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer.InitializeWith(2, 3, "foo");
+			mock.Indexers.InitializeWith(2, 3, "foo");
 
 			string result1 = mock.Object[2, 3];
 			string result2 = mock.Object[null, 4];

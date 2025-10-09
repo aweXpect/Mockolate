@@ -462,6 +462,13 @@ namespace Mockolate.Setup
         void RemoveEvent(string eventName, object? target, System.Reflection.MethodInfo method);
         void SetIndexerValue<TValue>(object?[] parameters, TValue value);
     }
+    public class IndexerInitialization
+    {
+        public IndexerInitialization(Mockolate.Setup.IMockSetup mockSetup) { }
+        public Mockolate.Setup.IndexerInitialization InitializeWith<TValue, T1>(T1 parameter, TValue value) { }
+        public Mockolate.Setup.IndexerInitialization InitializeWith<TValue, T1, T2>(T1 p1, T2 p2, TValue value) { }
+        public Mockolate.Setup.IndexerInitialization InitializeWith<TValue, T1, T2, T3>(T1 p1, T2 p2, T3 p3, TValue value) { }
+    }
     public abstract class IndexerSetup : Mockolate.Setup.IIndexerSetup
     {
         protected IndexerSetup() { }
@@ -503,16 +510,6 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IndexerSetup<T1, T2, T3> OnGet(System.Action<T1, T2, T3> callback) { }
         public Mockolate.Setup.IndexerSetup<T1, T2, T3> OnSet(System.Action callback) { }
         public Mockolate.Setup.IndexerSetup<T1, T2, T3> OnSet(System.Action<T1, T2, T3> callback) { }
-    }
-    public class IndexersSetup
-    {
-        public IndexersSetup(Mockolate.Setup.IMockSetup mockSetup) { }
-        public Mockolate.Setup.IndexersSetup For<T1>(Mockolate.With.Parameter<T1> parameter, System.Func<Mockolate.Setup.IndexerSetup<T1>, Mockolate.Setup.IndexerSetup<T1>> setup) { }
-        public Mockolate.Setup.IndexersSetup For<T1, T2>(Mockolate.With.Parameter<T1> parameter1, Mockolate.With.Parameter<T2> parameter2, System.Func<Mockolate.Setup.IndexerSetup<T1, T2>, Mockolate.Setup.IndexerSetup<T1, T2>> setup) { }
-        public Mockolate.Setup.IndexersSetup For<T1, T2, T3>(Mockolate.With.Parameter<T1> parameter1, Mockolate.With.Parameter<T2> parameter2, Mockolate.With.Parameter<T3> parameter3, System.Func<Mockolate.Setup.IndexerSetup<T1, T2, T3>, Mockolate.Setup.IndexerSetup<T1, T2, T3>> setup) { }
-        public Mockolate.Setup.IndexersSetup InitializeWith<TValue, T1>(T1 parameter, TValue value) { }
-        public Mockolate.Setup.IndexersSetup InitializeWith<TValue, T1, T2>(T1 p1, T2 p2, TValue value) { }
-        public Mockolate.Setup.IndexersSetup InitializeWith<TValue, T1, T2, T3>(T1 p1, T2 p2, T3 p3, TValue value) { }
     }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
     {

@@ -1,3 +1,5 @@
+using System.Data.Common;
+using System.Reflection.Metadata;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
@@ -149,33 +151,49 @@ internal static partial class SourceGeneration
 	{
 		sb.Append("\textension(Mock<").Append(allClasses).AppendLine("> mock)");
 		sb.AppendLine("\t{");
-		int count = 0;
-		if (mockClass.Properties.Any(x => x.IsIndexer))
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append("\t\t///     Initializes the indexers on the mock.").AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\tpublic IndexerInitialization Indexers").AppendLine();
+		sb.Append("\t\t\t=> new IndexerInitialization(mock.Setup);").AppendLine();
+		foreach (var indexer in mockClass.Properties.Where(x => x.IsIndexer))
 		{
-			count++;
+			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up the indexer on the mock for <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc()).Append("\" />.")
+			sb.Append("\t\t///     Sets up the ").Append(indexer.Type.GetMinimizedString(namespaces)).Append(" indexer on the mock for <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc()).Append("\" />.")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic IndexersSetup SetupIndexer").AppendLine();
-			sb.Append("\t\t\t=> new IndexersSetup(mock.Setup);").AppendLine();
+			sb.Append("\t\tpublic IndexerSetup<").Append(string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.Type.GetMinimizedString(namespaces))));
+			sb.Append("> SetupIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}> parameter{i+1}"))).Append(")").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tvar setup = new IndexerSetup<").Append(string.Join(", ", indexer.IndexerParameters.Value.Select(p => p.Type.GetMinimizedString(namespaces))));
+			sb.Append(">(").Append(string.Join(", ", Enumerable.Range(1, indexer.IndexerParameters.Value.Count).Select(p => $"parameter{p}"))).Append(");").AppendLine();
+			sb.Append("\t\t\t((IMockSetup)mock.Setup).RegisterIndexer(setup);").AppendLine();
+			sb.Append("\t\t\treturn setup;").AppendLine();
+			sb.Append("\t\t}").AppendLine();
 		}
 
 		foreach (Class @class in mockClass.AdditionalImplementations.Where(x => x.Properties.Any(y => y.IsIndexer)))
 		{
-			if (@class.Properties.Any(x => x.IsIndexer))
+			foreach (var indexer in @class.Properties.Where(x => x.IsIndexer))
 			{
-				if (count++ > 0)
-				{
-					sb.AppendLine();
-				}
-
+				sb.AppendLine();
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Sets up the indexer on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\" />.")
+				sb.Append("\t\t///     Sets up the ").Append(indexer.Type.GetMinimizedString(namespaces)).Append(" indexer on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\" />.")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
-				sb.Append("\t\tpublic IndexersSetup SetupIndexerOn").Append(@class.ClassName.Replace('.', '_')).AppendLine();
-				sb.Append("\t\t\t=> new IndexersSetup(mock.Setup);").AppendLine();
+				sb.Append("\t\tpublic IndexersSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
+				foreach (var parameter in indexer.IndexerParameters!)
+				{
+					sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
+				}
+				sb.Append("> SetupIndexerOn").Append(@class.ClassName.Replace('.', '_')).Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}> p{i}"))).Append(")").AppendLine();
+				sb.Append("\t\t\t=> new IndexersSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
+				foreach (var parameter in indexer.IndexerParameters!)
+				{
+					sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
+				}
+				sb.Append(">(mock.Setup);").AppendLine();
 			}
 		}
 
@@ -185,11 +203,11 @@ internal static partial class SourceGeneration
 	private static bool AppendProtectedMock(StringBuilder sb, Class @class)
 	{
 		if (@class.Events.All(@event
-			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-		    @class.Methods.All(method
-			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-		    @class.Properties.All(property
-			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
+			@class.Methods.All(method
+				=> method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
+			@class.Properties.All(property
+				=> property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
 		{
 			return false;
 		}
