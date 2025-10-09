@@ -13,6 +13,7 @@ public static class Generator
 		"CS8321" /* The local function is declared but never used */,
 		// TODO: Remove the following errors when tests work with extension syntax
 		"CS0106" /* The modifier 'public' is not valid for this item */,
+		"CS0116" /* A namespace cannot directly contain members such as fields or methods */,
 		"CS1520" /* Method must have a return type */,
 		"CS0710" /* Static classes cannot have instance constructors */,
 		"CS1513" /* } expected */,
