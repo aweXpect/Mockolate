@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Mockolate.Exceptions;
+﻿using Mockolate.Exceptions;
 
 namespace Mockolate.Tests.Exceptions;
 

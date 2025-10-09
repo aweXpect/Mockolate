@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using Mockolate.Tests.Checks;
+﻿using System.Reflection;
 
 namespace Mockolate.Tests.TestHelpers;
 
