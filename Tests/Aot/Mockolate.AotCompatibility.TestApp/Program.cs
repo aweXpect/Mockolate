@@ -1,6 +1,4 @@
-﻿using Mockolate;
-
-namespace Mockolate.AotCompatibility.TestApp;
+﻿namespace Mockolate.AotCompatibility.TestApp;
 
 internal class Program
 {

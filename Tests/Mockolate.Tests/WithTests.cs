@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Mockolate.Tests;
 
@@ -29,6 +31,18 @@ public sealed class WithTests
 		bool result = sut.Matches(value);
 
 		await That(result).IsEqualTo(expectMatch);
+	}
+
+	[Fact]
+	public async Task ShouldOnlyHaveOneParameterlessPrivateConstructor()
+	{
+		var constructors = typeof(With)
+			.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
+
+		await That(constructors).HasSingle().Which
+			.For(c => c.GetParameters(), p => p.HasCount(0));
+
+		_ = constructors.Single().Invoke([]);
 	}
 
 	[Fact]

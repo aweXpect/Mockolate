@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using static Mockolate.With;
 
 namespace Mockolate.Interactions;
 
