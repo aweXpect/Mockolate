@@ -55,10 +55,10 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	}
 
 	/// <summary>
-	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
+	///     Retrieves the setup configuration for the specified indexer parameters, creating a default setup if none exists.
 	/// </summary>
 	/// <remarks>
-	///     If the specified property name does not have an associated setup, a default configuration is
+	///     If the specified indexer parameters do not have an associated setup, a default configuration is
 	///     created and stored for future retrievals, so that getter and setter work in tandem.
 	/// </remarks>
 	internal PropertySetup GetIndexerSetup(object?[] parameters)
