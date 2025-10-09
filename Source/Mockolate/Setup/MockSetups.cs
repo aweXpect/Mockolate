@@ -347,7 +347,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 		}
 		private sealed class Storage
 		{
-			private ConcurrentDictionary<object, Storage> _storage = [];
+			private readonly ConcurrentDictionary<object, Storage> _storage = [];
 			private Storage? _nullStorage;
 
 			/// <summary>
