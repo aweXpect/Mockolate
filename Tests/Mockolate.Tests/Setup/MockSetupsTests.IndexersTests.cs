@@ -5,7 +5,7 @@ public sealed partial class MockSetupsTests
 	public sealed class IndexerTests
 	{
 		[Fact]
-		public async Task WithoutSetup_ShouldStoreLastValue()
+		public async Task ShouldStoreLastValue()
 		{
 			var mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
@@ -21,7 +21,7 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
-		public async Task WithoutSetup_ThreeLevels_ShouldStoreLastValue()
+		public async Task ThreeLevels_ShouldStoreLastValue()
 		{
 			var mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
@@ -41,7 +41,7 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
-		public async Task WithoutSetup_TwoLevels_ShouldStoreLastValue()
+		public async Task TwoLevels_ShouldStoreLastValue()
 		{
 			var mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
@@ -57,7 +57,7 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
-		public async Task WithoutSetup_SetOnDifferentLevel_ShouldNotBeUsed()
+		public async Task SetOnDifferentLevel_ShouldNotBeUsed()
 		{
 			var mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
@@ -70,10 +70,24 @@ public sealed partial class MockSetupsTests
 			await That(result2).IsNull();
 		}
 
+		[Fact]
+		public async Task ShouldSupportNullAsParameter()
+		{
+			var mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+
+			sut.SetIndexer("foo", null, 2);
+			var result1 = sut.GetIndexer<string>(null, 2);
+			var result2 = sut.GetIndexer<string>(1, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsNull();
+		}
+
 		public interface IIndexerService
 		{
 			string this[int index] { get; set; }
-			string this[int index1, int index2] { get; set; }
+			string this[int? index1, int index2] { get; set; }
 			int this[string index1, int index2, int index3] { get; set; }
 		}
 	}

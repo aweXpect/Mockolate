@@ -138,36 +138,21 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
 	void IMockSetup.RegisterMethod(MethodSetup methodSetup)
 	{
-		if (mock.Interactions.Count > 0)
-		{
-			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
-		}
-
 		_methodSetups.Add(methodSetup);
 	}
 
 	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
 	void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
 	{
-		if (mock.Interactions.Count > 0)
-		{
-			throw new NotSupportedException("You may not register additional setups after the first usage of the mock");
-		}
-
 		if (!_propertySetups.TryAdd(propertyName, propertySetup))
 		{
-			throw new MockException($"You cannot setup property '{propertyName}' twice");
+			throw new MockException($"You cannot setup property '{propertyName}' twice.");
 		}
 	}
 
 	/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
 	IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
 	{
-		if (_eventHandlers is null)
-		{
-			yield break;
-		}
-
 		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers)
 		{
 			if (name != eventName)
@@ -208,6 +193,11 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 		if (_eventHandlers?.Count > 0)
 		{
 			sb.Append(_eventHandlers.Count).Append(_eventHandlers.Count == 1 ? " event, " : " events, ");
+		}
+
+		if (_indexerSetups?.Count > 0)
+		{
+			sb.Append(_indexerSetups.Count).Append(_indexerSetups.Count == 1 ? " indexer, " : " indexers, ");
 		}
 
 		if (sb.Length < 2)
@@ -306,7 +296,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	{
 		private Storage? _storage;
 
-		public bool TryAdd(object?[] parameters, PropertySetup setup)
+		public void TryAdd(object?[] parameters, PropertySetup setup)
 		{
 			_storage ??= new Storage();
 			var storage = _storage;
@@ -319,9 +309,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			{
 				Interlocked.Increment(ref _count);
 				storage.Value = setup;
-				return true;
 			}
-			return false;
 		}
 
 		public bool TryGetValue(object?[] parameters, [NotNullWhen(true)] out PropertySetup? setup)
@@ -357,7 +345,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 			sb.Length -= Environment.NewLine.Length;
 			return sb.ToString();
 		}
-		private class Storage
+		private sealed class Storage
 		{
 			private ConcurrentDictionary<object, Storage> _storage = [];
 			private Storage? _nullStorage;
@@ -402,20 +390,6 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 					return _nullStorage;
 				}
 				return _storage.GetOrAdd(key, _ => valueGenerator());
-			}
-
-			public bool TryAdd(object? key, Storage value)
-			{
-				if (key is null)
-				{
-					if (_nullStorage is null)
-					{
-						_nullStorage = value;
-						return true;
-					}
-					return false;
-				}
-				return _storage.TryAdd(key, value);
 			}
 		}
 	}

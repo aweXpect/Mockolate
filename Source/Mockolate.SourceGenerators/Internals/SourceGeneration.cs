@@ -325,4 +325,7 @@ internal static partial class SourceGeneration
 			RefKind.RefReadOnlyParameter => "ref readonly ",
 			_ => "",
 		};
+
+	internal static string EscapeForXmlDoc(this string value)
+		=> value.Replace('<', '{').Replace('>', '}');
 }

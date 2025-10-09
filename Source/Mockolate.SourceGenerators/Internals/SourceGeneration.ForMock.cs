@@ -51,10 +51,10 @@ internal static partial class SourceGeneration
 	private static void AppendMock(StringBuilder sb, MockClass mockClass, string[] namespaces)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />");
+		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc()).Append("\" />");
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
-			sb.Append(" and <see cref=\"").Append(additional.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />");
+			sb.Append(" and <see cref=\"").Append(additional.ClassName.EscapeForXmlDoc()).Append("\" />");
 		}
 
 		sb.AppendLine(".");
@@ -120,8 +120,8 @@ internal static partial class SourceGeneration
 		}
 		sb.AppendLine("\t\t}");
 		sb.AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassName.Replace('<','{').Replace('>','}'))
-			.Append(string.Join(", ", mockClass.AdditionalImplementations.Select(x => x.ClassName.Replace('<', '{').Replace('>', '}'))))
+		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassName.EscapeForXmlDoc())
+			.Append(string.Join(", ", mockClass.AdditionalImplementations.Select(x => x.ClassName.EscapeForXmlDoc())))
 			.AppendLine("}.Object\" />");
 		sb.Append("\t\tpublic override ").Append(mockClass.ClassName).AppendLine(" Object { get; }");
 		sb.AppendLine("\t}");
@@ -130,11 +130,11 @@ internal static partial class SourceGeneration
 	private static void AppendMockObject(StringBuilder sb, MockClass mockClass, string[] namespaces)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The actual mock object implementing <see cref=\"").Append(mockClass.ClassName.Replace('<', '{').Replace('>', '}'))
+		sb.Append("\t///     The actual mock object implementing <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc())
 			.Append("\" />");
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
-			sb.Append(" and <see cref=\"").Append(additional.ClassName.Replace('<', '{').Replace('>', '}')).Append("\" />");
+			sb.Append(" and <see cref=\"").Append(additional.ClassName.EscapeForXmlDoc()).Append("\" />");
 		}
 
 		sb.AppendLine(".");
@@ -204,7 +204,7 @@ internal static partial class SourceGeneration
 	private static void ImplementClass(StringBuilder sb, Class @class, string[] namespaces,
 		bool explicitInterfaceImplementation)
 	{
-		sb.Append("\t\t# region ").Append(@class.ClassName).AppendLine();
+		sb.Append("\t\t#region ").Append(@class.ClassName).AppendLine();
 		int count = 0;
 		foreach (Event @event in @class.Events)
 		{
@@ -213,7 +213,7 @@ internal static partial class SourceGeneration
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append('.').Append(@event.Name.Replace('<', '{').Replace('>', '}'))
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append('.').Append(@event.Name.EscapeForXmlDoc())
 				.AppendLine("\" />");
 			if (explicitInterfaceImplementation)
 			{
@@ -247,7 +247,7 @@ internal static partial class SourceGeneration
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append('.').Append(property.Name.Replace('<', '{').Replace('>', '}'))
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append('.').Append(property.Name.EscapeForXmlDoc())
 				.AppendLine("\" />");
 			if (explicitInterfaceImplementation)
 			{
@@ -328,7 +328,7 @@ internal static partial class SourceGeneration
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.Replace('<', '{').Replace('>', '}')).Append('.').Append(method.Name.Replace('<', '{').Replace('>', '}'))
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append('.').Append(method.Name.EscapeForXmlDoc())
 				.Append('(').Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
 				.AppendLine(")\" />");
@@ -422,7 +422,7 @@ internal static partial class SourceGeneration
 			sb.AppendLine("\t\t}");
 		}
 
-		sb.Append("\t\t# endregion ").Append(@class.ClassName).AppendLine();
+		sb.Append("\t\t#endregion ").Append(@class.ClassName).AppendLine();
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
