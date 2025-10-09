@@ -33,11 +33,40 @@ public class IndexersSetup(IMockSetup mockSetup)
 	}
 
 	/// <summary>
-	///     Sets up the indexer for <paramref name="p1"/> with a custom <paramref name="setup" />.
+	///     Sets up the indexer for the <paramref name="parameter"/> with a custom <paramref name="setup" />.
 	/// </summary>
-	public IndexersSetup For<T1>(With.Parameter<T1> p1, Func<IndexerSetup<T1>, IndexerSetup<T1>> setup)
+	public IndexersSetup For<T1>(
+		With.Parameter<T1> parameter,
+		Func<IndexerSetup<T1>, IndexerSetup<T1>> setup)
 	{
-		var indexerSetup = new IndexerSetup<T1>(p1);
+		var indexerSetup = new IndexerSetup<T1>(parameter);
+		mockSetup.RegisterIndexer(setup(indexerSetup));
+		return this;
+	}
+
+	/// <summary>
+	///     Sets up the indexer for <paramref name="parameter1"/> and <paramref name="parameter2"/> with a custom <paramref name="setup" />.
+	/// </summary>
+	public IndexersSetup For<T1, T2>(
+		With.Parameter<T1> parameter1,
+		With.Parameter<T2> parameter2,
+		Func<IndexerSetup<T1, T2>, IndexerSetup<T1, T2>> setup)
+	{
+		var indexerSetup = new IndexerSetup<T1, T2>(parameter1, parameter2);
+		mockSetup.RegisterIndexer(setup(indexerSetup));
+		return this;
+	}
+
+	/// <summary>
+	///     Sets up the indexer for <paramref name="parameter1"/>, <paramref name="parameter2"/> and <paramref name="parameter3"/> with a custom <paramref name="setup" />.
+	/// </summary>
+	public IndexersSetup For<T1, T2, T3>(
+		With.Parameter<T1> parameter1,
+		With.Parameter<T2> parameter2,
+		With.Parameter<T3> parameter3,
+		Func<IndexerSetup<T1, T2, T3>, IndexerSetup<T1, T2, T3>> setup)
+	{
+		var indexerSetup = new IndexerSetup<T1, T2, T3>(parameter1, parameter2, parameter3);
 		mockSetup.RegisterIndexer(setup(indexerSetup));
 		return this;
 	}
