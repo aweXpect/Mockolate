@@ -488,7 +488,7 @@ internal static partial class SourceGeneration
 				.Append("> ").Append(property.Name).AppendLine();
 			sb.Append("\t\t\t=> new CheckResult.Property<Mock<").Append(allClasses).Append(">, ")
 				.Append(property.Type.GetMinimizedString(namespaces))
-				.Append(">(mock, \"").Append(@class.GetFullName(property.Name)).Append("\");");
+				.Append(">(mock, \"").Append(@class.GetFullName(property.Name)).Append("\");").AppendLine();
 		}
 
 		sb.AppendLine("\t}");
