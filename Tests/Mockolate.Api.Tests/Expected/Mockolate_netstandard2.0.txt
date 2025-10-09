@@ -126,7 +126,6 @@ namespace Mockolate
     }
     public class With
     {
-        public With() { }
         public static Mockolate.With.Parameter<T> Any<T>() { }
         public static Mockolate.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.With.Parameter<T> Null<T>() { }

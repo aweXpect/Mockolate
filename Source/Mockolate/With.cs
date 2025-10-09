@@ -10,6 +10,11 @@ namespace Mockolate;
 /// </summary>
 public class With
 {
+	private With()
+	{
+		// Prevent instantiation.
+	}
+
 	/// <summary>
 	///     Matches any parameter of type <typeparamref name="T" />.
 	/// </summary>
