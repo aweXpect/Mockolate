@@ -11,16 +11,16 @@ public sealed partial class MockEventTests
 		[Fact]
 		public async Task Subscribed_ShouldForwardToInner()
 		{
-			var mockInteractions = new MockInteractions();
+			MockInteractions mockInteractions = new();
 			IMockInteractions interactions = mockInteractions;
-			var mock = new MyMock<int>(1);
+			MyMock<int> mock = new(1);
 			IMockEvent<Mock<int>> @event = new MockEvent<int, Mock<int>>(mockInteractions, mock);
 			IMockEvent<Mock<int>> @protected = new MockEvent<int, Mock<int>>.Protected(@event, mockInteractions, mock);
 			interactions.RegisterInteraction(new EventSubscription(0, "foo.bar", this, GetMethodInfo()));
 			interactions.RegisterInteraction(new EventSubscription(1, "foo.bar", mock, GetMethodInfo()));
 
-			var result1 = @event.Subscribed("foo.bar");
-			var result2 = @protected.Subscribed("foo.bar");
+			CheckResult<Mock<int>> result1 = @event.Subscribed("foo.bar");
+			CheckResult<Mock<int>> result2 = @protected.Subscribed("foo.bar");
 
 			await That(result1).Twice();
 			await That(result2).Twice();
@@ -29,16 +29,16 @@ public sealed partial class MockEventTests
 		[Fact]
 		public async Task Unsubscribed_ShouldForwardToInner()
 		{
-			var mockInteractions = new MockInteractions();
+			MockInteractions mockInteractions = new();
 			IMockInteractions interactions = mockInteractions;
-			var mock = new MyMock<int>(1);
+			MyMock<int> mock = new(1);
 			IMockEvent<Mock<int>> @event = new MockEvent<int, Mock<int>>(mockInteractions, mock);
 			IMockEvent<Mock<int>> @protected = new MockEvent<int, Mock<int>>.Protected(@event, mockInteractions, mock);
 			interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, GetMethodInfo()));
 			interactions.RegisterInteraction(new EventUnsubscription(1, "foo.bar", mock, GetMethodInfo()));
 
-			var result1 = @event.Unsubscribed("foo.bar");
-			var result2 = @protected.Unsubscribed("foo.bar");
+			CheckResult<Mock<int>> result1 = @event.Unsubscribed("foo.bar");
+			CheckResult<Mock<int>> result2 = @protected.Unsubscribed("foo.bar");
 
 			await That(result1).Twice();
 			await That(result2).Twice();

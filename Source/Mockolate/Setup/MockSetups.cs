@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 
@@ -35,8 +34,9 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
 	/// </summary>
 	/// <remarks>
-	///     If the specified property name does not have an associated setup, a default configuration is
-	///     created and stored for future retrievals, so that getter and setter work in tandem.
+	///     If the specified property name does not have an associated setup, and the mock is configured to throw when not set up,
+	///     a <see cref="MockNotSetupException"/> is thrown. Otherwise, a default value is created and stored for future retrievals,
+	///     so that getter and setter work in tandem.
 	/// </remarks>
 	internal PropertySetup GetPropertySetup(string propertyName)
 	{
@@ -55,27 +55,25 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	}
 
 	/// <summary>
-	///     Retrieves the setup configuration for the specified indexer parameters, creating a default setup if none exists.
+	///     Retrieves the first indexer setup that matches the specified <paramref name="interaction" />,
+	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	/// <remarks>
-	///     If the specified indexer parameters do not have an associated setup, a default configuration is
-	///     created and stored for future retrievals, so that getter and setter work in tandem.
-	/// </remarks>
-	internal PropertySetup GetIndexerSetup(object?[] parameters)
-	{
-		if (!_indexerSetups.TryGetValue(parameters, out PropertySetup? matchingSetup))
+	internal IndexerSetup? GetIndexerSetup(IInteraction interaction)
+		=> _indexerSetups.FirstOrDefault(setup => ((IIndexerSetup)setup).Matches(interaction));
+
+	/// <summary>
+	///     Gets the indexer value for the given <paramref name="parameters"/>.
+	/// </summary>
+	internal TValue GetIndexerValue<TValue>(object?[] parameters)
+		=> _indexerSetups.GetOrAddValue(parameters, () =>
 		{
 			if (mock.Behavior.ThrowWhenNotSetup)
 			{
-				throw new MockNotSetupException($"The indexer [{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}] was accessed without prior setup.");
+				throw new MockNotSetupException($"The indexer ['{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}'] was accessed without prior setup.");
 			}
 
-			matchingSetup = new PropertySetup.Default();
-			_indexerSetups.TryAdd(parameters, matchingSetup);
-		}
-
-		return matchingSetup;
-	}
+			return mock.Behavior.DefaultValueGenerator.Generate<TValue>();
+		});
 
 	/// <summary>
 	///     A proxy implementation of <see cref="IMockSetup" /> that forwards all calls to the provided
@@ -83,6 +81,10 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// </summary>
 	public class Proxy(IMockSetup inner) : MockSetups<T>(inner.Mock), IMockSetup
 	{
+		/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
+		void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+			=> inner.RegisterIndexer(indexerSetup);
+
 		/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
 		void IMockSetup.RegisterMethod(MethodSetup methodSetup)
 			=> inner.RegisterMethod(methodSetup);
@@ -109,6 +111,10 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// </summary>
 	public class Protected(IMockSetup inner) : MockSetups<T>(inner.Mock), IMockSetup
 	{
+		/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
+		void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+			=> inner.RegisterIndexer(indexerSetup);
+
 		/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
 		void IMockSetup.RegisterMethod(MethodSetup methodSetup)
 			=> inner.RegisterMethod(methodSetup);
@@ -134,6 +140,16 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 
 	/// <inheritdoc cref="IMockSetup.Mock" />
 	IMock IMockSetup.Mock => mock;
+
+	/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
+	void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+	{
+		_indexerSetups.Add(indexerSetup);
+	}
+
+	/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+	void IMockSetup.SetIndexerValue<TValue>(object?[] parameters, TValue value)
+		=> _indexerSetups.UpdateValue(parameters, value);
 
 	/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
 	void IMockSetup.RegisterMethod(MethodSetup methodSetup)
@@ -294,39 +310,21 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class IndexerSetups
 	{
-		private Storage? _storage;
+		private ConcurrentQueue<IndexerSetup>? _storage;
 
-		public void TryAdd(object?[] parameters, PropertySetup setup)
+		private ValueStorage? _valueStorage;
+
+		public IndexerSetup? FirstOrDefault(Func<IndexerSetup, bool> predicate)
 		{
-			_storage ??= new Storage();
-			var storage = _storage;
-			foreach (var parameter in parameters)
+			if (_storage is null)
 			{
-				storage = storage.GetOrAdd(parameter, () => new Storage());
+				return null;
 			}
 
-			if (storage.Value is null)
-			{
-				Interlocked.Increment(ref _count);
-				storage.Value = setup;
-			}
+			return _storage.FirstOrDefault(predicate);
 		}
 
-		public bool TryGetValue(object?[] parameters, [NotNullWhen(true)] out PropertySetup? setup)
-		{
-			_storage ??= new Storage();
-			var storage = _storage;
-			foreach (var parameter in parameters)
-			{
-				storage = storage.GetOrAdd(parameter, () => new Storage());
-			}
-
-			setup = storage.Value;
-			return setup != null;
-		}
-
-		public int Count => _count;
-		private int _count;
+		public int Count => _storage?.Count ?? 0;
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
@@ -338,48 +336,72 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 
 			var sb = new StringBuilder();
 			sb.Append(Count).Append(Count == 1 ? " indexer:" : " indexers:").AppendLine();
-			foreach (var item in _storage.GetSetups())
+			foreach (var indexerSetup in _storage)
 			{
-				sb.Append(item.Path).Append(' ').Append(item.Setup).AppendLine();
+				sb.Append(indexerSetup).AppendLine();
 			}
 			sb.Length -= Environment.NewLine.Length;
 			return sb.ToString();
 		}
-		private sealed class Storage
+
+		internal void Add(IndexerSetup setup)
 		{
-			private readonly ConcurrentDictionary<object, Storage> _storage = [];
-			private Storage? _nullStorage;
+			_storage ??= new ConcurrentQueue<IndexerSetup>();
+			_storage.Enqueue(setup);
+		}
 
-			/// <summary>
-			///     The value, if the storage is a leaf node.
-			/// </summary>
-			public PropertySetup? Value { get; set; }
-
-			public IEnumerable<(string Path, PropertySetup Setup)> GetSetups()
+		internal TValue GetOrAddValue<TValue>(object?[] parameters, Func<TValue> valueGenerator)
+		{
+			_valueStorage ??= new ValueStorage();
+			var storage = _valueStorage;
+			foreach (var parameter in parameters)
 			{
-				foreach (var (path, setup) in GetSetups(""))
-				{
-					yield return ($"[{path}]", setup);
-				}
+				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
 			}
 
-			private IEnumerable<(string, PropertySetup)> GetSetups(string prefix)
+			if (storage.Value is TValue value)
 			{
-				if (Value is not null)
-				{
-					yield return (prefix.TrimStart('.'), Value);
-				}
-				foreach (var item in _storage)
-				{
-					var itemPrefix = $"{prefix}.{item.Key?.ToString() ?? "null"}";
-					foreach (var child in item.Value.GetSetups(itemPrefix))
-					{
-						yield return child;
-					}
-				}
+				return value;
+			}
+			else if (storage.HasValue && storage.Value is null)
+			{
+				return default!;
+			}
+			value = valueGenerator();
+			storage.Value = value;
+			return value;
+		}
+
+		internal void UpdateValue<TValue>(object?[] parameters, TValue value)
+		{
+			_valueStorage ??= new ValueStorage();
+			var storage = _valueStorage;
+			foreach (var parameter in parameters)
+			{
+				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
 			}
 
-			public Storage GetOrAdd(object? key, Func<Storage> valueGenerator)
+			storage.Value = value;
+		}
+
+		private sealed class ValueStorage
+		{
+			private ConcurrentDictionary<object, ValueStorage>? _storage = [];
+			private ValueStorage? _nullStorage;
+			public bool HasValue { get; private set; }
+
+			public object? Value
+			{
+				get => _value;
+				set
+				{
+					_value = value;
+					HasValue = true;
+				}
+			}
+			private object? _value;
+
+			public ValueStorage GetOrAdd(object? key, Func<ValueStorage> valueGenerator)
 			{
 				if (key is null)
 				{
@@ -389,6 +411,7 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 					}
 					return _nullStorage;
 				}
+				_storage ??= new ConcurrentDictionary<object, ValueStorage>();
 				return _storage.GetOrAdd(key, _ => valueGenerator());
 			}
 		}

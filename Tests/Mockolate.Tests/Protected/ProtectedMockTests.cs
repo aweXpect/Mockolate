@@ -1,6 +1,4 @@
-﻿using Mockolate.Checks;
-
-namespace Mockolate.Tests.Protected;
+﻿namespace Mockolate.Tests.Protected;
 
 public sealed class ProtectedMockTests
 {
@@ -14,10 +12,10 @@ public sealed class ProtectedMockTests
 		mock.Object.RegisterEvent(handler);
 		mock.Protected.Raise.MyEvent(this, EventArgs.Empty);
 
-		await That(mock.Protected.Event.MyEvent.Subscribed().Once());
-		await That(mock.Protected.Event.MyEvent.Unsubscribed().Never());
+		await That(mock.Protected.Event.MyEvent.Subscribed()).Once();
+		await That(mock.Protected.Event.MyEvent.Unsubscribed()).Never();
 		mock.Object.UnregisterEvent(handler);
-		await That(mock.Protected.Event.MyEvent.Unsubscribed().Once());
+		await That(mock.Protected.Event.MyEvent.Unsubscribed()).Once();
 	}
 
 	[Fact]
@@ -30,7 +28,7 @@ public sealed class ProtectedMockTests
 
 		string result = mock.Object.InvokeMyProtectedMethod("foo");
 
-		await That(mock.Protected.Invoked.MyProtectedMethod("foo").Once());
+		await That(mock.Protected.Invoked.MyProtectedMethod("foo")).Once();
 		await That(result).IsEqualTo("Hello, foo!");
 	}
 
@@ -43,7 +41,7 @@ public sealed class ProtectedMockTests
 
 		int result = mock.Object.GetMyProtectedProperty();
 
-		await That(mock.Protected.Accessed.MyProtectedProperty.Getter().Once());
+		await That(mock.Protected.Accessed.MyProtectedProperty.Getter()).Once();
 		await That(result).IsEqualTo(42);
 	}
 

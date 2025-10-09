@@ -20,7 +20,7 @@ public class MockCheckTests
 		sut.Object.DoSomething(1);
 		sut.Object.DoSomething(2);
 
-		await That(sut.Invoked.DoSomething(1).Once());
+		await That(sut.Invoked.DoSomething(1)).Once();
 		await That(sut.Check.AllInteractionsVerified()).IsFalse();
 	}
 
@@ -32,7 +32,7 @@ public class MockCheckTests
 		sut.Object.DoSomething(1);
 		sut.Object.DoSomething(2);
 
-		await That(sut.Invoked.DoSomething(With.Any<int>()).AtLeastOnce());
+		await That(sut.Invoked.DoSomething(With.Any<int>())).AtLeastOnce();
 		await That(sut.Check.AllInteractionsVerified()).IsTrue();
 	}
 

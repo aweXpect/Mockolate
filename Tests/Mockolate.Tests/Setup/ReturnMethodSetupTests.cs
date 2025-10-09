@@ -109,7 +109,7 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Object.Method0();
 			}
 
-			await That(result).IsEqualTo([4, 3, 2, 4, 3, 2, 4, 3, 2, 4]);
+			await That(result).IsEqualTo([4, 3, 2, 4, 3, 2, 4, 3, 2, 4,]);
 		}
 
 		[Fact]
@@ -305,7 +305,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int> setup = new("foo");
 			setup.Returns(x => 3 * x);
-			MethodInvocation invocation = new(0, "foo", ["2"]);
+			MethodInvocation invocation = new(0, "foo", ["2",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -322,7 +322,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(x => 3 * x);
-			MethodInvocation invocation = new(0, "foo", [2]);
+			MethodInvocation invocation = new(0, "foo", [2,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -388,7 +388,7 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Object.Method1(i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 20, 4, 3, 50, 4, 3, 80, 4]);
+			await That(result).IsEqualTo([4, 3, 20, 4, 3, 50, 4, 3, 80, 4,]);
 		}
 
 		[Fact]
@@ -665,7 +665,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int> setup = new("foo");
 			setup.Returns((x, y) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", ["1", 2]);
+			MethodInvocation invocation = new(0, "foo", ["1", 2,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -681,7 +681,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int> setup = new("foo");
 			setup.Returns((x, y) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", [1, "2"]);
+			MethodInvocation invocation = new(0, "foo", [1, "2",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -698,7 +698,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int, int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new(0, "foo", [2, 3]);
+			MethodInvocation invocation = new(0, "foo", [2, 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -764,7 +764,7 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Object.Method2(i, 2 * i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 16, 4, 3, 25, 4, 3, 34, 4]);
+			await That(result).IsEqualTo([4, 3, 16, 4, 3, 25, 4, 3, 34, 4,]);
 		}
 
 		[Fact]
@@ -1061,7 +1061,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", ["1", 2, 3]);
+			MethodInvocation invocation = new(0, "foo", ["1", 2, 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1077,7 +1077,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", [1, "2", 3]);
+			MethodInvocation invocation = new(0, "foo", [1, "2", 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1093,7 +1093,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", [1, 2, "3"]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "3",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1110,7 +1110,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -1176,7 +1176,7 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Object.Method3(i, 2 * i, 3 * i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 22, 4, 3, 40, 4, 3, 58, 4]);
+			await That(result).IsEqualTo([4, 3, 22, 4, 3, 40, 4, 3, 58, 4,]);
 		}
 
 		[Fact]
@@ -1492,7 +1492,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new(0, "foo", ["1", 2, 3, 4]);
+			MethodInvocation invocation = new(0, "foo", ["1", 2, 3, 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1508,7 +1508,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new(0, "foo", [1, "2", 3, 4]);
+			MethodInvocation invocation = new(0, "foo", [1, "2", 3, 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1524,7 +1524,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new(0, "foo", [1, 2, "3", 4]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "3", 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1540,7 +1540,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "4"]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "4",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1557,7 +1557,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -1623,7 +1623,7 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Object.Method4(i, 2 * i, 3 * i, 4 * i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 30, 4, 3, 60, 4, 3, 90, 4]);
+			await That(result).IsEqualTo([4, 3, 30, 4, 3, 60, 4, 3, 90, 4,]);
 		}
 
 		[Fact]
@@ -1957,7 +1957,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", ["1", 2, 3, 4, 5]);
+			MethodInvocation invocation = new(0, "foo", ["1", 2, 3, 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1973,7 +1973,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", [1, "2", 3, 4, 5]);
+			MethodInvocation invocation = new(0, "foo", [1, "2", 3, 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1989,7 +1989,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", [1, 2, "3", 4, 5]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "3", 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2005,7 +2005,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "4", 5]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "4", 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2021,7 +2021,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, "5"]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, "5",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2038,7 +2038,7 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Callback(() => { callCount++; }).Returns(3);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, 5]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<string>(invocation);
@@ -2104,7 +2104,7 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Object.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 40, 4, 3, 85, 4, 3, 130, 4]);
+			await That(result).IsEqualTo([4, 3, 40, 4, 3, 85, 4, 3, 130, 4,]);
 		}
 
 		[Fact]

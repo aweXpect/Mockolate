@@ -5,33 +5,73 @@ public sealed partial class MockSetupsTests
 	public sealed class IndexerTests
 	{
 		[Fact]
-		public async Task ShouldStoreLastValue()
+		public async Task SetOnDifferentLevel_ShouldNotBeUsed()
 		{
-			var mock = Mock.Create<IIndexerService>();
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
 
-			var result0 = sut.GetIndexer<string>(1);
-			sut.SetIndexer("foo", 1);
-			var result1 = sut.GetIndexer<string>(1);
-			var result2 = sut.GetIndexer<string>(2);
+			mock.Object[1] = "foo";
+			string result1 = mock.Object[1, 2];
+			string result2 = mock.Object[2, 1];
 
-			await That(result0).IsNull();
+			await That(result1).IsNull();
+			await That(result2).IsNull();
+		}
+
+		[Fact]
+		public async Task ShouldSupportNullAsParameter()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+
+			mock.Object[null, 2] = "foo";
+			string result1 = mock.Object[null, 2];
+			string result2 = mock.Object[0, 2];
+
 			await That(result1).IsEqualTo("foo");
 			await That(result2).IsNull();
 		}
 
 		[Fact]
-		public async Task ThreeLevels_ShouldStoreLastValue()
+		public async Task ShouldUseInitializedValue()
 		{
-			var mock = Mock.Create<IIndexerService>();
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.SetupIndexer(With.Any<int>()).InitializeWith(2, "foo");
+
+			string result1 = mock.Object[2];
+			string result2 = mock.Object[3];
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsNull();
+		}
+
+		[Fact]
+		public async Task ThreeLevels_ShouldUseInitializedValue()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.SetupIndexer(With.Any<string>(), With.Any<int>(), With.Any<int>()).InitializeWith("foo", 1, 2, 42);
+
+			int result1 = mock.Object["foo", 1, 2];
+			int result2 = mock.Object["bar", 1, 2];
+
+			await That(result1).IsEqualTo(42);
+			await That(result2).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ThreeLevels_WithoutSetup_ShouldStoreLastValue()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
 
-			var result0 = sut.GetIndexer<int>("foo", 1, 2);
+			int result0 = mock.Object["foo", 1, 2];
 			sut.SetIndexer(42, "foo", 1, 2);
-			var result1 = sut.GetIndexer<int>("foo", 1, 2);
-			var result2 = sut.GetIndexer<int>("bar", 1, 2);
-			var result3 = sut.GetIndexer<int>("foo", 2, 2);
-			var result4 = sut.GetIndexer<int>("foo", 1, 3);
+			int result1 = mock.Object["foo", 1, 2];
+			int result2 = mock.Object["bar", 1, 2];
+			int result3 = mock.Object["foo", 2, 2];
+			int result4 = mock.Object["foo", 1, 3];
 
 			await That(result0).IsEqualTo(default(int));
 			await That(result1).IsEqualTo(42);
@@ -41,15 +81,29 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
-		public async Task TwoLevels_ShouldStoreLastValue()
+		public async Task TwoLevels_ShouldUseInitializedValue()
 		{
-			var mock = Mock.Create<IIndexerService>();
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.SetupIndexer(With.Any<int?>(), With.Any<int>()).InitializeWith(2, 3, "foo");
+
+			string result1 = mock.Object[2, 3];
+			string result2 = mock.Object[null, 4];
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsNull();
+		}
+
+		[Fact]
+		public async Task TwoLevels_WithoutSetup_ShouldStoreLastValue()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
 
-			var result0 = sut.GetIndexer<string>(1, 2);
-			sut.SetIndexer("foo", 1, 2);
-			var result1 = sut.GetIndexer<string>(1, 2);
-			var result2 = sut.GetIndexer<string>(2, 2);
+			string result0 = mock.Object[1, 2];
+			mock.Object[1, 2] = "foo";
+			string result1 = mock.Object[1, 2];
+			string result2 = mock.Object[2, 2];
 
 			await That(result0).IsNull();
 			await That(result1).IsEqualTo("foo");
@@ -57,29 +111,17 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
-		public async Task SetOnDifferentLevel_ShouldNotBeUsed()
+		public async Task WithoutSetup_ShouldStoreLastValue()
 		{
-			var mock = Mock.Create<IIndexerService>();
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
 
-			sut.SetIndexer("foo", 1);
-			var result1 = sut.GetIndexer<string>(1, 2);
-			var result2 = sut.GetIndexer<string>(2, 1);
+			string result0 = mock.Object[1];
+			mock.Object[1] = "foo";
+			string result1 = mock.Object[1];
+			string result2 = mock.Object[2];
 
-			await That(result1).IsNull();
-			await That(result2).IsNull();
-		}
-
-		[Fact]
-		public async Task ShouldSupportNullAsParameter()
-		{
-			var mock = Mock.Create<IIndexerService>();
-			IMock sut = mock;
-
-			sut.SetIndexer("foo", null, 2);
-			var result1 = sut.GetIndexer<string>(null, 2);
-			var result2 = sut.GetIndexer<string>(1, 2);
-
+			await That(result0).IsNull();
 			await That(result1).IsEqualTo("foo");
 			await That(result2).IsNull();
 		}

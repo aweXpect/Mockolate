@@ -69,6 +69,16 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task Create_4Arguments_FourthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ = new MyMock<IMyService, IMyService, IMyService, MyBaseClass>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
 	public async Task Create_4Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 	{
 		MockBehavior behavior = new()
@@ -105,10 +115,20 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_4Arguments_FourthIsClass_ShouldThrow()
+	public async Task Create_5Arguments_FifthIsClass_ShouldThrow()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, MyBaseClass>();
+			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The fifth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_5Arguments_FourthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ = new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
@@ -151,23 +171,23 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_5Arguments_FourthIsClass_ShouldThrow()
+	public async Task Create_6Arguments_FifthIsClass_ShouldThrow()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_5Arguments_FifthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
+			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The fifth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_6Arguments_FourthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ = new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
@@ -197,6 +217,16 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task Create_6Arguments_SixthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The sixth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
 	public async Task Create_6Arguments_ThirdIsClass_ShouldThrow()
 	{
 		void Act()
@@ -207,33 +237,23 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_6Arguments_FourthIsClass_ShouldThrow()
+	public async Task Create_7Arguments_FifthIsClass_ShouldThrow()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_6Arguments_FifthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService>();
+			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The fifth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
-	public async Task Create_6Arguments_SixthIsClass_ShouldThrow()
+	public async Task Create_7Arguments_FourthIsClass_ShouldThrow()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
+			=> _ = new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
-			.WithMessage("The sixth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
@@ -265,33 +285,13 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_7Arguments_ThirdIsClass_ShouldThrow()
+	public async Task Create_7Arguments_SeventhIsClass_ShouldThrow()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService>();
+			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
 
 		await That(Act).Throws<MockException>()
-			.WithMessage("The third generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_7Arguments_FourthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_7Arguments_FifthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The fifth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+			.WithMessage("The seventh generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
@@ -305,13 +305,49 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_7Arguments_SeventhIsClass_ShouldThrow()
+	public async Task Create_7Arguments_ThirdIsClass_ShouldThrow()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
+			=> _ = new MyMock<IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
-			.WithMessage("The seventh generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+			.WithMessage("The third generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_8Arguments_EighthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					MyBaseClass>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The eighth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_8Arguments_FifthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService,
+					IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The fifth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_8Arguments_FourthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService,
+					IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
@@ -337,54 +373,11 @@ public sealed partial class MockTests
 	{
 		void Act()
 			=> _ =
-				new MyMock<IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+				new MyMock<IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The second generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_8Arguments_ThirdIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ =
-				new MyMock<IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The third generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_8Arguments_FourthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_8Arguments_FifthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The fifth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_8Arguments_SixthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The sixth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
@@ -392,22 +385,83 @@ public sealed partial class MockTests
 	{
 		void Act()
 			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService>();
+				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass,
+					IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The seventh generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
-	public async Task Create_8Arguments_EighthIsClass_ShouldThrow()
+	public async Task Create_8Arguments_SixthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService,
+					IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The sixth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_8Arguments_ThirdIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ =
+				new MyMock<IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService,
+					IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The third generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_9Arguments_EighthIsClass_ShouldThrow()
 	{
 		void Act()
 			=> _ =
 				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
-					MyBaseClass>();
+					MyBaseClass, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The eighth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_9Arguments_FifthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService,
+					IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The fifth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_9Arguments_FourthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService,
+					IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+	}
+
+	[Fact]
+	public async Task Create_9Arguments_NinthIsClass_ShouldThrow()
+	{
+		void Act()
+			=> _ =
+				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService, MyBaseClass>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The ninth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
@@ -432,54 +486,11 @@ public sealed partial class MockTests
 	{
 		void Act()
 			=> _ =
-				new MyMock<IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+				new MyMock<IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The second generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_9Arguments_ThirdIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ =
-				new MyMock<IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The third generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_9Arguments_FourthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The fourth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_9Arguments_FifthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The fifth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
-	}
-
-	[Fact]
-	public async Task Create_9Arguments_SixthIsClass_ShouldThrow()
-	{
-		void Act()
-			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The sixth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
@@ -487,31 +498,34 @@ public sealed partial class MockTests
 	{
 		void Act()
 			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService, IMyService>();
+				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass,
+					IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The seventh generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
-	public async Task Create_9Arguments_EighthIsClass_ShouldThrow()
+	public async Task Create_9Arguments_SixthIsClass_ShouldThrow()
 	{
 		void Act()
 			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService>();
+				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass, IMyService,
+					IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
-			.WithMessage("The eighth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+			.WithMessage("The sixth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 
 	[Fact]
-	public async Task Create_9Arguments_NinthIsClass_ShouldThrow()
+	public async Task Create_9Arguments_ThirdIsClass_ShouldThrow()
 	{
 		void Act()
 			=> _ =
-				new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyBaseClass>();
+				new MyMock<IMyService, IMyService, MyBaseClass, IMyService, IMyService, IMyService, IMyService,
+					IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
-			.WithMessage("The ninth generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
+			.WithMessage("The third generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
 }

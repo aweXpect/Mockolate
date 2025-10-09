@@ -7,17 +7,6 @@ namespace Mockolate.Tests;
 public sealed partial class MockTests
 {
 	[Fact]
-	public async Task DoubleNestedInterfaces_ShouldStillWork()
-	{
-		var mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
-		mock.Setup.IsValid.InitializeWith(true);
-
-		var result = mock.Object.IsValid;
-
-		await That(result).IsTrue();
-	}
-
-	[Fact]
 	public async Task Behavior_ShouldBeSet()
 	{
 		MyMock<string> sut = new("", MockBehavior.Default with
@@ -26,6 +15,26 @@ public sealed partial class MockTests
 		});
 
 		await That(sut.Hidden.Behavior.ThrowWhenNotSetup).IsTrue();
+	}
+
+	[Fact]
+	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
+	{
+		void Act()
+			=> _ = Mock.Create<MyBaseClassWithoutConstructor>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"Could not find any constructor at all for the base type 'MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
+	}
+
+	[Fact]
+	public async Task Create_WithMatchingParameters_ShouldCreateMock()
+	{
+		Mock<MyBaseClassWithConstructor> Act()
+			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
+
+		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
 	}
 
 	[Fact]
@@ -62,23 +71,14 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
+	public async Task DoubleNestedInterfaces_ShouldStillWork()
 	{
-		void Act()
-			=> _ = Mock.Create<MyBaseClassWithoutConstructor>();
+		Mock<Nested.Nested2.IMyDoubleNestedService> mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
+		mock.Setup.IsValid.InitializeWith(true);
 
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Could not find any constructor at all for the base type 'MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
-	}
+		bool result = mock.Object.IsValid;
 
-	[Fact]
-	public async Task Create_WithMatchingParameters_ShouldCreateMock()
-	{
-		Mock<MyBaseClassWithConstructor> Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
-
-		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
+		await That(result).IsTrue();
 	}
 
 	[Fact]
@@ -92,12 +92,24 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task TryCast_WhenMatching_ShouldReturnTrue()
+	{
+		MyMock<MyBaseClass> mock = new(new MyBaseClass());
+		object parameter = 42;
+
+		bool result = mock.HiddenTryCast(parameter, out int value);
+
+		await That(result).IsTrue();
+		await That(value).IsEqualTo(42);
+	}
+
+	[Fact]
 	public async Task TryCast_WhenNotMatching_ShouldReturnFalse()
 	{
-		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
+		MyMock<MyBaseClass> mock = new(new MyBaseClass());
 		object parameter = "foo";
 
-		var result = mock.HiddenTryCast<int>(parameter, out int value);
+		bool result = mock.HiddenTryCast(parameter, out int value);
 
 		await That(result).IsFalse();
 		await That(value).IsEqualTo(0);
@@ -106,25 +118,13 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task TryCast_WhenNullShouldReturnTrue()
 	{
-		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
+		MyMock<MyBaseClass> mock = new(new MyBaseClass());
 		object? parameter = null;
 
-		var result = mock.HiddenTryCast<int>(parameter, out int value);
+		bool result = mock.HiddenTryCast(parameter, out int value);
 
 		await That(result).IsTrue();
 		await That(value).IsEqualTo(0);
-	}
-
-	[Fact]
-	public async Task TryCast_WhenMatching_ShouldReturnTrue()
-	{
-		var mock = new MyMock<MyBaseClass>(new MyBaseClass());
-		object parameter = 42;
-
-		var result = mock.HiddenTryCast<int>(parameter, out int value);
-
-		await That(result).IsTrue();
-		await That(value).IsEqualTo(42);
 	}
 
 	[Fact]
@@ -169,10 +169,12 @@ public sealed partial class MockTests
 	public class MyBaseClassWithoutConstructor
 	{
 		private MyBaseClassWithoutConstructor()
-		{ }
+		{
+		}
 
 		public int Number { get; }
 	}
+
 	public sealed class Nested
 	{
 		public sealed class Nested2
@@ -183,5 +185,4 @@ public sealed partial class MockTests
 			}
 		}
 	}
-
 }

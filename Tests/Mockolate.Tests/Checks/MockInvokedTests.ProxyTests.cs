@@ -11,16 +11,16 @@ public sealed partial class MockInvokedTests
 		[Fact]
 		public async Task PropertySetter_ShouldForwardToInner()
 		{
-			var mockInteractions = new MockInteractions();
+			MockInteractions mockInteractions = new();
 			IMockInteractions interactions = mockInteractions;
-			var mock = new MyMock<int>(1);
+			MyMock<int> mock = new(1);
 			IMockInvoked<Mock<int>> invoked = new MockInvoked<int, Mock<int>>(mockInteractions, mock);
 			IMockInvoked<Mock<int>> proxy = new MockInvoked<int, Mock<int>>.Proxy(invoked, mockInteractions, mock);
-			interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [1]));
-			interactions.RegisterInteraction(new MethodInvocation(1, "foo.bar", [2]));
+			interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [1,]));
+			interactions.RegisterInteraction(new MethodInvocation(1, "foo.bar", [2,]));
 
-			var result1 = invoked.Method("foo.bar", With.Any<int>());
-			var result2 = proxy.Method("foo.bar", With.Any<int>());
+			CheckResult<Mock<int>> result1 = invoked.Method("foo.bar", With.Any<int>());
+			CheckResult<Mock<int>> result2 = proxy.Method("foo.bar", With.Any<int>());
 
 			await That(result1).Twice();
 			await That(result2).Twice();

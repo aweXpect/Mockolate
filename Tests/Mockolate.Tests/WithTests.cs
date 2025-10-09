@@ -36,7 +36,7 @@ public sealed class WithTests
 	[Fact]
 	public async Task ShouldOnlyHaveOneParameterlessPrivateConstructor()
 	{
-		var constructors = typeof(With)
+		ConstructorInfo[] constructors = typeof(With)
 			.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
 
 		await That(constructors).HasSingle().Which
@@ -60,7 +60,7 @@ public sealed class WithTests
 	[Fact]
 	public async Task ToString_NamedParameter_ShouldReturnExpectedValue()
 	{
-		var sut = new With.NamedParameter("foo", With.Out<int>());
+		With.NamedParameter sut = new("foo", With.Out<int>());
 		string expectedValue = "With.Out<int>() foo";
 
 		string? result = sut.ToString();
@@ -80,17 +80,6 @@ public sealed class WithTests
 	}
 
 	[Fact]
-	public async Task ToString_WithNull_ShouldReturnExpectedValue()
-	{
-		With.Parameter<string> sut = With.Null<string>();
-		string expectedValue = "With.Null<string>()";
-
-		string? result = sut.ToString();
-
-		await That(result).IsEqualTo(expectedValue);
-	}
-
-	[Fact]
 	public async Task ToString_WithMatching_ShouldReturnExpectedValue()
 	{
 		With.Parameter<string> sut = With.Matching<string>(x => x.Length == 3);
@@ -102,10 +91,10 @@ public sealed class WithTests
 	}
 
 	[Fact]
-	public async Task ToString_WithOut_ShouldReturnExpectedValue()
+	public async Task ToString_WithNull_ShouldReturnExpectedValue()
 	{
-		With.OutParameter<int> sut = With.Out<int>(() => 3);
-		string expectedValue = "With.Out<int>(() => 3)";
+		With.Parameter<string> sut = With.Null<string>();
+		string expectedValue = "With.Null<string>()";
 
 		string? result = sut.ToString();
 
@@ -117,6 +106,17 @@ public sealed class WithTests
 	{
 		With.InvokedOutParameter<int> sut = With.Out<int>();
 		string expectedValue = "With.Out<int>()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task ToString_WithOut_ShouldReturnExpectedValue()
+	{
+		With.OutParameter<int> sut = With.Out(() => 3);
+		string expectedValue = "With.Out<int>(() => 3)";
 
 		string? result = sut.ToString();
 
@@ -325,13 +325,12 @@ public sealed class WithTests
 	}
 
 	[Theory]
-	[InlineData(1, false)]
-	[InlineData(5, true)]
-	[InlineData(-5, false)]
-	[InlineData(42, false)]
-	public async Task WithValue_ShouldMatchWhenEqual(int value, bool expectMatch)
+	[InlineData(null, true)]
+	[InlineData("", false)]
+	[InlineData("foo", false)]
+	public async Task WithValue_Nullable_ShouldMatchWhenEqual(string? value, bool expectMatch)
 	{
-		With.Parameter<int> sut = With.Value(5);
+		With.Parameter<string?> sut = With.Value<string?>(null);
 
 		bool result = sut.Matches(value);
 
@@ -339,12 +338,13 @@ public sealed class WithTests
 	}
 
 	[Theory]
-	[InlineData(null, true)]
-	[InlineData("", false)]
-	[InlineData("foo", false)]
-	public async Task WithValue_Nullable_ShouldMatchWhenEqual(string? value, bool expectMatch)
+	[InlineData(1, false)]
+	[InlineData(5, true)]
+	[InlineData(-5, false)]
+	[InlineData(42, false)]
+	public async Task WithValue_ShouldMatchWhenEqual(int value, bool expectMatch)
 	{
-		With.Parameter<string?> sut = With.Value<string?>(null);
+		With.Parameter<int> sut = With.Value(5);
 
 		bool result = sut.Matches(value);
 

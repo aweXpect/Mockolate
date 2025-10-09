@@ -20,7 +20,7 @@ public sealed partial class MockSetupsTests
 	public async Task ToString_Empty_ShouldReturnExpectedValue(
 		int methodCount, int propertyCount, int eventCount, int indexerCount, string expected)
 	{
-		var mock = Mock.Create<IMyService>();
+		Mock<IMyService> mock = Mock.Create<IMyService>();
 		IMockSetup sut = mock.Setup;
 
 		for (int i = 0; i < methodCount; i++)
@@ -40,10 +40,10 @@ public sealed partial class MockSetupsTests
 
 		for (int i = 0; i < indexerCount; i++)
 		{
-			_ = ((IMock)mock).GetIndexer<int>(i);
+			sut.RegisterIndexer(new IndexerSetup<int, int>(With.Any<int>()));
 		}
 
-		var result = mock.Setup.ToString();
+		string result = mock.Setup.ToString();
 
 		await That(result).IsEqualTo(expected);
 	}

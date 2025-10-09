@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 
@@ -10,28 +9,13 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class PropertySetup
 {
-	private int _getterInvocationCount;
-	private int _setterInvocationCount;
-
-	/// <summary>
-	///     The number of matching invocations on the property setter.
-	/// </summary>
-	public int SetterInvocationCount => _setterInvocationCount;
-
-	/// <summary>
-	///     The number of matching invocations on the property getter.
-	/// </summary>
-	public int GetterInvocationCount => _getterInvocationCount;
-
 	internal void InvokeSetter(IInteraction invocation, object? value)
 	{
-		Interlocked.Increment(ref _setterInvocationCount);
 		InvokeSetter(value);
 	}
 
 	internal TResult InvokeGetter<TResult>(IInteraction invocation)
 	{
-		Interlocked.Increment(ref _getterInvocationCount);
 		return InvokeGetter<TResult>();
 	}
 

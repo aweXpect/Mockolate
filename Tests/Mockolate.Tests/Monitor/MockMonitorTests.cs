@@ -1,4 +1,3 @@
-using Mockolate.Checks;
 using Mockolate.Monitor;
 
 namespace Mockolate.Tests.Monitor;
@@ -23,14 +22,14 @@ public sealed class MockMonitorTests
 		mock.Object.IsValid(7);
 		mock.Object.IsValid(8);
 
-		await That(monitor.Invoked.IsValid(1).Never());
-		await That(monitor.Invoked.IsValid(2).Never());
-		await That(monitor.Invoked.IsValid(3).Once());
-		await That(monitor.Invoked.IsValid(4).Once());
-		await That(monitor.Invoked.IsValid(5).Never());
-		await That(monitor.Invoked.IsValid(6).Never());
-		await That(monitor.Invoked.IsValid(7).Never());
-		await That(monitor.Invoked.IsValid(8).Never());
+		await That(monitor.Invoked.IsValid(1)).Never();
+		await That(monitor.Invoked.IsValid(2)).Never();
+		await That(monitor.Invoked.IsValid(3)).Once();
+		await That(monitor.Invoked.IsValid(4)).Once();
+		await That(monitor.Invoked.IsValid(5)).Never();
+		await That(monitor.Invoked.IsValid(6)).Never();
+		await That(monitor.Invoked.IsValid(7)).Never();
+		await That(monitor.Invoked.IsValid(8)).Never();
 	}
 
 	[Fact]
@@ -58,16 +57,16 @@ public sealed class MockMonitorTests
 		mock.Object.IsValid(9);
 		mock.Object.IsValid(10);
 
-		await That(monitor.Invoked.IsValid(1).Never());
-		await That(monitor.Invoked.IsValid(2).Never());
-		await That(monitor.Invoked.IsValid(3).Once());
-		await That(monitor.Invoked.IsValid(4).Once());
-		await That(monitor.Invoked.IsValid(5).Never());
-		await That(monitor.Invoked.IsValid(6).Never());
-		await That(monitor.Invoked.IsValid(7).Once());
-		await That(monitor.Invoked.IsValid(8).Once());
-		await That(monitor.Invoked.IsValid(9).Never());
-		await That(monitor.Invoked.IsValid(10).Never());
+		await That(monitor.Invoked.IsValid(1)).Never();
+		await That(monitor.Invoked.IsValid(2)).Never();
+		await That(monitor.Invoked.IsValid(3)).Once();
+		await That(monitor.Invoked.IsValid(4)).Once();
+		await That(monitor.Invoked.IsValid(5)).Never();
+		await That(monitor.Invoked.IsValid(6)).Never();
+		await That(monitor.Invoked.IsValid(7)).Once();
+		await That(monitor.Invoked.IsValid(8)).Once();
+		await That(monitor.Invoked.IsValid(9)).Never();
+		await That(monitor.Invoked.IsValid(10)).Never();
 	}
 
 	[Fact]
@@ -105,16 +104,16 @@ public sealed class MockMonitorTests
 
 		mock.Object.IsValid(5);
 
-		await That(monitor.Invoked.IsValid(1).Never());
-		await That(monitor.Invoked.IsValid(2).Never());
-		await That(monitor.Invoked.IsValid(3).Once());
-		await That(monitor.Invoked.IsValid(4).Once());
-		await That(monitor.Invoked.IsValid(5).Never());
-		await That(mock.Invoked.IsValid(1).Once());
-		await That(mock.Invoked.IsValid(2).Once());
-		await That(mock.Invoked.IsValid(3).Once());
-		await That(mock.Invoked.IsValid(4).Once());
-		await That(mock.Invoked.IsValid(5).Once());
+		await That(monitor.Invoked.IsValid(1)).Never();
+		await That(monitor.Invoked.IsValid(2)).Never();
+		await That(monitor.Invoked.IsValid(3)).Once();
+		await That(monitor.Invoked.IsValid(4)).Once();
+		await That(monitor.Invoked.IsValid(5)).Never();
+		await That(mock.Invoked.IsValid(1)).Once();
+		await That(mock.Invoked.IsValid(2)).Once();
+		await That(mock.Invoked.IsValid(3)).Once();
+		await That(mock.Invoked.IsValid(4)).Once();
+		await That(mock.Invoked.IsValid(5)).Once();
 	}
 
 	public interface IMyService

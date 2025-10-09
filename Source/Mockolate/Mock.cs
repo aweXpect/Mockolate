@@ -144,20 +144,25 @@ public abstract class MockBase<T> : IMock
 	TResult IMock.GetIndexer<TResult>(params object?[] parameters)
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
-		IInteraction interaction =
-			((IMockInteractions)interactions).RegisterInteraction(new IndexerGetterAccess(interactions.GetNextIndex(), parameters));
-		PropertySetup matchingSetup = Setup.GetIndexerSetup(parameters);
-		return matchingSetup.InvokeGetter<TResult>(interaction);
+		IndexerGetterAccess interaction = new IndexerGetterAccess(interactions.GetNextIndex(), parameters);
+		((IMockInteractions)interactions).RegisterInteraction(interaction);
+
+		TResult value = Setup.GetIndexerValue<TResult>(parameters);
+		IndexerSetup? matchingSetup = Setup.GetIndexerSetup(interaction);
+		matchingSetup?.InvokeGetter(interaction, value, _behavior);
+		return value;
 	}
 
 	/// <inheritdoc cref="IMock.SetIndexer{TResult}(TResult, object?[])" />
 	void IMock.SetIndexer<TResult>(TResult value, params object?[] parameters)
 	{
-		MockInteractions interactions = ((IMock)this).Interactions;
-		IInteraction interaction =
-			((IMockInteractions)interactions).RegisterInteraction(new IndexerSetterAccess(interactions.GetNextIndex(), parameters, value));
-		PropertySetup matchingSetup = Setup.GetIndexerSetup(parameters);
-		matchingSetup.InvokeSetter(interaction, value);
+		MockInteractions? interactions = ((IMock)this).Interactions;
+		IndexerSetterAccess interaction = new IndexerSetterAccess(interactions.GetNextIndex(), parameters, value);
+		((IMockInteractions)interactions).RegisterInteraction(interaction);
+
+		((IMockSetup)Setup).SetIndexerValue(parameters, value);
+		IndexerSetup? matchingSetup = Setup.GetIndexerSetup(interaction);
+		matchingSetup?.InvokeSetter(interaction, value, _behavior);
 	}
 
 	#endregion IMock
