@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Mockolate.Exceptions;
 using Mockolate.Interactions;
 
 namespace Mockolate.Setup;
@@ -111,7 +112,11 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 	/// </summary>
 	public IndexerSetup<TValue, T1> InitializeWith(TValue value)
 	{
-		// TODO: Throw when already initialized!
+		if (_initialization is not null)
+		{
+			throw new MockException("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
 		_initialization = _ => value;
 		return this;
 	}
@@ -121,7 +126,11 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 	/// </summary>
 	public IndexerSetup<TValue, T1> InitializeWith(Func<T1, TValue> valueGenerator)
 	{
-		// TODO: Throw when already initialized!
+		if (_initialization is not null)
+		{
+			throw new MockException("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
 		_initialization = valueGenerator;
 		return this;
 	}
@@ -227,7 +236,11 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 	/// </summary>
 	public IndexerSetup<TValue, T1, T2> InitializeWith(TValue value)
 	{
-		// TODO: Throw when already initialized!
+		if (_initialization is not null)
+		{
+			throw new MockException("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
 		_initialization = (_, _) => value;
 		return this;
 	}
@@ -237,7 +250,11 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 	/// </summary>
 	public IndexerSetup<TValue, T1, T2> InitializeWith(Func<T1, T2, TValue> valueGenerator)
 	{
-		// TODO: Throw when already initialized!
+		if (_initialization is not null)
+		{
+			throw new MockException("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
 		_initialization = valueGenerator;
 		return this;
 	}
@@ -346,7 +363,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 	/// </summary>
 	public IndexerSetup<TValue, T1, T2, T3> InitializeWith(TValue value)
 	{
-		// TODO: Throw when already initialized!
+		if (_initialization is not null)
+		{
+			throw new MockException("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
 		_initialization = (_, _, _) => value;
 		return this;
 	}
@@ -356,7 +377,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 	/// </summary>
 	public IndexerSetup<TValue, T1, T2, T3> InitializeWith(Func<T1, T2, T3, TValue> valueGenerator)
 	{
-		// TODO: Throw when already initialized!
+		if (_initialization is not null)
+		{
+			throw new MockException("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
 		_initialization = valueGenerator;
 		return this;
 	}
