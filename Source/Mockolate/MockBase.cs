@@ -23,7 +23,7 @@ public abstract class MockBase<T> : IMock
 	{
 		_behavior = behavior;
 		_interactions = new();
-		Setup = new MockSetups<T>(this);
+		Setup = new MockSetup<T>(this);
 		Raise = new MockRaises<T>(Setup, _interactions);
 		Check = new MockCheck(_interactions);
 	}
@@ -46,7 +46,7 @@ public abstract class MockBase<T> : IMock
 	/// <summary>
 	///     Sets up the mock for <typeparamref name="T" />.
 	/// </summary>
-	public MockSetups<T> Setup { get; }
+	public MockSetup<T> Setup { get; }
 
 	/// <summary>
 	///     Implicitly converts the mock to the mocked object instance.

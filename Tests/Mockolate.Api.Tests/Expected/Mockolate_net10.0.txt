@@ -33,7 +33,7 @@ namespace Mockolate
         public Mockolate.Checks.MockCheck Check { get; }
         public abstract T Object { get; }
         public Mockolate.Events.MockRaises<T> Raise { get; }
-        public Mockolate.Setup.MockSetups<T> Setup { get; }
+        public Mockolate.Setup.MockSetup<T> Setup { get; }
         protected bool TryCast<TValue>(object? value, out TValue result) { }
         public static T op_Implicit(Mockolate.MockBase<T> mock) { }
     }
@@ -435,7 +435,7 @@ namespace Mockolate.Protected
         public Mockolate.Checks.MockEvent<T, Mockolate.Mock<T>>.Protected Event { get; }
         public Mockolate.Checks.MockInvoked<T, Mockolate.Mock<T>>.Protected Invoked { get; }
         public Mockolate.Events.MockRaises<T>.Protected Raise { get; }
-        public Mockolate.Setup.MockSetups<T>.Protected Setup { get; }
+        public Mockolate.Setup.MockSetup<T>.Protected Setup { get; }
         public TResult GetIndexer<TResult>(params object?[] parameters) { }
         public void SetIndexer<TResult>(TResult value, params object?[] parameters) { }
     }
@@ -545,17 +545,45 @@ namespace Mockolate.Setup
         public TResult Result { get; }
     }
     [System.Diagnostics.DebuggerDisplay("({_methodSetups}, {_propertySetups}, {_eventHandlers})")]
-    public class MockSetups<T> : Mockolate.Setup.IMockSetup
+    public class MockSetup<T> : Mockolate.Setup.IMockSetup
     {
-        public MockSetups(Mockolate.IMock mock) { }
+        public MockSetup(Mockolate.IMock mock) { }
         public override string ToString() { }
-        public class Protected : Mockolate.Setup.MockSetups<T>, Mockolate.Setup.IMockSetup
+        public class Methods : Mockolate.Setup.IMockSetup
+        {
+            public Methods(Mockolate.Setup.MockSetup<T> setup) { }
+            public Mockolate.IMock Mock { get; }
+            public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
+        }
+        public class Properties : Mockolate.Setup.IMockSetup
+        {
+            public Properties(Mockolate.Setup.MockSetup<T> setup) { }
+            public Mockolate.IMock Mock { get; }
+            public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
+        }
+        public class Protected : Mockolate.Setup.MockSetup<T>, Mockolate.Setup.IMockSetup
         {
             public Protected(Mockolate.Setup.IMockSetup inner) { }
+            public Mockolate.IMock Mock { get; }
+            public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
+            public class Methods : Mockolate.Setup.IMockSetup
+            {
+                public Methods(Mockolate.Setup.MockSetup<T> setup) { }
+                public Mockolate.IMock Mock { get; }
+                public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
+            }
+            public class Properties : Mockolate.Setup.IMockSetup
+            {
+                public Properties(Mockolate.Setup.MockSetup<T> setup) { }
+                public Mockolate.IMock Mock { get; }
+                public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
+            }
         }
-        public class Proxy : Mockolate.Setup.MockSetups<T>, Mockolate.Setup.IMockSetup
+        public class Proxy : Mockolate.Setup.MockSetup<T>, Mockolate.Setup.IMockSetup
         {
             public Proxy(Mockolate.Setup.IMockSetup inner) { }
+            public Mockolate.IMock Mock { get; }
+            public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
         }
     }
     public abstract class PropertySetup

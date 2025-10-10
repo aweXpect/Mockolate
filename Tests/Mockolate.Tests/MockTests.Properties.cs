@@ -19,7 +19,7 @@ public sealed partial class MockTests
 	public async Task Get_ShouldReturnInitializedValue()
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
-		sut.Setup.Counter.InitializeWith(24);
+		sut.Setup.Property.Counter.InitializeWith(24);
 
 		int result = sut.Object.Counter;
 
@@ -92,7 +92,7 @@ public sealed partial class MockTests
 	public async Task Set_WithNull_ShouldUpdateValueForNextGet()
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
-		sut.Setup.IsValid.InitializeWith(true);
+		sut.Setup.Property.IsValid.InitializeWith(true);
 
 		bool? result1 = sut.Object.IsValid;
 		sut.Object.IsValid = null;

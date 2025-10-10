@@ -5,7 +5,7 @@ internal class Program
 	static void Main(string[] args)
 	{
 		Mock<IMyInterface> mock = Mock.Create<IMyInterface>();
-		mock.Setup.MyMethod().Returns(2);
+		mock.Setup.Method.MyMethod().Returns(2);
 
 		int result = mock.Object.MyMethod();
 

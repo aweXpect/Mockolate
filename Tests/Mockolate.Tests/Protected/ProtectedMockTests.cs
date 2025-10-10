@@ -23,7 +23,7 @@ public sealed class ProtectedMockTests
 	{
 		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
 
-		mock.Protected.Setup.MyProtectedMethod(With.Any<string>())
+		mock.Protected.Setup.Method.MyProtectedMethod(With.Any<string>())
 			.Returns(v => $"Hello, {v}!");
 
 		string result = mock.Object.InvokeMyProtectedMethod("foo");
@@ -37,7 +37,7 @@ public sealed class ProtectedMockTests
 	{
 		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
 
-		mock.Protected.Setup.MyProtectedProperty.InitializeWith(42);
+		mock.Protected.Setup.Property.MyProtectedProperty.InitializeWith(42);
 
 		int result = mock.Object.GetMyProtectedProperty();
 

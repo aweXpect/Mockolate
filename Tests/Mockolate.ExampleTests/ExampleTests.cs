@@ -16,7 +16,7 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		Mock<MyClass> mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
 
-		mock.Setup.MyMethod(With.Any<int>()).Returns(5);
+		mock.Setup.Method.MyMethod(With.Any<int>()).Returns(5);
 
 		int result = mock.Object.MyMethod(3);
 
@@ -33,7 +33,7 @@ public class ExampleTests
 	public async Task HttpClientTest(HttpStatusCode statusCode)
 	{
 		Mock<HttpMessageHandler> mock = Mock.Create<HttpMessageHandler>();
-		mock.Protected.Setup
+		mock.Protected.Setup.Method
 			.SendAsync(With.Any<HttpRequestMessage>(), With.Any<CancellationToken>())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 
@@ -49,7 +49,7 @@ public class ExampleTests
 	{
 		Guid id = Guid.NewGuid();
 		Mock<IExampleRepository, IOrderRepository> mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.Setup
+		mock.Setup.Method
 			.AddUser(With.Any<string>())
 			.Returns(new User(id, "Alice"));
 		User result = mock.Object.AddUser("Bob");
@@ -63,7 +63,7 @@ public class ExampleTests
 		EventArgs eventArgs = EventArgs.Empty;
 		Guid id = Guid.NewGuid();
 		Mock<IExampleRepository, IOrderRepository> mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.SetupIOrderRepository
+		mock.SetupIOrderRepository.Method
 			.AddOrder(With.Any<string>())
 			.Returns(new Order(id, "Order1"));
 
@@ -81,7 +81,7 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		Mock<MyClass, IExampleRepository, IOrderRepository> mock =
 			Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
-		mock.SetupIExampleRepository.AddUser(
+		mock.SetupIExampleRepository.Method.AddUser(
 				With.Any<string>())
 			.Returns(new User(id, "Alice"));
 
@@ -125,7 +125,7 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		Mock<IExampleRepository> mock = Mock.Create<IExampleRepository>();
 
-		mock.Setup.AddUser(
+		mock.Setup.Method.AddUser(
 				With.Matching<string>(x => x == "Alice"))
 			.Returns(new User(id, "Alice"));
 
@@ -143,7 +143,7 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		Mock<IExampleRepository> mock = Mock.Create<IExampleRepository>();
 
-		mock.Setup.TryDelete(
+		mock.Setup.Method.TryDelete(
 				With.Any<Guid>(),
 				With.Out<User?>(() => new User(id, "Alice")))
 			.Returns(returnValue);
@@ -160,12 +160,12 @@ public class ExampleTests
 	{
 		bool isCalled = false;
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository, IOrderRepository> mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.SetupIOrderRepository
+		Mock<IList<int>, IExampleRepository, IOrderRepository> mock = Mock.Create<IList<int>, IExampleRepository, IOrderRepository>();
+		mock.SetupIOrderRepository.Method
 			.SaveChanges()
 			.Callback(() => isCalled = true);
 
-		bool result = mock.Object.SaveChanges();
+		mock.ObjectForIExampleRepository.SaveChanges();
 
 		await That(isCalled).IsFalse();
 	}

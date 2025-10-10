@@ -10,7 +10,7 @@ public sealed partial class MockTests
 	public async Task Execute_MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
-		sut.Setup.Multiply(With.Any<int>(), With.Any<int?>()).Returns(1);
+		sut.Setup.Method.Multiply(With.Any<int>(), With.Any<int?>()).Returns(1);
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
@@ -26,7 +26,7 @@ public sealed partial class MockTests
 	public async Task Execute_VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
-		sut.Setup.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>());
+		sut.Setup.Method.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>());
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{

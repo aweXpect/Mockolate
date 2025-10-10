@@ -12,7 +12,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
 			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetups<int>.Proxy(mock.Setup);
+			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
 			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 			proxy.AddEvent("foo.bar", setup, Helper.GetMethodInfo());
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(2);
@@ -24,7 +24,7 @@ public sealed partial class MockSetupsTests
 		public async Task RegisterMethod_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetups<int>.Proxy(mock.Setup);
+			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
 
 			proxy.RegisterMethod(new ReturnMethodSetup<int>("foo.bar").Returns(42));
 
@@ -36,7 +36,7 @@ public sealed partial class MockSetupsTests
 		public async Task RegisterProperty_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetups<int>.Proxy(mock.Setup);
+			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
 
 			proxy.RegisterProperty("foo.bar", new PropertySetup<int>().InitializeWith(42));
 
@@ -49,7 +49,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
 			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetups<int>.Proxy(mock.Setup);
+			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
 
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
 			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
@@ -61,7 +61,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
 			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetups<int>.Proxy(mock.Setup);
+			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
 			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);

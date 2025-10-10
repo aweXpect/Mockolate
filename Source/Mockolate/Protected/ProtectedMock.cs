@@ -49,7 +49,7 @@ public class ProtectedMock<T, TMock>(IMock inner, MockInteractions interactions,
 	/// <summary>
 	///     Sets up the mock for <typeparamref name="TMock" />.
 	/// </summary>
-	public MockSetups<T>.Protected Setup
+	public MockSetup<T>.Protected Setup
 		=> new(_inner.Setup);
 
 	#region IMock

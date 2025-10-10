@@ -233,7 +233,7 @@ public sealed class WithTests
 	public async Task WithNull_ShouldMatchWhenNull(int? value, int expectedCount)
 	{
 		Mock<IMyServiceWithNullable> mock = Mock.Create<IMyServiceWithNullable>();
-		mock.Setup.DoSomething(null, true);
+		mock.Setup.Method.DoSomething(null, true);
 
 		mock.Object.DoSomething(value, true);
 

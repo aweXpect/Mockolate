@@ -17,12 +17,12 @@ public class VoidMethodSetupTests
 	{
 		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-		sut.Setup.Method0();
-		sut.Setup.Method1(With.Any<int>());
-		sut.Setup.Method2(With.Any<int>(), With.Any<int>());
-		sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>());
-		sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>());
-		sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>());
+		sut.Setup.Method.Method0();
+		sut.Setup.Method.Method1(With.Any<int>());
+		sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>());
+		sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>());
+		sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>());
+		sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>());
 
 		void Act()
 			=> ((IMock)sut).Execute<int>(
@@ -41,7 +41,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method0().Callback(() => { callCount++; });
+			sut.Setup.Method.Method0().Callback(() => { callCount++; });
 
 			sut.Object.Method0();
 
@@ -54,7 +54,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method0().Callback(() => { callCount++; });
+			sut.Setup.Method.Method0().Callback(() => { callCount++; });
 
 			sut.Object.Method1(1);
 			sut.Object.Method0(false);
@@ -67,7 +67,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method0()
+			sut.Setup.Method.Method0()
 				.DoesNotThrow()
 				.Throws(new Exception("foo"))
 				.DoesNotThrow();
@@ -90,7 +90,7 @@ public class VoidMethodSetupTests
 			int callCount2 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method0()
+			sut.Setup.Method.Method0()
 				.Callback(() => { callCount1++; })
 				.Callback(() => { callCount2++; });
 
@@ -126,7 +126,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method0().Throws(() => new Exception("foo"));
+			sut.Setup.Method.Method0().Throws(() => new Exception("foo"));
 
 			void Act()
 				=> sut.Object.Method0();
@@ -139,7 +139,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method0().Throws(new Exception("foo"));
+			sut.Setup.Method.Method0().Throws(new Exception("foo"));
 
 			void Act()
 				=> sut.Object.Method0();
@@ -165,7 +165,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>())
+			sut.Setup.Method.Method1(With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method1(3);
@@ -179,7 +179,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>())
+			sut.Setup.Method.Method1(With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method0();
@@ -194,7 +194,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Matching<int>(v => v != 1))
+			sut.Setup.Method.Method1(With.Matching<int>(v => v != 1))
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method1(1);
@@ -209,7 +209,7 @@ public class VoidMethodSetupTests
 			int receivedValue = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>())
+			sut.Setup.Method.Method1(With.Any<int>())
 				.Callback(v =>
 				{
 					callCount++;
@@ -228,7 +228,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>())
+			sut.Setup.Method.Method1(With.Any<int>())
 				.Callback(v => { callCount++; });
 
 			sut.Object.Method0();
@@ -243,7 +243,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Matching<int>(v => v != 1))
+			sut.Setup.Method.Method1(With.Matching<int>(v => v != 1))
 				.Callback(v => { callCount++; });
 
 			sut.Object.Method1(1);
@@ -256,7 +256,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>())
+			sut.Setup.Method.Method1(With.Any<int>())
 				.DoesNotThrow()
 				.Throws(new Exception("foo"))
 				.DoesNotThrow();
@@ -279,7 +279,7 @@ public class VoidMethodSetupTests
 			int callCount2 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>())
+			sut.Setup.Method.Method1(With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback(v => { callCount2 += v; });
 
@@ -297,7 +297,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1WithOutParameter(With.Out(() => 3))
+			sut.Setup.Method.Method1WithOutParameter(With.Out(() => 3))
 				.Callback(v =>
 				{
 					callCount++;
@@ -318,7 +318,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1WithRefParameter(With.Ref<int>(v => 3))
+			sut.Setup.Method.Method1WithRefParameter(With.Ref<int>(v => 3))
 				.Callback(v =>
 				{
 					callCount++;
@@ -358,7 +358,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>()).Throws(() => new Exception("foo"));
+			sut.Setup.Method.Method1(With.Any<int>()).Throws(() => new Exception("foo"));
 
 			void Act()
 				=> sut.Object.Method1(1);
@@ -371,7 +371,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>()).Throws(v1 => new Exception($"foo-{v1}"));
+			sut.Setup.Method.Method1(With.Any<int>()).Throws(v1 => new Exception($"foo-{v1}"));
 
 			void Act()
 				=> sut.Object.Method1(1);
@@ -384,7 +384,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method1(With.Any<int>()).Throws(new Exception("foo"));
+			sut.Setup.Method.Method1(With.Any<int>()).Throws(new Exception("foo"));
 
 			void Act()
 				=> sut.Object.Method1(1);
@@ -411,7 +411,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method2(1, 2);
@@ -428,7 +428,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2))
+			sut.Setup.Method.Method2(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2))
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method2(1, 2);
@@ -442,7 +442,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method1(1);
@@ -459,7 +459,7 @@ public class VoidMethodSetupTests
 			int receivedValue2 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2) =>
 				{
 					callCount++;
@@ -483,7 +483,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2))
+			sut.Setup.Method.Method2(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2))
 				.Callback((v1, v2) => { callCount++; });
 
 			sut.Object.Method2(1, 2);
@@ -497,7 +497,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2) => { callCount++; });
 
 			sut.Object.Method1(1);
@@ -511,7 +511,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.DoesNotThrow()
 				.Throws(new Exception("foo"))
 				.DoesNotThrow();
@@ -534,7 +534,7 @@ public class VoidMethodSetupTests
 			int callCount2 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2) => { callCount2 += v1 * v2; });
 
@@ -553,7 +553,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2WithOutParameter(With.Out(() => 2), With.Out(() => 4))
+			sut.Setup.Method.Method2WithOutParameter(With.Out(() => 2), With.Out(() => 4))
 				.Callback((v1, v2) =>
 				{
 					callCount++;
@@ -578,7 +578,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+			sut.Setup.Method.Method2WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
 				.Callback((v1, v2) =>
 				{
 					callCount++;
@@ -622,7 +622,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
 
 			void Act()
@@ -636,7 +636,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
 
 			void Act()
@@ -650,7 +650,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
 
 			void Act()
@@ -680,7 +680,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method3(1, 2, 3);
@@ -699,7 +699,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+			sut.Setup.Method.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3))
 				.Callback(() => { callCount++; });
 
@@ -714,7 +714,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method2(1, 2);
@@ -732,7 +732,7 @@ public class VoidMethodSetupTests
 			int receivedValue3 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3) =>
 				{
 					callCount++;
@@ -760,7 +760,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+			sut.Setup.Method.Method3(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3))
 				.Callback((v1, v2, v3) => { callCount++; });
 
@@ -775,7 +775,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3) => { callCount++; });
 
 			sut.Object.Method2(1, 2);
@@ -789,7 +789,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.DoesNotThrow()
 				.Throws(new Exception("foo"))
 				.DoesNotThrow();
@@ -812,7 +812,7 @@ public class VoidMethodSetupTests
 			int callCount2 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2, v3) => { callCount2 += v1 * v2 * v3; });
 
@@ -832,7 +832,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6))
+			sut.Setup.Method.Method3WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6))
 				.Callback((v1, v2, v3) =>
 				{
 					callCount++;
@@ -861,7 +861,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
+			sut.Setup.Method.Method3WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10))
 				.Callback((v1, v2, v3) =>
 				{
@@ -910,7 +910,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
 
 			void Act()
@@ -924,7 +924,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
 
 			void Act()
@@ -938,7 +938,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
 
 			void Act()
@@ -969,7 +969,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method4(1, 2, 3, 4);
@@ -989,7 +989,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+			sut.Setup.Method.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
 				.Callback(() => { callCount++; });
 
@@ -1004,7 +1004,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method3(1, 2, 3);
@@ -1023,7 +1023,7 @@ public class VoidMethodSetupTests
 			int receivedValue4 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4) =>
 				{
 					callCount++;
@@ -1054,7 +1054,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+			sut.Setup.Method.Method4(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4))
 				.Callback((v1, v2, v3, v4) => { callCount++; });
 
@@ -1069,7 +1069,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4) => { callCount++; });
 
 			sut.Object.Method3(1, 2, 3);
@@ -1083,7 +1083,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.DoesNotThrow()
 				.Throws(new Exception("foo"))
 				.DoesNotThrow();
@@ -1106,7 +1106,7 @@ public class VoidMethodSetupTests
 			int callCount2 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2, v3, v4) => { callCount2 += v1 * v2 * v3 * v4; });
 
@@ -1127,7 +1127,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
+			sut.Setup.Method.Method4WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
 					With.Out(() => 8))
 				.Callback((v1, v2, v3, v4) =>
 				{
@@ -1161,7 +1161,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
+			sut.Setup.Method.Method4WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
 				.Callback((v1, v2, v3, v4) =>
 				{
@@ -1214,7 +1214,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
 
 			void Act()
@@ -1228,7 +1228,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
 
 			void Act()
@@ -1242,7 +1242,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
 
 			void Act()
@@ -1274,7 +1274,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method5(1, 2, 3, 4, 5);
@@ -1295,7 +1295,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+			sut.Setup.Method.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4),
 					With.Matching<int>(v => isMatch5))
 				.Callback(() => { callCount++; });
@@ -1311,7 +1311,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Object.Method4(1, 2, 3, 4);
@@ -1331,7 +1331,7 @@ public class VoidMethodSetupTests
 			int receivedValue5 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) =>
 				{
 					callCount++;
@@ -1365,7 +1365,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
+			sut.Setup.Method.Method5(With.Matching<int>(v => isMatch1), With.Matching<int>(v => isMatch2),
 					With.Matching<int>(v => isMatch3), With.Matching<int>(v => isMatch4),
 					With.Matching<int>(v => isMatch5))
 				.Callback((v1, v2, v3, v4, v5) => { callCount++; });
@@ -1381,7 +1381,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) => { callCount++; });
 
 			sut.Object.Method4(1, 2, 3, 4);
@@ -1395,7 +1395,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.DoesNotThrow()
 				.Throws(new Exception("foo"))
 				.DoesNotThrow();
@@ -1418,7 +1418,7 @@ public class VoidMethodSetupTests
 			int callCount2 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; });
 
@@ -1440,7 +1440,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
+			sut.Setup.Method.Method5WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
 					With.Out(() => 8), With.Out(() => 10))
 				.Callback((v1, v2, v3, v4, v5) =>
 				{
@@ -1479,7 +1479,7 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
+			sut.Setup.Method.Method5WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
 					With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
 				.Callback((v1, v2, v3, v4, v5) =>
 				{
@@ -1536,7 +1536,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(() => new Exception("foo"));
 
 			void Act()
@@ -1550,7 +1550,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
 			void Act()
@@ -1564,7 +1564,7 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Throws(new Exception("foo"));
 
 			void Act()

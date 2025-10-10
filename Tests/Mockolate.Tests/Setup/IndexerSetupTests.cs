@@ -9,7 +9,7 @@ public sealed class IndexerSetupTests
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Matching<int>(i => i < 4))
+		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.InitializeWith("foo");
 
 		string result2 = mock.Object[2];
@@ -26,7 +26,7 @@ public sealed class IndexerSetupTests
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Matching<int>(i => i < 4))
+		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.InitializeWith(v => $"foo-{v}");
 
 		string result2 = mock.Object[2];
@@ -43,7 +43,7 @@ public sealed class IndexerSetupTests
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		var setup = mock.SetupIndexer(With.Any<int>())
+		var setup = mock.Setup.Indexer(With.Any<int>())
 			.InitializeWith("foo");
 
 		void Act()
@@ -58,7 +58,7 @@ public sealed class IndexerSetupTests
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		var setup = mock.SetupIndexer(With.Any<int>())
+		var setup = mock.Setup.Indexer(With.Any<int>())
 			.InitializeWith("foo");
 
 		void Act()
@@ -74,7 +74,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Any<int>())
+		mock.Setup.Indexer(With.Any<int>())
 			.OnGet(() => { callCount++; });
 
 		_ = mock.Object[1];
@@ -92,7 +92,7 @@ public sealed class IndexerSetupTests
 		int callCount3 = 0;
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Value(2))
+		mock.Setup.Indexer(With.Value(2))
 			.OnGet(() => { callCount1++; })
 			.OnGet(v => { callCount2 += v; })
 			.OnGet(() => { callCount3++; });
@@ -113,7 +113,7 @@ public sealed class IndexerSetupTests
 		int callCount3 = 0;
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Any<int>())
+		mock.Setup.Indexer(With.Any<int>())
 			.OnSet(() => { callCount1++; })
 			.OnSet((_, v) => { callCount2 += v; })
 			.OnSet(_ => { callCount3++; });
@@ -132,7 +132,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Matching<int>(i => i < 4))
+		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.OnGet(() => { callCount++; });
 
 		_ = mock.Object[1];
@@ -151,7 +151,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Matching<int>(i => i < 4))
+		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.OnGet(v => { callCount += v; });
 
 		_ = mock.Object[1];
@@ -169,7 +169,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Matching<int>(i => i < 4))
+		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.OnSet(_ => { callCount++; });
 
 		mock.Object[1] = "";
@@ -188,7 +188,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
-		mock.SetupIndexer(With.Matching<int>(i => i < 4))
+		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.OnSet(() => { callCount++; });
 
 		mock.Object[1] = "";
@@ -207,7 +207,7 @@ public sealed class IndexerSetupTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.InitializeWith("foo");
 
 			string result12 = mock.Object[1, 2];
@@ -226,7 +226,7 @@ public sealed class IndexerSetupTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.InitializeWith((v1, v2) => $"foo-{v1}-{v2}");
 
 			string result12 = mock.Object[1, 2];
@@ -245,7 +245,7 @@ public sealed class IndexerSetupTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			var setup = mock.SetupIndexer(With.Any<int>(), With.Any<int>())
+			var setup = mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 				.InitializeWith("foo");
 
 			void Act()
@@ -260,7 +260,7 @@ public sealed class IndexerSetupTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			var setup = mock.SetupIndexer(With.Any<int>(), With.Any<int>())
+			var setup = mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 				.InitializeWith("foo");
 
 			void Act()
@@ -276,7 +276,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Any<int>(), With.Any<int>())
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 				.OnGet(() => { callCount++; });
 
 			_ = mock.Object[1];
@@ -294,7 +294,7 @@ public sealed class IndexerSetupTests
 			int callCount3 = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Any<int>(), With.Any<int>())
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 				.OnGet(() => { callCount1++; })
 				.OnGet((v1, v2) => { callCount2 += v1 * v2; })
 				.OnGet(() => { callCount3++; });
@@ -315,7 +315,7 @@ public sealed class IndexerSetupTests
 			int callCount3 = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Any<int>(), With.Any<int>())
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 				.OnSet(() => { callCount1++; })
 				.OnSet((value, v1, v2) => { callCount2 += v1 * v2 + value.Length; })
 				.OnSet(v => { callCount3 += v.Length; });
@@ -334,7 +334,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnGet(() => { callCount++; });
 
 			_ = mock.Object[5, 1]; // no
@@ -353,7 +353,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnGet((v1, v2) => { callCount += v1 * v2; });
 
 			_ = mock.Object[5, 1];  // no
@@ -372,7 +372,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(v => { callCount += v.Length; });
 
 			mock.Object[1,  1] = "a";         // yes (1)
@@ -394,7 +394,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(() => { callCount++; });
 
 			mock.Object[1, 1] = ""; // yes
@@ -415,7 +415,7 @@ public sealed class IndexerSetupTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.InitializeWith("foo");
 
 			string result123 = mock.Object[1, 2, 3];
@@ -436,7 +436,7 @@ public sealed class IndexerSetupTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.InitializeWith((v1, v2, v3) => $"foo-{v1}-{v2}-{v3}");
 
 			string result123 = mock.Object[1, 2, 3];
@@ -457,7 +457,7 @@ public sealed class IndexerSetupTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			var setup = mock.SetupIndexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			var setup = mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.InitializeWith("foo");
 
 			void Act()
@@ -472,7 +472,7 @@ public sealed class IndexerSetupTests
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			var setup = mock.SetupIndexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			var setup = mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.InitializeWith("foo");
 
 			void Act()
@@ -488,7 +488,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.OnGet(() => { callCount++; });
 
 			_ = mock.Object[1];
@@ -506,7 +506,7 @@ public sealed class IndexerSetupTests
 			int callCount3 = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.OnGet(() => { callCount1++; })
 				.OnGet((v1, v2, v3) => { callCount2 += v1 * v2 * v3; })
 				.OnGet(() => { callCount3++; });
@@ -527,7 +527,7 @@ public sealed class IndexerSetupTests
 			int callCount3 = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.OnSet(() => { callCount1++; })
 				.OnSet((value, v1, v2, v3) => { callCount2 += v1 * v2 * v3 + value.Length; })
 				.OnSet(v => { callCount3 += v.Length; });
@@ -546,7 +546,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnGet(() => { callCount++; });
 
 			_ = mock.Object[1, 5, 1];  // no
@@ -566,7 +566,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnGet((v1, v2, v3) => { callCount += v1 * v2 * v3; });
 
 			_ = mock.Object[1, 5, 1];  // no
@@ -586,7 +586,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(v => { callCount += v.Length; });
 
 			mock.Object[1,  1, 1] = "a";         // yes (1)
@@ -608,7 +608,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 			IMock sut = mock;
-			mock.SetupIndexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
+			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(() => { callCount++; });
 
 			mock.Object[1, 1, 1] = ""; // yes
