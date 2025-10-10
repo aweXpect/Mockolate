@@ -314,25 +314,26 @@ internal static partial class SourceGeneration
 			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Property indexer in @class.Properties.Where(predicate))
+		foreach (var indexerParameters in @class.Properties.Where(predicate).Select(x => x.IndexerParameters))
 		{
+			if (indexerParameters is null || indexerParameters.Value.Count == 0)
+			{
+				continue;
+			}
+
 			if (count++ > 0)
 			{
 				sb.AppendLine();
 			}
 
-			if (indexer.IndexerParameters is null || indexer.IndexerParameters.Value.Count == 0)
-			{
-				continue;
-			}
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the indexer read access for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">>")
-				.Append(isProtected ? ".Protected" : "").Append(" GotIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}>? parameter{i + 1}"))).Append(")").AppendLine();
+				.Append(isProtected ? ".Protected" : "").Append(" GotIndexer").Append("(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}>? parameter{i + 1}"))).Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tMockGotIndexer<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">> indexer = new(verify);").AppendLine();
-			sb.Append("\t\t\treturn ((IMockGotIndexer<Mock<").Append(allClasses).Append(">>)indexer).Got(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"parameter{i + 1}"))).Append(");").AppendLine();
+			sb.Append("\t\t\treturn ((IMockGotIndexer<Mock<").Append(allClasses).Append(">>)indexer).Got(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"parameter{i + 1}"))).Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
 
