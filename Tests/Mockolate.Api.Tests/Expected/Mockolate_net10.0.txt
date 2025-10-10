@@ -479,38 +479,41 @@ namespace Mockolate.Setup
         protected static bool Matches(Mockolate.With.Parameter[] parameters, object?[] values) { }
         protected static bool TryCast<T>(object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
-    public class IndexerSetup<T1> : Mockolate.Setup.IndexerSetup
+    public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup
     {
         public IndexerSetup(Mockolate.With.Parameter<T1> match1) { }
         protected override void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
         protected override bool IsMatch(object?[] parameters) { }
-        public Mockolate.Setup.IndexerSetup<T1> OnGet(System.Action callback) { }
-        public Mockolate.Setup.IndexerSetup<T1> OnGet(System.Action<T1> callback) { }
-        public Mockolate.Setup.IndexerSetup<T1> OnSet(System.Action callback) { }
-        public Mockolate.Setup.IndexerSetup<T1> OnSet(System.Action<T1> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1> OnGet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1> OnGet(System.Action<T1> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1> OnSet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1> OnSet(System.Action<TValue> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1> OnSet(System.Action<TValue, T1> callback) { }
     }
-    public class IndexerSetup<T1, T2> : Mockolate.Setup.IndexerSetup
+    public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup
     {
         public IndexerSetup(Mockolate.With.Parameter<T1> match1, Mockolate.With.Parameter<T2> match2) { }
         protected override void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
         protected override bool IsMatch(object?[] parameters) { }
-        public Mockolate.Setup.IndexerSetup<T1, T2> OnGet(System.Action callback) { }
-        public Mockolate.Setup.IndexerSetup<T1, T2> OnGet(System.Action<T1, T2> callback) { }
-        public Mockolate.Setup.IndexerSetup<T1, T2> OnSet(System.Action callback) { }
-        public Mockolate.Setup.IndexerSetup<T1, T2> OnSet(System.Action<T1, T2> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnGet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnGet(System.Action<T1, T2> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnSet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnSet(System.Action<TValue> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnSet(System.Action<TValue, T1, T2> callback) { }
     }
-    public class IndexerSetup<T1, T2, T3> : Mockolate.Setup.IndexerSetup
+    public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup
     {
         public IndexerSetup(Mockolate.With.Parameter<T1> match1, Mockolate.With.Parameter<T2> match2, Mockolate.With.Parameter<T3> match3) { }
         protected override void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
         protected override bool IsMatch(object?[] parameters) { }
-        public Mockolate.Setup.IndexerSetup<T1, T2, T3> OnGet(System.Action callback) { }
-        public Mockolate.Setup.IndexerSetup<T1, T2, T3> OnGet(System.Action<T1, T2, T3> callback) { }
-        public Mockolate.Setup.IndexerSetup<T1, T2, T3> OnSet(System.Action callback) { }
-        public Mockolate.Setup.IndexerSetup<T1, T2, T3> OnSet(System.Action<T1, T2, T3> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnGet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnGet(System.Action<T1, T2, T3> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnSet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnSet(System.Action<TValue> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnSet(System.Action<TValue, T1, T2, T3> callback) { }
     }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
     {

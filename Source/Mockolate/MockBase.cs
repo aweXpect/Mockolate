@@ -15,7 +15,7 @@ namespace Mockolate;
 [DebuggerDisplay("Setup: {Setup}, {_interactions.Count} interactions")]
 public abstract class MockBase<T> : IMock
 {
-	private readonly Interactions.MockInteractions _interactions;
+	private readonly MockInteractions _interactions;
 	private readonly MockBehavior _behavior;
 
 	/// <inheritdoc cref="MockBase{T}" />

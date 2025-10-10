@@ -45,7 +45,7 @@ public sealed class IndexerSetupTests
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
 		IMock sut = mock;
 		mock.SetupIndexer(With.Any<int>()).OnSet(() => { callCount1++; })
-				.OnSet((v) => { callCount2 += v; })
+				.OnSet((_, v) => { callCount2 += v; })
 				.OnSet(_ => { callCount3++; });
 
 		mock.Object[2] = "foo";

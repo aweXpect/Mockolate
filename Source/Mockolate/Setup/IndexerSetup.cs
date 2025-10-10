@@ -88,17 +88,17 @@ public abstract class IndexerSetup : IIndexerSetup
 }
 
 /// <summary>
-///     Sets up an indexer for <typeparamref name="T1"/>.
+///     Sets up a <typeparamref name="TValue"/> indexer for <typeparamref name="T1"/>.
 /// </summary>
-public class IndexerSetup<T1>(With.Parameter<T1> match1) : IndexerSetup
+public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 {
 	private readonly List<Action<T1>> _getterCallbacks = [];
-	private readonly List<Action<T1>> _setterCallbacks = [];
+	private readonly List<Action<TValue, T1>> _setterCallbacks = [];
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	public IndexerSetup<T1> OnGet(Action callback)
+	public IndexerSetup<TValue, T1> OnGet(Action callback)
 	{
 		_getterCallbacks.Add(_ => callback());
 		return this;
@@ -107,7 +107,7 @@ public class IndexerSetup<T1>(With.Parameter<T1> match1) : IndexerSetup
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	public IndexerSetup<T1> OnGet(Action<T1> callback)
+	public IndexerSetup<TValue, T1> OnGet(Action<T1> callback)
 	{
 		_getterCallbacks.Add(callback);
 		return this;
@@ -116,16 +116,25 @@ public class IndexerSetup<T1>(With.Parameter<T1> match1) : IndexerSetup
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	public IndexerSetup<T1> OnSet(Action callback)
+	public IndexerSetup<TValue, T1> OnSet(Action callback)
 	{
-		_setterCallbacks.Add((_) => callback());
+		_setterCallbacks.Add((_, _) => callback());
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	public IndexerSetup<T1> OnSet(Action<T1> callback)
+	public IndexerSetup<TValue, T1> OnSet(Action<TValue> callback)
+	{
+		_setterCallbacks.Add((v, _) => callback(v));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1> OnSet(Action<TValue, T1> callback)
 	{
 		_setterCallbacks.Add(callback);
 		return this;
@@ -141,13 +150,14 @@ public class IndexerSetup<T1>(With.Parameter<T1> match1) : IndexerSetup
 		}
 	}
 
-	/// <inheritdoc cref="ExecuteSetterCallback{T}(IndexerSetterAccess, T, MockBehavior)" />
+	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
 	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value, MockBehavior behavior)
 	{
-		if (indexerSetterAccess.Parameters.Length == 1 &&
+		if (value is TValue resultValue &&
+			indexerSetterAccess.Parameters.Length == 1 &&
 			TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke(p1));
+			_setterCallbacks.ForEach(callback => callback.Invoke(resultValue, p1));
 		}
 	}
 
@@ -157,17 +167,17 @@ public class IndexerSetup<T1>(With.Parameter<T1> match1) : IndexerSetup
 }
 
 /// <summary>
-///     Sets up an indexer for <typeparamref name="T1"/> and <typeparamref name="T2"/>.
+///     Sets up a <typeparamref name="TValue"/> indexer for <typeparamref name="T1"/> and <typeparamref name="T2"/>.
 /// </summary>
-public class IndexerSetup<T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> match2) : IndexerSetup
+public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> match2) : IndexerSetup
 {
 	private readonly List<Action<T1, T2>> _getterCallbacks = [];
-	private readonly List<Action<T1, T2>> _setterCallbacks = [];
+	private readonly List<Action<TValue, T1, T2>> _setterCallbacks = [];
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	public IndexerSetup<T1, T2> OnGet(Action callback)
+	public IndexerSetup<TValue, T1, T2> OnGet(Action callback)
 	{
 		_getterCallbacks.Add((_, _) => callback());
 		return this;
@@ -176,7 +186,7 @@ public class IndexerSetup<T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	public IndexerSetup<T1, T2> OnGet(Action<T1, T2> callback)
+	public IndexerSetup<TValue, T1, T2> OnGet(Action<T1, T2> callback)
 	{
 		_getterCallbacks.Add(callback);
 		return this;
@@ -185,16 +195,25 @@ public class IndexerSetup<T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	public IndexerSetup<T1, T2> OnSet(Action callback)
+	public IndexerSetup<TValue, T1, T2> OnSet(Action callback)
 	{
-		_setterCallbacks.Add((_, _) => callback());
+		_setterCallbacks.Add((_, _, _) => callback());
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	public IndexerSetup<T1, T2> OnSet(Action<T1, T2> callback)
+	public IndexerSetup<TValue, T1, T2> OnSet(Action<TValue> callback)
+	{
+		_setterCallbacks.Add((v, _, _) => callback(v));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> OnSet(Action<TValue, T1, T2> callback)
 	{
 		_setterCallbacks.Add(callback);
 		return this;
@@ -211,14 +230,15 @@ public class IndexerSetup<T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> 
 		}
 	}
 
-	/// <inheritdoc cref="ExecuteSetterCallback{T}(IndexerSetterAccess, T, MockBehavior)" />
+	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
 	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value, MockBehavior behavior)
 	{
-		if (indexerSetterAccess.Parameters.Length == 2 &&
+		if (value is TValue resultValue &&
+			indexerSetterAccess.Parameters.Length == 2 &&
 			TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
 			TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke(p1, p2));
+			_setterCallbacks.ForEach(callback => callback.Invoke(resultValue, p1, p2));
 		}
 	}
 
@@ -228,17 +248,17 @@ public class IndexerSetup<T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> 
 }
 
 /// <summary>
-///     Sets up an indexer for <typeparamref name="T1"/>, <typeparamref name="T2"/> and <typeparamref name="T3"/>.
+///     Sets up a <typeparamref name="TValue"/> indexer for <typeparamref name="T1"/>, <typeparamref name="T2"/> and <typeparamref name="T3"/>.
 /// </summary>
-public class IndexerSetup<T1, T2, T3>(With.Parameter<T1> match1, With.Parameter<T2> match2, With.Parameter<T3> match3) : IndexerSetup
+public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Parameter<T2> match2, With.Parameter<T3> match3) : IndexerSetup
 {
 	private readonly List<Action<T1, T2, T3>> _getterCallbacks = [];
-	private readonly List<Action<T1, T2, T3>> _setterCallbacks = [];
+	private readonly List<Action<TValue, T1, T2, T3>> _setterCallbacks = [];
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	public IndexerSetup<T1, T2, T3> OnGet(Action callback)
+	public IndexerSetup<TValue, T1, T2, T3> OnGet(Action callback)
 	{
 		_getterCallbacks.Add((_, _, _) => callback());
 		return this;
@@ -247,7 +267,7 @@ public class IndexerSetup<T1, T2, T3>(With.Parameter<T1> match1, With.Parameter<
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	public IndexerSetup<T1, T2, T3> OnGet(Action<T1, T2, T3> callback)
+	public IndexerSetup<TValue, T1, T2, T3> OnGet(Action<T1, T2, T3> callback)
 	{
 		_getterCallbacks.Add(callback);
 		return this;
@@ -256,16 +276,25 @@ public class IndexerSetup<T1, T2, T3>(With.Parameter<T1> match1, With.Parameter<
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	public IndexerSetup<T1, T2, T3> OnSet(Action callback)
+	public IndexerSetup<TValue, T1, T2, T3> OnSet(Action callback)
 	{
-		_setterCallbacks.Add((_, _, _) => callback());
+		_setterCallbacks.Add((_, _, _, _) => callback());
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	public IndexerSetup<T1, T2, T3> OnSet(Action<T1, T2, T3> callback)
+	public IndexerSetup<TValue, T1, T2, T3> OnSet(Action<TValue> callback)
+	{
+		_setterCallbacks.Add((v, _, _, _) => callback(v));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> OnSet(Action<TValue, T1, T2, T3> callback)
 	{
 		_setterCallbacks.Add(callback);
 		return this;
@@ -283,15 +312,16 @@ public class IndexerSetup<T1, T2, T3>(With.Parameter<T1> match1, With.Parameter<
 		}
 	}
 
-	/// <inheritdoc cref="ExecuteSetterCallback{T}(IndexerSetterAccess, T, MockBehavior)" />
+	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
 	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value, MockBehavior behavior)
 	{
-		if (indexerSetterAccess.Parameters.Length == 3 &&
+		if (value is TValue resultValue &&
+			indexerSetterAccess.Parameters.Length == 3 &&
 			TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
 			TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior) &&
 			TryCast(indexerSetterAccess.Parameters[2], out T3 p3, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke(p1, p2, p3));
+			_setterCallbacks.ForEach(callback => callback.Invoke(resultValue, p1, p2, p3));
 		}
 	}
 

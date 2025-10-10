@@ -94,7 +94,7 @@ public class ProtectedMock<T, TMock>(IMock inner, MockInteractions interactions,
 
 	/// <inheritdoc cref="IMock.SetIndexer{TResult}(TResult, object?[])" />
 	public void SetIndexer<TResult>(TResult value, params object?[] parameters)
-		=> _inner.SetIndexer<TResult>(value, parameters);
+		=> _inner.SetIndexer(value, parameters);
 
 	#endregion IMock
 }
