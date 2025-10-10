@@ -1,8 +1,9 @@
 using System.Linq;
+using Mockolate.Checks;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 
-namespace Mockolate.Checks;
+namespace Mockolate.Verify;
 
 /// <summary>
 ///     Check which methods got invoked on the mocked instance for <typeparamref name="TMock" />.

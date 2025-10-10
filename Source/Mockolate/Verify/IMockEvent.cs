@@ -1,4 +1,6 @@
-namespace Mockolate.Checks;
+using Mockolate.Checks;
+
+namespace Mockolate.Verify;
 
 /// <summary>
 ///     Get results for event subscriptions and unsubscriptions on the mock.

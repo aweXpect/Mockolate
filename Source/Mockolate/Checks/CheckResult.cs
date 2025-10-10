@@ -1,5 +1,6 @@
 using System;
 using Mockolate.Interactions;
+using Mockolate.Verify;
 
 namespace Mockolate.Checks;
 
@@ -45,24 +46,6 @@ public class CheckResult<TMock>
 /// </summary>
 public static class CheckResult
 {
-	/// <summary>
-	///     A property expectation returns the getter or setter <see cref="CheckResult" /> for the given
-	///     <paramref name="propertyName" />.
-	/// </summary>
-	public class Property<TMock, TProperty>(IMockAccessed<TMock> mockAccessed, string propertyName)
-	{
-		/// <summary>
-		///     The expectation for the property getter access.
-		/// </summary>
-		public CheckResult<TMock> Getter() => mockAccessed.PropertyGetter(propertyName);
-
-		/// <summary>
-		///     The expectation for the property setter access matching the specified <paramref name="value" />.
-		/// </summary>
-		public CheckResult<TMock> Setter(With.Parameter<TProperty> value)
-			=> mockAccessed.PropertySetter(propertyName, value);
-	}
-
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
 	///     An event expectation returns the subscription or unsubscription <see cref="CheckResult" /> for the given

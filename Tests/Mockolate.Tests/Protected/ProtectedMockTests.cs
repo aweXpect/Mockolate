@@ -41,7 +41,7 @@ public sealed class ProtectedMockTests
 
 		int result = mock.Subject.GetMyProtectedProperty();
 
-		await That(mock.Protected.Verify.Accessed.MyProtectedProperty.Getter()).Once();
+		await That(mock.Protected.Verify.Got.MyProtectedProperty()).Once();
 		await That(result).IsEqualTo(42);
 	}
 

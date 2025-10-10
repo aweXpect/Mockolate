@@ -39,9 +39,9 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.Accessed.MyProperty.Getter();
+		CheckResult<Mock<IMyService>> check = sut.Verify.Got.MyProperty();
 
-		await That(check.Expectation).IsEqualTo("accessed getter of property MyProperty");
+		await That(check.Expectation).IsEqualTo("got property MyProperty");
 	}
 
 	[Fact]
@@ -49,9 +49,9 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.Accessed.MyProperty.Setter(With.Any<int>());
+		CheckResult<Mock<IMyService>> check = sut.Verify.Set.MyProperty(With.Any<int>());
 
-		await That(check.Expectation).IsEqualTo("accessed setter of property MyProperty with value With.Any<int>()");
+		await That(check.Expectation).IsEqualTo("set property MyProperty to value With.Any<int>()");
 	}
 
 	public interface IMyService
