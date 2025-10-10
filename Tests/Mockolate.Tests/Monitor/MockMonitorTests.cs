@@ -10,17 +10,17 @@ public sealed class MockMonitorTests
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
 
-		mock.Object.IsValid(1);
-		mock.Object.IsValid(2);
+		mock.Subject.IsValid(1);
+		mock.Subject.IsValid(2);
 		IDisposable disposable = monitor.Run();
-		mock.Object.IsValid(3);
-		mock.Object.IsValid(4);
+		mock.Subject.IsValid(3);
+		mock.Subject.IsValid(4);
 		disposable.Dispose();
-		mock.Object.IsValid(5);
-		mock.Object.IsValid(6);
+		mock.Subject.IsValid(5);
+		mock.Subject.IsValid(6);
 		disposable.Dispose();
-		mock.Object.IsValid(7);
-		mock.Object.IsValid(8);
+		mock.Subject.IsValid(7);
+		mock.Subject.IsValid(8);
 
 		await That(monitor.Invoked.IsValid(1)).Never();
 		await That(monitor.Invoked.IsValid(2)).Never();
@@ -38,24 +38,24 @@ public sealed class MockMonitorTests
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
 
-		mock.Object.IsValid(1);
-		mock.Object.IsValid(2);
+		mock.Subject.IsValid(1);
+		mock.Subject.IsValid(2);
 		using (monitor.Run())
 		{
-			mock.Object.IsValid(3);
-			mock.Object.IsValid(4);
+			mock.Subject.IsValid(3);
+			mock.Subject.IsValid(4);
 		}
 
-		mock.Object.IsValid(5);
-		mock.Object.IsValid(6);
+		mock.Subject.IsValid(5);
+		mock.Subject.IsValid(6);
 		using (monitor.Run())
 		{
-			mock.Object.IsValid(7);
-			mock.Object.IsValid(8);
+			mock.Subject.IsValid(7);
+			mock.Subject.IsValid(8);
 		}
 
-		mock.Object.IsValid(9);
-		mock.Object.IsValid(10);
+		mock.Subject.IsValid(9);
+		mock.Subject.IsValid(10);
 
 		await That(monitor.Invoked.IsValid(1)).Never();
 		await That(monitor.Invoked.IsValid(2)).Never();
@@ -94,15 +94,15 @@ public sealed class MockMonitorTests
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
 
-		mock.Object.IsValid(1);
-		mock.Object.IsValid(2);
+		mock.Subject.IsValid(1);
+		mock.Subject.IsValid(2);
 		using (monitor.Run())
 		{
-			mock.Object.IsValid(3);
-			mock.Object.IsValid(4);
+			mock.Subject.IsValid(3);
+			mock.Subject.IsValid(4);
 		}
 
-		mock.Object.IsValid(5);
+		mock.Subject.IsValid(5);
 
 		await That(monitor.Invoked.IsValid(1)).Never();
 		await That(monitor.Invoked.IsValid(2)).Never();

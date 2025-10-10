@@ -39,8 +39,8 @@ public sealed partial class MockRaisesTests
 			Mock<MyRaiseEvent> mock = Mock.Create<MyRaiseEvent>();
 			EventHandler handler = (s, e) => { };
 
-			mock.Object.SubscribeToSomeEvent += handler;
-			mock.Object.SubscribeToSomeEvent += handler;
+			mock.Subject.SubscribeToSomeEvent += handler;
+			mock.Subject.SubscribeToSomeEvent += handler;
 
 			await That(mock.Protected.Event.SomeEvent.Subscribed()).Exactly(2);
 			await That(mock.Protected.Event.SomeEvent.Unsubscribed()).Never();
@@ -52,7 +52,7 @@ public sealed partial class MockRaisesTests
 			Mock<MyRaiseEvent> mock = Mock.Create<MyRaiseEvent>();
 			EventHandler handler = (s, e) => { };
 
-			mock.Object.SubscribeToSomeEvent -= handler;
+			mock.Subject.SubscribeToSomeEvent -= handler;
 
 			await That(mock.Protected.Event.SomeEvent.Subscribed()).Never();
 			await That(mock.Protected.Event.SomeEvent.Unsubscribed()).Once();
@@ -65,10 +65,10 @@ public sealed partial class MockRaisesTests
 			Mock<MyRaiseEvent> mock = Mock.Create<MyRaiseEvent>();
 			EventHandler handler = (s, e) => { callCount++; };
 
-			mock.Object.SubscribeToSomeEvent += handler;
+			mock.Subject.SubscribeToSomeEvent += handler;
 			mock.Protected.Raise.SomeEvent(this, EventArgs.Empty);
 			mock.Protected.Raise.SomeEvent(this, EventArgs.Empty);
-			mock.Object.SubscribeToSomeEvent -= handler;
+			mock.Subject.SubscribeToSomeEvent -= handler;
 			mock.Protected.Raise.SomeEvent(this, EventArgs.Empty);
 			mock.Protected.Raise.SomeEvent(this, EventArgs.Empty);
 

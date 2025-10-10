@@ -41,7 +41,7 @@ internal static partial class SourceGeneration
 
 		if (mockClass.IsInterface || mockClass.Constructors?.Any() == true)
 		{
-			AppendMockObject(sb, mockClass, namespaces);
+			AppendMockSubject(sb, mockClass, namespaces);
 		}
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
@@ -76,7 +76,7 @@ internal static partial class SourceGeneration
 			(mockClass.Constructors?.Count > 0 &&
 			 mockClass.Constructors.Value.All(m => m.Parameters.Count == 0)))
 		{
-			sb.Append("\t\t\tObject = new MockObject(this);").AppendLine();
+			sb.Append("\t\t\tSubject = new MockSubject(this);").AppendLine();
 		}
 		else if (mockClass.Constructors?.Count > 0)
 		{
@@ -84,7 +84,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t\t{").AppendLine();
 			if (mockClass.Constructors.Value.Any(mockClass => mockClass.Parameters.Count == 0))
 			{
-				sb.Append("\t\t\t\tObject = new MockObject(this);").AppendLine();
+				sb.Append("\t\t\t\tSubject = new MockSubject(this);").AppendLine();
 			}
 			else
 			{
@@ -101,7 +101,7 @@ internal static partial class SourceGeneration
 				}
 				sb.Append(")").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\tObject = new MockObject(this");
+				sb.Append("\t\t\t\tSubject = new MockSubject(this");
 				for (int i = 1; i <= constructor.Parameters.Count; i++)
 				{
 					sb.Append(", p").Append(i);
@@ -122,15 +122,15 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassName.EscapeForXmlDoc())
 			.Append(string.Join(", ", mockClass.AdditionalImplementations.Select(x => x.ClassName.EscapeForXmlDoc())))
-			.AppendLine("}.Object\" />");
-		sb.Append("\t\tpublic override ").Append(mockClass.ClassName).AppendLine(" Object { get; }");
+			.AppendLine("}.Subject\" />");
+		sb.Append("\t\tpublic override ").Append(mockClass.ClassName).AppendLine(" Subject { get; }");
 		sb.AppendLine("\t}");
 	}
 
-	private static void AppendMockObject(StringBuilder sb, MockClass mockClass, string[] namespaces)
+	private static void AppendMockSubject(StringBuilder sb, MockClass mockClass, string[] namespaces)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The actual mock object implementing <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc())
+		sb.Append("\t///     The actual mock subject implementing <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc())
 			.Append("\" />");
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
@@ -139,7 +139,7 @@ internal static partial class SourceGeneration
 
 		sb.AppendLine(".");
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic partial class MockObject : ").Append(mockClass.ClassName);
+		sb.Append("\tpublic partial class MockSubject : ").Append(mockClass.ClassName);
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
 			sb.Append(",").AppendLine();
@@ -149,12 +149,12 @@ internal static partial class SourceGeneration
 		sb.AppendLine().AppendLine("\t{");
 		sb.AppendLine("\t\tprivate IMock _mock;");
 		sb.AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"MockObject\" />").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"MockSubject\" />").AppendLine();
 		if (mockClass.IsInterface ||
 			(mockClass.Constructors?.Count > 0 && 
 			 mockClass.Constructors.Value.All(m => m.Parameters.Count == 0)))
 		{
-			sb.AppendLine("\t\tpublic MockObject(IMock mock)");
+			sb.AppendLine("\t\tpublic MockSubject(IMock mock)");
 			sb.AppendLine("\t\t{");
 			sb.AppendLine("\t\t\t_mock = mock;");
 			sb.AppendLine("\t\t}");
@@ -163,7 +163,7 @@ internal static partial class SourceGeneration
 		{
 			foreach (Method constructor in mockClass.Constructors)
 			{
-				sb.Append("\t\tpublic MockObject(IMock mock");
+				sb.Append("\t\tpublic MockSubject(IMock mock");
 				foreach (MethodParameter parameter in constructor.Parameters)
 				{
 					sb.Append(", ");

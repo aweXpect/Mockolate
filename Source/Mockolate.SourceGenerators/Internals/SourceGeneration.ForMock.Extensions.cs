@@ -45,12 +45,6 @@ internal static partial class SourceGeneration
 			AppendMockExtensions(sb, mockClass, allClasses);
 			sb.AppendLine();
 		}
-		if (mockClass.Properties.Any(x => x.IsIndexer) ||
-			mockClass.AdditionalImplementations.SelectMany(x => x.Properties).Any(x => x.IsIndexer))
-		{
-			AppendMockIndexers(sb, mockClass, namespaces, allClasses);
-			sb.AppendLine();
-		}
 
 		foreach (Class? @class in mockClass.GetAllClasses())
 		{
@@ -87,9 +81,9 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\" />")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockSetups<").Append(@class.ClassName).Append("> Setup").Append(@class.ClassName.Replace('.', '_'))
+			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassName).Append("> Setup").Append(@class.ClassName.Replace('.', '_'))
 				.AppendLine();
-			sb.Append("\t\t\t=> new MockSetups<").Append(@class.ClassName).Append(">.Proxy(mock.Setup);").AppendLine();
+			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassName).Append(">.Proxy(mock.Setup);").AppendLine();
 			if (@class.Events.Any())
 			{
 				sb.AppendLine();
@@ -134,75 +128,12 @@ internal static partial class SourceGeneration
 				.Append(">>.Proxy(mock.Event, ((IMock)mock).Interactions, mock);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Exposes the mocked object instance of type <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc())
+			sb.Append("\t\t///     Exposes the mocked subject of type <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc())
 				.Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append(@class.ClassName).Append(" ObjectFor").Append(@class.ClassName.Replace('.', '_'))
+			sb.Append("\t\tpublic ").Append(@class.ClassName).Append(" SubjectFor").Append(@class.ClassName.Replace('.', '_'))
 				.AppendLine();
-			sb.Append("\t\t\t=> (").Append(@class.ClassName).Append(")mock.Object;").AppendLine();
-		}
-
-		sb.AppendLine("\t}");
-	}
-
-	private static void AppendMockIndexers(StringBuilder sb, MockClass mockClass, string[] namespaces, string allClasses)
-	{
-		sb.Append("\textension(Mock<").Append(allClasses).AppendLine("> mock)");
-		sb.AppendLine("\t{");
-		int count = 0;
-		foreach (var indexer in mockClass.Properties.Where(x => x.IsIndexer))
-		{
-			if (count++ > 0)
-			{
-				sb.AppendLine();
-			}
-			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up the ").Append(indexer.Type.GetMinimizedString(namespaces)).Append(" indexer on the mock for <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc()).Append("\" />.")
-				.AppendLine();
-			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic IndexerSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
-			foreach (var parameter in indexer.IndexerParameters!)
-			{
-				sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
-			}
-			sb.Append("> SetupIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}> parameter{i+1}"))).Append(")").AppendLine();
-			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tvar setup = new IndexerSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
-			foreach (var parameter in indexer.IndexerParameters!)
-			{
-				sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
-			}
-			sb.Append(">(").Append(string.Join(", ", Enumerable.Range(1, indexer.IndexerParameters.Value.Count).Select(p => $"parameter{p}"))).Append(");").AppendLine();
-			sb.Append("\t\t\t((IMockSetup)mock.Setup).RegisterIndexer(setup);").AppendLine();
-			sb.Append("\t\t\treturn setup;").AppendLine();
-			sb.Append("\t\t}").AppendLine();
-		}
-
-		foreach (Class @class in mockClass.AdditionalImplementations.Where(x => x.Properties.Any(y => y.IsIndexer)))
-		{
-			foreach (var indexer in @class.Properties.Where(x => x.IsIndexer))
-			{
-				if (count++ > 0)
-				{
-					sb.AppendLine();
-				}
-				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Sets up the ").Append(indexer.Type.GetMinimizedString(namespaces)).Append(" indexer on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\" />.")
-					.AppendLine();
-				sb.Append("\t\t/// </summary>").AppendLine();
-				sb.Append("\t\tpublic IndexersSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
-				foreach (var parameter in indexer.IndexerParameters!)
-				{
-					sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
-				}
-				sb.Append("> SetupIndexerOn").Append(@class.ClassName.Replace('.', '_')).Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}> p{i}"))).Append(")").AppendLine();
-				sb.Append("\t\t\t=> new IndexersSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
-				foreach (var parameter in indexer.IndexerParameters!)
-				{
-					sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
-				}
-				sb.Append(">(mock.Setup);").AppendLine();
-			}
+			sb.Append("\t\t\t=> (").Append(@class.ClassName).Append(")mock.Subject;").AppendLine();
 		}
 
 		sb.AppendLine("\t}");

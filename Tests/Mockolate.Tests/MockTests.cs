@@ -74,9 +74,9 @@ public sealed partial class MockTests
 	public async Task DoubleNestedInterfaces_ShouldStillWork()
 	{
 		Mock<Nested.Nested2.IMyDoubleNestedService> mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
-		mock.Setup.IsValid.InitializeWith(true);
+		mock.Setup.Property.IsValid.InitializeWith(true);
 
-		bool result = mock.Object.IsValid;
+		bool result = mock.Subject.IsValid;
 
 		await That(result).IsTrue();
 	}

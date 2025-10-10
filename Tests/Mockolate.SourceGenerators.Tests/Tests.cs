@@ -63,7 +63,7 @@ public class Tests
 			             public static void Main(string[] args)
 			             {
 			     			var mock = Mock.Create<HttpMessageHandler>();
-			     			var httpClient = new HttpClient(mock.Object);
+			     			var httpClient = new HttpClient(mock.Subject);
 			             }
 			         }
 			     }

@@ -9,7 +9,7 @@ public sealed partial class MockTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		_ = sut.Object.Counter;
+		_ = sut.Subject.Counter;
 
 		await That(sut.Accessed.Counter.Getter()).Once();
 		await That(sut.Accessed.Counter.Setter(With.Any<int>())).Never();
@@ -19,9 +19,9 @@ public sealed partial class MockTests
 	public async Task Get_ShouldReturnInitializedValue()
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
-		sut.Setup.Counter.InitializeWith(24);
+		sut.Setup.Property.Counter.InitializeWith(24);
 
-		int result = sut.Object.Counter;
+		int result = sut.Subject.Counter;
 
 		await That(result).IsEqualTo(24);
 	}
@@ -37,7 +37,7 @@ public sealed partial class MockTests
 		});
 
 		void Act()
-			=> _ = sut.Object.IsValid;
+			=> _ = sut.Subject.IsValid;
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
@@ -50,7 +50,7 @@ public sealed partial class MockTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		sut.Object.Counter = 42;
+		sut.Subject.Counter = 42;
 
 		await That(sut.Accessed.Counter.Getter()).Never();
 		await That(sut.Accessed.Counter.Setter(With.Any<int>())).Once();
@@ -67,7 +67,7 @@ public sealed partial class MockTests
 		});
 
 		void Act()
-			=> sut.Object.IsValid = true;
+			=> sut.Subject.IsValid = true;
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
@@ -80,9 +80,9 @@ public sealed partial class MockTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		int result1 = sut.Object.Counter;
-		sut.Object.Counter = 5;
-		int result2 = sut.Object.Counter;
+		int result1 = sut.Subject.Counter;
+		sut.Subject.Counter = 5;
+		int result2 = sut.Subject.Counter;
 
 		await That(result1).IsEqualTo(0);
 		await That(result2).IsEqualTo(5);
@@ -92,11 +92,11 @@ public sealed partial class MockTests
 	public async Task Set_WithNull_ShouldUpdateValueForNextGet()
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
-		sut.Setup.IsValid.InitializeWith(true);
+		sut.Setup.Property.IsValid.InitializeWith(true);
 
-		bool? result1 = sut.Object.IsValid;
-		sut.Object.IsValid = null;
-		bool? result2 = sut.Object.IsValid;
+		bool? result1 = sut.Subject.IsValid;
+		sut.Subject.IsValid = null;
+		bool? result2 = sut.Subject.IsValid;
 
 		await That(result1).IsEqualTo(true);
 		await That(result2).IsEqualTo(null);

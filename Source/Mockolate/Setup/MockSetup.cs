@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -15,13 +16,69 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up the mock for <typeparamref name="T" />.
 /// </summary>
-[DebuggerDisplay("({_methodSetups}, {_propertySetups}, {_eventHandlers})")]
-public class MockSetups<T>(IMock mock) : IMockSetup
+[DebuggerDisplay("{ToString()}")]
+public class MockSetup<T>(IMock mock) : IMockSetup
 {
 	private readonly EventSetups _eventHandlers = new EventSetups();
 	private readonly MethodSetups _methodSetups = new MethodSetups();
 	private readonly PropertySetups _propertySetups = new PropertySetups();
 	private readonly IndexerSetups _indexerSetups = new IndexerSetups();
+
+	#region IMockSetup
+
+	/// <inheritdoc cref="IMockSetup.Mock" />
+	IMock IMockSetup.Mock => mock;
+
+	/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
+	void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+	{
+		_indexerSetups.Add(indexerSetup);
+	}
+
+	/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+	void IMockSetup.SetIndexerValue<TValue>(object?[] parameters, TValue value)
+		=> _indexerSetups.UpdateValue(parameters, value);
+
+	/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
+	void IMockSetup.RegisterMethod(MethodSetup methodSetup)
+	{
+		_methodSetups.Add(methodSetup);
+	}
+
+	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
+	void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
+	{
+		if (!_propertySetups.TryAdd(propertyName, propertySetup))
+		{
+			throw new MockException($"You cannot setup property '{propertyName}' twice.");
+		}
+	}
+
+	/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
+	IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
+	{
+		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers)
+		{
+			if (name != eventName)
+			{
+				continue;
+			}
+
+			yield return (target, method);
+		}
+	}
+
+	/// <inheritdoc cref="IMockSetup.AddEvent(string, object?, MethodInfo)" />
+	void IMockSetup.AddEvent(string eventName, object? target, MethodInfo method)
+	{
+		_eventHandlers.Add(target, method, eventName);
+	}
+
+	/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
+	void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
+		=> _eventHandlers.Remove(target, method, eventName);
+
+	#endregion IMockSetup
 
 	/// <summary>
 	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
@@ -84,8 +141,12 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	///     A proxy implementation of <see cref="IMockSetup" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockSetup inner) : MockSetups<T>(inner.Mock), IMockSetup
+	public class Proxy(IMockSetup inner) : MockSetup<T>(inner.Mock), IMockSetup
 	{
+		/// <inheritdoc cref="IMockSetup.Mock" />
+		public IMock Mock
+			=> inner.Mock;
+
 		/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
 		void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
 			=> inner.RegisterIndexer(indexerSetup);
@@ -109,13 +170,21 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 		/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
 		void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
 			=> inner.RemoveEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+		public void SetIndexerValue<TValue>(object?[] parameters, TValue value)
+			=> inner.SetIndexerValue(parameters, value);
 	}
 
 	/// <summary>
 	///     Sets up the protected elements of the mock for <typeparamref name="T" />.
 	/// </summary>
-	public class Protected(IMockSetup inner) : MockSetups<T>(inner.Mock), IMockSetup
+	public class Protected(IMockSetup inner) : MockSetup<T>(inner.Mock), IMockSetup
 	{
+		/// <inheritdoc cref="IMockSetup.Mock" />
+		public IMock Mock
+			=> inner.Mock;
+
 		/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
 		void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
 			=> inner.RegisterIndexer(indexerSetup);
@@ -139,65 +208,174 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 		/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
 		void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
 			=> inner.RemoveEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+		public void SetIndexerValue<TValue>(object?[] parameters, TValue value)
+			=> inner.SetIndexerValue(parameters, value);
 	}
 
-	#region IMockSetup
-
-	/// <inheritdoc cref="IMockSetup.Mock" />
-	IMock IMockSetup.Mock => mock;
-
-	/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
-	void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+	/// <summary>
+	///     Sets up properties on the mock for <typeparamref name="T"/>.
+	/// </summary>
+	public class Properties(MockSetup<T> setup) : IMockSetup
 	{
-		_indexerSetups.Add(indexerSetup);
+		private readonly IMockSetup _inner = setup;
+
+		/// <inheritdoc cref="IMockSetup.Mock" />
+		public IMock Mock
+			=> _inner.Mock;
+
+		/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
+		void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+			=> _inner.RegisterIndexer(indexerSetup);
+
+		/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
+		void IMockSetup.RegisterMethod(MethodSetup methodSetup)
+			=> _inner.RegisterMethod(methodSetup);
+
+		/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
+		void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
+			=> _inner.RegisterProperty(propertyName, propertySetup);
+
+		/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
+		IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
+			=> _inner.GetEventHandlers(eventName);
+
+		/// <inheritdoc cref="IMockSetup.AddEvent(string, object?, MethodInfo)" />
+		void IMockSetup.AddEvent(string eventName, object? target, MethodInfo method)
+			=> _inner.AddEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
+		void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
+			=> _inner.RemoveEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+		public void SetIndexerValue<TValue>(object?[] parameters, TValue value)
+			=> _inner.SetIndexerValue(parameters, value);
 	}
 
-	/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
-	void IMockSetup.SetIndexerValue<TValue>(object?[] parameters, TValue value)
-		=> _indexerSetups.UpdateValue(parameters, value);
-
-	/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
-	void IMockSetup.RegisterMethod(MethodSetup methodSetup)
+	/// <summary>
+	///     Sets up protected properties on the mock for <typeparamref name="T"/>.
+	/// </summary>
+	public class ProtectedProperties(MockSetup<T> setup) : IMockSetup
 	{
-		_methodSetups.Add(methodSetup);
+		private readonly IMockSetup _inner = setup;
+
+		/// <inheritdoc cref="IMockSetup.Mock" />
+		public IMock Mock
+			=> _inner.Mock;
+
+		/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
+		void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+			=> _inner.RegisterIndexer(indexerSetup);
+
+		/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
+		void IMockSetup.RegisterMethod(MethodSetup methodSetup)
+			=> _inner.RegisterMethod(methodSetup);
+
+		/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
+		void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
+			=> _inner.RegisterProperty(propertyName, propertySetup);
+
+		/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
+		IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
+			=> _inner.GetEventHandlers(eventName);
+
+		/// <inheritdoc cref="IMockSetup.AddEvent(string, object?, MethodInfo)" />
+		void IMockSetup.AddEvent(string eventName, object? target, MethodInfo method)
+			=> _inner.AddEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
+		void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
+			=> _inner.RemoveEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+		public void SetIndexerValue<TValue>(object?[] parameters, TValue value)
+			=> _inner.SetIndexerValue(parameters, value);
 	}
 
-	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
-	void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
+	/// <summary>
+	///     Sets up methods on the mock for <typeparamref name="T"/>.
+	/// </summary>
+	public class Methods(MockSetup<T> setup) : IMockSetup
 	{
-		if (!_propertySetups.TryAdd(propertyName, propertySetup))
-		{
-			throw new MockException($"You cannot setup property '{propertyName}' twice.");
-		}
+		private readonly IMockSetup _inner = setup;
+
+		/// <inheritdoc cref="IMockSetup.Mock" />
+		public IMock Mock
+			=> _inner.Mock;
+
+		/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
+		void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+			=> _inner.RegisterIndexer(indexerSetup);
+
+		/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
+		void IMockSetup.RegisterMethod(MethodSetup methodSetup)
+			=> _inner.RegisterMethod(methodSetup);
+
+		/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
+		void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
+			=> _inner.RegisterProperty(propertyName, propertySetup);
+
+		/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
+		IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
+			=> _inner.GetEventHandlers(eventName);
+
+		/// <inheritdoc cref="IMockSetup.AddEvent(string, object?, MethodInfo)" />
+		void IMockSetup.AddEvent(string eventName, object? target, MethodInfo method)
+			=> _inner.AddEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
+		void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
+			=> _inner.RemoveEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+		public void SetIndexerValue<TValue>(object?[] parameters, TValue value)
+			=> _inner.SetIndexerValue(parameters, value);
 	}
 
-	/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
-	IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
+	/// <summary>
+	///     Sets up protected methods on the mock for <typeparamref name="T"/>.
+	/// </summary>
+	public class ProtectedMethods(MockSetup<T> setup) : IMockSetup
 	{
-		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers)
-		{
-			if (name != eventName)
-			{
-				continue;
-			}
+		private readonly IMockSetup _inner = setup;
 
-			yield return (target, method);
-		}
+		/// <inheritdoc cref="IMockSetup.Mock" />
+		public IMock Mock
+			=> _inner.Mock;
+
+		/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
+		void IMockSetup.RegisterIndexer(IndexerSetup indexerSetup)
+			=> _inner.RegisterIndexer(indexerSetup);
+
+		/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
+		void IMockSetup.RegisterMethod(MethodSetup methodSetup)
+			=> _inner.RegisterMethod(methodSetup);
+
+		/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
+		void IMockSetup.RegisterProperty(string propertyName, PropertySetup propertySetup)
+			=> _inner.RegisterProperty(propertyName, propertySetup);
+
+		/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
+		IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
+			=> _inner.GetEventHandlers(eventName);
+
+		/// <inheritdoc cref="IMockSetup.AddEvent(string, object?, MethodInfo)" />
+		void IMockSetup.AddEvent(string eventName, object? target, MethodInfo method)
+			=> _inner.AddEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
+		void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
+			=> _inner.RemoveEvent(eventName, target, method);
+
+		/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+		public void SetIndexerValue<TValue>(object?[] parameters, TValue value)
+			=> _inner.SetIndexerValue(parameters, value);
 	}
-
-	/// <inheritdoc cref="IMockSetup.AddEvent(string, object?, MethodInfo)" />
-	void IMockSetup.AddEvent(string eventName, object? target, MethodInfo method)
-	{
-		_eventHandlers.Add(target, method, eventName);
-	}
-
-	/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
-	void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
-		=> _eventHandlers.Remove(target, method, eventName);
-
-	#endregion IMockSetup
 
 	/// <inheritdoc cref="object.ToString()" />
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public override string ToString()
 	{
 		var sb = new StringBuilder();

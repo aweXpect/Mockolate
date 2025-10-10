@@ -17,8 +17,8 @@ public class MockCheckTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		sut.Object.DoSomething(1);
-		sut.Object.DoSomething(2);
+		sut.Subject.DoSomething(1);
+		sut.Subject.DoSomething(2);
 
 		await That(sut.Invoked.DoSomething(1)).Once();
 		await That(sut.Check.AllInteractionsVerified()).IsFalse();
@@ -29,8 +29,8 @@ public class MockCheckTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		sut.Object.DoSomething(1);
-		sut.Object.DoSomething(2);
+		sut.Subject.DoSomething(1);
+		sut.Subject.DoSomething(2);
 
 		await That(sut.Invoked.DoSomething(With.Any<int>())).AtLeastOnce();
 		await That(sut.Check.AllInteractionsVerified()).IsTrue();
@@ -41,10 +41,10 @@ public class MockCheckTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		sut.Object.DoSomething(1);
-		sut.Object.DoSomething(2);
-		sut.Object.DoSomething(3);
-		sut.Object.DoSomething(4);
+		sut.Subject.DoSomething(1);
+		sut.Subject.DoSomething(2);
+		sut.Subject.DoSomething(3);
+		sut.Subject.DoSomething(4);
 
 		await That(sut.Invoked.DoSomething(3).Then(m => m.Invoked.DoSomething(4)));
 		await That(sut.Invoked.DoSomething(2).Then(m => m.Invoked.DoSomething(1))).IsFalse();
@@ -56,10 +56,10 @@ public class MockCheckTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		sut.Object.DoSomething(1);
-		sut.Object.DoSomething(2);
-		sut.Object.DoSomething(3);
-		sut.Object.DoSomething(4);
+		sut.Subject.DoSomething(1);
+		sut.Subject.DoSomething(2);
+		sut.Subject.DoSomething(3);
+		sut.Subject.DoSomething(4);
 
 		await That(sut.Invoked.DoSomething(6).Then(m => m.Invoked.DoSomething(4))).IsFalse();
 		await That(sut.Invoked.DoSomething(1).Then(m => m.Invoked.DoSomething(6), m => m.Invoked.DoSomething(3)))
