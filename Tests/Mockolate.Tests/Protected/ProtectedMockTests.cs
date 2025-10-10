@@ -1,4 +1,5 @@
-﻿using Mockolate.Verify;
+﻿using Mockolate.Protected;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.Protected;
 
@@ -45,6 +46,28 @@ public sealed class ProtectedMockTests
 
 		mock.Protected.Verify.Got.MyProtectedProperty().Once();
 		await That(result).IsEqualTo(42);
+	}
+
+	[Fact]
+	public async Task ShouldForwardIMockToInnerMock()
+	{
+		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+		ProtectedMock<MyProtectedClass, Mock<MyProtectedClass>> @protected = mock.Protected;
+		IMock innerMock = mock;
+		IMock protectedMock = @protected;
+
+		await That(protectedMock.Behavior).IsSameAs(innerMock.Behavior);
+		await That(protectedMock.Interactions).IsSameAs(innerMock.Interactions);
+		await That(protectedMock.Raise).IsSameAs(@protected.Raise);
+		await That(protectedMock.Setup).IsSameAs(innerMock.Setup);
+		innerMock.Set("from-inner", 3);
+		await That(protectedMock.Get<int>("from-inner")).IsEqualTo(3);
+		protectedMock.Set("from-protected", 5);
+		await That(innerMock.Get<int>("from-protected")).IsEqualTo(5);
+		innerMock.SetIndexer("set-on-inner", 1, 2);
+		await That(protectedMock.GetIndexer<string>(1, 2)).IsEqualTo("set-on-inner");
+		protectedMock.SetIndexer("set-on-protected", 7, 8, 9);
+		await That(innerMock.GetIndexer<string>(7, 8, 9)).IsEqualTo("set-on-protected");
 	}
 
 #pragma warning disable CS0067 // Event is never used

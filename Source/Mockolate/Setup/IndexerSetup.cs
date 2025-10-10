@@ -478,3 +478,136 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 		return false;
 	}
 }
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue"/> indexer for <typeparamref name="T1"/>, <typeparamref name="T2"/>, <typeparamref name="T3"/> and <typeparamref name="T4"/>.
+/// </summary>
+public class IndexerSetup<TValue, T1, T2, T3, T4>(With.Parameter<T1> match1, With.Parameter<T2> match2, With.Parameter<T3> match3, With.Parameter<T4> match4) : IndexerSetup
+{
+	private readonly List<Action<T1, T2, T3, T4>> _getterCallbacks = [];
+	private readonly List<Action<TValue, T1, T2, T3, T4>> _setterCallbacks = [];
+	private Func<T1, T2, T3, T4, TValue>? _initialization;
+
+	/// <summary>
+	///     Initializes the indexer with the given <paramref name="value" />.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(TValue value)
+	{
+		if (_initialization is not null)
+		{
+			throw new MockException("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
+		_initialization = (_, _, _, _) => value;
+		return this;
+	}
+
+	/// <summary>
+	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(Func<T1, T2, T3, T4, TValue> valueGenerator)
+	{
+		if (_initialization is not null)
+		{
+			throw new MockException("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
+		_initialization = valueGenerator;
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> OnGet(Action callback)
+	{
+		_getterCallbacks.Add((_, _, _, _) => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> OnGet(Action<T1, T2, T3, T4> callback)
+	{
+		_getterCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> OnSet(Action callback)
+	{
+		_setterCallbacks.Add((_, _, _, _, _) => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> OnSet(Action<TValue> callback)
+	{
+		_setterCallbacks.Add((v, _, _, _, _) => callback(v));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> OnSet(Action<TValue, T1, T2, T3, T4> callback)
+	{
+		_setterCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="ExecuteGetterCallback(IndexerGetterAccess, MockBehavior)" />
+	protected override void ExecuteGetterCallback(IndexerGetterAccess indexerGetterAccess, MockBehavior behavior)
+	{
+		if (indexerGetterAccess.Parameters.Length == 4 &&
+			TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior) &&
+			TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior) &&
+			TryCast(indexerGetterAccess.Parameters[2], out T3 p3, behavior) &&
+			TryCast(indexerGetterAccess.Parameters[3], out T4 p4, behavior))
+		{
+			_getterCallbacks.ForEach(callback => callback.Invoke(p1, p2, p3, p4));
+		}
+	}
+
+	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
+	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value, MockBehavior behavior)
+	{
+		if (value is TValue resultValue &&
+			indexerSetterAccess.Parameters.Length == 4 &&
+			TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
+			TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior) &&
+			TryCast(indexerSetterAccess.Parameters[2], out T3 p3, behavior) &&
+			TryCast(indexerSetterAccess.Parameters[3], out T4 p4, behavior))
+		{
+			_setterCallbacks.ForEach(callback => callback.Invoke(resultValue, p1, p2, p3, p4));
+		}
+	}
+
+	/// <inheritdoc cref="IsMatch(object?[])" />
+	protected override bool IsMatch(object?[] parameters)
+		=> Matches([match1, match2, match3, match4], parameters);
+
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out T value)
+	{
+		if (_initialization is not null &&
+			parameters.Length == 4 &&
+			TryCast(parameters[0], out T1 p1, behavior) &&
+			TryCast(parameters[1], out T2 p2, behavior) &&
+			TryCast(parameters[2], out T3 p3, behavior) &&
+			TryCast(parameters[3], out T4 p4, behavior) &&
+			_initialization.Invoke(p1, p2, p3, p4) is T initialValue)
+		{
+			value = initialValue;
+			return true;
+		}
+
+		value = default!;
+		return false;
+	}
+}
