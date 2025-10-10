@@ -121,14 +121,14 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Sets up properties on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(".Properties Property").AppendLine();
+				.Append(isProtected ? ".Protected" : ".").Append("Properties Property").AppendLine();
 			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(".Properties(setup);").AppendLine();
+				.Append(isProtected ? ".Protected" : ".").Append("Properties(setup);").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
 			sb.Append("\textension(MockSetup<").Append(@class.ClassName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(".Properties setup)").AppendLine();
+				.Append(isProtected ? ".Protected" : ".").Append("Properties setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
 			foreach (Property property in @class.Properties.Where(predicate))
@@ -238,14 +238,14 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Sets up methods on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(".Methods Method").AppendLine();
+				.Append(isProtected ? ".Protected" : ".").Append("Methods Method").AppendLine();
 			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(".Methods(setup);").AppendLine();
+				.Append(isProtected ? ".Protected" : ".").Append("Methods(setup);").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
 			sb.Append("\textension(MockSetup<").Append(@class.ClassName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(".Methods setup)").AppendLine();
+				.Append(isProtected ? ".Protected" : ".").Append("Methods setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
 			foreach (Method method in @class.Methods.Where(predicate))
