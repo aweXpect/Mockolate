@@ -393,6 +393,21 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnSet(System.Action<TValue, T1, T2, T3> callback) { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
+    public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup
+    {
+        public IndexerSetup(Mockolate.With.Parameter<T1> match1, Mockolate.With.Parameter<T2> match2, Mockolate.With.Parameter<T3> match3, Mockolate.With.Parameter<T4> match4) { }
+        protected override void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, Mockolate.MockBehavior behavior) { }
+        protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(System.Func<T1, T2, T3, T4, TValue> valueGenerator) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(TValue value) { }
+        protected override bool IsMatch(object?[] parameters) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> OnGet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> OnGet(System.Action<T1, T2, T3, T4> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> OnSet(System.Action callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> OnSet(System.Action<TValue> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> OnSet(System.Action<TValue, T1, T2, T3, T4> callback) { }
+        protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
+    }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
     {
         protected MethodSetup() { }
