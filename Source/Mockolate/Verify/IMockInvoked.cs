@@ -8,5 +8,5 @@ public interface IMockInvoked<TMock>
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
-	CheckResult<TMock> Method(string methodName, params With.Parameter[] parameters);
+	VerificationResult<TMock> Method(string methodName, params With.Parameter[] parameters);
 }

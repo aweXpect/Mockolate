@@ -21,8 +21,8 @@ public sealed partial class MockInvokedTests
 			interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [1,]));
 			interactions.RegisterInteraction(new MethodInvocation(1, "foo.bar", [2,]));
 
-			CheckResult<Mock<int>> result1 = invoked.Method("foo.bar", With.Any<int>());
-			CheckResult<Mock<int>> result2 = @protected.Method("foo.bar", With.Any<int>());
+			VerificationResult<Mock<int>> result1 = invoked.Method("foo.bar", With.Any<int>());
+			VerificationResult<Mock<int>> result2 = @protected.Method("foo.bar", With.Any<int>());
 
 			await That(result1.Exactly(2));
 			await That(result2.Exactly(2));

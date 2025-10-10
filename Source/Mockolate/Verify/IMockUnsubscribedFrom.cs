@@ -8,5 +8,5 @@ public interface IMockUnsubscribedFrom<TMock>
 	/// <summary>
 	///     Counts the unsubscriptions from the event <paramref name="eventName" />.
 	/// </summary>
-	CheckResult<TMock> Event(string eventName);
+	VerificationResult<TMock> Event(string eventName);
 }

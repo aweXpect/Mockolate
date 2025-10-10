@@ -10,7 +10,7 @@ namespace Mockolate.Verify;
 public class MockInvoked<T, TMock>(IMockVerify<TMock> verify) : IMockInvoked<TMock>
 {
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
-	CheckResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)
+	VerificationResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)
 		=> new(verify.Mock, verify.Interactions,
 			verify.Interactions.Interactions
 				.OfType<MethodInvocation>()
@@ -30,7 +30,7 @@ public class MockInvoked<T, TMock>(IMockVerify<TMock> verify) : IMockInvoked<TMo
 		: MockInvoked<T, TMock>(verify), IMockInvoked<TMock>
 	{
 		/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
-		CheckResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)
+		VerificationResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)
 			=> inner.Method(methodName, parameters);
 	}
 

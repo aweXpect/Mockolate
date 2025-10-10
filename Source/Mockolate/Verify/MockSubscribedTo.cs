@@ -10,7 +10,7 @@ namespace Mockolate.Verify;
 public class MockSubscribedTo<T, TMock>(IMockVerify<TMock> verify) : IMockSubscribedTo<TMock>
 {
 	/// <inheritdoc cref="IMockSubscribedTo{TMock}.Event(string)" />
-	CheckResult<TMock> IMockSubscribedTo<TMock>.Event(string eventName)
+	VerificationResult<TMock> IMockSubscribedTo<TMock>.Event(string eventName)
 		=> new(verify.Mock, verify.Interactions,
 			verify.Interactions.Interactions
 				.OfType<EventSubscription>()
@@ -27,7 +27,7 @@ public class MockSubscribedTo<T, TMock>(IMockVerify<TMock> verify) : IMockSubscr
 		: MockSubscribedTo<T, TMock>(verify), IMockSubscribedTo<TMock>
 	{
 		/// <inheritdoc cref="IMockSubscribedTo{TMock}.Event(string)" />
-		CheckResult<TMock> IMockSubscribedTo<TMock>.Event(string eventName)
+		VerificationResult<TMock> IMockSubscribedTo<TMock>.Event(string eventName)
 			=> inner.Event(eventName);
 	}
 

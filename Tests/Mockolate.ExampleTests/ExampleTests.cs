@@ -20,7 +20,7 @@ public class ExampleTests
 
 		int result = mock.Subject.MyMethod(3);
 
-		CheckResult<Mock<MyClass>> check = mock.Verify.Invoked.MyMethod(With.Any<int>());
+		VerificationResult<Mock<MyClass>> check = mock.Verify.Invoked.MyMethod(With.Any<int>());
 		await That(result).IsEqualTo(5);
 		await That(check.Once());
 	}

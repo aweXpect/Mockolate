@@ -10,7 +10,7 @@ namespace Mockolate.Verify;
 public class MockGot<T, TMock>(IMockVerify<TMock> verify) : IMockGot<TMock>
 {
 	/// <inheritdoc cref="IMockGot{TMock}.Property(string)" />
-	CheckResult<TMock> IMockGot<TMock>.Property(string propertyName)
+	VerificationResult<TMock> IMockGot<TMock>.Property(string propertyName)
 		=> new(verify.Mock, verify.Interactions,
 			verify.Interactions.Interactions
 				.OfType<PropertyGetterAccess>()
@@ -27,7 +27,7 @@ public class MockGot<T, TMock>(IMockVerify<TMock> verify) : IMockGot<TMock>
 		: MockGot<T, TMock>(verify), IMockGot<TMock>
 	{
 		/// <inheritdoc cref="IMockGot{TMock}.Property(string)" />
-		CheckResult<TMock> IMockGot<TMock>.Property(string propertyName)
+		VerificationResult<TMock> IMockGot<TMock>.Property(string propertyName)
 			=> inner.Property(propertyName);
 	}
 

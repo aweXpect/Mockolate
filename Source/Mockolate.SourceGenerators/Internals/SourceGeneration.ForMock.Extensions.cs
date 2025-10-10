@@ -196,7 +196,7 @@ internal static partial class SourceGeneration
 				.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult<Mock<").Append(allClasses).Append(">> ").Append(method.Name).Append("(");
+			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">> ").Append(method.Name).Append("(");
 			int i = 0;
 			foreach (MethodParameter parameter in method.Parameters)
 			{
@@ -284,7 +284,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc())
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult<Mock<").Append(allClasses).Append(">> ").Append(property.Name).Append("()").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">> ").Append(property.Name).Append("()").AppendLine();
 			sb.Append("\t\t\t=> ((IMockGot<Mock<").Append(allClasses).Append(">>)mock).Property(\"").Append(@class.GetFullName(property.Name)).Append("\");").AppendLine();
 		}
 
@@ -334,7 +334,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc())
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult<Mock<").Append(allClasses).Append(">> ").Append(property.Name).Append("(With.Parameter<").Append(property.Type.GetMinimizedString(namespaces)).Append("> value)").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">> ").Append(property.Name).Append("(With.Parameter<").Append(property.Type.GetMinimizedString(namespaces)).Append("> value)").AppendLine();
 			sb.Append("\t\t\t=> ((IMockSet<Mock<").Append(allClasses).Append(">>)mock).Property(\"").Append(@class.GetFullName(property.Name)).Append("\", value);").AppendLine();
 		}
 
@@ -391,7 +391,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Validates the subscriptions for the event <see cref=\"")
 				.Append(@class.ClassName.EscapeForXmlDoc()).Append(".").Append(@event.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult<Mock<").Append(allClasses).Append(">> ")
+			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">> ")
 				.Append(@event.Name).Append("()").AppendLine();
 			sb.Append("\t\t\t=> ((IMockSubscribedTo<Mock<").Append(allClasses).Append(">>)mock).Event(\"").Append(@class.GetFullName(@event.Name)).Append("\");").AppendLine();
 		}
@@ -414,7 +414,7 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t///     Validates the unsubscription for the event <see cref=\"")
 				.Append(@class.ClassName.EscapeForXmlDoc()).Append(".").Append(@event.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult<Mock<").Append(allClasses).Append(">> ")
+			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">> ")
 				.Append(@event.Name).Append("()").AppendLine();
 			sb.Append("\t\t\t=> ((IMockUnsubscribedFrom<Mock<").Append(allClasses).Append(">>)mock).Event(\"").Append(@class.GetFullName(@event.Name)).Append("\");").AppendLine();
 		}

@@ -656,43 +656,25 @@ namespace Mockolate.Setup
 }
 namespace Mockolate.Verify
 {
-    public static class CheckResultExtensions
-    {
-        public static bool AtLeast<TMock>(this Mockolate.Verify.CheckResult<TMock> checkResult, int times) { }
-        public static bool AtLeastOnce<TMock>(this Mockolate.Verify.CheckResult<TMock> checkResult) { }
-        public static bool AtMost<TMock>(this Mockolate.Verify.CheckResult<TMock> checkResult, int times) { }
-        public static bool AtMostOnce<TMock>(this Mockolate.Verify.CheckResult<TMock> checkResult) { }
-        public static bool Exactly<TMock>(this Mockolate.Verify.CheckResult<TMock> checkResult, int times) { }
-        public static bool Never<TMock>(this Mockolate.Verify.CheckResult<TMock> checkResult) { }
-        public static bool Once<TMock>(this Mockolate.Verify.CheckResult<TMock> checkResult) { }
-        public static bool Then<TMock>(this Mockolate.Verify.CheckResult<TMock> checkResult, params System.Func<TMock, Mockolate.Verify.CheckResult<TMock>>[] orderedChecks) { }
-    }
-    public class CheckResult<TMock>
-    {
-        public CheckResult(TMock mock, Mockolate.Interactions.MockInteractions interactions, Mockolate.Interactions.IInteraction[] matchingInteractions, string expectation) { }
-        public string Expectation { get; }
-        public TMock Mock { get; }
-        public bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate) { }
-    }
     public interface IMockGot<TMock>
     {
-        Mockolate.Verify.CheckResult<TMock> Property(string propertyName);
+        Mockolate.Verify.VerificationResult<TMock> Property(string propertyName);
     }
     public interface IMockInvoked<TMock>
     {
-        Mockolate.Verify.CheckResult<TMock> Method(string methodName, params Mockolate.With.Parameter[] parameters);
+        Mockolate.Verify.VerificationResult<TMock> Method(string methodName, params Mockolate.With.Parameter[] parameters);
     }
     public interface IMockSet<TMock>
     {
-        Mockolate.Verify.CheckResult<TMock> Property(string propertyName, Mockolate.With.Parameter value);
+        Mockolate.Verify.VerificationResult<TMock> Property(string propertyName, Mockolate.With.Parameter value);
     }
     public interface IMockSubscribedTo<TMock>
     {
-        Mockolate.Verify.CheckResult<TMock> Event(string eventName);
+        Mockolate.Verify.VerificationResult<TMock> Event(string eventName);
     }
     public interface IMockUnsubscribedFrom<TMock>
     {
-        Mockolate.Verify.CheckResult<TMock> Event(string eventName);
+        Mockolate.Verify.VerificationResult<TMock> Event(string eventName);
     }
     public interface IMockVerify<TMock>
     {
@@ -767,5 +749,23 @@ namespace Mockolate.Verify
         {
             public Protected(Mockolate.Verify.IMockVerify<TMock> verify) { }
         }
+    }
+    public static class VerificationResultExtensions
+    {
+        public static bool AtLeast<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
+        public static bool AtLeastOnce<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
+        public static bool AtMost<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
+        public static bool AtMostOnce<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
+        public static bool Exactly<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
+        public static bool Never<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
+        public static bool Once<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
+        public static bool Then<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, params System.Func<TMock, Mockolate.Verify.VerificationResult<TMock>>[] orderedChecks) { }
+    }
+    public class VerificationResult<TMock>
+    {
+        public VerificationResult(TMock mock, Mockolate.Interactions.MockInteractions interactions, Mockolate.Interactions.IInteraction[] matchingInteractions, string expectation) { }
+        public string Expectation { get; }
+        public TMock Mock { get; }
+        public bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate) { }
     }
 }
