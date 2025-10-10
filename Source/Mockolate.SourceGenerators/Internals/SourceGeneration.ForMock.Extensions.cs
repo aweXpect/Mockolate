@@ -51,6 +51,8 @@ internal static partial class SourceGeneration
 			AppendInvokedExtensions(sb, @class, namespaces, allClasses);
 			AppendGotExtensions(sb, @class, namespaces, allClasses);
 			AppendSetExtensions(sb, @class, namespaces, allClasses);
+			AppendGotIndexerExtensions(sb, @class, namespaces, allClasses);
+			AppendSetIndexerExtensions(sb, @class, namespaces, allClasses);
 			AppendEventExtensions(sb, @class, namespaces, allClasses);
 
 			if (AppendProtectedMock(sb, @class))
@@ -58,6 +60,8 @@ internal static partial class SourceGeneration
 				AppendInvokedExtensions(sb, @class, namespaces, allClasses, true);
 				AppendGotExtensions(sb, @class, namespaces, allClasses, true);
 				AppendSetExtensions(sb, @class, namespaces, allClasses, true);
+				AppendGotIndexerExtensions(sb, @class, namespaces, allClasses, true);
+				AppendSetIndexerExtensions(sb, @class, namespaces, allClasses, true);
 				AppendEventExtensions(sb, @class, namespaces, allClasses, true);
 			}
 		}
@@ -292,6 +296,51 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 	}
 
+	private static void AppendGotIndexerExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
+		bool isProtected = false)
+	{
+		Func<Property, bool> predicate = isProtected
+			? new Func<Property, bool>(e
+				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Getter.HasValue && e.Getter.Value.Accessibility != Accessibility.Private)
+			: new Func<Property, bool>(e
+				=> e.IsIndexer &&
+				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Getter.HasValue && e.Getter.Value.Accessibility != Accessibility.Private);
+		if (!@class.Properties.Any(predicate))
+		{
+			return;
+		}
+
+		sb.Append("\textension(MockVerify<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
+		sb.AppendLine("\t{");
+		int count = 0;
+		foreach (var indexerParameters in @class.Properties.Where(predicate).Select(x => x.IndexerParameters))
+		{
+			if (indexerParameters is null || indexerParameters.Value.Count == 0)
+			{
+				continue;
+			}
+
+			if (count++ > 0)
+			{
+				sb.AppendLine();
+			}
+
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the indexer read access for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">>")
+				.Append(isProtected ? ".Protected" : "").Append(" GotIndexer").Append("(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}>? parameter{i + 1}"))).Append(")").AppendLine();
+			sb.AppendLine("\t\t{");
+			sb.Append("\t\t\tMockGotIndexer<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">> indexer = new(verify);").AppendLine();
+			sb.Append("\t\t\treturn ((IMockGotIndexer<Mock<").Append(allClasses).Append(">>)indexer).Got(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"parameter{i + 1}"))).Append(");").AppendLine();
+			sb.AppendLine("\t\t}");
+		}
+
+		sb.AppendLine("\t}");
+		sb.AppendLine();
+	}
+
 	private static void AppendSetExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
 		bool isProtected = false)
 	{
@@ -336,6 +385,50 @@ internal static partial class SourceGeneration
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">> ").Append(property.Name).Append("(With.Parameter<").Append(property.Type.GetMinimizedString(namespaces)).Append("> value)").AppendLine();
 			sb.Append("\t\t\t=> ((IMockSet<Mock<").Append(allClasses).Append(">>)mock).Property(\"").Append(@class.GetFullName(property.Name)).Append("\", value);").AppendLine();
+		}
+
+		sb.AppendLine("\t}");
+		sb.AppendLine();
+	}
+
+	private static void AppendSetIndexerExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
+		bool isProtected = false)
+	{
+		Func<Property, bool> predicate = isProtected
+			? new Func<Property, bool>(e
+				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Setter.HasValue && e.Setter.Value.Accessibility != Accessibility.Private)
+			: new Func<Property, bool>(e
+				=> e.IsIndexer &&
+				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Setter.HasValue && e.Setter.Value.Accessibility != Accessibility.Private);
+		if (!@class.Properties.Any(predicate))
+		{
+			return;
+		}
+
+		sb.Append("\textension(MockVerify<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
+		sb.AppendLine("\t{");
+		int count = 0;
+		foreach (Property indexer in @class.Properties.Where(predicate))
+		{
+			if (count++ > 0)
+			{
+				sb.AppendLine();
+			}
+
+			if (indexer.IndexerParameters is null || indexer.IndexerParameters.Value.Count == 0)
+			{
+				continue;
+			}
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the indexer write access for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<Mock<").Append(allClasses).Append(">>")
+				.Append(isProtected ? ".Protected" : "").Append(" SetIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}>? parameter{i + 1}"))).Append(", With.Parameter<").Append(indexer.Type.GetMinimizedString(namespaces)).Append(">? value)").AppendLine();
+			sb.AppendLine("\t\t{");
+			sb.Append("\t\t\tMockSetIndexer<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">> indexer = new(verify);").AppendLine();
+			sb.Append("\t\t\treturn ((IMockSetIndexer<Mock<").Append(allClasses).Append(">>)indexer).Set(value, ").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"parameter{i + 1}"))).Append(");").AppendLine();
+			sb.AppendLine("\t\t}");
 		}
 
 		sb.AppendLine("\t}");

@@ -20,22 +20,9 @@ public class MockSubscribedTo<T, TMock>(IMockVerify<TMock> verify) : IMockSubscr
         $"subscribed to event {eventName.SubstringAfterLast('.')}");
 
 	/// <summary>
-	///     A proxy implementation of <see cref="IMockSubscribedTo{TMock}" /> that forwards all calls to the provided
-	///     <paramref name="inner" /> instance.
-	/// </summary>
-	public class Proxy(IMockSubscribedTo<TMock> inner, IMockVerify<TMock> verify)
-		: MockSubscribedTo<T, TMock>(verify), IMockSubscribedTo<TMock>
-	{
-		/// <inheritdoc cref="IMockSubscribedTo{TMock}.Event(string)" />
-		VerificationResult<TMock> IMockSubscribedTo<TMock>.Event(string eventName)
-			=> inner.Event(eventName);
-	}
-
-	/// <summary>
 	///     Check which protected events were subscribed to on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockSubscribedTo<T, TMock>(verify), IMockSubscribedTo<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockSubscribedTo<T, TMock>(verify)
 	{
 	}
 }

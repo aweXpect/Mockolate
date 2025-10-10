@@ -20,22 +20,9 @@ public class MockUnsubscribedFrom<T, TMock>(IMockVerify<TMock> verify) : IMockUn
         $"unsubscribed from event {eventName.SubstringAfterLast('.')}");
 
 	/// <summary>
-	///     A proxy implementation of <see cref="IMockUnsubscribedFrom{TMock}" /> that forwards all calls to the provided
-	///     <paramref name="inner" /> instance.
-	/// </summary>
-	public class Proxy(IMockUnsubscribedFrom<TMock> inner, IMockVerify<TMock> verify)
-		: MockUnsubscribedFrom<T, TMock>(verify), IMockUnsubscribedFrom<TMock>
-	{
-		/// <inheritdoc cref="IMockUnsubscribedFrom{TMock}.Event(string)" />
-		VerificationResult<TMock> IMockUnsubscribedFrom<TMock>.Event(string eventName)
-			=> inner.Event(eventName);
-	}
-
-	/// <summary>
 	///     Check which protected events were unsubscribed from on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockUnsubscribedFrom<T, TMock>(verify), IMockUnsubscribedFrom<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockUnsubscribedFrom<T, TMock>(verify)
 	{
 	}
 }

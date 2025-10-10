@@ -20,22 +20,9 @@ public class MockSet<T, TMock>(IMockVerify<TMock> verify) : IMockSet<TMock>
         $"set property {propertyName.SubstringAfterLast('.')} to value {value}");
 
 	/// <summary>
-	///     A proxy implementation of <see cref="IMockSet{TMock}" /> that forwards all calls to the provided
-	///     <paramref name="inner" /> instance.
-	/// </summary>
-	public class Proxy(IMockSet<TMock> inner, IMockVerify<TMock> verify)
-		: MockSet<T, TMock>(verify), IMockSet<TMock>
-	{
-		/// <inheritdoc cref="IMockSet{TMock}.Property(string, With.Parameter)" />
-		VerificationResult<TMock> IMockSet<TMock>.Property(string propertyName, With.Parameter value)
-			=> inner.Property(propertyName, value);
-	}
-
-	/// <summary>
 	///     Check which protected properties were set on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockSet<T, TMock>(verify), IMockSet<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockSet<T, TMock>(verify)
 	{
 	}
 }

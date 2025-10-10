@@ -23,22 +23,9 @@ public class MockInvoked<T, TMock>(IMockVerify<TMock> verify) : IMockInvoked<TMo
         $"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
 
 	/// <summary>
-	///     A proxy implementation of <see cref="IMockInvoked{TMock}" /> that forwards all calls to the provided
-	///     <paramref name="inner" /> instance.
-	/// </summary>
-	public class Proxy(IMockInvoked<TMock> inner, IMockVerify<TMock> verify)
-		: MockInvoked<T, TMock>(verify), IMockInvoked<TMock>
-	{
-		/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
-		VerificationResult<TMock> IMockInvoked<TMock>.Method(string methodName, params With.Parameter[] parameters)
-			=> inner.Method(methodName, parameters);
-	}
-
-	/// <summary>
 	///     Check which protected methods got invoked on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockInvoked<T, TMock>(verify), IMockInvoked<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockInvoked<T, TMock>(verify)
 	{
 	}
 }
