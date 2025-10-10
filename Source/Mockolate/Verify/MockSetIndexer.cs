@@ -17,8 +17,8 @@ public class MockSetIndexer<T, TMock>(IMockVerify<TMock> verify) : IMockSetIndex
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				(value is null ? indexer.Value is null : value!.Matches(indexer.Value)) &&
 				!parameters.Where((parameter, i) => parameter is null
-					? indexer.Parameters[1] is null
-					: !parameter.Matches(indexer.Parameters[1])).Any())
+					? indexer.Parameters[i] is null
+					: !parameter.Matches(indexer.Parameters[i])).Any())
 				.Cast<IInteraction>()
 				.ToArray(),
         $"set indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))} to value {(value?.ToString() ?? "null")}");
