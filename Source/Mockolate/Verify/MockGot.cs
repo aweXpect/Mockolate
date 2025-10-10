@@ -20,18 +20,6 @@ public class MockGot<T, TMock>(IMockVerify<TMock> verify) : IMockGot<TMock>
         $"got property {propertyName.SubstringAfterLast('.')}");
 
 	/// <summary>
-	///     A proxy implementation of <see cref="IMockGot{TMock}" /> that forwards all calls to the provided
-	///     <paramref name="inner" /> instance.
-	/// </summary>
-	public class Proxy(IMockGot<TMock> inner, IMockVerify<TMock> verify)
-		: MockGot<T, TMock>(verify), IMockGot<TMock>
-	{
-		/// <inheritdoc cref="IMockGot{TMock}.Property(string)" />
-		VerificationResult<TMock> IMockGot<TMock>.Property(string propertyName)
-			=> inner.Property(propertyName);
-	}
-
-	/// <summary>
 	///     Check which protected properties got read on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
 	public class Protected(IMockVerify<TMock> verify)

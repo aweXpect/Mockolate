@@ -23,18 +23,6 @@ public class MockGotIndexer<T, TMock>(IMockVerify<TMock> verify) : IMockGotIndex
         $"got indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))}");
 
 	/// <summary>
-	///     A proxy implementation of <see cref="IMockGot{TMock}" /> that forwards all calls to the provided
-	///     <paramref name="inner" /> instance.
-	/// </summary>
-	public class Proxy(IMockGotIndexer<TMock> inner, IMockVerify<TMock> verify)
-		: MockGotIndexer<T, TMock>(verify), IMockGotIndexer<TMock>
-	{
-		/// <inheritdoc cref="IMockGotIndexer{TMock}.Got(With.Parameter?[])" />
-		VerificationResult<TMock> IMockGotIndexer<TMock>.Got(params With.Parameter?[] parameters)
-			=> inner.Got(parameters);
-	}
-
-	/// <summary>
 	///     Check which protected indexers got read on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
 	public class Protected(IMockVerify<TMock> verify)
