@@ -16,8 +16,8 @@ public class MockGotIndexer<T, TMock>(IMockVerify<TMock> verify) : IMockGotIndex
 				.OfType<IndexerGetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				!parameters.Where((parameter, i) => parameter is null
-					? indexer.Parameters[1] is null
-					: !parameter.Matches(indexer.Parameters[1])).Any())
+					? indexer.Parameters[i] is null
+					: !parameter.Matches(indexer.Parameters[i])).Any())
 				.Cast<IInteraction>()
 				.ToArray(),
         $"got indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))}");
