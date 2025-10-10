@@ -16,29 +16,33 @@ namespace Mockolate.Protected;
 ///     not possible through standard public mocking APIs. All features exposed by this class operate on the provided mock
 ///     instance.
 /// </remarks>
-public class ProtectedMock<T, TMock>(IMock inner, MockInteractions interactions, TMock mock) : IMock
+public class ProtectedMock<T, TMock> : IMock
 	where TMock : Mock<T>
 {
-	private readonly IMock _inner = inner;
-	private readonly TMock _mock = mock;
+	private readonly IMock _inner;
+
+	public ProtectedMock(IMock inner, MockInteractions interactions, TMock mock)
+	{
+		_inner = inner;
+		Verify = new(new MockVerify<T, Mock<T>>(interactions, mock));
+		Raise = new(mock.Raise, mock.Setup, _inner.Interactions);
+		Setup = new(_inner.Setup);
+	}
 
 	/// <summary>
 	///     Verifies the protected interactions with the mocked subject of <typeparamref name="T"/>.
 	/// </summary>
-	public MockVerify<T, Mock<T>>.Protected Verify
-		=> new(new MockVerify<T, Mock<T>>(interactions, _mock));
+	public MockVerify<T, Mock<T>>.Protected Verify { get; }
 
 	/// <summary>
 	///     Raise events on the mock for <typeparamref name="TMock" />.
 	/// </summary>
-	public MockRaises<T>.Protected Raise
-		=> new(_mock.Raise, _mock.Setup, _inner.Interactions);
+	public MockRaises<T>.Protected Raise { get; }
 
 	/// <summary>
 	///     Sets up the mock for <typeparamref name="TMock" />.
 	/// </summary>
-	public MockSetup<T>.Protected Setup
-		=> new(_inner.Setup);
+	public MockSetup<T>.Protected Setup { get; }
 
 	#region IMock
 
@@ -68,10 +72,6 @@ public class ProtectedMock<T, TMock>(IMock inner, MockInteractions interactions,
 	MethodSetupResult IMock.Execute(string methodName, params object?[]? parameters)
 		=> _inner.Execute(methodName, parameters);
 
-	/// <inheritdoc cref="IMock.Set(string, object?)" />
-	void IMock.Set(string propertyName, object? value)
-		=> _inner.Set(propertyName, value);
-
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
 	TResult IMock.Get<TResult>(string propertyName)
 		=> _inner.Get<TResult>(propertyName);
@@ -79,6 +79,10 @@ public class ProtectedMock<T, TMock>(IMock inner, MockInteractions interactions,
 	/// <inheritdoc cref="IMock.GetIndexer{TResult}(object?[])" />
 	public TResult GetIndexer<TResult>(params object?[] parameters)
 		=> _inner.GetIndexer<TResult>(parameters);
+
+	/// <inheritdoc cref="IMock.Set(string, object?)" />
+	void IMock.Set(string propertyName, object? value)
+		=> _inner.Set(propertyName, value);
 
 	/// <inheritdoc cref="IMock.SetIndexer{TResult}(TResult, object?[])" />
 	public void SetIndexer<TResult>(TResult value, params object?[] parameters)

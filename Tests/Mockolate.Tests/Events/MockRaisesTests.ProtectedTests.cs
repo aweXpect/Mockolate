@@ -12,7 +12,7 @@ public sealed partial class MockRaisesTests
 		public async Task AddEvent_WithoutMethod_ShouldThrowMockException()
 		{
 			Mock<MyRaiseEvent> mock = Mock.Create<MyRaiseEvent>();
-			IMockRaises raises = mock.Raise;
+			IMockRaises raises = mock.Protected.Raise;
 
 			void Act()
 				=> raises.AddEvent("SomeEvent", this, null);
@@ -25,7 +25,7 @@ public sealed partial class MockRaisesTests
 		public async Task RemoveEvent_WithoutMethod_ShouldThrowMockException()
 		{
 			Mock<MyRaiseEvent> mock = Mock.Create<MyRaiseEvent>();
-			IMockRaises raises = mock.Raise;
+			IMockRaises raises = mock.Protected.Raise;
 
 			void Act()
 				=> raises.RemoveEvent("SomeEvent", this, null);
