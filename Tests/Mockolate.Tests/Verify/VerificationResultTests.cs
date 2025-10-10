@@ -2,14 +2,14 @@ using Mockolate.Verify;
 
 namespace Mockolate.Tests.Checks;
 
-public class CheckResultTests
+public class VerificationResultTests
 {
 	[Fact]
 	public async Task Expectation_EventSubscription_ShouldHaveExpectedValue()
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.SubscribedTo.SomethingHappened();
+		VerificationResult<Mock<IMyService>> check = sut.Verify.SubscribedTo.SomethingHappened();
 
 		await That(check.Expectation).IsEqualTo("subscribed to event SomethingHappened");
 	}
@@ -19,7 +19,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.UnsubscribedFrom.SomethingHappened();
+		VerificationResult<Mock<IMyService>> check = sut.Verify.UnsubscribedFrom.SomethingHappened();
 
 		await That(check.Expectation).IsEqualTo("unsubscribed from event SomethingHappened");
 	}
@@ -29,7 +29,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.Invoked.DoSomething(With.Any<int?>(), "foo");
+		VerificationResult<Mock<IMyService>> check = sut.Verify.Invoked.DoSomething(With.Any<int?>(), "foo");
 
 		await That(check.Expectation).IsEqualTo("invoked method DoSomething(With.Any<int?>(), \"foo\")");
 	}
@@ -39,7 +39,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.Got.MyProperty();
+		VerificationResult<Mock<IMyService>> check = sut.Verify.Got.MyProperty();
 
 		await That(check.Expectation).IsEqualTo("got property MyProperty");
 	}
@@ -49,7 +49,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.Set.MyProperty(With.Any<int>());
+		VerificationResult<Mock<IMyService>> check = sut.Verify.Set.MyProperty(With.Any<int>());
 
 		await That(check.Expectation).IsEqualTo("set property MyProperty to value With.Any<int>()");
 	}

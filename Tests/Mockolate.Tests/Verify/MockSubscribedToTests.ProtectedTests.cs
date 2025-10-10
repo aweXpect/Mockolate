@@ -20,8 +20,8 @@ public sealed partial class MockSubscribedToTests
 			interactions.RegisterInteraction(new EventSubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 			interactions.RegisterInteraction(new EventSubscription(1, "foo.bar", mock, Helper.GetMethodInfo()));
 
-			CheckResult<Mock<int>> result1 = subscribedTo.Event("foo.bar");
-			CheckResult<Mock<int>> result2 = @protected.Event("foo.bar");
+			VerificationResult<Mock<int>> result1 = subscribedTo.Event("foo.bar");
+			VerificationResult<Mock<int>> result2 = @protected.Event("foo.bar");
 
 			await That(result1.Exactly(2));
 			await That(result2.Exactly(2));

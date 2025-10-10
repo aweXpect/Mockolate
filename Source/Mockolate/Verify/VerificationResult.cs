@@ -6,7 +6,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     The expectation contains the matching interactions for verification.
 /// </summary>
-public class CheckResult<TMock>
+public class VerificationResult<TMock>
 {
 	private readonly MockInteractions _interactions;
 	private readonly IInteraction[] _matchingInteractions;
@@ -21,8 +21,8 @@ public class CheckResult<TMock>
 	/// </summary>
 	public TMock Mock { get; }
 
-	/// <inheritdoc cref="CheckResult{TMock}" />
-	public CheckResult(TMock mock, MockInteractions interactions, IInteraction[] matchingInteractions, string expectation)
+	/// <inheritdoc cref="VerificationResult{TMock}" />
+	public VerificationResult(TMock mock, MockInteractions interactions, IInteraction[] matchingInteractions, string expectation)
 	{
 		Mock = mock;
 		_interactions = interactions;

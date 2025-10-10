@@ -9,5 +9,5 @@ public interface IMockSet<TMock>
 	///     Counts the setter accesses of property <paramref name="propertyName" />
 	///     with the matching <paramref name="value" />.
 	/// </summary>
-	CheckResult<TMock> Property(string propertyName, With.Parameter value);
+	VerificationResult<TMock> Property(string propertyName, With.Parameter value);
 }

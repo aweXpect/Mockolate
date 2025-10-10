@@ -20,8 +20,8 @@ public sealed partial class MockGotTests
 			interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));
 			interactions.RegisterInteraction(new PropertyGetterAccess(1, "foo.bar"));
 
-			CheckResult<Mock<int>> result1 = mockGot.Property("foo.bar");
-			CheckResult<Mock<int>> result2 = proxy.Property("foo.bar");
+			VerificationResult<Mock<int>> result1 = mockGot.Property("foo.bar");
+			VerificationResult<Mock<int>> result2 = proxy.Property("foo.bar");
 
 			await That(result1.Exactly(2));
 			await That(result2.Exactly(2));

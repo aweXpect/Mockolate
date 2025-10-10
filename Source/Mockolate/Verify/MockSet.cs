@@ -10,7 +10,7 @@ namespace Mockolate.Verify;
 public class MockSet<T, TMock>(IMockVerify<TMock> verify) : IMockSet<TMock>
 {
 	/// <inheritdoc cref="IMockSet{TMock}.Property(string, With.Parameter)" />
-	CheckResult<TMock> IMockSet<TMock>.Property(string propertyName, With.Parameter value)
+	VerificationResult<TMock> IMockSet<TMock>.Property(string propertyName, With.Parameter value)
 		=> new(verify.Mock, verify.Interactions,
 			verify.Interactions.Interactions
 				.OfType<PropertySetterAccess>()
@@ -27,7 +27,7 @@ public class MockSet<T, TMock>(IMockVerify<TMock> verify) : IMockSet<TMock>
 		: MockSet<T, TMock>(verify), IMockSet<TMock>
 	{
 		/// <inheritdoc cref="IMockSet{TMock}.Property(string, With.Parameter)" />
-		CheckResult<TMock> IMockSet<TMock>.Property(string propertyName, With.Parameter value)
+		VerificationResult<TMock> IMockSet<TMock>.Property(string propertyName, With.Parameter value)
 			=> inner.Property(propertyName, value);
 	}
 

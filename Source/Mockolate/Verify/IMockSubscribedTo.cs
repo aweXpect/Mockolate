@@ -8,5 +8,5 @@ public interface IMockSubscribedTo<TMock>
 	/// <summary>
 	///     Counts the subscriptions to the event <paramref name="eventName" />.
 	/// </summary>
-	CheckResult<TMock> Event(string eventName);
+	VerificationResult<TMock> Event(string eventName);
 }

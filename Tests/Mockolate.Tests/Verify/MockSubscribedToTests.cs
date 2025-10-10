@@ -16,7 +16,7 @@ public sealed partial class MockSubscribedToTests
 		IMockSubscribedTo<Mock<int>> subscribedTo = new MockSubscribedTo<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new EventSubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		CheckResult<Mock<int>> result = subscribedTo.Event("baz.bar");
+		VerificationResult<Mock<int>> result = subscribedTo.Event("baz.bar");
 
 		await That(result.Never());
 	}
@@ -30,7 +30,7 @@ public sealed partial class MockSubscribedToTests
 		IMockSubscribedTo<Mock<int>> subscribedTo = new MockSubscribedTo<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new EventSubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		CheckResult<Mock<int>> result = subscribedTo.Event("foo.bar");
+		VerificationResult<Mock<int>> result = subscribedTo.Event("foo.bar");
 
 		await That(result.Once());
 	}
@@ -42,7 +42,7 @@ public sealed partial class MockSubscribedToTests
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
 		IMockSubscribedTo<Mock<int>> subscribedTo = new MockSubscribedTo<int, Mock<int>>(verify);
 
-		CheckResult<Mock<int>> result = subscribedTo.Event("foo.bar");
+		VerificationResult<Mock<int>> result = subscribedTo.Event("foo.bar");
 
 		await That(result.Never());
 		await That(result.Expectation).IsEqualTo("subscribed to event bar");
