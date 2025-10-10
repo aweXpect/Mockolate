@@ -1,6 +1,7 @@
+using Mockolate;
 using Mockolate.Verify;
 
-namespace Mockolate.Tests.Checks;
+namespace Mockolate.Tests.Verify;
 
 public class VerificationResultTests
 {

@@ -22,7 +22,7 @@ public class ExampleTests
 
 		VerificationResult<Mock<MyClass>> check = mock.Verify.Invoked.MyMethod(With.Any<int>());
 		await That(result).IsEqualTo(5);
-		await That(check.Once());
+		check.Once();
 	}
 
 #if NET8_0_OR_GREATER
@@ -54,7 +54,7 @@ public class ExampleTests
 			.Returns(new User(id, "Alice"));
 		User result = mock.Subject.AddUser("Bob");
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		await That(mock.Verify.Invoked.AddUser(With.Any<string>()).Once());
+		mock.Verify.Invoked.AddUser(With.Any<string>()).Once();
 	}
 
 	[Fact]
@@ -70,7 +70,7 @@ public class ExampleTests
 		var result = mock.SubjectForIOrderRepository.AddOrder("foo");
 
 		await That(result.Name).IsEqualTo("Order1");
-		await That(mock.VerifyOnIOrderRepository.Invoked.AddOrder("foo").Once());
+		mock.VerifyOnIOrderRepository.Invoked.AddOrder("foo").Once();
 		await That(mock.Subject).Is<IExampleRepository>();
 		await That(mock.Subject).Is<IOrderRepository>();
 	}
@@ -88,7 +88,7 @@ public class ExampleTests
 		var result = mock.SubjectForIExampleRepository.AddUser("Bob");
 
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		await That(mock.VerifyOnIExampleRepository.Invoked.AddUser("Bob").Once());
+		mock.VerifyOnIExampleRepository.Invoked.AddUser("Bob").Once();
 	}
 
 	[Fact]
@@ -132,7 +132,7 @@ public class ExampleTests
 		User result = mock.Subject.AddUser(name);
 
 		await That(result).IsEqualTo(expectResult ? new User(id, "Alice") : null);
-		await That(mock.Verify.Invoked.AddUser(name).Once());
+		mock.Verify.Invoked.AddUser(name).Once();
 	}
 
 	[Theory]
@@ -152,7 +152,7 @@ public class ExampleTests
 
 		await That(deletedUser).IsEqualTo(new User(id, "Alice"));
 		await That(result).IsEqualTo(returnValue);
-		await That(mock.Verify.Invoked.TryDelete(id, With.Out<User?>()).Once());
+		mock.Verify.Invoked.TryDelete(id, With.Out<User?>()).Once();
 	}
 
 	[Fact]

@@ -17,7 +17,7 @@ public sealed partial class MockSetTests
 
 		VerificationResult<Mock<int>> result = mockSet.Property("foo.bar", With.Any<int>());
 
-		await That(result.Once());
+		result.Once();
 	}
 
 	[Fact]
@@ -31,7 +31,7 @@ public sealed partial class MockSetTests
 
 		VerificationResult<Mock<int>> result = mockSet.Property("foo.bar", With.Any<string>());
 
-		await That(result.Never());
+		result.Never();
 	}
 
 	[Fact]
@@ -45,7 +45,7 @@ public sealed partial class MockSetTests
 
 		VerificationResult<Mock<int>> result = mockSet.Property("baz.bar", With.Any<int>());
 
-		await That(result.Never());
+		result.Never();
 	}
 
 	[Fact]
@@ -57,7 +57,7 @@ public sealed partial class MockSetTests
 
 		VerificationResult<Mock<int>> result = mockSet.Property("foo.bar", With.Any<int>());
 
-		await That(result.Never());
+		result.Never();
 		await That(result.Expectation).IsEqualTo("set property bar to value With.Any<int>()");
 	}
 }

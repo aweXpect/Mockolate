@@ -2,5 +2,6 @@
 
 internal interface IMyService
 {
+	void DoSomething(int value);
 	void DoSomething(int value, bool flag);
 }

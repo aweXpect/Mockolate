@@ -23,8 +23,8 @@ public sealed partial class MockSetTests
 			VerificationResult<Mock<int>> result1 = mockSet.Property("foo.bar", With.Any<int>());
 			VerificationResult<Mock<int>> result2 = @protected.Property("foo.bar", With.Any<int>());
 
-			await That(result1.Exactly(2));
-			await That(result2.Exactly(2));
+			result1.Exactly(2);
+			result2.Exactly(2);
 		}
 	}
 }

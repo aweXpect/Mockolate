@@ -17,7 +17,7 @@ public sealed partial class MockGotTests
 
 		VerificationResult<Mock<int>> result = mockGot.Property("baz.bar");
 
-		await That(result.Never());
+		result.Never();
 	}
 
 	[Fact]
@@ -31,7 +31,7 @@ public sealed partial class MockGotTests
 
 		VerificationResult<Mock<int>> result = mockGot.Property("foo.bar");
 
-		await That(result.Once());
+		result.Once();
 	}
 
 	[Fact]
@@ -43,7 +43,7 @@ public sealed partial class MockGotTests
 
 		VerificationResult<Mock<int>> result = mockGot.Property("foo.bar");
 
-		await That(result.Never());
+		result.Never();
 		await That(result.Expectation).IsEqualTo("got property bar");
 	}
 }
