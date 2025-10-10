@@ -15,7 +15,7 @@ public class MockSetIndexer<T, TMock>(IMockVerify<TMock> verify) : IMockSetIndex
 			verify.Interactions.Interactions
 				.OfType<IndexerSetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
-				value is null ? indexer.Value is null : value!.Matches(indexer.Value) &&
+				(value is null ? indexer.Value is null : value!.Matches(indexer.Value)) &&
 				!parameters.Where((parameter, i) => parameter is null
 					? indexer.Parameters[1] is null
 					: !parameter.Matches(indexer.Parameters[1])).Any())
