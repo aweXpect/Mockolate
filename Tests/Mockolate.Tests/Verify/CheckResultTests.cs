@@ -1,4 +1,4 @@
-using Mockolate.Checks;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.Checks;
 
@@ -9,7 +9,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Event.SomethingHappened.Subscribed();
+		CheckResult<Mock<IMyService>> check = sut.Verify.SubscribedTo.SomethingHappened();
 
 		await That(check.Expectation).IsEqualTo("subscribed to event SomethingHappened");
 	}
@@ -19,7 +19,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Event.SomethingHappened.Unsubscribed();
+		CheckResult<Mock<IMyService>> check = sut.Verify.UnsubscribedFrom.SomethingHappened();
 
 		await That(check.Expectation).IsEqualTo("unsubscribed from event SomethingHappened");
 	}
@@ -29,7 +29,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Invoked.DoSomething(With.Any<int?>(), "foo");
+		CheckResult<Mock<IMyService>> check = sut.Verify.Invoked.DoSomething(With.Any<int?>(), "foo");
 
 		await That(check.Expectation).IsEqualTo("invoked method DoSomething(With.Any<int?>(), \"foo\")");
 	}
@@ -39,9 +39,9 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Accessed.MyProperty.Getter();
+		CheckResult<Mock<IMyService>> check = sut.Verify.Got.MyProperty();
 
-		await That(check.Expectation).IsEqualTo("accessed getter of property MyProperty");
+		await That(check.Expectation).IsEqualTo("got property MyProperty");
 	}
 
 	[Fact]
@@ -49,9 +49,9 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Accessed.MyProperty.Setter(With.Any<int>());
+		CheckResult<Mock<IMyService>> check = sut.Verify.Set.MyProperty(With.Any<int>());
 
-		await That(check.Expectation).IsEqualTo("accessed setter of property MyProperty with value With.Any<int>()");
+		await That(check.Expectation).IsEqualTo("set property MyProperty to value With.Any<int>()");
 	}
 
 	public interface IMyService

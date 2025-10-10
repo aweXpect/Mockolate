@@ -1,6 +1,6 @@
-using Mockolate.Checks;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Verify;
 
 namespace Mockolate;
 
@@ -13,25 +13,13 @@ public abstract class Mock<T> : MockBase<T>
 	protected Mock(MockBehavior behavior) : base(behavior)
 	{
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T, Mock<T>>(checks, this);
-		Event = new MockEvent<T, Mock<T>>(checks, this);
-		Invoked = new MockInvoked<T, Mock<T>>(checks, this);
+		Verify = new MockVerify<T, Mock<T>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T"/>.
 	/// </summary>
-	public MockAccessed<T, Mock<T>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
-	/// </summary>
-	public MockEvent<T, Mock<T>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T" />.
-	/// </summary>
-	public MockInvoked<T, Mock<T>> Invoked { get; }
+	public MockVerify<T, Mock<T>> Verify { get; }
 }
 
 /// <summary>
@@ -48,28 +36,13 @@ public abstract class Mock<T1, T2> : MockBase<T1>
 		}
 		
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T1, Mock<T1, T2>>(checks, this);
-		Event = new MockEvent<T1, Mock<T1, T2>>(checks, this);
-		Invoked = new MockInvoked<T1, Mock<T1, T2>>(checks, this);
+		Verify = new MockVerify<T1, Mock<T1, T2>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/> and <typeparamref name="T2"/>.
 	/// </summary>
-	public MockAccessed<T1, Mock<T1, T2>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockEvent<T1, Mock<T1, T2>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockInvoked<T1, Mock<T1, T2>> Invoked { get; }
+	public MockVerify<T1, Mock<T1, T2>> Verify { get; }
 }
 
 /// <summary>
@@ -92,28 +65,14 @@ public abstract class Mock<T1, T2, T3> : MockBase<T1>
 		}
 		
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T1, Mock<T1, T2, T3>>(checks, this);
-		Event = new MockEvent<T1, Mock<T1, T2, T3>>(checks, this);
-		Invoked = new MockInvoked<T1, Mock<T1, T2, T3>>(checks, this);
+		Verify = new MockVerify<T1, Mock<T1, T2, T3>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />
+	///     and <typeparamref name="T3" />.
 	/// </summary>
-	public MockAccessed<T1, Mock<T1, T2, T3>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockEvent<T1, Mock<T1, T2, T3>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockInvoked<T1, Mock<T1, T2, T3>> Invoked { get; }
+	public MockVerify<T1, Mock<T1, T2, T3>> Verify { get; }
 }
 
 /// <summary>
@@ -141,28 +100,14 @@ public abstract class Mock<T1, T2, T3, T4> : MockBase<T1>
 		}
 
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4>>(checks, this);
-		Event = new MockEvent<T1, Mock<T1, T2, T3, T4>>(checks, this);
-		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4>>(checks, this);
+		Verify = new MockVerify<T1, Mock<T1, T2, T3, T4>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 	/// </summary>
-	public MockAccessed<T1, Mock<T1, T2, T3, T4>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockEvent<T1, Mock<T1, T2, T3, T4>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockInvoked<T1, Mock<T1, T2, T3, T4>> Invoked { get; }
+	public MockVerify<T1, Mock<T1, T2, T3, T4>> Verify { get; }
 }
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
@@ -196,28 +141,14 @@ public abstract class Mock<T1, T2, T3, T4, T5> : MockBase<T1>
 		}
 
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5>>(checks, this);
-		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5>>(checks, this);
-		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5>>(checks, this);
+		Verify = new MockVerify<T1, Mock<T1, T2, T3, T4, T5>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
 	/// </summary>
-	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockEvent<T1, Mock<T1, T2, T3, T4, T5>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5>> Invoked { get; }
+	public MockVerify<T1, Mock<T1, T2, T3, T4, T5>> Verify { get; }
 }
 
 /// <summary>
@@ -255,28 +186,14 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6> : MockBase<T1>
 		}
 
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6>>(checks, this);
-		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6>>(checks, this);
-		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6>>(checks, this);
+		Verify = new MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" /> and <typeparamref name="T6" />.
 	/// </summary>
-	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6>> Invoked { get; }
+	public MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6>> Verify { get; }
 }
 
 /// <summary>
@@ -320,28 +237,15 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : MockBase<T1>
 		}
 
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7>>(checks, this);
-		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7>>(checks, this);
-		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7>>(checks, this);
+		Verify = new MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" /> and
+	///     <typeparamref name="T7" />.
 	/// </summary>
-	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7>> Invoked { get; }
+	public MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7>> Verify { get; }
 }
 
 /// <summary>
@@ -390,28 +294,15 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : MockBase<T1>
 		}
 
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>>(checks, this);
-		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>>(checks, this);
-		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>>(checks, this);
+		Verify = new MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" />,
+	///     <typeparamref name="T7" /> and <typeparamref name="T8" />.
 	/// </summary>
-	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>> Invoked { get; }
+	public MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>> Verify { get; }
 }
 
 /// <summary>
@@ -465,27 +356,14 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> : MockBase<T1>
 		}
 
 		MockInteractions? checks = ((IMock)this).Interactions;
-		Accessed = new MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(checks, this);
-		Event = new MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(checks, this);
-		Invoked = new MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(checks, this);
+		Verify = new MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(checks, this);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" />,
+	///     <typeparamref name="T7" />, <typeparamref name="T8" /> and <typeparamref name="T9" />.
 	/// </summary>
-	public MockAccessed<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockEvent<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T1" /> and
-	///     <typeparamref name="T2" />.
-	/// </summary>
-	public MockInvoked<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>> Invoked { get; }
+	public MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>> Verify { get; }
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters

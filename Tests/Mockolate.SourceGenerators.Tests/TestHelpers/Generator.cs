@@ -27,6 +27,7 @@ public static class Generator
 		"CS0708" /* 'member': cannot declare instance members in a static class */,
 		"CS0103" /* The name 'name' does not exist in the current context */,
 		"CS7022" /* The entry point of the program is global code */,
+		"CS8802" /* Only one compilation unit can have top-level statements */,
 	];
 
 	public static GeneratorResult Run(string source, params Type[] assemblyTypes)

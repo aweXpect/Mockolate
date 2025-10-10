@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Linq;
-using Mockolate.Checks;
 using Mockolate.Events;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -25,13 +24,7 @@ public abstract class MockBase<T> : IMock
 		_interactions = new();
 		Setup = new MockSetup<T>(this);
 		Raise = new MockRaises<T>(Setup, _interactions);
-		Check = new MockCheck(_interactions);
 	}
-
-	/// <summary>
-	///     Additional checks on the mocked instance.
-	/// </summary>
-	public MockCheck Check { get; }
 
 	/// <summary>
 	///     Exposes the mocked subject instance of type <typeparamref name="T" />.

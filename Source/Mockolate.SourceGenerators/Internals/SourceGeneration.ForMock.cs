@@ -13,11 +13,11 @@ internal static partial class SourceGeneration
 		[
 			..GlobalUsings,
 			..mockClass.GetAllNamespaces(),
-			"Mockolate.Checks",
 			"Mockolate.Events",
 			"Mockolate.Exceptions",
 			"Mockolate.Protected",
 			"Mockolate.Setup",
+			"Mockolate.Verify",
 		];
 		StringBuilder sb = new();
 		sb.AppendLine(Header);

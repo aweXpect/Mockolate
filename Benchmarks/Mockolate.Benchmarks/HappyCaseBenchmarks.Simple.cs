@@ -2,7 +2,7 @@ using aweXpect;
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using NSubstitute;
-using Mockolate.Checks;
+using Mockolate.Verify;
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -22,7 +22,7 @@ public partial class HappyCaseBenchmarks
 
 		mock.Subject.MyFunc(42);
 
-		await Expect.That(mock.Invoked.MyFunc(With.Any<int>()).Once());
+		await Expect.That(mock.Verify.Invoked.MyFunc(With.Any<int>()).Once());
 	}
 
 	/// <summary>

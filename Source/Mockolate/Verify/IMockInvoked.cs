@@ -1,4 +1,4 @@
-namespace Mockolate.Checks;
+namespace Mockolate.Verify;
 
 /// <summary>
 ///     Get results for method invocations on the mock.
