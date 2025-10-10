@@ -2,7 +2,7 @@
 
 namespace Mockolate.Tests.Checks;
 
-public class MockCheckTests
+public class MockVerifyTests
 {
 	[Fact]
 	public async Task AllInteractionsVerified_WithoutInteractions_ShouldReturnTrue()

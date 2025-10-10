@@ -1,33 +1,34 @@
 ﻿using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.Internals;
 
 public sealed class StringExtensionsTests
 {
-	/* TODO
 	[Fact]
 	public async Task SubstringAfterLast_WhenNameContainsNoDot_ShouldIncludeFullName()
 	{
 		MockInteractions interactions = new();
-		IMockAccessed<Mock<int>> accessed = new MockAccessed<int, Mock<int>>(interactions, new MyMock<int>(1));
+		MockVerify<int, Mock<int>> verify = new(interactions, new MyMock<int>(1));
+		IMockGot<Mock<int>> mockGot = new MockGot<int, Mock<int>>(verify);
 
-		CheckResult<Mock<int>> result = accessed.PropertyGetter("SomeNameWithoutADot");
+		CheckResult<Mock<int>> result = mockGot.Property("SomeNameWithoutADot");
 
-		await That(result).Never();
-		await That(result.Expectation).IsEqualTo("accessed getter of property SomeNameWithoutADot");
+		await That(result.Never());
+		await That(result.Expectation).IsEqualTo("got property SomeNameWithoutADot");
 	}
 
 	[Fact]
 	public async Task SubstringAfterLast_WhenNameStartsWithDot_ShouldOmitDot()
 	{
 		MockInteractions interactions = new();
-		IMockAccessed<Mock<int>> accessed = new MockAccessed<int, Mock<int>>(interactions, new MyMock<int>(1));
+		MockVerify<int, Mock<int>> verify = new(interactions, new MyMock<int>(1));
+		IMockGot<Mock<int>> accessed = new MockGot<int, Mock<int>>(verify);
 
-		CheckResult<Mock<int>> result = accessed.PropertyGetter(".bar");
+		CheckResult<Mock<int>> result = accessed.Property(".bar");
 
-		await That(result).Never();
-		await That(result.Expectation).IsEqualTo("accessed getter of property bar");
+		await That(result.Never());
+		await That(result.Expectation).IsEqualTo("got property bar");
 	}
-	*/
 }
