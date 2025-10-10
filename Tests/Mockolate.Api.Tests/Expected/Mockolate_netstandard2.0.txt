@@ -429,6 +429,7 @@ namespace Mockolate.Setup
     public interface IIndexerSetup
     {
         bool Matches(Mockolate.Interactions.IInteraction invocation);
+        bool TryGetInitialValue<TValue>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TValue value);
     }
     public interface IMethodSetup
     {
@@ -447,19 +448,13 @@ namespace Mockolate.Setup
         void RemoveEvent(string eventName, object? target, System.Reflection.MethodInfo method);
         void SetIndexerValue<TValue>(object?[] parameters, TValue value);
     }
-    public class IndexerInitialization
-    {
-        public IndexerInitialization(Mockolate.Setup.IMockSetup mockSetup) { }
-        public Mockolate.Setup.IndexerInitialization InitializeWith<TValue, T1>(T1 parameter, TValue value) { }
-        public Mockolate.Setup.IndexerInitialization InitializeWith<TValue, T1, T2>(T1 p1, T2 p2, TValue value) { }
-        public Mockolate.Setup.IndexerInitialization InitializeWith<TValue, T1, T2, T3>(T1 p1, T2 p2, T3 p3, TValue value) { }
-    }
     public abstract class IndexerSetup : Mockolate.Setup.IIndexerSetup
     {
         protected IndexerSetup() { }
         protected abstract void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, Mockolate.MockBehavior behavior);
         protected abstract void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior);
         protected abstract bool IsMatch(object?[] parameters);
+        protected abstract bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value);
         protected static bool Matches(Mockolate.With.Parameter[] parameters, object?[] values) { }
         protected static bool TryCast<T>(object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
@@ -468,36 +463,45 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.With.Parameter<T1> match1) { }
         protected override void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1> InitializeWith(System.Func<T1, TValue> valueGenerator) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1> InitializeWith(TValue value) { }
         protected override bool IsMatch(object?[] parameters) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1> OnGet(System.Action callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1> OnGet(System.Action<T1> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1> OnSet(System.Action callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1> OnSet(System.Action<TValue> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1> OnSet(System.Action<TValue, T1> callback) { }
+        protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
     public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup
     {
         public IndexerSetup(Mockolate.With.Parameter<T1> match1, Mockolate.With.Parameter<T2> match2) { }
         protected override void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2> InitializeWith(System.Func<T1, T2, TValue> valueGenerator) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2> InitializeWith(TValue value) { }
         protected override bool IsMatch(object?[] parameters) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnGet(System.Action callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnGet(System.Action<T1, T2> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnSet(System.Action callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnSet(System.Action<TValue> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2> OnSet(System.Action<TValue, T1, T2> callback) { }
+        protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
     public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup
     {
         public IndexerSetup(Mockolate.With.Parameter<T1> match1, Mockolate.With.Parameter<T2> match2, Mockolate.With.Parameter<T3> match3) { }
         protected override void ExecuteGetterCallback(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> InitializeWith(System.Func<T1, T2, T3, TValue> valueGenerator) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> InitializeWith(TValue value) { }
         protected override bool IsMatch(object?[] parameters) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnGet(System.Action callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnGet(System.Action<T1, T2, T3> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnSet(System.Action callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnSet(System.Action<TValue> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> OnSet(System.Action<TValue, T1, T2, T3> callback) { }
+        protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
     {

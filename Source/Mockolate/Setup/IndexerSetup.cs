@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Mockolate.Interactions;
 
 namespace Mockolate.Setup;
@@ -85,6 +86,15 @@ public abstract class IndexerSetup : IIndexerSetup
 
 		return true;
 	}
+
+	/// <inheritdoc cref="IIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, object?[], out TValue)" />
+	bool IIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out TValue value)
+		=> TryGetInitialValue(behavior, parameters, out value);
+
+	/// <summary>
+	///     Attempts to retrieve the initial <paramref name="value"/> for the <paramref name="parameters"/>, if an initialization is set up.
+	/// </summary>
+	protected abstract bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out T value);
 }
 
 /// <summary>
@@ -94,6 +104,27 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 {
 	private readonly List<Action<T1>> _getterCallbacks = [];
 	private readonly List<Action<TValue, T1>> _setterCallbacks = [];
+	private Func<T1, TValue>? _initialization;
+
+	/// <summary>
+	///     Initializes the indexer with the given <paramref name="value" />.
+	/// </summary>
+	public IndexerSetup<TValue, T1> InitializeWith(TValue value)
+	{
+		// TODO: Throw when already initialized!
+		_initialization = _ => value;
+		return this;
+	}
+
+	/// <summary>
+	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
+	/// </summary>
+	public IndexerSetup<TValue, T1> InitializeWith(Func<T1, TValue> valueGenerator)
+	{
+		// TODO: Throw when already initialized!
+		_initialization = valueGenerator;
+		return this;
+	}
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -164,6 +195,22 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 	/// <inheritdoc cref="IsMatch(object?[])" />
 	protected override bool IsMatch(object?[] parameters)
 		=> Matches([match1], parameters);
+
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out T value)
+	{
+		if (_initialization is not null &&
+			parameters.Length == 1 &&
+			TryCast(parameters[0], out T1 p1, behavior) &&
+			_initialization.Invoke(p1) is T initialValue)
+		{
+			value = initialValue;
+			return true;
+		}
+
+		value = default!;
+		return false;
+	}
 }
 
 /// <summary>
@@ -173,6 +220,27 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 {
 	private readonly List<Action<T1, T2>> _getterCallbacks = [];
 	private readonly List<Action<TValue, T1, T2>> _setterCallbacks = [];
+	private Func<T1, T2, TValue>? _initialization;
+
+	/// <summary>
+	///     Initializes the indexer with the given <paramref name="value" />.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> InitializeWith(TValue value)
+	{
+		// TODO: Throw when already initialized!
+		_initialization = (_, _) => value;
+		return this;
+	}
+
+	/// <summary>
+	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> InitializeWith(Func<T1, T2, TValue> valueGenerator)
+	{
+		// TODO: Throw when already initialized!
+		_initialization = valueGenerator;
+		return this;
+	}
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -245,6 +313,23 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 	/// <inheritdoc cref="IsMatch(object?[])" />
 	protected override bool IsMatch(object?[] parameters)
 		=> Matches([match1, match2], parameters);
+
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out T value)
+	{
+		if (_initialization is not null &&
+			parameters.Length == 2 &&
+			TryCast(parameters[0], out T1 p1, behavior) &&
+			TryCast(parameters[1], out T2 p2, behavior) &&
+			_initialization.Invoke(p1, p2) is T initialValue)
+		{
+			value = initialValue;
+			return true;
+		}
+
+		value = default!;
+		return false;
+	}
 }
 
 /// <summary>
@@ -254,6 +339,27 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 {
 	private readonly List<Action<T1, T2, T3>> _getterCallbacks = [];
 	private readonly List<Action<TValue, T1, T2, T3>> _setterCallbacks = [];
+	private Func<T1, T2, T3, TValue>? _initialization;
+
+	/// <summary>
+	///     Initializes the indexer with the given <paramref name="value" />.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> InitializeWith(TValue value)
+	{
+		// TODO: Throw when already initialized!
+		_initialization = (_, _, _) => value;
+		return this;
+	}
+
+	/// <summary>
+	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> InitializeWith(Func<T1, T2, T3, TValue> valueGenerator)
+	{
+		// TODO: Throw when already initialized!
+		_initialization = valueGenerator;
+		return this;
+	}
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -328,4 +434,22 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 	/// <inheritdoc cref="IsMatch(object?[])" />
 	protected override bool IsMatch(object?[] parameters)
 		=> Matches([match1, match2, match3], parameters);
+
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out T value)
+	{
+		if (_initialization is not null &&
+			parameters.Length == 3 &&
+			TryCast(parameters[0], out T1 p1, behavior) &&
+			TryCast(parameters[1], out T2 p2, behavior) &&
+			TryCast(parameters[2], out T3 p3, behavior) &&
+			_initialization.Invoke(p1, p2, p3) is T initialValue)
+		{
+			value = initialValue;
+			return true;
+		}
+
+		value = default!;
+		return false;
+	}
 }

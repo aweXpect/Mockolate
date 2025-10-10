@@ -147,8 +147,8 @@ public abstract class MockBase<T> : IMock
 		IndexerGetterAccess interaction = new IndexerGetterAccess(interactions.GetNextIndex(), parameters);
 		((IMockInteractions)interactions).RegisterInteraction(interaction);
 
-		TResult value = Setup.GetIndexerValue<TResult>(parameters);
 		IndexerSetup? matchingSetup = Setup.GetIndexerSetup(interaction);
+		TResult value = Setup.GetIndexerValue<TResult>(matchingSetup, parameters);
 		matchingSetup?.InvokeGetter(interaction, value, _behavior);
 		return value;
 	}
