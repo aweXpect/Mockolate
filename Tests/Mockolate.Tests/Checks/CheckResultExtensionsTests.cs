@@ -1,7 +1,7 @@
 using System.Linq;
-using Mockolate.Checks;
 using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.Checks;
 

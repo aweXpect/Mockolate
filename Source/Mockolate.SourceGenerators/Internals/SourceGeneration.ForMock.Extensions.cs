@@ -19,7 +19,6 @@ internal static partial class SourceGeneration
 		[
 			..GlobalUsings,
 			.. mockClass.GetAllNamespaces(),
-			"Mockolate.Checks",
 			"Mockolate.Events",
 			"Mockolate.Protected",
 			"Mockolate.Setup",

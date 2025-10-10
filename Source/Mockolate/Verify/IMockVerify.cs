@@ -1,6 +1,6 @@
 using Mockolate.Interactions;
 
-namespace Mockolate.Checks;
+namespace Mockolate.Verify;
 
 /// <summary>
 ///     Get results for property access on the mock.

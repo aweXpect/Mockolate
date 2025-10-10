@@ -1,4 +1,4 @@
-using Mockolate.Checks;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.Checks;
 

@@ -1,4 +1,3 @@
-using Mockolate.Checks;
 using Mockolate.Events;
 using Mockolate.Interactions;
 using Mockolate.Setup;

@@ -1,5 +1,6 @@
 ﻿using Mockolate.Events;
 using Mockolate.Exceptions;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.Events;
 
@@ -40,8 +41,8 @@ public sealed partial class MockRaisesTests
 		mock.Subject.SomeEvent += handler;
 		mock.Subject.SomeEvent += handler;
 
-		await That(mock.Verify.SubscribedTo.SomeEvent()).Twice();
-		await That(mock.Verify.UnsubscribedFrom.SomeEvent()).Never();
+		await That(mock.Verify.SubscribedTo.SomeEvent().Exactly(2));
+		await That(mock.Verify.UnsubscribedFrom.SomeEvent().Never());
 	}
 
 	[Fact]
@@ -52,8 +53,8 @@ public sealed partial class MockRaisesTests
 
 		mock.Subject.SomeEvent -= handler;
 
-		await That(mock.Verify.SubscribedTo.SomeEvent()).Never();
-		await That(mock.Verify.UnsubscribedFrom.SomeEvent()).Once();
+		await That(mock.Verify.SubscribedTo.SomeEvent().Never());
+		await That(mock.Verify.UnsubscribedFrom.SomeEvent().Once());
 	}
 
 	[Fact]

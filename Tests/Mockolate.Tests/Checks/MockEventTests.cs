@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Mockolate.Checks;
 using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
 

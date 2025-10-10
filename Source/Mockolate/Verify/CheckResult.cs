@@ -1,8 +1,7 @@
 using System;
 using Mockolate.Interactions;
-using Mockolate.Verify;
 
-namespace Mockolate.Checks;
+namespace Mockolate.Verify;
 
 /// <summary>
 ///     The expectation contains the matching interactions for verification.

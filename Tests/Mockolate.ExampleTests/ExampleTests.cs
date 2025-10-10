@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
-using Mockolate.Checks;
 using Mockolate.Tests.Dummy;
+using Mockolate.Verify;
 
 namespace Mockolate.ExampleTests;
 

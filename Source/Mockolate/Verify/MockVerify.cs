@@ -1,5 +1,4 @@
 using System.Linq;
-using Mockolate.Checks;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 
@@ -10,6 +9,11 @@ namespace Mockolate.Verify;
 /// </summary>
 public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock) : IMockVerify<TMock>
 {
+	/// <summary>
+	///     Gets a value indicating whether all expected interactions have been verified.
+	/// </summary>
+	public bool ThatAllInteractionsAreVerified() => !interactions.HasMissingVerifications;
+
 	/// <inheritdoc cref="IMockVerify{TMock}.Interactions" />
 	MockInteractions IMockVerify<TMock>.Interactions
 		=> interactions;

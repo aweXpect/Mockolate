@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests;
 
@@ -237,7 +238,7 @@ public sealed class WithTests
 
 		mock.Subject.DoSomething(value, true);
 
-		await That(mock.Verify.Invoked.DoSomething(null, true)).Exactly(expectedCount);
+		await That(mock.Verify.Invoked.DoSomething(null, true).Exactly(expectedCount));
 	}
 
 	[Theory]

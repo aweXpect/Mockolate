@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Mockolate.Checks;
 using Mockolate.Interactions;
 using Mockolate.Verify;
 

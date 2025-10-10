@@ -1,9 +1,8 @@
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
-using Mockolate.Verify;
 
-namespace Mockolate.Checks;
+namespace Mockolate.Verify;
 
 /// <summary>
 ///     Check which properties were read on the mocked instance <typeparamref name="TMock" />.

@@ -1,4 +1,4 @@
-﻿using Mockolate.Checks;
+﻿using Mockolate.Verify;
 
 namespace Mockolate.Tests.Checks;
 
@@ -9,7 +9,7 @@ public class MockCheckTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		await That(sut.Check.AllInteractionsVerified()).IsTrue();
+		await That(sut.Verify.ThatAllInteractionsAreVerified()).IsTrue();
 	}
 
 	[Fact]
@@ -20,8 +20,8 @@ public class MockCheckTests
 		sut.Subject.DoSomething(1);
 		sut.Subject.DoSomething(2);
 
-		await That(sut.Verify.Invoked.DoSomething(1)).Once();
-		await That(sut.Check.AllInteractionsVerified()).IsFalse();
+		await That(sut.Verify.Invoked.DoSomething(1).Once());
+		await That(sut.Verify.ThatAllInteractionsAreVerified()).IsFalse();
 	}
 
 	[Fact]
@@ -32,8 +32,8 @@ public class MockCheckTests
 		sut.Subject.DoSomething(1);
 		sut.Subject.DoSomething(2);
 
-		await That(sut.Verify.Invoked.DoSomething(With.Any<int>())).AtLeastOnce();
-		await That(sut.Check.AllInteractionsVerified()).IsTrue();
+		await That(sut.Verify.Invoked.DoSomething(With.Any<int>()).AtLeastOnce());
+		await That(sut.Verify.ThatAllInteractionsAreVerified()).IsTrue();
 	}
 
 	[Fact]
