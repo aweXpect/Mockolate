@@ -7,7 +7,7 @@ namespace Mockolate.Tests.Checks;
 public sealed partial class MockSetTests
 {
 	[Fact]
-	public async Task WhenNameAndValueMatches_ShouldReturnOnce()
+	public void WhenNameAndValueMatches_ShouldReturnOnce()
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
@@ -21,7 +21,7 @@ public sealed partial class MockSetTests
 	}
 
 	[Fact]
-	public async Task WhenOnlyNameMatches_ShouldReturnNever()
+	public void WhenOnlyNameMatches_ShouldReturnNever()
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
@@ -35,7 +35,7 @@ public sealed partial class MockSetTests
 	}
 
 	[Fact]
-	public async Task WhenOnlyValueMatches_ShouldReturnNever()
+	public void WhenOnlyValueMatches_ShouldReturnNever()
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;

@@ -6,7 +6,7 @@ namespace Mockolate.Tests.Monitor;
 public sealed class MockMonitorTests
 {
 	[Fact]
-	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
+	public void DisposeTwice_ShouldNotIncludeMoreInvocations()
 	{
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
@@ -34,7 +34,7 @@ public sealed class MockMonitorTests
 	}
 
 	[Fact]
-	public async Task MultipleRun_ShouldMonitorInvocationsDuringTheRun()
+	public void MultipleRun_ShouldMonitorInvocationsDuringTheRun()
 	{
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();
@@ -90,7 +90,7 @@ public sealed class MockMonitorTests
 	}
 
 	[Fact]
-	public async Task Run_ShouldMonitorInvocationsDuringTheRun()
+	public void Run_ShouldMonitorInvocationsDuringTheRun()
 	{
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		MockMonitor<IMyService, Mock<IMyService>> monitor = mock.Monitor();

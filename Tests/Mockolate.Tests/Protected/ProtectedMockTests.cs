@@ -5,7 +5,7 @@ namespace Mockolate.Tests.Protected;
 public sealed class ProtectedMockTests
 {
 	[Fact]
-	public async Task CanAccessProtectedEvents()
+	public void CanAccessProtectedEvents()
 	{
 		int callCount = 0;
 		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();

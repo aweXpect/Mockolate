@@ -35,7 +35,7 @@ public sealed partial class MockRaisesTests
 		}
 
 		[Fact]
-		public async Task Subscription_ShouldBeRegistered()
+		public void Subscription_ShouldBeRegistered()
 		{
 			Mock<MyRaiseEvent> mock = Mock.Create<MyRaiseEvent>();
 			EventHandler handler = (s, e) => { };
@@ -48,7 +48,7 @@ public sealed partial class MockRaisesTests
 		}
 
 		[Fact]
-		public async Task Unsubscription_ShouldBeRegistered()
+		public void Unsubscription_ShouldBeRegistered()
 		{
 			Mock<MyRaiseEvent> mock = Mock.Create<MyRaiseEvent>();
 			EventHandler handler = (s, e) => { };

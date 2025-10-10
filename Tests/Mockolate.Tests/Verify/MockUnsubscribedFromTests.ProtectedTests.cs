@@ -9,7 +9,7 @@ public sealed partial class MockUnsubscribedFromTests
 	public sealed class ProtectedTests
 	{
 		[Fact]
-		public async Task Unsubscribed_ShouldForwardToInner()
+		public void Unsubscribed_ShouldForwardToInner()
 		{
 			MockInteractions mockInteractions = new();
 			IMockInteractions interactions = mockInteractions;

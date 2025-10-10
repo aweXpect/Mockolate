@@ -9,7 +9,7 @@ public sealed partial class MockInvokedTests
 	public sealed class ProtectedTests
 	{
 		[Fact]
-		public async Task PropertySetter_ShouldForwardToInner()
+		public void PropertySetter_ShouldForwardToInner()
 		{
 			MockInteractions mockInteractions = new();
 			IMockInteractions interactions = mockInteractions;

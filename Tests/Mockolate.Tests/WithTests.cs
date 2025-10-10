@@ -231,7 +231,7 @@ public sealed class WithTests
 	[Theory]
 	[InlineData(null, 1)]
 	[InlineData(1, 0)]
-	public async Task WithNull_ShouldMatchWhenNull(int? value, int expectedCount)
+	public void WithNull_ShouldMatchWhenNull(int? value, int expectedCount)
 	{
 		Mock<IMyServiceWithNullable> mock = Mock.Create<IMyServiceWithNullable>();
 		mock.Setup.Method.DoSomething(null, true);

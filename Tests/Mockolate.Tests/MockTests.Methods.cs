@@ -8,7 +8,7 @@ public sealed partial class MockTests
 	[Theory]
 	[InlineData(2)]
 	[InlineData(42)]
-	public async Task Execute_MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
+	public void Execute_MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 		sut.Setup.Method.Multiply(With.Any<int>(), With.Any<int?>()).Returns(1);
@@ -24,7 +24,7 @@ public sealed partial class MockTests
 	[Theory]
 	[InlineData(2)]
 	[InlineData(42)]
-	public async Task Execute_VoidMethod_ShouldBeRegistered(int numberOfInvocations)
+	public void Execute_VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 		sut.Setup.Method.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>());

@@ -7,7 +7,7 @@ namespace Mockolate.Tests.Checks;
 public sealed partial class MockGotTests
 {
 	[Fact]
-	public async Task WhenNameDoesNotMatch_ShouldReturnNever()
+	public void WhenNameDoesNotMatch_ShouldReturnNever()
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
@@ -21,7 +21,7 @@ public sealed partial class MockGotTests
 	}
 
 	[Fact]
-	public async Task WhenNameMatches_ShouldReturnOnce()
+	public void WhenNameMatches_ShouldReturnOnce()
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;

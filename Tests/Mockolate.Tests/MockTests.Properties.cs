@@ -6,7 +6,7 @@ namespace Mockolate.Tests;
 public sealed partial class MockTests
 {
 	[Fact]
-	public async Task Get_ShouldIncreaseInvocationCountOfGetter()
+	public void Get_ShouldIncreaseInvocationCountOfGetter()
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
@@ -47,7 +47,7 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Set_ShouldIncreaseInvocationCountOfGetter()
+	public void Set_ShouldIncreaseInvocationCountOfGetter()
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
