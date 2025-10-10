@@ -156,23 +156,26 @@ internal static partial class SourceGeneration
 			{
 				sb.AppendLine();
 			}
-
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up the ").Append(indexer.Type.GetMinimizedString(namespaces)).Append(" indexer on the mock for <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc()).Append("\" />.")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic IndexersSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
+			sb.Append("\t\tpublic IndexerSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
 			foreach (var parameter in indexer.IndexerParameters!)
 			{
 				sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
 			}
-			sb.Append("> SetupIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}> p{i}"))).Append(")").AppendLine();
-			sb.Append("\t\t\t=> new IndexersSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
+			sb.Append("> SetupIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}> parameter{i+1}"))).Append(")").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tvar setup = new IndexerSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
 			foreach (var parameter in indexer.IndexerParameters!)
 			{
 				sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
 			}
-			sb.Append(">(mock.Setup);").AppendLine();
+			sb.Append(">(").Append(string.Join(", ", Enumerable.Range(1, indexer.IndexerParameters.Value.Count).Select(p => $"parameter{p}"))).Append(");").AppendLine();
+			sb.Append("\t\t\t((IMockSetup)mock.Setup).RegisterIndexer(setup);").AppendLine();
+			sb.Append("\t\t\treturn setup;").AppendLine();
+			sb.Append("\t\t}").AppendLine();
 		}
 
 		foreach (Class @class in mockClass.AdditionalImplementations.Where(x => x.Properties.Any(y => y.IsIndexer)))
@@ -183,7 +186,6 @@ internal static partial class SourceGeneration
 				{
 					sb.AppendLine();
 				}
-
 				sb.Append("\t\t/// <summary>").AppendLine();
 				sb.Append("\t\t///     Sets up the ").Append(indexer.Type.GetMinimizedString(namespaces)).Append(" indexer on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\" />.")
 					.AppendLine();
@@ -209,11 +211,11 @@ internal static partial class SourceGeneration
 	private static bool AppendProtectedMock(StringBuilder sb, Class @class)
 	{
 		if (@class.Events.All(@event
-			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-		    @class.Methods.All(method
-			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-		    @class.Properties.All(property
-			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
+			@class.Methods.All(method
+				=> method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
+			@class.Properties.All(property
+				=> property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
 		{
 			return false;
 		}

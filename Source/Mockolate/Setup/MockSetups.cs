@@ -64,9 +64,14 @@ public class MockSetups<T>(IMock mock) : IMockSetup
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters"/>.
 	/// </summary>
-	internal TValue GetIndexerValue<TValue>(object?[] parameters)
+	internal TValue GetIndexerValue<TValue>(IIndexerSetup? setup, object?[] parameters)
 		=> _indexerSetups.GetOrAddValue(parameters, () =>
 		{
+			if (setup?.TryGetInitialValue(mock.Behavior, parameters, out TValue ? value) == true)
+			{
+				return value;
+			}
+
 			if (mock.Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException($"The indexer ['{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}'] was accessed without prior setup.");
