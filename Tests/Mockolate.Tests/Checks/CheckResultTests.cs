@@ -9,7 +9,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.Event.SomethingHappened.Subscribed();
+		CheckResult<Mock<IMyService>> check = sut.Verify.SubscribedTo.SomethingHappened();
 
 		await That(check.Expectation).IsEqualTo("subscribed to event SomethingHappened");
 	}
@@ -19,7 +19,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Verify.Event.SomethingHappened.Unsubscribed();
+		CheckResult<Mock<IMyService>> check = sut.Verify.UnsubscribedFrom.SomethingHappened();
 
 		await That(check.Expectation).IsEqualTo("unsubscribed from event SomethingHappened");
 	}

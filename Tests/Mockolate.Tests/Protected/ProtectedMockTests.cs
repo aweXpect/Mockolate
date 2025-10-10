@@ -12,10 +12,10 @@ public sealed class ProtectedMockTests
 		mock.Subject.RegisterEvent(handler);
 		mock.Protected.Raise.MyEvent(this, EventArgs.Empty);
 
-		await That(mock.Protected.Verify.Event.MyEvent.Subscribed()).Once();
-		await That(mock.Protected.Verify.Event.MyEvent.Unsubscribed()).Never();
+		await That(mock.Protected.Verify.SubscribedTo.MyEvent()).Once();
+		await That(mock.Protected.Verify.UnsubscribedFrom.MyEvent()).Never();
 		mock.Subject.UnregisterEvent(handler);
-		await That(mock.Protected.Verify.Event.MyEvent.Unsubscribed()).Once();
+		await That(mock.Protected.Verify.UnsubscribedFrom.MyEvent()).Once();
 	}
 
 	[Fact]

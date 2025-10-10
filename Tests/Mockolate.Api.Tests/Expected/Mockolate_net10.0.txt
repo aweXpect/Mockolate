@@ -185,15 +185,6 @@ namespace Mockolate
 }
 namespace Mockolate.Checks
 {
-    public static class CheckResult
-    {
-        public class Event<TMock, TEvent>
-        {
-            public Event(Mockolate.Verify.IMockEvent<TMock> mockEvent, string eventName) { }
-            public Mockolate.Checks.CheckResult<TMock> Subscribed() { }
-            public Mockolate.Checks.CheckResult<TMock> Unsubscribed() { }
-        }
-    }
     public static class CheckResultExtensions
     {
         public static bool AtLeast<TMock>(this Mockolate.Checks.CheckResult<TMock> checkResult, int times) { }
@@ -729,26 +720,17 @@ namespace Mockolate.Setup
 }
 namespace Mockolate.Verify
 {
-    public interface IMockEvent<TMock>
-    {
-        Mockolate.Checks.CheckResult<TMock> Subscribed(string eventName);
-        Mockolate.Checks.CheckResult<TMock> Unsubscribed(string eventName);
-    }
     public interface IMockInvoked<TMock>
     {
         Mockolate.Checks.CheckResult<TMock> Method(string methodName, params Mockolate.With.Parameter[] parameters);
     }
-    public class MockEvent<T, TMock> : Mockolate.Verify.IMockEvent<TMock>
+    public interface IMockSubscribedTo<TMock>
     {
-        public MockEvent(Mockolate.Checks.IMockVerify<TMock> verify) { }
-        public class Protected : Mockolate.Verify.MockEvent<T, TMock>, Mockolate.Verify.IMockEvent<TMock>
-        {
-            public Protected(Mockolate.Checks.IMockVerify<TMock> verify) { }
-        }
-        public class Proxy : Mockolate.Verify.MockEvent<T, TMock>, Mockolate.Verify.IMockEvent<TMock>
-        {
-            public Proxy(Mockolate.Verify.IMockEvent<TMock> inner, Mockolate.Checks.IMockVerify<TMock> verify) { }
-        }
+        Mockolate.Checks.CheckResult<TMock> Event(string eventName);
+    }
+    public interface IMockUnsubscribedFrom<TMock>
+    {
+        Mockolate.Checks.CheckResult<TMock> Event(string eventName);
     }
     public class MockInvoked<T, TMock> : Mockolate.Verify.IMockInvoked<TMock>
     {
@@ -760,6 +742,30 @@ namespace Mockolate.Verify
         public class Proxy : Mockolate.Verify.MockInvoked<T, TMock>, Mockolate.Verify.IMockInvoked<TMock>
         {
             public Proxy(Mockolate.Verify.IMockInvoked<TMock> inner, Mockolate.Checks.IMockVerify<TMock> verify) { }
+        }
+    }
+    public class MockSubscribedTo<T, TMock> : Mockolate.Verify.IMockSubscribedTo<TMock>
+    {
+        public MockSubscribedTo(Mockolate.Checks.IMockVerify<TMock> verify) { }
+        public class Protected : Mockolate.Verify.MockSubscribedTo<T, TMock>, Mockolate.Verify.IMockSubscribedTo<TMock>
+        {
+            public Protected(Mockolate.Checks.IMockVerify<TMock> verify) { }
+        }
+        public class Proxy : Mockolate.Verify.MockSubscribedTo<T, TMock>, Mockolate.Verify.IMockSubscribedTo<TMock>
+        {
+            public Proxy(Mockolate.Verify.IMockSubscribedTo<TMock> inner, Mockolate.Checks.IMockVerify<TMock> verify) { }
+        }
+    }
+    public class MockUnsubscribedFrom<T, TMock> : Mockolate.Verify.IMockUnsubscribedFrom<TMock>
+    {
+        public MockUnsubscribedFrom(Mockolate.Checks.IMockVerify<TMock> verify) { }
+        public class Protected : Mockolate.Verify.MockUnsubscribedFrom<T, TMock>, Mockolate.Verify.IMockUnsubscribedFrom<TMock>
+        {
+            public Protected(Mockolate.Checks.IMockVerify<TMock> verify) { }
+        }
+        public class Proxy : Mockolate.Verify.MockUnsubscribedFrom<T, TMock>, Mockolate.Verify.IMockUnsubscribedFrom<TMock>
+        {
+            public Proxy(Mockolate.Verify.IMockUnsubscribedFrom<TMock> inner, Mockolate.Checks.IMockVerify<TMock> verify) { }
         }
     }
     public class MockVerify<T, TMock> : Mockolate.Checks.IMockVerify<TMock>

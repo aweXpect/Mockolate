@@ -362,13 +362,21 @@ internal static partial class SourceGeneration
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Verifies the method invocations for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" Event").AppendLine();
-		sb.Append("\t\t\t=> new MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+		sb.Append("\t\tpublic MockSubscribedTo<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+			.Append(isProtected ? ".Protected" : "").Append(" SubscribedTo").AppendLine();
+		sb.Append("\t\t\t=> new MockSubscribedTo<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+			.Append(isProtected ? ".Protected" : "").Append("(verify);").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append("\t\t///     Verifies the method invocations for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\tpublic MockUnsubscribedFrom<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+			.Append(isProtected ? ".Protected" : "").Append(" UnsubscribedFrom").AppendLine();
+		sb.Append("\t\t\t=> new MockUnsubscribedFrom<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
 			.Append(isProtected ? ".Protected" : "").Append("(verify);").AppendLine();
 		sb.AppendLine("\t}");
 		sb.AppendLine();
-		sb.Append("\textension(MockEvent<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+		sb.Append("\textension(MockSubscribedTo<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
 			.Append(isProtected ? ".Protected" : "")
 			.Append(" mock)").AppendLine();
 		sb.AppendLine("\t{");
@@ -381,15 +389,35 @@ internal static partial class SourceGeneration
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the subscriptions or unsubscription for the event <see cref=\"")
+			sb.Append("\t\t///     Validates the subscriptions for the event <see cref=\"")
 				.Append(@class.ClassName.EscapeForXmlDoc()).Append(".").Append(@event.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic CheckResult.Event<Mock<").Append(allClasses).Append(">, ")
-				.Append(@event.Type.GetMinimizedString(namespaces)).Append("> ")
-				.Append(@event.Name).AppendLine();
-			sb.Append("\t\t\t=> new CheckResult.Event<Mock<").Append(allClasses).Append(">, ")
-				.Append(@event.Type.GetMinimizedString(namespaces))
-				.Append(">(mock, \"").Append(@class.GetFullName(@event.Name)).Append("\");").AppendLine();
+			sb.Append("\t\tpublic CheckResult<Mock<").Append(allClasses).Append(">> ")
+				.Append(@event.Name).Append("()").AppendLine();
+			sb.Append("\t\t\t=> ((IMockSubscribedTo<Mock<").Append(allClasses).Append(">>)mock).Event(\"").Append(@class.GetFullName(@event.Name)).Append("\");").AppendLine();
+		}
+
+		sb.AppendLine("\t}");
+		sb.AppendLine();
+		sb.Append("\textension(MockUnsubscribedFrom<").Append(@class.ClassName).Append(", Mock<").Append(allClasses).Append(">>")
+			.Append(isProtected ? ".Protected" : "")
+			.Append(" mock)").AppendLine();
+		sb.AppendLine("\t{");
+		count = 0;
+		foreach (Event @event in @class.Events.Where(predicate))
+		{
+			if (count++ > 0)
+			{
+				sb.AppendLine();
+			}
+
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Validates the unsubscription for the event <see cref=\"")
+				.Append(@class.ClassName.EscapeForXmlDoc()).Append(".").Append(@event.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic CheckResult<Mock<").Append(allClasses).Append(">> ")
+				.Append(@event.Name).Append("()").AppendLine();
+			sb.Append("\t\t\t=> ((IMockUnsubscribedFrom<Mock<").Append(allClasses).Append(">>)mock).Event(\"").Append(@class.GetFullName(@event.Name)).Append("\");").AppendLine();
 		}
 
 		sb.AppendLine("\t}");

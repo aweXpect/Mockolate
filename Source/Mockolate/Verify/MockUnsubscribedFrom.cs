@@ -1,0 +1,42 @@
+using System.Linq;
+using Mockolate.Checks;
+using Mockolate.Interactions;
+using Mockolate.Internals;
+
+namespace Mockolate.Verify;
+
+/// <summary>
+///     Check which events were subscribed or unsubscribed on the mocked instance <typeparamref name="TMock" />.
+/// </summary>
+public class MockUnsubscribedFrom<T, TMock>(IMockVerify<TMock> verify) : IMockUnsubscribedFrom<TMock>
+{
+	/// <inheritdoc cref="IMockUnsubscribedFrom{TMock}.Event(string)" />
+	CheckResult<TMock> IMockUnsubscribedFrom<TMock>.Event(string eventName)
+		=> new(verify.Mock, verify.Interactions,
+			verify.Interactions.Interactions
+				.OfType<EventUnsubscription>()
+				.Where(@event => @event.Name.Equals(eventName))
+				.Cast<IInteraction>()
+				.ToArray(),
+        $"unsubscribed from event {eventName.SubstringAfterLast('.')}");
+
+	/// <summary>
+	///     A proxy implementation of <see cref="IMockUnsubscribedFrom{TMock}" /> that forwards all calls to the provided
+	///     <paramref name="inner" /> instance.
+	/// </summary>
+	public class Proxy(IMockUnsubscribedFrom<TMock> inner, IMockVerify<TMock> verify)
+		: MockUnsubscribedFrom<T, TMock>(verify), IMockUnsubscribedFrom<TMock>
+	{
+		/// <inheritdoc cref="IMockUnsubscribedFrom{TMock}.Event(string)" />
+		CheckResult<TMock> IMockUnsubscribedFrom<TMock>.Event(string eventName)
+			=> inner.Event(eventName);
+	}
+
+	/// <summary>
+	///     Check which protected events were subscribed or unsubscribed on the mocked instance <typeparamref name="TMock" />.
+	/// </summary>
+	public class Protected(IMockVerify<TMock> verify)
+		: MockUnsubscribedFrom<T, TMock>(verify), IMockUnsubscribedFrom<TMock>
+	{
+	}
+}

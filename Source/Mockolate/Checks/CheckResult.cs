@@ -40,28 +40,3 @@ public class CheckResult<TMock>
 		return predicate(_matchingInteractions);
 	}
 }
-
-/// <summary>
-///     The expectation contains the matching interactions for verification.
-/// </summary>
-public static class CheckResult
-{
-#pragma warning disable S2326 // Unused type parameters should be removed
-	/// <summary>
-	///     An event expectation returns the subscription or unsubscription <see cref="CheckResult" /> for the given
-	///     <paramref name="eventName" />.
-	/// </summary>
-	public class Event<TMock, TEvent>(IMockEvent<TMock> mockEvent, string eventName)
-	{
-		/// <summary>
-		///     The expectation for the subscriptions for the event.
-		/// </summary>
-		public CheckResult<TMock> Subscribed() => mockEvent.Subscribed(eventName);
-
-		/// <summary>
-		///     The expectation for the unsubscriptions from the event.
-		/// </summary>
-		public CheckResult<TMock> Unsubscribed() => mockEvent.Unsubscribed(eventName);
-	}
-#pragma warning restore S2326 // Unused type parameters should be removed
-}
