@@ -22,8 +22,7 @@ public class MockSubscribedTo<T, TMock>(IMockVerify<TMock> verify) : IMockSubscr
 	/// <summary>
 	///     Check which protected events were subscribed to on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockSubscribedTo<T, TMock>(verify), IMockSubscribedTo<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockSubscribedTo<T, TMock>(verify)
 	{
 	}
 }

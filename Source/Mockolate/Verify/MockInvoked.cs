@@ -25,8 +25,7 @@ public class MockInvoked<T, TMock>(IMockVerify<TMock> verify) : IMockInvoked<TMo
 	/// <summary>
 	///     Check which protected methods got invoked on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockInvoked<T, TMock>(verify), IMockInvoked<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockInvoked<T, TMock>(verify)
 	{
 	}
 }

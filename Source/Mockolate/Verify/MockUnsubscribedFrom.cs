@@ -22,8 +22,7 @@ public class MockUnsubscribedFrom<T, TMock>(IMockVerify<TMock> verify) : IMockUn
 	/// <summary>
 	///     Check which protected events were unsubscribed from on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockUnsubscribedFrom<T, TMock>(verify), IMockUnsubscribedFrom<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockUnsubscribedFrom<T, TMock>(verify)
 	{
 	}
 }

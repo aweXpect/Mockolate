@@ -25,8 +25,7 @@ public class MockGotIndexer<T, TMock>(IMockVerify<TMock> verify) : IMockGotIndex
 	/// <summary>
 	///     Check which protected indexers got read on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockGotIndexer<T, TMock>(verify), IMockGotIndexer<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockGotIndexer<T, TMock>(verify)
 	{
 	}
 }

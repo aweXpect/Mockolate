@@ -1,7 +1,7 @@
 namespace Mockolate.Verify;
 
 /// <summary>
-///     Get results for property set access on the mock.
+///     Get results for indexer set access on the mock.
 /// </summary>
 public interface IMockSetIndexer<TMock>
 {

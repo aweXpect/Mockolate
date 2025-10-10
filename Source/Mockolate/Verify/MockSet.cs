@@ -22,8 +22,7 @@ public class MockSet<T, TMock>(IMockVerify<TMock> verify) : IMockSet<TMock>
 	/// <summary>
 	///     Check which protected properties were set on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockSet<T, TMock>(verify), IMockSet<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockSet<T, TMock>(verify)
 	{
 	}
 }

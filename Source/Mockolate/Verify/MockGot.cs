@@ -22,8 +22,7 @@ public class MockGot<T, TMock>(IMockVerify<TMock> verify) : IMockGot<TMock>
 	/// <summary>
 	///     Check which protected properties got read on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockGot<T, TMock>(verify), IMockGot<TMock>
+	public class Protected(IMockVerify<TMock> verify) : MockGot<T, TMock>(verify)
 	{
 	}
 }
