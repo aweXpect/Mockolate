@@ -23,8 +23,8 @@ public sealed partial class MockGotTests
 			VerificationResult<Mock<int>> result1 = mockGot.Property("foo.bar");
 			VerificationResult<Mock<int>> result2 = @protected.Property("foo.bar");
 
-			await That(result1.Exactly(2));
-			await That(result2.Exactly(2));
+			result1.Exactly(2);
+			result2.Exactly(2);
 		}
 	}
 }

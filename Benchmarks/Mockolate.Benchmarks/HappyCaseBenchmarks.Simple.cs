@@ -15,14 +15,14 @@ public partial class HappyCaseBenchmarks
 	///     <see href="https://github.com/Mockolate/Mockolate"/>
 	/// </summary>
 	[Benchmark]
-	public async Task Simple_Mockolate()
+	public void Simple_Mockolate()
 	{
 		var mock = Mock.Create<IMyInterface>();
 		mock.Setup.Method.MyFunc(With.Any<int>()).Returns(true);
 
 		mock.Subject.MyFunc(42);
 
-		await Expect.That(mock.Verify.Invoked.MyFunc(With.Any<int>()).Once());
+		mock.Verify.Invoked.MyFunc(With.Any<int>()).Once();
 	}
 
 	/// <summary>

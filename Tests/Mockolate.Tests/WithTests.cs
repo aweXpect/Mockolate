@@ -238,7 +238,7 @@ public sealed class WithTests
 
 		mock.Subject.DoSomething(value, true);
 
-		await That(mock.Verify.Invoked.DoSomething(null, true).Exactly(expectedCount));
+		mock.Verify.Invoked.DoSomething(null, true).Exactly(expectedCount);
 	}
 
 	[Theory]

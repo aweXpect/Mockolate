@@ -41,8 +41,8 @@ public sealed partial class MockRaisesTests
 		mock.Subject.SomeEvent += handler;
 		mock.Subject.SomeEvent += handler;
 
-		await That(mock.Verify.SubscribedTo.SomeEvent().Exactly(2));
-		await That(mock.Verify.UnsubscribedFrom.SomeEvent().Never());
+		mock.Verify.SubscribedTo.SomeEvent().Exactly(2);
+		mock.Verify.UnsubscribedFrom.SomeEvent().Never();
 	}
 
 	[Fact]
@@ -53,8 +53,8 @@ public sealed partial class MockRaisesTests
 
 		mock.Subject.SomeEvent -= handler;
 
-		await That(mock.Verify.SubscribedTo.SomeEvent().Never());
-		await That(mock.Verify.UnsubscribedFrom.SomeEvent().Once());
+		mock.Verify.SubscribedTo.SomeEvent().Never();
+		mock.Verify.UnsubscribedFrom.SomeEvent().Once();
 	}
 
 	[Fact]
