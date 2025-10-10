@@ -1,10 +1,6 @@
-using System.Diagnostics;
-using System.Linq;
 using Mockolate.Checks;
-using Mockolate.Events;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
-using Mockolate.Setup;
 
 namespace Mockolate;
 
