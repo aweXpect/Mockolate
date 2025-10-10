@@ -260,9 +260,13 @@ internal static partial class SourceGeneration
 					.Append(method.Name.EscapeForXmlDoc()).Append("(")
 					.Append(string.Join(", ",
 						method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
-					.Append(")\"/> with the given ")
-					.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".")
-					.AppendLine();
+					.Append(")\"/>");
+				if (method.Parameters.Any())
+				{
+					sb.Append(" with the given ")
+						.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>")));
+				}
+				sb.Append(".").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				if (method.ReturnType != Type.Void)
 				{

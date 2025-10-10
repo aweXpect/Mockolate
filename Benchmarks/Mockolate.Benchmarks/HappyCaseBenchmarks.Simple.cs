@@ -20,7 +20,7 @@ public partial class HappyCaseBenchmarks
 		var mock = Mock.Create<IMyInterface>();
 		mock.Setup.Method.MyFunc(With.Any<int>()).Returns(true);
 
-		mock.Object.MyFunc(42);
+		mock.Subject.MyFunc(42);
 
 		await Expect.That(mock.Invoked.MyFunc(With.Any<int>()).Once());
 	}

@@ -9,12 +9,12 @@ public sealed class ProtectedMockTests
 		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
 		MyProtectedClass.MyEventHandler handler = (s, e) => callCount++;
 
-		mock.Object.RegisterEvent(handler);
+		mock.Subject.RegisterEvent(handler);
 		mock.Protected.Raise.MyEvent(this, EventArgs.Empty);
 
 		await That(mock.Protected.Event.MyEvent.Subscribed()).Once();
 		await That(mock.Protected.Event.MyEvent.Unsubscribed()).Never();
-		mock.Object.UnregisterEvent(handler);
+		mock.Subject.UnregisterEvent(handler);
 		await That(mock.Protected.Event.MyEvent.Unsubscribed()).Once();
 	}
 
@@ -26,7 +26,7 @@ public sealed class ProtectedMockTests
 		mock.Protected.Setup.Method.MyProtectedMethod(With.Any<string>())
 			.Returns(v => $"Hello, {v}!");
 
-		string result = mock.Object.InvokeMyProtectedMethod("foo");
+		string result = mock.Subject.InvokeMyProtectedMethod("foo");
 
 		await That(mock.Protected.Invoked.MyProtectedMethod("foo")).Once();
 		await That(result).IsEqualTo("Hello, foo!");
@@ -39,7 +39,7 @@ public sealed class ProtectedMockTests
 
 		mock.Protected.Setup.Property.MyProtectedProperty.InitializeWith(42);
 
-		int result = mock.Object.GetMyProtectedProperty();
+		int result = mock.Subject.GetMyProtectedProperty();
 
 		await That(mock.Protected.Accessed.MyProtectedProperty.Getter()).Once();
 		await That(result).IsEqualTo(42);

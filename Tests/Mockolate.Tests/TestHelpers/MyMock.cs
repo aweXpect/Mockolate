@@ -21,7 +21,7 @@ public class MyMock<T>(T @object, MockBehavior? behavior = null) : Mock<T>(behav
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 
 	public bool HiddenTryCast<TValue>(object? value, out TValue result)
 		=> TryCast(value, out result);
@@ -45,7 +45,7 @@ public class MyMock<T, T2>(T @object = default!, MockBehavior? behavior = null)
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 }
 
 public class MyMock<T, T2, T3>(T @object = default!, MockBehavior? behavior = null)
@@ -66,7 +66,7 @@ public class MyMock<T, T2, T3>(T @object = default!, MockBehavior? behavior = nu
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 }
 
 public class MyMock<T, T2, T3, T4>(T @object = default!, MockBehavior? behavior = null)
@@ -87,7 +87,7 @@ public class MyMock<T, T2, T3, T4>(T @object = default!, MockBehavior? behavior 
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 }
 
 public class MyMock<T, T2, T3, T4, T5>(T @object = default!, MockBehavior? behavior = null)
@@ -108,7 +108,7 @@ public class MyMock<T, T2, T3, T4, T5>(T @object = default!, MockBehavior? behav
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 }
 
 public class MyMock<T, T2, T3, T4, T5, T6>(T @object = default!, MockBehavior? behavior = null)
@@ -129,7 +129,7 @@ public class MyMock<T, T2, T3, T4, T5, T6>(T @object = default!, MockBehavior? b
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 }
 
 public class MyMock<T, T2, T3, T4, T5, T6, T7>(T @object = default!, MockBehavior? behavior = null)
@@ -150,7 +150,7 @@ public class MyMock<T, T2, T3, T4, T5, T6, T7>(T @object = default!, MockBehavio
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 }
 
 public class MyMock<T, T2, T3, T4, T5, T6, T7, T8>(T @object = default!, MockBehavior? behavior = null)
@@ -171,7 +171,7 @@ public class MyMock<T, T2, T3, T4, T5, T6, T7, T8>(T @object = default!, MockBeh
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 }
 
 public class MyMock<T, T2, T3, T4, T5, T6, T7, T8, T9>(T @object = default!, MockBehavior? behavior = null)
@@ -192,5 +192,5 @@ public class MyMock<T, T2, T3, T4, T5, T6, T7, T8, T9>(T @object = default!, Moc
 	public IMock Hidden
 		=> this;
 
-	public override T Object => @object;
+	public override T Subject => @object;
 }

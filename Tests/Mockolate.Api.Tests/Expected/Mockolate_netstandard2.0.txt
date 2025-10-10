@@ -29,9 +29,9 @@ namespace Mockolate
     {
         protected MockBase(Mockolate.MockBehavior behavior) { }
         public Mockolate.Checks.MockCheck Check { get; }
-        public abstract T Object { get; }
         public Mockolate.Events.MockRaises<T> Raise { get; }
         public Mockolate.Setup.MockSetup<T> Setup { get; }
+        public abstract T Subject { get; }
         protected bool TryCast<TValue>(object? value, out TValue result) { }
         public static T op_Implicit(Mockolate.MockBase<T> mock) { }
     }

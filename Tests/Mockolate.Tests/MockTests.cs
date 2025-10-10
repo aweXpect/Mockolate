@@ -76,7 +76,7 @@ public sealed partial class MockTests
 		Mock<Nested.Nested2.IMyDoubleNestedService> mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
 		mock.Setup.Property.IsValid.InitializeWith(true);
 
-		bool result = mock.Object.IsValid;
+		bool result = mock.Subject.IsValid;
 
 		await That(result).IsTrue();
 	}

@@ -7,7 +7,7 @@ internal class Program
 		Mock<IMyInterface> mock = Mock.Create<IMyInterface>();
 		mock.Setup.Method.MyMethod().Returns(2);
 
-		int result = mock.Object.MyMethod();
+		int result = mock.Subject.MyMethod();
 
 		Console.WriteLine($"The mock returned: {result}");
 	}

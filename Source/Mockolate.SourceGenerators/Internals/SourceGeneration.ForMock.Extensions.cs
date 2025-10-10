@@ -128,12 +128,12 @@ internal static partial class SourceGeneration
 				.Append(">>.Proxy(mock.Event, ((IMock)mock).Interactions, mock);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Exposes the mocked object instance of type <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc())
+			sb.Append("\t\t///     Exposes the mocked subject of type <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc())
 				.Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append(@class.ClassName).Append(" ObjectFor").Append(@class.ClassName.Replace('.', '_'))
+			sb.Append("\t\tpublic ").Append(@class.ClassName).Append(" SubjectFor").Append(@class.ClassName.Replace('.', '_'))
 				.AppendLine();
-			sb.Append("\t\t\t=> (").Append(@class.ClassName).Append(")mock.Object;").AppendLine();
+			sb.Append("\t\t\t=> (").Append(@class.ClassName).Append(")mock.Subject;").AppendLine();
 		}
 
 		sb.AppendLine("\t}");

@@ -10,7 +10,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method1(With.Any<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Object.Method1(1);
+			int result = await sut.Subject.Method1(1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -21,7 +21,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method1(With.Any<int>()).ReturnsAsync(v1 => v1 + 10);
 
-			int result = await sut.Object.Method1(2);
+			int result = await sut.Subject.Method1(2);
 
 			await That(result).IsEqualTo(12);
 		}
@@ -32,7 +32,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method1(With.Any<int>()).ReturnsAsync(42);
 
-			int result = await sut.Object.Method1(1);
+			int result = await sut.Subject.Method1(1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -43,7 +43,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Object.Method2(1, 2);
+			int result = await sut.Subject.Method2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -54,7 +54,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
 
-			int result = await sut.Object.Method2(1, 2);
+			int result = await sut.Subject.Method2(1, 2);
 
 			await That(result).IsEqualTo(13);
 		}
@@ -65,7 +65,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).ReturnsAsync(42);
 
-			int result = await sut.Object.Method2(1, 2);
+			int result = await sut.Subject.Method2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -76,7 +76,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Object.Method3(1, 2, 3);
+			int result = await sut.Subject.Method3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -88,7 +88,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.ReturnsAsync((v1, v2, v3) => v1 + v2 + v3 + 10);
 
-			int result = await sut.Object.Method3(1, 2, 3);
+			int result = await sut.Subject.Method3(1, 2, 3);
 
 			await That(result).IsEqualTo(16);
 		}
@@ -99,7 +99,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>()).ReturnsAsync(42);
 
-			int result = await sut.Object.Method3(1, 2, 3);
+			int result = await sut.Subject.Method3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -111,7 +111,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.ReturnsAsync(() => 42);
 
-			int result = await sut.Object.Method4(1, 2, 3, 4);
+			int result = await sut.Subject.Method4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -123,7 +123,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.ReturnsAsync((v1, v2, v3, v4) => v1 + v2 + v3 + v4 + 10);
 
-			int result = await sut.Object.Method4(1, 2, 3, 4);
+			int result = await sut.Subject.Method4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(20);
 		}
@@ -134,7 +134,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>()).ReturnsAsync(42);
 
-			int result = await sut.Object.Method4(1, 2, 3, 4);
+			int result = await sut.Subject.Method4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -145,7 +145,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method0().ReturnsAsync(() => 42);
 
-			int result = await sut.Object.Method0();
+			int result = await sut.Subject.Method0();
 
 			await That(result).IsEqualTo(42);
 		}
@@ -156,7 +156,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.Method0().ReturnsAsync(42);
 
-			int result = await sut.Object.Method0();
+			int result = await sut.Subject.Method0();
 
 			await That(result).IsEqualTo(42);
 		}
@@ -171,7 +171,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT1(With.Any<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Object.MethodVT1(1);
+			int result = await sut.Subject.MethodVT1(1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -182,7 +182,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT1(With.Any<int>()).ReturnsAsync(v1 => v1 + 10);
 
-			int result = await sut.Object.MethodVT1(2);
+			int result = await sut.Subject.MethodVT1(2);
 
 			await That(result).IsEqualTo(12);
 		}
@@ -193,7 +193,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT1(With.Any<int>()).ReturnsAsync(42);
 
-			int result = await sut.Object.MethodVT1(1);
+			int result = await sut.Subject.MethodVT1(1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -204,7 +204,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT2(With.Any<int>(), With.Any<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Object.MethodVT2(1, 2);
+			int result = await sut.Subject.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -215,7 +215,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT2(With.Any<int>(), With.Any<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
 
-			int result = await sut.Object.MethodVT2(1, 2);
+			int result = await sut.Subject.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(13);
 		}
@@ -226,7 +226,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT2(With.Any<int>(), With.Any<int>()).ReturnsAsync(42);
 
-			int result = await sut.Object.MethodVT2(1, 2);
+			int result = await sut.Subject.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -237,7 +237,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT3(With.Any<int>(), With.Any<int>(), With.Any<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Object.MethodVT3(1, 2, 3);
+			int result = await sut.Subject.MethodVT3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -249,7 +249,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			sut.Setup.Method.MethodVT3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.ReturnsAsync((v1, v2, v3) => v1 + v2 + v3 + 10);
 
-			int result = await sut.Object.MethodVT3(1, 2, 3);
+			int result = await sut.Subject.MethodVT3(1, 2, 3);
 
 			await That(result).IsEqualTo(16);
 		}
@@ -260,7 +260,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT3(With.Any<int>(), With.Any<int>(), With.Any<int>()).ReturnsAsync(42);
 
-			int result = await sut.Object.MethodVT3(1, 2, 3);
+			int result = await sut.Subject.MethodVT3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -272,7 +272,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			sut.Setup.Method.MethodVT4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.ReturnsAsync(() => 42);
 
-			int result = await sut.Object.MethodVT4(1, 2, 3, 4);
+			int result = await sut.Subject.MethodVT4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -284,7 +284,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			sut.Setup.Method.MethodVT4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.ReturnsAsync((v1, v2, v3, v4) => v1 + v2 + v3 + v4 + 10);
 
-			int result = await sut.Object.MethodVT4(1, 2, 3, 4);
+			int result = await sut.Subject.MethodVT4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(20);
 		}
@@ -295,7 +295,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>()).ReturnsAsync(42);
 
-			int result = await sut.Object.MethodVT4(1, 2, 3, 4);
+			int result = await sut.Subject.MethodVT4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -306,7 +306,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT0().ReturnsAsync(() => 42);
 
-			int result = await sut.Object.MethodVT0();
+			int result = await sut.Subject.MethodVT0();
 
 			await That(result).IsEqualTo(42);
 		}
@@ -317,7 +317,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
 			sut.Setup.Method.MethodVT0().ReturnsAsync(42);
 
-			int result = await sut.Object.MethodVT0();
+			int result = await sut.Subject.MethodVT0();
 
 			await That(result).IsEqualTo(42);
 		}

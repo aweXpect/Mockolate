@@ -235,7 +235,7 @@ public sealed class WithTests
 		Mock<IMyServiceWithNullable> mock = Mock.Create<IMyServiceWithNullable>();
 		mock.Setup.Method.DoSomething(null, true);
 
-		mock.Object.DoSomething(value, true);
+		mock.Subject.DoSomething(value, true);
 
 		await That(mock.Invoked.DoSomething(null, true)).Exactly(expectedCount);
 	}

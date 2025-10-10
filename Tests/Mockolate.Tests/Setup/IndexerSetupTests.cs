@@ -12,9 +12,9 @@ public sealed class IndexerSetupTests
 		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.InitializeWith("foo");
 
-		string result2 = mock.Object[2];
-		string result3 = mock.Object[3];
-		string result4 = mock.Object[4];
+		string result2 = mock.Subject[2];
+		string result3 = mock.Subject[3];
+		string result4 = mock.Subject[4];
 
 		await That(result2).IsEqualTo("foo");
 		await That(result3).IsEqualTo("foo");
@@ -29,9 +29,9 @@ public sealed class IndexerSetupTests
 		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.InitializeWith(v => $"foo-{v}");
 
-		string result2 = mock.Object[2];
-		string result3 = mock.Object[3];
-		string result4 = mock.Object[4];
+		string result2 = mock.Subject[2];
+		string result3 = mock.Subject[3];
+		string result4 = mock.Subject[4];
 
 		await That(result2).IsEqualTo("foo-2");
 		await That(result3).IsEqualTo("foo-3");
@@ -77,9 +77,9 @@ public sealed class IndexerSetupTests
 		mock.Setup.Indexer(With.Any<int>())
 			.OnGet(() => { callCount++; });
 
-		_ = mock.Object[1];
-		_ = mock.Object[2, 2];
-		_ = mock.Object[3, 3, 3];
+		_ = mock.Subject[1];
+		_ = mock.Subject[2, 2];
+		_ = mock.Subject[3, 3, 3];
 
 		await That(callCount).IsEqualTo(1);
 	}
@@ -97,8 +97,8 @@ public sealed class IndexerSetupTests
 			.OnGet(v => { callCount2 += v; })
 			.OnGet(() => { callCount3++; });
 
-		_ = mock.Object[2];
-		_ = mock.Object[2];
+		_ = mock.Subject[2];
+		_ = mock.Subject[2];
 
 		await That(callCount1).IsEqualTo(2);
 		await That(callCount2).IsEqualTo(4);
@@ -118,8 +118,8 @@ public sealed class IndexerSetupTests
 			.OnSet((_, v) => { callCount2 += v; })
 			.OnSet(_ => { callCount3++; });
 
-		mock.Object[2] = "foo";
-		mock.Object[2] = "bar";
+		mock.Subject[2] = "foo";
+		mock.Subject[2] = "bar";
 
 		await That(callCount1).IsEqualTo(2);
 		await That(callCount2).IsEqualTo(4);
@@ -135,12 +135,12 @@ public sealed class IndexerSetupTests
 		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.OnGet(() => { callCount++; });
 
-		_ = mock.Object[1];
-		_ = mock.Object[2];
-		_ = mock.Object[3];
-		_ = mock.Object[4];
-		_ = mock.Object[5];
-		_ = mock.Object[6];
+		_ = mock.Subject[1];
+		_ = mock.Subject[2];
+		_ = mock.Subject[3];
+		_ = mock.Subject[4];
+		_ = mock.Subject[5];
+		_ = mock.Subject[6];
 
 		await That(callCount).IsEqualTo(3);
 	}
@@ -154,11 +154,11 @@ public sealed class IndexerSetupTests
 		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.OnGet(v => { callCount += v; });
 
-		_ = mock.Object[1];
-		_ = mock.Object[2];
-		_ = mock.Object[3];
-		_ = mock.Object[4];
-		_ = mock.Object[5];
+		_ = mock.Subject[1];
+		_ = mock.Subject[2];
+		_ = mock.Subject[3];
+		_ = mock.Subject[4];
+		_ = mock.Subject[5];
 
 		await That(callCount).IsEqualTo(6);
 	}
@@ -172,12 +172,12 @@ public sealed class IndexerSetupTests
 		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.OnSet(_ => { callCount++; });
 
-		mock.Object[1] = "";
-		mock.Object[2] = "";
-		mock.Object[3] = "";
-		mock.Object[4] = "";
-		mock.Object[5] = "";
-		mock.Object[6] = "";
+		mock.Subject[1] = "";
+		mock.Subject[2] = "";
+		mock.Subject[3] = "";
+		mock.Subject[4] = "";
+		mock.Subject[5] = "";
+		mock.Subject[6] = "";
 
 		await That(callCount).IsEqualTo(3);
 	}
@@ -191,11 +191,11 @@ public sealed class IndexerSetupTests
 		mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 			.OnSet(() => { callCount++; });
 
-		mock.Object[1] = "";
-		mock.Object[2] = "";
-		mock.Object[3] = "";
-		mock.Object[4] = "";
-		mock.Object[5] = "";
+		mock.Subject[1] = "";
+		mock.Subject[2] = "";
+		mock.Subject[3] = "";
+		mock.Subject[4] = "";
+		mock.Subject[5] = "";
 
 		await That(callCount).IsEqualTo(3);
 	}
@@ -210,10 +210,10 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.InitializeWith("foo");
 
-			string result12 = mock.Object[1, 2];
-			string result13 = mock.Object[2, 3];
-			string result14 = mock.Object[1, 4];
-			string result41 = mock.Object[4, 1];
+			string result12 = mock.Subject[1, 2];
+			string result13 = mock.Subject[2, 3];
+			string result14 = mock.Subject[1, 4];
+			string result41 = mock.Subject[4, 1];
 
 			await That(result12).IsEqualTo("foo");
 			await That(result13).IsEqualTo("foo");
@@ -229,10 +229,10 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.InitializeWith((v1, v2) => $"foo-{v1}-{v2}");
 
-			string result12 = mock.Object[1, 2];
-			string result13 = mock.Object[2, 3];
-			string result14 = mock.Object[1, 4];
-			string result41 = mock.Object[4, 1];
+			string result12 = mock.Subject[1, 2];
+			string result13 = mock.Subject[2, 3];
+			string result14 = mock.Subject[1, 4];
+			string result41 = mock.Subject[4, 1];
 
 			await That(result12).IsEqualTo("foo-1-2");
 			await That(result13).IsEqualTo("foo-2-3");
@@ -279,9 +279,9 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 				.OnGet(() => { callCount++; });
 
-			_ = mock.Object[1];
-			_ = mock.Object[2, 2];
-			_ = mock.Object[3, 3, 3];
+			_ = mock.Subject[1];
+			_ = mock.Subject[2, 2];
+			_ = mock.Subject[3, 3, 3];
 
 			await That(callCount).IsEqualTo(1);
 		}
@@ -299,8 +299,8 @@ public sealed class IndexerSetupTests
 				.OnGet((v1, v2) => { callCount2 += v1 * v2; })
 				.OnGet(() => { callCount3++; });
 
-			_ = mock.Object[2, 3];
-			_ = mock.Object[4, 5];
+			_ = mock.Subject[2, 3];
+			_ = mock.Subject[4, 5];
 
 			await That(callCount1).IsEqualTo(2);
 			await That(callCount2).IsEqualTo(26);
@@ -320,8 +320,8 @@ public sealed class IndexerSetupTests
 				.OnSet((value, v1, v2) => { callCount2 += v1 * v2 + value.Length; })
 				.OnSet(v => { callCount3 += v.Length; });
 
-			mock.Object[2, 3] = "foo";  // 6 + 3
-			mock.Object[4, 5] = "bart"; // 20 + 4
+			mock.Subject[2, 3] = "foo";  // 6 + 3
+			mock.Subject[4, 5] = "bart"; // 20 + 4
 
 			await That(callCount1).IsEqualTo(2);
 			await That(callCount2).IsEqualTo(9 + 24);
@@ -337,12 +337,12 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnGet(() => { callCount++; });
 
-			_ = mock.Object[5, 1]; // no
-			_ = mock.Object[3, 2]; // yes
-			_ = mock.Object[2, 3]; // yes
-			_ = mock.Object[1, 4]; // no
-			_ = mock.Object[1, -4]; // yes
-			_ = mock.Object[8, 6]; // no
+			_ = mock.Subject[5, 1]; // no
+			_ = mock.Subject[3, 2]; // yes
+			_ = mock.Subject[2, 3]; // yes
+			_ = mock.Subject[1, 4]; // no
+			_ = mock.Subject[1, -4]; // yes
+			_ = mock.Subject[8, 6]; // no
 
 			await That(callCount).IsEqualTo(3);
 		}
@@ -356,12 +356,12 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnGet((v1, v2) => { callCount += v1 * v2; });
 
-			_ = mock.Object[5, 1];  // no
-			_ = mock.Object[3, 2];  // yes (6)
-			_ = mock.Object[2, 3];  // yes (6)
-			_ = mock.Object[1, 4];  // no
-			_ = mock.Object[1, -4]; // yes (-4)
-			_ = mock.Object[8, 6];  // no
+			_ = mock.Subject[5, 1];  // no
+			_ = mock.Subject[3, 2];  // yes (6)
+			_ = mock.Subject[2, 3];  // yes (6)
+			_ = mock.Subject[1, 4];  // no
+			_ = mock.Subject[1, -4]; // yes (-4)
+			_ = mock.Subject[8, 6];  // no
 
 			await That(callCount).IsEqualTo(8);
 		}
@@ -375,15 +375,15 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(v => { callCount += v.Length; });
 
-			mock.Object[1,  1] = "a";         // yes (1)
-			mock.Object[1,  2] = "bb";        // yes (2)
-			mock.Object[1,  3] = "ccc";       // yes (3)
-			mock.Object[1,  4] = "dddd";      // no
-			mock.Object[1,  5] = "eeeee";     // no
-			mock.Object[6,  1] = "ffffff";    // no
-			mock.Object[6,  7] = "ggggggg";   // no
-			mock.Object[8, -9] = "hhhhhhhh";  // no
-			mock.Object[3,  3] = "iiiiiiiii"; // yes (9)
+			mock.Subject[1,  1] = "a";         // yes (1)
+			mock.Subject[1,  2] = "bb";        // yes (2)
+			mock.Subject[1,  3] = "ccc";       // yes (3)
+			mock.Subject[1,  4] = "dddd";      // no
+			mock.Subject[1,  5] = "eeeee";     // no
+			mock.Subject[6,  1] = "ffffff";    // no
+			mock.Subject[6,  7] = "ggggggg";   // no
+			mock.Subject[8, -9] = "hhhhhhhh";  // no
+			mock.Subject[3,  3] = "iiiiiiiii"; // yes (9)
 
 			await That(callCount).IsEqualTo(15);
 		}
@@ -397,12 +397,12 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(() => { callCount++; });
 
-			mock.Object[1, 1] = ""; // yes
-			mock.Object[1, 2] = ""; // yes
-			mock.Object[1, 3] = ""; // yes
-			mock.Object[1, 4] = ""; // no
-			mock.Object[5, 1] = ""; // no
-			mock.Object[2, 1] = ""; // yes
+			mock.Subject[1, 1] = ""; // yes
+			mock.Subject[1, 2] = ""; // yes
+			mock.Subject[1, 3] = ""; // yes
+			mock.Subject[1, 4] = ""; // no
+			mock.Subject[5, 1] = ""; // no
+			mock.Subject[2, 1] = ""; // yes
 
 			await That(callCount).IsEqualTo(4);
 		}
@@ -418,11 +418,11 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.InitializeWith("foo");
 
-			string result123 = mock.Object[1, 2, 3];
-			string result231 = mock.Object[2, 3, 1];
-			string result114 = mock.Object[1, 1, 4];
-			string result141 = mock.Object[1, 4, 1];
-			string result411 = mock.Object[4, 1, 1];
+			string result123 = mock.Subject[1, 2, 3];
+			string result231 = mock.Subject[2, 3, 1];
+			string result114 = mock.Subject[1, 1, 4];
+			string result141 = mock.Subject[1, 4, 1];
+			string result411 = mock.Subject[4, 1, 1];
 
 			await That(result123).IsEqualTo("foo");
 			await That(result231).IsEqualTo("foo");
@@ -439,11 +439,11 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.InitializeWith((v1, v2, v3) => $"foo-{v1}-{v2}-{v3}");
 
-			string result123 = mock.Object[1, 2, 3];
-			string result231 = mock.Object[2, 3, 1];
-			string result114 = mock.Object[1, 1, 4];
-			string result141 = mock.Object[1, 4, 1];
-			string result411 = mock.Object[4, 1, 1];
+			string result123 = mock.Subject[1, 2, 3];
+			string result231 = mock.Subject[2, 3, 1];
+			string result114 = mock.Subject[1, 1, 4];
+			string result141 = mock.Subject[1, 4, 1];
+			string result411 = mock.Subject[4, 1, 1];
 
 			await That(result123).IsEqualTo("foo-1-2-3");
 			await That(result231).IsEqualTo("foo-2-3-1");
@@ -491,9 +491,9 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.OnGet(() => { callCount++; });
 
-			_ = mock.Object[1];
-			_ = mock.Object[2, 2];
-			_ = mock.Object[3, 3, 3];
+			_ = mock.Subject[1];
+			_ = mock.Subject[2, 2];
+			_ = mock.Subject[3, 3, 3];
 
 			await That(callCount).IsEqualTo(1);
 		}
@@ -511,8 +511,8 @@ public sealed class IndexerSetupTests
 				.OnGet((v1, v2, v3) => { callCount2 += v1 * v2 * v3; })
 				.OnGet(() => { callCount3++; });
 
-			_ = mock.Object[1, 2, 3]; // 6
-			_ = mock.Object[4, 5, 6]; // 120
+			_ = mock.Subject[1, 2, 3]; // 6
+			_ = mock.Subject[4, 5, 6]; // 120
 
 			await That(callCount1).IsEqualTo(2);
 			await That(callCount2).IsEqualTo(126);
@@ -532,8 +532,8 @@ public sealed class IndexerSetupTests
 				.OnSet((value, v1, v2, v3) => { callCount2 += v1 * v2 * v3 + value.Length; })
 				.OnSet(v => { callCount3 += v.Length; });
 
-			mock.Object[1, 2, 3] = "foo";  // 6 + 3
-			mock.Object[4, 5, 6] = "bart"; // 120 + 4
+			mock.Subject[1, 2, 3] = "foo";  // 6 + 3
+			mock.Subject[4, 5, 6] = "bart"; // 120 + 4
 
 			await That(callCount1).IsEqualTo(2);
 			await That(callCount2).IsEqualTo(9 + 124);
@@ -549,13 +549,13 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnGet(() => { callCount++; });
 
-			_ = mock.Object[1, 5, 1];  // no
-			_ = mock.Object[3, 1, 2];  // yes
-			_ = mock.Object[2, 2, 3];  // yes
-			_ = mock.Object[1, 1, 4];  // no
-			_ = mock.Object[1, 1, -4]; // yes
-			_ = mock.Object[6, 2, 1];  // no
-			_ = mock.Object[6, 7, 8];  // no
+			_ = mock.Subject[1, 5, 1];  // no
+			_ = mock.Subject[3, 1, 2];  // yes
+			_ = mock.Subject[2, 2, 3];  // yes
+			_ = mock.Subject[1, 1, 4];  // no
+			_ = mock.Subject[1, 1, -4]; // yes
+			_ = mock.Subject[6, 2, 1];  // no
+			_ = mock.Subject[6, 7, 8];  // no
 
 			await That(callCount).IsEqualTo(3);
 		}
@@ -569,13 +569,13 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnGet((v1, v2, v3) => { callCount += v1 * v2 * v3; });
 
-			_ = mock.Object[1, 5, 1];  // no
-			_ = mock.Object[3, 1, 2];  // yes (6)
-			_ = mock.Object[2, 2, 3];  // yes (12)
-			_ = mock.Object[1, 1, 4];  // no
-			_ = mock.Object[1, 1, -4]; // yes (-4)
-			_ = mock.Object[6, 2, 1];  // no
-			_ = mock.Object[6, 7, 8];  // no
+			_ = mock.Subject[1, 5, 1];  // no
+			_ = mock.Subject[3, 1, 2];  // yes (6)
+			_ = mock.Subject[2, 2, 3];  // yes (12)
+			_ = mock.Subject[1, 1, 4];  // no
+			_ = mock.Subject[1, 1, -4]; // yes (-4)
+			_ = mock.Subject[6, 2, 1];  // no
+			_ = mock.Subject[6, 7, 8];  // no
 
 			await That(callCount).IsEqualTo(14);
 		}
@@ -589,15 +589,15 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(v => { callCount += v.Length; });
 
-			mock.Object[1,  1, 1] = "a";         // yes (1)
-			mock.Object[1,  2, 1] = "bb";        // yes (2)
-			mock.Object[3,  1, 2] = "ccc";       // yes (3)
-			mock.Object[1,  1, 4] = "dddd";      // no
-			mock.Object[1,  5, 1] = "eeeee";     // no
-			mock.Object[6,  1, 1] = "ffffff";    // no
-			mock.Object[6,  7, 8] = "ggggggg";   // no
-			mock.Object[8, -9, 1] = "hhhhhhhh";  // no
-			mock.Object[3,  3, 3] = "iiiiiiiii"; // yes (9)
+			mock.Subject[1,  1, 1] = "a";         // yes (1)
+			mock.Subject[1,  2, 1] = "bb";        // yes (2)
+			mock.Subject[3,  1, 2] = "ccc";       // yes (3)
+			mock.Subject[1,  1, 4] = "dddd";      // no
+			mock.Subject[1,  5, 1] = "eeeee";     // no
+			mock.Subject[6,  1, 1] = "ffffff";    // no
+			mock.Subject[6,  7, 8] = "ggggggg";   // no
+			mock.Subject[8, -9, 1] = "hhhhhhhh";  // no
+			mock.Subject[3,  3, 3] = "iiiiiiiii"; // yes (9)
 
 			await That(callCount).IsEqualTo(15);
 		}
@@ -611,13 +611,13 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(() => { callCount++; });
 
-			mock.Object[1, 1, 1] = ""; // yes
-			mock.Object[1, 1, 2] = ""; // yes
-			mock.Object[1, 3, 1] = ""; // yes
-			mock.Object[1, 1, 4] = ""; // no
-			mock.Object[1, 5, 1] = ""; // no
-			mock.Object[6, 1, 1] = ""; // no
-			mock.Object[2, 1, 1] = ""; // yes
+			mock.Subject[1, 1, 1] = ""; // yes
+			mock.Subject[1, 1, 2] = ""; // yes
+			mock.Subject[1, 3, 1] = ""; // yes
+			mock.Subject[1, 1, 4] = ""; // no
+			mock.Subject[1, 5, 1] = ""; // no
+			mock.Subject[6, 1, 1] = ""; // no
+			mock.Subject[2, 1, 1] = ""; // yes
 
 			await That(callCount).IsEqualTo(4);
 		}

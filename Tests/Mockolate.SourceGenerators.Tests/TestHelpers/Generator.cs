@@ -17,9 +17,16 @@ public static class Generator
 		"CS1520" /* Method must have a return type */,
 		"CS0710" /* Static classes cannot have instance constructors */,
 		"CS1513" /* } expected */,
+		"CS1002" /* ; expected */,
+		"CS1003" /* Syntax error, ',' expected */,
+		"CS0119" /* 'identifier' is a type, which is not valid in the given context */,
+		"CS0246" /* A namespace cannot directly contain members such as fields or methods */,
+		"CS0305" /* Using the generic type 'type' requires 1 type arguments */,
+		"CS8803" /* Top-level statements must precede namespace and type declarations */,
 		"CS1022" /* Type or namespace definition, or end-of-file expected */,
 		"CS0708" /* 'member': cannot declare instance members in a static class */,
 		"CS0103" /* The name 'name' does not exist in the current context */,
+		"CS7022" /* The entry point of the program is global code */,
 	];
 
 	public static GeneratorResult Run(string source, params Type[] assemblyTypes)

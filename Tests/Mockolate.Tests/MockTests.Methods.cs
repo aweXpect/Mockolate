@@ -14,7 +14,7 @@ public sealed partial class MockTests
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
-			sut.Object.Multiply(i, 4);
+			sut.Subject.Multiply(i, 4);
 		}
 
 		await That(sut.Invoked.Multiply(With.Any<int>(), With.Any<int?>())).Exactly(numberOfInvocations);
@@ -30,7 +30,7 @@ public sealed partial class MockTests
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
-			sut.Object.SetIsValid(i % 2 == 0, () => true);
+			sut.Subject.SetIsValid(i % 2 == 0, () => true);
 		}
 
 		await That(sut.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>())).Exactly(numberOfInvocations);
@@ -48,7 +48,7 @@ public sealed partial class MockTests
 		});
 
 		void Act()
-			=> sut.Object.SetIsValid(true, null);
+			=> sut.Subject.SetIsValid(true, null);
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
@@ -65,7 +65,7 @@ public sealed partial class MockTests
 		});
 
 		void Act()
-			=> sut.Object.Multiply(3, null);
+			=> sut.Subject.Multiply(3, null);
 
 		await That(Act).Throws<MockNotSetupException>()
 			.WithMessage("""
@@ -78,7 +78,7 @@ public sealed partial class MockTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		int result = sut.Object.Multiply(3, 4);
+		int result = sut.Subject.Multiply(3, 4);
 
 		await That(result).IsEqualTo(default(int));
 	}

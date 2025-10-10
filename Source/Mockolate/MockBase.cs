@@ -34,9 +34,9 @@ public abstract class MockBase<T> : IMock
 	public MockCheck Check { get; }
 
 	/// <summary>
-	///     Exposes the mocked object instance of type <typeparamref name="T" />.
+	///     Exposes the mocked subject instance of type <typeparamref name="T" />.
 	/// </summary>
-	public abstract T Object { get; }
+	public abstract T Subject { get; }
 
 	/// <summary>
 	///     Raise events on the mock for <typeparamref name="T" />.
@@ -55,7 +55,7 @@ public abstract class MockBase<T> : IMock
 	///     This does not work implicitly (but only with an explicit cast) for interfaces due to
 	///     a limitation of the C# language.
 	/// </remarks>
-	public static implicit operator T(MockBase<T> mock) => mock.Object;
+	public static implicit operator T(MockBase<T> mock) => mock.Subject;
 
 	#region IMock
 
