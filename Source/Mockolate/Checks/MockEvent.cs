@@ -7,12 +7,12 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     Check which events were subscribed or unsubscribed on the mocked instance <typeparamref name="TMock" />.
 /// </summary>
-public class MockEvent<T, TMock>(MockInteractions interactions, TMock mock) : IMockEvent<TMock>
+public class MockEvent<T, TMock>(IMockVerify<TMock> verify) : IMockEvent<TMock>
 {
 	/// <inheritdoc cref="IMockEvent{TMock}.Subscribed(string)" />
 	CheckResult<TMock> IMockEvent<TMock>.Subscribed(string eventName)
-		=> new(mock, interactions,
-			interactions.Interactions
+		=> new(verify.Mock, verify.Interactions,
+			verify.Interactions.Interactions
 				.OfType<EventSubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
@@ -21,8 +21,8 @@ public class MockEvent<T, TMock>(MockInteractions interactions, TMock mock) : IM
 
 	/// <inheritdoc cref="IMockEvent{TMock}.Unsubscribed(string)" />
 	CheckResult<TMock> IMockEvent<TMock>.Unsubscribed(string eventName)
-		=> new(mock, interactions,
-			interactions.Interactions
+		=> new(verify.Mock, verify.Interactions,
+			verify.Interactions.Interactions
 				.OfType<EventUnsubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
@@ -33,8 +33,8 @@ public class MockEvent<T, TMock>(MockInteractions interactions, TMock mock) : IM
 	///     A proxy implementation of <see cref="IMockEvent{TMock}" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockEvent<TMock> inner, MockInteractions interactions, TMock mock)
-		: MockEvent<T, TMock>(interactions, mock), IMockEvent<TMock>
+	public class Proxy(IMockEvent<TMock> inner, IMockVerify<TMock> verify)
+		: MockEvent<T, TMock>(verify), IMockEvent<TMock>
 	{
 		/// <inheritdoc cref="IMockEvent{TMock}.Subscribed(string)" />
 		CheckResult<TMock> IMockEvent<TMock>.Subscribed(string eventName)
@@ -48,15 +48,8 @@ public class MockEvent<T, TMock>(MockInteractions interactions, TMock mock) : IM
 	/// <summary>
 	///     Check which protected events were subscribed or unsubscribed on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockEvent<TMock> inner, MockInteractions interactions, TMock mock)
-		: MockEvent<T, TMock>(interactions, mock), IMockEvent<TMock>
+	public class Protected(IMockVerify<TMock> verify)
+		: MockEvent<T, TMock>(verify), IMockEvent<TMock>
 	{
-		/// <inheritdoc cref="IMockEvent{TMock}.Subscribed(string)" />
-		CheckResult<TMock> IMockEvent<TMock>.Subscribed(string eventName)
-			=> inner.Subscribed(eventName);
-
-		/// <inheritdoc cref="IMockEvent{TMock}.Unsubscribed(string)" />
-		CheckResult<TMock> IMockEvent<TMock>.Unsubscribed(string eventName)
-			=> inner.Unsubscribed(eventName);
 	}
 }

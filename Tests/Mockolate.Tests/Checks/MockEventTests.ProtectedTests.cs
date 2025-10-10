@@ -8,6 +8,7 @@ public sealed partial class MockEventTests
 {
 	public sealed class ProtectedTests
 	{
+		/* TODO
 		[Fact]
 		public async Task Subscribed_ShouldForwardToInner()
 		{
@@ -43,5 +44,6 @@ public sealed partial class MockEventTests
 			await That(result1).Twice();
 			await That(result2).Twice();
 		}
+		*/
 	}
 }

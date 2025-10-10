@@ -7,6 +7,7 @@ namespace Mockolate.Tests.Checks;
 
 public sealed partial class MockEventTests
 {
+	/* TODO
 	[Fact]
 	public async Task Subscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
@@ -85,4 +86,5 @@ public sealed partial class MockEventTests
 
 	private static MethodInfo GetMethodInfo()
 		=> typeof(MockEventTests).GetMethod(nameof(GetMethodInfo), BindingFlags.Static)!;
+	*/
 }

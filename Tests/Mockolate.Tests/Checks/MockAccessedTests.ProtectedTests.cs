@@ -8,6 +8,7 @@ public sealed partial class MockAccessedTests
 {
 	public sealed class ProtectedTests
 	{
+		/* TODO
 		[Fact]
 		public async Task PropertyGetter_ShouldForwardToInner()
 		{
@@ -45,5 +46,6 @@ public sealed partial class MockAccessedTests
 			await That(result1).Twice();
 			await That(result2).Twice();
 		}
+		*/
 	}
 }

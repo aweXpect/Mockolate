@@ -7,12 +7,12 @@ namespace Mockolate.Checks;
 /// <summary>
 ///     Check which properties were accessed on the mocked instance <typeparamref name="TMock" />.
 /// </summary>
-public class MockAccessed<T, TMock>(MockInteractions interactions, TMock mock) : IMockAccessed<TMock>
+public class MockAccessed<T, TMock>(IMockVerify<TMock> verify) : IMockAccessed<TMock>
 {
 	/// <inheritdoc cref="IMockAccessed{TMock}.PropertyGetter(string)" />
 	CheckResult<TMock> IMockAccessed<TMock>.PropertyGetter(string propertyName)
-		=> new(mock, interactions,
-			interactions.Interactions
+		=> new(verify.Mock, verify.Interactions,
+			verify.Interactions.Interactions
 				.OfType<PropertyGetterAccess>()
 				.Where(property => property.Name.Equals(propertyName))
 				.Cast<IInteraction>()
@@ -21,8 +21,8 @@ public class MockAccessed<T, TMock>(MockInteractions interactions, TMock mock) :
 
 	/// <inheritdoc cref="IMockAccessed{TMock}.PropertySetter(string, With.Parameter)" />
 	CheckResult<TMock> IMockAccessed<TMock>.PropertySetter(string propertyName, With.Parameter value)
-		=> new(mock, interactions,
-			interactions.Interactions
+		=> new(verify.Mock, verify.Interactions,
+			verify.Interactions.Interactions
 				.OfType<PropertySetterAccess>()
 				.Where(property => property.Name.Equals(propertyName) && value.Matches(property.Value))
 				.Cast<IInteraction>()
@@ -33,8 +33,8 @@ public class MockAccessed<T, TMock>(MockInteractions interactions, TMock mock) :
 	///     A proxy implementation of <see cref="IMockAccessed{TMock}" /> that forwards all calls to the provided
 	///     <paramref name="inner" /> instance.
 	/// </summary>
-	public class Proxy(IMockAccessed<TMock> inner, MockInteractions interactions, TMock mock)
-		: MockAccessed<T, TMock>(interactions, mock), IMockAccessed<TMock>
+	public class Proxy(IMockAccessed<TMock> inner, IMockVerify<TMock> verify)
+		: MockAccessed<T, TMock>(verify), IMockAccessed<TMock>
 	{
 		/// <inheritdoc cref="IMockAccessed{TMock}.PropertyGetter(string)" />
 		CheckResult<TMock> IMockAccessed<TMock>.PropertyGetter(string propertyName)
@@ -48,15 +48,8 @@ public class MockAccessed<T, TMock>(MockInteractions interactions, TMock mock) :
 	/// <summary>
 	///     Check which protected properties were accessed on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockAccessed<TMock> inner, MockInteractions interactions, TMock mock)
-		: MockAccessed<T, TMock>(interactions, mock), IMockAccessed<TMock>
+	public class Protected(IMockVerify<TMock> verify)
+		: MockAccessed<T, TMock>(verify), IMockAccessed<TMock>
 	{
-		/// <inheritdoc cref="IMockAccessed{TMock}.PropertyGetter(string)" />
-		CheckResult<TMock> IMockAccessed<TMock>.PropertyGetter(string propertyName)
-			=> inner.PropertyGetter(propertyName);
-
-		/// <inheritdoc cref="IMockAccessed{TMock}.PropertySetter(string, With.Parameter)" />
-		CheckResult<TMock> IMockAccessed<TMock>.PropertySetter(string propertyName, With.Parameter value)
-			=> inner.PropertySetter(propertyName, value);
 	}
 }

@@ -16,9 +16,7 @@ public sealed partial class MockTests
 		Mock<MyBaseClass, IMyService> sut = new MyMock<MyBaseClass, IMyService>(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
-		await That(sut.Accessed).IsNotNull();
-		await That(sut.Invoked).IsNotNull();
-		await That(sut.Event).IsNotNull();
+		await That(sut.Verify).IsNotNull();
 	}
 
 	[Fact]
@@ -43,9 +41,7 @@ public sealed partial class MockTests
 			new MyMock<MyBaseClass, IMyService, IMyService>(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
-		await That(sut.Accessed).IsNotNull();
-		await That(sut.Invoked).IsNotNull();
-		await That(sut.Event).IsNotNull();
+		await That(sut.Verify).IsNotNull();
 	}
 
 	[Fact]
@@ -89,9 +85,7 @@ public sealed partial class MockTests
 		MyMock<MyBaseClass, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
-		await That(sut.Accessed).IsNotNull();
-		await That(sut.Invoked).IsNotNull();
-		await That(sut.Event).IsNotNull();
+		await That(sut.Verify).IsNotNull();
 	}
 
 	[Fact]
@@ -145,9 +139,7 @@ public sealed partial class MockTests
 		MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
-		await That(sut.Accessed).IsNotNull();
-		await That(sut.Invoked).IsNotNull();
-		await That(sut.Event).IsNotNull();
+		await That(sut.Verify).IsNotNull();
 	}
 
 	[Fact]
@@ -201,9 +193,7 @@ public sealed partial class MockTests
 		MyMock<MyBaseClass, IMyService, IMyService, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
-		await That(sut.Accessed).IsNotNull();
-		await That(sut.Invoked).IsNotNull();
-		await That(sut.Event).IsNotNull();
+		await That(sut.Verify).IsNotNull();
 	}
 
 	[Fact]
@@ -269,9 +259,7 @@ public sealed partial class MockTests
 				behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
-		await That(sut.Accessed).IsNotNull();
-		await That(sut.Invoked).IsNotNull();
-		await That(sut.Event).IsNotNull();
+		await That(sut.Verify).IsNotNull();
 	}
 
 	[Fact]
@@ -363,9 +351,7 @@ public sealed partial class MockTests
 				behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
-		await That(sut.Accessed).IsNotNull();
-		await That(sut.Invoked).IsNotNull();
-		await That(sut.Event).IsNotNull();
+		await That(sut.Verify).IsNotNull();
 	}
 
 	[Fact]
@@ -476,9 +462,7 @@ public sealed partial class MockTests
 			IMyService> sut = new(behavior: behavior);
 
 		await That(((IMock)sut).Behavior).IsSameAs(behavior);
-		await That(sut.Accessed).IsNotNull();
-		await That(sut.Invoked).IsNotNull();
-		await That(sut.Event).IsNotNull();
+		await That(sut.Verify).IsNotNull();
 	}
 
 	[Fact]

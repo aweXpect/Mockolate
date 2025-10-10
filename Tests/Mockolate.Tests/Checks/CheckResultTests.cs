@@ -9,7 +9,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Event.SomethingHappened.Subscribed();
+		CheckResult<Mock<IMyService>> check = sut.Verify.Event.SomethingHappened.Subscribed();
 
 		await That(check.Expectation).IsEqualTo("subscribed to event SomethingHappened");
 	}
@@ -19,7 +19,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Event.SomethingHappened.Unsubscribed();
+		CheckResult<Mock<IMyService>> check = sut.Verify.Event.SomethingHappened.Unsubscribed();
 
 		await That(check.Expectation).IsEqualTo("unsubscribed from event SomethingHappened");
 	}
@@ -29,7 +29,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Invoked.DoSomething(With.Any<int?>(), "foo");
+		CheckResult<Mock<IMyService>> check = sut.Verify.Invoked.DoSomething(With.Any<int?>(), "foo");
 
 		await That(check.Expectation).IsEqualTo("invoked method DoSomething(With.Any<int?>(), \"foo\")");
 	}
@@ -39,7 +39,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Accessed.MyProperty.Getter();
+		CheckResult<Mock<IMyService>> check = sut.Verify.Accessed.MyProperty.Getter();
 
 		await That(check.Expectation).IsEqualTo("accessed getter of property MyProperty");
 	}
@@ -49,7 +49,7 @@ public class CheckResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		CheckResult<Mock<IMyService>> check = sut.Accessed.MyProperty.Setter(With.Any<int>());
+		CheckResult<Mock<IMyService>> check = sut.Verify.Accessed.MyProperty.Setter(With.Any<int>());
 
 		await That(check.Expectation).IsEqualTo("accessed setter of property MyProperty with value With.Any<int>()");
 	}

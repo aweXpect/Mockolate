@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Mockolate.Checks;
 using Mockolate.Interactions;
+using Mockolate.Verify;
 
 namespace Mockolate.Monitor;
 
@@ -86,23 +87,11 @@ public class MockMonitor<T, TMock> : MockMonitor
 	/// <inheritdoc cref="MockMonitor{T, TMock}" />
 	public MockMonitor(TMock mock) : base(mock)
 	{
-		Accessed = new MockAccessed<T, TMock>(Interactions, mock);
-		Event = new MockEvent<T, TMock>(Interactions, mock);
-		Invoked = new MockInvoked<T, TMock>(Interactions, mock);
+		Verify = new MockVerify<T, TMock>(Interactions, mock);
 	}
 
 	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="T" />.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T"/>.
 	/// </summary>
-	public MockAccessed<T, TMock> Accessed { get; }
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="T" />.
-	/// </summary>
-	public MockEvent<T, TMock> Event { get; }
-
-	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="T" />.
-	/// </summary>
-	public MockInvoked<T, TMock> Invoked { get; }
+	public MockVerify<T, TMock> Verify { get; }
 }

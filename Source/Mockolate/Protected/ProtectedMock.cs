@@ -2,6 +2,7 @@ using Mockolate.Checks;
 using Mockolate.Events;
 using Mockolate.Interactions;
 using Mockolate.Setup;
+using Mockolate.Verify;
 
 namespace Mockolate.Protected;
 
@@ -23,22 +24,10 @@ public class ProtectedMock<T, TMock>(IMock inner, MockInteractions interactions,
 	private readonly TMock _mock = mock;
 
 	/// <summary>
-	///     Check which methods got invoked on the mocked instance for <typeparamref name="TMock" />.
+	///     Verifies the protected interactions with the mocked subject of <typeparamref name="T"/>.
 	/// </summary>
-	public MockInvoked<T, Mock<T>>.Protected Invoked
-		=> new(_mock.Invoked, interactions, _mock);
-
-	/// <summary>
-	///     Check which properties were accessed on the mocked instance for <typeparamref name="TMock" />.
-	/// </summary>
-	public MockAccessed<T, Mock<T>>.Protected Accessed
-		=> new(_mock.Accessed, interactions, _mock);
-
-	/// <summary>
-	///     Check which events were subscribed or unsubscribed on the mocked instance for <typeparamref name="TMock" />.
-	/// </summary>
-	public MockEvent<T, Mock<T>>.Protected Event
-		=> new(_mock.Event, interactions, _mock);
+	public MockVerify<T, Mock<T>>.Protected Verify
+		=> new(new MockVerify<T, Mock<T>>(interactions, _mock));
 
 	/// <summary>
 	///     Raise events on the mock for <typeparamref name="TMock" />.

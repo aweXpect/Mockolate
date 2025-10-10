@@ -22,7 +22,7 @@ public partial class HappyCaseBenchmarks
 
 		mock.Subject.MyFunc(42);
 
-		await Expect.That(mock.Invoked.MyFunc(With.Any<int>()).Once());
+		await Expect.That(mock.Verify.Invoked.MyFunc(With.Any<int>()).Once());
 	}
 
 	/// <summary>
