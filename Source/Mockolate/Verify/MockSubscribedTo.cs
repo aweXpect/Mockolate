@@ -5,7 +5,7 @@ using Mockolate.Internals;
 namespace Mockolate.Verify;
 
 /// <summary>
-///     Check which events were subscribed or unsubscribed on the mocked instance <typeparamref name="TMock" />.
+///     Check which events were subscribed to on the mocked instance <typeparamref name="TMock" />.
 /// </summary>
 public class MockSubscribedTo<T, TMock>(IMockVerify<TMock> verify) : IMockSubscribedTo<TMock>
 {
@@ -32,7 +32,7 @@ public class MockSubscribedTo<T, TMock>(IMockVerify<TMock> verify) : IMockSubscr
 	}
 
 	/// <summary>
-	///     Check which protected events were subscribed or unsubscribed on the mocked instance <typeparamref name="TMock" />.
+	///     Check which protected events were subscribed to on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
 	public class Protected(IMockVerify<TMock> verify)
 		: MockSubscribedTo<T, TMock>(verify), IMockSubscribedTo<TMock>

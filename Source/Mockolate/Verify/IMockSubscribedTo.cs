@@ -1,7 +1,7 @@
 namespace Mockolate.Verify;
 
 /// <summary>
-///     Get results for event subscriptions and unsubscriptions on the mock.
+///     Get results for event subscriptions on the mock.
 /// </summary>
 public interface IMockSubscribedTo<TMock>
 {

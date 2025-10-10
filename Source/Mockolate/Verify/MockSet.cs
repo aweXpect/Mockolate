@@ -5,7 +5,7 @@ using Mockolate.Internals;
 namespace Mockolate.Verify;
 
 /// <summary>
-///     Check which properties were written to on the mocked instance <typeparamref name="TMock" />.
+///     Check which properties were set on the mocked instance <typeparamref name="TMock" />.
 /// </summary>
 public class MockSet<T, TMock>(IMockVerify<TMock> verify) : IMockSet<TMock>
 {
@@ -32,7 +32,7 @@ public class MockSet<T, TMock>(IMockVerify<TMock> verify) : IMockSet<TMock>
 	}
 
 	/// <summary>
-	///     Check which protected properties were wrote on the mocked instance <typeparamref name="TMock" />.
+	///     Check which protected properties were set on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
 	public class Protected(IMockVerify<TMock> verify)
 		: MockSet<T, TMock>(verify), IMockSet<TMock>

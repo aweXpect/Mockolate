@@ -40,7 +40,7 @@ public abstract class Mock<T1, T2> : MockBase<T1>
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/> and <typeparamref name="T2"/>.
 	/// </summary>
 	public MockVerify<T1, Mock<T1, T2>> Verify { get; }
 }
@@ -69,7 +69,8 @@ public abstract class Mock<T1, T2, T3> : MockBase<T1>
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />
+	///     and <typeparamref name="T3" />.
 	/// </summary>
 	public MockVerify<T1, Mock<T1, T2, T3>> Verify { get; }
 }
@@ -103,7 +104,8 @@ public abstract class Mock<T1, T2, T3, T4> : MockBase<T1>
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 	/// </summary>
 	public MockVerify<T1, Mock<T1, T2, T3, T4>> Verify { get; }
 }
@@ -143,7 +145,8 @@ public abstract class Mock<T1, T2, T3, T4, T5> : MockBase<T1>
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
 	/// </summary>
 	public MockVerify<T1, Mock<T1, T2, T3, T4, T5>> Verify { get; }
 }
@@ -187,7 +190,8 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6> : MockBase<T1>
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" /> and <typeparamref name="T6" />.
 	/// </summary>
 	public MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6>> Verify { get; }
 }
@@ -237,7 +241,9 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : MockBase<T1>
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" /> and
+	///     <typeparamref name="T7" />.
 	/// </summary>
 	public MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7>> Verify { get; }
 }
@@ -292,7 +298,9 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : MockBase<T1>
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" />,
+	///     <typeparamref name="T7" /> and <typeparamref name="T8" />.
 	/// </summary>
 	public MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8>> Verify { get; }
 }
@@ -352,7 +360,9 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> : MockBase<T1>
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T1"/>, <typeparamref name="T2" />,
+	///     <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" />,
+	///     <typeparamref name="T7" />, <typeparamref name="T8" /> and <typeparamref name="T9" />.
 	/// </summary>
 	public MockVerify<T1, Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9>> Verify { get; }
 }

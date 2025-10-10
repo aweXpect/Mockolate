@@ -1,7 +1,7 @@
 namespace Mockolate.Verify;
 
 /// <summary>
-///     Get results for property access on the mock.
+///     Get results for property get access on the mock.
 /// </summary>
 public interface IMockGot<TMock>
 {
