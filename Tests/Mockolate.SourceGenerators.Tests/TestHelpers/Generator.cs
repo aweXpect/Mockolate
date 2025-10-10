@@ -16,6 +16,7 @@ public static class Generator
 		"CS0116" /* A namespace cannot directly contain members such as fields or methods */,
 		"CS1520" /* Method must have a return type */,
 		"CS0710" /* Static classes cannot have instance constructors */,
+		"CS1503" /* cannot convert from ... */,
 		"CS1513" /* } expected */,
 		"CS1002" /* ; expected */,
 		"CS1003" /* Syntax error, ',' expected */,

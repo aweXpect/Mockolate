@@ -1,4 +1,6 @@
-﻿namespace Mockolate.Tests.Setup;
+﻿using Mockolate.Verify;
+
+namespace Mockolate.Tests.Setup;
 
 public sealed partial class MockSetupsTests
 {

@@ -655,6 +655,10 @@ namespace Mockolate.Setup
 }
 namespace Mockolate.Verify
 {
+    public interface IMockGotIndexer<TMock>
+    {
+        Mockolate.Verify.VerificationResult<TMock> Got(params Mockolate.With.Parameter?[] parameters);
+    }
     public interface IMockGot<TMock>
     {
         Mockolate.Verify.VerificationResult<TMock> Property(string propertyName);
@@ -662,6 +666,10 @@ namespace Mockolate.Verify
     public interface IMockInvoked<TMock>
     {
         Mockolate.Verify.VerificationResult<TMock> Method(string methodName, params Mockolate.With.Parameter[] parameters);
+    }
+    public interface IMockSetIndexer<TMock>
+    {
+        Mockolate.Verify.VerificationResult<TMock> Set(Mockolate.With.Parameter? value, params Mockolate.With.Parameter?[] parameters);
     }
     public interface IMockSet<TMock>
     {
@@ -679,6 +687,18 @@ namespace Mockolate.Verify
     {
         Mockolate.Interactions.MockInteractions Interactions { get; }
         TMock Mock { get; }
+    }
+    public class MockGotIndexer<T, TMock> : Mockolate.Verify.IMockGotIndexer<TMock>
+    {
+        public MockGotIndexer(Mockolate.Verify.IMockVerify<TMock> verify) { }
+        public class Protected : Mockolate.Verify.MockGotIndexer<T, TMock>, Mockolate.Verify.IMockGotIndexer<TMock>
+        {
+            public Protected(Mockolate.Verify.IMockVerify<TMock> verify) { }
+        }
+        public class Proxy : Mockolate.Verify.MockGotIndexer<T, TMock>, Mockolate.Verify.IMockGotIndexer<TMock>
+        {
+            public Proxy(Mockolate.Verify.IMockGotIndexer<TMock> inner, Mockolate.Verify.IMockVerify<TMock> verify) { }
+        }
     }
     public class MockGot<T, TMock> : Mockolate.Verify.IMockGot<TMock>
     {
@@ -702,6 +722,18 @@ namespace Mockolate.Verify
         public class Proxy : Mockolate.Verify.MockInvoked<T, TMock>, Mockolate.Verify.IMockInvoked<TMock>
         {
             public Proxy(Mockolate.Verify.IMockInvoked<TMock> inner, Mockolate.Verify.IMockVerify<TMock> verify) { }
+        }
+    }
+    public class MockSetIndexer<T, TMock> : Mockolate.Verify.IMockSetIndexer<TMock>
+    {
+        public MockSetIndexer(Mockolate.Verify.IMockVerify<TMock> verify) { }
+        public class Protected : Mockolate.Verify.MockSetIndexer<T, TMock>, Mockolate.Verify.IMockSetIndexer<TMock>
+        {
+            public Protected(Mockolate.Verify.IMockVerify<TMock> verify) { }
+        }
+        public class Proxy : Mockolate.Verify.MockSetIndexer<T, TMock>, Mockolate.Verify.IMockSetIndexer<TMock>
+        {
+            public Proxy(Mockolate.Verify.IMockSetIndexer<TMock> inner, Mockolate.Verify.IMockVerify<TMock> verify) { }
         }
     }
     public class MockSet<T, TMock> : Mockolate.Verify.IMockSet<TMock>
