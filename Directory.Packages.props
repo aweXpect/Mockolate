@@ -34,7 +34,6 @@
 		<PackageVersion Include="coverlet.collector" Version="6.0.4"/>
 		<PackageVersion Include="PublicApiGenerator" Version="11.4.6"/>
 		<PackageVersion Include="aweXpect" Version="2.26.0"/>
-		<PackageVersion Include="aweXpect.Mockolate" Version="0.1.0"/>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="Moq" Version="4.20.72"/>
