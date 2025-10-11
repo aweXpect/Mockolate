@@ -6,7 +6,7 @@ namespace Mockolate.SourceGenerators.Internals;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 #pragma warning disable S3267 // Loops should be simplified with LINQ expressions
-internal static partial class SourceGeneration
+internal static partial class Sources
 {
 	public static string ForMockExtensions(string name, MockClass mockClass)
 	{

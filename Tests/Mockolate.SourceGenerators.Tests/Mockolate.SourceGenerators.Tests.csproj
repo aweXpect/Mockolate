@@ -5,10 +5,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Source\Mockolate.SourceGenerators\Mockolate.SourceGenerators.csproj"/>
-		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj"/>
-		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all"/>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all"/>
+		<ProjectReference Include="..\..\Source\Mockolate.SourceGenerators\Mockolate.SourceGenerators.csproj" />
+		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
 	</ItemGroup>
 
 </Project>

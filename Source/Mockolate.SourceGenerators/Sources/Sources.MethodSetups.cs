@@ -2,9 +2,9 @@ using System.Text;
 
 namespace Mockolate.SourceGenerators.Internals;
 
-internal static partial class SourceGeneration
+internal static partial class Sources
 {
-	public static string GetMethodSetups(HashSet<(int, bool)> methodSetups)
+	public static string MethodSetups(HashSet<(int, bool)> methodSetups)
 	{
 		StringBuilder sb = new();
 		sb.AppendLine(Header);

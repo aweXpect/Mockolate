@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 namespace Mockolate.SourceGenerators.Internals;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-internal static partial class SourceGeneration
+internal static partial class Sources
 {
 	public const string Header =
 		"""
@@ -29,7 +29,10 @@ internal static partial class SourceGeneration
 		"System.Threading.Tasks",
 	];
 
-	public static string Mock()
+	/// <summary>
+	///     Creates the static <c>Mock</c> class with the <c>Create</c> methods to create new mocks.
+	/// </summary>
+	public static string MockClass()
 	{
 		int maxNumberOfArguments = 9;
 		StringBuilder sb = new();
@@ -41,11 +44,12 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 		sb.AppendLine("#nullable enable");
 		sb.AppendLine("/// <summary>");
-		sb.AppendLine("///     Create new mocks by calling <c>Mock.Create&lt;T&gt;()</c>. You can specify up to 9 additional interfaces that the mock should also implement.");
+		sb.AppendLine("///     Create new mocks by calling <c>Mock.Create&lt;T&gt;()</c>.<br />");
+		sb.AppendLine("///     You can specify up to eight additional interfaces that the mock will also implement.");
 		sb.AppendLine("/// </summary>");
 		sb.AppendLine("/// <remarks>");
 		sb.AppendLine("///     If your type is a class without default constructor, you can provide constructor parameters using <see cref=\"BaseClass.WithConstructorParameters(object?[])\" />.");
-		sb.AppendLine("///     You can also provide a <see cref=\"MockBehavior\"/> to specify how the mock should behave.");
+		sb.AppendLine("///     You can also provide a <see cref=\"MockBehavior\"/> parameter to customize how the mock should behave in certain scenarios.");
 		sb.AppendLine("/// </remarks>");
 		sb.AppendLine("internal static partial class Mock");
 		sb.AppendLine("{");

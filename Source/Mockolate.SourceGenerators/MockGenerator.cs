@@ -19,7 +19,7 @@ public class MockGenerator : IIncrementalGenerator
 	{
 		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
 			"Mock.g.cs",
-			SourceText.From(SourceGeneration.Mock(), Encoding.UTF8)));
+			SourceText.From(Sources.MockClass(), Encoding.UTF8)));
 
 		IncrementalValueProvider<ImmutableArray<MockClass?>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
@@ -38,9 +38,9 @@ public class MockGenerator : IIncrementalGenerator
 		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate)
 		{
 			context.AddSource($"For{mockToGenerate.Name}.g.cs",
-				SourceText.From(SourceGeneration.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
+				SourceText.From(Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
 			context.AddSource($"For{mockToGenerate.Name}.Extensions.g.cs",
-				SourceText.From(SourceGeneration.ForMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
+				SourceText.From(Sources.ForMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
 		}
 
 		HashSet<(int, bool)> methodSetups = new();
@@ -49,7 +49,7 @@ public class MockGenerator : IIncrementalGenerator
 		foreach ((string name, Class extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
 		{
 			context.AddSource($"For{name}.SetupExtensions.g.cs",
-				SourceText.From(SourceGeneration.ForMockSetupExtensions(name, extensionToGenerate), Encoding.UTF8));
+				SourceText.From(Sources.ForMockSetupExtensions(name, extensionToGenerate), Encoding.UTF8));
 		}
 
 		foreach ((int Count, bool) item in mocksToGenerate
@@ -63,18 +63,18 @@ public class MockGenerator : IIncrementalGenerator
 		if (methodSetups.Any())
 		{
 			context.AddSource("MethodSetups.g.cs",
-				SourceText.From(SourceGeneration.GetMethodSetups(methodSetups), Encoding.UTF8));
+				SourceText.From(Sources.MethodSetups(methodSetups), Encoding.UTF8));
 		}
 
 		if (methodSetups.Any(x => !x.Item2))
 		{
 			context.AddSource("ReturnsAsyncExtensions.g.cs",
-				SourceText.From(SourceGeneration.GetReturnsAsyncExtensions(methodSetups
+				SourceText.From(Sources.ReturnsAsyncExtensions(methodSetups
 				.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
 		}
 
 		context.AddSource("MockRegistration.g.cs",
-			SourceText.From(SourceGeneration.MockRegistration(namedMocksToGenerate), Encoding.UTF8));
+			SourceText.From(Sources.MockRegistration(namedMocksToGenerate), Encoding.UTF8));
 	}
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)

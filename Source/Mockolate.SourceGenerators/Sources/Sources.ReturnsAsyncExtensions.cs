@@ -2,9 +2,9 @@ using System.Text;
 
 namespace Mockolate.SourceGenerators.Internals;
 
-internal static partial class SourceGeneration
+internal static partial class Sources
 {
-	public static string GetReturnsAsyncExtensions(int[] numberOfParameters)
+	public static string ReturnsAsyncExtensions(int[] numberOfParameters)
 	{
 		StringBuilder sb = new();
 		sb.AppendLine(Header);

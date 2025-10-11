@@ -3,7 +3,7 @@ using Mockolate.SourceGenerators.Entities;
 
 namespace Mockolate.SourceGenerators.Internals;
 
-internal static partial class SourceGeneration
+internal static partial class Sources
 {
 	public static string MockRegistration(ICollection<(string Name, MockClass MockClass)> mocks)
 	{

@@ -1,11 +1,10 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mockolate.SourceGenerators.Entities;
 
-namespace Mockolate.SourceGenerators.Internals;
+namespace Mockolate.SourceGenerators;
 
-internal static class GeneratorHelpers
+internal static class MockGeneratorHelpers
 {
 	internal static bool IsCreateMethodInvocation(this SyntaxNode node)
 		=> node is InvocationExpressionSyntax
