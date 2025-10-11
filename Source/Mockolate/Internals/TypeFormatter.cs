@@ -81,9 +81,9 @@ internal static class TypeFormatter
 			FormatType(value.GetElementType()!, stringBuilder);
 			stringBuilder.Append("[]");
 		}
-		else if (TryFindPrimitiveAlias(value, out string? alias))
+		else if (AppendedPrimitiveAlias(value, stringBuilder))
 		{
-			stringBuilder.Append(alias);
+			return;
 		}
 		else if (value.IsGenericType)
 		{
@@ -110,24 +110,28 @@ internal static class TypeFormatter
 		}
 	}
 
-	private static bool TryFindPrimitiveAlias(Type value, [NotNullWhen(true)] out string? alias)
+	private static bool AppendedPrimitiveAlias(Type value, StringBuilder stringBuilder)
 	{
 		if (Aliases.TryGetValue(value, out string? typeAlias))
 		{
-			alias = typeAlias;
+			stringBuilder.Append(typeAlias);
 			return true;
 		}
 
 		Type? underlyingType = Nullable.GetUnderlyingType(value);
 
-		if (underlyingType != null &&
-			Aliases.TryGetValue(underlyingType, out string? underlyingAlias))
+		if (underlyingType != null)
 		{
-			alias = $"{underlyingAlias}?";
+			if (Aliases.TryGetValue(underlyingType, out string? underlyingAlias))
+			{
+				stringBuilder.Append(underlyingAlias).Append('?');
+				return true;
+			}
+			FormatType(underlyingType, stringBuilder);
+			stringBuilder.Append('?');
 			return true;
 		}
 
-		alias = null;
 		return false;
 	}
 }

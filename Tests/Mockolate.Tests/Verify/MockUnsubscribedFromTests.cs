@@ -18,7 +18,7 @@ public sealed partial class MockUnsubscribedFromTests
 
 		VerificationResult<Mock<int>> result = unsubscribedFrom.Event("baz.bar");
 
-		result.Never();
+		await That(result).Never();
 	}
 
 	[Fact]
@@ -32,7 +32,7 @@ public sealed partial class MockUnsubscribedFromTests
 
 		VerificationResult<Mock<int>> result = unsubscribedFrom.Event("foo.bar");
 
-		result.Once();
+		await That(result).Once();
 	}
 
 	[Fact]
@@ -44,7 +44,7 @@ public sealed partial class MockUnsubscribedFromTests
 
 		VerificationResult<Mock<int>> result = unsubscribedFrom.Event("foo.bar");
 
-		result.Never();
+		await That(result).Never();
 		await That(result.Expectation).IsEqualTo("unsubscribed from event bar");
 	}
 }

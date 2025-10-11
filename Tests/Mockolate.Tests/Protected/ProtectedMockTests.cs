@@ -1,4 +1,6 @@
-﻿using Mockolate.Protected;
+﻿using System.Linq;
+using Mockolate.Interactions;
+using Mockolate.Protected;
 using Mockolate.Verify;
 
 namespace Mockolate.Tests.Protected;
@@ -15,10 +17,10 @@ public sealed class ProtectedMockTests
 		mock.Subject.RegisterEvent(handler);
 		mock.Protected.Raise.MyEvent(this, EventArgs.Empty);
 
-		mock.Protected.Verify.SubscribedTo.MyEvent().Once();
-		mock.Protected.Verify.UnsubscribedFrom.MyEvent().Never();
+		await That(mock.Protected.Verify.SubscribedTo.MyEvent()).Once();
+		await That(mock.Protected.Verify.UnsubscribedFrom.MyEvent()).Never();
 		mock.Subject.UnregisterEvent(handler);
-		mock.Protected.Verify.UnsubscribedFrom.MyEvent().Once();
+		await That(mock.Protected.Verify.UnsubscribedFrom.MyEvent()).Once();
 	}
 
 	[Fact]
@@ -31,7 +33,7 @@ public sealed class ProtectedMockTests
 
 		string result = mock.Subject.InvokeMyProtectedMethod("foo");
 
-		mock.Protected.Verify.Invoked.MyProtectedMethod("foo").Once();
+		await That(mock.Protected.Verify.Invoked.MyProtectedMethod("foo")).Once();
 		await That(result).IsEqualTo("Hello, foo!");
 	}
 
@@ -44,7 +46,7 @@ public sealed class ProtectedMockTests
 
 		int result = mock.Subject.GetMyProtectedProperty();
 
-		mock.Protected.Verify.Got.MyProtectedProperty().Once();
+		await That(mock.Protected.Verify.Got.MyProtectedProperty()).Once();
 		await That(result).IsEqualTo(42);
 	}
 
@@ -60,10 +62,20 @@ public sealed class ProtectedMockTests
 		await That(protectedMock.Interactions).IsSameAs(innerMock.Interactions);
 		await That(protectedMock.Raise).IsSameAs(@protected.Raise);
 		await That(protectedMock.Setup).IsSameAs(innerMock.Setup);
+
+		protectedMock.Execute("void-method-from-protected");
+		await That(innerMock.Interactions.Interactions).HasItem()
+			.Matching<MethodInvocation>(m => m.Name == "void-method-from-protected");
+
+		protectedMock.Execute<int>("return-method-from-protected");
+		await That(innerMock.Interactions.Interactions).HasItem()
+			.Matching<MethodInvocation>(m => m.Name == "return-method-from-protected");
+
 		innerMock.Set("from-inner", 3);
 		await That(protectedMock.Get<int>("from-inner")).IsEqualTo(3);
 		protectedMock.Set("from-protected", 5);
 		await That(innerMock.Get<int>("from-protected")).IsEqualTo(5);
+
 		innerMock.SetIndexer("set-on-inner", 1, 2);
 		await That(protectedMock.GetIndexer<string>(1, 2)).IsEqualTo("set-on-inner");
 		protectedMock.SetIndexer("set-on-protected", 7, 8, 9);

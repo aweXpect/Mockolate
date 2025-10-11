@@ -143,7 +143,7 @@ public static class VerificationResultExtensions
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock never {verificationResult.Expectation}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {0.ToTimes()} {verificationResult.Expectation}, but it {found.ToTimes("did")}.");
 		}
 	}
 

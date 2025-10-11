@@ -5,7 +5,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Verifies the <see cref="Interactions"/> with the mocked subject in the <typeparamref name="TMock"/> <see cref="Mock"/>.
 /// </summary>
-public interface IMockVerify<TMock>
+public interface IMockVerify<out TMock>
 {
 	/// <summary>
 	///     The interactions recorded on the mock.

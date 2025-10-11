@@ -21,7 +21,7 @@ public class MockVerifyTests
 		sut.Subject.DoSomething(1);
 		sut.Subject.DoSomething(2);
 
-		sut.Verify.Invoked.DoSomething(1).Once();
+		await That(sut.Verify.Invoked.DoSomething(1)).Once();
 		await That(sut.Verify.ThatAllInteractionsAreVerified()).IsFalse();
 	}
 
@@ -33,7 +33,7 @@ public class MockVerifyTests
 		sut.Subject.DoSomething(1);
 		sut.Subject.DoSomething(2);
 
-		sut.Verify.Invoked.DoSomething(With.Any<int>()).AtLeastOnce();
+		await That(sut.Verify.Invoked.DoSomething(With.Any<int>())).AtLeastOnce();
 		await That(sut.Verify.ThatAllInteractionsAreVerified()).IsTrue();
 	}
 

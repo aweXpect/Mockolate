@@ -17,7 +17,7 @@ public sealed partial class MockInvokedTests
 
 		VerificationResult<Mock<int>> result = invoked.Method("foo.bar", With.Any<int>());
 
-		result.Once();
+		await That(result).Once();
 	}
 
 	[Fact]
@@ -31,7 +31,7 @@ public sealed partial class MockInvokedTests
 
 		VerificationResult<Mock<int>> result = invoked.Method("foo.bar", With.Any<string>());
 
-		result.Never();
+		await That(result).Never();
 	}
 
 	[Fact]
@@ -45,7 +45,7 @@ public sealed partial class MockInvokedTests
 
 		VerificationResult<Mock<int>> result = invoked.Method("baz.bar", With.Any<int>());
 
-		result.Never();
+		await That(result).Never();
 	}
 
 	[Fact]
@@ -57,7 +57,7 @@ public sealed partial class MockInvokedTests
 
 		VerificationResult<Mock<int>> result = invoked.Method("foo.bar", With.Any<int>());
 
-		result.Never();
+		await That(result).Never();
 		await That(result.Expectation).IsEqualTo("invoked method bar(With.Any<int>())");
 	}
 }

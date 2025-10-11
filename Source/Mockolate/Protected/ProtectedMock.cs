@@ -21,6 +21,7 @@ public class ProtectedMock<T, TMock> : IMock
 {
 	private readonly IMock _inner;
 
+	/// <inheritdoc cref="ProtectedMock{T, TMock}" />
 	public ProtectedMock(IMock inner, MockInteractions interactions, TMock mock)
 	{
 		_inner = inner;
