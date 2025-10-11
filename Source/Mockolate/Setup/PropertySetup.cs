@@ -5,7 +5,6 @@ using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
-using static Mockolate.With;
 
 namespace Mockolate.Setup;
 
@@ -14,15 +13,9 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class PropertySetup
 {
-	internal void InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
-	{
-		InvokeSetter(value, behavior);
-	}
+	internal void InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior) => InvokeSetter(value, behavior);
 
-	internal TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior)
-	{
-		return InvokeGetter<TResult>(behavior);
-	}
+	internal TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior) => InvokeGetter<TResult>(behavior);
 
 	/// <summary>
 	///     Invokes the setter logic with the given <paramref name="value" />.
@@ -60,9 +53,9 @@ public abstract class PropertySetup
 /// </summary>
 public class PropertySetup<T> : PropertySetup
 {
-	private List<Action<T>> _getterCallbacks = [];
-	private List<Action<T, T>> _setterCallbacks = [];
-	private List<Func<T, T>> _returnCallbacks = [];
+	private readonly List<Action<T>> _getterCallbacks = [];
+	private readonly List<Action<T, T>> _setterCallbacks = [];
+	private readonly List<Func<T, T>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private T _value = default!;
 
@@ -124,8 +117,7 @@ public class PropertySetup<T> : PropertySetup
 	///     Registers a callback to be invoked whenever the property's getter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value is read. Only
-	///     one callback can be registered; subsequent calls to this method will replace any previously set callback.
+	///     Use this method to perform custom logic or side effects whenever the property's value is read.
 	/// </remarks>
 	public PropertySetup<T> OnGet(Action callback)
 	{
@@ -137,8 +129,7 @@ public class PropertySetup<T> : PropertySetup
 	///     Registers a callback to be invoked whenever the property's getter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value is read. Only
-	///     one callback can be registered; subsequent calls to this method will replace any previously set callback.
+	///     Use this method to perform custom logic or side effects whenever the property's value is read.
 	/// </remarks>
 	public PropertySetup<T> OnGet(Action<T> callback)
 	{
@@ -205,8 +196,7 @@ public class PropertySetup<T> : PropertySetup
 	///     set.
 	/// </summary>
 	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value changes. Only
-	///     one callback can be registered; subsequent calls to this method will replace any previously set callback.
+	///     Use this method to perform custom logic or side effects whenever the property's value changes.
 	/// </remarks>
 	public PropertySetup<T> OnSet(Action callback)
 	{
@@ -219,8 +209,7 @@ public class PropertySetup<T> : PropertySetup
 	///     set.
 	/// </summary>
 	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value changes. Only
-	///     one callback can be registered; subsequent calls to this method will replace any previously set callback.
+	///     Use this method to perform custom logic or side effects whenever the property's value changes.
 	/// </remarks>
 	public PropertySetup<T> OnSet(Action<T, T> callback)
 	{
@@ -228,12 +217,12 @@ public class PropertySetup<T> : PropertySetup
 		return this;
 	}
 
-
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 	{
 		return $"{typeof(T).FormatType()}";
 	}
+
 	private static bool TryCast<TValue>(object? value, out TValue result, MockBehavior behavior)
 	{
 		if (value is TValue typedValue)
