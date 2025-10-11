@@ -180,7 +180,7 @@ public sealed partial class MockSetupsTests
 			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
 
 			sut.Setup.Property.MyProperty
-				.OnSet(() => { callCount++; });
+				.OnSet((_, _) => { callCount++; });
 
 			sut.Subject.MyOtherProperty = 1;
 			_ = sut.Subject.MyProperty;

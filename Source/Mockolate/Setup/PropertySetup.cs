@@ -62,10 +62,13 @@ public class PropertySetup<T> : PropertySetup
 	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 	protected override void InvokeSetter(object? value, MockBehavior behavior)
 	{
-		if (TryCast(value, out T parameter, behavior))
+		if (!TryCast(value, out T parameter, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke(_value, parameter));
+			throw new MockException(
+				$"The property value only supports '{typeof(T).FormatType()}', but is '{value?.GetType().FormatType()}'.");
 		}
+
+		_setterCallbacks.ForEach(callback => callback.Invoke(_value, parameter));
 
 		if (_returnCallbacks.Any())
 		{
@@ -73,14 +76,9 @@ public class PropertySetup<T> : PropertySetup
 			Func<T, T> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 			_value = returnCallback(_value);
 		}
-		else if (TryCast(value, out T typedValue, behavior))
-		{
-			_value = typedValue;
-		}
 		else
 		{
-			throw new MockException(
-				$"The property value only supports '{typeof(T).FormatType()}', but is '{value?.GetType().FormatType()}'.");
+			_value = parameter;
 		}
 	}
 
