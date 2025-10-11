@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Mockolate.SourceGenerators.Tests.Sources;
 
@@ -43,26 +42,26 @@ public sealed class MockRegistrationTests
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("""
-			internal static partial class Mock
-			{
-				private partial class MockGenerator
-				{
-					partial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types)
-					{
-						if (types.Length == 1 &&
-						    types[0] == typeof(IMyInterface))
-						{
-							_value = new ForIMyInterface.Mock(constructorParameters, mockBehavior);
-						}
-						else if (types.Length == 2 &&
-						         types[0] == typeof(MyBaseClass) &&
-						         types[1] == typeof(IMyInterface))
-						{
-							_value = new ForMyBaseClass_IMyInterface.Mock(constructorParameters, mockBehavior);
-						}
-					}
-				}
-			}
-			""");
+			          internal static partial class Mock
+			          {
+			          	private partial class MockGenerator
+			          	{
+			          		partial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types)
+			          		{
+			          			if (types.Length == 1 &&
+			          			    types[0] == typeof(IMyInterface))
+			          			{
+			          				_value = new ForIMyInterface.Mock(constructorParameters, mockBehavior);
+			          			}
+			          			else if (types.Length == 2 &&
+			          			         types[0] == typeof(MyBaseClass) &&
+			          			         types[1] == typeof(IMyInterface))
+			          			{
+			          				_value = new ForMyBaseClass_IMyInterface.Mock(constructorParameters, mockBehavior);
+			          			}
+			          		}
+			          	}
+			          }
+			          """);
 	}
 }
