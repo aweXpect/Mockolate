@@ -7,7 +7,7 @@ using Mockolate.Interactions;
 namespace Mockolate.Setup;
 
 /// <summary>
-///     Setup for a method returning <see langword="void" />.
+///     Sets up a method returning <see langword="void" />.
 /// </summary>
 public class VoidMethodSetup(string name) : MethodSetup
 {

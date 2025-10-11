@@ -1291,15 +1291,15 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 5), With.Matching<int>(i => i < 5), With.Matching<int>(i => i < 5), With.Matching<int>(i => i < 5))
 				.OnSet(v => { callCount += v.Length; });
 
-			mock.Subject[1,  1, 1, 1] = "a";         // yes (1)
-			mock.Subject[1,  2, 1, 3] = "bb";        // yes (2)
-			mock.Subject[3,  1, 2, 4] = "ccc";       // yes (3)
-			mock.Subject[1,  1, 4, 3] = "dddd";      // yes (4)
-			mock.Subject[1,  5, 1, 1] = "eeeee";     // no
-			mock.Subject[6,  1, 1, 1] = "ffffff";    // no
-			mock.Subject[6,  7, 8, 9] = "ggggggg";   // no
+			mock.Subject[1, 1, 1, 1] = "a";         // yes (1)
+			mock.Subject[1, 2, 1, 3] = "bb";        // yes (2)
+			mock.Subject[3, 1, 2, 4] = "ccc";       // yes (3)
+			mock.Subject[1, 1, 4, 3] = "dddd";      // yes (4)
+			mock.Subject[1, 5, 1, 1] = "eeeee";     // no
+			mock.Subject[6, 1, 1, 1] = "ffffff";    // no
+			mock.Subject[6, 7, 8, 9] = "ggggggg";   // no
 			mock.Subject[8, -9, 1, 3] = "hhhhhhhh";  // no
-			mock.Subject[4,  4, 4, 4] = "iiiiiiiii"; // yes (9)
+			mock.Subject[4, 4, 4, 4] = "iiiiiiiii"; // yes (9)
 
 			await That(callCount).IsEqualTo(19);
 		}
@@ -1485,11 +1485,399 @@ public sealed class IndexerSetupTests
 		}
 	}
 
+	public sealed class With5Levels
+	{
+		[Fact]
+		public async Task InitializeWith_ShouldInitializeMatchingIndexers()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
+				.InitializeWith("foo");
+
+			string result12345 = mock.Subject[1, 2, 3, 4, 5];
+			string result52341 = mock.Subject[5, 2, 3, 4, 1];
+			string result11116 = mock.Subject[1, 1, 1, 1, 6];
+			string result11161 = mock.Subject[1, 1, 1, 6, 1];
+			string result11611 = mock.Subject[1, 1, 6, 1, 1];
+			string result16111 = mock.Subject[1, 6, 1, 1, 1];
+			string result61111 = mock.Subject[6, 1, 1, 1, 1];
+
+			await That(result12345).IsEqualTo("foo");
+			await That(result52341).IsEqualTo("foo");
+			await That(result11116).IsNull();
+			await That(result11161).IsNull();
+			await That(result11611).IsNull();
+			await That(result16111).IsNull();
+			await That(result61111).IsNull();
+		}
+
+		[Fact]
+		public async Task InitializeWith_Callback_ShouldInitializeMatchingIndexers()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
+				.InitializeWith((v1, v2, v3, v4, v5) => $"foo-{v1}-{v2}-{v3}-{v4}-{v5}");
+
+			string result12345 = mock.Subject[1, 2, 3, 4, 5];
+			string result52341 = mock.Subject[5, 2, 3, 4, 1];
+			string result11116 = mock.Subject[1, 1, 1, 1, 6];
+			string result11161 = mock.Subject[1, 1, 1, 6, 1];
+			string result11611 = mock.Subject[1, 1, 6, 1, 1];
+			string result16111 = mock.Subject[1, 6, 1, 1, 1];
+			string result61111 = mock.Subject[6, 1, 1, 1, 1];
+
+			await That(result12345).IsEqualTo("foo-1-2-3-4-5");
+			await That(result52341).IsEqualTo("foo-5-2-3-4-1");
+			await That(result11116).IsNull();
+			await That(result11161).IsNull();
+			await That(result11611).IsNull();
+			await That(result16111).IsNull();
+			await That(result61111).IsNull();
+		}
+
+		[Fact]
+		public async Task InitializeWith_Twice_ShouldThrowMockException()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			var setup = mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.InitializeWith("foo");
+
+			void Act()
+				=> setup.InitializeWith("bar");
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
+		[Fact]
+		public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			var setup = mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.InitializeWith("foo");
+
+			void Act()
+				=> setup.InitializeWith((_, _, _, _, _) => "bar");
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The indexer is already initialized. You cannot initialize it twice.");
+		}
+
+		[Fact]
+		public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
+		{
+			int callCount = 0;
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.OnGet(() => { callCount++; });
+
+			_ = mock.Subject[1];
+			_ = mock.Subject[2, 2];
+			_ = mock.Subject[3, 3, 3];
+			_ = mock.Subject[4, 4, 4, 4];
+			_ = mock.Subject[5, 5, 5, 5, 5];
+
+			await That(callCount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task ShouldExecuteAllGetterCallbacks()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			int callCount3 = 0;
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.OnGet(() => { callCount1++; })
+				.OnGet((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; })
+				.OnGet(() => { callCount3++; });
+
+			_ = mock.Subject[1, 2, 3, 4, 5]; // 120
+			_ = mock.Subject[4, 5, 6, 7, 8]; // 6720
+
+			await That(callCount1).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(6840);
+			await That(callCount3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task ShouldExecuteAllSetterCallbacks()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			int callCount3 = 0;
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.OnSet(() => { callCount1++; })
+				.OnSet((value, v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5 + value.Length; })
+				.OnSet(v => { callCount3 += v.Length; });
+
+			mock.Subject[1, 2, 3, 4, 5] = "foo";  // 120 + 3
+			mock.Subject[4, 5, 6, 7, 8] = "bart"; // 6720 + 4
+
+			await That(callCount1).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(123 + 6724);
+			await That(callCount3).IsEqualTo(7);
+		}
+
+		[Fact]
+		public async Task ShouldExecuteGetterCallbacks()
+		{
+			int callCount = 0;
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
+				.OnGet(() => { callCount++; });
+
+			_ = mock.Subject[1, 1, 1, 6,  1]; // no
+			_ = mock.Subject[1, 3, 1, 2,  4]; // yes
+			_ = mock.Subject[2, 4, 2, 1,  3]; // yes
+			_ = mock.Subject[1, 1, 1, 1,  6]; // no
+			_ = mock.Subject[1, 1, 6, 1,  1]; // no
+			_ = mock.Subject[1, 1, 1, 1, -4]; // yes
+			_ = mock.Subject[1, 6, 2, 1,  3]; // no
+			_ = mock.Subject[6, 7, 8, 9, 10]; // no
+
+			await That(callCount).IsEqualTo(3);
+		}
+
+		[Fact]
+		public async Task ShouldExecuteGetterCallbacksWithValue()
+		{
+			int callCount = 0;
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
+				.OnGet((v1, v2, v3, v4, v5) => { callCount += v1 * v2 * v3 * v4 * v5; });
+
+			_ = mock.Subject[1, 1, 1, 7,  1]; // no
+			_ = mock.Subject[1, 3, 1, 2,  4]; // yes (24)
+			_ = mock.Subject[2, 4, 2, 1,  3]; // yes (48)
+			_ = mock.Subject[1, 1, 1, 1,  7]; // no
+			_ = mock.Subject[1, 1, 7, 1,  1]; // no
+			_ = mock.Subject[1, 3, 3, 1, -4]; // yes (-36)
+			_ = mock.Subject[1, 7, 2, 1,  3]; // no
+			_ = mock.Subject[6, 7, 8, 9, 10]; // no
+
+			await That(callCount).IsEqualTo(36);
+		}
+
+		[Fact]
+		public async Task ShouldExecuteSetterCallbacks()
+		{
+			int callCount = 0;
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
+				.OnSet(v => { callCount += v.Length; });
+
+			mock.Subject[1, 1, 1, 1,  1] = "a";         // yes (1)
+			mock.Subject[4, 1, 2, 1,  3] = "bb";        // yes (2)
+			mock.Subject[1, 3, 1, 2,  4] = "ccc";       // yes (3)
+			mock.Subject[2, 1, 1, 4,  3] = "dddd";      // yes (4)
+			mock.Subject[1, 1, 5, 1,  1] = "eeeee";     // yes (5)
+			mock.Subject[1, 6, 1, 1,  1] = "ffffff";    // no
+			mock.Subject[5, 6, 7, 8,  9] = "ggggggg";   // no
+			mock.Subject[8, 8, -9, 1, 3] = "hhhhhhhh";  // no
+			mock.Subject[5, 5, 5, 5,  5] = "iiiiiiiii"; // yes (9)
+
+			await That(callCount).IsEqualTo(24);
+		}
+
+		[Fact]
+		public async Task ShouldExecuteSetterCallbacksWithoutAnyValue()
+		{
+			int callCount = 0;
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			IMock sut = mock;
+			mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
+				.OnSet(() => { callCount++; });
+
+			mock.Subject[1, 1, 1, 1, 1] = ""; // yes
+			mock.Subject[1, 1, 1, 2, 2] = ""; // yes
+			mock.Subject[1, 1, 3, 1, 3] = ""; // yes
+			mock.Subject[1, 1, 1, 4, 4] = ""; // yes
+			mock.Subject[1, 1, 6, 1, 1] = ""; // no
+			mock.Subject[1, 6, 1, 1, 1] = ""; // no
+			mock.Subject[1, 2, 1, 1, 3] = ""; // yes
+
+			await That(callCount).IsEqualTo(5);
+		}
+
+		[Fact]
+		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns("a")
+				.Throws(new Exception("foo"))
+				.Returns(() => "b");
+
+			string result1 = sut.Subject[1, 1, 1, 1, 1];
+			Exception? result2 = Record.Exception(() => _ = sut.Subject[2, 2, 2, 2, 2]);
+			string result3 = sut.Subject[3, 3, 3, 3, 3];
+
+			await That(result1).IsEqualTo("a");
+			await That(result2).HasMessage("foo");
+			await That(result3).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns("a")
+				.Returns(() => "b")
+				.Returns((p1, p2, p3, p4, p5) => $"foo-{p1}-{p2}-{p3}-{p4}-{p5}");
+
+			string[] result = new string[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut.Subject[i, i * i, i * i + i, i * i - i, i + i];
+			}
+
+			await That(result).IsEqualTo(["a", "b", "foo-2-4-6-2-4", "a", "b", "foo-5-25-30-20-10", "a", "b", "foo-8-64-72-56-16", "a",]);
+		}
+
+		[Fact]
+		public async Task Returns_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns(() => "foo");
+
+			string result = sut.Subject[1, 2, 3, 4, 5];
+
+			await That(result).IsEqualTo("foo");
+		}
+
+		[Fact]
+		public async Task Returns_CallbackWithParameters_ShouldReturnExpectedValue()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.InitializeWith("a")
+				.Returns((p1, p2, p3, p4, p5) => $"foo-{p1}-{p2}-{p3}-{p4}-{p5}");
+
+			string result = sut.Subject[3, 4, 5, 6, 7];
+
+			await That(result).IsEqualTo("foo-3-4-5-6-7");
+		}
+
+		[Fact]
+		public async Task Returns_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.InitializeWith("init")
+				.Returns((v, p1, p2, p3, p4, p5) => $"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}");
+
+			string result = sut.Subject[3, 4, 5, 6, 7];
+
+			await That(result).IsEqualTo("foo-init-3-4-5-6-7");
+		}
+
+		[Fact]
+		public async Task Returns_ShouldReturnExpectedValue()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Returns("foo");
+
+			string result = sut.Subject[1, 2, 3, 4, 5];
+
+			await That(result).IsEqualTo("foo");
+		}
+
+		[Fact]
+		public async Task Returns_WithoutSetup_ShouldReturnDefault()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			string result = sut.Subject[1, 2, 3, 4, 5];
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(() => new Exception("foo"));
+
+			void Act()
+				=> _ = sut.Subject[1, 2, 3, 4, 5];
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithParameters_ShouldReturnExpectedValue()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.InitializeWith("init")
+				.Throws((p1, p2, p3, p4, p5) => new Exception($"foo-{p1}-{p2}-{p3}-{p4}-{p5}"));
+
+			void Act()
+				=> _ = sut.Subject[1, 2, 3, 4, 5];
+
+			await That(Act).ThrowsException().WithMessage("foo-1-2-3-4-5");
+		}
+
+		[Fact]
+		public async Task Throws_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.InitializeWith("init")
+				.Throws((v, p1, p2, p3, p4, p5) => new Exception($"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}"));
+
+			void Act()
+				=> _ = sut.Subject[1, 2, 3, 4, 5];
+
+			await That(Act).ThrowsException().WithMessage("foo-init-1-2-3-4-5");
+		}
+
+		[Fact]
+		public async Task Throws_ShouldReturnExpectedValue()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Throws(new Exception("foo"));
+
+			void Act()
+				=> _ = sut.Subject[1, 2, 3, 4, 5];
+
+			await That(Act).ThrowsException().WithMessage("foo");
+		}
+	}
+
 	public interface IIndexerService
 	{
 		string this[int index] { get; set; }
 		string this[int index1, int index2] { get; set; }
 		string this[int index1, int index2, int index3] { get; set; }
 		string this[int index1, int index2, int index3, int index4] { get; set; }
+		string this[int index1, int index2, int index3, int index4, int index5] { get; set; }
 	}
 }

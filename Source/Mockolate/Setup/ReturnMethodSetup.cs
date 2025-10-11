@@ -7,7 +7,7 @@ using Mockolate.Interactions;
 namespace Mockolate.Setup;
 
 /// <summary>
-///     Setup for a method returning <typeparamref name="TReturn" />.
+///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 {
