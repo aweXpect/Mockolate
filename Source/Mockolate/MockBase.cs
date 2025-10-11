@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Mockolate.Events;
 using Mockolate.Exceptions;
@@ -165,7 +166,7 @@ public abstract class MockBase<T> : IMock
 	///     Attempts to cast the specified value to the type parameter <typeparamref name="TValue"/>,
 	///     returning a value that indicates whether the cast was successful.
 	/// </summary>
-	protected bool TryCast<TValue>(object? value, out TValue result)
+	protected bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
 	{
 		if (value is TValue typedValue)
 		{

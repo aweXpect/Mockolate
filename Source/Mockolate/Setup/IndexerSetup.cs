@@ -50,7 +50,7 @@ public abstract class IndexerSetup : IIndexerSetup
 	///     result is set to the default value for type <typeparamref name="T" /> as provided
 	///     by the <paramref name="behavior" />.
 	/// </remarks>
-	protected static bool TryCast<T>(object? value, out T result, MockBehavior behavior)
+	protected static bool TryCast<T>([NotNullWhen(false)] object? value, out T result, MockBehavior behavior)
 	{
 		if (value is T typedValue)
 		{
