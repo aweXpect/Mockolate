@@ -42,8 +42,6 @@ public class MockGenerator : IIncrementalGenerator
 				SourceText.From(Sources.ForMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
 		}
 
-		HashSet<(int, bool)> methodSetups = new();
-
 
 		foreach ((string name, Class extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
 		{
@@ -51,6 +49,22 @@ public class MockGenerator : IIncrementalGenerator
 				SourceText.From(Sources.ForMockSetupExtensions(name, extensionToGenerate), Encoding.UTF8));
 		}
 
+		HashSet<int> indexerSetups = new();
+		foreach (int item in mocksToGenerate
+					 .SelectMany(m => m.Properties)
+					 .Where(m => m.IndexerParameters?.Count > 4)
+					 .Select(m => m.IndexerParameters!.Value.Count))
+		{
+			indexerSetups.Add(item);
+		}
+
+		if (indexerSetups.Any())
+		{
+			context.AddSource("IndexerSetups.g.cs",
+				SourceText.From(Sources.IndexerSetups(indexerSetups), Encoding.UTF8));
+		}
+
+		HashSet<(int, bool)> methodSetups = new();
 		foreach ((int Count, bool) item in mocksToGenerate
 			         .SelectMany(m => m.Methods)
 			         .Where(m => m.Parameters.Count > 4)

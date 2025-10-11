@@ -25,11 +25,11 @@ internal static partial class Sources
 			sb.AppendLine();
 			if (item.Item2)
 			{
-				AppendVoidMethod(sb, item.Item1);
+				AppendVoidMethodSetup(sb, item.Item1);
 			}
 			else
 			{
-				AppendReturnMethod(sb, item.Item1);
+				AppendReturnMethodSetup(sb, item.Item1);
 			}
 		}
 
@@ -37,12 +37,12 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	private static void AppendVoidMethod(StringBuilder sb, int numberOfParameters)
+	private static void AppendVoidMethodSetup(StringBuilder sb, int numberOfParameters)
 	{
 		string typeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"));
 		string values = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"v{i}"));
 		sb.Append("/// <summary>").AppendLine();
-		sb.Append("///     Setup for a method with ").Append(numberOfParameters).Append(" parameters ");
+		sb.Append("///     Sets up a method with ").Append(numberOfParameters).Append(" parameters ");
 		for (int i = 1; i < numberOfParameters - 1; i++)
 		{
 			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
@@ -64,6 +64,7 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to execute when the method is called.")
 			.AppendLine();
@@ -76,6 +77,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to execute when the method is called.")
 			.AppendLine();
@@ -87,6 +89,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers an iteration in the sequence of method invocations, that does not throw.")
 			.AppendLine();
@@ -100,6 +103,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append(
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
@@ -113,6 +117,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append(
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
@@ -127,6 +132,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
 			.AppendLine();
@@ -140,6 +146,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)\" />")
 			.AppendLine();
 		sb.Append("\tprotected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)")
@@ -171,6 +178,7 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)\" />")
 			.AppendLine();
 		sb.Append(
@@ -179,12 +187,14 @@ internal static partial class Sources
 		sb.Append("\t\twhere TResult : default").AppendLine();
 		sb.Append("\t\t=> throw new MockException(\"The method setup does not support return values.\");").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
 		sb.Append("\tprotected override bool IsMatch(MethodInvocation invocation)").AppendLine();
 		sb.Append("\t\t=> invocation.Name.Equals(name) && Matches([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"match{x}")))
 			.Append("], invocation.Parameters);").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
 		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)")
 			.AppendLine();
@@ -199,6 +209,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn behavior.DefaultValueGenerator.Generate<T>();").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetRefParameter{T}(string, T, MockBehavior)\" />").AppendLine();
 		sb.Append("\tprotected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)")
 			.AppendLine();
@@ -213,6 +224,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn value;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 		sb.Append("\tpublic override string ToString()").AppendLine();
 		sb.Append("\t{").AppendLine();
@@ -224,12 +236,12 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendReturnMethod(StringBuilder sb, int numberOfParameters)
+	private static void AppendReturnMethodSetup(StringBuilder sb, int numberOfParameters)
 	{
 		string typeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"));
 		string values = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"v{i}"));
 		sb.Append("/// <summary>").AppendLine();
-		sb.Append("///     Setup for a method with ").Append(numberOfParameters).Append(" parameters ");
+		sb.Append("///     Sets up a method with ").Append(numberOfParameters).Append(" parameters ");
 		for (int i = 1; i < numberOfParameters - 1; i++)
 		{
 			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
@@ -251,6 +263,7 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to execute when the method is called.")
 			.AppendLine();
@@ -264,6 +277,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to execute when the method is called.")
 			.AppendLine();
@@ -275,6 +289,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this method.")
 			.AppendLine();
@@ -286,6 +301,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this method.")
 			.AppendLine();
@@ -299,6 +315,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers the <paramref name=\"returnValue\" /> for this method.").AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
@@ -311,6 +328,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append(
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
@@ -324,6 +342,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append(
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
@@ -339,6 +358,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
 			.AppendLine();
@@ -352,6 +372,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)\" />")
 			.AppendLine();
 		sb.Append("\tprotected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)")
@@ -375,6 +396,7 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)\" />")
 			.AppendLine();
 		sb.Append(
@@ -413,12 +435,14 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
 		sb.Append("\tprotected override bool IsMatch(MethodInvocation invocation)").AppendLine();
 		sb.Append("\t\t=> invocation.Name.Equals(name) && Matches([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"match{x}")))
 			.Append("], invocation.Parameters);").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
 		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)")
 			.AppendLine();
@@ -433,6 +457,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn behavior.DefaultValueGenerator.Generate<T>();").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetRefParameter{T}(string, T, MockBehavior)\" />").AppendLine();
 		sb.Append("\tprotected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)")
 			.AppendLine();
@@ -447,6 +472,7 @@ internal static partial class Sources
 		sb.Append("\t\treturn value;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 		sb.Append("\tpublic override string ToString()").AppendLine();
 		sb.Append("\t{").AppendLine();
