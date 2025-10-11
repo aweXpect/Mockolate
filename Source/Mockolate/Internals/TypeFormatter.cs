@@ -81,7 +81,7 @@ internal static class TypeFormatter
 			FormatType(value.GetElementType()!, stringBuilder);
 			stringBuilder.Append("[]");
 		}
-		else if (TryFindPrimitiveAlias(value, stringBuilder))
+		else if (AppendedPrimitiveAlias(value, stringBuilder))
 		{
 			return;
 		}
@@ -110,7 +110,7 @@ internal static class TypeFormatter
 		}
 	}
 
-	private static bool TryFindPrimitiveAlias(Type value, StringBuilder stringBuilder)
+	private static bool AppendedPrimitiveAlias(Type value, StringBuilder stringBuilder)
 	{
 		if (Aliases.TryGetValue(value, out string? typeAlias))
 		{

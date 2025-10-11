@@ -687,7 +687,7 @@ namespace Mockolate.Verify
     {
         Mockolate.Verify.VerificationResult<TMock> Event(string eventName);
     }
-    public interface IMockVerify<TMock>
+    public interface IMockVerify<out TMock>
     {
         Mockolate.Interactions.MockInteractions Interactions { get; }
         TMock Mock { get; }

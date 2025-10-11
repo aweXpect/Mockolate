@@ -29,7 +29,7 @@ public sealed partial class MockSetIndexerTests
 	}
 
 	[Fact]
-	public async Task WhenNull_AndMatches_ShouldReturn()
+	public async Task WhenNullParametersAndValue_AndMatches_ShouldReturn()
 	{
 		var mock = Mock.Create<IMyService>();
 		mock.Subject[null, null, null, null] = null;
