@@ -1,4 +1,6 @@
-﻿using Mockolate.Protected;
+﻿using System.Linq;
+using Mockolate.Interactions;
+using Mockolate.Protected;
 using Mockolate.Verify;
 
 namespace Mockolate.Tests.Protected;
@@ -60,10 +62,20 @@ public sealed class ProtectedMockTests
 		await That(protectedMock.Interactions).IsSameAs(innerMock.Interactions);
 		await That(protectedMock.Raise).IsSameAs(@protected.Raise);
 		await That(protectedMock.Setup).IsSameAs(innerMock.Setup);
+
+		protectedMock.Execute("void-method-from-protected");
+		await That(innerMock.Interactions.Interactions).HasItem()
+			.Matching<MethodInvocation>(m => m.Name == "void-method-from-protected");
+
+		protectedMock.Execute<int>("return-method-from-protected");
+		await That(innerMock.Interactions.Interactions).HasItem()
+			.Matching<MethodInvocation>(m => m.Name == "return-method-from-protected");
+
 		innerMock.Set("from-inner", 3);
 		await That(protectedMock.Get<int>("from-inner")).IsEqualTo(3);
 		protectedMock.Set("from-protected", 5);
 		await That(innerMock.Get<int>("from-protected")).IsEqualTo(5);
+
 		innerMock.SetIndexer("set-on-inner", 1, 2);
 		await That(protectedMock.GetIndexer<string>(1, 2)).IsEqualTo("set-on-inner");
 		protectedMock.SetIndexer("set-on-protected", 7, 8, 9);

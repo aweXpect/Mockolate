@@ -32,9 +32,9 @@ public sealed partial class MockSetIndexerTests
 	public async Task WhenNull_AndMatches_ShouldReturn()
 	{
 		var mock = Mock.Create<IMyService>();
-		mock.Subject[null, null, null, null] = "foo";
+		mock.Subject[null, null, null, null] = null;
 
-		await That(mock.Verify.SetIndexer(With.Any<int?>(), null, With.Null<int?>(), With.Any<int?>(), "foo")).Once();
+		await That(mock.Verify.SetIndexer(With.Any<int?>(), null, With.Null<int?>(), With.Any<int?>(), null)).Once();
 	}
 
 }
