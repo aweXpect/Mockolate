@@ -105,7 +105,7 @@ public class MockGenerator : IIncrementalGenerator
 			{
 				int suffix = 1;
 				string actualName = mockToGenerate.GetClassNameWithoutDots();
-				while (result.Any(r => r.Name == actualName))
+				while (result.Any(r => r.Name.Equals(actualName, StringComparison.OrdinalIgnoreCase)))
 				{
 					actualName = $"{mockToGenerate.GetClassNameWithoutDots()}_{suffix++}";
 				}
@@ -119,7 +119,7 @@ public class MockGenerator : IIncrementalGenerator
 				{
 					int suffix = 1;
 					string actualName = item.GetClassNameWithoutDots();
-					while (result.Any(r => r.Name == actualName))
+					while (result.Any(r => r.Name.Equals(actualName, StringComparison.OrdinalIgnoreCase)))
 					{
 						actualName = $"{item.GetClassNameWithoutDots()}_{suffix++}";
 					}
@@ -147,7 +147,7 @@ public class MockGenerator : IIncrementalGenerator
 
 			int suffix = 1;
 			string actualName = name;
-			while (result.Any(r => r.Name == actualName))
+			while (result.Any(r => actualName.Equals(r.Name, StringComparison.OrdinalIgnoreCase)))
 			{
 				actualName = $"{name}_{suffix++}";
 			}

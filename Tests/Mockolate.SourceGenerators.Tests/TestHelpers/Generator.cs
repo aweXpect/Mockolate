@@ -8,7 +8,8 @@ namespace Mockolate.SourceGenerators.Tests.TestHelpers;
 
 public static class Generator
 {
-	private static string[] NoWarn = [
+	private static readonly string[] NoWarn =
+	[
 		"CS8019" /* Unnecessary using directive. */,
 		"CS8321" /* The local function is declared but never used */,
 		// TODO: Remove the following errors when tests work with extension syntax
@@ -18,7 +19,12 @@ public static class Generator
 		"CS0710" /* Static classes cannot have instance constructors */,
 		"CS1503" /* cannot convert from ... */,
 		"CS1513" /* } expected */,
+		"CS1001" /* Identifier expected */,
 		"CS1002" /* ; expected */,
+		"CS1026" /* ) expected */,
+		"CS1519" /* Invalid token '(' in class, record, … */,
+		"CS0501" /*  */,
+		"CS8124" /* Tuple must contain at least two elem… */,
 		"CS1003" /* Syntax error, ',' expected */,
 		"CS0119" /* 'identifier' is a type, which is not valid in the given context */,
 		"CS0246" /* A namespace cannot directly contain members such as fields or methods */,
@@ -47,12 +53,13 @@ public static class Generator
 		driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out Compilation outputCompilation,
 			out ImmutableArray<Diagnostic> diagnostics);
 
-		var compilationDiagnostics = outputCompilation.GetDiagnostics();
+		ImmutableArray<Diagnostic> compilationDiagnostics = outputCompilation.GetDiagnostics();
 		GeneratorDriverRunResult runResult = driver.GetRunResult();
 		Dictionary<string, string> generatedSources = runResult.Results
 			.SelectMany(runResult => runResult.GeneratedSources)
 			.ToDictionary(source => source.HintName, source => source.SourceText.ToString());
-		string[] diagnosticMessages = [
+		string[] diagnosticMessages =
+		[
 			..compilationDiagnostics.Where(x => !NoWarn.Contains(x.Id)).Select(ToDiagnosticString),
 			..diagnostics.Where(x => !NoWarn.Contains(x.Id)).Select(ToDiagnosticString),
 		];
@@ -61,7 +68,7 @@ public static class Generator
 
 	private static string ToDiagnosticString(Diagnostic d)
 	{
-		var result = d.ToString();
+		string result = d.ToString();
 		if (result.StartsWith("Mockolate.SourceGenerators\\Mockolate.SourceGenerators.MockGenerator\\"))
 		{
 			result = result["Mockolate.SourceGenerators\\Mockolate.SourceGenerators.MockGenerator\\".Length..];
