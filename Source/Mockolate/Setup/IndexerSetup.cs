@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 
@@ -16,9 +18,9 @@ public abstract class IndexerSetup : IIndexerSetup
 		=> invocation is IndexerGetterAccess getterAccess && IsMatch(getterAccess.Parameters) ||
 		   invocation is IndexerSetterAccess setterAccess && IsMatch(setterAccess.Parameters);
 
-	internal void InvokeGetter<TValue>(IndexerGetterAccess getterAccess, TValue value, MockBehavior behavior)
+	internal TValue InvokeGetter<TValue>(IndexerGetterAccess getterAccess, TValue value, MockBehavior behavior)
 	{
-		ExecuteGetterCallback(getterAccess, behavior);
+		return ExecuteGetterCallback(getterAccess, value, behavior);
 	}
 
 	internal void InvokeSetter<TValue>(IndexerSetterAccess setterAccess, TValue value, MockBehavior behavior)
@@ -29,7 +31,7 @@ public abstract class IndexerSetup : IIndexerSetup
 	/// <summary>
 	///     Execute a potentially registered getter callback.
 	/// </summary>
-	protected abstract void ExecuteGetterCallback(IndexerGetterAccess indexerGetterAccess, MockBehavior behavior);
+	protected abstract T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value, MockBehavior behavior);
 
 	/// <summary>
 	///     Execute a potentially registered setter callback.
@@ -105,6 +107,8 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 {
 	private readonly List<Action<T1>> _getterCallbacks = [];
 	private readonly List<Action<TValue, T1>> _setterCallbacks = [];
+	private readonly List<Func<TValue, T1, TValue>> _returnCallbacks = [];
+	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, TValue>? _initialization;
 
 	/// <summary>
@@ -180,14 +184,99 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 		return this;
 	}
 
-	/// <inheritdoc cref="ExecuteGetterCallback(IndexerGetterAccess, MockBehavior)" />
-	protected override void ExecuteGetterCallback(IndexerGetterAccess indexerGetterAccess, MockBehavior behavior)
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Returns(Func<TValue, T1, TValue> callback)
 	{
-		if (indexerGetterAccess.Parameters.Length == 1 &&
+		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Returns(Func<T1, TValue> callback)
+	{
+		_returnCallbacks.Add((_, p1) => callback(p1));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Returns(Func<TValue> callback)
+	{
+		_returnCallbacks.Add((_, _) => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers the <paramref name="returnValue" /> for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Returns(TValue returnValue)
+	{
+		_returnCallbacks.Add((_, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Throws(Func<T1, Exception> callback)
+	{
+		_returnCallbacks.Add((_, p1) => throw callback(p1));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Throws(Func<TValue, T1, Exception> callback)
+	{
+		_returnCallbacks.Add((v, p1) => throw callback(v, p1));
+		return this;
+	}
+
+	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
+	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value, MockBehavior behavior)
+	{
+		if (TryCast(value, out TValue resultValue, behavior) &&
+			indexerGetterAccess.Parameters.Length == 1 &&
 			TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior))
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke(p1));
+			if (_returnCallbacks.Any())
+			{
+				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				Func<TValue, T1, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				var newValue = returnCallback(resultValue, p1);
+				if (TryCast<T>(newValue, out var returnValue, behavior))
+				{
+					return returnValue;
+				}
+			}
 		}
+
+		return value;
 	}
 
 	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
@@ -229,6 +318,8 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 {
 	private readonly List<Action<T1, T2>> _getterCallbacks = [];
 	private readonly List<Action<TValue, T1, T2>> _setterCallbacks = [];
+	private readonly List<Func<TValue, T1, T2, TValue>> _returnCallbacks = [];
+	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, TValue>? _initialization;
 
 	/// <summary>
@@ -304,15 +395,100 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 		return this;
 	}
 
-	/// <inheritdoc cref="ExecuteGetterCallback(IndexerGetterAccess, MockBehavior)" />
-	protected override void ExecuteGetterCallback(IndexerGetterAccess indexerGetterAccess, MockBehavior behavior)
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Returns(Func<TValue, T1, T2, TValue> callback)
 	{
-		if (indexerGetterAccess.Parameters.Length == 2 &&
+		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback)
+	{
+		_returnCallbacks.Add((_, p1, p2) => callback(p1, p2));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Returns(Func<TValue> callback)
+	{
+		_returnCallbacks.Add((_, _, _) => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers the <paramref name="returnValue" /> for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Returns(TValue returnValue)
+	{
+		_returnCallbacks.Add((_, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback)
+	{
+		_returnCallbacks.Add((_, p1, p2) => throw callback(p1, p2));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Throws(Func<TValue, T1, T2, Exception> callback)
+	{
+		_returnCallbacks.Add((v, p1, p2) => throw callback(v, p1, p2));
+		return this;
+	}
+
+	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
+	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value, MockBehavior behavior)
+	{
+		if (TryCast(value, out TValue resultValue, behavior) &&
+			indexerGetterAccess.Parameters.Length == 2 &&
 			TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior) &&
 			TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior))
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke(p1, p2));
+			if (_returnCallbacks.Any())
+			{
+				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				Func<TValue, T1, T2, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				var newValue = returnCallback(resultValue, p1, p2);
+				if (TryCast<T>(newValue, out var returnValue, behavior))
+				{
+					return returnValue;
+				}
+			}
 		}
+
+		return value;
 	}
 
 	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
@@ -356,6 +532,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 {
 	private readonly List<Action<T1, T2, T3>> _getterCallbacks = [];
 	private readonly List<Action<TValue, T1, T2, T3>> _setterCallbacks = [];
+	private readonly List<Func<TValue, T1, T2, T3, TValue>> _returnCallbacks = [];
+	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, TValue>? _initialization;
 
 	/// <summary>
@@ -431,16 +609,101 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 		return this;
 	}
 
-	/// <inheritdoc cref="ExecuteGetterCallback(IndexerGetterAccess, MockBehavior)" />
-	protected override void ExecuteGetterCallback(IndexerGetterAccess indexerGetterAccess, MockBehavior behavior)
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Returns(Func<TValue, T1, T2, T3, TValue> callback)
 	{
-		if (indexerGetterAccess.Parameters.Length == 3 &&
+		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback)
+	{
+		_returnCallbacks.Add((_, p1, p2, p3) => callback(p1, p2, p3));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Returns(Func<TValue> callback)
+	{
+		_returnCallbacks.Add((_, _, _, _) => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers the <paramref name="returnValue" /> for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Returns(TValue returnValue)
+	{
+		_returnCallbacks.Add((_, _, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _, _, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _, _, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
+	{
+		_returnCallbacks.Add((_, p1, p2, p3) => throw callback(p1, p2, p3));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Throws(Func<TValue, T1, T2, T3, Exception> callback)
+	{
+		_returnCallbacks.Add((v, p1, p2, p3) => throw callback(v, p1, p2, p3));
+		return this;
+	}
+
+	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
+	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value, MockBehavior behavior)
+	{
+		if (TryCast(value, out TValue resultValue, behavior) &&
+			indexerGetterAccess.Parameters.Length == 3 &&
 			TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior) &&
 			TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior) &&
 			TryCast(indexerGetterAccess.Parameters[2], out T3 p3, behavior))
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke(p1, p2, p3));
+			if (_returnCallbacks.Any())
+			{
+				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				Func<TValue, T1, T2, T3, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				var newValue = returnCallback(resultValue, p1, p2, p3);
+				if (TryCast<T>(newValue, out var returnValue, behavior))
+				{
+					return returnValue;
+				}
+			}
 		}
+
+		return value;
 	}
 
 	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
@@ -487,6 +750,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(With.Parameter<T1> match1, Wit
 {
 	private readonly List<Action<T1, T2, T3, T4>> _getterCallbacks = [];
 	private readonly List<Action<TValue, T1, T2, T3, T4>> _setterCallbacks = [];
+	private readonly List<Func<TValue, T1, T2, T3, T4, TValue>> _returnCallbacks = [];
+	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
 
 	/// <summary>
@@ -562,17 +827,102 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(With.Parameter<T1> match1, Wit
 		return this;
 	}
 
-	/// <inheritdoc cref="ExecuteGetterCallback(IndexerGetterAccess, MockBehavior)" />
-	protected override void ExecuteGetterCallback(IndexerGetterAccess indexerGetterAccess, MockBehavior behavior)
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<TValue, T1, T2, T3, T4, TValue> callback)
 	{
-		if (indexerGetterAccess.Parameters.Length == 4 &&
+		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback)
+	{
+		_returnCallbacks.Add((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback)
+	{
+		_returnCallbacks.Add((_, _, _, _, _) => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers the <paramref name="returnValue" /> for this property.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Returns(TValue returnValue)
+	{
+		_returnCallbacks.Add((_, _, _, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Throws(Exception exception)
+	{
+		_returnCallbacks.Add((_, _, _, _, _) => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add((_, _, _, _, _) => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
+	{
+		_returnCallbacks.Add((_, p1, p2, p3, p4) => throw callback(p1, p2, p3, p4));
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<TValue, T1, T2, T3, T4, Exception> callback)
+	{
+		_returnCallbacks.Add((v, p1, p2, p3, p4) => throw callback(v, p1, p2, p3, p4));
+		return this;
+	}
+
+	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
+	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value, MockBehavior behavior)
+	{
+		if (TryCast(value, out TValue resultValue, behavior) &&
+			indexerGetterAccess.Parameters.Length == 4 &&
 			TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior) &&
 			TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior) &&
 			TryCast(indexerGetterAccess.Parameters[2], out T3 p3, behavior) &&
 			TryCast(indexerGetterAccess.Parameters[3], out T4 p4, behavior))
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke(p1, p2, p3, p4));
+			if (_returnCallbacks.Any())
+			{
+				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+				Func<TValue, T1, T2, T3, T4, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				var newValue = returnCallback(resultValue, p1, p2, p3, p4);
+				if (TryCast<T>(newValue, out var returnValue, behavior))
+				{
+					return returnValue;
+				}
+			}
 		}
+
+		return value;
 	}
 
 	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />

@@ -143,9 +143,19 @@ public abstract class MockBase<T> : IMock
 		((IMockInteractions)interactions).RegisterInteraction(interaction);
 
 		IndexerSetup? matchingSetup = Setup.GetIndexerSetup(interaction);
-		TResult value = Setup.GetIndexerValue<TResult>(matchingSetup, parameters);
-		matchingSetup?.InvokeGetter(interaction, value, _behavior);
-		return value;
+		TResult initialValue = Setup.GetIndexerValue<TResult>(matchingSetup, parameters);
+		if (matchingSetup is not null)
+		{
+			var value = matchingSetup.InvokeGetter(interaction, initialValue, _behavior);
+			if (!object.Equals(initialValue, value))
+			{
+				((IMockSetup)Setup).SetIndexerValue(parameters, value);
+			}
+
+			return value;
+		}
+
+		return initialValue;
 	}
 
 	/// <inheritdoc cref="IMock.SetIndexer{TResult}(TResult, object?[])" />
