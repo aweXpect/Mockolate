@@ -21,7 +21,7 @@ public class MockFactoryTests
 			     			var y = factory.Create<IMyInterface>();
 			             }
 			         }
-			     
+
 			         public interface IMyInterface
 			         {
 			             void MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7);

@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 
 namespace Mockolate.SourceGenerators.Tests;
+
 public class Tests
 {
 	[Fact]
@@ -25,12 +26,12 @@ public class Tests
 			     			var z = Mock.Create<MyBaseClass>();
 			             }
 			         }
-			     
+
 			         public interface IMyInterface
 			         {
 			             void MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7);
 			         }
-			     
+
 			         public class MyBaseClass
 			         {
 			             protected virtual Task<int> MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7, TimeSpan v8, CancellationToken v9)
@@ -119,12 +120,12 @@ public class Tests
 			     			var x = Mockolate.Mock.Create<IMyInterface1, IMyInterface2>();
 			             }
 			         }
-			     
+
 			         public interface IMyInterface1
 			         {
 			             void MyMethod(int v1);
 			         }
-			     
+
 			         public interface IMyInterface2
 			         {
 			             void MyMethod(int v1);
@@ -156,12 +157,12 @@ public class Tests
 			     			var x = Mockolate.Mock.Create<IMyInterface1>();
 			             }
 			         }
-			     
+
 			         public interface IMyInterface1 : IMyInterface2
 			         {
 			             new void MyMethod(int v1);
 			         }
-			     
+
 			         public interface IMyInterface2
 			         {
 			             void MyMethod(int v1);
