@@ -6,7 +6,7 @@ using Type = Mockolate.SourceGenerators.Entities.Type;
 namespace Mockolate.SourceGenerators.Internals;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-internal static partial class SourceGeneration
+internal static partial class Sources
 {
 	public static string ForMockSetupExtensions(string name, Class @class)
 	{

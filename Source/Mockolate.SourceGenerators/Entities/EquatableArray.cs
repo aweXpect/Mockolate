@@ -1,11 +1,17 @@
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Mockolate.SourceGenerators.Internals;
 
 /// <summary>
 ///     An immutable, equatable array. This is equivalent to <see cref="Array" /> but with value equality support.
 /// </summary>
+/// <remarks>
+///     <see href="https://github.com/andrewlock/blog-examples/blob/master/NetEscapades.EnumGenerators/src/NetEscapades.EnumGenerators/EquatableArray.cs" />,<br />
+///     <see href="https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/" />
+/// </remarks>
 /// <typeparam name="T">The type of values in the array.</typeparam>
+[ExcludeFromCodeCoverage]
 public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnumerable<T>
 	where T : IEquatable<T>
 {

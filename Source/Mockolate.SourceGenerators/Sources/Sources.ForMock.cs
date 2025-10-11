@@ -5,7 +5,7 @@ using Mockolate.SourceGenerators.Entities;
 namespace Mockolate.SourceGenerators.Internals;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-internal static partial class SourceGeneration
+internal static partial class Sources
 {
 	public static string ForMock(string name, MockClass mockClass)
 	{
@@ -247,12 +247,18 @@ internal static partial class SourceGeneration
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append('.').Append(property.Name.EscapeForXmlDoc())
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append('.').Append(property.IndexerParameters is not null
+					? property.Name.Replace("[]",
+						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.GetMinimizedString(namespaces)}"))}]").EscapeForXmlDoc()
+					: property.Name.EscapeForXmlDoc())
 				.AppendLine("\" />");
 			if (explicitInterfaceImplementation)
 			{
 				sb.Append("\t\t").Append(property.Type.GetMinimizedString(namespaces))
-					.Append(" ").Append(@class.ClassName).Append('.').Append(property.Name).AppendLine();
+					.Append(" ").Append(@class.ClassName).Append('.').Append(property.IndexerParameters is not null
+						? property.Name.Replace("[]",
+							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.GetMinimizedString(namespaces)} {p.Name}"))}]")
+						: property.Name).AppendLine();
 			}
 			else
 			{
@@ -409,7 +415,7 @@ internal static partial class SourceGeneration
 				{
 					sb.Append("\t\t\t").Append(parameter.Name).Append(" = result.SetRefParameter<")
 						.Append(parameter.Type.GetMinimizedString(namespaces)).Append(">(\"").Append(parameter.Name)
-						.AppendLine("\", ").Append(parameter.Name).Append(");");
+						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
 				}
 			}
 
