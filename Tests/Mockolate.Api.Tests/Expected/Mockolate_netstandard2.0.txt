@@ -416,7 +416,7 @@ namespace Mockolate.Setup
         protected abstract bool IsMatch(Mockolate.Interactions.MethodInvocation invocation);
         protected abstract T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
         protected abstract T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
-        protected static string FormatType<TResult>() { }
+        protected static string FormatType(System.Type? type) { }
         protected static bool HasOutParameter<T>(Mockolate.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.With.OutParameter<T>? parameter) { }
         protected static bool HasRefParameter<T>(Mockolate.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.With.RefParameter<T>? parameter) { }
         protected static bool Matches(Mockolate.With.NamedParameter[] namedParameters, object?[] values) { }
