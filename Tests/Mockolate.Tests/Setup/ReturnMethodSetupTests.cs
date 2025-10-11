@@ -50,7 +50,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             The return callback only supports 'int' and not 'string'.
 				             """);
 			await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 		}
@@ -312,7 +312,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter only supports 'System.Int32', but is 'System.String'.
+				             The input parameter only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -329,7 +329,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             The return callback only supports 'int' and not 'string'.
 				             """);
 			await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 		}
@@ -672,7 +672,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 1 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 1 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -688,7 +688,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 2 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 2 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -705,7 +705,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             The return callback only supports 'int' and not 'string'.
 				             """);
 			await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 		}
@@ -1068,7 +1068,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 1 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 1 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1084,7 +1084,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 2 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 2 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1100,7 +1100,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 3 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 3 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1117,7 +1117,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             The return callback only supports 'int' and not 'string'.
 				             """);
 			await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 		}
@@ -1499,7 +1499,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 1 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 1 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1515,7 +1515,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 2 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 2 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1531,7 +1531,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 3 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 3 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1547,7 +1547,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 4 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 4 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1564,7 +1564,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             The return callback only supports 'int' and not 'string'.
 				             """);
 			await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 		}
@@ -1964,7 +1964,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 1 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 1 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1980,7 +1980,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 2 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 2 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -1996,7 +1996,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 3 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 3 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -2012,7 +2012,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 4 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 4 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -2028,7 +2028,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The input parameter 5 only supports 'System.Int32', but is 'System.String'.
+				             The input parameter 5 only supports 'int', but is 'string'.
 				             """);
 		}
 
@@ -2045,7 +2045,7 @@ public class ReturnMethodSetupTests
 
 			await That(Act).Throws<MockException>()
 				.WithMessage("""
-				             The return callback only supports 'System.Int32' and not 'System.String'.
+				             The return callback only supports 'int' and not 'string'.
 				             """);
 			await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 		}

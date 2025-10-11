@@ -1,5 +1,3 @@
-using System.Linq;
-using aweXpect.Core;
 using Mockolate;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;

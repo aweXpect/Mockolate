@@ -53,7 +53,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
-			             The method 'Mockolate.Tests.MockTests.IMyService.SetIsValid(System.Boolean, <null>)' was invoked without prior setup.
+			             The method 'Mockolate.Tests.MockTests.IMyService.SetIsValid(bool, <null>)' was invoked without prior setup.
 			             """);
 	}
 
@@ -70,7 +70,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockNotSetupException>()
 			.WithMessage("""
-			             The method 'Mockolate.Tests.MockTests.IMyService.Multiply(System.Int32, <null>)' was invoked without prior setup.
+			             The method 'Mockolate.Tests.MockTests.IMyService.Multiply(int, <null>)' was invoked without prior setup.
 			             """);
 	}
 

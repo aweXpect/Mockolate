@@ -167,8 +167,8 @@ public abstract class MethodSetup : IMethodSetup
 	}
 
 	/// <summary>
-	///     Returns a formatted string representation of the <typeparamref name="TResult" />.
+	///     Returns a formatted string representation of the given <paramref name="type" />.
 	/// </summary>
-	protected static string FormatType<TResult>()
-		=> typeof(TResult).FormatType();
+	protected static string FormatType(Type? type)
+		=> type?.FormatType() ?? "null";
 }

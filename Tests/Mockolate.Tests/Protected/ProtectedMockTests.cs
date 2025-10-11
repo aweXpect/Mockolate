@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Mockolate.Interactions;
+﻿using Mockolate.Interactions;
 using Mockolate.Protected;
 using Mockolate.Verify;
 

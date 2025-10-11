@@ -393,8 +393,8 @@ internal static partial class Sources
 				.Append("], out T").Append(i).Append(" p").Append(i).Append(", behavior))").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tthrow new MockException($\"The input parameter ").Append(i)
-				.Append(" only supports '{typeof(T").Append(i).Append(")}', but is '{invocation.Parameters[")
-				.Append(i - 1).Append("]?.GetType()}'.\");").AppendLine();
+				.Append(" only supports '{FormatType(typeof(T").Append(i).Append("))}', but is '{FormatType(invocation.Parameters[")
+				.Append(i - 1).Append("]?.GetType())}'.\");").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
 		}
@@ -409,7 +409,7 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append(
-				"\t\tthrow new MockException($\"The return callback only supports '{typeof(TReturn)}' and not '{typeof(TResult)}'.\");")
+				"\t\tthrow new MockException($\"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.\");")
 			.AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -450,7 +450,7 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 		sb.Append("\tpublic override string ToString()").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\treturn $\"{FormatType<TReturn>()} {name}(")
+		sb.Append("\t\treturn $\"{FormatType(typeof(TReturn))} {name}(")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{match{x}}}")))
 			.Append(")\";").AppendLine();
 		sb.Append("\t}").AppendLine();
