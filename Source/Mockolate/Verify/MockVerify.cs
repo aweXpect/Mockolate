@@ -1,6 +1,4 @@
-using System.Linq;
 using Mockolate.Interactions;
-using Mockolate.Internals;
 
 namespace Mockolate.Verify;
 

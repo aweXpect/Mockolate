@@ -1,7 +1,5 @@
 ﻿using Mockolate.Exceptions;
-using Mockolate.Interactions;
 using Mockolate.Setup;
-using static Mockolate.Tests.Setup.ReturnMethodSetupTests;
 
 namespace Mockolate.Tests.Setup;
 

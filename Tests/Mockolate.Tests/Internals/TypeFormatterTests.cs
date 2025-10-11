@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Mockolate.Interactions;
 using Mockolate.Setup;
-using Mockolate.Tests.TestHelpers;
-using Mockolate.Verify;
 
 namespace Mockolate.Tests.Internals;
 

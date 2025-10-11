@@ -1,4 +1,3 @@
-using aweXpect;
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using NSubstitute;
