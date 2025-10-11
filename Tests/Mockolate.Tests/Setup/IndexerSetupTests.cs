@@ -1,5 +1,4 @@
 ﻿using Mockolate.Exceptions;
-using static Mockolate.Tests.Setup.MockSetupsTests.PropertiesTests;
 
 namespace Mockolate.Tests.Setup;
 
@@ -911,15 +910,15 @@ public sealed class IndexerSetupTests
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 				.OnSet(v => { callCount += v.Length; });
 
-			mock.Subject[1, 1, 1] = "a";         // yes (1)
-			mock.Subject[1, 2, 1] = "bb";        // yes (2)
-			mock.Subject[3, 1, 2] = "ccc";       // yes (3)
-			mock.Subject[1, 1, 4] = "dddd";      // no
-			mock.Subject[1, 5, 1] = "eeeee";     // no
-			mock.Subject[6, 1, 1] = "ffffff";    // no
-			mock.Subject[6, 7, 8] = "ggggggg";   // no
+			mock.Subject[1,  1, 1] = "a";         // yes (1)
+			mock.Subject[1,  2, 1] = "bb";        // yes (2)
+			mock.Subject[3,  1, 2] = "ccc";       // yes (3)
+			mock.Subject[1,  1, 4] = "dddd";      // no
+			mock.Subject[1,  5, 1] = "eeeee";     // no
+			mock.Subject[6,  1, 1] = "ffffff";    // no
+			mock.Subject[6,  7, 8] = "ggggggg";   // no
 			mock.Subject[8, -9, 1] = "hhhhhhhh";  // no
-			mock.Subject[3, 3, 3] = "iiiiiiiii"; // yes (9)
+			mock.Subject[3,  3, 3] = "iiiiiiiii"; // yes (9)
 
 			await That(callCount).IsEqualTo(15);
 		}
