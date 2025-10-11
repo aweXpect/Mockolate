@@ -3,6 +3,7 @@ using System.Linq;
 using Mockolate.Events;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Internals;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -83,7 +84,7 @@ public abstract class MockBase<T> : IMock
 			if (_behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().ToString() ?? "<null>"))})' was invoked without prior setup.");
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
 			return new MethodSetupResult<TResult>(null, _behavior,
@@ -106,7 +107,7 @@ public abstract class MockBase<T> : IMock
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().ToString() ?? "<null>"))})' was invoked without prior setup.");
+				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 		}
 
 		matchingSetup?.Invoke(interaction, _behavior);
@@ -120,7 +121,7 @@ public abstract class MockBase<T> : IMock
 		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new PropertyGetterAccess(interactions.GetNextIndex(), propertyName));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
-		return matchingSetup.InvokeGetter<TResult>(interaction);
+		return matchingSetup.InvokeGetter<TResult>(interaction, _behavior);
 	}
 
 	/// <inheritdoc cref="IMock.Set(string, object?)" />
@@ -130,7 +131,7 @@ public abstract class MockBase<T> : IMock
 		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(), propertyName, value));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
-		matchingSetup.InvokeSetter(interaction, value);
+		matchingSetup.InvokeSetter(interaction, value, _behavior);
 	}
 
 	/// <inheritdoc cref="IMock.GetIndexer{TResult}(object?[])" />

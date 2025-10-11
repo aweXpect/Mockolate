@@ -1,6 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
+using static Mockolate.With;
 
 namespace Mockolate.Setup;
 
@@ -9,35 +14,36 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class PropertySetup
 {
-	internal void InvokeSetter(IInteraction invocation, object? value)
+	internal void InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
 	{
-		InvokeSetter(value);
+		InvokeSetter(value, behavior);
 	}
 
-	internal TResult InvokeGetter<TResult>(IInteraction invocation)
+	internal TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior)
 	{
-		return InvokeGetter<TResult>();
+		return InvokeGetter<TResult>(behavior);
 	}
 
 	/// <summary>
 	///     Invokes the setter logic with the given <paramref name="value" />.
 	/// </summary>
-	protected abstract void InvokeSetter(object? value);
+	protected abstract void InvokeSetter(object? value, MockBehavior behavior);
 
 	/// <summary>
 	///     Invokes the getter logic and returns the value of type <typeparamref name="TResult" />.
 	/// </summary>
-	protected abstract TResult InvokeGetter<TResult>();
+	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior);
 
 	internal class Default : PropertySetup
 	{
 		private object? _value;
 
-		/// <inheritdoc cref="PropertySetup.InvokeSetter(object?)" />
-		protected override void InvokeSetter(object? value) => _value = value;
+		/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
+		protected override void InvokeSetter(object? value, MockBehavior behavior)
+			=> _value = value;
 
-		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}()" />
-		protected override TResult InvokeGetter<TResult>()
+		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior)" />
+		protected override TResult InvokeGetter<TResult>(MockBehavior behavior)
 		{
 			if (_value is TResult typedValue)
 			{
@@ -54,42 +60,55 @@ public abstract class PropertySetup
 /// </summary>
 public class PropertySetup<T> : PropertySetup
 {
-	private Func<T, T>? _getterCallback;
-	private Func<T, T, T>? _setterCallback;
+	private List<Action<T>> _getterCallbacks = [];
+	private List<Action<T, T>> _setterCallbacks = [];
+	private List<Func<T, T>> _returnCallbacks = [];
+	private int _currentReturnCallbackIndex = -1;
 	private T _value = default!;
 
-	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?)" />
-	protected override void InvokeSetter(object? value)
+	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
+	protected override void InvokeSetter(object? value, MockBehavior behavior)
 	{
-		if (_setterCallback is not null)
+		if (TryCast(value, out T parameter, behavior))
 		{
-			_value = _setterCallback.Invoke(_value, value is T typedValue ? typedValue : default!);
+			_setterCallbacks.ForEach(callback => callback.Invoke(_value, parameter));
 		}
-		else if (value is T typedValue)
+
+		if (_returnCallbacks.Any())
+		{
+			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+			Func<T, T> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+			_value = returnCallback(_value);
+		}
+		else if (TryCast(value, out T typedValue, behavior))
 		{
 			_value = typedValue;
 		}
 		else
 		{
-			_value = default!;
+			throw new MockException(
+				$"The property value only supports '{typeof(T).FormatType()}', but is '{value?.GetType().FormatType()}'.");
 		}
 	}
 
-	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}()" />
-	protected override TResult InvokeGetter<TResult>()
+	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior)" />
+	protected override TResult InvokeGetter<TResult>(MockBehavior behavior)
 	{
-		T value = _value;
-		if (_getterCallback is not null)
+		_getterCallbacks.ForEach(callback => callback.Invoke(_value));
+		if (_returnCallbacks.Any())
 		{
-			value = _getterCallback(_value);
+			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+			Func<T, T> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+			_value = returnCallback(_value);
 		}
 
-		if (value is TResult typedValue)
+		if (!TryCast(_value, out TResult result, MockBehavior.Default))
 		{
-			return typedValue;
+			throw new MockException(
+				$"The property only supports '{typeof(T).FormatType()}' and not '{typeof(TResult).FormatType()}'.");
 		}
 
-		return default!;
+		return result;
 	}
 
 	/// <summary>
@@ -110,11 +129,74 @@ public class PropertySetup<T> : PropertySetup
 	/// </remarks>
 	public PropertySetup<T> OnGet(Action callback)
 	{
-		_getterCallback = v =>
-		{
-			callback();
-			return v;
-		};
+		_getterCallbacks.Add(_ => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's getter is accessed.
+	/// </summary>
+	/// <remarks>
+	///     Use this method to perform custom logic or side effects whenever the property's value is read. Only
+	///     one callback can be registered; subsequent calls to this method will replace any previously set callback.
+	/// </remarks>
+	public PropertySetup<T> OnGet(Action<T> callback)
+	{
+		_getterCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public PropertySetup<T> Returns(Func<T, T> callback)
+	{
+		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	/// </summary>
+	public PropertySetup<T> Returns(Func<T> callback)
+	{
+		_returnCallbacks.Add(_ => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers the <paramref name="returnValue" /> for this property.
+	/// </summary>
+	public PropertySetup<T> Returns(T returnValue)
+	{
+		_returnCallbacks.Add(_ => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the property is read.
+	/// </summary>
+	public PropertySetup<T> Throws(Exception exception)
+	{
+		_returnCallbacks.Add(_ => throw exception);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public PropertySetup<T> Throws(Func<Exception> callback)
+	{
+		_returnCallbacks.Add(_ => throw callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	/// </summary>
+	public PropertySetup<T> Throws(Func<T, Exception> callback)
+	{
+		_returnCallbacks.Add(v => throw callback(v));
 		return this;
 	}
 
@@ -126,13 +208,23 @@ public class PropertySetup<T> : PropertySetup
 	///     Use this method to perform custom logic or side effects whenever the property's value changes. Only
 	///     one callback can be registered; subsequent calls to this method will replace any previously set callback.
 	/// </remarks>
-	public PropertySetup<T> OnSet(Action<T> callback)
+	public PropertySetup<T> OnSet(Action callback)
 	{
-		_setterCallback = (_, newValue) =>
-		{
-			callback(newValue);
-			return newValue;
-		};
+		_setterCallbacks.Add((_, _) => callback());
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's value is set. The callback receives the new value being
+	///     set.
+	/// </summary>
+	/// <remarks>
+	///     Use this method to perform custom logic or side effects whenever the property's value changes. Only
+	///     one callback can be registered; subsequent calls to this method will replace any previously set callback.
+	/// </remarks>
+	public PropertySetup<T> OnSet(Action<T, T> callback)
+	{
+		_setterCallbacks.Add(callback);
 		return this;
 	}
 
@@ -141,5 +233,16 @@ public class PropertySetup<T> : PropertySetup
 	public override string ToString()
 	{
 		return $"{typeof(T).FormatType()}";
+	}
+	private static bool TryCast<TValue>(object? value, out TValue result, MockBehavior behavior)
+	{
+		if (value is TValue typedValue)
+		{
+			result = typedValue;
+			return true;
+		}
+
+		result = behavior.DefaultValueGenerator.Generate<TValue>();
+		return value is null;
 	}
 }

@@ -466,7 +466,8 @@ public sealed partial class ForMockTests
 
 				     public class MyService
 				     {
-				         public virtual int SomeProperty { get; set; }
+				         public virtual int SomeProperty1 { protected get; set; }
+				         public virtual int SomeProperty2 { get; protected set; }
 				         protected virtual bool? SomeReadOnlyProperty { get; }
 				         protected virtual bool? SomeWriteOnlyProperty { set; }
 				         public bool? SomeNonVirtualProperty { get; set; }
@@ -480,16 +481,30 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForMyService_IMyOtherService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.SomeProperty" />
-				          		public override int SomeProperty
+				          		/// <inheritdoc cref="MyService.SomeProperty1" />
+				          		public override int SomeProperty1
 				          		{
-				          			get
+				          			protected get
 				          			{
-				          				return _mock.Get<int>("MyCode.MyService.SomeProperty");
+				          				return _mock.Get<int>("MyCode.MyService.SomeProperty1");
 				          			}
 				          			set
 				          			{
-				          				_mock.Set("MyCode.MyService.SomeProperty", value);
+				          				_mock.Set("MyCode.MyService.SomeProperty1", value);
+				          			}
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyService.SomeProperty2" />
+				          		public override int SomeProperty2
+				          		{
+				          			get
+				          			{
+				          				return _mock.Get<int>("MyCode.MyService.SomeProperty2");
+				          			}
+				          			protected set
+				          			{
+				          				_mock.Set("MyCode.MyService.SomeProperty2", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And

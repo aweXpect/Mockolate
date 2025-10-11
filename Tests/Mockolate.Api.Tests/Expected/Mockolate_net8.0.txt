@@ -493,17 +493,25 @@ namespace Mockolate.Setup
     public abstract class PropertySetup
     {
         protected PropertySetup() { }
-        protected abstract TResult InvokeGetter<TResult>();
-        protected abstract void InvokeSetter(object? value);
+        protected abstract TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior);
+        protected abstract void InvokeSetter(object? value, Mockolate.MockBehavior behavior);
     }
     public class PropertySetup<T> : Mockolate.Setup.PropertySetup
     {
         public PropertySetup() { }
         public Mockolate.Setup.PropertySetup<T> InitializeWith(T value) { }
-        protected override TResult InvokeGetter<TResult>() { }
-        protected override void InvokeSetter(object? value) { }
+        protected override TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior) { }
+        protected override void InvokeSetter(object? value, Mockolate.MockBehavior behavior) { }
         public Mockolate.Setup.PropertySetup<T> OnGet(System.Action callback) { }
-        public Mockolate.Setup.PropertySetup<T> OnSet(System.Action<T> callback) { }
+        public Mockolate.Setup.PropertySetup<T> OnGet(System.Action<T> callback) { }
+        public Mockolate.Setup.PropertySetup<T> OnSet(System.Action callback) { }
+        public Mockolate.Setup.PropertySetup<T> OnSet(System.Action<T, T> callback) { }
+        public Mockolate.Setup.PropertySetup<T> Returns(System.Func<T> callback) { }
+        public Mockolate.Setup.PropertySetup<T> Returns(System.Func<T, T> callback) { }
+        public Mockolate.Setup.PropertySetup<T> Returns(T returnValue) { }
+        public Mockolate.Setup.PropertySetup<T> Throws(System.Exception exception) { }
+        public Mockolate.Setup.PropertySetup<T> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.PropertySetup<T> Throws(System.Func<T, System.Exception> callback) { }
         public override string ToString() { }
     }
     public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup
