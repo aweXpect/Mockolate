@@ -479,6 +479,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(With.Parameter<T1> match1, With.Pa
 	}
 }
 
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
 ///     Sets up a <typeparamref name="TValue"/> indexer for <typeparamref name="T1"/>, <typeparamref name="T2"/>, <typeparamref name="T3"/> and <typeparamref name="T4"/>.
 /// </summary>
@@ -611,3 +612,4 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(With.Parameter<T1> match1, Wit
 		return false;
 	}
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
