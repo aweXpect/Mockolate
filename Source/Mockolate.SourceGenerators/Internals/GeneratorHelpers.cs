@@ -1,35 +1,43 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Mockolate.SourceGenerators.Entities;
 
 namespace Mockolate.SourceGenerators.Internals;
 
 internal static class GeneratorHelpers
 {
-	internal static bool IsMockForInvocationExpressionSyntax(this SyntaxNode node)
+	internal static bool IsCreateMethodInvocation(this SyntaxNode node)
 		=> node is InvocationExpressionSyntax
 		{
 			Expression: MemberAccessExpressionSyntax
 			{
-				Name: GenericNameSyntax { Identifier.Text : "Create", },
+				Name: GenericNameSyntax { Identifier.Text: "Create", },
 			},
 		};
 
-	internal static bool TryExtractGenericNameSyntax(this SyntaxNode syntaxNode,
-		SemanticModel semanticModel,
-		[NotNullWhen(true)] out GenericNameSyntax? genericNameSyntax)
+	private static bool IsCreateInvocationOnMockOrMockFactory(this ISymbol? symbol)
+		=> symbol?.ContainingType.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
+		   symbol.ContainingType.ContainingNamespace.Name == "Mockolate" &&
+		   (symbol.ContainingType.Name == "Mock" ||
+		    symbol.ContainingType.ContainingType.Name == "Mock" && symbol.ContainingType.Name == "Factory");
+
+	internal static MockClass? ExtractMockOrMockFactoryCreateSyntaxOrDefault(
+		this SyntaxNode syntaxNode, SemanticModel semanticModel)
 	{
-		if (syntaxNode is InvocationExpressionSyntax i && i.Expression is MemberAccessExpressionSyntax m &&
-		    m.Name is GenericNameSyntax value)
+		InvocationExpressionSyntax invocationSyntax = (InvocationExpressionSyntax)syntaxNode;
+		MemberAccessExpressionSyntax memberAccessExpressionSyntax = (MemberAccessExpressionSyntax)invocationSyntax.Expression;
+		var genericNameSyntax = (GenericNameSyntax)(memberAccessExpressionSyntax!.Name);
+		if (semanticModel.GetSymbolInfo(syntaxNode).Symbol.IsCreateInvocationOnMockOrMockFactory())
 		{
-			ISymbol? symbol = semanticModel.GetSymbolInfo(syntaxNode).Symbol;
-			genericNameSyntax = value;
-			return symbol?.ContainingType.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
-			       symbol.ContainingType.ContainingNamespace.Name == "Mockolate" &&
-			       (symbol.ContainingType.Name == "Mock" || symbol.ContainingType.Name == "Factory" && symbol.ContainingType.ContainingType.Name == "Mock");
+			ITypeSymbol[] genericTypes = genericNameSyntax.TypeArgumentList.Arguments
+				.Select(t => semanticModel.GetTypeInfo(t).Type)
+				.Where(t => t is not null)
+				.Cast<ITypeSymbol>()
+				.ToArray();
+			return new MockClass(genericTypes);
 		}
 
-		genericNameSyntax = null;
-		return false;
+		return null;
 	}
 }

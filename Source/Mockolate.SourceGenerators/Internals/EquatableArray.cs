@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Mockolate.SourceGenerators.Internals;
 
@@ -6,6 +7,7 @@ namespace Mockolate.SourceGenerators.Internals;
 ///     An immutable, equatable array. This is equivalent to <see cref="Array" /> but with value equality support.
 /// </summary>
 /// <typeparam name="T">The type of values in the array.</typeparam>
+[ExcludeFromCodeCoverage]
 public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnumerable<T>
 	where T : IEquatable<T>
 {

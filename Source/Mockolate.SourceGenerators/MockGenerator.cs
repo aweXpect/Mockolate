@@ -23,31 +23,13 @@ public class MockGenerator : IIncrementalGenerator
 
 		IncrementalValueProvider<ImmutableArray<MockClass?>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
-				static (s, _) => s.IsMockForInvocationExpressionSyntax(),
-				(ctx, _) => GetSemanticTargetForGeneration(ctx))
+				static (s, _) => s.IsCreateMethodInvocation(),
+				(ctx, _) => ctx.Node.ExtractMockOrMockFactoryCreateSyntaxOrDefault(ctx.SemanticModel))
 			.Where(static m => m is not null)
 			.Collect();
 
 		context.RegisterSourceOutput(expectationsToRegister,
 			(spc, source) => Execute([..source.Where(t => t != null).Distinct().Cast<MockClass>(),], spc));
-	}
-
-	private static MockClass? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
-	{
-		if (context.Node.TryExtractGenericNameSyntax(context.SemanticModel, out GenericNameSyntax? genericNameSyntax))
-		{
-			SemanticModel semanticModel = context.SemanticModel;
-
-			ITypeSymbol[] types = genericNameSyntax.TypeArgumentList.Arguments
-				.Select(t => semanticModel.GetTypeInfo(t).Type)
-				.Where(t => t is not null)
-				.Cast<ITypeSymbol>()
-				.ToArray();
-			MockClass mockClass = new(types);
-			return mockClass;
-		}
-
-		return null;
 	}
 
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
