@@ -31,7 +31,7 @@ namespace Mockolate
         public Mockolate.Events.MockRaises<T> Raise { get; }
         public Mockolate.Setup.MockSetup<T> Setup { get; }
         public abstract T Subject { get; }
-        protected bool TryCast<TValue>(object? value, out TValue result) { }
+        protected bool TryCast<TValue>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out TValue result) { }
         public static T op_Implicit(Mockolate.MockBase<T> mock) { }
     }
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
@@ -346,7 +346,7 @@ namespace Mockolate.Setup
         protected abstract bool IsMatch(object?[] parameters);
         protected abstract bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value);
         protected static bool Matches(Mockolate.With.Parameter[] parameters, object?[] values) { }
-        protected static bool TryCast<T>(object? value, out T result, Mockolate.MockBehavior behavior) { }
+        protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
     public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup
     {
@@ -420,7 +420,7 @@ namespace Mockolate.Setup
         protected static bool HasOutParameter<T>(Mockolate.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.With.OutParameter<T>? parameter) { }
         protected static bool HasRefParameter<T>(Mockolate.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.With.RefParameter<T>? parameter) { }
         protected static bool Matches(Mockolate.With.NamedParameter[] namedParameters, object?[] values) { }
-        protected static bool TryCast<T>(object? value, out T result, Mockolate.MockBehavior behavior) { }
+        protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
     public class MethodSetupResult
     {

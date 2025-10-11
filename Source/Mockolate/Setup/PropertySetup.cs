@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Mockolate.Exceptions;
@@ -65,21 +66,11 @@ public class PropertySetup<T> : PropertySetup
 		if (!TryCast(value, out T parameter, behavior))
 		{
 			throw new MockException(
-				$"The property value only supports '{typeof(T).FormatType()}', but is '{value?.GetType().FormatType()}'.");
+				$"The property value only supports '{typeof(T).FormatType()}', but is '{value.GetType().FormatType()}'.");
 		}
 
 		_setterCallbacks.ForEach(callback => callback.Invoke(_value, parameter));
-
-		if (_returnCallbacks.Any())
-		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-			Func<T, T> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-			_value = returnCallback(_value);
-		}
-		else
-		{
-			_value = parameter;
-		}
+		_value = parameter;
 	}
 
 	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior)" />
@@ -221,7 +212,7 @@ public class PropertySetup<T> : PropertySetup
 		return $"{typeof(T).FormatType()}";
 	}
 
-	private static bool TryCast<TValue>(object? value, out TValue result, MockBehavior behavior)
+	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result, MockBehavior behavior)
 	{
 		if (value is TValue typedValue)
 		{

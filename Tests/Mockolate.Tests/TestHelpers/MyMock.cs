@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Mockolate.Events;
 using Mockolate.Setup;
 using Mockolate.Verify;
@@ -20,7 +21,7 @@ public class MyMock<T>(T @object, MockBehavior? behavior = null) : Mock<T>(behav
 
 	public override T Subject => @object;
 
-	public bool HiddenTryCast<TValue>(object? value, out TValue result)
+	public bool HiddenTryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
 		=> TryCast(value, out result);
 }
 
