@@ -14,9 +14,11 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class PropertySetup
 {
-	internal void InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior) => InvokeSetter(value, behavior);
+	internal void InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
+		=> InvokeSetter(value, behavior);
 
-	internal TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior) => InvokeGetter<TResult>(behavior);
+	internal TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior)
+		=> InvokeGetter<TResult>(behavior);
 
 	/// <summary>
 	///     Invokes the setter logic with the given <paramref name="value" />.
