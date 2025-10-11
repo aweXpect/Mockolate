@@ -18,7 +18,7 @@ public sealed partial class MockTests
 			sut.Subject.Multiply(i, 4);
 		}
 
-		sut.Verify.Invoked.Multiply(With.Any<int>(), With.Any<int?>()).Exactly(numberOfInvocations);
+		await That(sut.Verify.Invoked.Multiply(With.Any<int>(), With.Any<int?>())).Exactly(numberOfInvocations);
 	}
 
 	[Theory]
@@ -34,7 +34,7 @@ public sealed partial class MockTests
 			sut.Subject.SetIsValid(i % 2 == 0, () => true);
 		}
 
-		sut.Verify.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>()).Exactly(numberOfInvocations);
+		await That(sut.Verify.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>())).Exactly(numberOfInvocations);
 	}
 
 	[Theory]

@@ -23,8 +23,8 @@ public sealed partial class MockGotIndexerTests
 			VerificationResult<Mock<int>> result1 = mockIndexer.Got(With.Any<string>());
 			VerificationResult<Mock<int>> result2 = @protected.Got(With.Any<string>());
 
-			result1.Exactly(2);
-			result2.Exactly(2);
+			await That(result1).Exactly(2);
+			await That(result2).Exactly(2);
 		}
 	}
 }

@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Mockolate.SourceGenerators.Internals;
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class SourceGeneration
 {
 	public const string Header =
@@ -329,3 +330,4 @@ internal static partial class SourceGeneration
 	internal static string EscapeForXmlDoc(this string value)
 		=> value.Replace('<', '{').Replace('>', '}');
 }
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

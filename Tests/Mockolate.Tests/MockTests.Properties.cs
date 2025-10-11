@@ -12,8 +12,8 @@ public sealed partial class MockTests
 
 		_ = sut.Subject.Counter;
 
-		sut.Verify.Got.Counter().Once();
-		sut.Verify.Set.Counter(With.Any<int>()).Never();
+		await That(sut.Verify.Got.Counter()).Once();
+		await That(sut.Verify.Set.Counter(With.Any<int>())).Never();
 	}
 
 	[Fact]
@@ -53,8 +53,8 @@ public sealed partial class MockTests
 
 		sut.Subject.Counter = 42;
 
-		sut.Verify.Got.Counter().Never();
-		sut.Verify.Set.Counter(With.Any<int>()).Once();
+		await That(sut.Verify.Got.Counter()).Never();
+		await That(sut.Verify.Set.Counter(With.Any<int>())).Once();
 	}
 
 	[Theory]

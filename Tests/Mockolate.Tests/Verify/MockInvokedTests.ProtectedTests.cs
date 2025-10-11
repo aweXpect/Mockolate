@@ -24,8 +24,8 @@ public sealed partial class MockInvokedTests
 			VerificationResult<Mock<int>> result1 = invoked.Method("foo.bar", With.Any<int>());
 			VerificationResult<Mock<int>> result2 = @protected.Method("foo.bar", With.Any<int>());
 
-			result1.Exactly(2);
-			result2.Exactly(2);
+			await That(result1).Exactly(2);
+			await That(result2).Exactly(2);
 		}
 	}
 }

@@ -23,8 +23,8 @@ public sealed partial class MockSetIndexerTests
 			VerificationResult<Mock<int>> result1 = mockIndexer.Set(With.Any<int>(), With.Any<string>());
 			VerificationResult<Mock<int>> result2 = @protected.Set(With.Any<int>(), With.Any<string>());
 
-			result1.Exactly(2);
-			result2.Exactly(2);
+			await That(result1).Exactly(2);
+			await That(result2).Exactly(2);
 		}
 	}
 }

@@ -15,10 +15,10 @@ public sealed class ProtectedMockTests
 		mock.Subject.RegisterEvent(handler);
 		mock.Protected.Raise.MyEvent(this, EventArgs.Empty);
 
-		mock.Protected.Verify.SubscribedTo.MyEvent().Once();
-		mock.Protected.Verify.UnsubscribedFrom.MyEvent().Never();
+		await That(mock.Protected.Verify.SubscribedTo.MyEvent()).Once();
+		await That(mock.Protected.Verify.UnsubscribedFrom.MyEvent()).Never();
 		mock.Subject.UnregisterEvent(handler);
-		mock.Protected.Verify.UnsubscribedFrom.MyEvent().Once();
+		await That(mock.Protected.Verify.UnsubscribedFrom.MyEvent()).Once();
 	}
 
 	[Fact]
@@ -31,7 +31,7 @@ public sealed class ProtectedMockTests
 
 		string result = mock.Subject.InvokeMyProtectedMethod("foo");
 
-		mock.Protected.Verify.Invoked.MyProtectedMethod("foo").Once();
+		await That(mock.Protected.Verify.Invoked.MyProtectedMethod("foo")).Once();
 		await That(result).IsEqualTo("Hello, foo!");
 	}
 
@@ -44,7 +44,7 @@ public sealed class ProtectedMockTests
 
 		int result = mock.Subject.GetMyProtectedProperty();
 
-		mock.Protected.Verify.Got.MyProtectedProperty().Once();
+		await That(mock.Protected.Verify.Got.MyProtectedProperty()).Once();
 		await That(result).IsEqualTo(42);
 	}
 

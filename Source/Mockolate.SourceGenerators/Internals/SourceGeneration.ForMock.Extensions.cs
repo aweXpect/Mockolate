@@ -5,6 +5,7 @@ using Mockolate.SourceGenerators.Entities;
 namespace Mockolate.SourceGenerators.Internals;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
+#pragma warning disable S3267 // Loops should be simplified with LINQ expressions
 internal static partial class SourceGeneration
 {
 	public static string ForMockExtensions(string name, MockClass mockClass)
@@ -49,20 +50,20 @@ internal static partial class SourceGeneration
 		foreach (Class? @class in mockClass.GetAllClasses())
 		{
 			AppendInvokedExtensions(sb, @class, namespaces, allClasses);
-			AppendGotExtensions(sb, @class, namespaces, allClasses);
+			AppendGotExtensions(sb, @class, allClasses);
 			AppendSetExtensions(sb, @class, namespaces, allClasses);
 			AppendGotIndexerExtensions(sb, @class, namespaces, allClasses);
 			AppendSetIndexerExtensions(sb, @class, namespaces, allClasses);
-			AppendEventExtensions(sb, @class, namespaces, allClasses);
+			AppendEventExtensions(sb, @class, allClasses);
 
 			if (AppendProtectedMock(sb, @class))
 			{
 				AppendInvokedExtensions(sb, @class, namespaces, allClasses, true);
-				AppendGotExtensions(sb, @class, namespaces, allClasses, true);
+				AppendGotExtensions(sb, @class, allClasses, true);
 				AppendSetExtensions(sb, @class, namespaces, allClasses, true);
 				AppendGotIndexerExtensions(sb, @class, namespaces, allClasses, true);
 				AppendSetIndexerExtensions(sb, @class, namespaces, allClasses, true);
-				AppendEventExtensions(sb, @class, namespaces, allClasses, true);
+				AppendEventExtensions(sb, @class, allClasses, true);
 			}
 		}
 
@@ -246,7 +247,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 	}
 
-	private static void AppendGotExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
+	private static void AppendGotExtensions(StringBuilder sb, Class @class, string allClasses,
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
@@ -435,7 +436,7 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 	}
 
-	private static void AppendEventExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
+	private static void AppendEventExtensions(StringBuilder sb, Class @class, string allClasses,
 		bool isProtected = false)
 	{
 		Func<Event, bool> predicate = isProtected
@@ -516,4 +517,5 @@ internal static partial class SourceGeneration
 		sb.AppendLine();
 	}
 }
+#pragma warning restore S3267 // Loops should be simplified with LINQ expressions
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

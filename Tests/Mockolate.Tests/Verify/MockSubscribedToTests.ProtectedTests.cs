@@ -23,8 +23,8 @@ public sealed partial class MockSubscribedToTests
 			VerificationResult<Mock<int>> result1 = subscribedTo.Event("foo.bar");
 			VerificationResult<Mock<int>> result2 = @protected.Event("foo.bar");
 
-			result1.Exactly(2);
-			result2.Exactly(2);
+			await That(result1).Exactly(2);
+			await That(result2).Exactly(2);
 		}
 	}
 }
