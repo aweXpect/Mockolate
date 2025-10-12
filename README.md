@@ -53,10 +53,10 @@ mock.Setup.AddUser(With.Any<string>())
     .Returns(name => new User(Guid.NewGuid(), name));
 ```
 
-- Use `.Callback(…)` to run code when the method is called.
-- Use `.Returns(…)` to specify the value to return. You can provide a direct value or a callback to generate values on demand.
-- Use `.Throws(…)` to specify an exception to throw when the method is executed.
-- Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values.
+- Use `.Callback(â€¦)` to run code when the method is called.
+- Use `.Returns(â€¦)` to specify the value to return. You can provide a direct value or a callback to generate values on demand.
+- Use `.Throws(â€¦)` to specify an exception to throw when the method is executed.
+- Use `.Returns(â€¦)` and `.Throws(â€¦)` repeatedly to define a sequence of return values.
 
 **Argument Matching**
 
@@ -64,7 +64,7 @@ Mockolate provides flexible argument matching for method setups and verification
 
 - `With.Any<T>()`: Matches any value of type `T`.
 - `With.Matching<T>(predicate)`: Matches values based on a predicate.
-- `With.Ref<T>(…)`/`With.Out<T>(…)`: Matches and sets ref or out parameters.
+- `With.Ref<T>(â€¦)`/`With.Out<T>(â€¦)`: Matches and sets ref or out parameters.
 
 ```csharp
 mock.Setup.AddUser(With.Matching<string>(name => name.StartsWith("A")))
@@ -99,7 +99,7 @@ mock.Setup.Property.MyProperty
 Callbacks can be registered on the setter or getter.
 ```csharp
 mock.Setup.Property.MyProperty.OnGet(() => Console.WriteLine("MyProperty was read!"));
-mock.Setup.Property.MyProperty.OnSet(value => Console.WriteLine($"Set MyProperty to {value}}!"));
+mock.Setup.Property.MyProperty.OnSet(value => Console.WriteLine($"Set MyProperty to {value}!"));
 ```
 
 **Indexers**  
