@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Mockolate.SourceGenerators.Tests.Sources;
+﻿namespace Mockolate.SourceGenerators.Tests.Sources;
 
 public sealed partial class ForMockTests
 {
