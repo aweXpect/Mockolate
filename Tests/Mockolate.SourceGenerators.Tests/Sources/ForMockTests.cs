@@ -1,4 +1,6 @@
-﻿namespace Mockolate.SourceGenerators.Tests.Sources;
+﻿using System.Collections.Generic;
+
+namespace Mockolate.SourceGenerators.Tests.Sources;
 
 public sealed partial class ForMockTests
 {
@@ -138,6 +140,7 @@ public sealed partial class ForMockTests
 	{
 		GeneratorResult result = Generator
 			.Run("""
+			     using System.Collections.Generic;
 			     using Mockolate;
 
 			     namespace MyCode;
@@ -145,14 +148,15 @@ public sealed partial class ForMockTests
 			     {
 			         public static void Main(string[] args)
 			         {
-			     		_ = Mock.Create<IMyService>();
+			     		_ = Mock.Create<IMyService<List<int>>>();
 			         }
 			     }
 
-			     public class IMyService { }
-			     """);
+			     public class IMyService<T> { }
+			     """, typeof(List<>));
 
-		await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("ForIMyServiceListint.g.cs").WhoseValue
+			.Contains("using System.Collections.Generic;").And
 			.Contains("using MyCode;");
 	}
 }

@@ -94,7 +94,7 @@ public class MockGenerator : IIncrementalGenerator
 	{
 		HashSet<(string, string)> classNames = new();
 		List<(string Name, Class MockClass)> result = new();
-		foreach (MockClass? mockToGenerate in mocksToGenerate)
+		foreach (MockClass? mockToGenerate in mocksToGenerate.Where(x => x.Delegate is null))
 		{
 			if (classNames.Add((mockToGenerate.Namespace, mockToGenerate.ClassName)))
 			{

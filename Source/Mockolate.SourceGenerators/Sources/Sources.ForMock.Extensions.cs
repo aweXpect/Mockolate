@@ -1,3 +1,5 @@
+using System;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
@@ -10,12 +12,6 @@ internal static partial class Sources
 {
 	public static string ForMockExtensions(string name, MockClass mockClass)
 	{
-		string allClasses = mockClass.ClassName;
-		if (mockClass.AdditionalImplementations.Any())
-		{
-			allClasses += ", " + string.Join(",", mockClass.AdditionalImplementations.Select(c => c.ClassName));
-		}
-
 		string[] namespaces =
 		[
 			..GlobalUsings,
@@ -41,35 +37,225 @@ internal static partial class Sources
 		          """);
 		sb.Append("internal static class ExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
-		if (mockClass.AdditionalImplementations.Any())
+
+		if (mockClass.Delegate is not null)
 		{
-			AppendMockExtensions(sb, mockClass, allClasses);
-			sb.AppendLine();
+			AppendDelegateExtensions(sb, mockClass, mockClass.Delegate.Value, namespaces);
 		}
-
-		foreach (Class? @class in mockClass.GetAllClasses())
+		else
 		{
-			AppendInvokedExtensions(sb, @class, namespaces, allClasses);
-			AppendGotExtensions(sb, @class, allClasses);
-			AppendSetExtensions(sb, @class, namespaces, allClasses);
-			AppendGotIndexerExtensions(sb, @class, namespaces, allClasses);
-			AppendSetIndexerExtensions(sb, @class, namespaces, allClasses);
-			AppendEventExtensions(sb, @class, allClasses);
-
-			if (AppendProtectedMock(sb, @class))
+			string allClasses = mockClass.ClassName;
+			if (mockClass.AdditionalImplementations.Any())
 			{
-				AppendInvokedExtensions(sb, @class, namespaces, allClasses, true);
-				AppendGotExtensions(sb, @class, allClasses, true);
-				AppendSetExtensions(sb, @class, namespaces, allClasses, true);
-				AppendGotIndexerExtensions(sb, @class, namespaces, allClasses, true);
-				AppendSetIndexerExtensions(sb, @class, namespaces, allClasses, true);
-				AppendEventExtensions(sb, @class, allClasses, true);
+				allClasses += ", " + string.Join(",", mockClass.AdditionalImplementations.Select(c => c.ClassName));
+			}
+
+			if (mockClass.AdditionalImplementations.Any())
+			{
+				AppendMockExtensions(sb, mockClass, allClasses);
+				sb.AppendLine();
+			}
+
+			foreach (Class? @class in mockClass.GetAllClasses())
+			{
+				AppendInvokedExtensions(sb, @class, namespaces, allClasses);
+				AppendGotExtensions(sb, @class, allClasses);
+				AppendSetExtensions(sb, @class, namespaces, allClasses);
+				AppendGotIndexerExtensions(sb, @class, namespaces, allClasses);
+				AppendSetIndexerExtensions(sb, @class, namespaces, allClasses);
+				AppendEventExtensions(sb, @class, allClasses);
+
+				if (AppendProtectedMock(sb, @class))
+				{
+					AppendInvokedExtensions(sb, @class, namespaces, allClasses, true);
+					AppendGotExtensions(sb, @class, allClasses, true);
+					AppendSetExtensions(sb, @class, namespaces, allClasses, true);
+					AppendGotIndexerExtensions(sb, @class, namespaces, allClasses, true);
+					AppendSetIndexerExtensions(sb, @class, namespaces, allClasses, true);
+					AppendEventExtensions(sb, @class, allClasses, true);
+				}
 			}
 		}
 
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
+	}
+
+	private static void AppendDelegateExtensions(StringBuilder sb, MockClass mockClass, Method method, string[] namespaces)
+	{
+		#region Setup
+		sb.Append("\textension(MockSetup<").Append(mockClass.ClassName).AppendLine("> setup)");
+		sb.AppendLine("\t{");
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append("\t\t///     Sets up the delegate <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc()).Append("\" /> on the mock.").AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		if (method.ReturnType != Entities.Type.Void)
+		{
+			sb.Append("\t\tpublic ReturnMethodSetup<")
+				.Append(method.ReturnType.GetMinimizedString(namespaces));
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
+			}
+
+			sb.Append("> Delegate(");
+		}
+		else
+		{
+			sb.Append("\t\tpublic VoidMethodSetup");
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append('<');
+				int index = 0;
+				foreach (MethodParameter parameter in method.Parameters)
+				{
+					if (index++ > 0)
+					{
+						sb.Append(", ");
+					}
+
+					sb.Append(parameter.Type.GetMinimizedString(namespaces));
+				}
+
+				sb.Append('>');
+			}
+
+			sb.Append(" Delegate(");
+		}
+
+		int i = 0;
+		foreach (MethodParameter parameter in method.Parameters)
+		{
+			if (i++ > 0)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append(parameter.RefKind switch
+			{
+				RefKind.Ref => "With.RefParameter<",
+				RefKind.Out => "With.OutParameter<",
+				_ => "With.Parameter<",
+			}).Append(parameter.Type.GetMinimizedString(namespaces))
+				.Append('>');
+			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+			{
+				sb.Append('?');
+			}
+			sb.Append(' ').Append(parameter.Name);
+		}
+
+		sb.Append(")").AppendLine();
+		sb.AppendLine("\t\t{");
+
+		if (method.ReturnType != Entities.Type.Void)
+		{
+			sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<")
+				.Append(method.ReturnType.GetMinimizedString(namespaces));
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
+			}
+
+			sb.Append(">");
+		}
+		else
+		{
+			sb.Append("\t\t\tvar methodSetup = new VoidMethodSetup");
+
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append('<');
+				int index = 0;
+				foreach (MethodParameter parameter in method.Parameters)
+				{
+					if (index++ > 0)
+					{
+						sb.Append(", ");
+					}
+
+					sb.Append(parameter.Type.GetMinimizedString(namespaces));
+				}
+
+				sb.Append('>');
+			}
+		}
+
+		sb.Append("(\"").Append(mockClass.GetFullName(method.Name)).Append("\"");
+		foreach (var parameter in method.Parameters)
+		{
+			sb.Append(", new With.NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
+			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+			{
+				sb.Append(" ?? With.Null<").Append(parameter.Type.GetMinimizedString(namespaces))
+				.Append(">()");
+			}
+			sb.Append(")");
+		}
+
+		sb.Append(");").AppendLine();
+		sb.AppendLine("\t\t\tif (setup is IMockSetup mockSetup)");
+		sb.AppendLine("\t\t\t{");
+		sb.AppendLine("\t\t\t\tmockSetup.RegisterMethod(methodSetup);");
+		sb.AppendLine("\t\t\t}");
+		sb.AppendLine("\t\t\treturn methodSetup;");
+		sb.AppendLine("\t\t}");
+		sb.AppendLine("\t}");
+		#endregion
+
+		sb.AppendLine();
+
+		#region Verify
+		sb.Append("\textension(MockVerify<").Append(mockClass.ClassName).Append(", Mock<").Append(mockClass.ClassName).Append(">>").Append(" verify)").AppendLine();
+		sb.AppendLine("\t{");
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append("\t\t///     Verifies the delegate invocations for <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(mockClass.ClassName).Append(", Mock<").Append(mockClass.ClassName).Append(">>> Invoked(");
+		i = 0;
+		foreach (MethodParameter parameter in method.Parameters)
+		{
+			if (i++ > 0)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append(parameter.RefKind switch
+			{
+				RefKind.Ref => "With.InvokedRefParameter<",
+				RefKind.Out => "With.InvokedOutParameter<",
+				_ => "With.Parameter<",
+			}).Append(parameter.Type.GetMinimizedString(namespaces))
+				.Append('>');
+			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+			{
+				sb.Append('?');
+			}
+			sb.Append(' ').Append(parameter.Name);
+		}
+		sb.Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tIMockInvoked<MockVerify<").Append(mockClass.ClassName).Append(", Mock<").Append(mockClass.ClassName).Append(">>> invoked = new MockInvoked<").Append(mockClass.ClassName).Append(", Mock<").Append(mockClass.ClassName).Append(">>").Append("(verify);").AppendLine();
+		sb.Append("\t\t\treturn invoked.Method(\"")
+			.Append(mockClass.GetFullName(method.Name))
+			.Append("\"");
+
+		foreach (MethodParameter parameter in method.Parameters)
+		{
+			sb.Append(", ");
+			sb.Append(parameter.Name);
+			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+			{
+				sb.Append(" ?? With.Null<").Append(parameter.Type.GetMinimizedString(namespaces))
+				.Append(">()");
+			}
+		}
+		sb.AppendLine(");");
+		sb.Append("\t\t}").AppendLine();
+
+		sb.AppendLine("\t}");
+		#endregion
 	}
 
 	private static void AppendMockExtensions(StringBuilder sb, MockClass mockClass, string allClasses)

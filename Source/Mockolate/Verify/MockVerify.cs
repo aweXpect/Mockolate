@@ -12,8 +12,8 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock) : I
 	/// </summary>
 	public bool ThatAllInteractionsAreVerified() => !interactions.HasMissingVerifications;
 
-	/// <inheritdoc cref="IMockVerify{TMock}.Interactions" />
-	MockInteractions IMockVerify<TMock>.Interactions
+	/// <inheritdoc cref="IMockVerify.Interactions" />
+	MockInteractions IMockVerify.Interactions
 		=> interactions;
 
 	/// <inheritdoc cref="IMockVerify{TMock}.Mock" />

@@ -743,9 +743,12 @@ namespace Mockolate.Verify
     {
         Mockolate.Verify.VerificationResult<TMock> Event(string eventName);
     }
-    public interface IMockVerify<out TMock>
+    public interface IMockVerify
     {
         Mockolate.Interactions.MockInteractions Interactions { get; }
+    }
+    public interface IMockVerify<out TMock> : Mockolate.Verify.IMockVerify
+    {
         TMock Mock { get; }
     }
     public interface IVerificationResult
@@ -815,7 +818,7 @@ namespace Mockolate.Verify
             public Protected(Mockolate.Verify.MockVerify<T, TMock> verify) { }
         }
     }
-    public class MockVerify<T, TMock> : Mockolate.Verify.IMockVerify<TMock>
+    public class MockVerify<T, TMock> : Mockolate.Verify.IMockVerify, Mockolate.Verify.IMockVerify<TMock>
     {
         public MockVerify(Mockolate.Interactions.MockInteractions interactions, TMock mock) { }
         public bool ThatAllInteractionsAreVerified() { }
