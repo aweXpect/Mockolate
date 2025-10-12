@@ -122,7 +122,6 @@ internal static partial class Sources
 				sb.Append("\t\t\t\treturn result.Result;").AppendLine();
 			}
 
-
 			sb.Append("\t\t\t});").AppendLine();
 		}
 		else if (mockClass.IsInterface ||
