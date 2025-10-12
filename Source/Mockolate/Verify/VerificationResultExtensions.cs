@@ -16,15 +16,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void AtLeast<TMock>(this VerificationResult<TMock> verificationResult, int times)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length >= times;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} at least {times.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} at least {times.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -33,15 +34,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void AtLeastOnce<TMock>(this VerificationResult<TMock> verificationResult)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length >= 1;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} at least {1.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} at least {1.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -50,15 +52,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void AtLeastTwice<TMock>(this VerificationResult<TMock> verificationResult)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length >= 2;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} at least {2.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} at least {2.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -67,15 +70,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void AtMost<TMock>(this VerificationResult<TMock> verificationResult, int times)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length <= times;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} at most {times.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} at most {times.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -84,15 +88,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void AtMostOnce<TMock>(this VerificationResult<TMock> verificationResult)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length <= 1;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} at most {1.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} at most {1.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -101,15 +106,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void AtMostTwice<TMock>(this VerificationResult<TMock> verificationResult)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length <= 2;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} at most {2.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} at most {2.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -118,15 +124,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void Exactly<TMock>(this VerificationResult<TMock> verificationResult, int times)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length == times;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} exactly {times.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} exactly {times.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -135,15 +142,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void Never<TMock>(this VerificationResult<TMock> verificationResult)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length == 0;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {0.ToTimes()} {verificationResult.Expectation}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {0.ToTimes()} {result.Expectation}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -152,15 +160,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void Once<TMock>(this VerificationResult<TMock> verificationResult)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length == 1;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} exactly {1.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} exactly {1.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
@@ -169,27 +178,28 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void Twice<TMock>(this VerificationResult<TMock> verificationResult)
 	{
+		IVerificationResult result = verificationResult;
 		int found = 0;
-		if (!verificationResult.Verify(interactions =>
+		if (!result.Verify(interactions =>
 		{
 			found = interactions.Length;
 			return interactions.Length == 2;
 		}))
 		{
 			throw new MockVerificationException(
-				$"Expected that mock {verificationResult.Expectation} exactly {2.ToTimes()}, but it {found.ToTimes("did")}.");
+				$"Expected that mock {result.Expectation} exactly {2.ToTimes()}, but it {found.ToTimes("did")}.");
 		}
 	}
 
 	/// <summary>
 	///     Supports fluent chaining of verifications in a given order.
 	/// </summary>
-	public static void Then<TMock>(this VerificationResult<TMock> verificationResult, params Func<TMock, VerificationResult<TMock>>[] orderedChecks)
+	public static void Then<TMock>(this IVerificationResult<TMock> verificationResult, params Func<TMock, VerificationResult<TMock>>[] orderedChecks)
 	{
 		string? error = null;
 		bool flag = true;
 		List<string> expectations = [];
-		VerificationResult<TMock> result = verificationResult;
+		IVerificationResult<TMock> result = verificationResult;
 		int after = -1;
 		foreach (Func<TMock, VerificationResult<TMock>>? check in orderedChecks)
 		{
@@ -198,7 +208,7 @@ public static class VerificationResultExtensions
 			{
 				flag = false;
 			}
-			result = check(result.Mock);
+			result = check(result.Object);
 		}
 		expectations.Add(result.Expectation);
 		if (!result.Verify(VerifyInteractions) || !flag)

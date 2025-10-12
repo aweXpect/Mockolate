@@ -15,7 +15,7 @@ public sealed partial class MockGotTests
 		IMockGot<MockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));
 
-		var result = mockGot.Property("baz.bar");
+		VerificationResult<MockVerify<int, Mock<int>>> result = mockGot.Property("baz.bar");
 
 		await That(result).Never();
 	}
@@ -29,7 +29,7 @@ public sealed partial class MockGotTests
 		IMockGot<MockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));
 
-		var result = mockGot.Property("foo.bar");
+		VerificationResult<MockVerify<int, Mock<int>>> result = mockGot.Property("foo.bar");
 
 		await That(result).Once();
 	}
@@ -41,9 +41,9 @@ public sealed partial class MockGotTests
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
 		IMockGot<MockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
 
-		var result = mockGot.Property("foo.bar");
+		VerificationResult<MockVerify<int, Mock<int>>> result = mockGot.Property("foo.bar");
 
 		await That(result).Never();
-		await That(result.Expectation).IsEqualTo("got property bar");
+		await That((((IVerificationResult)result).Expectation)).IsEqualTo("got property bar");
 	}
 }
