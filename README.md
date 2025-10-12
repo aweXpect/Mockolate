@@ -136,7 +136,7 @@ mock.Verify.Invoked.DoSomething(With.Any<int>()).Exactly(2);
 
 
 #### Call Ordering
-Use `Then` to Verify that calls occurred in a specific order:
+Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
 mock.Verify.Invoked.AddUser("Alice").Then(
