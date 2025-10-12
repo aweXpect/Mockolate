@@ -64,6 +64,8 @@ internal static partial class Sources
 		sb.AppendLine("\t/// </remarks>");
 		sb.AppendLine("\tpublic static Mock<T> Create<T>(BaseClass.ConstructorParameters? constructorParameters = null)");
 		sb.AppendLine("\t{");
+		sb.AppendLine("\t\tThrowIfNotMockable(typeof(T));");
+		sb.AppendLine();
 		sb.AppendLine("\t\treturn new MockGenerator().Get<T>(constructorParameters, MockBehavior.Default)");
 		sb.AppendLine(
 			"\t\t\t?? throw new MockException(\"Could not generate Mock<T>. Did the source generator run correctly?\");");
@@ -83,6 +85,8 @@ internal static partial class Sources
 		sb.AppendLine("\t/// </remarks>");
 		sb.AppendLine("\tpublic static Mock<T> Create<T>(MockBehavior mockBehavior)");
 		sb.AppendLine("\t{");
+		sb.AppendLine("\t\tThrowIfNotMockable(typeof(T));");
+		sb.AppendLine();
 		sb.AppendLine("\t\treturn new MockGenerator().Get<T>(null, mockBehavior)");
 		sb.AppendLine(
 			"\t\t\t?? throw new MockException(\"Could not generate Mock<T>. Did the source generator run correctly?\");");
@@ -103,6 +107,8 @@ internal static partial class Sources
 		sb.AppendLine(
 			"\tpublic static Mock<T> Create<T>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior)");
 		sb.AppendLine("\t{");
+		sb.AppendLine("\t\tThrowIfNotMockable(typeof(T));");
+		sb.AppendLine();
 		sb.AppendLine("\t\treturn new MockGenerator().Get<T>(constructorParameters, mockBehavior)");
 		sb.AppendLine(
 			"\t\t\t?? throw new MockException(\"Could not generate Mock<T>. Did the source generator run correctly?\");");
@@ -208,68 +214,79 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		sb.AppendLine("/// <summary>");
-		sb.AppendLine("///     A mock factory to create mocks with a common behavior.");
-		sb.AppendLine("/// </summary>");
-		sb.AppendLine("public partial class Factory");
-		sb.AppendLine("{");
-		sb.AppendLine("\tprivate MockBehavior _behavior;");
-		sb.AppendLine();
-		sb.AppendLine("\t/// <inheritdoc cref=\"Factory\" />");
-		sb.AppendLine("\tpublic Factory(MockBehavior behavior)");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t_behavior = behavior;");
-		sb.AppendLine("\t}");
-		sb.AppendLine();
 		sb.AppendLine("\t/// <summary>");
-		sb.AppendLine(
-			"\t///     Create a new mock for <typeparamref name=\"T\" />.");
+		sb.AppendLine("\t///     A mock factory to create mocks with a common behavior.");
 		sb.AppendLine("\t/// </summary>");
-		sb.AppendLine("\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-		sb.AppendLine("\t/// <remarks>");
-		sb.AppendLine(
-			"\t///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.");
-		sb.AppendLine("\t/// </remarks>");
-		sb.AppendLine("\tpublic Mock<T> Create<T>(BaseClass.ConstructorParameters? constructorParameters = null)");
+		sb.AppendLine("\tpublic partial class Factory");
 		sb.AppendLine("\t{");
-		sb.Append("\t\treturn new MockGenerator().Get<T>(constructorParameters, _behavior)").AppendLine();
-		sb.Append("\t\t\t?? throw new MockException(\"Could not generate Mock<T>. Did the source generator run correctly?\");").AppendLine();
-		sb.AppendLine("\t}");
+		sb.AppendLine("\t\tprivate MockBehavior _behavior;");
+		sb.AppendLine();
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"Factory\" />");
+		sb.AppendLine("\t\tpublic Factory(MockBehavior behavior)");
+		sb.AppendLine("\t\t{");
+		sb.AppendLine("\t\t\t_behavior = behavior;");
+		sb.AppendLine("\t\t}");
+		sb.AppendLine();
+		sb.AppendLine("\t\t/// <summary>");
+		sb.AppendLine(
+			"\t\t///     Create a new mock for <typeparamref name=\"T\" />.");
+		sb.AppendLine("\t\t/// </summary>");
+		sb.AppendLine("\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
+		sb.AppendLine("\t\t/// <remarks>");
+		sb.AppendLine(
+			"\t\t///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.");
+		sb.AppendLine("\t\t/// </remarks>");
+		sb.AppendLine("\t\tpublic Mock<T> Create<T>(BaseClass.ConstructorParameters? constructorParameters = null)");
+		sb.AppendLine("\t\t{");
+		sb.AppendLine("\t\t\tThrowIfNotMockable(typeof(T));");
+		sb.AppendLine();
+		sb.Append("\t\t\treturn new MockGenerator().Get<T>(constructorParameters, _behavior)").AppendLine();
+		sb.Append("\t\t\t\t?? throw new MockException(\"Could not generate Mock<T>. Did the source generator run correctly?\");").AppendLine();
+		sb.AppendLine("\t\t}");
 		for (int numberOfArguments = 1; numberOfArguments < maxNumberOfArguments; numberOfArguments++)
 		{
 			sb.AppendLine();
 			string types = string.Join(", ", Enumerable.Range(2, numberOfArguments).Select(n => $"T{n}"));
-			sb.AppendLine("\t/// <summary>");
-			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
+			sb.AppendLine("\t\t/// <summary>");
+			sb.Append("\t\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
 				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
 				.Append(string.Join(", ",
 					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
 				.Append(numberOfArguments > 1 ? " and " : "")
 				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />.").AppendLine();
-			sb.AppendLine("\t/// </summary>");
+			sb.AppendLine("\t\t/// </summary>");
 			sb.AppendLine(
-				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
+				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
 			for (int i = 2; i <= numberOfArguments + 1; i++)
 			{
-				sb.Append("\t/// <typeparam name=\"T").Append(i)
+				sb.Append("\t\t/// <typeparam name=\"T").Append(i)
 					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
 			}
 
-			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append("\t\t/// <remarks>").AppendLine();
 			sb.Append(
-					"\t///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.")
+					"\t\t///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.")
 				.AppendLine();
-			sb.Append("\t/// </remarks>").AppendLine();
-			sb.Append("\tpublic Mock<T, ").Append(types).Append("> Create<T, ").Append(types)
+			sb.Append("\t\t/// </remarks>").AppendLine();
+			sb.Append("\t\tpublic Mock<T, ").Append(types).Append("> Create<T, ").Append(types)
 				.Append(">(BaseClass.ConstructorParameters? constructorParameters = null)").AppendLine();
-			sb.Append("\t{").AppendLine();
-			sb.Append("\t\treturn new MockGenerator().Get<T, ").Append(types)
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\treturn new MockGenerator().Get<T, ").Append(types)
 				.Append(">(constructorParameters, _behavior)").AppendLine();
-			sb.Append("\t\t\t?? throw new MockException(\"Could not generate Mock<T, ").Append(types)
+			sb.Append("\t\t\t\t?? throw new MockException(\"Could not generate Mock<T, ").Append(types)
 				.Append(">. Did the source generator run correctly?\");").AppendLine();
-			sb.Append("\t}").AppendLine();
+			sb.Append("\t\t}").AppendLine();
 		}
-		sb.AppendLine("}");
+		sb.AppendLine("\t}");
+		sb.AppendLine();
+
+		sb.AppendLine("\tprivate static void ThrowIfNotMockable(Type type)");
+		sb.AppendLine("\t{");
+		sb.Append("\t\tif (type.IsSealed && type.BaseType != typeof(MulticastDelegate))").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthrow new MockException($\"The type '{type}' is sealed and therefore not mockable.\");").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine("\t}");
 		sb.AppendLine();
 
 		sb.Append("\tprivate partial class MockGenerator").AppendLine();
