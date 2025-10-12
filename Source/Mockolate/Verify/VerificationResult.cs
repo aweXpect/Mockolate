@@ -35,20 +35,9 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	#region IVerificationResult<TVerify>
 
-	/// <inheritdoc cref="IVerificationResult{TVerify}.Expectation" />
-	string IVerificationResult<TVerify>.Expectation
-		=> _expectation;
-
 	/// <inheritdoc cref="IVerificationResult{TVerify}.Object" />
 	TVerify IVerificationResult<TVerify>.Object
 		=> _verify;
-
-	/// <inheritdoc cref="IVerificationResult{TVerify}.Verify(Func{IInteraction[], Boolean})" />
-	bool IVerificationResult<TVerify>.Verify(Func<IInteraction[], bool> predicate)
-	{
-		_interactions.Verified(_matchingInteractions);
-		return predicate(_matchingInteractions);
-	}
 
 	#endregion
 
@@ -57,6 +46,10 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	/// <inheritdoc cref="IVerificationResult.Expectation" />
 	string IVerificationResult.Expectation
 		=> _expectation;
+
+	/// <inheritdoc cref="IVerificationResult.MockInteractions" />
+	MockInteractions IVerificationResult.MockInteractions
+		=> _interactions;
 
 	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
 	bool IVerificationResult.Verify(Func<IInteraction[], bool> predicate)

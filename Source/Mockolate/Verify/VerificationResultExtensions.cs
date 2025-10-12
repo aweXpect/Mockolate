@@ -194,12 +194,13 @@ public static class VerificationResultExtensions
 	/// <summary>
 	///     Supports fluent chaining of verifications in a given order.
 	/// </summary>
-	public static void Then<TMock>(this IVerificationResult<TMock> verificationResult, params Func<TMock, VerificationResult<TMock>>[] orderedChecks)
+	public static void Then<TMock>(this VerificationResult<TMock> verificationResult, params Func<TMock, VerificationResult<TMock>>[] orderedChecks)
 	{
 		string? error = null;
 		bool flag = true;
 		List<string> expectations = [];
-		IVerificationResult<TMock> result = verificationResult;
+		IVerificationResult result = verificationResult;
+		TMock mock = ((IVerificationResult<TMock>)verificationResult).Object;
 		int after = -1;
 		foreach (Func<TMock, VerificationResult<TMock>>? check in orderedChecks)
 		{
@@ -208,7 +209,7 @@ public static class VerificationResultExtensions
 			{
 				flag = false;
 			}
-			result = check(result.Object);
+			result = check(mock);
 		}
 		expectations.Add(result.Expectation);
 		if (!result.Verify(VerifyInteractions) || !flag)
