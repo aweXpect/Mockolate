@@ -738,13 +738,12 @@ namespace Mockolate.Verify
     public interface IVerificationResult
     {
         string Expectation { get; }
+        Mockolate.Interactions.MockInteractions MockInteractions { get; }
         bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate);
     }
     public interface IVerificationResult<out TVerify>
     {
-        string Expectation { get; }
         TVerify Object { get; }
-        bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate);
     }
     public class MockGotIndexer<T, TMock> : Mockolate.Verify.IMockGotIndexer<Mockolate.Verify.MockVerify<T, TMock>>
     {
@@ -822,7 +821,7 @@ namespace Mockolate.Verify
         public static void Exactly<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
         public static void Never<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
         public static void Once<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void Then<TMock>(this Mockolate.Verify.IVerificationResult<TMock> verificationResult, params System.Func<TMock, Mockolate.Verify.VerificationResult<TMock>>[] orderedChecks) { }
+        public static void Then<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, params System.Func<TMock, Mockolate.Verify.VerificationResult<TMock>>[] orderedChecks) { }
         public static void Twice<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
     }
     public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult, Mockolate.Verify.IVerificationResult<TVerify>
