@@ -748,6 +748,11 @@ namespace Mockolate.Verify
         Mockolate.Interactions.MockInteractions Interactions { get; }
         TMock Mock { get; }
     }
+    public interface IVerificationResult
+    {
+        string Expectation { get; }
+        bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate);
+    }
     public interface IVerificationResult<out TVerify>
     {
         string Expectation { get; }
@@ -830,14 +835,13 @@ namespace Mockolate.Verify
         public static void Exactly<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
         public static void Never<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
         public static void Once<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void Then<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, params System.Func<TMock, Mockolate.Verify.VerificationResult<TMock>>[] orderedChecks) { }
+        public static void Then<TMock>(this Mockolate.Verify.IVerificationResult<TMock> verificationResult, params System.Func<TMock, Mockolate.Verify.VerificationResult<TMock>>[] orderedChecks) { }
         public static void Twice<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
     }
-    public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult<TVerify>
+    public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult, Mockolate.Verify.IVerificationResult<TVerify>
     {
-        public VerificationResult(TVerify mock, Mockolate.Interactions.MockInteractions interactions, Mockolate.Interactions.IInteraction[] matchingInteractions, string expectation) { }
+        public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, Mockolate.Interactions.IInteraction[] matchingInteractions, string expectation) { }
         public string Expectation { get; }
-        public TVerify Mock { get; }
         public bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate) { }
     }
 }

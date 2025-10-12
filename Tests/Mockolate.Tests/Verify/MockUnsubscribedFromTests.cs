@@ -15,7 +15,7 @@ public sealed partial class MockUnsubscribedFromTests
 		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		var result = unsubscribedFrom.Event("baz.bar");
+		VerificationResult<MockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("baz.bar");
 
 		await That(result).Never();
 	}
@@ -29,7 +29,7 @@ public sealed partial class MockUnsubscribedFromTests
 		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		var result = unsubscribedFrom.Event("foo.bar");
+		VerificationResult<MockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("foo.bar");
 
 		await That(result).Once();
 	}
@@ -41,9 +41,9 @@ public sealed partial class MockUnsubscribedFromTests
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
 		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
 
-		var result = unsubscribedFrom.Event("foo.bar");
+		VerificationResult<MockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("foo.bar");
 
 		await That(result).Never();
-		await That(result.Expectation).IsEqualTo("unsubscribed from event bar");
+		await That((((IVerificationResult)result).Expectation)).IsEqualTo("unsubscribed from event bar");
 	}
 }
