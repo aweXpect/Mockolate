@@ -9,12 +9,45 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Behavior_ShouldBeSet()
 	{
-		MyMock<string> sut = new("", MockBehavior.Default with
+		MyMock<MyServiceBase> sut = new(new MyServiceBase(), MockBehavior.Default with
 		{
 			ThrowWhenNotSetup = true,
 		});
 
 		await That(sut.Hidden.Behavior.ThrowWhenNotSetup).IsTrue();
+	}
+
+	[Fact]
+	public async Task Create_SealedClass_ShouldThrowMockException()
+	{
+		void Act()
+			=> _ = Mock.Create<MySealedClass>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Create_WithMockBehavior_SealedClass_ShouldThrowMockException()
+	{
+		void Act()
+			=> _ = Mock.Create<MySealedClass>(MockBehavior.Default);
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Create_WithConstructorParameters_SealedClass_ShouldThrowMockException()
+	{
+		void Act()
+			=> _ = Mock.Create<MySealedClass>(BaseClass.WithConstructorParameters());
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -185,4 +218,6 @@ public sealed partial class MockTests
 			}
 		}
 	}
+
+	public sealed class MySealedClass { }
 }

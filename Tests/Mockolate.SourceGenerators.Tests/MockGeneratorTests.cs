@@ -18,9 +18,9 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var m1 = Mock.Create<IMyInt>();
-			     			var m2 = Mock.Create<I.MyInt>();
-			     			var m3 = Mock.Create<IMy<int>>();
+			     			_ = Mock.Create<IMyInt>();
+			     			_ = Mock.Create<I.MyInt>();
+			     			_ = Mock.Create<IMy<int>>();
 			             }
 			         }
 
@@ -67,7 +67,7 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var m1 = Mock.Create<I, IMyInt, I.MyInt, IMy<int>>();
+			     			_ = Mock.Create<I, IMyInt, I.MyInt, IMy<int>>();
 			             }
 			         }
 
@@ -109,7 +109,7 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var m1 = Mock.Create<IMyInterface>();
+			     			_ = Mock.Create<IMyInterface>();
 			             }
 			         }
 
@@ -121,6 +121,39 @@ public class MockGeneratorTests
 			         }
 
 			         public class Mock<T>{ }
+			     }
+			     """);
+
+		await ThatAll(
+			That(result.Sources.Keys).IsEqualTo([
+				"Mock.g.cs",
+				"MockRegistration.g.cs",
+			]).InAnyOrder().IgnoringCase(),
+			That(result.Diagnostics).IsEmpty()
+		);
+	}
+
+	[Fact]
+	public async Task SealedClass_ShouldNotBeIncluded()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<MyService>();
+			             }
+			         }
+
+			         public sealed class MyService { }
 			     }
 			     """);
 
@@ -149,7 +182,7 @@ public class MockGeneratorTests
 			             public static void Main(string[] args)
 			             {
 			                var factory = new Mock.Factory(MockBehavior.Default);
-			     			var y = factory.Create<IMyInterface>();
+			     			_ = factory.Create<IMyInterface>();
 			             }
 			         }
 

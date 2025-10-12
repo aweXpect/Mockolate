@@ -34,9 +34,19 @@ internal static class MockGeneratorHelpers
 				.Where(t => t is not null)
 				.Cast<ITypeSymbol>()
 				.ToArray();
+			if (genericTypes.Length == 0 || !IsMockable(genericTypes[0]))
+			{
+				return null;
+			}
+
 			return new MockClass(genericTypes);
 		}
 
 		return null;
+	}
+
+	private static bool IsMockable(ITypeSymbol typeSymbol)
+	{
+		return !typeSymbol.IsSealed || typeSymbol.TypeKind == TypeKind.Delegate;
 	}
 }
