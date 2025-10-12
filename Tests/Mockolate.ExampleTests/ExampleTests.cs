@@ -22,7 +22,7 @@ public class ExampleTests
 
 		int result = mock.Subject.MyMethod(3);
 
-		VerificationResult<Mock<MyClass>> check = mock.Verify.Invoked.MyMethod(With.Any<int>());
+		var check = mock.Verify.Invoked.MyMethod(With.Any<int>());
 		await That(result).IsEqualTo(5);
 		check.Once();
 	}

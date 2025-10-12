@@ -12,10 +12,10 @@ public sealed partial class MockUnsubscribedFromTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockUnsubscribedFrom<Mock<int>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
+		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		VerificationResult<Mock<int>> result = unsubscribedFrom.Event("baz.bar");
+		var result = unsubscribedFrom.Event("baz.bar");
 
 		await That(result).Never();
 	}
@@ -26,10 +26,10 @@ public sealed partial class MockUnsubscribedFromTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockUnsubscribedFrom<Mock<int>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
+		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		VerificationResult<Mock<int>> result = unsubscribedFrom.Event("foo.bar");
+		var result = unsubscribedFrom.Event("foo.bar");
 
 		await That(result).Once();
 	}
@@ -39,9 +39,9 @@ public sealed partial class MockUnsubscribedFromTests
 	{
 		MockInteractions mockInteractions = new();
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockUnsubscribedFrom<Mock<int>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
+		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
 
-		VerificationResult<Mock<int>> result = unsubscribedFrom.Event("foo.bar");
+		var result = unsubscribedFrom.Event("foo.bar");
 
 		await That(result).Never();
 		await That(result.Expectation).IsEqualTo("unsubscribed from event bar");

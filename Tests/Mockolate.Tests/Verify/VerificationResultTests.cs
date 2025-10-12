@@ -10,7 +10,7 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		VerificationResult<Mock<IMyService>> check = sut.Verify.SubscribedTo.SomethingHappened();
+		var check = sut.Verify.SubscribedTo.SomethingHappened();
 
 		await That(check.Expectation).IsEqualTo("subscribed to event SomethingHappened");
 	}
@@ -20,7 +20,7 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		VerificationResult<Mock<IMyService>> check = sut.Verify.UnsubscribedFrom.SomethingHappened();
+		var check = sut.Verify.UnsubscribedFrom.SomethingHappened();
 
 		await That(check.Expectation).IsEqualTo("unsubscribed from event SomethingHappened");
 	}
@@ -30,7 +30,7 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		VerificationResult<Mock<IMyService>> check = sut.Verify.Invoked.DoSomething(With.Any<int?>(), "foo");
+		var check = sut.Verify.Invoked.DoSomething(With.Any<int?>(), "foo");
 
 		await That(check.Expectation).IsEqualTo("invoked method DoSomething(With.Any<int?>(), \"foo\")");
 	}
@@ -40,7 +40,7 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		VerificationResult<Mock<IMyService>> check = sut.Verify.Got.MyProperty();
+		var check = sut.Verify.Got.MyProperty();
 
 		await That(check.Expectation).IsEqualTo("got property MyProperty");
 	}
@@ -50,7 +50,7 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		VerificationResult<Mock<IMyService>> check = sut.Verify.Set.MyProperty(With.Any<int>());
+		var check = sut.Verify.Set.MyProperty(With.Any<int>());
 
 		await That(check.Expectation).IsEqualTo("set property MyProperty to value With.Any<int>()");
 	}

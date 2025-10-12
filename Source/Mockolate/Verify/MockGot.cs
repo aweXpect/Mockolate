@@ -7,22 +7,25 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Check which properties got read on the mocked instance <typeparamref name="TMock" />.
 /// </summary>
-public class MockGot<T, TMock>(IMockVerify<TMock> verify) : IMockGot<TMock>
+public class MockGot<T, TMock>(MockVerify<T, TMock> verify) : IMockGot<MockVerify<T, TMock>>
 {
 	/// <inheritdoc cref="IMockGot{TMock}.Property(string)" />
-	VerificationResult<TMock> IMockGot<TMock>.Property(string propertyName)
-		=> new(verify.Mock, verify.Interactions,
-			verify.Interactions.Interactions
+	VerificationResult<MockVerify<T, TMock>> IMockGot<MockVerify<T, TMock>>.Property(string propertyName)
+	{
+		MockInteractions interactions = ((IMockVerify<TMock>)verify).Interactions;
+		return new(verify, interactions,
+			interactions.Interactions
 				.OfType<PropertyGetterAccess>()
 				.Where(property => property.Name.Equals(propertyName))
 				.Cast<IInteraction>()
 				.ToArray(),
-        $"got property {propertyName.SubstringAfterLast('.')}");
+		$"got property {propertyName.SubstringAfterLast('.')}");
+	}
 
 	/// <summary>
 	///     Check which protected properties got read on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify) : MockGot<T, TMock>(verify)
+	public class Protected(MockVerify<T, TMock> verify) : MockGot<T, TMock>(verify)
 	{
 	}
 }
