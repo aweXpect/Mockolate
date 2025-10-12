@@ -56,7 +56,7 @@ public class DelegateTests
 		_ = mock.Subject(1, "foo");
 		_ = mock.Subject(2, "bar");
 
-		mock.Verify.Invoked(With.Any<int>(), With.Any<string>()).Twice();
+		await That(mock.Verify.Invoked(With.Any<int>(), With.Any<string>())).Twice();
 	}
 
 	internal delegate int DoSomething(int x, string y);
