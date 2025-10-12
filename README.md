@@ -128,7 +128,7 @@ Verify that methods or properties were called with specific arguments and how ma
 ```csharp
 mock.Verify.Invoked.AddUser("Bob").AtLeastOnce();
 mock.Verify.Invoked.TryDelete(id, With.Out<User?>()).Never();
-mock.Verify.Invoked.DoSomething(WithAny<int>()).Exactly(2);
+mock.Verify.Invoked.DoSomething(With.Any<int>()).Exactly(2);
 ```
 
 - Supports `.Never()`, `Once()`, `Twice()`, `Exactly(n)`, `.AtLeastOnce()`, `.AtLeastTwice()`, `.AtLeast(n)`, `.AtMostOnce()`, `.AtMostTwice()`, `.AtMost(n)` for call count verification.
