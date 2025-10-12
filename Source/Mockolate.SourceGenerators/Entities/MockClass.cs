@@ -18,8 +18,14 @@ internal record MockClass : Class
 				            x.DeclaredAccessibility == Accessibility.ProtectedOrInternal ||
 				            x.DeclaredAccessibility == Accessibility.Public)
 				.Select(x => new Method(x)).ToArray());
+			if (namedTypeSymbol.DelegateInvokeMethod is not null)
+			{
+				Delegate = new Method(namedTypeSymbol.DelegateInvokeMethod);
+			}
 		}
 	}
+
+	public Method? Delegate { get; }
 
 	public EquatableArray<Method>? Constructors { get; }
 

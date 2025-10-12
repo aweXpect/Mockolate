@@ -39,7 +39,7 @@ internal static partial class Sources
 		AppendMock(sb, mockClass, namespaces);
 		sb.AppendLine();
 
-		if (mockClass.IsInterface || mockClass.Constructors?.Any() == true)
+		if (mockClass.Delegate is null && (mockClass.IsInterface || mockClass.Constructors?.Any() == true))
 		{
 			AppendMockSubject(sb, mockClass, namespaces);
 		}
@@ -72,7 +72,59 @@ internal static partial class Sources
 				"\t\tpublic Mock(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior) : base(mockBehavior)")
 			.AppendLine();
 		sb.AppendLine("\t\t{");
-		if (mockClass.IsInterface ||
+		if (mockClass.Delegate is not null)
+		{
+			sb.Append("\t\t\tSubject = new ").Append(mockClass.ClassName).Append("((")
+				.Append(string.Join(", ", mockClass.Delegate.Value.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+				.Append(") =>").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			if (mockClass.Delegate.Value.ReturnType != Entities.Type.Void)
+			{
+				sb.Append("\t\t\t\tvar result = ((IMock)this).Execute<")
+					.Append(mockClass.Delegate.Value.ReturnType.GetMinimizedString(namespaces))
+					.Append(">(\"").Append(mockClass.GetFullName(mockClass.Delegate.Value.Name)).Append("\"");
+				foreach (MethodParameter p in mockClass.Delegate.Value.Parameters)
+				{
+					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
+				}
+
+				sb.AppendLine(");");
+			}
+			else
+			{
+				sb.Append("\t\t\t\tvar result = ((IMock)this).Execute(\"").Append(mockClass.GetFullName(mockClass.Delegate.Value.Name)).Append("\"");
+				foreach (MethodParameter p in mockClass.Delegate.Value.Parameters)
+				{
+					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
+				}
+
+				sb.AppendLine(");");
+			}
+
+			foreach (MethodParameter parameter in mockClass.Delegate.Value.Parameters)
+			{
+				if (parameter.RefKind == RefKind.Out)
+				{
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = result.SetOutParameter<")
+						.Append(parameter.Type.GetMinimizedString(namespaces)).Append(">(\"").Append(parameter.Name)
+						.AppendLine("\");");
+				}
+				else if (parameter.RefKind == RefKind.Ref)
+				{
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = result.SetRefParameter<")
+						.Append(parameter.Type.GetMinimizedString(namespaces)).Append(">(\"").Append(parameter.Name)
+						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
+				}
+			}
+
+			if (mockClass.Delegate.Value.ReturnType != Entities.Type.Void)
+			{
+				sb.Append("\t\t\t\treturn result.Result;").AppendLine();
+			}
+
+			sb.Append("\t\t\t});").AppendLine();
+		}
+		else if (mockClass.IsInterface ||
 			(mockClass.Constructors?.Count > 0 &&
 			 mockClass.Constructors.Value.All(m => m.Parameters.Count == 0)))
 		{
@@ -418,7 +470,6 @@ internal static partial class Sources
 						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
 				}
 			}
-
 
 			if (method.ReturnType != Entities.Type.Void)
 			{

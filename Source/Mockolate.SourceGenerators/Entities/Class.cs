@@ -99,6 +99,7 @@ internal record Class
 				SpecialType.System_UInt32 => "uint",
 				SpecialType.System_UInt64 => "ulong",
 				SpecialType.System_UInt16 => "ushort",
+				SpecialType.System_Boolean => "bool",
 				_ => type.Name,
 			};
 		}
@@ -126,6 +127,7 @@ internal record Class
 
 	public string GetClassNameWithoutDots()
 		=> ClassName
+			.Replace(",", "")
 			.Replace(".", "")
 			.Replace("<", "")
 			.Replace(">", "");
