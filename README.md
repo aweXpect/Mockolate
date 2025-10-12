@@ -95,14 +95,14 @@ mock.Setup.Property.MyProperty
 	.Returns(4);
 ```
 
-**Callbacks**
+**Callbacks**  
 Callbacks can be registered on the setter or getter.
 ```csharp
 mock.Setup.Property.MyProperty.OnGet(() => Console.WriteLine("MyProperty was read!"));
 mock.Setup.Property.MyProperty.OnSet(value => Console.WriteLine($"Set MyProperty to {value}}!"));
 ```
 
-**Indexers**
+**Indexers**  
 Indexers are supported as well.
 ```csharp
 mock.Setup.Indexer(With.Any<int>())
@@ -128,16 +128,15 @@ Verify that methods or properties were called with specific arguments and how ma
 ```csharp
 mock.Verify.Invoked.AddUser("Bob").AtLeastOnce();
 mock.Verify.Invoked.TryDelete(id, With.Out<User?>()).Never();
-mock.Verify.Invoked.DoSomething().Exactly(2);
+mock.Verify.Invoked.DoSomething(WithAny<int>()).Exactly(2);
 ```
 
-- Use `.Never()`, `.AtLeastOnce()`, `.AtMost(n)`, `.Exactly(n)` for call count verification.
+- Supports `.Never()`, `Once()`, `Twice()`, `Exactly(n)`, `.AtLeastOnce()`, `.AtLeastTwice()`, `.AtLeast(n)`, `.AtMostOnce()`, `.AtMostTwice()`, `.AtMost(n)` for call count verification.
 - Verify arguments with matchers.
 
 
 #### Call Ordering
-
-Verify that calls occurred in a specific order:
+Use `Then` to Verify that calls occurred in a specific order:
 
 ```csharp
 mock.Verify.Invoked.AddUser("Alice").Then(
