@@ -81,10 +81,7 @@ mock.Raises.UsersChanged(this, EventArgs.Empty);
 Verify that methods or properties were called with specific arguments and how many times:
 
 ```csharp
-mock.Invoked.AddUser("Bob").Invocations.Count(); // e.g., 1
-mock.Invoked.TryDelete(id, With.Out<User?>()).Invocations.Count();
+mock.Verify.Invoked.AddUser("Bob").AtLeastOnce();
+mock.Verify.Invoked.TryDelete(id, With.Out<User?>()).Never();
 ```
-
-- Use the `Invoked` property to access invocation history for each method or property.
-- You can assert on the number of invocations or inspect the arguments used.
 
