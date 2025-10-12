@@ -106,8 +106,8 @@ mock.Setup.Property.MyProperty.OnSet(value => Console.WriteLine($"Set MyProperty
 Indexers are supported as well.
 ```csharp
 mock.Setup.Indexer(With.Any<int>())
-	.InitializeWith(v => v*v)
-	.OnGet(v => Console.WriteLine($"Indexer this[{v}] was read"));
+	.InitializeWith(index => index*index)
+	.OnGet(index => Console.WriteLine($"Indexer this[{index}] was read"));
 ```
 
 ### Event Raising
