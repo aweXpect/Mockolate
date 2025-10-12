@@ -4,25 +4,20 @@ using Mockolate.Interactions;
 namespace Mockolate.Verify;
 
 /// <summary>
-///     The expectation contains the matching interactions for verification.
+///     The result of a verification containing the matching interactions.
 /// </summary>
-public class VerificationResult<TMock>
+public class VerificationResult<TVerify> : IVerificationResult<TVerify>
 {
 	private readonly MockInteractions _interactions;
 	private readonly IInteraction[] _matchingInteractions;
 
 	/// <summary>
-	///     The expectation of this check result.
+	///     The verify object for which this expectation applies.
 	/// </summary>
-	public string Expectation { get; }
-
-	/// <summary>
-	///     The mock object for which this expectation applies.
-	/// </summary>
-	public TMock Mock { get; }
+	public TVerify Mock { get; }
 
 	/// <inheritdoc cref="VerificationResult{TMock}" />
-	public VerificationResult(TMock mock, MockInteractions interactions, IInteraction[] matchingInteractions, string expectation)
+	public VerificationResult(TVerify mock, MockInteractions interactions, IInteraction[] matchingInteractions, string expectation)
 	{
 		Mock = mock;
 		_interactions = interactions;
@@ -30,12 +25,20 @@ public class VerificationResult<TMock>
 		Expectation = expectation;
 	}
 
-	/// <summary>
-	/// Verifies that the specified <paramref name="predicate"/> holds true for the current set of interactions.
-	/// </summary>
+	#region IVerificationResult<TVerify>
+
+	/// <inheritdoc cref="IVerificationResult{TVerify}.Expectation" />
+	public string Expectation { get; }
+
+	/// <inheritdoc cref="IVerificationResult{TVerify}.Object" />
+	TVerify IVerificationResult<TVerify>.Object => Mock;
+
+	/// <inheritdoc cref="IVerificationResult{TVerify}.Verify(Func{IInteraction[], Boolean})" />
 	public bool Verify(Func<IInteraction[], bool> predicate)
 	{
 		_interactions.Verified(_matchingInteractions);
 		return predicate(_matchingInteractions);
 	}
+
+	#endregion
 }

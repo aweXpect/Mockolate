@@ -7,22 +7,25 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Check which events were subscribed to on the mocked instance <typeparamref name="TMock" />.
 /// </summary>
-public class MockSubscribedTo<T, TMock>(IMockVerify<TMock> verify) : IMockSubscribedTo<TMock>
+public class MockSubscribedTo<T, TMock>(MockVerify<T, TMock> verify) : IMockSubscribedTo<MockVerify<T, TMock>>
 {
 	/// <inheritdoc cref="IMockSubscribedTo{TMock}.Event(string)" />
-	VerificationResult<TMock> IMockSubscribedTo<TMock>.Event(string eventName)
-		=> new(verify.Mock, verify.Interactions,
-			verify.Interactions.Interactions
+	VerificationResult<MockVerify<T, TMock>> IMockSubscribedTo<MockVerify<T, TMock>>.Event(string eventName)
+	{
+		MockInteractions interactions = ((IMockVerify<TMock>)verify).Interactions;
+		return new(verify, interactions,
+			interactions.Interactions
 				.OfType<EventSubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
 				.ToArray(),
-        $"subscribed to event {eventName.SubstringAfterLast('.')}");
+		$"subscribed to event {eventName.SubstringAfterLast('.')}");
+	}
 
 	/// <summary>
 	///     Check which protected events were subscribed to on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify) : MockSubscribedTo<T, TMock>(verify)
+	public class Protected(MockVerify<T, TMock> verify) : MockSubscribedTo<T, TMock>(verify)
 	{
 	}
 }

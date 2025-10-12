@@ -187,13 +187,13 @@ public class VerificationResultExtensionsTests
 		mock.Subject.DoSomething(3);
 		mock.Subject.DoSomething(4);
 
-		mock.Verify.Invoked.DoSomething(3).Then(m => m.Verify.Invoked.DoSomething(4));
+		mock.Verify.Invoked.DoSomething(3).Then(m => m.Invoked.DoSomething(4));
 		void Act()
-			=> mock.Verify.Invoked.DoSomething(2).Then(m => m.Verify.Invoked.DoSomething(1));
+			=> mock.Verify.Invoked.DoSomething(2).Then(m => m.Invoked.DoSomething(1));
 
 		await That(Act).Throws<MockVerificationException>()
 			.WithMessage($"Expected that mock invoked method DoSomething(2), then invoked method DoSomething(1) in order, but it invoked method DoSomething(1) too early.");
-		mock.Verify.Invoked.DoSomething(1).Then(m => m.Verify.Invoked.DoSomething(2));
+		mock.Verify.Invoked.DoSomething(1).Then(m => m.Invoked.DoSomething(2));
 	}
 
 	[Fact]
@@ -205,15 +205,15 @@ public class VerificationResultExtensionsTests
 		mock.Subject.DoSomething(3);
 		mock.Subject.DoSomething(4);
 
-		await That(void () => mock.Verify.Invoked.DoSomething(6).Then(m => m.Verify.Invoked.DoSomething(4)))
+		await That(void () => mock.Verify.Invoked.DoSomething(6).Then(m => m.Invoked.DoSomething(4)))
 			.Throws<MockVerificationException>()
 			.WithMessage($"Expected that mock invoked method DoSomething(6), then invoked method DoSomething(4) in order, but it invoked method DoSomething(6) not at all.");
 		
-		await That(void () => mock.Verify.Invoked.DoSomething(1).Then(m => m.Verify.Invoked.DoSomething(6), m => m.Verify.Invoked.DoSomething(3)))
+		await That(void () => mock.Verify.Invoked.DoSomething(1).Then(m => m.Invoked.DoSomething(6), m => m.Invoked.DoSomething(3)))
 			.Throws<MockVerificationException>()
 			.WithMessage($"Expected that mock invoked method DoSomething(1), then invoked method DoSomething(6), then invoked method DoSomething(3) in order, but it invoked method DoSomething(6) not at all.");
 		
-		await That(void () => mock.Verify.Invoked.DoSomething(1).Then(m => m.Verify.Invoked.DoSomething(2), m => m.Verify.Invoked.DoSomething(6)))
+		await That(void () => mock.Verify.Invoked.DoSomething(1).Then(m => m.Invoked.DoSomething(2), m => m.Invoked.DoSomething(6)))
 			.Throws<MockVerificationException>()
 			.WithMessage($"Expected that mock invoked method DoSomething(1), then invoked method DoSomething(2), then invoked method DoSomething(6) in order, but it invoked method DoSomething(6) not at all.");
 	}

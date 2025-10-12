@@ -12,10 +12,10 @@ public sealed partial class MockSetTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockSet<Mock<int>> mockSet = new MockSet<int, Mock<int>>(verify);
+		IMockSet<MockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
-		VerificationResult<Mock<int>> result = mockSet.Property("foo.bar", With.Any<int>());
+		var result = mockSet.Property("foo.bar", With.Any<int>());
 
 		await That(result).Once();
 	}
@@ -26,10 +26,10 @@ public sealed partial class MockSetTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockSet<Mock<int>> mockSet = new MockSet<int, Mock<int>>(verify);
+		IMockSet<MockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
-		VerificationResult<Mock<int>> result = mockSet.Property("foo.bar", With.Any<string>());
+		var result = mockSet.Property("foo.bar", With.Any<string>());
 
 		await That(result).Never();
 	}
@@ -40,10 +40,10 @@ public sealed partial class MockSetTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockSet<Mock<int>> mockSet = new MockSet<int, Mock<int>>(verify);
+		IMockSet<MockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
-		VerificationResult<Mock<int>> result = mockSet.Property("baz.bar", With.Any<int>());
+		var result = mockSet.Property("baz.bar", With.Any<int>());
 
 		await That(result).Never();
 	}
@@ -53,9 +53,9 @@ public sealed partial class MockSetTests
 	{
 		MockInteractions mockInteractions = new();
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockSet<Mock<int>> mockSet = new MockSet<int, Mock<int>>(verify);
+		IMockSet<MockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
 
-		VerificationResult<Mock<int>> result = mockSet.Property("foo.bar", With.Any<int>());
+		var result = mockSet.Property("foo.bar", With.Any<int>());
 
 		await That(result).Never();
 		await That(result.Expectation).IsEqualTo("set property bar to value With.Any<int>()");

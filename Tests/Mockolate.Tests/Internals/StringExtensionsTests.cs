@@ -11,9 +11,9 @@ public sealed class StringExtensionsTests
 	{
 		MockInteractions interactions = new();
 		MockVerify<int, Mock<int>> verify = new(interactions, new MyMock<int>(1));
-		IMockGot<Mock<int>> mockGot = new MockGot<int, Mock<int>>(verify);
+		IMockGot<MockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
 
-		VerificationResult<Mock<int>> result = mockGot.Property("SomeNameWithoutADot");
+		var result = mockGot.Property("SomeNameWithoutADot");
 
 		result.Never();
 		await That(result.Expectation).IsEqualTo("got property SomeNameWithoutADot");
@@ -24,9 +24,9 @@ public sealed class StringExtensionsTests
 	{
 		MockInteractions interactions = new();
 		MockVerify<int, Mock<int>> verify = new(interactions, new MyMock<int>(1));
-		IMockGot<Mock<int>> accessed = new MockGot<int, Mock<int>>(verify);
+		IMockGot<MockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
 
-		VerificationResult<Mock<int>> result = accessed.Property(".bar");
+		var result = mockGot.Property(".bar");
 
 		result.Never();
 		await That(result.Expectation).IsEqualTo("got property bar");

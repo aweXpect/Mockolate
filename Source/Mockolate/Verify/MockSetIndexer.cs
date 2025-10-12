@@ -6,12 +6,14 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Check which indexers were set on the mocked instance <typeparamref name="TMock" />.
 /// </summary>
-public class MockSetIndexer<T, TMock>(IMockVerify<TMock> verify) : IMockSetIndexer<TMock>
+public class MockSetIndexer<T, TMock>(MockVerify<T, TMock> verify) : IMockSetIndexer<MockVerify<T, TMock>>
 {
 	/// <inheritdoc cref="IMockSetIndexer{TMock}.Set(With.Parameter?, With.Parameter?[])" />
-	VerificationResult<TMock> IMockSetIndexer<TMock>.Set(With.Parameter? value, params With.Parameter?[] parameters)
-		=> new(verify.Mock, verify.Interactions,
-			verify.Interactions.Interactions
+	VerificationResult<MockVerify<T, TMock>> IMockSetIndexer<MockVerify<T, TMock>>.Set(With.Parameter? value, params With.Parameter?[] parameters)
+	{
+		MockInteractions interactions = ((IMockVerify<TMock>)verify).Interactions;
+		return new(verify, interactions,
+			interactions.Interactions
 				.OfType<IndexerSetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				(value is null ? indexer.Value is null : value!.Matches(indexer.Value)) &&
@@ -20,12 +22,13 @@ public class MockSetIndexer<T, TMock>(IMockVerify<TMock> verify) : IMockSetIndex
 					: !parameter.Matches(indexer.Parameters[i])).Any())
 				.Cast<IInteraction>()
 				.ToArray(),
-        $"set indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))} to value {(value?.ToString() ?? "null")}");
+		$"set indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))} to value {(value?.ToString() ?? "null")}");
+	}
 
 	/// <summary>
 	///     Check which protected indexers were set on the mocked instance <typeparamref name="TMock" />.
 	/// </summary>
-	public class Protected(IMockVerify<TMock> verify) : MockSetIndexer<T, TMock>(verify)
+	public class Protected(MockVerify<T, TMock> verify) : MockSetIndexer<T, TMock>(verify)
 	{
 	}
 }
