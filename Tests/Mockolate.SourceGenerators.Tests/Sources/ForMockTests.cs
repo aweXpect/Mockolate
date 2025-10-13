@@ -158,7 +158,7 @@ public sealed partial class ForMockTests
 			     
 			     namespace MyCode.Services
 			     {
-			         public class IMyService<T> { }
+			         public interface IMyService<T> { }
 			     }
 			     
 			     namespace MyCode.Models
