@@ -75,37 +75,49 @@ internal static class TypeFormatter
 		Type value,
 		StringBuilder stringBuilder)
 	{
-		if (value.IsArray)
+		if (value.IsGenericParameter)
+		{
+			stringBuilder.Append(value.Name);
+		}
+		else if (value.IsArray)
 		{
 			FormatType(value.GetElementType()!, stringBuilder);
 			stringBuilder.Append("[]");
 		}
-		else if (AppendedPrimitiveAlias(value, stringBuilder))
+		else if (!AppendedPrimitiveAlias(value, stringBuilder))
 		{
-			return;
-		}
-		else if (value.IsGenericType)
-		{
-			Type genericTypeDefinition = value.GetGenericTypeDefinition();
-			stringBuilder.Append(genericTypeDefinition.Name.SubstringUntilFirst('`'));
-			stringBuilder.Append('<');
-			bool isFirstArgument = true;
-			foreach (Type argument in value.GetGenericArguments())
+			if (value.IsNested && value.DeclaringType is not null)
 			{
-				if (!isFirstArgument)
-				{
-					stringBuilder.Append(", ");
-				}
-
-				isFirstArgument = false;
-				FormatType(argument, stringBuilder);
+				FormatType(value.DeclaringType, stringBuilder);
+				stringBuilder.Append('.');
 			}
 
-			stringBuilder.Append('>');
-		}
-		else
-		{
-			stringBuilder.Append(value.Name);
+			if (value.IsGenericType)
+			{
+				Type genericTypeDefinition = value.GetGenericTypeDefinition();
+				stringBuilder.Append(genericTypeDefinition.Name.SubstringUntilFirst('`'));
+				stringBuilder.Append('<');
+				bool isFirstArgument = true;
+				foreach (Type argument in value.GetGenericArguments())
+				{
+					if (!isFirstArgument)
+					{
+						stringBuilder.Append(", ");
+					}
+
+					isFirstArgument = false;
+					if (!argument.ContainsGenericParameters)
+					{
+						FormatType(argument, stringBuilder);
+					}
+				}
+
+				stringBuilder.Append('>');
+			}
+			else
+			{
+				stringBuilder.Append(value.Name);
+			}
 		}
 	}
 
