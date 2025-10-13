@@ -142,21 +142,35 @@ public sealed partial class ForMockTests
 			.Run("""
 			     using System.Collections.Generic;
 			     using Mockolate;
+			     using MyCode.Models;
+			     using MyCode.Services;
 
-			     namespace MyCode;
-			     public class Program
+			     namespace MyCode
 			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = Mock.Create<IMyService<List<int>>>();
-			         }
+			     	public class Program
+			     	{
+			     	    public static void Main(string[] args)
+			     	    {
+			     			_ = Mock.Create<IMyService<List<MyData>>>();
+			     	    }
+			     	}
 			     }
-
-			     public class IMyService<T> { }
+			     
+			     namespace MyCode.Services
+			     {
+			         public class IMyService<T> { }
+			     }
+			     
+			     namespace MyCode.Models
+			     {
+			         public record MyData(int Value);
+			     }
+			     
 			     """, typeof(List<>));
 
-		await That(result.Sources).ContainsKey("ForIMyServiceListint.g.cs").WhoseValue
+		 await That(result.Sources).ContainsKey("ForIMyServiceListMyData.g.cs").WhoseValue
 			.Contains("using System.Collections.Generic;").And
-			.Contains("using MyCode;");
+			.Contains("using MyCode.Services;").And
+			.Contains("using MyCode.Models;");
 	}
 }
