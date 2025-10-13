@@ -137,6 +137,11 @@ internal record Class
 	internal IEnumerable<string> EnumerateNamespaces()
 	{
 		yield return Namespace;
+		foreach (var @namespace in AdditionalNamespaces)
+		{
+			yield return @namespace;
+		}
+
 		foreach (Method method in Methods)
 		{
 			if (method.ReturnType.Namespace != null)
