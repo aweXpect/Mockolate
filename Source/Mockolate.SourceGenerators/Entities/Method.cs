@@ -14,7 +14,15 @@ internal record struct Method
 		ContainingType = methodSymbol.ContainingType.Name;
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
+		if (methodSymbol.IsGenericMethod)
+		{
+			GenericParameters = new EquatableArray<GenericParameter>(methodSymbol.TypeArguments
+				.Select(x => new GenericParameter((ITypeParameterSymbol)x)).ToArray());
+			Name += $"<{string.Join(", ", GenericParameters.Value.Select(x => x.Name))}>";
+		}
 	}
+
+	public EquatableArray<GenericParameter>? GenericParameters { get; }
 
 	public bool UseOverride { get; }
 
