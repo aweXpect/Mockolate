@@ -430,6 +430,16 @@ internal static partial class Sources
 			}
 
 			sb.Append(')');
+			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+			{
+				foreach (GenericParameter gp in method.GenericParameters.Value)
+				{
+					sb.AppendLine();
+					sb.Append("\t\t\t");
+					gp.AppendWhereConstraint(sb, namespaces);
+				}
+			}
+
 			sb.AppendLine();
 			sb.AppendLine("\t\t{");
 			if (method.ReturnType != Entities.Type.Void)

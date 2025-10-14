@@ -283,6 +283,59 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
+		[Theory]
+		[InlineData("T")]
+		[InlineData("struct")]
+		[InlineData("class")]
+		[InlineData("notnull")]
+		[InlineData("class?")]
+		[InlineData("IMyInterface")]
+		[InlineData("new()")]
+		[InlineData("IMyInterface?")]
+		[InlineData("allows ref struct")]
+		public async Task Methods_Generic_ShouldApplyAllConstraints(string constraint)
+		{
+			GeneratorResult result = Generator
+				.Run($$"""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         bool MyMethod1<T, U>(int index)
+				             where T : class?, notnull, new()
+				             where U : {{constraint}};
+				         void MyMethod2(int index, bool isReadOnly);
+				     }
+
+				     public interface IMyInterface
+				     {
+				     }
+
+				     public class MyClass<out T>
+				     {
+				     	T Value { get; set; }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
+				.Contains($$"""
+				          		/// <inheritdoc cref="IMyService.MyMethod1{T, U}(int)" />
+				          		public bool MyMethod1<T, U>(int index)
+				          			where T : class?, notnull, new()
+				          			where U : {{constraint}}
+				          """).IgnoringNewlineStyle();
+		}
+
 		[Fact]
 		public async Task Methods_ShouldImplementVirtualMethodsOfClassesAndAllExplicitelyFromAdditionalInterfaces()
 		{

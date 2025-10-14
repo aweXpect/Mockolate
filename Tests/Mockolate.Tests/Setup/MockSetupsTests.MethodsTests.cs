@@ -32,12 +32,27 @@ public sealed partial class MockSetupsTests
 			await That(result0.Result).IsNull();
 		}
 
+		[Fact]
+		public async Task GenericMethod_SetupShouldWork()
+		{
+			Mock<IMethodService> mock = Mock.Create<IMethodService>();
+			mock.Setup.Method.MyGenericMethod<int, string>(0, "foo").Returns(42);
+
+			int result1 = mock.Subject.MyGenericMethod<int, string>(0, "foo");
+			int result2 = mock.Subject.MyGenericMethod<long, string>(0, "foo");
+
+			await That(mock.Verify.Invoked.MyGenericMethod<long, string>(With.Any<long>(), With.Any<string>())).Once();
+			await That(result1).IsEqualTo(42);
+			await That(result2).IsEqualTo(0);
+		}
+
 		public interface IMethodService
 		{
 			void MyVoidMethodWithoutParameters();
 			void MyVoidMethodWithParameters(int x, string y);
 			int MyIntMethodWithoutParameters();
 			int MyIntMethodWithParameters(int x, string y);
+			int MyGenericMethod<T1, T2>(T1 x, T2 y) where T1 : struct where T2 : class;
 		}
 	}
 }
