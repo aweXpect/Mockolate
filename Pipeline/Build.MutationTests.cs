@@ -40,7 +40,6 @@ partial class Build
 
 			DotNetToolInstall(_ => _
 				.SetPackageName("dotnet-stryker")
-				.SetVersion("4.7.0")
 				.SetToolInstallationPath(toolPath));
 
 			Dictionary<Project, Project[]> projects = new()
