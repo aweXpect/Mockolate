@@ -7,6 +7,38 @@ namespace Mockolate.Tests;
 
 public sealed class WithTests
 {
+#if NET8_0_OR_GREATER
+	[Theory]
+	[InlineData(41, 43, true)]
+	[InlineData(42, 42, true)]
+	[InlineData(43, 44, false)]
+	[InlineData(40, 41, false)]
+	public async Task Between_ShouldMatchInclusive(int minimum, int maximum, bool expectMatch)
+	{
+		var sut = With.ValueBetween(minimum).And(maximum);
+
+		bool result = sut.Matches(42);
+
+		await That(result).IsEqualTo(expectMatch);
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	[Theory]
+	[InlineData(41, 43, true)]
+	[InlineData(42, 42, false)]
+	[InlineData(42, 44, false)]
+	[InlineData(40, 42, false)]
+	public async Task Between_Exclusive_ShouldMatchExclusive(int minimum, int maximum, bool expectMatch)
+	{
+		var sut = With.ValueBetween(minimum).And(maximum).Exclusive();
+
+		bool result = sut.Matches(42);
+
+		await That(result).IsEqualTo(expectMatch);
+	}
+#endif
+
 	[Theory]
 	[InlineData(null, false)]
 	[InlineData("", false)]

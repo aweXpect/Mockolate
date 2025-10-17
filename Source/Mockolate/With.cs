@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 
@@ -83,6 +84,78 @@ public class With
 		[CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression(nameof(comparer))] string doNotPopulateThisValue2 = "")
 		=> new ParameterEquals<T>(value, doNotPopulateThisValue1, comparer, doNotPopulateThisValue2);
+
+#if NET8_0_OR_GREATER
+	/// <summary>
+	///     Matches a numeric parameter that is between <paramref name="minimum"/>…
+	/// </summary>
+	/// <remarks>Per default the comparison is inclusive the <paramref name="minimum"/> and maximum value.</remarks>
+	public static BetweenParameter<T>.Builder ValueBetween<T>(T minimum, [CallerArgumentExpression(nameof(minimum))] string doNotPopulateThisValue = "")
+		where T : INumber<T>
+		=> new BetweenParameter<T>.Builder(minimum, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches a method parameter of type <typeparamref name="T" /> to be between <paramref name="minimum"/> and <paramref name="maximum"/> inclusive.
+	/// </summary>
+	public class BetweenParameter<T>(T minimum, T maximum, string minimumExpression, string maximumExpression) : Parameter<T>
+		where T : INumber<T>
+	{
+		/// <summary>
+		///     Flag indicating whether the range includes its boundary values.
+		/// </summary>
+		public bool IsInclusive { get; private set; } = true;
+
+		/// <summary>
+		///     The minimum value of the range.
+		/// </summary>
+		public T Minimum { get; } = minimum;
+
+		/// <summary>
+		///     The maximum value of the range.
+		/// </summary>
+		public T Maximum { get; } = maximum;
+
+		/// <summary>
+		///     Excludes the <see cref="Minimum"/> and <see cref="Maximum"/> from the range.
+		/// </summary>
+		public BetweenParameter<T> Exclusive()
+		{
+			IsInclusive = false;
+			return this;
+		}
+
+		/// <inheritdoc cref="Parameter{T}.Matches(T)" />
+		protected override bool Matches(T value)
+		{
+			if (IsInclusive)
+			{
+				return Minimum <= value && value <= Maximum;
+			}
+
+			return Minimum < value && value < Maximum;
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			return $"With.ValueBetween<{typeof(T).FormatType()}>({minimumExpression}).And({maximumExpression})";
+		}
+
+		/// <summary>
+		///     The builder for a <see cref="BetweenParameter{T}"/>.
+		/// </summary>
+		public class Builder(T minimum, string minimumExpression)
+		{
+			/// <summary>
+			///     …and <paramref name="maximum"/>.
+			/// </summary>
+			public BetweenParameter<T> And(T maximum, [CallerArgumentExpression(nameof(maximum))] string doNotPopulateThisValue = "")
+			{
+				return new BetweenParameter<T>(minimum, maximum, minimumExpression, doNotPopulateThisValue);
+			}
+		}
+	}
+#endif
 
 	/// <summary>
 	///     Matches a method parameter against an expectation.
