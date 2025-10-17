@@ -156,6 +156,11 @@ public class With
 			/// </summary>
 			public BetweenParameter<T> And(T maximum, [CallerArgumentExpression(nameof(maximum))] string doNotPopulateThisValue = "")
 			{
+				if (maximum < minimum)
+				{
+					throw new ArgumentOutOfRangeException(nameof(maximum), "The maximum must be greater than or equal to the minimum.");
+				}
+
 				return new BetweenParameter<T>(minimum, maximum, minimumExpression, doNotPopulateThisValue);
 			}
 		}
