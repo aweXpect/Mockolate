@@ -58,7 +58,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Could not find any constructor at all for the base type 'MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
+				"Could not find any constructor at all for the base type 'Mockolate.Tests.MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
 	}
 
 	[Fact]
@@ -78,7 +78,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"No parameterless constructor found for 'MockTests.MyBaseClassWithConstructor'. Please provide constructor parameters.");
+				"No parameterless constructor found for 'Mockolate.Tests.MockTests.MyBaseClassWithConstructor'. Please provide constructor parameters.");
 	}
 
 	[Fact]
@@ -89,7 +89,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"No parameterless constructor found for 'MockTests.MyBaseClassWithConstructor'. Please provide constructor parameters.");
+				"No parameterless constructor found for 'Mockolate.Tests.MockTests.MyBaseClassWithConstructor'. Please provide constructor parameters.");
 	}
 
 	[Fact]
@@ -100,7 +100,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Could not find any constructor for 'MockTests.MyBaseClassWithConstructor' that matches the 3 given parameters (foo, 1, 2).");
+				"Could not find any constructor for 'Mockolate.Tests.MockTests.MyBaseClassWithConstructor' that matches the 3 given parameters (foo, 1, 2).");
 	}
 
 	[Fact]

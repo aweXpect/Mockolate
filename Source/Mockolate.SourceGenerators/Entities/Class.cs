@@ -175,5 +175,7 @@ internal record Class
 #pragma warning restore S3267
 	}
 
+	internal string GetFullName() => $"{Namespace}.{ClassName}";
+
 	internal string GetFullName(string name) => $"{Namespace}.{ClassName}.{name}";
 }

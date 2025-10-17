@@ -11,6 +11,7 @@ public sealed partial class ForMockTests
 			     using Mockolate;
 
 			     namespace MyCode;
+
 			     public class Program
 			     {
 			         public static void Main(string[] args)
@@ -22,7 +23,7 @@ public sealed partial class ForMockTests
 
 		await That(result.Sources).ContainsKey("ForFuncintbool.g.cs").WhoseValue
 			.DoesNotContain("MockSubject").IgnoringNewlineStyle().And
-			.Contains("Subject = new Func<int,bool>(").IgnoringNewlineStyle();
+			.Contains("Subject = new System.Func<int,bool>(").IgnoringNewlineStyle();
 	}
 
 	[Fact]
@@ -34,6 +35,7 @@ public sealed partial class ForMockTests
 			     using Mockolate;
 
 			     namespace MyCode;
+
 			     public class Program
 			     {
 			         public static void Main(string[] args)
@@ -60,9 +62,9 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		public VerificationResult<MockVerify<Program.DoSomething, Mock<Program.DoSomething>>> Invoked(With.Parameter<int>? x, With.Parameter<int>? y)
+				          		public VerificationResult<MockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(With.Parameter<int>? x, With.Parameter<int>? y)
 				          		{
-				          			IMockInvoked<MockVerify<Program.DoSomething, Mock<Program.DoSomething>>> invoked = new MockInvoked<Program.DoSomething, Mock<Program.DoSomething>>(verify);
+				          			IMockInvoked<MockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = new MockInvoked<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>(verify);
 				          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? With.Null<int>(), y ?? With.Null<int>());
 				          		}
 				          """).IgnoringNewlineStyle();

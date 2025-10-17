@@ -11,7 +11,7 @@ internal record struct Method
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : new Type(methodSymbol.ReturnType);
 		Name = methodSymbol.Name;
-		ContainingType = methodSymbol.ContainingType.Name;
+		ContainingType = methodSymbol.ContainingType.ToDisplayString();
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		if (methodSymbol.IsGenericMethod)
