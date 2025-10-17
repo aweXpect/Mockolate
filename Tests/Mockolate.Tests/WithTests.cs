@@ -7,6 +7,51 @@ namespace Mockolate.Tests;
 
 public sealed class WithTests
 {
+#if NET8_0_OR_GREATER
+	[Theory]
+	[InlineData(41, 43, true)]
+	[InlineData(42, 42, false)]
+	[InlineData(42, 44, false)]
+	[InlineData(40, 42, false)]
+	public async Task Between_Exclusive_ShouldMatchExclusive(int minimum, int maximum, bool expectMatch)
+	{
+		var sut = With.ValueBetween(minimum).And(maximum).Exclusive();
+
+		bool result = sut.Matches(42);
+
+		await That(result).IsEqualTo(expectMatch);
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task Between_MaximumLessThanMinimum_ShouldThrowArgumentOutOfRangeException()
+	{
+		void Act() => 
+			_ = With.ValueBetween(42.0).And(41.0).Exclusive();
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithMessage("The maximum must be greater than or equal to the minimum.").AsPrefix().And
+			.WithParamName("maximum");
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	[Theory]
+	[InlineData(41, 43, true)]
+	[InlineData(42, 42, true)]
+	[InlineData(43, 44, false)]
+	[InlineData(40, 41, false)]
+	public async Task Between_ShouldMatchInclusive(int minimum, int maximum, bool expectMatch)
+	{
+		var sut = With.ValueBetween(minimum).And(maximum);
+
+		bool result = sut.Matches(42);
+
+		await That(result).IsEqualTo(expectMatch);
+	}
+#endif
+
 	[Theory]
 	[InlineData(null, false)]
 	[InlineData("", false)]
@@ -123,6 +168,32 @@ public sealed class WithTests
 
 		await That(result).IsEqualTo(expectedValue);
 	}
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task ToString_Between_ShouldReturnExpectedValue()
+	{
+		var sut = With.ValueBetween(4).And(2 * 3);
+		string expectedValue = "With.ValueBetween<int>(4).And(2 * 3)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task ToString_Between_Exclusive_ShouldMatchExpectedValue()
+	{
+		var sut = With.ValueBetween(4).And(2 * 3).Exclusive();
+		string expectedValue = "With.ValueBetween<int>(4).And(2 * 3).Exclusive()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+#endif
 
 	[Fact]
 	public async Task ToString_WithRef_Invoked_ShouldReturnExpectedValue()
