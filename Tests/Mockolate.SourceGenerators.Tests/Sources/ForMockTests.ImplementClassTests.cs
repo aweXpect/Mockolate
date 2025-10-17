@@ -30,16 +30,16 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.SomeEvent" />
-				          		public event EventHandler? SomeEvent
+				          		/// <inheritdoc cref="MyCode.IMyService.SomeEvent" />
+				          		public event System.EventHandler? SomeEvent
 				          		{
 				          			add => _mock.Raise.AddEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
 				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.SomeOtherEvent" />
-				          		public event EventHandler? SomeOtherEvent
+				          		/// <inheritdoc cref="MyCode.IMyService.SomeOtherEvent" />
+				          		public event System.EventHandler? SomeOtherEvent
 				          		{
 				          			add => _mock.Raise.AddEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
 				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
@@ -78,8 +78,8 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForMyService_IMyOtherService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.SomeEvent" />
-				          		public override event EventHandler? SomeEvent
+				          		/// <inheritdoc cref="MyCode.MyService.SomeEvent" />
+				          		public override event System.EventHandler? SomeEvent
 				          		{
 				          			add => _mock.Raise.AddEvent("MyCode.MyService.SomeEvent", value?.Target, value?.Method);
 				          			remove => _mock.Raise.RemoveEvent("MyCode.MyService.SomeEvent", value?.Target, value?.Method);
@@ -87,8 +87,8 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle().And
 				.DoesNotContain("SomeOtherEvent").Because("The event is not virtual!").And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyOtherService.SomeThirdEvent" />
-				          		event EventHandler? IMyOtherService.SomeThirdEvent
+				          		/// <inheritdoc cref="MyCode.IMyOtherService.SomeThirdEvent" />
+				          		event System.EventHandler? MyCode.IMyOtherService.SomeThirdEvent
 				          		{
 				          			add => _mock.Raise.AddEvent("MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
 				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
@@ -123,7 +123,7 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.this[int]" />
+				          		/// <inheritdoc cref="MyCode.IMyService.this[int]" />
 				          		public int this[int index]
 				          		{
 				          			get
@@ -137,7 +137,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.this[int, bool]" />
+				          		/// <inheritdoc cref="MyCode.IMyService.this[int, bool]" />
 				          		public int this[int index, bool isReadOnly]
 				          		{
 				          			get
@@ -147,7 +147,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.this[int, string]" />
+				          		/// <inheritdoc cref="MyCode.IMyService.this[int, string]" />
 				          		public int this[int index, string isWriteOnly]
 				          		{
 				          			set
@@ -191,7 +191,7 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForMyService_IMyOtherService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.this[int]" />
+				          		/// <inheritdoc cref="MyCode.MyService.this[int]" />
 				          		public override int this[int index]
 				          		{
 				          			get
@@ -205,7 +205,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.this[int, bool]" />
+				          		/// <inheritdoc cref="MyCode.MyService.this[int, bool]" />
 				          		protected override int this[int index, bool isReadOnly]
 				          		{
 				          			get
@@ -215,7 +215,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.this[int, string]" />
+				          		/// <inheritdoc cref="MyCode.MyService.this[int, string]" />
 				          		protected override int this[int index, string isWriteOnly]
 				          		{
 				          			set
@@ -226,8 +226,8 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle().And
 				.DoesNotContain("int this[int index, long isNotVirtual]").Because("The indexer is not virtual!").And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyOtherService.this[string]" />
-				          		int IMyOtherService.this[string someAdditionalIndex]
+				          		/// <inheritdoc cref="MyCode.IMyOtherService.this[string]" />
+				          		int MyCode.IMyOtherService.this[string someAdditionalIndex]
 				          		{
 				          			get
 				          			{
@@ -267,7 +267,7 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.MyMethod1(int)" />
+				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod1(int)" />
 				          		public bool MyMethod1(int index)
 				          		{
 				          			var result = _mock.Execute<bool>("MyCode.IMyService.MyMethod1", index);
@@ -275,7 +275,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.MyMethod2(int, bool)" />
+				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, bool)" />
 				          		public void MyMethod2(int index, bool isReadOnly)
 				          		{
 				          			var result = _mock.Execute("MyCode.IMyService.MyMethod2", index, isReadOnly);
@@ -289,9 +289,9 @@ public sealed partial class ForMockTests
 		[InlineData("class")]
 		[InlineData("notnull")]
 		[InlineData("class?")]
-		[InlineData("IMyInterface")]
+		[InlineData("MyCode.IMyInterface")]
 		[InlineData("new()")]
-		[InlineData("IMyInterface?")]
+		[InlineData("MyCode.IMyInterface?")]
 		[InlineData("allows ref struct")]
 		public async Task Methods_Generic_ShouldApplyAllConstraints(string constraint)
 		{
@@ -329,7 +329,7 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
 				.Contains($$"""
-				          		/// <inheritdoc cref="IMyService.MyMethod1{T, U}(int)" />
+				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod1{T, U}(int)" />
 				          		public bool MyMethod1<T, U>(int index)
 				          			where T : class?, notnull, new()
 				          			where U : {{constraint}}
@@ -368,14 +368,14 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForMyService_IMyOtherService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.MyMethod1(int)" />
+				          		/// <inheritdoc cref="MyCode.MyService.MyMethod1(int)" />
 				          		public override void MyMethod1(int index)
 				          		{
 				          			var result = _mock.Execute("MyCode.MyService.MyMethod1", index);
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.MyMethod2(int, bool)" />
+				          		/// <inheritdoc cref="MyCode.MyService.MyMethod2(int, bool)" />
 				          		protected override bool MyMethod2(int index, bool isReadOnly)
 				          		{
 				          			var result = _mock.Execute<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
@@ -384,8 +384,8 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle().And
 				.DoesNotContain("MyNonVirtualMethod").Because("The method is not virtual!").And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyOtherService.SomeOtherMethod()" />
-				          		int IMyOtherService.SomeOtherMethod()
+				          		/// <inheritdoc cref="MyCode.IMyOtherService.SomeOtherMethod()" />
+				          		int MyCode.IMyOtherService.SomeOtherMethod()
 				          		{
 				          			var result = _mock.Execute<int>("MyCode.IMyOtherService.SomeOtherMethod");
 				          			return result.Result;
@@ -419,7 +419,7 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.MyMethod1(ref int)" />
+				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod1(ref int)" />
 				          		public void MyMethod1(ref int index)
 				          		{
 				          			var result = _mock.Execute("MyCode.IMyService.MyMethod1", index);
@@ -427,7 +427,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.MyMethod2(int, out bool)" />
+				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, out bool)" />
 				          		public bool MyMethod2(int index, out bool isReadOnly)
 				          		{
 				          			var result = _mock.Execute<bool>("MyCode.IMyService.MyMethod2", index, null);
@@ -464,7 +464,7 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.SomeProperty" />
+				          		/// <inheritdoc cref="MyCode.IMyService.SomeProperty" />
 				          		public int SomeProperty
 				          		{
 				          			get
@@ -478,7 +478,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.SomeReadOnlyProperty" />
+				          		/// <inheritdoc cref="MyCode.IMyService.SomeReadOnlyProperty" />
 				          		public bool? SomeReadOnlyProperty
 				          		{
 				          			get
@@ -488,7 +488,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyService.SomeWriteOnlyProperty" />
+				          		/// <inheritdoc cref="MyCode.IMyService.SomeWriteOnlyProperty" />
 				          		public bool? SomeWriteOnlyProperty
 				          		{
 				          			set
@@ -534,7 +534,7 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("ForMyService_IMyOtherService.g.cs").WhoseValue
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.SomeProperty1" />
+				          		/// <inheritdoc cref="MyCode.MyService.SomeProperty1" />
 				          		public override int SomeProperty1
 				          		{
 				          			protected get
@@ -548,7 +548,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.SomeProperty2" />
+				          		/// <inheritdoc cref="MyCode.MyService.SomeProperty2" />
 				          		public override int SomeProperty2
 				          		{
 				          			get
@@ -562,7 +562,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.SomeReadOnlyProperty" />
+				          		/// <inheritdoc cref="MyCode.MyService.SomeReadOnlyProperty" />
 				          		protected override bool? SomeReadOnlyProperty
 				          		{
 				          			get
@@ -572,7 +572,7 @@ public sealed partial class ForMockTests
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		/// <inheritdoc cref="MyService.SomeWriteOnlyProperty" />
+				          		/// <inheritdoc cref="MyCode.MyService.SomeWriteOnlyProperty" />
 				          		protected override bool? SomeWriteOnlyProperty
 				          		{
 				          			set
@@ -583,8 +583,8 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle().And
 				.DoesNotContain("SomeNonVirtualProperty").Because("The property is not virtual!").And
 				.Contains("""
-				          		/// <inheritdoc cref="IMyOtherService.SomeAdditionalProperty" />
-				          		int IMyOtherService.SomeAdditionalProperty
+				          		/// <inheritdoc cref="MyCode.IMyOtherService.SomeAdditionalProperty" />
+				          		int MyCode.IMyOtherService.SomeAdditionalProperty
 				          		{
 				          			get
 				          			{

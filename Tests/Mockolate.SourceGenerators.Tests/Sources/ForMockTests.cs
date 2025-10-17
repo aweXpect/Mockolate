@@ -12,6 +12,7 @@ public sealed partial class ForMockTests
 			     using Mockolate;
 
 			     namespace MyCode;
+
 			     public class Program
 			     {
 			         public static void Main(string[] args)
@@ -52,6 +53,7 @@ public sealed partial class ForMockTests
 			     using Mockolate;
 
 			     namespace MyCode;
+
 			     public class Program
 			     {
 			         public static void Main(string[] args)
@@ -100,7 +102,7 @@ public sealed partial class ForMockTests
 			.Contains("""
 			          			if (constructorParameters is null || constructorParameters.Parameters.Length == 0)
 			          			{
-			          				throw new MockException("No parameterless constructor found for 'MyBaseClass'. Please provide constructor parameters.");
+			          				throw new MockException("No parameterless constructor found for 'MyCode.MyBaseClass'. Please provide constructor parameters.");
 			          			}
 			          """).IgnoringNewlineStyle();
 	}
@@ -113,6 +115,7 @@ public sealed partial class ForMockTests
 			     using Mockolate;
 
 			     namespace MyCode;
+
 			     public class Program
 			     {
 			         public static void Main(string[] args)
@@ -128,15 +131,15 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources).ContainsKey("ForMyBaseClass.g.cs").WhoseValue
-			.Contains("public class Mock : Mock<MyBaseClass>").And
+			.Contains("public class Mock : Mock<MyCode.MyBaseClass>").And
 			.Contains(
-				"throw new MockException(\"Could not find any constructor at all for the base type 'MyBaseClass'. Therefore mocking is not supported!\");")
+				"throw new MockException(\"Could not find any constructor at all for the base type 'MyCode.MyBaseClass'. Therefore mocking is not supported!\");")
 			.And
 			.DoesNotContain("public partial class MockSubject");
 	}
 
 	[Fact]
-	public async Task ShouldIncludeNamespacesFromMockTypes()
+	public async Task ShouldNotIncludeNamespacesFromMockTypes()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -170,7 +173,7 @@ public sealed partial class ForMockTests
 
 		 await That(result.Sources).ContainsKey("ForIMyServiceListMyData.g.cs").WhoseValue
 			.Contains("using System.Collections.Generic;").And
-			.Contains("using MyCode.Services;").And
-			.Contains("using MyCode.Models;");
+			.DoesNotContain("using MyCode.Services;").And
+			.DoesNotContain("using MyCode.Models;");
 	}
 }

@@ -12,7 +12,6 @@ internal static partial class Sources
 		string[] namespaces =
 		[
 			..GlobalUsings,
-			..mockClass.GetAllNamespaces(),
 			"Mockolate.Events",
 			"Mockolate.Exceptions",
 			"Mockolate.Protected",
@@ -51,18 +50,18 @@ internal static partial class Sources
 	private static void AppendMock(StringBuilder sb, MockClass mockClass, string[] namespaces)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc()).Append("\" />");
+		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.GetFullName().EscapeForXmlDoc()).Append("\" />");
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
-			sb.Append(" and <see cref=\"").Append(additional.ClassName.EscapeForXmlDoc()).Append("\" />");
+			sb.Append(" and <see cref=\"").Append(additional.GetFullName().EscapeForXmlDoc()).Append("\" />");
 		}
 
 		sb.AppendLine(".");
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic class Mock : Mock<").Append(mockClass.ClassName);
+		sb.Append("\tpublic class Mock : Mock<").Append(mockClass.GetFullName());
 		foreach (Class? item in mockClass.AdditionalImplementations)
 		{
-			sb.Append(", ").Append(item.ClassName);
+			sb.Append(", ").Append(item.GetFullName());
 		}
 
 		sb.AppendLine(">");
@@ -74,7 +73,7 @@ internal static partial class Sources
 		sb.AppendLine("\t\t{");
 		if (mockClass.Delegate is not null)
 		{
-			sb.Append("\t\t\tSubject = new ").Append(mockClass.ClassName).Append("((")
+			sb.Append("\t\t\tSubject = new ").Append(mockClass.GetFullName()).Append("((")
 				.Append(string.Join(", ", mockClass.Delegate.Value.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
 				.Append(") =>").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -140,7 +139,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\t\tthrow new MockException(\"No parameterless constructor found for '").Append(mockClass.ClassName).Append("'. Please provide constructor parameters.\");").AppendLine();
+				sb.Append("\t\t\t\tthrow new MockException(\"No parameterless constructor found for '").Append(mockClass.GetFullName()).Append("'. Please provide constructor parameters.\");").AppendLine();
 			}
 			sb.Append("\t\t\t}").AppendLine();
 			foreach (Method constructor in mockClass.Constructors)
@@ -163,39 +162,39 @@ internal static partial class Sources
 			}
 			sb.Append("\t\t\telse").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tthrow new MockException($\"Could not find any constructor for '").Append(mockClass.ClassName).Append("' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", constructorParameters.Parameters)}).\");").AppendLine();
+			sb.Append("\t\t\t\tthrow new MockException($\"Could not find any constructor for '").Append(mockClass.GetFullName()).Append("' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", constructorParameters.Parameters)}).\");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 		}
 		else
 		{
-			sb.Append("\t\t\tthrow new MockException(\"Could not find any constructor at all for the base type '").Append(mockClass.ClassName).Append("'. Therefore mocking is not supported!\");").AppendLine();
+			sb.Append("\t\t\tthrow new MockException(\"Could not find any constructor at all for the base type '").Append(mockClass.GetFullName()).Append("'. Therefore mocking is not supported!\");").AppendLine();
 		}
 		sb.AppendLine("\t\t}");
 		sb.AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassName.EscapeForXmlDoc())
-			.Append(string.Join(", ", mockClass.AdditionalImplementations.Select(x => x.ClassName.EscapeForXmlDoc())))
+		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.GetFullName().EscapeForXmlDoc())
+			.Append(string.Join(", ", mockClass.AdditionalImplementations.Select(x => x.GetFullName().EscapeForXmlDoc())))
 			.AppendLine("}.Subject\" />");
-		sb.Append("\t\tpublic override ").Append(mockClass.ClassName).AppendLine(" Subject { get; }");
+		sb.Append("\t\tpublic override ").Append(mockClass.GetFullName()).AppendLine(" Subject { get; }");
 		sb.AppendLine("\t}");
 	}
 
 	private static void AppendMockSubject(StringBuilder sb, MockClass mockClass, string[] namespaces)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The actual mock subject implementing <see cref=\"").Append(mockClass.ClassName.EscapeForXmlDoc())
+		sb.Append("\t///     The actual mock subject implementing <see cref=\"").Append(mockClass.GetFullName().EscapeForXmlDoc())
 			.Append("\" />");
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
-			sb.Append(" and <see cref=\"").Append(additional.ClassName.EscapeForXmlDoc()).Append("\" />");
+			sb.Append(" and <see cref=\"").Append(additional.GetFullName().EscapeForXmlDoc()).Append("\" />");
 		}
 
 		sb.AppendLine(".");
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic partial class MockSubject : ").Append(mockClass.ClassName);
+		sb.Append("\tpublic class MockSubject : ").Append(mockClass.GetFullName());
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
 			sb.Append(",").AppendLine();
-			sb.Append("\t\t").Append(additional.ClassName);
+			sb.Append("\t\t").Append(additional.GetFullName());
 		}
 
 		sb.AppendLine().AppendLine("\t{");
@@ -256,7 +255,7 @@ internal static partial class Sources
 	private static void ImplementClass(StringBuilder sb, Class @class, string[] namespaces,
 		bool explicitInterfaceImplementation)
 	{
-		sb.Append("\t\t#region ").Append(@class.ClassName).AppendLine();
+		sb.Append("\t\t#region ").Append(@class.GetFullName()).AppendLine();
 		int count = 0;
 		foreach (Event @event in @class.Events)
 		{
@@ -265,12 +264,12 @@ internal static partial class Sources
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append('.').Append(@event.Name.EscapeForXmlDoc())
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append('.').Append(@event.Name.EscapeForXmlDoc())
 				.AppendLine("\" />");
 			if (explicitInterfaceImplementation)
 			{
 				sb.Append("\t\tevent ").Append(@event.Type.GetMinimizedString(namespaces))
-					.Append("? ").Append(@class.ClassName).Append('.').Append(@event.Name).AppendLine();
+					.Append("? ").Append(@class.GetFullName()).Append('.').Append(@event.Name).AppendLine();
 			}
 			else
 			{
@@ -299,7 +298,7 @@ internal static partial class Sources
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append('.').Append(property.IndexerParameters is not null
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append('.').Append(property.IndexerParameters is not null
 					? property.Name.Replace("[]",
 						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.GetMinimizedString(namespaces)}"))}]").EscapeForXmlDoc()
 					: property.Name.EscapeForXmlDoc())
@@ -307,7 +306,7 @@ internal static partial class Sources
 			if (explicitInterfaceImplementation)
 			{
 				sb.Append("\t\t").Append(property.Type.GetMinimizedString(namespaces))
-					.Append(" ").Append(@class.ClassName).Append('.').Append(property.IndexerParameters is not null
+					.Append(" ").Append(@class.GetFullName()).Append('.').Append(property.IndexerParameters is not null
 						? property.Name.Replace("[]",
 							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.GetMinimizedString(namespaces)} {p.Name}"))}]")
 						: property.Name).AppendLine();
@@ -386,7 +385,7 @@ internal static partial class Sources
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append('.').Append(method.Name.EscapeForXmlDoc())
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append('.').Append(method.Name.EscapeForXmlDoc())
 				.Append('(').Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
 				.AppendLine(")\" />");
@@ -394,7 +393,7 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t");
 				sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
-					.Append(@class.ClassName).Append('.').Append(method.Name).Append('(');
+					.Append(@class.GetFullName()).Append('.').Append(method.Name).Append('(');
 			}
 			else
 			{
@@ -489,7 +488,7 @@ internal static partial class Sources
 			sb.AppendLine("\t\t}");
 		}
 
-		sb.Append("\t\t#endregion ").Append(@class.ClassName).AppendLine();
+		sb.Append("\t\t#endregion ").Append(@class.GetFullName()).AppendLine();
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

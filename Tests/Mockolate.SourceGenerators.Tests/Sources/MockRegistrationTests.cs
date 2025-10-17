@@ -49,13 +49,13 @@ public sealed class MockRegistrationTests
 			          		partial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types)
 			          		{
 			          			if (types.Length == 1 &&
-			          			    types[0] == typeof(IMyInterface))
+			          			    types[0] == typeof(MyCode.IMyInterface))
 			          			{
 			          				_value = new ForIMyInterface.Mock(constructorParameters, mockBehavior);
 			          			}
 			          			else if (types.Length == 2 &&
-			          			         types[0] == typeof(MyBaseClass) &&
-			          			         types[1] == typeof(IMyInterface))
+			          			         types[0] == typeof(MyCode.MyBaseClass) &&
+			          			         types[1] == typeof(MyCode.IMyInterface))
 			          			{
 			          				_value = new ForMyBaseClass_IMyInterface.Mock(constructorParameters, mockBehavior);
 			          			}

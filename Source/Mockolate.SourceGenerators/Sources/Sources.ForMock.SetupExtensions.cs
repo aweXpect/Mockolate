@@ -13,7 +13,6 @@ internal static partial class Sources
 		string[] namespaces =
 		[
 			..GlobalUsings,
-			.. @class.GetClassNamespaces(),
 			"Mockolate.Events",
 			"Mockolate.Protected",
 			"Mockolate.Setup",
@@ -73,7 +72,7 @@ internal static partial class Sources
 			return;
 		}
 
-		sb.Append("\textension(MockRaises<").Append(@class.ClassName).Append(">")
+		sb.Append("\textension(MockRaises<").Append(@class.GetFullName()).Append(">")
 			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
@@ -85,7 +84,7 @@ internal static partial class Sources
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc())
+			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc())
 				.Append(".").Append(@event.Name.EscapeForXmlDoc())
 				.Append("\"/> event.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
@@ -114,20 +113,20 @@ internal static partial class Sources
 
 		if (@class.Properties.Any(predicate))
 		{
-			sb.Append("\textension(MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\textension(MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up properties on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
+			sb.Append("\t\t///     Sets up properties on the mock for <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\t\tpublic MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : ".").Append("Properties Property").AppendLine();
-			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\t\t\t=> new MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : ".").Append("Properties(setup);").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
-			sb.Append("\textension(MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\textension(MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : ".").Append("Properties setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
@@ -139,7 +138,7 @@ internal static partial class Sources
 				}
 
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Setup for the property <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append(".")
+				sb.Append("\t\t///     Setup for the property <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append(".")
 					.Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic PropertySetup<").Append(property.Type.GetMinimizedString(namespaces)).Append("> ")
@@ -180,7 +179,7 @@ internal static partial class Sources
 
 		if (@class.Properties.Any(predicate))
 		{
-			sb.Append("\textension(MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\textension(MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
@@ -192,7 +191,7 @@ internal static partial class Sources
 				}
 
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Sets up the ").Append(indexer.Type.GetMinimizedString(namespaces)).Append(" indexer on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\" />.")
+				sb.Append("\t\t///     Sets up the ").Append(indexer.Type.GetMinimizedString(namespaces)).Append(" indexer on the mock for <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append("\" />.")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic IndexerSetup<").Append(indexer.Type.GetMinimizedString(namespaces));
@@ -231,20 +230,20 @@ internal static partial class Sources
 
 		if (@class.Methods.Any(predicate))
 		{
-			sb.Append("\textension(MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\textension(MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up methods on the mock for <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
+			sb.Append("\t\t///     Sets up methods on the mock for <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\t\tpublic MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : ".").Append("Methods Method").AppendLine();
-			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\t\t\t=> new MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : ".").Append("Methods(setup);").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
-			sb.Append("\textension(MockSetup<").Append(@class.ClassName).Append(">")
+			sb.Append("\textension(MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : ".").Append("Methods setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
@@ -256,7 +255,7 @@ internal static partial class Sources
 				}
 
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Setup for the method <see cref=\"").Append(@class.ClassName.EscapeForXmlDoc()).Append(".")
+				sb.Append("\t\t///     Setup for the method <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append(".")
 					.Append(method.Name.EscapeForXmlDoc()).Append("(")
 					.Append(string.Join(", ",
 						method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))

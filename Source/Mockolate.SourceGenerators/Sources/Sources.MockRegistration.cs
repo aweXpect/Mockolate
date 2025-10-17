@@ -9,7 +9,6 @@ internal static partial class Sources
 	{
 		List<string> namespaces =
 		[
-			.. mocks.SelectMany(m => m.MockClass.GetAllNamespaces()),
 			"System",
 		];
 		if (mocks.Any())
@@ -51,12 +50,12 @@ internal static partial class Sources
 
 			sb.Append("if (types.Length == ").Append(mock.MockClass.AdditionalImplementations.Count + 1).Append(" &&")
 				.AppendLine();
-			sb.Append(prefix).Append("types[0] == typeof(").Append(mock.MockClass.ClassName).Append(")");
+			sb.Append(prefix).Append("types[0] == typeof(").Append(mock.MockClass.GetFullName()).Append(")");
 			int idx = 1;
 			foreach (Class? item in mock.MockClass.AdditionalImplementations)
 			{
 				sb.AppendLine(" &&");
-				sb.Append(prefix).Append("types[").Append(idx++).Append("] == typeof(").Append(item.ClassName)
+				sb.Append(prefix).Append("types[").Append(idx++).Append("] == typeof(").Append(item.GetFullName())
 					.Append(")");
 			}
 

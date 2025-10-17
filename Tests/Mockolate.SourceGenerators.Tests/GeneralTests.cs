@@ -100,8 +100,8 @@ public class GeneralTests
 		await That(result.Diagnostics).IsEmpty();
 
 		await That(result.Sources).ContainsKey("ForIListint.g.cs").WhoseValue
-			.Contains("IEnumerator IEnumerable.GetEnumerator()").And
-			.Contains("public IEnumerator<int> GetEnumerator()");
+			.Contains("System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()").And
+			.Contains("public System.Collections.Generic.IEnumerator<int> GetEnumerator()");
 	}
 
 	[Fact]
@@ -138,7 +138,7 @@ public class GeneralTests
 
 		await That(result.Sources).ContainsKey("ForIMyInterface1_IMyInterface2.g.cs").WhoseValue
 			.Contains("public void MyMethod(int v1)").And
-			.Contains("void IMyInterface2.MyMethod(int v1)");
+			.Contains("void MyCode.IMyInterface2.MyMethod(int v1)");
 	}
 
 	[Fact]
@@ -175,6 +175,6 @@ public class GeneralTests
 
 		await That(result.Sources).ContainsKey("ForIMyInterface1.g.cs").WhoseValue
 			.Contains("public void MyMethod(int v1)").And
-			.Contains("void IMyInterface2.MyMethod(int v1)");
+			.Contains("void MyCode.IMyInterface2.MyMethod(int v1)");
 	}
 }
