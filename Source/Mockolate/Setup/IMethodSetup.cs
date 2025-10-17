@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Mockolate.Interactions;
 
 namespace Mockolate.Setup;
@@ -20,7 +21,7 @@ public interface IMethodSetup
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current <paramref name="behavior" />.
 	/// </remarks>
-	T SetOutParameter<T>(string parameterName, MockBehavior behavior);
+	T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior);
 
 	/// <summary>
 	///     Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value" /> and
@@ -30,5 +31,5 @@ public interface IMethodSetup
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current <paramref name="behavior" />.
 	/// </remarks>
-	T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior);
+	T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior);
 }

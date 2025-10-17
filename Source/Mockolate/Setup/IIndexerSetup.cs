@@ -16,5 +16,5 @@ public interface IIndexerSetup
 	/// <summary>
 	///     Attempts to retrieve the initial <paramref name="value"/> for the <paramref name="parameters"/>, if an initialization is set up.
 	/// </summary>
-	bool TryGetInitialValue<TValue>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out TValue value);
+	bool TryGetInitialValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out TValue value);
 }

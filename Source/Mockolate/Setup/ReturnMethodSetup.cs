@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -65,7 +66,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 		=> _callbacks.ForEach(callback => callback.Invoke());
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -89,11 +90,11 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 		=> behavior.DefaultValueGenerator.Generate<T>();
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 		=> value;
 
 	/// <inheritdoc cref="object.ToString()" />
@@ -106,7 +107,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter match1)
+public class ReturnMethodSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TReturn, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1>(string name, With.NamedParameter match1)
 	: MethodSetup
 {
 	private readonly List<Action<T1>> _callbacks = [];
@@ -195,7 +196,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -225,7 +226,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 		=> invocation.Name.Equals(name) && Matches([match1,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1,], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -236,7 +237,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1,], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -257,7 +258,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 ///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
 ///     <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter match1, With.NamedParameter match2)
+public class ReturnMethodSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TReturn, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2>(string name, With.NamedParameter match1, With.NamedParameter match2)
 	: MethodSetup
 {
 	private readonly List<Action<T1, T2>> _callbacks = [];
@@ -347,7 +348,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -383,7 +384,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 		=> invocation.Name.Equals(name) && Matches([match1, match2,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2,], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -394,7 +395,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2,], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -415,7 +416,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1, T2, T3>(
+public class ReturnMethodSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TReturn, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T3>(
 	string name,
 	With.NamedParameter match1,
 	With.NamedParameter match2,
@@ -510,7 +511,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -551,7 +552,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 		=> invocation.Name.Equals(name) && Matches([match1, match2, match3,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3,], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -562,7 +563,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3,], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -584,7 +585,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
+public class ReturnMethodSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TReturn, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T3, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T4>(
 	string name,
 	With.NamedParameter match1,
 	With.NamedParameter match2,
@@ -681,7 +682,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -728,7 +729,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3, match4,], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -739,7 +740,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3, match4,], parameterName, out With.RefParameter<T>? refParameter))
 		{

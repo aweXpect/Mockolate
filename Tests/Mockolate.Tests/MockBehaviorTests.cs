@@ -33,6 +33,17 @@ public class MockBehaviorTests
 	}
 
 	[Fact]
+	public async Task DefaultValueGenerator_WithValueTuple_ShouldReturnZero()
+	{
+		MockBehavior sut = MockBehavior.Default;
+
+		(int V1, string V2) result = sut.DefaultValueGenerator.Generate<(int, string)>();
+
+		await That(result.V1).IsEqualTo(0);
+		await That(result.V2).IsEqualTo("");
+	}
+
+	[Fact]
 	public async Task DefaultValueGenerator_WithNullableInt_ShouldReturnNull()
 	{
 		MockBehavior sut = MockBehavior.Default;

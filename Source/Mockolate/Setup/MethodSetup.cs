@@ -12,18 +12,18 @@ namespace Mockolate.Setup;
 public abstract class MethodSetup : IMethodSetup
 {
 	/// <inheritdoc cref="IMethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	T IMethodSetup.SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	T IMethodSetup.SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 		=> SetOutParameter<T>(parameterName, behavior);
 
 	/// <inheritdoc cref="IMethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	T IMethodSetup.SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	T IMethodSetup.SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 		=> SetRefParameter(parameterName, value, behavior);
 
 	/// <inheritdoc cref="IMethodSetup.Matches(IInteraction)" />
 	bool IMethodSetup.Matches(IInteraction invocation)
 		=> invocation is MethodInvocation methodInvocation && IsMatch(methodInvocation);
 
-	internal TResult Invoke<TResult>(IInteraction invocation, MockBehavior behavior)
+	internal TResult Invoke<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(IInteraction invocation, MockBehavior behavior)
 	{
 		if (invocation is MethodInvocation methodInvocation)
 		{
@@ -50,7 +50,7 @@ public abstract class MethodSetup : IMethodSetup
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current <paramref name="behavior" />.
 	/// </remarks>
-	protected abstract T SetOutParameter<T>(string parameterName, MockBehavior behavior);
+	protected abstract T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior);
 
 	/// <summary>
 	///     Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value" /> and
@@ -60,7 +60,7 @@ public abstract class MethodSetup : IMethodSetup
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current <paramref name="behavior" />.
 	/// </remarks>
-	protected abstract T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior);
+	protected abstract T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior);
 
 	/// <summary>
 	///     Execute a potentially registered callback.
@@ -70,7 +70,7 @@ public abstract class MethodSetup : IMethodSetup
 	/// <summary>
 	///     Gets the registered return value.
 	/// </summary>
-	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior);
+	protected abstract TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior);
 
 	/// <summary>
 	///     Checks if the <paramref name="invocation" /> matches the setup.
@@ -154,7 +154,7 @@ public abstract class MethodSetup : IMethodSetup
 	///     result is set to the default value for type <typeparamref name="T" /> as provided
 	///     by the <paramref name="behavior" />.
 	/// </remarks>
-	protected static bool TryCast<T>([NotNullWhen(false)] object? value, out T result, MockBehavior behavior)
+	protected static bool TryCast<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>([NotNullWhen(false)] object? value, out T result, MockBehavior behavior)
 	{
 		if (value is T typedValue)
 		{

@@ -121,7 +121,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters"/>.
 	/// </summary>
-	internal TValue GetIndexerValue<TValue>(IIndexerSetup? setup, object?[] parameters)
+	internal TValue GetIndexerValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue>(IIndexerSetup? setup, object?[] parameters)
 		=> _indexerSetups.GetOrAddValue(parameters, () =>
 		{
 			if (setup?.TryGetInitialValue(mock.Behavior, parameters, out TValue ? value) == true)

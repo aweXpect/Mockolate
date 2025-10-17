@@ -17,7 +17,7 @@ public abstract class PropertySetup
 	internal void InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
 		=> InvokeSetter(value, behavior);
 
-	internal TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior)
+	internal TResult InvokeGetter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(IInteraction invocation, MockBehavior behavior)
 		=> InvokeGetter<TResult>(behavior);
 
 	/// <summary>
@@ -28,7 +28,7 @@ public abstract class PropertySetup
 	/// <summary>
 	///     Invokes the getter logic and returns the value of type <typeparamref name="TResult" />.
 	/// </summary>
-	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior);
+	protected abstract TResult InvokeGetter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MockBehavior behavior);
 
 	internal class Default : PropertySetup
 	{
@@ -39,7 +39,7 @@ public abstract class PropertySetup
 			=> _value = value;
 
 		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior)" />
-		protected override TResult InvokeGetter<TResult>(MockBehavior behavior)
+		protected override TResult InvokeGetter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MockBehavior behavior)
 		{
 			if (_value is TResult typedValue)
 			{
@@ -54,7 +54,7 @@ public abstract class PropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
-public class PropertySetup<T> : PropertySetup
+public class PropertySetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T> : PropertySetup
 {
 	private readonly List<Action<T>> _getterCallbacks = [];
 	private readonly List<Action<T, T>> _setterCallbacks = [];
@@ -76,7 +76,7 @@ public class PropertySetup<T> : PropertySetup
 	}
 
 	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior)" />
-	protected override TResult InvokeGetter<TResult>(MockBehavior behavior)
+	protected override TResult InvokeGetter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MockBehavior behavior)
 	{
 		_getterCallbacks.ForEach(callback => callback.Invoke(_value));
 		if (_returnCallbacks.Any())
@@ -214,7 +214,7 @@ public class PropertySetup<T> : PropertySetup
 		return $"{typeof(T).FormatType()}";
 	}
 
-	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result, MockBehavior behavior)
+	private static bool TryCast<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue>([NotNullWhen(false)] object? value, out TValue result, MockBehavior behavior)
 	{
 		if (value is TValue typedValue)
 		{

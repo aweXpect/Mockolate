@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Mockolate.Events;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -66,7 +67,7 @@ public class ProtectedMock<T, TMock> : IMock
 		=> _inner.Setup;
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
-	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
+	MethodSetupResult<TResult> IMock.Execute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(string methodName, params object?[]? parameters)
 		=> _inner.Execute<TResult>(methodName, parameters);
 
 	/// <inheritdoc cref="IMock.Execute(string, object?[])" />
@@ -74,11 +75,11 @@ public class ProtectedMock<T, TMock> : IMock
 		=> _inner.Execute(methodName, parameters);
 
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
-	TResult IMock.Get<TResult>(string propertyName)
+	TResult IMock.Get<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(string propertyName)
 		=> _inner.Get<TResult>(propertyName);
 
 	/// <inheritdoc cref="IMock.GetIndexer{TResult}(object?[])" />
-	public TResult GetIndexer<TResult>(params object?[] parameters)
+	public TResult GetIndexer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(params object?[] parameters)
 		=> _inner.GetIndexer<TResult>(parameters);
 
 	/// <inheritdoc cref="IMock.Set(string, object?)" />

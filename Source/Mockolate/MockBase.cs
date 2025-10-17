@@ -72,7 +72,7 @@ public abstract class MockBase<T> : IMock
 		=> Raise;
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
-	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)
+	MethodSetupResult<TResult> IMock.Execute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(string methodName, params object?[]? parameters)
 	{
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
@@ -116,7 +116,7 @@ public abstract class MockBase<T> : IMock
 	}
 
 	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
-	TResult IMock.Get<TResult>(string propertyName)
+	TResult IMock.Get<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(string propertyName)
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
 		IInteraction interaction =
@@ -136,7 +136,7 @@ public abstract class MockBase<T> : IMock
 	}
 
 	/// <inheritdoc cref="IMock.GetIndexer{TResult}(object?[])" />
-	TResult IMock.GetIndexer<TResult>(params object?[] parameters)
+	TResult IMock.GetIndexer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(params object?[] parameters)
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
 		IndexerGetterAccess interaction = new IndexerGetterAccess(interactions.GetNextIndex(), parameters);
@@ -176,7 +176,7 @@ public abstract class MockBase<T> : IMock
 	///     Attempts to cast the specified value to the type parameter <typeparamref name="TValue"/>,
 	///     returning a value that indicates whether the cast was successful.
 	/// </summary>
-	protected bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
+	protected bool TryCast<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue>([NotNullWhen(false)] object? value, out TValue result)
 	{
 		if (value is TValue typedValue)
 		{

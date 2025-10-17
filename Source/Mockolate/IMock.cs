@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Mockolate.Events;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -33,7 +34,7 @@ public interface IMock
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>
-	MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[]? parameters);
+	MethodSetupResult<TResult> Execute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(string methodName, params object?[]? parameters);
 
 	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> returning
@@ -44,7 +45,7 @@ public interface IMock
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName" />.
 	/// </summary>
-	TResult Get<TResult>(string propertyName);
+	TResult Get<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(string propertyName);
 
 	/// <summary>
 	///     Accesses the setter of the property with <paramref name="propertyName" /> and the matching
@@ -55,7 +56,7 @@ public interface IMock
 	/// <summary>
 	///     Gets the value from the indexer with the given parameters.
 	/// </summary>
-	TResult GetIndexer<TResult>(params object?[] parameters);
+	TResult GetIndexer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(params object?[] parameters);
 
 	/// <summary>
 	///     Sets the value of the indexer with the given parameters.

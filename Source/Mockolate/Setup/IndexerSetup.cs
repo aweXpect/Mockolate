@@ -19,11 +19,11 @@ public abstract class IndexerSetup : IIndexerSetup
 		   (invocation is IndexerSetterAccess setterAccess && IsMatch(setterAccess.Parameters));
 
 	/// <inheritdoc cref="IIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, object?[], out TValue)" />
-	bool IIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, object?[] parameters,
+	bool IIndexerSetup.TryGetInitialValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue>(MockBehavior behavior, object?[] parameters,
 		[NotNullWhen(true)] out TValue value)
 		=> TryGetInitialValue(behavior, parameters, out value);
 
-	internal TValue InvokeGetter<TValue>(IndexerGetterAccess getterAccess, TValue value, MockBehavior behavior)
+	internal TValue InvokeGetter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue>(IndexerGetterAccess getterAccess, TValue value, MockBehavior behavior)
 		=> ExecuteGetterCallback(getterAccess, value, behavior);
 
 	internal void InvokeSetter<TValue>(IndexerSetterAccess setterAccess, TValue value, MockBehavior behavior)
@@ -32,7 +32,7 @@ public abstract class IndexerSetup : IIndexerSetup
 	/// <summary>
 	///     Execute a potentially registered getter callback.
 	/// </summary>
-	protected abstract T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
+	protected abstract T ExecuteGetterCallback<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(IndexerGetterAccess indexerGetterAccess, T value,
 		MockBehavior behavior);
 
 	/// <summary>
@@ -55,7 +55,7 @@ public abstract class IndexerSetup : IIndexerSetup
 	///     result is set to the default value for type <typeparamref name="T" /> as provided
 	///     by the <paramref name="behavior" />.
 	/// </remarks>
-	protected static bool TryCast<T>([NotNullWhen(false)] object? value, out T result, MockBehavior behavior)
+	protected static bool TryCast<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>([NotNullWhen(false)] object? value, out T result, MockBehavior behavior)
 	{
 		if (value is T typedValue)
 		{
@@ -97,14 +97,14 @@ public abstract class IndexerSetup : IIndexerSetup
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
-	protected abstract bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	protected abstract bool TryGetInitialValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(MockBehavior behavior, object?[] parameters,
 		[NotNullWhen(true)] out T value);
 }
 
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
-public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
+public class IndexerSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1>(With.Parameter<T1> match1) : IndexerSetup
 {
 	private readonly List<Action<T1>> _getterCallbacks = [];
 	private readonly List<Func<TValue, T1, TValue>> _returnCallbacks = [];
@@ -258,7 +258,7 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 	}
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
+	protected override T ExecuteGetterCallback<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(IndexerGetterAccess indexerGetterAccess, T value,
 		MockBehavior behavior)
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
@@ -298,7 +298,7 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 		=> Matches([match1,], parameters);
 
 	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	protected override bool TryGetInitialValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(MockBehavior behavior, object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -318,7 +318,7 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
 /// </summary>
-public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> match2) : IndexerSetup
+public class IndexerSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2>(With.Parameter<T1> match1, With.Parameter<T2> match2) : IndexerSetup
 {
 	private readonly List<Action<T1, T2>> _getterCallbacks = [];
 	private readonly List<Func<TValue, T1, T2, TValue>> _returnCallbacks = [];
@@ -472,7 +472,7 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 	}
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
+	protected override T ExecuteGetterCallback<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(IndexerGetterAccess indexerGetterAccess, T value,
 		MockBehavior behavior)
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
@@ -514,7 +514,7 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 		=> Matches([match1, match2,], parameters);
 
 	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	protected override bool TryGetInitialValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(MockBehavior behavior, object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -536,7 +536,7 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" />.
 /// </summary>
-public class IndexerSetup<TValue, T1, T2, T3>(
+public class IndexerSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T3>(
 	With.Parameter<T1> match1,
 	With.Parameter<T2> match2,
 	With.Parameter<T3> match3) : IndexerSetup
@@ -693,7 +693,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
+	protected override T ExecuteGetterCallback<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(IndexerGetterAccess indexerGetterAccess, T value,
 		MockBehavior behavior)
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
@@ -737,7 +737,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		=> Matches([match1, match2, match3,], parameters);
 
 	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	protected override bool TryGetInitialValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(MockBehavior behavior, object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -761,7 +761,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
-public class IndexerSetup<TValue, T1, T2, T3, T4>(
+public class IndexerSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TValue, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T3, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T4>(
 	With.Parameter<T1> match1,
 	With.Parameter<T2> match2,
 	With.Parameter<T3> match3,
@@ -919,7 +919,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
+	protected override T ExecuteGetterCallback<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(IndexerGetterAccess indexerGetterAccess, T value,
 		MockBehavior behavior)
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
@@ -965,7 +965,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		=> Matches([match1, match2, match3, match4,], parameters);
 
 	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	protected override bool TryGetInitialValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(MockBehavior behavior, object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&

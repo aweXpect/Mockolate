@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -64,7 +65,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -73,11 +74,11 @@ public class VoidMethodSetup(string name) : MethodSetup
 		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 		=> behavior.DefaultValueGenerator.Generate<T>();
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 		=> value;
 
 	/// <inheritdoc cref="object.ToString()" />
@@ -90,7 +91,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : MethodSetup
+public class VoidMethodSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1>(string name, With.NamedParameter match1) : MethodSetup
 {
 	private readonly List<Action<T1>> _callbacks = [];
 	private readonly List<Action<T1>> _returnCallbacks = [];
@@ -166,7 +167,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -175,7 +176,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 		=> invocation.Name.Equals(name) && Matches([match1], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -186,7 +187,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -207,7 +208,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 ///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
 ///     <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, With.NamedParameter match2) : MethodSetup
+public class VoidMethodSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2>(string name, With.NamedParameter match1, With.NamedParameter match2) : MethodSetup
 {
 	private readonly List<Action<T1, T2>> _callbacks = [];
 	private readonly List<Action<T1, T2>> _returnCallbacks = [];
@@ -284,7 +285,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -293,7 +294,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 		=> invocation.Name.Equals(name) && Matches([match1, match2], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -304,7 +305,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -325,7 +326,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1, T2, T3>(
+public class VoidMethodSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T3>(
 	string name,
 	With.NamedParameter match1,
 	With.NamedParameter match2,
@@ -407,7 +408,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -416,7 +417,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 		=> invocation.Name.Equals(name) && Matches([match1, match2, match3], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -427,7 +428,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3], parameterName, out With.RefParameter<T>? refParameter))
 		{
@@ -448,7 +449,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1, T2, T3, T4>(
+public class VoidMethodSetup<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T1, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T2, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T3, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T4>(
 	string name,
 	With.NamedParameter match1,
 	With.NamedParameter match2,
@@ -532,7 +533,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	protected override TResult GetReturnValue<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -541,7 +542,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	protected override T SetOutParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, MockBehavior behavior)
 	{
 		if (HasOutParameter([match1, match2, match3, match4], parameterName, out With.OutParameter<T>? outParameter))
 		{
@@ -552,7 +553,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	protected override T SetRefParameter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (HasRefParameter([match1, match2, match3, match4], parameterName, out With.RefParameter<T>? refParameter))
 		{

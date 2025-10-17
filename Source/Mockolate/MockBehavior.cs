@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,7 +36,7 @@ public record MockBehavior
 	///     - <see cref="CancellationToken" />
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValueGenerator { get; init; }
-		= new ReturnDefaultDefaultValueGenerator();
+		= new ReturnDefaultValueGenerator();
 
 	/// <summary>
 	///     Defines a mechanism for generating default values of a specified type.
@@ -44,10 +46,10 @@ public record MockBehavior
 		/// <summary>
 		///     Generates a default value of the specified type.
 		/// </summary>
-		T Generate<T>();
+		T Generate<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>();
 	}
 
-	private sealed class ReturnDefaultDefaultValueGenerator : IDefaultValueGenerator
+	private sealed class ReturnDefaultValueGenerator : IDefaultValueGenerator
 	{
 		private static readonly (Type Type, object Value)[] _defaultValues =
 		[
@@ -57,9 +59,39 @@ public record MockBehavior
 			// of <see cref="MockBehavior.DefaultValueGenerator"/>!
 		];
 
-		/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}" />
-		public T Generate<T>()
+		object CreateValueTupleOf([System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicConstructors)] Type type)
 		{
+			var itemTypes = type.GetGenericArguments();
+			var items = new object[itemTypes.Length];
+			for (int i = 0, n = itemTypes.Length; i < n; ++i)
+			{
+				items[i] = this.Generate(itemTypes[i]);
+			}
+			// Fix CS8603 by using null-forgiving operator and IL2067 by adding annotation above
+			return Activator.CreateInstance(type, items)!;
+		}
+		object Generate(Type type)
+		{
+			foreach ((Type Type, object Value) defaultValue in _defaultValues)
+			{
+				if (defaultValue.Type == type)
+				{
+					return defaultValue.Value;
+				}
+			}
+
+			return default!;
+		}
+
+		/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}" />
+		public T Generate<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>()
+		{
+			if (typeof(T) == typeof(ValueTuple<,>) &&
+				CreateValueTupleOf(typeof(T)) is T tupleValue)
+			{
+				return tupleValue;
+			}
+
 			foreach ((Type Type, object Value) defaultValue in _defaultValues)
 			{
 				if (defaultValue.Value is T value &&
