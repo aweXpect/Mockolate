@@ -269,7 +269,7 @@ internal static partial class Sources
 		sb.Append("\textension(Mock<").Append(allClasses).AppendLine("> mock)");
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Class? @class in mockClass.AdditionalImplementations)
+		foreach (Class? @class in mockClass.DistinctAdditionalImplementations())
 		{
 			if (count++ > 0)
 			{

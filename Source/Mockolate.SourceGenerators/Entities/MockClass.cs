@@ -31,12 +31,15 @@ internal record MockClass : Class
 
 	public EquatableArray<Class> AdditionalImplementations { get; }
 
+	public IEnumerable<Class> DistinctAdditionalImplementations()
+		=> AdditionalImplementations.Distinct().Where(x => x.GetFullName() != GetFullName());
+
 	public string[] GetAllNamespaces() => EnumerateAllNamespaces().Where(n => !n.StartsWith("<")).Distinct().OrderBy(n => n).ToArray();
 
 	internal IEnumerable<Class> GetAllClasses()
 	{
 		yield return this;
-		foreach (Class implementation in AdditionalImplementations)
+		foreach (Class implementation in DistinctAdditionalImplementations())
 		{
 			yield return implementation;
 		}

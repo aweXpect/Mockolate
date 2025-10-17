@@ -47,6 +47,18 @@ namespace Mockolate
             T Generate<T>();
         }
     }
+    public static class MockExtensions
+    {
+        public static Mockolate.Mock<T> Setup<T>(this Mockolate.Mock<T> mock, params System.Action<Mockolate.Setup.MockSetup<T>>[] setups) { }
+        public static Mockolate.Mock<T1, T2> Setup<T1, T2>(this Mockolate.Mock<T1, T2> mock, params System.Action<Mockolate.Setup.MockSetup<T1>>[] setups) { }
+        public static Mockolate.Mock<T1, T2, T3> Setup<T1, T2, T3>(this Mockolate.Mock<T1, T2, T3> mock, params System.Action<Mockolate.Setup.MockSetup<T1>>[] setups) { }
+        public static Mockolate.Mock<T1, T2, T3, T4> Setup<T1, T2, T3, T4>(this Mockolate.Mock<T1, T2, T3, T4> mock, params System.Action<Mockolate.Setup.MockSetup<T1>>[] setups) { }
+        public static Mockolate.Mock<T1, T2, T3, T4, T5> Setup<T1, T2, T3, T4, T5>(this Mockolate.Mock<T1, T2, T3, T4, T5> mock, params System.Action<Mockolate.Setup.MockSetup<T1>>[] setups) { }
+        public static Mockolate.Mock<T1, T2, T3, T4, T5, T6> Setup<T1, T2, T3, T4, T5, T6>(this Mockolate.Mock<T1, T2, T3, T4, T5, T6> mock, params System.Action<Mockolate.Setup.MockSetup<T1>>[] setups) { }
+        public static Mockolate.Mock<T1, T2, T3, T4, T5, T6, T7> Setup<T1, T2, T3, T4, T5, T6, T7>(this Mockolate.Mock<T1, T2, T3, T4, T5, T6, T7> mock, params System.Action<Mockolate.Setup.MockSetup<T1>>[] setups) { }
+        public static Mockolate.Mock<T1, T2, T3, T4, T5, T6, T7, T8> Setup<T1, T2, T3, T4, T5, T6, T7, T8>(this Mockolate.Mock<T1, T2, T3, T4, T5, T6, T7, T8> mock, params System.Action<Mockolate.Setup.MockSetup<T1>>[] setups) { }
+        public static Mockolate.Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> Setup<T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Mockolate.Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> mock, params System.Action<Mockolate.Setup.MockSetup<T1>>[] setups) { }
+    }
     public abstract class Mock<T> : Mockolate.MockBase<T>
     {
         protected Mock(Mockolate.MockBehavior behavior) { }
