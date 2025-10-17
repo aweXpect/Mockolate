@@ -66,6 +66,7 @@ public static class MockExtensions
 		return mock;
 	}
 
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 	/// <summary>
 	///     Applies all <paramref name="setups"/> on the <paramref name="mock" />.
 	/// </summary>
@@ -135,4 +136,5 @@ public static class MockExtensions
 
 		return mock;
 	}
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 }
