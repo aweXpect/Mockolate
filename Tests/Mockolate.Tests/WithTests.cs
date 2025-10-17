@@ -156,6 +156,32 @@ public sealed class WithTests
 		await That(result).IsEqualTo(expectedValue);
 	}
 
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task ToString_Between_ShouldReturnExpectedValue()
+	{
+		var sut = With.ValueBetween(4).And(2 * 3);
+		string expectedValue = "With.ValueBetween<int>(4).And(2 * 3)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task ToString_Between_Exclusive_ShouldMatchExpectedValue()
+	{
+		var sut = With.ValueBetween(4).And(2 * 3).Exclusive();
+		string expectedValue = "With.ValueBetween<int>(4).And(2 * 3).Exclusive()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+#endif
+
 	[Fact]
 	public async Task ToString_WithRef_Invoked_ShouldReturnExpectedValue()
 	{

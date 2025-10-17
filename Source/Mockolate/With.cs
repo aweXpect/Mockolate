@@ -89,7 +89,9 @@ public class With
 	/// <summary>
 	///     Matches a numeric parameter that is between <paramref name="minimum"/>…
 	/// </summary>
-	/// <remarks>Per default the comparison is inclusive the <paramref name="minimum"/> and maximum value.</remarks>
+	/// <remarks>
+	///     By default, the comparison is inclusive of the <paramref name="minimum"/> and maximum values.
+	/// </remarks>
 	public static BetweenParameter<T>.Builder ValueBetween<T>(T minimum, [CallerArgumentExpression(nameof(minimum))] string doNotPopulateThisValue = "")
 		where T : INumber<T>
 		=> new BetweenParameter<T>.Builder(minimum, doNotPopulateThisValue);
@@ -138,7 +140,8 @@ public class With
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
-			return $"With.ValueBetween<{typeof(T).FormatType()}>({minimumExpression}).And({maximumExpression})";
+			string baseString = $"With.ValueBetween<{typeof(T).FormatType()}>({minimumExpression}).And({maximumExpression})";
+			return IsInclusive ? baseString : baseString + ".Exclusive()";
 		}
 
 		/// <summary>
