@@ -183,7 +183,7 @@ internal static partial class Sources
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     The actual mock subject implementing <see cref=\"").Append(mockClass.GetFullName().EscapeForXmlDoc())
 			.Append("\" />");
-		foreach (Class? additional in mockClass.AdditionalImplementations)
+		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
 		{
 			sb.Append(" and <see cref=\"").Append(additional.GetFullName().EscapeForXmlDoc()).Append("\" />");
 		}
@@ -191,7 +191,7 @@ internal static partial class Sources
 		sb.AppendLine(".");
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\tpublic class MockSubject : ").Append(mockClass.GetFullName());
-		foreach (Class? additional in mockClass.AdditionalImplementations)
+		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
 		{
 			sb.Append(",").AppendLine();
 			sb.Append("\t\t").Append(additional.GetFullName());
@@ -243,7 +243,7 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		ImplementClass(sb, mockClass, namespaces, false);
-		foreach (Class? additional in mockClass.AdditionalImplementations)
+		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
 		{
 			sb.AppendLine();
 			ImplementClass(sb, additional, namespaces, true);
