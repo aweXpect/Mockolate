@@ -18,7 +18,6 @@ public sealed partial class MockExtensionsTests
 		await That(result).IsSameAs(mock);
 		await That(mock.Subject.DoSomething1()).IsEqualTo(3);
 		await That(mock.Subject.DoSomething2()).IsEqualTo(5);
-
 	}
 
 	[Fact]
