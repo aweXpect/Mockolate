@@ -135,6 +135,24 @@ namespace Mockolate
         public static Mockolate.With.RefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.With.Parameter<T> Value<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
         public static Mockolate.With.Parameter<T> Value<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.With.BetweenParameter<T>.Builder ValueBetween<T>(T minimum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue = "")
+            where T : System.Numerics.INumber<T> { }
+        public class BetweenParameter<T> : Mockolate.With.Parameter<T>
+            where T : System.Numerics.INumber<T>
+        {
+            public BetweenParameter(T minimum, T maximum, string minimumExpression, string maximumExpression) { }
+            public bool IsInclusive { get; }
+            public T Maximum { get; }
+            public T Minimum { get; }
+            public Mockolate.With.BetweenParameter<T> Exclusive() { }
+            protected override bool Matches(T value) { }
+            public override string ToString() { }
+            public class Builder
+            {
+                public Builder(T minimum, string minimumExpression) { }
+                public Mockolate.With.BetweenParameter<T> And(T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue = "") { }
+            }
+        }
         public class InvokedOutParameter<T> : Mockolate.With.Parameter
         {
             public InvokedOutParameter() { }
