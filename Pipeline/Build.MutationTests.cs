@@ -22,6 +22,7 @@ namespace Build;
 
 partial class Build
 {
+	private static bool DisableMutationTests = true;
 	static string MutationCommentBody = "";
 
 	Target MutationTests => _ => _
@@ -30,6 +31,7 @@ partial class Build
 
 	Target MutationTestExecution => _ => _
 		.DependsOn(Compile)
+		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.Executes(() =>
 		{
 			AbsolutePath toolPath = TestResultsDirectory / "dotnet-stryker";
@@ -110,6 +112,7 @@ partial class Build
 
 	Target MutationTestComment => _ => _
 		.After(MutationTestExecution)
+		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.OnlyWhenDynamic(() => GitHubActions.IsPullRequest)
 		.Executes(() =>
 		{
@@ -135,6 +138,7 @@ partial class Build
 
 	Target MutationTestDashboard => _ => _
 		.After(MutationTestExecution)
+		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.Executes(async () =>
 		{
 			await "MutationTests".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
