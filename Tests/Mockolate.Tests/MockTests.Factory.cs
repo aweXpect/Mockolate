@@ -46,4 +46,27 @@ public sealed partial class MockTests
 			.WithMessage(
 				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
 	}
+
+	[Fact]
+	public async Task Factory_Create_WithSameNamedInterfaces_ShouldAppendIndex()
+	{
+		bool isDoSomethingCalled1 = false;
+		bool isDoSomethingCalled2 = false;
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		var mock = factory.Create<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService>();
+
+		mock.SetupIMyService.Method.DoSomething(With.Any<int>()).Callback(() => isDoSomethingCalled1 = true);
+		mock.SetupIMyService__2.Method.DoSomething(With.Any<int>()).Callback(() => isDoSomethingCalled2 = true);
+
+		mock.SubjectForIMyService.DoSomething(1);
+
+		await That(isDoSomethingCalled1).IsTrue();
+		await That(isDoSomethingCalled2).IsFalse();
+
+		mock.SubjectForIMyService__2.DoSomething(1);
+
+		await That(isDoSomethingCalled1).IsTrue();
+		await That(isDoSomethingCalled2).IsTrue();
+	}
 }
