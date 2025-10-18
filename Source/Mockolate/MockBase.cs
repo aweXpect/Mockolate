@@ -89,7 +89,7 @@ public abstract class MockBase<T> : IMock
 			}
 
 			return new MethodSetupResult<TResult>(null, _behavior,
-				_behavior.DefaultValueGenerator.Generate<TResult>());
+				_behavior.DefaultValue.Generate<TResult>());
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, _behavior,
@@ -184,7 +184,7 @@ public abstract class MockBase<T> : IMock
 			return true;
 		}
 
-		result = _behavior.DefaultValueGenerator.Generate<TValue>();
+		result = _behavior.DefaultValue.Generate<TValue>();
 		return value is null;
 	}
 }

@@ -20,7 +20,7 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 			return setup.SetOutParameter<T>(parameterName, behavior);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <summary>
@@ -34,7 +34,7 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 			return setup.SetRefParameter(parameterName, value, behavior);
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 }
 

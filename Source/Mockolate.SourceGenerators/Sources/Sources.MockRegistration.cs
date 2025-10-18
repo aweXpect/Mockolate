@@ -3,10 +3,26 @@ using Mockolate.SourceGenerators.Entities;
 
 namespace Mockolate.SourceGenerators.Internals;
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
 	public static string MockRegistration(ICollection<(string Name, MockClass MockClass)> mocks)
 	{
+		static IEnumerable<Entities.Type> GetTypes(MockClass mockClass)
+		{
+			foreach (var @class in mockClass.GetAllClasses())
+			{
+				foreach (var property in @class.Properties)
+				{
+					yield return property.Type;
+				}
+				foreach (var method in @class.Methods.Where(m => m.ReturnType != Entities.Type.Void))
+				{
+					yield return method.ReturnType;
+				}
+			}
+		}
+
 		List<string> namespaces =
 		[
 			"System",
@@ -14,6 +30,7 @@ internal static partial class Sources
 		if (mocks.Any())
 		{
 			namespaces.Add("Mockolate.Generated");
+			namespaces.Add("Mockolate.DefaultValues");
 		}
 		StringBuilder sb = new();
 		sb.AppendLine(Header);
@@ -28,6 +45,55 @@ internal static partial class Sources
 		sb.AppendLine("#nullable enable");
 		sb.AppendLine("internal static partial class Mock");
 		sb.AppendLine("{");
+		sb.AppendLine("\tstatic Mock()");
+		sb.AppendLine("\t{");
+		foreach (Entities.Type type in mocks.SelectMany(x => GetTypes(x.MockClass)).Distinct())
+		{
+			if (type.IsArray)
+			{
+				sb.Append("\t\tDefaultValueGenerator.Register(new TypedDefaultValueFactory<").Append(type.Fullname).Append(">(");
+				if (type.Fullname.EndsWith("[]") && type.Fullname.IndexOf('[') == type.Fullname.LastIndexOf('['))
+				{
+					sb.Append("Array.Empty<").Append(type.Fullname.Substring(0, type.Fullname.Length -2)).Append(">()");
+				}
+				else
+				{
+					//int[,,][,][] -> int[0,0,0][,][]
+					var constructorExpression = type.Fullname;
+					var idxStart = constructorExpression.IndexOf('[');
+					var idxEnd = constructorExpression.IndexOf(']');
+					var prefix = constructorExpression.Substring(0, idxStart);
+					var firstArrayPart = constructorExpression.Substring(idxStart + 1, idxEnd - idxStart - 1);
+					var suffix = constructorExpression.Substring(idxEnd + 1);
+					constructorExpression = $"{prefix}[0{firstArrayPart.Replace(",", ",0")}]{suffix}";
+					sb.Append("new ").Append(constructorExpression);
+				}
+				sb.AppendLine("));");
+			}
+			else if (type.Fullname.StartsWith("System.Collections.Generic.IEnumerable<") && type.Fullname.EndsWith(">"))
+			{
+				var elementType = type.Fullname.Substring("System.Collections.Generic.IEnumerable<".Length, type.Fullname.Length - "System.Collections.Generic.IEnumerable<".Length - 1);
+				sb.Append("\t\tDefaultValueGenerator.Register(new TypedDefaultValueFactory<").Append(type.Fullname).Append(">(Array.Empty<").Append(elementType).Append(">()));").AppendLine();
+			}
+			else if (type.TupleTypes is not null)
+			{
+				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname).Append(">(defaultValueGenerator => (").Append(string.Join(", ", type.TupleTypes.Value.Select(t => $"defaultValueGenerator.Generate<{t.Fullname}>()"))).Append(")));").AppendLine();
+			}
+			else if (type.Fullname.StartsWith("System.Threading.Tasks.Task<") && type.Fullname.EndsWith(">"))
+			{
+				var elementType = type.Fullname.Substring("System.Threading.Tasks.Task<".Length, type.Fullname.Length - "System.Threading.Tasks.Task<".Length - 1);
+				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname).Append(">(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<").Append(elementType).Append(">(defaultValueGenerator.Generate<").Append(elementType).Append(">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(").Append(elementType).Append(")));").AppendLine();
+			}
+			else if (type.Fullname.StartsWith("System.Threading.Tasks.ValueTask<") && type.Fullname.EndsWith(">"))
+			{
+				var elementType = type.Fullname.Substring("System.Threading.Tasks.ValueTask<".Length, type.Fullname.Length - "System.Threading.Tasks.ValueTask<".Length - 1);
+				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname).Append(">(defaultValueGenerator => new System.Threading.Tasks.ValueTask<").Append(elementType).Append(">(defaultValueGenerator.Generate<").Append(elementType).Append(">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(").Append(elementType).Append(")));").AppendLine();
+			}
+		}
+
+		sb.AppendLine("\t}");
+
+		sb.AppendLine();
 		sb.AppendLine("\tprivate partial class MockGenerator");
 		sb.AppendLine("\t{");
 		sb.AppendLine(
@@ -68,8 +134,33 @@ internal static partial class Sources
 
 		sb.AppendLine("\t\t}");
 		sb.AppendLine("\t}");
+
+		sb.AppendLine();
+		sb.AppendLine("\tprivate class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory");
+		sb.AppendLine("\t{");
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.IsMatch(Type)\" />");
+		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
+		sb.AppendLine("\t\t\t=> type == typeof(T);");
+		sb.AppendLine();
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator)\" />");
+		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator)");
+		sb.AppendLine("\t\t\t=> value;");
+		sb.AppendLine("\t}");
+
+		sb.AppendLine();
+		sb.AppendLine("\tpublic class CallbackDefaultValueFactory<T>(Func<IDefaultValueGenerator, T> callback, Func<Type, bool>? isMatch = null) : IDefaultValueFactory");
+		sb.AppendLine("\t{");
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.IsMatch(Type)\" />");
+		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
+		sb.AppendLine("\t\t\t=> isMatch?.Invoke(type) ?? type == typeof(T);");
+		sb.AppendLine();
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator)\" />");
+		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator)");
+		sb.AppendLine("\t\t\t=> callback(defaultValueGenerator);");
+		sb.AppendLine("\t}");
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
 	}
 }
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

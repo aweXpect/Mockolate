@@ -46,7 +46,7 @@ public abstract class PropertySetup
 				return typedValue;
 			}
 
-			return default!;
+			return behavior.DefaultValue.Generate<TResult>();
 		}
 	}
 }
@@ -222,7 +222,7 @@ public class PropertySetup<T> : PropertySetup
 			return true;
 		}
 
-		result = behavior.DefaultValueGenerator.Generate<TValue>();
+		result = behavior.DefaultValue.Generate<TValue>();
 		return value is null;
 	}
 }

@@ -1,9 +1,168 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace Mockolate.SourceGenerators.Tests.Sources;
 
 public sealed class MockRegistrationTests
 {
+	[Fact]
+	public async Task DefaultValueGenerator_ShouldRegisterArrays()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             int[] SimpleArray { get; }
+			             int[,,][,][] MultiDimensionalArray { get; }
+			         }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
+			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<int[]>(Array.Empty<int>()));").And
+			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<int[,,][,][]>(new int[0,0,0][,][]));");
+	}
+
+	[Fact]
+	public async Task DefaultValueGenerator_ShouldRegisterTasks()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             Task<int> IntTask { get; }
+			             Task<int[]> IntArrayTask { get; }
+			         }
+			     }
+			     """, typeof(Task));
+
+		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.Task<int>>(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<int>(defaultValueGenerator.Generate<int>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int)));").And
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.Task<int[]>>(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<int[]>(defaultValueGenerator.Generate<int[]>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int[])));");
+	}
+
+	[Fact]
+	public async Task DefaultValueGenerator_ShouldRegisterValueTasks()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             ValueTask<int> IntValueTask { get; }
+			             ValueTask<int[]> IntArrayValueTask { get; }
+			         }
+			     }
+			     """, typeof(ValueTask));
+
+		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int>>(defaultValueGenerator => new System.Threading.Tasks.ValueTask<int>(defaultValueGenerator.Generate<int>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int)));").And
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int[]>>(defaultValueGenerator => new System.Threading.Tasks.ValueTask<int[]>(defaultValueGenerator.Generate<int[]>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int[])));");
+	}
+
+	[Fact]
+	public async Task DefaultValueGenerator_ShouldRegisterIEnumerables()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             IEnumerable<int> EnumerableOfInt { get; }
+			             IEnumerable<int[]> EnumerableOfIntArray { get; }
+			         }
+			     }
+			     """, typeof(IEnumerable<>));
+
+		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
+			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<System.Collections.Generic.IEnumerable<int>>(Array.Empty<int>()));").And
+			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<System.Collections.Generic.IEnumerable<int[]>>(Array.Empty<int[]>()));");
+	}
+
+	[Fact]
+	public async Task DefaultValueGenerator_ShouldRegisterValueTuples()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             (int V1, string V2) NamedValueTuple { get; }
+			             (int, string, int, string, int, string, int, string) ValueTuple8 { get; }
+			         }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<(int V1, string V2)>(defaultValueGenerator => (defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>())));").And
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<(int, string, int, string, int, string, int, string)>(defaultValueGenerator => (defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>())));");
+	}
+
 	[Fact]
 	public async Task ShouldRegisterAllTypesInTheMockGenerator()
 	{
@@ -42,10 +201,6 @@ public sealed class MockRegistrationTests
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("""
-			          internal static partial class Mock
-			          {
-			          	private partial class MockGenerator
-			          	{
 			          		partial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types)
 			          		{
 			          			if (types.Length == 1 &&
@@ -60,8 +215,6 @@ public sealed class MockRegistrationTests
 			          				_value = new ForMyBaseClass_IMyInterface.Mock(constructorParameters, mockBehavior);
 			          			}
 			          		}
-			          	}
-			          }
-			          """);
+			          """).IgnoringNewlineStyle();
 	}
 }

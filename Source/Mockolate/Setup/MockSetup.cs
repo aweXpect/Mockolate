@@ -134,7 +134,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 				throw new MockNotSetupException($"The indexer ['{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}'] was accessed without prior setup.");
 			}
 
-			return mock.Behavior.DefaultValueGenerator.Generate<TValue>();
+			return mock.Behavior.DefaultValue.Generate<TValue>();
 		});
 
 	/// <summary>
