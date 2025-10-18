@@ -51,9 +51,9 @@ public sealed partial class MockSetupsTests
 			string result1 = sut.Get<string>("my.property");
 			string result2 = sut.Get<string>("my.other.property");
 
-			await That(result0).IsNull();
+			await That(result0).IsEmpty();
 			await That(result1).IsEqualTo("foo");
-			await That(result2).IsNull();
+			await That(result2).IsEmpty();
 		}
 
 		[Fact]

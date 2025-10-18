@@ -14,8 +14,8 @@ public sealed partial class MockSetupsTests
 			string result1 = mock.Subject[1, 2];
 			string result2 = mock.Subject[2, 1];
 
-			await That(result1).IsNull();
-			await That(result2).IsNull();
+			await That(result1).IsEmpty();
+			await That(result2).IsEmpty();
 		}
 
 		[Fact]
@@ -29,7 +29,7 @@ public sealed partial class MockSetupsTests
 			string result2 = mock.Subject[0, 2];
 
 			await That(result1).IsEqualTo("foo");
-			await That(result2).IsNull();
+			await That(result2).IsEmpty();
 		}
 
 		[Fact]
@@ -43,7 +43,7 @@ public sealed partial class MockSetupsTests
 			string result2 = mock.Subject[3];
 
 			await That(result1).IsEqualTo("foo");
-			await That(result2).IsNull();
+			await That(result2).IsEmpty();
 		}
 
 		[Fact]
@@ -91,7 +91,7 @@ public sealed partial class MockSetupsTests
 			string result2 = mock.Subject[null, 4];
 
 			await That(result1).IsEqualTo("foo");
-			await That(result2).IsNull();
+			await That(result2).IsEmpty();
 		}
 
 		[Fact]
@@ -105,9 +105,9 @@ public sealed partial class MockSetupsTests
 			string result1 = mock.Subject[1, 2];
 			string result2 = mock.Subject[2, 2];
 
-			await That(result0).IsNull();
+			await That(result0).IsEmpty();
 			await That(result1).IsEqualTo("foo");
-			await That(result2).IsNull();
+			await That(result2).IsEmpty();
 		}
 
 		[Fact]
@@ -121,9 +121,9 @@ public sealed partial class MockSetupsTests
 			string result1 = mock.Subject[1];
 			string result2 = mock.Subject[2];
 
-			await That(result0).IsNull();
+			await That(result0).IsEmpty();
 			await That(result1).IsEqualTo("foo");
-			await That(result2).IsNull();
+			await That(result2).IsEmpty();
 		}
 
 		public interface IIndexerService

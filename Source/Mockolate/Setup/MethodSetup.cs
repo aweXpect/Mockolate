@@ -162,7 +162,7 @@ public abstract class MethodSetup : IMethodSetup
 			return true;
 		}
 
-		result = behavior.DefaultValueGenerator.Generate<T>();
+		result = behavior.DefaultValue.Generate<T>();
 		return value is null;
 	}
 

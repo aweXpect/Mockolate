@@ -74,7 +74,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
-		=> behavior.DefaultValueGenerator.Generate<T>();
+		=> behavior.DefaultValue.Generate<T>();
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
@@ -182,7 +182,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 			return outParameter.GetValue();
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -300,7 +300,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 			return outParameter.GetValue();
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -423,7 +423,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 			return outParameter.GetValue();
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -548,7 +548,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 			return outParameter.GetValue();
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />

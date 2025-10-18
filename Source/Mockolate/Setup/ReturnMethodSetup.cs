@@ -70,7 +70,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	{
 		if (_returnCallbacks.Count == 0)
 		{
-			return behavior.DefaultValueGenerator.Generate<TResult>();
+			return behavior.DefaultValue.Generate<TResult>();
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
@@ -90,7 +90,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
-		=> behavior.DefaultValueGenerator.Generate<T>();
+		=> behavior.DefaultValue.Generate<T>();
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
@@ -200,7 +200,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	{
 		if (_returnCallbacks.Count == 0)
 		{
-			return behavior.DefaultValueGenerator.Generate<TResult>();
+			return behavior.DefaultValue.Generate<TResult>();
 		}
 
 		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
@@ -232,7 +232,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 			return outParameter.GetValue();
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -352,7 +352,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	{
 		if (_returnCallbacks.Count == 0)
 		{
-			return behavior.DefaultValueGenerator.Generate<TResult>();
+			return behavior.DefaultValue.Generate<TResult>();
 		}
 
 		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
@@ -390,7 +390,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 			return outParameter.GetValue();
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -515,7 +515,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	{
 		if (_returnCallbacks.Count == 0)
 		{
-			return behavior.DefaultValueGenerator.Generate<TResult>();
+			return behavior.DefaultValue.Generate<TResult>();
 		}
 
 		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
@@ -558,7 +558,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 			return outParameter.GetValue();
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -686,7 +686,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	{
 		if (_returnCallbacks.Count == 0)
 		{
-			return behavior.DefaultValueGenerator.Generate<TResult>();
+			return behavior.DefaultValue.Generate<TResult>();
 		}
 
 		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
@@ -735,7 +735,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 			return outParameter.GetValue();
 		}
 
-		return behavior.DefaultValueGenerator.Generate<T>();
+		return behavior.DefaultValue.Generate<T>();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />

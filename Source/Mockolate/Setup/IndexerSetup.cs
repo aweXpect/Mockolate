@@ -63,7 +63,7 @@ public abstract class IndexerSetup : IIndexerSetup
 			return true;
 		}
 
-		result = behavior.DefaultValueGenerator.Generate<T>();
+		result = behavior.DefaultValue.Generate<T>();
 		return value is null;
 	}
 
@@ -310,7 +310,7 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 			return true;
 		}
 
-		value = behavior.DefaultValueGenerator.Generate<T>();
+		value = behavior.DefaultValue.Generate<T>();
 		return false;
 	}
 }
@@ -527,7 +527,7 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 			return true;
 		}
 
-		value = behavior.DefaultValueGenerator.Generate<T>();
+		value = behavior.DefaultValue.Generate<T>();
 		return false;
 	}
 }
@@ -751,7 +751,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 			return true;
 		}
 
-		value = behavior.DefaultValueGenerator.Generate<T>();
+		value = behavior.DefaultValue.Generate<T>();
 		return false;
 	}
 }
@@ -980,7 +980,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 			return true;
 		}
 
-		value = behavior.DefaultValueGenerator.Generate<T>();
+		value = behavior.DefaultValue.Generate<T>();
 		return false;
 	}
 }

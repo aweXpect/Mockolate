@@ -206,7 +206,7 @@ internal static partial class Sources
 		sb.Append("\t\t\treturn outParameter.GetValue();").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\treturn behavior.DefaultValueGenerator.Generate<T>();").AppendLine();
+		sb.Append("\t\treturn behavior.DefaultValue.Generate<T>();").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -406,7 +406,7 @@ internal static partial class Sources
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tif (_returnCallbacks.Count == 0)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\treturn behavior.DefaultValueGenerator.Generate<TResult>();").AppendLine();
+		sb.Append("\t\t\treturn behavior.DefaultValue.Generate<TResult>();").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
@@ -454,7 +454,7 @@ internal static partial class Sources
 		sb.Append("\t\t\treturn outParameter.GetValue();").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\treturn behavior.DefaultValueGenerator.Generate<T>();").AppendLine();
+		sb.Append("\t\treturn behavior.DefaultValue.Generate<T>();").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 

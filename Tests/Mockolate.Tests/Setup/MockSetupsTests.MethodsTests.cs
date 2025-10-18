@@ -29,7 +29,7 @@ public sealed partial class MockSetupsTests
 
 			MethodSetupResult<string> result0 = sut.Execute<string>("my.method");
 
-			await That(result0.Result).IsNull();
+			await That(result0.Result).IsEmpty();
 		}
 
 		[Fact]

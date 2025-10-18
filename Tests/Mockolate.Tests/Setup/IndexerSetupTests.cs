@@ -18,7 +18,7 @@ public sealed class IndexerSetupTests
 
 		await That(result2).IsEqualTo("foo");
 		await That(result3).IsEqualTo("foo");
-		await That(result4).IsNull();
+		await That(result4).IsEmpty();
 	}
 
 	[Fact]
@@ -35,7 +35,7 @@ public sealed class IndexerSetupTests
 
 		await That(result2).IsEqualTo("foo-2");
 		await That(result3).IsEqualTo("foo-3");
-		await That(result4).IsNull();
+		await That(result4).IsEmpty();
 	}
 
 	[Fact]
@@ -299,7 +299,7 @@ public sealed class IndexerSetupTests
 
 		string result = sut.Subject[2];
 
-		await That(result).IsNull();
+		await That(result).IsEmpty();
 	}
 
 	[Fact]
@@ -377,8 +377,8 @@ public sealed class IndexerSetupTests
 
 			await That(result12).IsEqualTo("foo");
 			await That(result13).IsEqualTo("foo");
-			await That(result14).IsNull();
-			await That(result41).IsNull();
+			await That(result14).IsEmpty();
+			await That(result41).IsEmpty();
 		}
 
 		[Fact]
@@ -396,8 +396,8 @@ public sealed class IndexerSetupTests
 
 			await That(result12).IsEqualTo("foo-1-2");
 			await That(result13).IsEqualTo("foo-2-3");
-			await That(result14).IsNull();
-			await That(result41).IsNull();
+			await That(result14).IsEmpty();
+			await That(result41).IsEmpty();
 		}
 
 		[Fact]
@@ -666,7 +666,7 @@ public sealed class IndexerSetupTests
 
 			string result = sut.Subject[1, 2];
 
-			await That(result).IsNull();
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -746,9 +746,9 @@ public sealed class IndexerSetupTests
 
 			await That(result123).IsEqualTo("foo");
 			await That(result231).IsEqualTo("foo");
-			await That(result114).IsNull();
-			await That(result141).IsNull();
-			await That(result411).IsNull();
+			await That(result114).IsEmpty();
+			await That(result141).IsEmpty();
+			await That(result411).IsEmpty();
 		}
 
 		[Fact]
@@ -767,9 +767,9 @@ public sealed class IndexerSetupTests
 
 			await That(result123).IsEqualTo("foo-1-2-3");
 			await That(result231).IsEqualTo("foo-2-3-1");
-			await That(result114).IsNull();
-			await That(result141).IsNull();
-			await That(result411).IsNull();
+			await That(result114).IsEmpty();
+			await That(result141).IsEmpty();
+			await That(result411).IsEmpty();
 		}
 
 		[Fact]
@@ -1042,7 +1042,7 @@ public sealed class IndexerSetupTests
 
 			string result = sut.Subject[1, 2, 3];
 
-			await That(result).IsNull();
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -1123,10 +1123,10 @@ public sealed class IndexerSetupTests
 
 			await That(result1234).IsEqualTo("foo");
 			await That(result2341).IsEqualTo("foo");
-			await That(result1114).IsNull();
-			await That(result1141).IsNull();
-			await That(result1411).IsNull();
-			await That(result4111).IsNull();
+			await That(result1114).IsEmpty();
+			await That(result1141).IsEmpty();
+			await That(result1411).IsEmpty();
+			await That(result4111).IsEmpty();
 		}
 
 		[Fact]
@@ -1146,10 +1146,10 @@ public sealed class IndexerSetupTests
 
 			await That(result1234).IsEqualTo("foo-1-2-3-4");
 			await That(result2341).IsEqualTo("foo-2-3-4-1");
-			await That(result1114).IsNull();
-			await That(result1141).IsNull();
-			await That(result1411).IsNull();
-			await That(result4111).IsNull();
+			await That(result1114).IsEmpty();
+			await That(result1141).IsEmpty();
+			await That(result1411).IsEmpty();
+			await That(result4111).IsEmpty();
 		}
 
 		[Fact]
@@ -1423,7 +1423,7 @@ public sealed class IndexerSetupTests
 
 			string result = sut.Subject[1, 2, 3, 4];
 
-			await That(result).IsNull();
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -1505,11 +1505,11 @@ public sealed class IndexerSetupTests
 
 			await That(result12345).IsEqualTo("foo");
 			await That(result52341).IsEqualTo("foo");
-			await That(result11116).IsNull();
-			await That(result11161).IsNull();
-			await That(result11611).IsNull();
-			await That(result16111).IsNull();
-			await That(result61111).IsNull();
+			await That(result11116).IsEmpty();
+			await That(result11161).IsEmpty();
+			await That(result11611).IsEmpty();
+			await That(result16111).IsEmpty();
+			await That(result61111).IsEmpty();
 		}
 
 		[Fact]
@@ -1530,11 +1530,11 @@ public sealed class IndexerSetupTests
 
 			await That(result12345).IsEqualTo("foo-1-2-3-4-5");
 			await That(result52341).IsEqualTo("foo-5-2-3-4-1");
-			await That(result11116).IsNull();
-			await That(result11161).IsNull();
-			await That(result11611).IsNull();
-			await That(result16111).IsNull();
-			await That(result61111).IsNull();
+			await That(result11116).IsEmpty();
+			await That(result11161).IsEmpty();
+			await That(result11611).IsEmpty();
+			await That(result16111).IsEmpty();
+			await That(result61111).IsEmpty();
 		}
 
 		[Fact]
@@ -1810,7 +1810,7 @@ public sealed class IndexerSetupTests
 
 			string result = sut.Subject[1, 2, 3, 4, 5];
 
-			await That(result).IsNull();
+			await That(result).IsEmpty();
 		}
 
 		[Fact]

@@ -39,13 +39,9 @@ namespace Mockolate
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
     {
         public MockBehavior() { }
-        public Mockolate.MockBehavior.IDefaultValueGenerator DefaultValueGenerator { get; init; }
+        public Mockolate.DefaultValues.IDefaultValueGenerator DefaultValue { get; init; }
         public bool ThrowWhenNotSetup { get; init; }
         public static Mockolate.MockBehavior Default { get; }
-        public interface IDefaultValueGenerator
-        {
-            T Generate<T>();
-        }
     }
     public static class MockExtensions
     {
@@ -210,6 +206,37 @@ namespace Mockolate
             public override bool Matches(object? value) { }
             public override string ToString() { }
         }
+    }
+}
+namespace Mockolate.DefaultValues
+{
+    public class CallbackDefaultValueFactory<T> : Mockolate.DefaultValues.IDefaultValueFactory
+    {
+        public CallbackDefaultValueFactory(System.Func<Mockolate.DefaultValues.IDefaultValueGenerator, T> callback, System.Func<System.Type, bool>? isMatch = null) { }
+        public object? Create(System.Type type, Mockolate.DefaultValues.IDefaultValueGenerator defaultValueGenerator) { }
+        public bool IsMatch(System.Type type) { }
+    }
+    public class DefaultValueGenerator : Mockolate.DefaultValues.IDefaultValueGenerator
+    {
+        public DefaultValueGenerator() { }
+        public T Generate<T>() { }
+        protected virtual bool TryGenerate(System.Type type, out object? value) { }
+        public static void Register(Mockolate.DefaultValues.IDefaultValueFactory defaultValueFactory) { }
+    }
+    public interface IDefaultValueFactory
+    {
+        object? Create(System.Type type, Mockolate.DefaultValues.IDefaultValueGenerator defaultValueGenerator);
+        bool IsMatch(System.Type type);
+    }
+    public interface IDefaultValueGenerator
+    {
+        T Generate<T>();
+    }
+    public class TypedDefaultValueFactory<T> : Mockolate.DefaultValues.IDefaultValueFactory
+    {
+        public TypedDefaultValueFactory(T value) { }
+        public object? Create(System.Type type, Mockolate.DefaultValues.IDefaultValueGenerator defaultValueGenerator) { }
+        public bool IsMatch(System.Type type) { }
     }
 }
 namespace Mockolate.Events

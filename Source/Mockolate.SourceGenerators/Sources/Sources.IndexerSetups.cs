@@ -284,7 +284,7 @@ internal static partial class Sources
 		sb.Append("\t\t\treturn true;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\tvalue = behavior.DefaultValueGenerator.Generate<T>();").AppendLine();
+		sb.Append("\t\tvalue = behavior.DefaultValue.Generate<T>();").AppendLine();
 		sb.Append("\t\treturn false;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
