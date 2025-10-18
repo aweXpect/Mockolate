@@ -268,7 +268,7 @@ internal static partial class Sources
 				.AppendLine("\" />");
 			if (explicitInterfaceImplementation)
 			{
-				sb.Append("\t\tevent ").Append(@event.Type.GetMinimizedString(namespaces))
+				sb.Append("\t\tevent ").Append(@event.Type.GetMinimizedString(namespaces).TrimEnd('?'))
 					.Append("? ").Append(@class.GetFullName()).Append('.').Append(@event.Name).AppendLine();
 			}
 			else

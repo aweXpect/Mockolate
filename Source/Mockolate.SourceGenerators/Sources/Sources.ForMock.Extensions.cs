@@ -269,6 +269,7 @@ internal static partial class Sources
 		sb.Append("\textension(Mock<").Append(allClasses).AppendLine("> mock)");
 		sb.AppendLine("\t{");
 		int count = 0;
+		HashSet<string> usedNames = [];
 		foreach (Class? @class in mockClass.DistinctAdditionalImplementations())
 		{
 			if (count++ > 0)
@@ -276,11 +277,17 @@ internal static partial class Sources
 				sb.AppendLine();
 			}
 
+			int nameSuffix = 1;
+			string name = @class.ClassName.Replace('.', '_');
+			while (!usedNames.Add(name))
+			{
+				name = $"{@class.ClassName.Replace('.', '_')}__{++nameSuffix}";
+			}
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append("\" />")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockSetup<").Append(@class.GetFullName()).Append("> Setup").Append(@class.ClassName.Replace('.', '_'))
+			sb.Append("\t\tpublic MockSetup<").Append(@class.GetFullName()).Append("> Setup").Append(name)
 				.AppendLine();
 			sb.Append("\t\t\t=> new MockSetup<").Append(@class.GetFullName()).Append(">.Proxy(mock.Setup);").AppendLine();
 			if (@class.Events.Any())
@@ -291,7 +298,7 @@ internal static partial class Sources
 					.Append("\" />").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic MockRaises<").Append(@class.GetFullName()).Append("> RaiseOn")
-					.Append(@class.ClassName.Replace('.', '_')).AppendLine();
+					.Append(name).AppendLine();
 				sb.Append("\t\t\t=> new MockRaises<").Append(@class.GetFullName())
 					.Append(">(mock.Setup, ((IMock)mock).Interactions);").AppendLine();
 			}
@@ -302,7 +309,7 @@ internal static partial class Sources
 				.Append(@class.GetFullName().EscapeForXmlDoc()).Append("\" /> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses)
-				.Append(">> VerifyOn").Append(@class.ClassName.Replace('.', '_'))
+				.Append(">> VerifyOn").Append(name)
 				.AppendLine();
 			sb.Append("\t\t\t=> new MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses)
 				.Append(">>(((IMock)mock).Interactions, mock);").AppendLine();
@@ -311,7 +318,7 @@ internal static partial class Sources
 			sb.Append("\t\t///     Exposes the mocked subject of type <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc())
 				.Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append(@class.GetFullName()).Append(" SubjectFor").Append(@class.ClassName.Replace('.', '_'))
+			sb.Append("\t\tpublic ").Append(@class.GetFullName()).Append(" SubjectFor").Append(name)
 				.AppendLine();
 			sb.Append("\t\t\t=> (").Append(@class.GetFullName()).Append(")mock.Subject;").AppendLine();
 		}
