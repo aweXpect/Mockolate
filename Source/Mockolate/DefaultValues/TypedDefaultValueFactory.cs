@@ -1,12 +1,11 @@
-﻿
-using System;
+﻿using System;
 
 namespace Mockolate.DefaultValues;
 
 /// <summary>
 ///     A <see cref="IDefaultValueFactory"/> that returns a specified <paramref name="value"/> for the given type parameter <typeparamref name="T"/>.
 /// </summary>
-public class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
+internal class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
 {
 	/// <inheritdoc cref="IDefaultValueFactory.IsMatch(Type)" />
 	public bool IsMatch(Type type)

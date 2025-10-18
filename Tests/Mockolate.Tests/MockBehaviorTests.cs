@@ -86,7 +86,7 @@ public class MockBehaviorTests
 		await That(result.V4).IsEqualTo("");
 		await That(result.V5).IsEqualTo(0);
 		await That(result.V6).IsEqualTo("");
-		await That(result.V1).IsEqualTo(0);
+		await That(result.V7).IsEqualTo(0);
 		await That(result.V8).IsEqualTo("");
 	}
 

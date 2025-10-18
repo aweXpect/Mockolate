@@ -3,6 +3,7 @@ using Mockolate.SourceGenerators.Entities;
 
 namespace Mockolate.SourceGenerators.Internals;
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
 	public static string MockRegistration(ICollection<(string Name, MockClass MockClass)> mocks)
@@ -91,6 +92,7 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("\t}");
+
 		sb.AppendLine();
 		sb.AppendLine("\tprivate partial class MockGenerator");
 		sb.AppendLine("\t{");
@@ -132,8 +134,33 @@ internal static partial class Sources
 
 		sb.AppendLine("\t\t}");
 		sb.AppendLine("\t}");
+
+		sb.AppendLine();
+		sb.AppendLine("\tprivate class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory");
+		sb.AppendLine("\t{");
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.IsMatch(Type)\" />");
+		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
+		sb.AppendLine("\t\t\t=> type == typeof(T);");
+		sb.AppendLine();
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator)\" />");
+		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator)");
+		sb.AppendLine("\t\t\t=> value;");
+		sb.AppendLine("\t}");
+
+		sb.AppendLine();
+		sb.AppendLine("\tpublic class CallbackDefaultValueFactory<T>(Func<IDefaultValueGenerator, T> callback, Func<Type, bool>? isMatch = null) : IDefaultValueFactory");
+		sb.AppendLine("\t{");
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.IsMatch(Type)\" />");
+		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
+		sb.AppendLine("\t\t\t=> isMatch?.Invoke(type) ?? type == typeof(T);");
+		sb.AppendLine();
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator)\" />");
+		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator)");
+		sb.AppendLine("\t\t\t=> callback(defaultValueGenerator);");
+		sb.AppendLine("\t}");
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
 	}
 }
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

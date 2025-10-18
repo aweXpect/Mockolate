@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,13 +45,11 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 	/// </summary>
 	protected virtual bool TryGenerate(Type type, out object? value)
 	{
-		foreach (var factory in _factories)
+		IDefaultValueFactory? matchingFactory = _factories.FirstOrDefault(f => f.IsMatch(type));
+		if (matchingFactory is not null)
 		{
-			if (factory.IsMatch(type))
-			{
-				value = factory.Create(type, this);
-				return true;
-			}
+			value = matchingFactory.Create(type, this);
+			return true;
 		}
 
 		value = null;
