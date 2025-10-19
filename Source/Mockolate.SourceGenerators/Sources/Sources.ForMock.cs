@@ -257,14 +257,14 @@ internal static partial class Sources
 	{
 		sb.Append("\t\t#region ").Append(@class.GetFullName()).AppendLine();
 		int count = 0;
-		foreach (Event @event in @class.Events)
+		foreach (Event @event in @class.AllEvents())
 		{
 			if (count++ > 0)
 			{
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append('.').Append(@event.Name.EscapeForXmlDoc())
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@event.ContainingType.EscapeForXmlDoc()).Append('.').Append(@event.Name.EscapeForXmlDoc())
 				.AppendLine("\" />");
 			if (explicitInterfaceImplementation)
 			{
@@ -284,21 +284,21 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\tadd => _mock.Raise.AddEvent(\"").Append(@class.GetFullName(@event.Name))
+			sb.Append("\t\t\tadd => _mock.Raise.AddEvent(\"").Append(@event.ContainingType).Append('.').Append(@event.Name)
 				.Append("\", value?.Target, value?.Method);").AppendLine();
-			sb.Append("\t\t\tremove => _mock.Raise.RemoveEvent(\"").Append(@class.GetFullName(@event.Name))
+			sb.Append("\t\t\tremove => _mock.Raise.RemoveEvent(\"").Append(@event.ContainingType).Append('.').Append(@event.Name)
 				.Append("\", value?.Target, value?.Method);").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
 
-		foreach (Property property in @class.Properties)
+		foreach (Property property in @class.AllProperties())
 		{
 			if (count++ > 0)
 			{
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append('.').Append(property.IndexerParameters is not null
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(property.ContainingType.EscapeForXmlDoc()).Append('.').Append(property.IndexerParameters is not null
 					? property.Name.Replace("[]",
 						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.GetMinimizedString(namespaces)}"))}]").EscapeForXmlDoc()
 					: property.Name.EscapeForXmlDoc())
@@ -347,7 +347,7 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\treturn _mock.Get<")
 						.Append(property.Type.GetMinimizedString(namespaces))
-						.Append(">(\"").Append(@class.GetFullName(property.Name)).AppendLine("\");");
+						.Append(">(\"").Append(property.ContainingType).Append('.').Append(property.Name).AppendLine("\");");
 				}
 				sb.AppendLine("\t\t\t}");
 			}
@@ -370,7 +370,7 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\t_mock.Set(\"").Append(@class.GetFullName(property.Name)).AppendLine("\", value);");
+					sb.Append("\t\t\t\t_mock.Set(\"").Append(property.ContainingType).Append('.').Append(property.Name).AppendLine("\", value);");
 				}
 				sb.AppendLine("\t\t\t}");
 			}
@@ -378,14 +378,14 @@ internal static partial class Sources
 			sb.AppendLine("\t\t}");
 		}
 
-		foreach (Method method in @class.Methods)
+		foreach (Method method in @class.AllMethods())
 		{
 			if (count++ > 0)
 			{
 				sb.AppendLine();
 			}
 
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append('.').Append(method.Name.EscapeForXmlDoc())
+			sb.Append("\t\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.').Append(method.Name.EscapeForXmlDoc())
 				.Append('(').Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
 				.AppendLine(")\" />");
@@ -445,7 +445,7 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\tvar result = _mock.Execute<")
 					.Append(method.ReturnType.GetMinimizedString(namespaces))
-					.Append(">(\"").Append(@class.GetFullName(method.Name)).Append("\"");
+					.Append(">(\"").Append(method.ContainingType).Append('.').Append(method.Name).Append("\"");
 				foreach (MethodParameter p in method.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);

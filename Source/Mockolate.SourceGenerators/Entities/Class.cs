@@ -23,7 +23,7 @@ internal record Class
 		}
 
 		IsInterface = type.TypeKind == TypeKind.Interface;
-		List<Method> methods = GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IMethodSymbol>())
+		List<Method> methods = type.GetMembers().OfType<IMethodSymbol>()
 			// Exclude getter/setter methods
 			.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
@@ -48,14 +48,14 @@ internal record Class
 
 		Methods = new EquatableArray<Method>(methods.ToArray());
 		Properties = new EquatableArray<Property>(
-			GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IPropertySymbol>())
+			type.GetMembers().OfType<IPropertySymbol>()
 				.Where(x => !x.IsSealed)
 				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => new Property(x))
 				.Distinct()
 				.ToArray());
 		Events = new EquatableArray<Event>(
-			GetBaseTypesAndThis(type).SelectMany(t => t.GetMembers().OfType<IEventSymbol>())
+			type.GetMembers().OfType<IEventSymbol>()
 				.Where(x => !x.IsSealed)
 				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => (x, (x.Type as INamedTypeSymbol)?.DelegateInvokeMethod))
@@ -64,13 +64,16 @@ internal record Class
 				.Distinct()
 				.ToArray());
 		AdditionalNamespaces = new EquatableArray<string>(additionalNamespaces.Distinct().ToArray());
+		InheritedTypes = new EquatableArray<Class>(
+			GetInheritedTypes(type).Select(t => new Class(t))
+				.ToArray());
 	}
 
 	public Type? ContainingType { get; }
 
 	public EquatableArray<Method> Methods { get; }
 	public EquatableArray<string> AdditionalNamespaces { get; }
-
+	public EquatableArray<Class> InheritedTypes { get; }
 	public EquatableArray<Property> Properties { get; }
 
 	public EquatableArray<Event> Events { get; }
@@ -107,21 +110,43 @@ internal record Class
 		return type.Name;
 	}
 
-	public static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
+	public static IEnumerable<ITypeSymbol> GetInheritedTypes(ITypeSymbol type)
 	{
 		ITypeSymbol? current = type;
 		while (current != null)
 		{
-			yield return current;
+			if (!SymbolEqualityComparer.Default.Equals(current, type))
+			{
+				yield return current;
+			}
+
 			if (current.TypeKind == TypeKind.Interface)
 			{
-				foreach (INamedTypeSymbol? @interface in current.Interfaces)
+				foreach (INamedTypeSymbol? @interface in current.AllInterfaces)
 				{
 					yield return @interface;
 				}
 			}
 
 			current = current.BaseType;
+		}
+	}
+
+	public IEnumerable<Property> AllProperties()
+		=> AllClasses().SelectMany(c => c.Properties);
+
+	public IEnumerable<Method> AllMethods()
+		=> AllClasses().SelectMany(c => c.Methods);
+
+	public IEnumerable<Event> AllEvents()
+		=> AllClasses().SelectMany(c => c.Events);
+
+	public IEnumerable<Class> AllClasses()
+	{
+		yield return this;
+		foreach (Class inherited in InheritedTypes)
+		{
+			yield return inherited;
 		}
 	}
 

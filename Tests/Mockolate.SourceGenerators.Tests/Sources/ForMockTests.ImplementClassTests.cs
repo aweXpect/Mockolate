@@ -97,6 +97,79 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
+		public async Task Events_ShouldImplementImplicitelyInheritedEvents()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService : IMyServiceBase1
+				     {
+				         event EventHandler MyDirectEvent;
+				     }
+				     
+				     public interface IMyServiceBase1 : IMyServiceBase2
+				     {
+				         event EventHandler MyBaseEvent1;
+				     }
+				     
+				     public interface IMyServiceBase2 : IMyServiceBase3
+				     {
+				         event EventHandler MyBaseEvent2;
+				     }
+				     
+				     public interface IMyServiceBase3
+				     {
+				         event EventHandler MyBaseEvent3;
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyService.MyDirectEvent" />
+				          		public event System.EventHandler? MyDirectEvent
+				          		{
+				          			add => _mock.Raise.AddEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseEvent1" />
+				          		public event System.EventHandler? MyBaseEvent1
+				          		{
+				          			add => _mock.Raise.AddEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseEvent2" />
+				          		public event System.EventHandler? MyBaseEvent2
+				          		{
+				          			add => _mock.Raise.AddEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseEvent3" />
+				          		public event System.EventHandler? MyBaseEvent3
+				          		{
+				          			add => _mock.Raise.AddEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+				          		}
+				          """).IgnoringNewlineStyle();
+		}
+
+		[Fact]
 		public async Task Indexers_ShouldImplementAllIndexersFromInterfaces()
 		{
 			GeneratorResult result = Generator
@@ -593,6 +666,176 @@ public sealed partial class ForMockTests
 				          			set
 				          			{
 				          				_mock.Set("MyCode.IMyOtherService.SomeAdditionalProperty", value);
+				          			}
+				          		}
+				          """).IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task Methods_ShouldImplementImplicitelyInheritedMethods()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService : IMyServiceBase1
+				     {
+				         int MyDirectMethod(int value);
+				     }
+				     
+				     public interface IMyServiceBase1 : IMyServiceBase2
+				     {
+				         int MyBaseMethod1(int value);
+				     }
+				     
+				     public interface IMyServiceBase2 : IMyServiceBase3
+				     {
+				         int MyBaseMethod2(int value);
+				     }
+				     
+				     public interface IMyServiceBase3
+				     {
+				         int MyBaseMethod3(int value);
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyService.MyDirectMethod(int)" />
+				          		public int MyDirectMethod(int value)
+				          		{
+				          			var result = _mock.Execute<int>("MyCode.IMyService.MyDirectMethod", value);
+				          			return result.Result;
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseMethod1(int)" />
+				          		public int MyBaseMethod1(int value)
+				          		{
+				          			var result = _mock.Execute<int>("MyCode.IMyServiceBase1.MyBaseMethod1", value);
+				          			return result.Result;
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseMethod2(int)" />
+				          		public int MyBaseMethod2(int value)
+				          		{
+				          			var result = _mock.Execute<int>("MyCode.IMyServiceBase2.MyBaseMethod2", value);
+				          			return result.Result;
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseMethod3(int)" />
+				          		public int MyBaseMethod3(int value)
+				          		{
+				          			var result = _mock.Execute<int>("MyCode.IMyServiceBase3.MyBaseMethod3", value);
+				          			return result.Result;
+				          		}
+				          """).IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task Properties_ShouldImplementImplicitelyInheritedProperties()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService : IMyServiceBase1
+				     {
+				         int MyDirectProperty { get; set; }
+				     }
+				     
+				     public interface IMyServiceBase1 : IMyServiceBase2
+				     {
+				         int MyBaseProperty1 { get; set; }
+				     }
+				     
+				     public interface IMyServiceBase2 : IMyServiceBase3
+				     {
+				         int MyBaseProperty2 { get; set; }
+				     }
+				     
+				     public interface IMyServiceBase3
+				     {
+				         int MyBaseProperty3 { get; set; }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyService.MyDirectProperty" />
+				          		public int MyDirectProperty
+				          		{
+				          			get
+				          			{
+				          				return _mock.Get<int>("MyCode.IMyService.MyDirectProperty");
+				          			}
+				          			set
+				          			{
+				          				_mock.Set("MyCode.IMyService.MyDirectProperty", value);
+				          			}
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseProperty1" />
+				          		public int MyBaseProperty1
+				          		{
+				          			get
+				          			{
+				          				return _mock.Get<int>("MyCode.IMyServiceBase1.MyBaseProperty1");
+				          			}
+				          			set
+				          			{
+				          				_mock.Set("MyCode.IMyServiceBase1.MyBaseProperty1", value);
+				          			}
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseProperty2" />
+				          		public int MyBaseProperty2
+				          		{
+				          			get
+				          			{
+				          				return _mock.Get<int>("MyCode.IMyServiceBase2.MyBaseProperty2");
+				          			}
+				          			set
+				          			{
+				          				_mock.Set("MyCode.IMyServiceBase2.MyBaseProperty2", value);
+				          			}
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseProperty3" />
+				          		public int MyBaseProperty3
+				          		{
+				          			get
+				          			{
+				          				return _mock.Get<int>("MyCode.IMyServiceBase3.MyBaseProperty3");
+				          			}
+				          			set
+				          			{
+				          				_mock.Set("MyCode.IMyServiceBase3.MyBaseProperty3", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle();
