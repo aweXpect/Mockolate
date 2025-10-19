@@ -97,7 +97,7 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
-		public async Task Events_ShouldImplementImplicitelyInheritedEvents()
+		public async Task Events_ShouldImplementImplicitlyInheritedEvents()
 		{
 			GeneratorResult result = Generator
 				.Run("""
@@ -672,7 +672,7 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
-		public async Task Methods_ShouldImplementImplicitelyInheritedMethods()
+		public async Task Methods_ShouldImplementImplicitlyInheritedMethods()
 		{
 			GeneratorResult result = Generator
 				.Run("""
@@ -745,7 +745,7 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
-		public async Task Properties_ShouldImplementImplicitelyInheritedProperties()
+		public async Task Properties_ShouldImplementImplicitlyInheritedProperties()
 		{
 			GeneratorResult result = Generator
 				.Run("""
