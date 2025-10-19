@@ -105,6 +105,37 @@ public class GeneralTests
 	}
 
 	[Fact]
+	public async Task MockOfIList_ShouldIncludeFullNameAsGenericParameter()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			var x = Mockolate.Mock.Create<IList<MyOtherCode.MyRecord>>();
+			             }
+			         }
+			     }
+
+			     namespace MyOtherCode
+			     {
+			         public record MyRecord(int Id, string Name);
+			     }
+
+			     """, typeof(IList<>));
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources).ContainsKey("ForIListMyRecord.g.cs").WhoseValue
+			.Contains("public class MockSubject : System.Collections.Generic.IList<MyOtherCode.MyRecord>");
+	}
+
+	[Fact]
 	public async Task SameMethodInMultipleInterfaces_ShouldUseExplicitImplementation()
 	{
 		GeneratorResult result = Generator
