@@ -10,13 +10,14 @@ internal readonly record struct Event
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
 		Name = eventSymbol.Name;
 		Type = new Type(eventSymbol.Type);
-		Delegate = new Method(delegateInvokeMethod);
+		ContainingType = eventSymbol.ContainingType.ToDisplayString();
+		Delegate = new Method(delegateInvokeMethod, null);
 	}
 
 	public Method Delegate { get; }
 
 	public Type Type { get; }
-
+	public string ContainingType { get; }
 	public bool UseOverride { get; }
 
 	public Accessibility Accessibility { get; }

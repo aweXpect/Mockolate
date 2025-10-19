@@ -37,7 +37,7 @@ internal static partial class Sources
 
 		if (mockClass.Delegate is not null)
 		{
-			AppendDelegateExtensions(sb, mockClass, mockClass.Delegate.Value, namespaces);
+			AppendDelegateExtensions(sb, mockClass, mockClass.Delegate, namespaces);
 		}
 		else
 		{
@@ -460,10 +460,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(e
-				=> !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Getter.HasValue && e.Getter.Value.Accessibility != Accessibility.Private)
+				=> !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Getter != null && e.Getter.Accessibility != Accessibility.Private)
 			: new Func<Property, bool>(e
 				=> !e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Getter.HasValue && e.Getter.Value.Accessibility != Accessibility.Private);
+				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Getter != null && e.Getter.Accessibility != Accessibility.Private);
 		if (!@class.Properties.Any(predicate))
 		{
 			return;
@@ -510,10 +510,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(e
-				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Getter.HasValue && e.Getter.Value.Accessibility != Accessibility.Private)
+				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Getter != null && e.Getter.Accessibility != Accessibility.Private)
 			: new Func<Property, bool>(e
 				=> e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Getter.HasValue && e.Getter.Value.Accessibility != Accessibility.Private);
+				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Getter != null && e.Getter.Accessibility != Accessibility.Private);
 		if (!@class.Properties.Any(predicate))
 		{
 			return;
@@ -555,10 +555,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(e
-				=> !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Setter.HasValue && e.Setter.Value.Accessibility != Accessibility.Private)
+				=> !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Setter != null && e.Setter.Accessibility != Accessibility.Private)
 			: new Func<Property, bool>(e
 				=> !e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Setter.HasValue && e.Setter.Value.Accessibility != Accessibility.Private);
+				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Setter != null && e.Setter.Accessibility != Accessibility.Private);
 		if (!@class.Properties.Any(predicate))
 		{
 			return;
@@ -605,10 +605,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(e
-				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Setter.HasValue && e.Setter.Value.Accessibility != Accessibility.Private)
+				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Setter != null && e.Setter.Accessibility != Accessibility.Private)
 			: new Func<Property, bool>(e
 				=> e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Setter.HasValue && e.Setter.Value.Accessibility != Accessibility.Private);
+				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Setter != null && e.Setter.Accessibility != Accessibility.Private);
 		if (!@class.Properties.Any(predicate))
 		{
 			return;

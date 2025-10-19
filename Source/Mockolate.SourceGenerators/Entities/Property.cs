@@ -11,6 +11,7 @@ internal readonly record struct Property
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
 		Name = propertySymbol.Name;
 		Type = new Type(propertySymbol.Type);
+		ContainingType = propertySymbol.ContainingType.ToDisplayString();
 		IsIndexer = propertySymbol.IsIndexer;
 		if (IsIndexer && propertySymbol.Parameters.Length > 0)
 		{
@@ -18,14 +19,14 @@ internal readonly record struct Property
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
 
-		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod);
-		Setter = propertySymbol.SetMethod is null ? null : new Method(propertySymbol.SetMethod);
+		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod, null);
+		Setter = propertySymbol.SetMethod is null ? null : new Method(propertySymbol.SetMethod, null);
 	}
 
 	public bool IsIndexer { get; }
 	public EquatableArray<MethodParameter>? IndexerParameters { get; }
 	public Type Type { get; }
-
+	public string ContainingType { get; }
 	public Method? Setter { get; }
 
 	public Method? Getter { get; }
