@@ -7,9 +7,9 @@ internal record Class
 {
 	public Class(ITypeSymbol type, List<Method>? alreadyDefinedMethods = null)
 	{
-		List<string> additionalNamespaces = [];
 		Namespace = type.ContainingNamespace.ToString();
-		ClassName = GetTypeName(type, additionalNamespaces);
+		ClassName = GetTypeName(type);
+		ClassFullName = GetTypeFullName(type);
 
 		var containingType = type.ContainingType;
 		if (containingType is not null)
@@ -48,7 +48,6 @@ internal record Class
 				.Select(x => new Event(x.x, x.DelegateInvokeMethod!))
 				.Distinct()
 				.ToArray());
-		AdditionalNamespaces = new EquatableArray<string>(additionalNamespaces.Distinct().ToArray());
 		InheritedTypes = new EquatableArray<Class>(
 			GetInheritedTypes(type).Select(t => new Class(t, methods))
 				.ToArray());
@@ -57,7 +56,6 @@ internal record Class
 	public Type? ContainingType { get; }
 
 	public EquatableArray<Method> Methods { get; }
-	public EquatableArray<string> AdditionalNamespaces { get; }
 	public EquatableArray<Class> InheritedTypes { get; }
 	public EquatableArray<Property> Properties { get; }
 
@@ -66,17 +64,16 @@ internal record Class
 	public bool IsInterface { get; }
 	public string Namespace { get; }
 	public string ClassName { get; }
+	public string ClassFullName { get; }
 
-	private string GetTypeName(ITypeSymbol type, List<string> additionalNamespaces)
+	private string GetTypeName(ITypeSymbol type)
 	{
 		if (type is INamedTypeSymbol namedType)
 		{
 			if (namedType.IsGenericType)
 			{
-				additionalNamespaces.AddRange(namedType.TypeArguments
-					.Select(t => t.ContainingNamespace.ToString()));
 				return namedType.Name + "<" + string.Join(",",
-					namedType.TypeArguments.Select(t => GetTypeName(t, additionalNamespaces))) + ">";
+					namedType.TypeArguments.Select(t => GetTypeName(t))) + ">";
 			}
 
 			return namedType.SpecialType switch
@@ -93,6 +90,44 @@ internal record Class
 		}
 
 		return type.Name;
+	}
+
+	private string GetTypeFullName(ITypeSymbol type)
+	{
+		string GetPrefix(ITypeSymbol s)
+		{
+			string p = "";
+			var containingType = s.ContainingType;
+			while (containingType is not null)
+			{
+				p = $"{containingType.Name}.{p}";
+				containingType = containingType.ContainingType;
+			}
+			return $"{s.ContainingNamespace}.{p}";
+		}
+
+		if (type is INamedTypeSymbol namedType)
+		{
+			if (namedType.IsGenericType)
+			{
+				return GetPrefix(namedType) + namedType.Name + "<" + string.Join(",",
+					namedType.TypeArguments.Select(t => GetTypeFullName(t))) + ">";
+			}
+
+			return namedType.SpecialType switch
+			{
+				SpecialType.System_Int32 => "int",
+				SpecialType.System_Int64 => "long",
+				SpecialType.System_Int16 => "short",
+				SpecialType.System_UInt32 => "uint",
+				SpecialType.System_UInt64 => "ulong",
+				SpecialType.System_UInt16 => "ushort",
+				SpecialType.System_Boolean => "bool",
+				_ => GetPrefix(namedType) + namedType.Name,
+			};
+		}
+
+		return GetPrefix(type) + type.Name;
 	}
 
 	public static IEnumerable<ITypeSymbol> GetInheritedTypes(ITypeSymbol type)
@@ -142,50 +177,7 @@ internal record Class
 			.Replace("<", "")
 			.Replace(">", "");
 
-	public string[] GetClassNamespaces() => EnumerateNamespaces().Where(n => !n.StartsWith("<")).Distinct().OrderBy(n => n).ToArray();
-
-	internal IEnumerable<string> EnumerateNamespaces()
-	{
-		yield return Namespace;
-		foreach (var @namespace in AdditionalNamespaces)
-		{
-			yield return @namespace;
-		}
-
-		foreach (Method method in Methods)
-		{
-			if (method.ReturnType.Namespace != null)
-			{
-				yield return method.ReturnType.Namespace;
-			}
-
-			foreach (string? @namespace in method.Parameters
-				         .Select(parameter => parameter.Type.Namespace)
-				         .Where(n => n is not null))
-			{
-				yield return @namespace!;
-			}
-		}
-#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
-		foreach (Property property in Properties)
-		{
-			if (property.Type.Namespace != null)
-			{
-				yield return property.Type.Namespace;
-			}
-		}
-
-		foreach (Event @event in Events)
-		{
-			if (@event.Type.Namespace != null)
-			{
-				yield return @event.Type.Namespace;
-			}
-		}
-#pragma warning restore S3267
-	}
-
-	internal string GetFullName() => $"{Namespace}.{ClassName}";
+	internal string GetFullName() => ClassFullName;
 
 	internal string GetFullName(string name) => $"{Namespace}.{ClassName}.{name}";
 }
