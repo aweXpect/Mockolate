@@ -3,9 +3,9 @@ using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
-internal record struct Method
+internal record Method
 {
-	public Method(IMethodSymbol methodSymbol)
+	public Method(IMethodSymbol methodSymbol, List<Method>? alreadyDefinedMethods)
 	{
 		Accessibility = methodSymbol.DeclaredAccessibility;
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
@@ -20,6 +20,17 @@ internal record struct Method
 				.Select(x => new GenericParameter((ITypeParameterSymbol)x)).ToArray());
 			Name += $"<{string.Join(", ", GenericParameters.Value.Select(x => x.Name))}>";
 		}
+		if (alreadyDefinedMethods is not null)
+		{
+			if (alreadyDefinedMethods.Any(m =>
+					m.Name == Name &&
+					m.Parameters.Count == Parameters.Count &&
+					m.Parameters.SequenceEqual(Parameters)))
+			{
+				ExplicitImplementation = ContainingType;
+			}
+			alreadyDefinedMethods.Add(this);
+		}
 	}
 
 	public EquatableArray<GenericParameter>? GenericParameters { get; }
@@ -32,4 +43,9 @@ internal record struct Method
 	public string ContainingType { get; }
 	public EquatableArray<MethodParameter> Parameters { get; }
 	public string? ExplicitImplementation { get; set; }
+
+	public void SetExplicitImplementation()
+	{
+		ExplicitImplementation = ContainingType;
+	}
 }

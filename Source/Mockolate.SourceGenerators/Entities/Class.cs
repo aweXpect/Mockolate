@@ -5,7 +5,7 @@ namespace Mockolate.SourceGenerators.Entities;
 
 internal record Class
 {
-	public Class(ITypeSymbol type)
+	public Class(ITypeSymbol type, List<Method>? alreadyDefinedMethods = null)
 	{
 		List<string> additionalNamespaces = [];
 		Namespace = type.ContainingNamespace.ToString();
@@ -27,24 +27,9 @@ internal record Class
 			// Exclude getter/setter methods
 			.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-			.Select(x => new Method(x))
+			.Select(x => new Method(x, alreadyDefinedMethods))
 			.Distinct()
 			.ToList();
-		for (int i = 0; i < methods.Count; i++)
-		{
-			Method method = methods[i];
-			if (methods.Take(i)
-			    .Any(m =>
-				    m.Name == method.Name &&
-				    m.Parameters.Count == method.Parameters.Count &&
-				    m.Parameters.SequenceEqual(method.Parameters)))
-			{
-				methods[i] = method with
-				{
-					ExplicitImplementation = method.ContainingType,
-				};
-			}
-		}
 
 		Methods = new EquatableArray<Method>(methods.ToArray());
 		Properties = new EquatableArray<Property>(
@@ -65,7 +50,7 @@ internal record Class
 				.ToArray());
 		AdditionalNamespaces = new EquatableArray<string>(additionalNamespaces.Distinct().ToArray());
 		InheritedTypes = new EquatableArray<Class>(
-			GetInheritedTypes(type).Select(t => new Class(t))
+			GetInheritedTypes(type).Select(t => new Class(t, methods))
 				.ToArray());
 	}
 

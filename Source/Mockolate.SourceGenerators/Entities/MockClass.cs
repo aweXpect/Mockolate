@@ -17,10 +17,10 @@ internal record MockClass : Class
 				.Where(x => x.DeclaredAccessibility == Accessibility.Protected ||
 				            x.DeclaredAccessibility == Accessibility.ProtectedOrInternal ||
 				            x.DeclaredAccessibility == Accessibility.Public)
-				.Select(x => new Method(x)).ToArray());
+				.Select(x => new Method(x, null)).ToArray());
 			if (namedTypeSymbol.DelegateInvokeMethod is not null)
 			{
-				Delegate = new Method(namedTypeSymbol.DelegateInvokeMethod);
+				Delegate = new Method(namedTypeSymbol.DelegateInvokeMethod, null);
 			}
 		}
 	}

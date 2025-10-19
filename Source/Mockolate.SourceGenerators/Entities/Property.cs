@@ -19,8 +19,8 @@ internal readonly record struct Property
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
 
-		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod);
-		Setter = propertySymbol.SetMethod is null ? null : new Method(propertySymbol.SetMethod);
+		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod, null);
+		Setter = propertySymbol.SetMethod is null ? null : new Method(propertySymbol.SetMethod, null);
 	}
 
 	public bool IsIndexer { get; }

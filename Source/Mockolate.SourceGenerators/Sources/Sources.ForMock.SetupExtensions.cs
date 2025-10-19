@@ -41,11 +41,11 @@ internal static partial class Sources
 		AppendIndexerSetupExtensions(sb, @class, namespaces);
 		AppendMethodSetupExtensions(sb, @class, namespaces);
 
-		if (@class.Events.Any(@event
+		if (@class.AllEvents().Any(@event
 			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-		    @class.Methods.Any(method
+		    @class.AllMethods().Any(method
 			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-		    @class.Properties.Any(property
+		    @class.AllProperties().Any(property
 			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
 		{
 			AppendRaisesExtensions(sb, @class, namespaces, true);
@@ -67,7 +67,7 @@ internal static partial class Sources
 				=> e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
 			: new Func<Event, bool>(e
 				=> e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
-		if (!@class.Events.Any(predicate))
+		if (!@class.AllEvents().Any(predicate))
 		{
 			return;
 		}
@@ -76,7 +76,7 @@ internal static partial class Sources
 			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Event @event in @class.Events.Where(predicate))
+		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
 			if (count++ > 0)
 			{
@@ -111,7 +111,7 @@ internal static partial class Sources
 				=> !e.IsIndexer &&
 				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
-		if (@class.Properties.Any(predicate))
+		if (@class.AllProperties().Any(predicate))
 		{
 			sb.Append("\textension(MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
@@ -130,7 +130,7 @@ internal static partial class Sources
 				.Append(isProtected ? ".Protected" : ".").Append("Properties setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
-			foreach (Property property in @class.Properties.Where(predicate))
+			foreach (Property property in @class.AllProperties().Where(predicate))
 			{
 				if (count++ > 0)
 				{
@@ -177,13 +177,13 @@ internal static partial class Sources
 			: new Func<Property, bool>(e
 				=> e.IsIndexer && e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
-		if (@class.Properties.Any(predicate))
+		if (@class.AllProperties().Any(predicate))
 		{
 			sb.Append("\textension(MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
-			foreach (Property indexer in @class.Properties.Where(predicate))
+			foreach (Property indexer in @class.AllProperties().Where(predicate))
 			{
 				if (count++ > 0)
 				{
@@ -228,7 +228,7 @@ internal static partial class Sources
 				=> e.ExplicitImplementation is null &&
 				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
-		if (@class.Methods.Any(predicate))
+		if (@class.AllMethods().Any(predicate))
 		{
 			sb.Append("\textension(MockSetup<").Append(@class.GetFullName()).Append(">")
 				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
@@ -247,7 +247,7 @@ internal static partial class Sources
 				.Append(isProtected ? ".Protected" : ".").Append("Methods setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
-			foreach (Method method in @class.Methods.Where(predicate))
+			foreach (Method method in @class.AllMethods().Where(predicate))
 			{
 				if (count++ > 0)
 				{

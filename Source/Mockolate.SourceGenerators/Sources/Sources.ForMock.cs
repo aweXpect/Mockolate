@@ -74,15 +74,15 @@ internal static partial class Sources
 		if (mockClass.Delegate is not null)
 		{
 			sb.Append("\t\t\tSubject = new ").Append(mockClass.GetFullName()).Append("((")
-				.Append(string.Join(", ", mockClass.Delegate.Value.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+				.Append(string.Join(", ", mockClass.Delegate.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
 				.Append(") =>").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			if (mockClass.Delegate.Value.ReturnType != Entities.Type.Void)
+			if (mockClass.Delegate.ReturnType != Entities.Type.Void)
 			{
 				sb.Append("\t\t\t\tvar result = ((IMock)this).Execute<")
-					.Append(mockClass.Delegate.Value.ReturnType.GetMinimizedString(namespaces))
-					.Append(">(\"").Append(mockClass.GetFullName(mockClass.Delegate.Value.Name)).Append("\"");
-				foreach (MethodParameter p in mockClass.Delegate.Value.Parameters)
+					.Append(mockClass.Delegate.ReturnType.GetMinimizedString(namespaces))
+					.Append(">(\"").Append(mockClass.GetFullName(mockClass.Delegate.Name)).Append("\"");
+				foreach (MethodParameter p in mockClass.Delegate.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
 				}
@@ -91,8 +91,8 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\t\tvar result = ((IMock)this).Execute(\"").Append(mockClass.GetFullName(mockClass.Delegate.Value.Name)).Append("\"");
-				foreach (MethodParameter p in mockClass.Delegate.Value.Parameters)
+				sb.Append("\t\t\t\tvar result = ((IMock)this).Execute(\"").Append(mockClass.GetFullName(mockClass.Delegate.Name)).Append("\"");
+				foreach (MethodParameter p in mockClass.Delegate.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
 				}
@@ -100,7 +100,7 @@ internal static partial class Sources
 				sb.AppendLine(");");
 			}
 
-			foreach (MethodParameter parameter in mockClass.Delegate.Value.Parameters)
+			foreach (MethodParameter parameter in mockClass.Delegate.Parameters)
 			{
 				if (parameter.RefKind == RefKind.Out)
 				{
@@ -116,7 +116,7 @@ internal static partial class Sources
 				}
 			}
 
-			if (mockClass.Delegate.Value.ReturnType != Entities.Type.Void)
+			if (mockClass.Delegate.ReturnType != Entities.Type.Void)
 			{
 				sb.Append("\t\t\t\treturn result.Result;").AppendLine();
 			}
@@ -327,12 +327,12 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine("\t\t{");
-			if (property.Getter != null && property.Getter.Value.Accessibility != Accessibility.Private)
+			if (property.Getter != null && property.Getter.Accessibility != Accessibility.Private)
 			{
 				sb.Append("\t\t\t");
-				if (property.Getter.Value.Accessibility != property.Accessibility)
+				if (property.Getter.Accessibility != property.Accessibility)
 				{
-					sb.Append(property.Getter.Value.Accessibility.ToVisibilityString()).Append(' ');
+					sb.Append(property.Getter.Accessibility.ToVisibilityString()).Append(' ');
 				}
 
 				sb.AppendLine("get");
@@ -352,12 +352,12 @@ internal static partial class Sources
 				sb.AppendLine("\t\t\t}");
 			}
 
-			if (property.Setter != null && property.Setter.Value.Accessibility != Accessibility.Private)
+			if (property.Setter != null && property.Setter.Accessibility != Accessibility.Private)
 			{
 				sb.Append("\t\t\t");
-				if (property.Setter.Value.Accessibility != property.Accessibility)
+				if (property.Setter.Accessibility != property.Accessibility)
 				{
-					sb.Append(property.Setter.Value.Accessibility.ToVisibilityString()).Append(' ');
+					sb.Append(property.Setter.Accessibility.ToVisibilityString()).Append(' ');
 				}
 
 				sb.AppendLine("set");

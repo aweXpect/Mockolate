@@ -11,7 +11,7 @@ internal readonly record struct Event
 		Name = eventSymbol.Name;
 		Type = new Type(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString();
-		Delegate = new Method(delegateInvokeMethod);
+		Delegate = new Method(delegateInvokeMethod, null);
 	}
 
 	public Method Delegate { get; }
