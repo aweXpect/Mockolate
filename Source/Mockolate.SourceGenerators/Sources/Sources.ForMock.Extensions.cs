@@ -358,13 +358,13 @@ internal static partial class Sources
 
 		if (!isProtected)
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the method invocations for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append(isProtected ? "Protected" : "").Append("MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Invoked").AppendLine();
-			sb.Append("\t\t\t=> new ").Append(isProtected ? "Protected" : "").Append("MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.Append("\t\tpublic MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Invoked").AppendLine();
+			sb.Append("\t\t\t=> new MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}
@@ -478,13 +478,13 @@ internal static partial class Sources
 
 		if (!isProtected)
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the property read access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append(isProtected ? "Protected" : "").Append("MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Got").AppendLine();
-			sb.Append("\t\t\t=> new ").Append(isProtected ? "Protected" : "").Append("MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.Append("\t\tpublic MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Got").AppendLine();
+			sb.Append("\t\t\t=> new MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}
@@ -591,13 +591,13 @@ internal static partial class Sources
 
 		if (!isProtected)
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the property write access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append(isProtected ? "Protected" : "").Append("MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Set").AppendLine();
-			sb.Append("\t\t\t=> new ").Append(isProtected ? "Protected" : "").Append("MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.Append("\t\tpublic MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Set").AppendLine();
+			sb.Append("\t\t\t=> new MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}
@@ -701,19 +701,19 @@ internal static partial class Sources
 
 		if (!isProtected)
 		{
-			sb.Append("\textension(").Append("MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the event subscriptions for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append("MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> SubscribedTo").AppendLine();
-			sb.Append("\t\t\t=> new ").Append("MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.Append("\t\tpublic MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> SubscribedTo").AppendLine();
+			sb.Append("\t\t\t=> new MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the event unsubscriptions for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic ").Append("MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> UnsubscribedFrom").AppendLine();
-			sb.Append("\t\t\t=> new ").Append("MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.Append("\t\tpublic MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> UnsubscribedFrom").AppendLine();
+			sb.Append("\t\t\t=> new MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}

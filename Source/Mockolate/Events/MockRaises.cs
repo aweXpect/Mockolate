@@ -5,6 +5,7 @@ using Mockolate.Setup;
 
 namespace Mockolate.Events;
 
+#pragma warning disable S2326 // Unused type parameters should be removed
 /// <summary>
 ///     Raise events on the mock for <typeparamref name="T" />.
 /// </summary>
@@ -51,3 +52,4 @@ public class MockRaises<T>(IMockSetup setup, MockInteractions interactions) : IM
 		setup.RemoveEvent(name, target, method);
 	}
 }
+#pragma warning restore S2326 // Unused type parameters should be removed

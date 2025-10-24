@@ -822,10 +822,6 @@ namespace Mockolate.Verify
     {
         public ProtectedMockUnsubscribedFrom(Mockolate.Verify.MockUnsubscribedFrom<T, TMock> unsubscribedFrom) { }
     }
-    public class ProtectedMockVerify<T, TMock> : Mockolate.Verify.MockVerify<T, TMock>
-    {
-        public ProtectedMockVerify(Mockolate.Verify.IMockVerify<TMock> verify) { }
-    }
     public static class VerificationResultExtensions
     {
         public static void AtLeast<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
