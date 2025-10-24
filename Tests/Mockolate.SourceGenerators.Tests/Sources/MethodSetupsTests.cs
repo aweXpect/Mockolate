@@ -20,10 +20,12 @@ public sealed class MethodSetupsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = Mock.Create<IMyOutermostInterface>();
 			             }
 			         }
-
+			     
+			         public interface IMyOutermostInterface : IMyOuterInterface;
+			         public interface IMyOuterInterface : IMyInterface;
 			         public interface IMyInterface
 			         {
 			             bool MyMethod1(int v1, bool v2, double v3, long v4, CancellationToken v5);

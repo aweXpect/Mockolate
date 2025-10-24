@@ -51,7 +51,7 @@ public class MockGenerator : IIncrementalGenerator
 
 		HashSet<int> indexerSetups = new();
 		foreach (int item in mocksToGenerate
-					 .SelectMany(m => m.Properties)
+					 .SelectMany(m => m.AllProperties())
 					 .Where(m => m.IndexerParameters?.Count > 4)
 					 .Select(m => m.IndexerParameters!.Value.Count))
 		{
@@ -66,7 +66,7 @@ public class MockGenerator : IIncrementalGenerator
 
 		HashSet<(int, bool)> methodSetups = new();
 		foreach ((int Count, bool) item in mocksToGenerate
-			         .SelectMany(m => m.Methods)
+			         .SelectMany(m => m.AllMethods())
 			         .Where(m => m.Parameters.Count > 4)
 			         .Select(m => (m.Parameters.Count, m.ReturnType == Type.Void)))
 		{
