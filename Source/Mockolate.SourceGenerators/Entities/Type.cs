@@ -36,9 +36,4 @@ internal readonly record struct Type
 	public string Fullname { get; }
 
 	public override string ToString() => Fullname;
-
-	public string GetMinimizedString(string[] namespaces)
-	{
-		return Fullname;
-	}
 }
