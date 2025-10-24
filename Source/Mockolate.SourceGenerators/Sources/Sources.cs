@@ -6,7 +6,7 @@ namespace Mockolate.SourceGenerators.Internals;
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
-	private static StringBuilder InitializeBuilder(params string[] namespaces)
+	private static StringBuilder InitializeBuilder(string[] namespaces)
 	{
 		StringBuilder sb = new();
 		sb.AppendLine("""
