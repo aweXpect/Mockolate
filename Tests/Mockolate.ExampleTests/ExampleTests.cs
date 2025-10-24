@@ -35,7 +35,7 @@ public class ExampleTests
 	public async Task HttpClientTest(HttpStatusCode statusCode)
 	{
 		Mock<HttpMessageHandler> mock = Mock.Create<HttpMessageHandler>();
-		mock.Protected.Setup.Method
+		mock.Setup.Protected.Method
 			.SendAsync(With.Any<HttpRequestMessage>(), With.Any<CancellationToken>())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 

@@ -15,8 +15,9 @@ public sealed partial class MockUnsubscribedFromTests
 			IMockInteractions interactions = mockInteractions;
 			MyMock<int> mock = new(1);
 			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = new MockUnsubscribedFrom<int, Mock<int>>(verify);
-			IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> @protected = new MockUnsubscribedFrom<int, Mock<int>>.Protected(verify);
+			MockUnsubscribedFrom<int, Mock<int>> inner = new MockUnsubscribedFrom<int, Mock<int>>(verify);
+			IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = inner;
+			IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> @protected = new ProtectedMockUnsubscribedFrom<int, Mock<int>>(inner);
 			interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 			interactions.RegisterInteraction(new EventUnsubscription(1, "foo.bar", mock, Helper.GetMethodInfo()));
 

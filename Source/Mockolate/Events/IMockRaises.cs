@@ -1,4 +1,6 @@
 using System.Reflection;
+using Mockolate.Interactions;
+using Mockolate.Setup;
 
 namespace Mockolate.Events;
 
@@ -24,4 +26,14 @@ public interface IMockRaises
 	///     by the given <paramref name="name" />.
 	/// </summary>
 	void RemoveEvent(string name, object? target, MethodInfo? method);
+
+	/// <summary>
+	///     The setup of the mock.
+	/// </summary>
+	IMockSetup Setup { get; }
+
+	/// <summary>
+	///     The interactions recorded on the mock.
+	/// </summary>
+	MockInteractions Interactions { get; }
 }

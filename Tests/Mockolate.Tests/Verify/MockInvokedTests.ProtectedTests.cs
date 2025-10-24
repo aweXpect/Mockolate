@@ -15,9 +15,9 @@ public sealed partial class MockInvokedTests
 			IMockInteractions interactions = mockInteractions;
 			MyMock<int> mock = new(1);
 			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			IMockInvoked<MockVerify<int, Mock<int>>> invoked = new MockInvoked<int, Mock<int>>(verify);
-			IMockInvoked<MockVerify<int, Mock<int>>> @protected =
-				new MockInvoked<int, Mock<int>>.Protected(verify);
+			MockInvoked<int, Mock<int>> inner = new MockInvoked<int, Mock<int>>(verify);
+			IMockInvoked<MockVerify<int, Mock<int>>> invoked = inner;
+			IMockInvoked<MockVerify<int, Mock<int>>> @protected = new ProtectedMockInvoked<int, Mock<int>>(inner);
 			interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [1,]));
 			interactions.RegisterInteraction(new MethodInvocation(1, "foo.bar", [2,]));
 

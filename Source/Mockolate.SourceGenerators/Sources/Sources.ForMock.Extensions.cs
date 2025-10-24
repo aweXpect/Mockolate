@@ -12,7 +12,6 @@ internal static partial class Sources
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Events",
-			"Mockolate.Protected",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
 		]);
@@ -319,25 +318,24 @@ internal static partial class Sources
 
 	private static bool AppendProtectedMock(StringBuilder sb, Class @class)
 	{
-		if (@class.Events.All(@event
-				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-			@class.Methods.All(method
-				=> method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) &&
-			@class.Properties.All(property
-				=> property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+		bool hasProtectedEvents = @class.Events.Any(@event
+				=> @event.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal);
+		bool hasProtectedMethods = @class.Methods.Any(method
+				=> method.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal);
+		bool hasProtectedProperties = @class.Properties.Any(property
+				=> property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal);
+		if (!hasProtectedEvents && !hasProtectedMethods && !hasProtectedProperties)
 		{
 			return false;
 		}
 
-		sb.Append("\textension(Mock<").Append(@class.ClassFullName).Append(">").Append(" mock)").AppendLine();
+		sb.Append("\textension(MockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
 		sb.AppendLine("\t{");
 		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Allows mocking protected methods, events or properties.").AppendLine();
+		sb.Append("\t\t///     Sets up the protected methods or properties of the mock for <typeparamref name=\"TMock\" />.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic ProtectedMock<").Append(@class.ClassFullName).Append(", Mock<").Append(@class.ClassFullName)
-			.Append(">> Protected").AppendLine();
-		sb.Append("\t\t\t=> new ProtectedMock<").Append(@class.ClassFullName).Append(", Mock<").Append(@class.ClassFullName)
-			.Append(">>(mock, ((IMock)mock).Interactions, mock);").AppendLine();
+		sb.Append("\t\tpublic ProtectedMockSetup<").Append(@class.ClassFullName).Append("> Protected").AppendLine();
+		sb.Append("\t\t\t=> new ProtectedMockSetup<").Append(@class.ClassFullName).Append(">(setup);").AppendLine();
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 		return true;
@@ -347,32 +345,49 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Method, bool> predicate = isProtected
-			? new Func<Method, bool>(e
-				=> e.ExplicitImplementation is null &&
-				   e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Method, bool>(e
-				=> e.ExplicitImplementation is null &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Method, bool>(method
+				=> method.ExplicitImplementation is null &&
+				   method.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Method, bool>(method
+				=> method.ExplicitImplementation is null &&
+				   method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+		if (!@class.Methods.Any(method => method.ExplicitImplementation is null))
+		{
+			return;
+		}
+
+		if (!isProtected)
+		{
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the method invocations for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ").Append(isProtected ? "Protected" : "").Append("MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Invoked").AppendLine();
+			sb.Append("\t\t\t=> new ").Append(isProtected ? "Protected" : "").Append("MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+		}
+
 		if (!@class.Methods.Any(predicate))
 		{
 			return;
 		}
 
-		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
-		sb.AppendLine("\t{");
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Verifies the method invocations for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" Invoked").AppendLine();
-		sb.Append("\t\t\t=> new MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append("(verify);").AppendLine();
-		sb.AppendLine("\t}");
-		sb.AppendLine();
+		if (isProtected)
+		{
+			sb.Append("\textension(MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the protected method invocations for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ProtectedMockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Protected").AppendLine();
+			sb.Append("\t\t\t=> new ProtectedMockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+		}
 
-		sb.Append("\textension(MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
+		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Method method in @class.Methods.Where(predicate))
@@ -450,31 +465,51 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
-			? new Func<Property, bool>(e
-				=> !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Getter != null && e.Getter.Accessibility != Accessibility.Private)
-			: new Func<Property, bool>(e
-				=> !e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Getter != null && e.Getter.Accessibility != Accessibility.Private);
+			? new Func<Property, bool>(property
+				=> !property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Getter != null && property.Getter.Accessibility != Accessibility.Private)
+			: new Func<Property, bool>(property
+				=> !property.IsIndexer &&
+				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Getter != null && property.Getter.Accessibility != Accessibility.Private);
+
+		if (!@class.Properties.Any(property => !property.IsIndexer))
+		{
+			return;
+		}
+
+		if (!isProtected)
+		{
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the property read access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ").Append(isProtected ? "Protected" : "").Append("MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Got").AppendLine();
+			sb.Append("\t\t\t=> new ").Append(isProtected ? "Protected" : "").Append("MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+		}
+
 		if (!@class.Properties.Any(predicate))
 		{
 			return;
 		}
 
-		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
-		sb.AppendLine("\t{");
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Verifies the property read access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" Got").AppendLine();
-		sb.Append("\t\t\t=> new MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append("(verify);").AppendLine();
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-		sb.Append("\textension(MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses)
-			.Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
+		if (isProtected)
+		{
+			sb.Append("\textension(MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the protected property read access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ProtectedMockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Protected").AppendLine();
+			sb.Append("\t\t\t=> new ProtectedMockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+
+		}
+
+		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockGot<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses)
+			.Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Property property in @class.Properties.Where(predicate))
@@ -500,18 +535,17 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
-			? new Func<Property, bool>(e
-				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Getter != null && e.Getter.Accessibility != Accessibility.Private)
-			: new Func<Property, bool>(e
-				=> e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Getter != null && e.Getter.Accessibility != Accessibility.Private);
+			? new Func<Property, bool>(property
+				=> property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Getter != null && property.Getter.Accessibility != Accessibility.Private)
+			: new Func<Property, bool>(property
+				=> property.IsIndexer &&
+				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Getter != null && property.Getter.Accessibility != Accessibility.Private);
 		if (!@class.Properties.Any(predicate))
 		{
 			return;
 		}
 
-		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
+		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (var indexerParameters in @class.Properties.Where(predicate).Select(x => x.IndexerParameters))
@@ -529,8 +563,7 @@ internal static partial class Sources
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the indexer read access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>")
-				.Append(isProtected ? ".Protected" : "").Append(" GotIndexer").Append("(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(")").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>> Got").Append(isProtected ? "Protected" : "").Append("Indexer").Append("(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tMockGotIndexer<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> indexer = new(verify);").AppendLine();
 			sb.Append("\t\t\treturn ((IMockGotIndexer<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)indexer).Got(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"parameter{i + 1}"))).Append(");").AppendLine();
@@ -545,31 +578,50 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
-			? new Func<Property, bool>(e
-				=> !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Setter != null && e.Setter.Accessibility != Accessibility.Private)
-			: new Func<Property, bool>(e
-				=> !e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Setter != null && e.Setter.Accessibility != Accessibility.Private);
+			? new Func<Property, bool>(property
+				=> !property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Setter != null && property.Setter.Accessibility != Accessibility.Private)
+			: new Func<Property, bool>(property
+				=> !property.IsIndexer &&
+				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Setter != null && property.Setter.Accessibility != Accessibility.Private);
+
+		if (!@class.Properties.Any(property => !property.IsIndexer))
+		{
+			return;
+		}
+
+		if (!isProtected)
+		{
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the property write access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ").Append(isProtected ? "Protected" : "").Append("MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Set").AppendLine();
+			sb.Append("\t\t\t=> new ").Append(isProtected ? "Protected" : "").Append("MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+		}
+
 		if (!@class.Properties.Any(predicate))
 		{
 			return;
 		}
 
-		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
-		sb.AppendLine("\t{");
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Verifies the property write access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" Set").AppendLine();
-		sb.Append("\t\t\t=> new MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append("(verify);").AppendLine();
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-		sb.Append("\textension(MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses)
-			.Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
+		if (isProtected)
+		{
+			sb.Append("\textension(MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the protected property write access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ProtectedMockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Protected").AppendLine();
+			sb.Append("\t\t\t=> new ProtectedMockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+		}
+
+		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSet<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses)
+			.Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Property property in @class.Properties.Where(predicate))
@@ -595,18 +647,17 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
-			? new Func<Property, bool>(e
-				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && e.Setter != null && e.Setter.Accessibility != Accessibility.Private)
-			: new Func<Property, bool>(e
-				=> e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && e.Setter != null && e.Setter.Accessibility != Accessibility.Private);
+			? new Func<Property, bool>(property
+				=> property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Setter != null && property.Setter.Accessibility != Accessibility.Private)
+			: new Func<Property, bool>(property
+				=> property.IsIndexer &&
+				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Setter != null && property.Setter.Accessibility != Accessibility.Private);
 		if (!@class.Properties.Any(predicate))
 		{
 			return;
 		}
 
-		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
+		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Property indexer in @class.Properties.Where(predicate))
@@ -623,8 +674,7 @@ internal static partial class Sources
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the indexer write access for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>")
-				.Append(isProtected ? ".Protected" : "").Append(" SetIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(", With.Parameter<").Append(indexer.Type.Fullname).Append(">? value)").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>> Set").Append(isProtected ? "Protected" : "").Append("Indexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(", With.Parameter<").Append(indexer.Type.Fullname).Append(">? value)").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tMockSetIndexer<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> indexer = new(verify);").AppendLine();
 			sb.Append("\t\t\treturn ((IMockSetIndexer<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)indexer).Set(value, ").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"parameter{i + 1}"))).Append(");").AppendLine();
@@ -643,34 +693,70 @@ internal static partial class Sources
 				=> e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
 			: new Func<Event, bool>(e
 				=> e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+
+		if (!@class.Events.Any())
+		{
+			return;
+		}
+
+		if (!isProtected)
+		{
+			sb.Append("\textension(").Append("MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the event subscriptions for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ").Append("MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> SubscribedTo").AppendLine();
+			sb.Append("\t\t\t=> new ").Append("MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the event unsubscriptions for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ").Append("MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> UnsubscribedFrom").AppendLine();
+			sb.Append("\t\t\t=> new ").Append("MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+		}
+
 		if (!@class.Events.Any(predicate))
 		{
 			return;
 		}
 
-		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" verify)").AppendLine();
-		sb.AppendLine("\t{");
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Verifies the method invocations for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" SubscribedTo").AppendLine();
-		sb.Append("\t\t\t=> new MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append("(verify);").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Verifies the method invocations for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append(" UnsubscribedFrom").AppendLine();
-		sb.Append("\t\t\t=> new MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "").Append("(verify);").AppendLine();
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-		sb.Append("\textension(MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "")
-			.Append(" mock)").AppendLine();
+		if (isProtected)
+		{
+			sb.Append("\textension(MockRaises<").Append(@class.ClassFullName).Append("> raises)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Raise protected events on the mock for <typeparamref name=\"TMock\" />.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ProtectedMockRaises<").Append(@class.ClassFullName).Append("> Protected").AppendLine();
+			sb.Append("\t\t\t=> new ProtectedMockRaises<").Append(@class.ClassFullName).Append(">(raises);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+
+			sb.Append("\textension(MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the protected event subscriptions for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ProtectedMockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Protected").AppendLine();
+			sb.Append("\t\t\t=> new ProtectedMockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+
+			sb.Append("\textension(MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the protected event unsubscriptions for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic ProtectedMockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> Protected").AppendLine();
+			sb.Append("\t\t\t=> new ProtectedMockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>(verify);").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+		}
+
+		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Event @event in @class.Events.Where(predicate))
@@ -691,9 +777,7 @@ internal static partial class Sources
 
 		sb.AppendLine("\t}");
 		sb.AppendLine();
-		sb.Append("\textension(MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>")
-			.Append(isProtected ? ".Protected" : "")
-			.Append(" mock)").AppendLine();
+		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		count = 0;
 		foreach (Event @event in @class.Events.Where(predicate))

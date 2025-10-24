@@ -19,12 +19,12 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock) : I
 	/// <inheritdoc cref="IMockVerify{TMock}.Mock" />
 	TMock IMockVerify<TMock>.Mock
 		=> mock;
+}
 
-	/// <summary>
-	///     Verifies the protected interactions with the mocked subject in the <typeparamref name="TMock"/> mock.
-	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockVerify<T, TMock>(verify.Interactions, verify.Mock)
-	{
-	}
+/// <summary>
+///     Verifies the protected interactions with the mocked subject in the <typeparamref name="TMock"/> mock.
+/// </summary>
+public class ProtectedMockVerify<T, TMock>(IMockVerify<TMock> verify)
+	: MockVerify<T, TMock>(verify.Interactions, verify.Mock)
+{
 }

@@ -12,7 +12,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
 			IMockSetup setup = mock.Setup;
-			IMockSetup @protected = new MockSetup<int>.Protected(mock.Setup);
+			IMockSetup @protected = new ProtectedMockSetup<int>(mock.Setup);
 			@protected.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 			@protected.AddEvent("foo.bar", setup, Helper.GetMethodInfo());
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(2);
@@ -24,7 +24,7 @@ public sealed partial class MockSetupsTests
 		public async Task RegisterMethod_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup @protected = new MockSetup<int>.Protected(mock.Setup);
+			IMockSetup @protected = new ProtectedMockSetup<int>(mock.Setup);
 
 			@protected.RegisterMethod(new ReturnMethodSetup<int>("foo.bar").Returns(42));
 
@@ -36,7 +36,7 @@ public sealed partial class MockSetupsTests
 		public async Task RegisterProperty_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup @protected = new MockSetup<int>.Protected(mock.Setup);
+			IMockSetup @protected = new ProtectedMockSetup<int>(mock.Setup);
 
 			@protected.RegisterProperty("foo.bar", new PropertySetup<int>().InitializeWith(42));
 
@@ -49,7 +49,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
 			IMockSetup setup = mock.Setup;
-			IMockSetup @protected = new MockSetup<int>.Protected(mock.Setup);
+			IMockSetup @protected = new ProtectedMockSetup<int>(mock.Setup);
 
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
 			@protected.AddEvent("foo.bar", this, Helper.GetMethodInfo());
@@ -61,7 +61,7 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
 			IMockSetup setup = mock.Setup;
-			IMockSetup @protected = new MockSetup<int>.Protected(mock.Setup);
+			IMockSetup @protected = new ProtectedMockSetup<int>(mock.Setup);
 			@protected.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);

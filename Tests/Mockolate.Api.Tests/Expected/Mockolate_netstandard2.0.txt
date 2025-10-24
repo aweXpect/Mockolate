@@ -197,6 +197,8 @@ namespace Mockolate.Events
 {
     public interface IMockRaises
     {
+        Mockolate.Interactions.MockInteractions Interactions { get; }
+        Mockolate.Setup.IMockSetup Setup { get; }
         void AddEvent(string name, object? target, System.Reflection.MethodInfo? method);
         void Raise(string eventName, params object?[] parameters);
         void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method);
@@ -204,10 +206,10 @@ namespace Mockolate.Events
     public class MockRaises<T> : Mockolate.Events.IMockRaises
     {
         public MockRaises(Mockolate.Setup.IMockSetup setup, Mockolate.Interactions.MockInteractions interactions) { }
-        public class Protected : Mockolate.Events.MockRaises<T>, Mockolate.Events.IMockRaises
-        {
-            public Protected(Mockolate.Events.IMockRaises inner, Mockolate.Setup.IMockSetup setup, Mockolate.Interactions.MockInteractions interactions) { }
-        }
+    }
+    public class ProtectedMockRaises<T> : Mockolate.Events.MockRaises<T>, Mockolate.Events.IMockRaises
+    {
+        public ProtectedMockRaises(Mockolate.Events.IMockRaises inner) { }
     }
 }
 namespace Mockolate.Exceptions
@@ -326,19 +328,6 @@ namespace Mockolate.Monitor
     {
         public MockMonitor(TMock mock) { }
         public Mockolate.Verify.MockVerify<T, TMock> Verify { get; }
-    }
-}
-namespace Mockolate.Protected
-{
-    public class ProtectedMock<T, TMock> : Mockolate.IMock
-        where TMock : Mockolate.Mock<T>
-    {
-        public ProtectedMock(Mockolate.IMock inner, Mockolate.Interactions.MockInteractions interactions, TMock mock) { }
-        public Mockolate.Events.MockRaises<T>.Protected Raise { get; }
-        public Mockolate.Setup.MockSetup<T>.Protected Setup { get; }
-        public Mockolate.Verify.MockVerify<T, Mockolate.Mock<T>>.Protected Verify { get; }
-        public TResult GetIndexer<TResult>(params object?[] parameters) { }
-        public void SetIndexer<TResult>(TResult value, params object?[] parameters) { }
     }
 }
 namespace Mockolate.Setup
@@ -509,12 +498,6 @@ namespace Mockolate.Setup
             public Mockolate.IMock Mock { get; }
             public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
         }
-        public class Protected : Mockolate.Setup.MockSetup<T>, Mockolate.Setup.IMockSetup
-        {
-            public Protected(Mockolate.Setup.IMockSetup inner) { }
-            public Mockolate.IMock Mock { get; }
-            public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
-        }
         public class ProtectedMethods : Mockolate.Setup.IMockSetup
         {
             public ProtectedMethods(Mockolate.Setup.MockSetup<T> setup) { }
@@ -557,6 +540,12 @@ namespace Mockolate.Setup
         public Mockolate.Setup.PropertySetup<T> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.PropertySetup<T> Throws(System.Func<T, System.Exception> callback) { }
         public override string ToString() { }
+    }
+    public class ProtectedMockSetup<T> : Mockolate.Setup.MockSetup<T>, Mockolate.Setup.IMockSetup
+    {
+        public ProtectedMockSetup(Mockolate.Setup.IMockSetup inner) { }
+        public Mockolate.IMock Mock { get; }
+        public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
     }
     public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup
     {
@@ -775,67 +764,67 @@ namespace Mockolate.Verify
     public class MockGotIndexer<T, TMock> : Mockolate.Verify.IMockGotIndexer<Mockolate.Verify.MockVerify<T, TMock>>
     {
         public MockGotIndexer(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        public class Protected : Mockolate.Verify.MockGotIndexer<T, TMock>
-        {
-            public Protected(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        }
     }
     public class MockGot<T, TMock> : Mockolate.Verify.IMockGot<Mockolate.Verify.MockVerify<T, TMock>>
     {
         public MockGot(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        public class Protected : Mockolate.Verify.MockGot<T, TMock>
-        {
-            public Protected(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        }
     }
     public class MockInvoked<T, TMock> : Mockolate.Verify.IMockInvoked<Mockolate.Verify.MockVerify<T, TMock>>
     {
         public MockInvoked(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        public class Protected : Mockolate.Verify.MockInvoked<T, TMock>
-        {
-            public Protected(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        }
     }
     public class MockSetIndexer<T, TMock> : Mockolate.Verify.IMockSetIndexer<Mockolate.Verify.MockVerify<T, TMock>>
     {
         public MockSetIndexer(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        public class Protected : Mockolate.Verify.MockSetIndexer<T, TMock>
-        {
-            public Protected(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        }
     }
     public class MockSet<T, TMock> : Mockolate.Verify.IMockSet<Mockolate.Verify.MockVerify<T, TMock>>
     {
         public MockSet(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        public class Protected : Mockolate.Verify.MockSet<T, TMock>
-        {
-            public Protected(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        }
     }
     public class MockSubscribedTo<T, TMock> : Mockolate.Verify.IMockSubscribedTo<Mockolate.Verify.MockVerify<T, TMock>>
     {
         public MockSubscribedTo(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        public class Protected : Mockolate.Verify.MockSubscribedTo<T, TMock>
-        {
-            public Protected(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        }
     }
     public class MockUnsubscribedFrom<T, TMock> : Mockolate.Verify.IMockUnsubscribedFrom<Mockolate.Verify.MockVerify<T, TMock>>
     {
         public MockUnsubscribedFrom(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        public class Protected : Mockolate.Verify.MockUnsubscribedFrom<T, TMock>
-        {
-            public Protected(Mockolate.Verify.MockVerify<T, TMock> verify) { }
-        }
     }
     public class MockVerify<T, TMock> : Mockolate.Verify.IMockVerify, Mockolate.Verify.IMockVerify<TMock>
     {
         public MockVerify(Mockolate.Interactions.MockInteractions interactions, TMock mock) { }
         public bool ThatAllInteractionsAreVerified() { }
-        public class Protected : Mockolate.Verify.MockVerify<T, TMock>
-        {
-            public Protected(Mockolate.Verify.IMockVerify<TMock> verify) { }
-        }
+    }
+    public class ProtectedMockGotIndexer<T, TMock> : Mockolate.Verify.MockGotIndexer<T, TMock>
+    {
+        public ProtectedMockGotIndexer(Mockolate.Verify.MockGotIndexer<T, TMock> mockGotIndexer) { }
+    }
+    public class ProtectedMockGot<T, TMock> : Mockolate.Verify.MockGot<T, TMock>
+    {
+        public ProtectedMockGot(Mockolate.Verify.MockGot<T, TMock> mockGot) { }
+    }
+    public class ProtectedMockInvoked<T, TMock> : Mockolate.Verify.MockInvoked<T, TMock>
+    {
+        public ProtectedMockInvoked(Mockolate.Verify.MockInvoked<T, TMock> mockInvoked) { }
+    }
+    public class ProtectedMockSetIndexer<T, TMock> : Mockolate.Verify.MockSetIndexer<T, TMock>
+    {
+        public ProtectedMockSetIndexer(Mockolate.Verify.MockSetIndexer<T, TMock> mockSetIndexer) { }
+    }
+    public class ProtectedMockSet<T, TMock> : Mockolate.Verify.MockSet<T, TMock>
+    {
+        public ProtectedMockSet(Mockolate.Verify.MockSet<T, TMock> mockSet) { }
+    }
+    public class ProtectedMockSubscribedTo<T, TMock> : Mockolate.Verify.MockSubscribedTo<T, TMock>
+    {
+        public ProtectedMockSubscribedTo(Mockolate.Verify.MockSubscribedTo<T, TMock> subscribedTo) { }
+    }
+    public class ProtectedMockUnsubscribedFrom<T, TMock> : Mockolate.Verify.MockUnsubscribedFrom<T, TMock>
+    {
+        public ProtectedMockUnsubscribedFrom(Mockolate.Verify.MockUnsubscribedFrom<T, TMock> unsubscribedFrom) { }
+    }
+    public class ProtectedMockVerify<T, TMock> : Mockolate.Verify.MockVerify<T, TMock>
+    {
+        public ProtectedMockVerify(Mockolate.Verify.IMockVerify<TMock> verify) { }
     }
     public static class VerificationResultExtensions
     {

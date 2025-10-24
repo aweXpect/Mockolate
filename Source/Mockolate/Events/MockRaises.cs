@@ -10,6 +10,14 @@ namespace Mockolate.Events;
 /// </summary>
 public class MockRaises<T>(IMockSetup setup, MockInteractions interactions) : IMockRaises
 {
+	/// <inheritdoc cref="IMockRaises.Setup" />
+	IMockSetup IMockRaises.Setup
+		=> setup;
+
+	/// <inheritdoc cref="IMockRaises.Interactions" />
+	MockInteractions IMockRaises.Interactions
+		=> interactions;
+
 	/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
 	void IMockRaises.Raise(string eventName, params object?[] parameters)
 	{
@@ -41,24 +49,5 @@ public class MockRaises<T>(IMockSetup setup, MockInteractions interactions) : IM
 
 		((IMockInteractions)interactions).RegisterInteraction(new EventUnsubscription(interactions.GetNextIndex(), name, target, method));
 		setup.RemoveEvent(name, target, method);
-	}
-
-	/// <summary>
-	///     Raise protected events on the mock for <typeparamref name="T" />.
-	/// </summary>
-	public class Protected(IMockRaises inner, IMockSetup setup, MockInteractions interactions)
-		: MockRaises<T>(setup, interactions), IMockRaises
-	{
-		/// <inheritdoc cref="IMockRaises.Raise(string, object?[])" />
-		void IMockRaises.Raise(string eventName, params object?[] parameters)
-			=> inner.Raise(eventName, parameters);
-
-		/// <inheritdoc cref="IMockRaises.AddEvent(string, object?, MethodInfo?)" />
-		void IMockRaises.AddEvent(string name, object? target, MethodInfo? method)
-			=> inner.AddEvent(name, target, method);
-
-		/// <inheritdoc cref="IMockRaises.RemoveEvent(string, object?, MethodInfo?)" />
-		void IMockRaises.RemoveEvent(string name, object? target, MethodInfo? method)
-			=> inner.RemoveEvent(name, target, method);
 	}
 }

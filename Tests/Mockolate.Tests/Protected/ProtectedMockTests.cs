@@ -1,5 +1,4 @@
 ﻿using Mockolate.Interactions;
-using Mockolate.Protected;
 using Mockolate.Verify;
 
 namespace Mockolate.Tests.Protected;
@@ -14,12 +13,42 @@ public sealed class ProtectedMockTests
 		MyProtectedClass.MyEventHandler handler = (s, e) => callCount++;
 
 		mock.Subject.RegisterEvent(handler);
-		mock.Protected.Raise.MyEvent(this, EventArgs.Empty);
+		mock.Raise.Protected.MyEvent(this, EventArgs.Empty);
 
-		await That(mock.Protected.Verify.SubscribedTo.MyEvent()).Once();
-		await That(mock.Protected.Verify.UnsubscribedFrom.MyEvent()).Never();
+		await That(mock.Verify.SubscribedTo.Protected.MyEvent()).Once();
+		await That(mock.Verify.UnsubscribedFrom.Protected.MyEvent()).Never();
 		mock.Subject.UnregisterEvent(handler);
-		await That(mock.Protected.Verify.UnsubscribedFrom.MyEvent()).Once();
+		await That(mock.Verify.UnsubscribedFrom.Protected.MyEvent()).Once();
+	}
+
+	[Fact]
+	public async Task CanReadProtectedIndexers()
+	{
+		int callCount = 0;
+		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+
+		mock.Setup.Protected.Indexer(With.Any<int>()).InitializeWith(42).OnGet(() => callCount++);
+
+		int result = mock.Subject.GetMyProtectedIndexer(3);
+
+		await That(mock.Verify.GotProtectedIndexer(3)).Once();
+		await That(result).IsEqualTo(42);
+		await That(callCount).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task CanWriteProtectedIndexers()
+	{
+		int callCount = 0;
+		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+
+		mock.Setup.Protected.Indexer(With.Any<int>()).OnSet(() => callCount++);
+
+		mock.Subject.SetMyProtectedIndexer(3, 4);
+
+		await That(mock.Verify.SetProtectedIndexer(3, 4)).Once();
+		await That(mock.Subject.GetMyProtectedIndexer(3)).IsEqualTo(4);
+		await That(callCount).IsEqualTo(1);
 	}
 
 	[Fact]
@@ -27,12 +56,12 @@ public sealed class ProtectedMockTests
 	{
 		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
 
-		mock.Protected.Setup.Method.MyProtectedMethod(With.Any<string>())
+		mock.Setup.Protected.Method.MyProtectedMethod(With.Any<string>())
 			.Returns(v => $"Hello, {v}!");
 
 		string result = mock.Subject.InvokeMyProtectedMethod("foo");
 
-		await That(mock.Protected.Verify.Invoked.MyProtectedMethod("foo")).Once();
+		await That(mock.Verify.Invoked.Protected.MyProtectedMethod("foo")).Once();
 		await That(result).IsEqualTo("Hello, foo!");
 	}
 
@@ -41,44 +70,12 @@ public sealed class ProtectedMockTests
 	{
 		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
 
-		mock.Protected.Setup.Property.MyProtectedProperty.InitializeWith(42);
+		mock.Setup.Protected.Property.MyProtectedProperty.InitializeWith(42);
 
 		int result = mock.Subject.GetMyProtectedProperty();
 
-		await That(mock.Protected.Verify.Got.MyProtectedProperty()).Once();
+		await That(mock.Verify.Got.Protected.MyProtectedProperty()).Once();
 		await That(result).IsEqualTo(42);
-	}
-
-	[Fact]
-	public async Task ShouldForwardIMockToInnerMock()
-	{
-		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
-		ProtectedMock<MyProtectedClass, Mock<MyProtectedClass>> @protected = mock.Protected;
-		IMock innerMock = mock;
-		IMock protectedMock = @protected;
-
-		await That(protectedMock.Behavior).IsSameAs(innerMock.Behavior);
-		await That(protectedMock.Interactions).IsSameAs(innerMock.Interactions);
-		await That(protectedMock.Raise).IsSameAs(@protected.Raise);
-		await That(protectedMock.Setup).IsSameAs(innerMock.Setup);
-
-		protectedMock.Execute("void-method-from-protected");
-		await That(innerMock.Interactions.Interactions).HasItem()
-			.Matching<MethodInvocation>(m => m.Name == "void-method-from-protected");
-
-		protectedMock.Execute<int>("return-method-from-protected");
-		await That(innerMock.Interactions.Interactions).HasItem()
-			.Matching<MethodInvocation>(m => m.Name == "return-method-from-protected");
-
-		innerMock.Set("from-inner", 3);
-		await That(protectedMock.Get<int>("from-inner")).IsEqualTo(3);
-		protectedMock.Set("from-protected", 5);
-		await That(innerMock.Get<int>("from-protected")).IsEqualTo(5);
-
-		innerMock.SetIndexer("set-on-inner", 1, 2);
-		await That(protectedMock.GetIndexer<string>(1, 2)).IsEqualTo("set-on-inner");
-		protectedMock.SetIndexer("set-on-protected", 7, 8, 9);
-		await That(innerMock.GetIndexer<string>(7, 8, 9)).IsEqualTo("set-on-protected");
 	}
 
 #pragma warning disable CS0067 // Event is never used
@@ -89,11 +86,19 @@ public sealed class ProtectedMockTests
 
 		protected virtual int MyProtectedProperty { get; set; }
 
+		protected abstract int this[int key] { get; set; }
+
 		protected virtual event MyEventHandler? MyEvent;
 		protected abstract string MyProtectedMethod(string input);
 
 		public int GetMyProtectedProperty()
 			=> MyProtectedProperty;
+
+		public int GetMyProtectedIndexer(int key)
+			=> this[key];
+
+		public void SetMyProtectedIndexer(int key, int value)
+			=> this[key] = value;
 
 		public string InvokeMyProtectedMethod(string input)
 			=> MyProtectedMethod(input);
