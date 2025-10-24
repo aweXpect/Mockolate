@@ -176,8 +176,4 @@ internal record Class
 			.Replace(".", "")
 			.Replace("<", "")
 			.Replace(">", "");
-
-	internal string GetFullName() => ClassFullName;
-
-	internal string GetFullName(string name) => $"{Namespace}.{ClassName}.{name}";
 }
