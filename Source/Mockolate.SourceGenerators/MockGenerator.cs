@@ -79,6 +79,13 @@ public class MockGenerator : IIncrementalGenerator
 				SourceText.From(Sources.MethodSetups(methodSetups), Encoding.UTF8));
 		}
 
+		const int dotNetFuncActionParameterLimit = 16;
+		if (methodSetups.Any(x => x.Item1 > dotNetFuncActionParameterLimit))
+		{
+			context.AddSource("MethodSetups.ActionFunc.g.cs",
+				SourceText.From(Sources.MethodSetupsActionFunc(methodSetups.Where(x => x.Item1 > dotNetFuncActionParameterLimit).Select(x => x.Item1).Distinct()), Encoding.UTF8));
+		}
+
 		if (methodSetups.Any(x => !x.Item2))
 		{
 			context.AddSource("ReturnsAsyncExtensions.g.cs",
