@@ -1,5 +1,4 @@
 using System.Text;
-using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace Mockolate.SourceGenerators.Internals;
