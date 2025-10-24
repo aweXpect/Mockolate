@@ -15,8 +15,9 @@ public sealed partial class MockSetTests
 			IMockInteractions interactions = mockInteractions;
 			MyMock<int> mock = new(1);
 			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			IMockSet<MockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
-			IMockSet<MockVerify<int, Mock<int>>> @protected = new MockSet<int, Mock<int>>.Protected(verify);
+			MockSet<int, Mock<int>> inner = new MockSet<int, Mock<int>>(verify);
+			IMockSet<MockVerify<int, Mock<int>>> mockSet = inner;
+			IMockSet<MockVerify<int, Mock<int>>> @protected = new ProtectedMockSet<int, Mock<int>>(inner);
 			interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 1));
 			interactions.RegisterInteraction(new PropertySetterAccess(1, "foo.bar", 2));
 

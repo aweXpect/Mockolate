@@ -9,11 +9,13 @@ namespace Mockolate.Verify;
 /// </summary>
 public class MockInvoked<T, TMock>(MockVerify<T, TMock> verify) : IMockInvoked<MockVerify<T, TMock>>
 {
+	internal MockVerify<T, TMock> Verify { get; } = verify;
+
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
 	VerificationResult<MockVerify<T, TMock>> IMockInvoked<MockVerify<T, TMock>>.Method(string methodName, params With.Parameter[] parameters)
 	{
-		MockInteractions interactions = ((IMockVerify<TMock>)verify).Interactions;
-		return new(verify, interactions,
+		MockInteractions interactions = ((IMockVerify<TMock>)Verify).Interactions;
+		return new(Verify, interactions,
 			interactions.Interactions
 				.OfType<MethodInvocation>()
 				.Where(method =>
@@ -23,12 +25,5 @@ public class MockInvoked<T, TMock>(MockVerify<T, TMock> verify) : IMockInvoked<M
 				.Cast<IInteraction>()
 				.ToArray(),
 		$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
-	}
-
-	/// <summary>
-	///     Check which protected methods got invoked on the mocked instance <typeparamref name="TMock" />.
-	/// </summary>
-	public class Protected(MockVerify<T, TMock> verify) : MockInvoked<T, TMock>(verify)
-	{
 	}
 }

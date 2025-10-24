@@ -12,7 +12,6 @@ internal static partial class Sources
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Events",
-			"Mockolate.Protected",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
 		]);
@@ -54,17 +53,16 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Event, bool> predicate = isProtected
-			? new Func<Event, bool>(e
-				=> e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Event, bool>(e
-				=> e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Event, bool>(@event
+				=> @event.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Event, bool>(@event
+				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 		if (!@class.AllEvents().Any(predicate))
 		{
 			return;
 		}
 
-		sb.Append("\textension(MockRaises<").Append(@class.ClassFullName).Append(">")
-			.Append(isProtected ? ".Protected" : "").Append(" mock)").AppendLine();
+		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockRaises<").Append(@class.ClassFullName).Append("> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
@@ -96,16 +94,15 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
-			? new Func<Property, bool>(e
-				=> !e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Property, bool>(e
-				=> !e.IsIndexer &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Property, bool>(property
+				=> !property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Property, bool>(property
+				=> !property.IsIndexer &&
+				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
 		if (@class.AllProperties().Any(predicate))
 		{
-			sb.Append("\textension(MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up properties on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
@@ -163,15 +160,14 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
-			? new Func<Property, bool>(e
-				=> e.IsIndexer && e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Property, bool>(e
-				=> e.IsIndexer && e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Property, bool>(property
+				=> property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Property, bool>(property
+				=> property.IsIndexer && property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
 		if (@class.AllProperties().Any(predicate))
 		{
-			sb.Append("\textension(MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
 			foreach (Property indexer in @class.AllProperties().Where(predicate))
@@ -212,17 +208,16 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Method, bool> predicate = isProtected
-			? new Func<Method, bool>(e
-				=> e.ExplicitImplementation is null &&
-				   e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Method, bool>(e
-				=> e.ExplicitImplementation is null &&
-				   e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Method, bool>(method
+				=> method.ExplicitImplementation is null &&
+				   method.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Method, bool>(method
+				=> method.ExplicitImplementation is null &&
+				   method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
 		if (@class.AllMethods().Any(predicate))
 		{
-			sb.Append("\textension(MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : "").Append(" setup)").AppendLine();
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up methods on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();

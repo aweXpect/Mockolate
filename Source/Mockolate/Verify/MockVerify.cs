@@ -2,6 +2,7 @@ using Mockolate.Interactions;
 
 namespace Mockolate.Verify;
 
+#pragma warning disable S2326 // Unused type parameters should be removed
 /// <summary>
 ///     Verifies the <paramref name="interactions"/> with the mocked subject in the <typeparamref name="TMock"/> <paramref name="mock"/>.
 /// </summary>
@@ -19,12 +20,5 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock) : I
 	/// <inheritdoc cref="IMockVerify{TMock}.Mock" />
 	TMock IMockVerify<TMock>.Mock
 		=> mock;
-
-	/// <summary>
-	///     Verifies the protected interactions with the mocked subject in the <typeparamref name="TMock"/> mock.
-	/// </summary>
-	public class Protected(IMockVerify<TMock> verify)
-		: MockVerify<T, TMock>(verify.Interactions, verify.Mock)
-	{
-	}
 }
+#pragma warning restore S2326 // Unused type parameters should be removed

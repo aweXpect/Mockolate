@@ -12,7 +12,6 @@ internal static partial class Sources
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Events",
 			"Mockolate.Exceptions",
-			"Mockolate.Protected",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
 		]);

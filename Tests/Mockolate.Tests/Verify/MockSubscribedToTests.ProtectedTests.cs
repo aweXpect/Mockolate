@@ -15,8 +15,9 @@ public sealed partial class MockSubscribedToTests
 			IMockInteractions interactions = mockInteractions;
 			MyMock<int> mock = new(1);
 			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			IMockSubscribedTo<MockVerify<int, Mock<int>>> subscribedTo = new MockSubscribedTo<int, Mock<int>>(verify);
-			IMockSubscribedTo<MockVerify<int, Mock<int>>> @protected = new MockSubscribedTo<int, Mock<int>>.Protected(verify);
+			MockSubscribedTo<int, Mock<int>> inner = new MockSubscribedTo<int, Mock<int>>(verify);
+			IMockSubscribedTo<MockVerify<int, Mock<int>>> subscribedTo = inner;
+			IMockSubscribedTo<MockVerify<int, Mock<int>>> @protected = new ProtectedMockSubscribedTo<int, Mock<int>>(inner);
 			interactions.RegisterInteraction(new EventSubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 			interactions.RegisterInteraction(new EventSubscription(1, "foo.bar", mock, Helper.GetMethodInfo()));
 

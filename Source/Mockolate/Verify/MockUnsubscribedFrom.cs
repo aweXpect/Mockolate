@@ -9,23 +9,18 @@ namespace Mockolate.Verify;
 /// </summary>
 public class MockUnsubscribedFrom<T, TMock>(MockVerify<T, TMock> verify) : IMockUnsubscribedFrom<MockVerify<T, TMock>>
 {
+	internal MockVerify<T, TMock> Verify { get; } = verify;
+
 	/// <inheritdoc cref="IMockUnsubscribedFrom{TMock}.Event(string)" />
 	VerificationResult<MockVerify<T, TMock>> IMockUnsubscribedFrom<MockVerify<T, TMock>>.Event(string eventName)
 	{
-		MockInteractions interactions = ((IMockVerify<TMock>)verify).Interactions;
-		return new(verify, interactions,
+		MockInteractions interactions = ((IMockVerify<TMock>)Verify).Interactions;
+		return new(Verify, interactions,
 			interactions.Interactions
 				.OfType<EventUnsubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
 				.ToArray(),
 		$"unsubscribed from event {eventName.SubstringAfterLast('.')}");
-	}
-
-	/// <summary>
-	///     Check which protected events were unsubscribed from on the mocked instance <typeparamref name="TMock" />.
-	/// </summary>
-	public class Protected(MockVerify<T, TMock> verify) : MockUnsubscribedFrom<T, TMock>(verify)
-	{
 	}
 }
