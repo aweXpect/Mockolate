@@ -103,18 +103,18 @@ internal static partial class Sources
 			sb.Append("\t\t\t\tthrow new MockException(\"No parameterless constructor found for '").Append(mockClass.ClassFullName).Append("'. Please provide constructor parameters.\");").AppendLine();
 		}
 		sb.Append("\t\t\t}").AppendLine();
-		foreach (Method constructor in constructors)
+		foreach (var constructorParameters in constructors.Select(constructor => constructor.Parameters))
 		{
-			sb.Append("\t\t\telse if (constructorParameters.Parameters.Length == ").Append(constructor.Parameters.Count);
+			sb.Append("\t\t\telse if (constructorParameters.Parameters.Length == ").Append(constructorParameters.Count);
 			int index = 0;
-			foreach (MethodParameter parameter in constructor.Parameters)
+			foreach (MethodParameter parameter in constructorParameters)
 			{
 				sb.AppendLine().Append("\t\t\t    && TryCast(constructorParameters.Parameters[").Append(index++).Append("], out ").Append(parameter.Type.Fullname).Append(" p").Append(index).Append(")");
 			}
 			sb.Append(")").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tSubject = new MockSubject(this");
-			for (int i = 1; i <= constructor.Parameters.Count; i++)
+			for (int i = 1; i <= constructorParameters.Count; i++)
 			{
 				sb.Append(", p").Append(i);
 			}
