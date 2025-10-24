@@ -35,6 +35,110 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task Factory_Create_SealedClass_With1AdditionalInterface_ShouldThrowMockException()
+	{
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		void Act()
+			=> _ = factory.Create<MySealedClass, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Factory_Create_SealedClass_With2AdditionalInterfaces_ShouldThrowMockException()
+	{
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		void Act()
+			=> _ = factory.Create<MySealedClass, IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Factory_Create_SealedClass_With3AdditionalInterfaces_ShouldThrowMockException()
+	{
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		void Act()
+			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Factory_Create_SealedClass_With4AdditionalInterfaces_ShouldThrowMockException()
+	{
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		void Act()
+			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Factory_Create_SealedClass_With5AdditionalInterfaces_ShouldThrowMockException()
+	{
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		void Act()
+			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Factory_Create_SealedClass_With6AdditionalInterfaces_ShouldThrowMockException()
+	{
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		void Act()
+			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Factory_Create_SealedClass_With7AdditionalInterfaces_ShouldThrowMockException()
+	{
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		void Act()
+			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Factory_Create_SealedClass_With8AdditionalInterfaces_ShouldThrowMockException()
+	{
+		Mock.Factory factory = new(MockBehavior.Default);
+
+		void Act()
+			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
 	public async Task Factory_Create_WithConstructorParameters_SealedClass_ShouldThrowMockException()
 	{
 		Mock.Factory factory = new(MockBehavior.Default);
