@@ -39,13 +39,7 @@ internal static partial class Sources
 
 	internal static string MethodSetupsActionFunc(IEnumerable<int> parameterCounts)
 	{
-		StringBuilder sb = InitializeBuilder([
-			"System",
-			"System.Collections.Generic",
-			"System.Threading",
-			"Mockolate.Exceptions",
-			"Mockolate.Interactions",
-		]);
+		StringBuilder sb = InitializeBuilder([]);
 
 		sb.AppendLine("""
 		          namespace System;
