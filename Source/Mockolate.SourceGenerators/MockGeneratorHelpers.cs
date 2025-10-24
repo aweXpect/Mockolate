@@ -1,3 +1,4 @@
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mockolate.SourceGenerators.Entities;
@@ -11,15 +12,15 @@ internal static class MockGeneratorHelpers
 		{
 			Expression: MemberAccessExpressionSyntax
 			{
-				Name: GenericNameSyntax { Identifier.Text: "Create", },
+				Name: GenericNameSyntax,
 			},
 		};
 
 	private static bool IsCreateInvocationOnMockOrMockFactory(this ISymbol? symbol)
-		=> symbol?.ContainingType.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
-		   symbol.ContainingType.ContainingNamespace.Name == "Mockolate" &&
-		   (symbol.ContainingType.Name == "Mock" ||
-		    symbol.ContainingType.ContainingType.Name == "Mock" && symbol.ContainingType.Name == "Factory");
+		=> symbol?.GetAttributes().Any(a =>
+			a.AttributeClass?.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
+			a.AttributeClass.ContainingNamespace.Name == "Mockolate" &&
+			a.AttributeClass.Name == "MockGeneratorAttribute") == true;
 
 	internal static MockClass? ExtractMockOrMockFactoryCreateSyntaxOrDefault(
 		this SyntaxNode syntaxNode, SemanticModel semanticModel)
@@ -47,6 +48,6 @@ internal static class MockGeneratorHelpers
 
 	private static bool IsMockable(ITypeSymbol typeSymbol)
 	{
-		return !typeSymbol.IsSealed || typeSymbol.TypeKind == TypeKind.Delegate;
+		return typeSymbol.TypeKind != TypeKind.TypeParameter && (!typeSymbol.IsSealed || typeSymbol.TypeKind == TypeKind.Delegate);
 	}
 }

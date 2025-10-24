@@ -127,6 +127,7 @@ public class MockGeneratorTests
 		await ThatAll(
 			That(result.Sources.Keys).IsEqualTo([
 				"Mock.g.cs",
+				"MockGeneratorAttribute.g.cs",
 				"MockRegistration.g.cs",
 			]).InAnyOrder().IgnoringCase(),
 			That(result.Diagnostics).IsEmpty()
@@ -160,6 +161,7 @@ public class MockGeneratorTests
 		await ThatAll(
 			That(result.Sources.Keys).IsEqualTo([
 				"Mock.g.cs",
+				"MockGeneratorAttribute.g.cs",
 				"MockRegistration.g.cs",
 			]).InAnyOrder().IgnoringCase(),
 			That(result.Diagnostics).IsEmpty()
@@ -183,6 +185,49 @@ public class MockGeneratorTests
 			             {
 			                var factory = new Mock.Factory(MockBehavior.Default);
 			     			_ = factory.Create<IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             void MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7);
+			         }
+			     }
+			     """, typeof(DateTime), typeof(Task));
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).HasCount().AtLeast(5);
+		await That(result.Sources).ContainsKey("ForIMyInterface.g.cs");
+		await That(result.Sources).ContainsKey("ForIMyInterface.Extensions.g.cs");
+		await That(result.Sources).ContainsKey("ForIMyInterface.SetupExtensions.g.cs");
+	}
+
+	[Fact]
+	public async Task WithCustomGenerator_ShouldWork()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			                 _ = MyGenerator.Create<IMyInterface>();
+			             }
+			         }
+
+			         public static class MyGenerator
+			         {
+			             [MockGenerator]
+			             public static Mock<T> Create<T>()
+			                 where T : class
+			             {
+			                 return Mock.Create<T>();
 			             }
 			         }
 

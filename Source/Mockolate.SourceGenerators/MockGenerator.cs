@@ -17,6 +17,10 @@ public class MockGenerator : IIncrementalGenerator
 	void IIncrementalGenerator.Initialize(IncrementalGeneratorInitializationContext context)
 	{
 		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
+			"MockGeneratorAttribute.g.cs",
+			SourceText.From(Sources.MockGeneratorAttribute(), Encoding.UTF8)));
+
+		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
 			"Mock.g.cs",
 			SourceText.From(Sources.MockClass(), Encoding.UTF8)));
 
