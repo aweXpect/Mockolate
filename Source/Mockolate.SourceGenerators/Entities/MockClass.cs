@@ -32,7 +32,7 @@ internal record MockClass : Class
 	public EquatableArray<Class> AdditionalImplementations { get; }
 
 	public IEnumerable<Class> DistinctAdditionalImplementations()
-		=> AdditionalImplementations.Distinct().Where(x => x.GetFullName() != GetFullName());
+		=> AdditionalImplementations.Distinct().Where(x => x.ClassFullName != ClassFullName);
 
 	internal IEnumerable<Class> GetAllClasses()
 	{
