@@ -6,13 +6,13 @@ internal static partial class Sources
 {
 	public static string ReturnsAsyncExtensions(int[] numberOfParameters)
 	{
-		StringBuilder sb = new();
-		sb.AppendLine(Header);
-		sb.Append("""
-		          using System;
-		          using System.Threading.Tasks;
-		          using Mockolate.Setup;
+		StringBuilder sb = InitializeBuilder([
+			"System",
+			"System.Threading.Tasks",
+			"Mockolate.Setup",
+		]);
 
+		sb.Append("""
 		          namespace Mockolate;
 
 		          #nullable enable

@@ -6,16 +6,16 @@ internal static partial class Sources
 {
 	public static string IndexerSetups(HashSet<int> methodSetups)
 	{
-		StringBuilder sb = new();
-		sb.AppendLine(Header);
-		sb.Append("""
-		          using System;
-		          using System.Collections.Generic;
-		          using System.Diagnostics.CodeAnalysis;
-		          using System.Threading;
-		          using Mockolate.Exceptions;
-		          using Mockolate.Interactions;
+		StringBuilder sb = InitializeBuilder([
+			"System",
+			"System.Collections.Generic",
+			"System.Diagnostics.CodeAnalysis",
+			"System.Threading",
+			"Mockolate.Exceptions",
+			"Mockolate.Interactions",
+		]);
 
+		sb.Append("""
 		          namespace Mockolate.Setup;
 
 		          #nullable enable

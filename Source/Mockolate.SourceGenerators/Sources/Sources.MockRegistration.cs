@@ -23,26 +23,22 @@ internal static partial class Sources
 			}
 		}
 
-		List<string> namespaces =
-		[
-			"System",
-		];
-		if (mocks.Any())
-		{
-			namespaces.Add("Mockolate.Generated");
-			namespaces.Add("Mockolate.DefaultValues");
-		}
-		StringBuilder sb = new();
-		sb.AppendLine(Header);
-		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
-		{
-			sb.Append("using ").Append(@namespace).AppendLine(";");
-		}
+		StringBuilder sb = InitializeBuilder(mocks.Any()
+			? [
+				"System",
+				"Mockolate.Generated",
+				"Mockolate.DefaultValues",
+			]
+			: [
+				"System"
+			]);
 
-		sb.AppendLine();
-		sb.AppendLine("namespace Mockolate;");
-		sb.AppendLine();
-		sb.AppendLine("#nullable enable");
+		sb.Append("""
+		          namespace Mockolate;
+
+		          #nullable enable
+
+		          """);
 		sb.AppendLine("internal static partial class Mock");
 		sb.AppendLine("{");
 		sb.AppendLine("\tstatic Mock()");

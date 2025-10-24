@@ -172,7 +172,7 @@ public sealed partial class ForMockTests
 			     """, typeof(List<>));
 
 		 await That(result.Sources).ContainsKey("ForIMyServiceListMyData.g.cs").WhoseValue
-			.Contains("using System.Collections.Generic;").And
+			.Contains("using Mockolate.Setup;").And
 			.DoesNotContain("using MyCode.Services;").And
 			.DoesNotContain("using MyCode.Models;");
 	}

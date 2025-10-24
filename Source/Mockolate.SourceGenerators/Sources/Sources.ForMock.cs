@@ -9,24 +9,15 @@ internal static partial class Sources
 {
 	public static string ForMock(string name, MockClass mockClass)
 	{
-		string[] namespaces =
-		[
-			..GlobalUsings,
+		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Events",
 			"Mockolate.Exceptions",
 			"Mockolate.Protected",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
-		];
-		StringBuilder sb = new();
-		sb.AppendLine(Header);
-		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
-		{
-			sb.Append("using ").Append(@namespace).AppendLine(";");
-		}
+		]);
 
 		sb.Append("""
-
 		          namespace Mockolate.Generated;
 
 		          #nullable enable
@@ -35,19 +26,19 @@ internal static partial class Sources
 		sb.Append("internal static class For").Append(name).AppendLine();
 		sb.AppendLine("{");
 
-		AppendMock(sb, mockClass, namespaces);
+		AppendMock(sb, mockClass);
 		sb.AppendLine();
 
 		if (mockClass.Delegate is null && (mockClass.IsInterface || mockClass.Constructors?.Any() == true))
 		{
-			AppendMockSubject(sb, mockClass, namespaces);
+			AppendMockSubject(sb, mockClass);
 		}
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
 	}
 
-	private static void AppendMock(StringBuilder sb, MockClass mockClass, string[] namespaces)
+	private static void AppendMock(StringBuilder sb, MockClass mockClass)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.GetFullName().EscapeForXmlDoc()).Append("\" />");
@@ -80,7 +71,7 @@ internal static partial class Sources
 			if (mockClass.Delegate.ReturnType != Entities.Type.Void)
 			{
 				sb.Append("\t\t\t\tvar result = ((IMock)this).Execute<")
-					.Append(mockClass.Delegate.ReturnType.GetMinimizedString(namespaces))
+					.Append(mockClass.Delegate.ReturnType.Fullname)
 					.Append(">(\"").Append(mockClass.GetFullName(mockClass.Delegate.Name)).Append("\"");
 				foreach (MethodParameter p in mockClass.Delegate.Parameters)
 				{
@@ -105,13 +96,13 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = result.SetOutParameter<")
-						.Append(parameter.Type.GetMinimizedString(namespaces)).Append(">(\"").Append(parameter.Name)
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
 						.AppendLine("\");");
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = result.SetRefParameter<")
-						.Append(parameter.Type.GetMinimizedString(namespaces)).Append(">(\"").Append(parameter.Name)
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
 						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
 				}
 			}
@@ -148,7 +139,7 @@ internal static partial class Sources
 				int index = 0;
 				foreach (MethodParameter parameter in constructor.Parameters)
 				{
-					sb.AppendLine().Append("\t\t\t    && TryCast(constructorParameters.Parameters[").Append(index++).Append("], out ").Append(parameter.Type.GetMinimizedString(namespaces)).Append(" p").Append(index).Append(")");
+					sb.AppendLine().Append("\t\t\t    && TryCast(constructorParameters.Parameters[").Append(index++).Append("], out ").Append(parameter.Type.Fullname).Append(" p").Append(index).Append(")");
 				}
 				sb.Append(")").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
@@ -178,7 +169,7 @@ internal static partial class Sources
 		sb.AppendLine("\t}");
 	}
 
-	private static void AppendMockSubject(StringBuilder sb, MockClass mockClass, string[] namespaces)
+	private static void AppendMockSubject(StringBuilder sb, MockClass mockClass)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     The actual mock subject implementing <see cref=\"").Append(mockClass.GetFullName().EscapeForXmlDoc())
@@ -218,7 +209,7 @@ internal static partial class Sources
 				foreach (MethodParameter parameter in constructor.Parameters)
 				{
 					sb.Append(", ");
-					sb.Append(parameter.Type.GetMinimizedString(namespaces)).Append(' ').Append(parameter.Name);
+					sb.Append(parameter.Type.Fullname).Append(' ').Append(parameter.Name);
 				}
 
 				sb.AppendLine(")");
@@ -242,18 +233,17 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine();
-		ImplementClass(sb, mockClass, namespaces, false);
+		ImplementClass(sb, mockClass, false);
 		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
 		{
 			sb.AppendLine();
-			ImplementClass(sb, additional, namespaces, true);
+			ImplementClass(sb, additional, true);
 		}
 
 		sb.AppendLine("\t}");
 	}
 
-	private static void ImplementClass(StringBuilder sb, Class @class, string[] namespaces,
-		bool explicitInterfaceImplementation)
+	private static void ImplementClass(StringBuilder sb, Class @class, bool explicitInterfaceImplementation)
 	{
 		sb.Append("\t\t#region ").Append(@class.GetFullName()).AppendLine();
 		int count = 0;
@@ -268,7 +258,7 @@ internal static partial class Sources
 				.AppendLine("\" />");
 			if (explicitInterfaceImplementation)
 			{
-				sb.Append("\t\tevent ").Append(@event.Type.GetMinimizedString(namespaces).TrimEnd('?'))
+				sb.Append("\t\tevent ").Append(@event.Type.Fullname.TrimEnd('?'))
 					.Append("? ").Append(@class.GetFullName()).Append('.').Append(@event.Name).AppendLine();
 			}
 			else
@@ -279,7 +269,7 @@ internal static partial class Sources
 					sb.Append("override ");
 				}
 
-				sb.Append("event ").Append(@event.Type.GetMinimizedString(namespaces).TrimEnd('?'))
+				sb.Append("event ").Append(@event.Type.Fullname.TrimEnd('?'))
 					.Append("? ").Append(@event.Name).AppendLine();
 			}
 
@@ -300,15 +290,15 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <inheritdoc cref=\"").Append(property.ContainingType.EscapeForXmlDoc()).Append('.').Append(property.IndexerParameters is not null
 					? property.Name.Replace("[]",
-						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.GetMinimizedString(namespaces)}"))}]").EscapeForXmlDoc()
+						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname}"))}]").EscapeForXmlDoc()
 					: property.Name.EscapeForXmlDoc())
 				.AppendLine("\" />");
 			if (explicitInterfaceImplementation)
 			{
-				sb.Append("\t\t").Append(property.Type.GetMinimizedString(namespaces))
+				sb.Append("\t\t").Append(property.Type.Fullname)
 					.Append(" ").Append(@class.GetFullName()).Append('.').Append(property.IndexerParameters is not null
 						? property.Name.Replace("[]",
-							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.GetMinimizedString(namespaces)} {p.Name}"))}]")
+							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname} {p.Name}"))}]")
 						: property.Name).AppendLine();
 			}
 			else
@@ -319,10 +309,10 @@ internal static partial class Sources
 					sb.Append("override ");
 				}
 
-				sb.Append(property.Type.GetMinimizedString(namespaces))
+				sb.Append(property.Type.Fullname)
 					.Append(" ").Append(property.IndexerParameters is not null
 						? property.Name.Replace("[]",
-							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.GetMinimizedString(namespaces)} {p.Name}"))}]")
+							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname} {p.Name}"))}]")
 						: property.Name).AppendLine();
 			}
 
@@ -340,13 +330,13 @@ internal static partial class Sources
 				if (property.IsIndexer && property.IndexerParameters is not null)
 				{
 					sb.Append("\t\t\t\treturn _mock.GetIndexer<")
-						.Append(property.Type.GetMinimizedString(namespaces))
+						.Append(property.Type.Fullname)
 						.Append(">(").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine(");");
 				}
 				else
 				{
 					sb.Append("\t\t\t\treturn _mock.Get<")
-						.Append(property.Type.GetMinimizedString(namespaces))
+						.Append(property.Type.Fullname)
 						.Append(">(\"").Append(property.ContainingType).Append('.').Append(property.Name).AppendLine("\");");
 				}
 				sb.AppendLine("\t\t\t}");
@@ -365,7 +355,7 @@ internal static partial class Sources
 				if (property.IsIndexer && property.IndexerParameters is not null)
 				{
 					sb.Append("\t\t\t\t_mock.SetIndexer<")
-						.Append(property.Type.GetMinimizedString(namespaces))
+						.Append(property.Type.Fullname)
 						.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine(");");
 				}
 				else
@@ -387,12 +377,12 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.').Append(method.Name.EscapeForXmlDoc())
 				.Append('(').Append(string.Join(", ",
-					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
 				.AppendLine(")\" />");
 			if (explicitInterfaceImplementation)
 			{
 				sb.Append("\t\t");
-				sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
+				sb.Append(method.ReturnType.Fullname).Append(' ')
 					.Append(@class.GetFullName()).Append('.').Append(method.Name).Append('(');
 			}
 			else
@@ -406,12 +396,12 @@ internal static partial class Sources
 						sb.Append("override ");
 					}
 
-					sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
+					sb.Append(method.ReturnType.Fullname).Append(' ')
 						.Append(method.Name).Append('(');
 				}
 				else
 				{
-					sb.Append(method.ReturnType.GetMinimizedString(namespaces)).Append(' ')
+					sb.Append(method.ReturnType.Fullname).Append(' ')
 						.Append(method.ExplicitImplementation).Append('.').Append(method.Name).Append('(');
 				}
 			}
@@ -425,7 +415,7 @@ internal static partial class Sources
 				}
 
 				sb.Append(parameter.RefKind.GetString());
-				sb.Append(parameter.Type.GetMinimizedString(namespaces)).Append(' ').Append(parameter.Name);
+				sb.Append(parameter.Type.Fullname).Append(' ').Append(parameter.Name);
 			}
 
 			sb.Append(')');
@@ -435,7 +425,7 @@ internal static partial class Sources
 				{
 					sb.AppendLine();
 					sb.Append("\t\t\t");
-					gp.AppendWhereConstraint(sb, namespaces);
+					gp.AppendWhereConstraint(sb);
 				}
 			}
 
@@ -444,7 +434,7 @@ internal static partial class Sources
 			if (method.ReturnType != Entities.Type.Void)
 			{
 				sb.Append("\t\t\tvar result = _mock.Execute<")
-					.Append(method.ReturnType.GetMinimizedString(namespaces))
+					.Append(method.ReturnType.Fullname)
 					.Append(">(\"").Append(method.ContainingType).Append('.').Append(method.Name).Append("\"");
 				foreach (MethodParameter p in method.Parameters)
 				{
@@ -469,13 +459,13 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append("\t\t\t").Append(parameter.Name).Append(" = result.SetOutParameter<")
-						.Append(parameter.Type.GetMinimizedString(namespaces)).Append(">(\"").Append(parameter.Name)
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
 						.AppendLine("\");");
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.Append("\t\t\t").Append(parameter.Name).Append(" = result.SetRefParameter<")
-						.Append(parameter.Type.GetMinimizedString(namespaces)).Append(">(\"").Append(parameter.Name)
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
 						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
 				}
 			}

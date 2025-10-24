@@ -32,7 +32,7 @@ internal readonly record struct GenericParameter
 	public NullableAnnotation NullableAnnotation { get; }
 	public bool IsClass { get; }
 
-	public void AppendWhereConstraint(StringBuilder sb, string[] namespaces)
+	public void AppendWhereConstraint(StringBuilder sb)
 	{
 		int count = 0;
 		sb.Append("where ").Append(Name).Append(" : ");
@@ -42,7 +42,7 @@ internal readonly record struct GenericParameter
 			{
 				sb.Append(", ");
 			}
-			sb.Append(constraintType.GetMinimizedString(namespaces));
+			sb.Append(constraintType.Fullname);
 			if (NullableAnnotation == NullableAnnotation.Annotated)
 			{
 				sb.Append('?');

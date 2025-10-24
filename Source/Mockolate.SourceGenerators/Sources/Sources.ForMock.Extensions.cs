@@ -10,23 +10,14 @@ internal static partial class Sources
 {
 	public static string ForMockExtensions(string name, MockClass mockClass)
 	{
-		string[] namespaces =
-		[
-			..GlobalUsings,
+		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Events",
 			"Mockolate.Protected",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
-		];
-		StringBuilder sb = new();
-		sb.AppendLine(Header);
-		foreach (string @namespace in namespaces.Distinct().OrderBy(n => n))
-		{
-			sb.Append("using ").Append(@namespace).AppendLine(";");
-		}
+		]);
 
 		sb.Append("""
-
 		          namespace Mockolate;
 
 		          #nullable enable
@@ -37,7 +28,7 @@ internal static partial class Sources
 
 		if (mockClass.Delegate is not null)
 		{
-			AppendDelegateExtensions(sb, mockClass, mockClass.Delegate, namespaces);
+			AppendDelegateExtensions(sb, mockClass, mockClass.Delegate);
 		}
 		else
 		{
@@ -55,20 +46,20 @@ internal static partial class Sources
 
 			foreach (Class? @class in mockClass.GetAllClasses())
 			{
-				AppendInvokedExtensions(sb, @class, namespaces, allClasses);
+				AppendInvokedExtensions(sb, @class, allClasses);
 				AppendGotExtensions(sb, @class, allClasses);
-				AppendSetExtensions(sb, @class, namespaces, allClasses);
-				AppendGotIndexerExtensions(sb, @class, namespaces, allClasses);
-				AppendSetIndexerExtensions(sb, @class, namespaces, allClasses);
+				AppendSetExtensions(sb, @class, allClasses);
+				AppendGotIndexerExtensions(sb, @class, allClasses);
+				AppendSetIndexerExtensions(sb, @class, allClasses);
 				AppendEventExtensions(sb, @class, allClasses);
 
 				if (AppendProtectedMock(sb, @class))
 				{
-					AppendInvokedExtensions(sb, @class, namespaces, allClasses, true);
+					AppendInvokedExtensions(sb, @class, allClasses, true);
 					AppendGotExtensions(sb, @class, allClasses, true);
-					AppendSetExtensions(sb, @class, namespaces, allClasses, true);
-					AppendGotIndexerExtensions(sb, @class, namespaces, allClasses, true);
-					AppendSetIndexerExtensions(sb, @class, namespaces, allClasses, true);
+					AppendSetExtensions(sb, @class, allClasses, true);
+					AppendGotIndexerExtensions(sb, @class, allClasses, true);
+					AppendSetIndexerExtensions(sb, @class, allClasses, true);
 					AppendEventExtensions(sb, @class, allClasses, true);
 				}
 			}
@@ -79,7 +70,7 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	private static void AppendDelegateExtensions(StringBuilder sb, MockClass mockClass, Method method, string[] namespaces)
+	private static void AppendDelegateExtensions(StringBuilder sb, MockClass mockClass, Method method)
 	{
 		#region Setup
 		sb.Append("\textension(MockSetup<").Append(mockClass.GetFullName()).AppendLine("> setup)");
@@ -90,10 +81,10 @@ internal static partial class Sources
 		if (method.ReturnType != Entities.Type.Void)
 		{
 			sb.Append("\t\tpublic ReturnMethodSetup<")
-				.Append(method.ReturnType.GetMinimizedString(namespaces));
+				.Append(method.ReturnType.Fullname);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
-				sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
+				sb.Append(", ").Append(parameter.Type.Fullname);
 			}
 
 			sb.Append("> Delegate(");
@@ -112,7 +103,7 @@ internal static partial class Sources
 						sb.Append(", ");
 					}
 
-					sb.Append(parameter.Type.GetMinimizedString(namespaces));
+					sb.Append(parameter.Type.Fullname);
 				}
 
 				sb.Append('>');
@@ -134,7 +125,7 @@ internal static partial class Sources
 				RefKind.Ref => "With.RefParameter<",
 				RefKind.Out => "With.OutParameter<",
 				_ => "With.Parameter<",
-			}).Append(parameter.Type.GetMinimizedString(namespaces))
+			}).Append(parameter.Type.Fullname)
 				.Append('>');
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
@@ -150,7 +141,7 @@ internal static partial class Sources
 			{
 				sb.AppendLine();
 				sb.Append("\t\t\t");
-				gp.AppendWhereConstraint(sb, namespaces);
+				gp.AppendWhereConstraint(sb);
 			}
 		}
 		sb.AppendLine("\t\t{");
@@ -158,10 +149,10 @@ internal static partial class Sources
 		if (method.ReturnType != Entities.Type.Void)
 		{
 			sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<")
-				.Append(method.ReturnType.GetMinimizedString(namespaces));
+				.Append(method.ReturnType.Fullname);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
-				sb.Append(", ").Append(parameter.Type.GetMinimizedString(namespaces));
+				sb.Append(", ").Append(parameter.Type.Fullname);
 			}
 
 			sb.Append(">");
@@ -181,7 +172,7 @@ internal static partial class Sources
 						sb.Append(", ");
 					}
 
-					sb.Append(parameter.Type.GetMinimizedString(namespaces));
+					sb.Append(parameter.Type.Fullname);
 				}
 
 				sb.Append('>');
@@ -194,7 +185,7 @@ internal static partial class Sources
 			sb.Append(", new With.NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
-				sb.Append(" ?? With.Null<").Append(parameter.Type.GetMinimizedString(namespaces))
+				sb.Append(" ?? With.Null<").Append(parameter.Type.Fullname)
 				.Append(">()");
 			}
 			sb.Append(")");
@@ -232,7 +223,7 @@ internal static partial class Sources
 				RefKind.Ref => "With.InvokedRefParameter<",
 				RefKind.Out => "With.InvokedOutParameter<",
 				_ => "With.Parameter<",
-			}).Append(parameter.Type.GetMinimizedString(namespaces))
+			}).Append(parameter.Type.Fullname)
 				.Append('>');
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
@@ -253,7 +244,7 @@ internal static partial class Sources
 			sb.Append(parameter.Name);
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
-				sb.Append(" ?? With.Null<").Append(parameter.Type.GetMinimizedString(namespaces))
+				sb.Append(" ?? With.Null<").Append(parameter.Type.Fullname)
 				.Append(">()");
 			}
 		}
@@ -352,7 +343,7 @@ internal static partial class Sources
 		return true;
 	}
 
-	private static void AppendInvokedExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
+	private static void AppendInvokedExtensions(StringBuilder sb, Class @class, string allClasses,
 		bool isProtected = false)
 	{
 		Func<Method, bool> predicate = isProtected
@@ -395,7 +386,7 @@ internal static partial class Sources
 			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc())
 				.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
 				.Append(string.Join(", ",
-					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.GetMinimizedString(namespaces))))
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
 				.Append(")\"/> with the given ")
 				.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".")
 				.AppendLine();
@@ -414,7 +405,7 @@ internal static partial class Sources
 					RefKind.Ref => "With.InvokedRefParameter<",
 					RefKind.Out => "With.InvokedOutParameter<",
 					_ => "With.Parameter<",
-				}).Append(parameter.Type.GetMinimizedString(namespaces))
+				}).Append(parameter.Type.Fullname)
 					.Append('>');
 				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 				{
@@ -430,7 +421,7 @@ internal static partial class Sources
 				{
 					sb.AppendLine();
 					sb.Append("\t\t\t");
-					gp.AppendWhereConstraint(sb, namespaces);
+					gp.AppendWhereConstraint(sb);
 				}
 			}
 			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">>>)mock).Method(\"")
@@ -443,7 +434,7 @@ internal static partial class Sources
 				sb.Append(parameter.Name);
 				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 				{
-					sb.Append(" ?? With.Null<").Append(parameter.Type.GetMinimizedString(namespaces))
+					sb.Append(" ?? With.Null<").Append(parameter.Type.Fullname)
 					.Append(">()");
 				}
 			}
@@ -505,7 +496,7 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendGotIndexerExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
+	private static void AppendGotIndexerExtensions(StringBuilder sb, Class @class, string allClasses,
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
@@ -539,7 +530,7 @@ internal static partial class Sources
 			sb.Append("\t\t///     Verifies the indexer read access for <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">>>")
-				.Append(isProtected ? ".Protected" : "").Append(" GotIndexer").Append("(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}>? parameter{i + 1}"))).Append(")").AppendLine();
+				.Append(isProtected ? ".Protected" : "").Append(" GotIndexer").Append("(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tMockGotIndexer<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">> indexer = new(verify);").AppendLine();
 			sb.Append("\t\t\treturn ((IMockGotIndexer<MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">>>)indexer).Got(").Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"parameter{i + 1}"))).Append(");").AppendLine();
@@ -550,7 +541,7 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendSetExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
+	private static void AppendSetExtensions(StringBuilder sb, Class @class, string allClasses,
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
@@ -592,7 +583,7 @@ internal static partial class Sources
 			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc())
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">>> ").Append(property.Name).Append("(With.Parameter<").Append(property.Type.GetMinimizedString(namespaces)).Append("> value)").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">>> ").Append(property.Name).Append("(With.Parameter<").Append(property.Type.Fullname).Append("> value)").AppendLine();
 			sb.Append("\t\t\t=> ((IMockSet<MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">>>)mock).Property(\"").Append(@class.GetFullName(property.Name)).Append("\", value);").AppendLine();
 		}
 
@@ -600,7 +591,7 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendSetIndexerExtensions(StringBuilder sb, Class @class, string[] namespaces, string allClasses,
+	private static void AppendSetIndexerExtensions(StringBuilder sb, Class @class, string allClasses,
 		bool isProtected = false)
 	{
 		Func<Property, bool> predicate = isProtected
@@ -633,7 +624,7 @@ internal static partial class Sources
 			sb.Append("\t\t///     Verifies the indexer write access for <see cref=\"").Append(@class.GetFullName().EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">>>")
-				.Append(isProtected ? ".Protected" : "").Append(" SetIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.GetMinimizedString(namespaces)}>? parameter{i + 1}"))).Append(", With.Parameter<").Append(indexer.Type.GetMinimizedString(namespaces)).Append(">? value)").AppendLine();
+				.Append(isProtected ? ".Protected" : "").Append(" SetIndexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(", With.Parameter<").Append(indexer.Type.Fullname).Append(">? value)").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tMockSetIndexer<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">> indexer = new(verify);").AppendLine();
 			sb.Append("\t\t\treturn ((IMockSetIndexer<MockVerify<").Append(@class.GetFullName()).Append(", Mock<").Append(allClasses).Append(">>>)indexer).Set(value, ").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"parameter{i + 1}"))).Append(");").AppendLine();
