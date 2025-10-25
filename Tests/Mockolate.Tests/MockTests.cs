@@ -141,8 +141,10 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
 	{
+		var mock = Mock.Create<MyBaseClassWithoutConstructor>();
+
 		void Act()
-			=> _ = Mock.Create<MyBaseClassWithoutConstructor>();
+			=> _ = mock.Subject;
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -161,8 +163,10 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithEmptyParameters_ShouldThrowMockException()
 	{
+		var mock = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
+
 		void Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
+			=> _ = mock.Subject;
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -172,8 +176,10 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithoutParameters_ShouldThrowMockException()
 	{
+		var mock = Mock.Create<MyBaseClassWithConstructor>();
+
 		void Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>();
+			=> _ = mock.Subject;
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -183,8 +189,10 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithTooManyParameters_ShouldThrowMockException()
 	{
+		var mock = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
+
 		void Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
+			=> _ = mock.Subject;
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
