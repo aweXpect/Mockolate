@@ -9,4 +9,9 @@ public interface IMockInvoked<TMock>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
 	VerificationResult<TMock> Method(string methodName, params With.Parameter[] parameters);
+
+	/// <summary>
+	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
+	/// </summary>
+	VerificationResult<TMock> Method(string methodName, With.Parameters parameters);
 }
