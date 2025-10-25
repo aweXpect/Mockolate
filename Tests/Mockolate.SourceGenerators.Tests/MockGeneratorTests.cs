@@ -217,17 +217,17 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			                 _ = MyGenerator.Create<IMyInterface>();
+			                 MyGenerator.Create<IMyInterface>();
 			             }
 			         }
 
 			         public static class MyGenerator
 			         {
 			             [MockGenerator]
-			             public static Mock<T> Create<T>()
+			             public static void Create<T>()
 			                 where T : class
 			             {
-			                 return Mock.Create<T>();
+			                 _ = Mock.Create<T>();
 			             }
 			         }
 

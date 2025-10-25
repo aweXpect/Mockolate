@@ -12,7 +12,7 @@ internal static class MockGeneratorHelpers
 		{
 			Expression: MemberAccessExpressionSyntax
 			{
-				Name: GenericNameSyntax,
+				Name: GenericNameSyntax { Arity: > 0},
 			},
 		};
 

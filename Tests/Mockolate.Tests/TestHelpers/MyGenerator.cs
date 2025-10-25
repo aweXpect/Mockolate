@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Mockolate.Tests.TestHelpers;
+﻿namespace Mockolate.Tests.TestHelpers;
 
 public static class MyGenerator
 {

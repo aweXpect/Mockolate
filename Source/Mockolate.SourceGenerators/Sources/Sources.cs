@@ -338,6 +338,9 @@ internal static partial class Sources
 		sb.AppendLine("""
 			namespace Mockolate;
 
+			/// <summary>
+			///     Marks a method as a mock generator for its generic parameters.
+			/// </summary>
 			[AttributeUsage(AttributeTargets.Method)]
 			public class MockGeneratorAttribute : Attribute
 			{
