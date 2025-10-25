@@ -134,6 +134,7 @@ namespace Mockolate
     public class With
     {
         public static Mockolate.With.Parameter<T> Any<T>() { }
+        public static Mockolate.With.Parameters AnyParameterCombination() { }
         public static Mockolate.With.Parameter<T> Matching<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.With.Parameter<T> Null<T>() { }
         public static Mockolate.With.InvokedOutParameter<T> Out<T>() { }
@@ -198,6 +199,11 @@ namespace Mockolate
             protected abstract bool Matches(T value);
             public override bool Matches(object? value) { }
             public static Mockolate.With.Parameter<T> op_Implicit(T value) { }
+        }
+        public abstract class Parameters
+        {
+            protected Parameters() { }
+            public abstract bool Matches(object?[] values);
         }
         public class RefParameter<T> : Mockolate.With.Parameter
         {
@@ -581,6 +587,21 @@ namespace Mockolate.Setup
         public Mockolate.IMock Mock { get; }
         public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
     }
+    public class ReturnMethodSetupWithParameters<TReturn> : Mockolate.Setup.MethodSetup
+    {
+        public ReturnMethodSetupWithParameters(string name, Mockolate.With.Parameters match) { }
+        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Callback(System.Action callback) { }
+        protected override void ExecuteCallback(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Interactions.MethodInvocation invocation) { }
+        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Returns(System.Func<TReturn> callback) { }
+        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Returns(TReturn returnValue) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Throws(System.Exception exception) { }
+        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Throws(System.Func<System.Exception> callback) { }
+        public override string ToString() { }
+    }
     public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup
     {
         public ReturnMethodSetup(string name) { }
@@ -682,6 +703,20 @@ namespace Mockolate.Setup
         public Mockolate.Setup.VoidMethodSetup Throws(System.Func<System.Exception> callback) { }
         public override string ToString() { }
     }
+    public class VoidMethodSetupWithParameters : Mockolate.Setup.MethodSetup
+    {
+        public VoidMethodSetupWithParameters(string name, Mockolate.With.Parameters match) { }
+        public Mockolate.Setup.VoidMethodSetupWithParameters Callback(System.Action callback) { }
+        public Mockolate.Setup.VoidMethodSetupWithParameters DoesNotThrow() { }
+        protected override void ExecuteCallback(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override TResult GetReturnValue<TResult>(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
+        protected override bool IsMatch(Mockolate.Interactions.MethodInvocation invocation) { }
+        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
+        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
+        public Mockolate.Setup.VoidMethodSetupWithParameters Throws(System.Exception exception) { }
+        public Mockolate.Setup.VoidMethodSetupWithParameters Throws(System.Func<System.Exception> callback) { }
+        public override string ToString() { }
+    }
     public class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup
     {
         public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1) { }
@@ -760,6 +795,7 @@ namespace Mockolate.Verify
     public interface IMockInvoked<TMock>
     {
         Mockolate.Verify.VerificationResult<TMock> Method(string methodName, params Mockolate.With.Parameter[] parameters);
+        Mockolate.Verify.VerificationResult<TMock> Method(string methodName, Mockolate.With.Parameters parameters);
     }
     public interface IMockSetIndexer<TMock>
     {

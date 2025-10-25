@@ -26,6 +26,12 @@ public class With
 		=> new AnyParameter<T>();
 
 	/// <summary>
+	///     Matches any parameter combination.
+	/// </summary>
+	public static Parameters AnyParameterCombination()
+		=> new AnyParameters();
+
+	/// <summary>
 	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
 	/// </summary>
 	public static Parameter<T> Matching<T>(Func<T, bool> predicate, [CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
@@ -166,6 +172,17 @@ public class With
 		}
 	}
 #endif
+
+	/// <summary>
+	///     Matches the method parameters against an expectation.
+	/// </summary>
+	public abstract class Parameters
+	{
+		/// <summary>
+		///     Checks if the <paramref name="values" /> match the expected parameters.
+		/// </summary>
+		public abstract bool Matches(object?[] values);
+	}
 
 	/// <summary>
 	///     Matches a method parameter against an expectation.
@@ -328,6 +345,13 @@ public class With
 		{
 			return $"{Parameter} {Name}";
 		}
+	}
+
+	private sealed class AnyParameters : Parameters
+	{
+		/// <inheritdoc cref="Parameters.Matches(object?[])" />
+		public override bool Matches(object?[] values)
+			=> true;
 	}
 
 	private sealed class AnyParameter<T> : Parameter<T>

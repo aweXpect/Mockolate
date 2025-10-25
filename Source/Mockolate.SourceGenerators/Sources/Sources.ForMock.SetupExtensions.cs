@@ -32,11 +32,11 @@ internal static partial class Sources
 		AppendMethodSetupExtensions(sb, @class);
 
 		if (@class.AllEvents().Any(@event
-			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-		    @class.AllMethods().Any(method
-			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-		    @class.AllProperties().Any(property
-			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+			@class.AllMethods().Any(method
+				=> method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+			@class.AllProperties().Any(property
+				=> property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
 		{
 			AppendRaisesExtensions(sb, @class, true);
 			AppendPropertySetupExtensions(sb, @class, true);
@@ -365,6 +365,68 @@ internal static partial class Sources
 				}
 
 				sb.Append(");").AppendLine();
+				sb.AppendLine("\t\t\tif (setup is IMockSetup mockSetup)");
+				sb.AppendLine("\t\t\t{");
+				sb.AppendLine("\t\t\t\tmockSetup.RegisterMethod(methodSetup);");
+				sb.AppendLine("\t\t\t}");
+				sb.AppendLine("\t\t\treturn methodSetup;");
+				sb.AppendLine("\t\t}");
+			}
+
+			foreach (Method method in @class.AllMethods()
+				.Where(predicate)
+				.GroupBy(m => m.Name)
+				.Where(g => g.Count() == 1)
+				.Select(g => g.Single())
+				.Where(m => m.Parameters.Count > 1 && m.Parameters.All(x => x.RefKind == RefKind.None)))
+			{
+				if (count++ > 0)
+				{
+					sb.AppendLine();
+				}
+
+				sb.Append("\t\t/// <summary>").AppendLine();
+				sb.Append("\t\t///     Setup for the method <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+					.Append(method.Name.EscapeForXmlDoc()).Append("(")
+					.Append(string.Join(", ",
+						method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+					.Append(")\"/>");
+				if (method.Parameters.Any())
+				{
+					sb.Append(" with the given ")
+						.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>")));
+				}
+				sb.Append(".").AppendLine();
+				sb.Append("\t\t/// </summary>").AppendLine();
+				if (method.ReturnType != Type.Void)
+				{
+					sb.Append("\t\tpublic ReturnMethodSetupWithParameters<").Append(method.ReturnType.Fullname).Append("> ").Append(method.Name).Append("(");
+				}
+				else
+				{
+					sb.Append("\t\tpublic VoidMethodSetupWithParameters ").Append(method.Name).Append("(");
+				}
+				sb.Append("With.Parameters parameters)").AppendLine();
+				if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+				{
+					foreach (GenericParameter gp in method.GenericParameters.Value)
+					{
+						gp.AppendWhereConstraint(sb, "\t\t\t");
+					}
+				}
+				sb.AppendLine("\t\t{");
+
+				if (method.ReturnType != Type.Void)
+				{
+					sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetupWithParameters<")
+						.Append(method.ReturnType.Fullname).Append(">(");
+				}
+				else
+				{
+					sb.Append("\t\t\tvar methodSetup = new VoidMethodSetupWithParameters(");
+				}
+
+				sb.Append(method.GetUniqueNameString()).Append(", parameters);").AppendLine();
 				sb.AppendLine("\t\t\tif (setup is IMockSetup mockSetup)");
 				sb.AppendLine("\t\t\t{");
 				sb.AppendLine("\t\t\t\tmockSetup.RegisterMethod(methodSetup);");

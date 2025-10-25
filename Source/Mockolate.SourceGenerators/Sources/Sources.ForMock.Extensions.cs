@@ -451,6 +451,39 @@ internal static partial class Sources
 			sb.AppendLine(");");
 		}
 
+		foreach (Method method in @class.Methods
+				.Where(predicate)
+				.GroupBy(m => m.Name)
+				.Where(g => g.Count() == 1)
+				.Select(g => g.Single())
+				.Where(m => m.Parameters.Count > 1 && m.Parameters.All(x => x.RefKind == RefKind.None)))
+		{
+			if (count++ > 0)
+			{
+				sb.AppendLine();
+			}
+
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
+				.Append(string.Join(", ",
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+				.Append(")\"/> with the given ")
+				.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".")
+				.AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>> ").Append(method.Name).Append("(With.Parameters parameters)").AppendLine();
+			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+			{
+				foreach (GenericParameter gp in method.GenericParameters.Value)
+				{
+					gp.AppendWhereConstraint(sb, "\t\t\t");
+				}
+			}
+			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Method(").Append(method.GetUniqueNameString());
+			sb.AppendLine(", parameters);");
+		}
+
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 	}

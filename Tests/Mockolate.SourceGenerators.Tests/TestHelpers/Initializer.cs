@@ -5,5 +5,9 @@ namespace Mockolate.SourceGenerators.Tests.TestHelpers;
 
 public class Initializer : IAweXpectInitializer
 {
-	public void Initialize() => Customize.aweXpect.Formatting().MaximumNumberOfCollectionItems.Set(40);
+	public void Initialize()
+	{
+		Customize.aweXpect.Formatting().MaximumNumberOfCollectionItems.Set(40);
+		Customize.aweXpect.Formatting().MaximumStringLength.Set(250);
+	}
 }

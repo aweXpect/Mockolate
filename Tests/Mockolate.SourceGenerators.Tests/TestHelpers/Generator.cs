@@ -27,6 +27,7 @@ public static class Generator
 		"CS8124" /* Tuple must contain at least two elem… */,
 		"CS1003" /* Syntax error, ',' expected */,
 		"CS0119" /* 'identifier' is a type, which is not valid in the given context */,
+		"CS0128" /* A local variable named 'variable' is already defined in this scope */,
 		"CS0246" /* A namespace cannot directly contain members such as fields or methods */,
 		"CS0305" /* Using the generic type 'type' requires 1 type arguments */,
 		"CS8803" /* Top-level statements must precede namespace and type declarations */,
