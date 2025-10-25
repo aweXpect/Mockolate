@@ -1,3 +1,5 @@
+using System;
+
 namespace Mockolate.Monitor;
 
 /// <summary>
@@ -6,7 +8,14 @@ namespace Mockolate.Monitor;
 public static class MockMonitorExtensions
 {
 	/// <summary>
-	///     Create a mock monitor for the given <paramref name="mock" /> instance.
+	///     Create a <paramref name="monitor"/> to verify the interaction on the <paramref name="mock"/> during a specific time frame.
 	/// </summary>
-	public static MockMonitor<T, Mock<T>> Monitor<T>(this Mock<T> mock) => new(mock);
+	/// <remarks>
+	///     Returns an <see cref="IDisposable" /> that can be used to stop the monitoring.
+	/// </remarks>
+	public static IDisposable Monitor<T>(this Mock<T> mock, out MockMonitor<T, Mock<T>> monitor)
+	{
+		monitor = new(mock);
+		return monitor.Run();
+	}
 }

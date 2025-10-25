@@ -56,13 +56,28 @@ public abstract class MockMonitor
 	{
 		if (_monitoringStart >= 0)
 		{
-			foreach (IInteraction? invocation in _monitoredInvocations.Interactions.Skip(_monitoringStart))
+			foreach (IInteraction? interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
 			{
-				((IMockInteractions)Interactions).RegisterInteraction(invocation);
+				((IMockInteractions)Interactions).RegisterInteraction(interaction);
 			}
 		}
 
 		_monitoringStart = -1;
+	}
+
+	/// <summary>
+	///     Updates the interactions while the mock monitor is running.
+	/// </summary>
+	protected void UpdateInteractions()
+	{
+		if (_monitoringStart >= 0)
+		{
+			foreach (IInteraction? interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
+			{
+				((IMockInteractions)Interactions).RegisterInteraction(interaction);
+				_monitoringStart = interaction.Index + 1;
+			}
+		}
 	}
 
 	private sealed class MonitorScope(Action callback) : IDisposable
@@ -80,17 +95,26 @@ public abstract class MockMonitor
 ///     which events were subscribed to, during a test session. Monitoring is session-based; begin a session with the Run
 ///     method and dispose the returned scope to finalize monitoring.
 /// </remarks>
-public class MockMonitor<T, TMock> : MockMonitor
+public sealed class MockMonitor<T, TMock> : MockMonitor
 	where TMock : IMock
 {
+	private readonly MockVerify<T, TMock> _verify;
+
 	/// <inheritdoc cref="MockMonitor{T, TMock}" />
 	public MockMonitor(TMock mock) : base(mock)
 	{
-		Verify = new MockVerify<T, TMock>(Interactions, mock);
+		_verify = new MockVerify<T, TMock>(Interactions, mock);
 	}
 
 	/// <summary>
 	///     Verifies the interactions with the mocked subject of <typeparamref name="T"/>.
 	/// </summary>
-	public MockVerify<T, TMock> Verify { get; }
+	public MockVerify<T, TMock> Verify
+	{
+		get
+		{
+			UpdateInteractions();
+			return _verify;
+		}
+	}
 }
