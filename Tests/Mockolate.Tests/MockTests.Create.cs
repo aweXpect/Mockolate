@@ -517,19 +517,27 @@ public sealed partial class MockTests
 	public async Task Create_BaseClassWithVirtualCallsInConstructor()
 	{
 		var mock = Mock.Create<MyBaseClassWithVirtualCallsInConstructor>();
+		mock.Setup.Method.VirtualMethod().Returns([5, 6]);
 
-		await That(mock.Verify.Invoked.VirtualMethod()).Never();
+		var value = mock.Subject.VirtualProperty;
+
+		await That(mock.Verify.Invoked.VirtualMethod()).Once();
+		await That(value).IsEqualTo(5);
 	}
 
 	public class MyBaseClassWithVirtualCallsInConstructor
 	{
 		public MyBaseClassWithVirtualCallsInConstructor()
 		{
-			VirtualMethod();
+			var values = VirtualMethod();
+			VirtualProperty = values[0];
 		}
 
-		public virtual void VirtualMethod()
+		public virtual int VirtualProperty { get; set; }
+
+		public virtual int[] VirtualMethod()
 		{
+			return [0, 1];
 		}
 	}
 }

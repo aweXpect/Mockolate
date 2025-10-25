@@ -23,7 +23,7 @@ public sealed partial class ForMockTests
 
 		await That(result.Sources).ContainsKey("ForFuncintbool.g.cs").WhoseValue
 			.DoesNotContain("MockSubject").IgnoringNewlineStyle().And
-			.Contains("Subject = new System.Func<int,bool>(").IgnoringNewlineStyle();
+			.Contains("_subject = new System.Func<int,bool>(").IgnoringNewlineStyle();
 	}
 
 	[Fact]
