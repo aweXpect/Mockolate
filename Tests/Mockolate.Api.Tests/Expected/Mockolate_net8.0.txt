@@ -357,12 +357,13 @@ namespace Mockolate.Monitor
         protected MockMonitor(Mockolate.IMock mock) { }
         protected Mockolate.Interactions.MockInteractions Interactions { get; }
         public System.IDisposable Run() { }
+        protected void UpdateInteractions() { }
     }
     public static class MockMonitorExtensions
     {
-        public static Mockolate.Monitor.MockMonitor<T, Mockolate.Mock<T>> Monitor<T>(this Mockolate.Mock<T> mock) { }
+        public static System.IDisposable Monitor<T>(this Mockolate.Mock<T> mock, out Mockolate.Monitor.MockMonitor<T, Mockolate.Mock<T>> monitor) { }
     }
-    public class MockMonitor<T, TMock> : Mockolate.Monitor.MockMonitor
+    public sealed class MockMonitor<T, TMock> : Mockolate.Monitor.MockMonitor
         where TMock : Mockolate.IMock
     {
         public MockMonitor(TMock mock) { }
