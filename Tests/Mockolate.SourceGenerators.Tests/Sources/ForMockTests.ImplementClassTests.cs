@@ -349,7 +349,12 @@ public sealed partial class ForMockTests
 				          		public bool MyMethod1(int index)
 				          		{
 				          			MethodSetupResult<bool>? methodExecution = _mock?.Execute<bool>("MyCode.IMyService.MyMethod1", index);
-				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<bool>();
+				          			if (methodExecution is null)
+				          			{
+				          				return MockBehavior.Default.DefaultValue.Generate<bool>();
+				          			}
+
+				          			return methodExecution.Result;
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
@@ -498,7 +503,12 @@ public sealed partial class ForMockTests
 				          		protected override bool MyMethod2(int index, bool isReadOnly)
 				          		{
 				          			MethodSetupResult<bool>? methodExecution = (_mock ?? _mockProvider.Value)?.Execute<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
-				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<bool>();
+				          			if (methodExecution is null)
+				          			{
+				          				return MockBehavior.Default.DefaultValue.Generate<bool>();
+				          			}
+				          
+				          			return methodExecution.Result;
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.DoesNotContain("MyNonVirtualMethod").Because("The method is not virtual!").And
@@ -507,7 +517,12 @@ public sealed partial class ForMockTests
 				          		int MyCode.IMyOtherService.SomeOtherMethod()
 				          		{
 				          			MethodSetupResult<int>? methodExecution = (_mock ?? _mockProvider.Value)?.Execute<int>("MyCode.IMyOtherService.SomeOtherMethod");
-				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
+				          			if (methodExecution is null)
+				          			{
+				          				return MockBehavior.Default.DefaultValue.Generate<int>();
+				          			}
+				          
+				          			return methodExecution.Result;
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -542,8 +557,15 @@ public sealed partial class ForMockTests
 				          		public void MyMethod1(ref int index)
 				          		{
 				          			MethodSetupResult? methodExecution = _mock?.Execute("MyCode.IMyService.MyMethod1", index);
-				          			index = methodExecution?.SetRefParameter<int>("index", index)
-				          				?? MockBehavior.Default.DefaultValue.Generate<int>();
+				          			if (methodExecution is null)
+				          			{
+				          				index = MockBehavior.Default.DefaultValue.Generate<int>();
+				          			}
+				          			else
+				          			{
+				          				index = methodExecution.SetRefParameter<int>("index", index);
+				          			}
+
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
@@ -551,9 +573,21 @@ public sealed partial class ForMockTests
 				          		public bool MyMethod2(int index, out bool isReadOnly)
 				          		{
 				          			MethodSetupResult<bool>? methodExecution = _mock?.Execute<bool>("MyCode.IMyService.MyMethod2", index, null);
-				          			isReadOnly = methodExecution?.SetOutParameter<bool>("isReadOnly")
-				          				?? MockBehavior.Default.DefaultValue.Generate<bool>();
-				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<bool>();
+				          			if (methodExecution is null)
+				          			{
+				          				isReadOnly = MockBehavior.Default.DefaultValue.Generate<bool>();
+				          			}
+				          			else
+				          			{
+				          				isReadOnly = methodExecution.SetOutParameter<bool>("isReadOnly");
+				          			}
+
+				          			if (methodExecution is null)
+				          			{
+				          				return MockBehavior.Default.DefaultValue.Generate<bool>();
+				          			}
+
+				          			return methodExecution.Result;
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -769,7 +803,12 @@ public sealed partial class ForMockTests
 				          		public int MyDirectMethod(int value)
 				          		{
 				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyService.MyDirectMethod", value);
-				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
+				          			if (methodExecution is null)
+				          			{
+				          				return MockBehavior.Default.DefaultValue.Generate<int>();
+				          			}
+
+				          			return methodExecution.Result;
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
@@ -777,7 +816,12 @@ public sealed partial class ForMockTests
 				          		public int MyBaseMethod1(int value)
 				          		{
 				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyServiceBase1.MyBaseMethod1", value);
-				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
+				          			if (methodExecution is null)
+				          			{
+				          				return MockBehavior.Default.DefaultValue.Generate<int>();
+				          			}
+				          
+				          			return methodExecution.Result;
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
@@ -785,7 +829,12 @@ public sealed partial class ForMockTests
 				          		public int MyBaseMethod2(int value)
 				          		{
 				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyServiceBase2.MyBaseMethod2", value);
-				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
+				          			if (methodExecution is null)
+				          			{
+				          				return MockBehavior.Default.DefaultValue.Generate<int>();
+				          			}
+				          
+				          			return methodExecution.Result;
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
@@ -793,7 +842,12 @@ public sealed partial class ForMockTests
 				          		public int MyBaseMethod3(int value)
 				          		{
 				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyServiceBase3.MyBaseMethod3", value);
-				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
+				          			if (methodExecution is null)
+				          			{
+				          				return MockBehavior.Default.DefaultValue.Generate<int>();
+				          			}
+				          
+				          			return methodExecution.Result;
 				          		}
 				          """).IgnoringNewlineStyle();
 		}

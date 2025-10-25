@@ -27,13 +27,15 @@ public sealed class MockRegistrationTests
 			         {
 			             int[] SimpleArray { get; }
 			             int[,,][,][] MultiDimensionalArray { get; }
+			             T[] GenericArray<T>();
 			         }
 			     }
 			     """);
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<int[]>(Array.Empty<int>()));").And
-			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<int[,,][,][]>(new int[0,0,0][,][]));");
+			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<int[,,][,][]>(new int[0,0,0][,][]));").And
+			.DoesNotContain("T[]");
 	}
 
 	[Fact]
@@ -59,13 +61,15 @@ public sealed class MockRegistrationTests
 			         {
 			             Task<int> IntTask { get; }
 			             Task<int[]> IntArrayTask { get; }
+			             Task<T> GenericValueTask<T>();
 			         }
 			     }
 			     """, typeof(Task));
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.Task<int>>(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<int>(defaultValueGenerator.Generate<int>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int)));").And
-			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.Task<int[]>>(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<int[]>(defaultValueGenerator.Generate<int[]>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int[])));");
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.Task<int[]>>(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<int[]>(defaultValueGenerator.Generate<int[]>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int[])));").And
+			.DoesNotContain("Task<T>");
 	}
 
 	[Fact]
@@ -91,13 +95,15 @@ public sealed class MockRegistrationTests
 			         {
 			             ValueTask<int> IntValueTask { get; }
 			             ValueTask<int[]> IntArrayValueTask { get; }
+			             ValueTask<T> GenericValueTask<T>();
 			         }
 			     }
 			     """, typeof(ValueTask));
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int>>(defaultValueGenerator => new System.Threading.Tasks.ValueTask<int>(defaultValueGenerator.Generate<int>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int)));").And
-			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int[]>>(defaultValueGenerator => new System.Threading.Tasks.ValueTask<int[]>(defaultValueGenerator.Generate<int[]>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int[])));");
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int[]>>(defaultValueGenerator => new System.Threading.Tasks.ValueTask<int[]>(defaultValueGenerator.Generate<int[]>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int[])));").And
+			.DoesNotContain("ValueTask<T>");
 	}
 
 	[Fact]
@@ -123,13 +129,15 @@ public sealed class MockRegistrationTests
 			         {
 			             IEnumerable<int> EnumerableOfInt { get; }
 			             IEnumerable<int[]> EnumerableOfIntArray { get; }
+			             IEnumerable<T> GenericEnumerable<T>();
 			         }
 			     }
 			     """, typeof(IEnumerable<>));
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<System.Collections.Generic.IEnumerable<int>>(Array.Empty<int>()));").And
-			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<System.Collections.Generic.IEnumerable<int[]>>(Array.Empty<int[]>()));");
+			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<System.Collections.Generic.IEnumerable<int[]>>(Array.Empty<int[]>()));").And
+			.DoesNotContain("IEnumerable<T>");
 	}
 
 	[Fact]
@@ -154,13 +162,15 @@ public sealed class MockRegistrationTests
 			         {
 			             (int V1, string V2) NamedValueTuple { get; }
 			             (int, string, int, string, int, string, int, string) ValueTuple8 { get; }
+			             (int, T1, T2) GenericValueTuple<T1, T2>();
 			         }
 			     }
 			     """);
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<(int V1, string V2)>(defaultValueGenerator => (defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>())));").And
-			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<(int, string, int, string, int, string, int, string)>(defaultValueGenerator => (defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>())));");
+			.Contains("DefaultValueGenerator.Register(new CallbackDefaultValueFactory<(int, string, int, string, int, string, int, string)>(defaultValueGenerator => (defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>())));").And
+			.DoesNotContain("(int, T1, T2)");
 	}
 
 	[Fact]

@@ -3,7 +3,7 @@ using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
-internal readonly record struct Type
+internal record Type
 {
 	private Type(string fullname)
 	{
@@ -16,24 +16,36 @@ internal readonly record struct Type
 		Fullname = typeSymbol.ToDisplayString().Replace("*", "");
 		Namespace = typeSymbol.ContainingNamespace?.ToString();
 		IsArray = typeSymbol.TypeKind == TypeKind.Array;
-		if (typeSymbol is INamedTypeSymbol namedTypeSymbol &&
-			typeSymbol.IsTupleType)
+		if (typeSymbol is IArrayTypeSymbol arrayType)
 		{
-			TupleTypes = new EquatableArray<Type>(namedTypeSymbol.TupleElements
-				.Select(x => new Type(x.Type))
+			ElementType = new Type(arrayType.ElementType);
+		}
+		IsTypeParameter = typeSymbol.TypeKind == TypeKind.TypeParameter;
+		if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
+		{
+			if (typeSymbol.IsTupleType)
+			{
+				TupleTypes = new EquatableArray<Type>(namedTypeSymbol.TupleElements
+					.Select(x => new Type(x.Type))
+					.ToArray());
+			}
+
+			GenericTypeParameters = new EquatableArray<Type>(namedTypeSymbol.TypeArguments
+				.Select(x => new Type(x))
 				.ToArray());
 		}
 	}
 
 	public bool IsArray { get; }
-
+	public bool IsTypeParameter { get; }
 	public EquatableArray<Type>? TupleTypes { get; }
-
+	public EquatableArray<Type>? GenericTypeParameters { get; }
 	public string? Namespace { get; }
 
 	internal static Type Void { get; } = new("void");
 
 	public string Fullname { get; }
+	public Type? ElementType { get; }
 
 	public override string ToString() => Fullname;
 }

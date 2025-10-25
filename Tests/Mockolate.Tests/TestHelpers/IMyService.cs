@@ -1,4 +1,7 @@
-﻿namespace Mockolate.Tests.TestHelpers;
+﻿using System.Collections.Generic;
+using Mockolate.Setup;
+
+namespace Mockolate.Tests.TestHelpers;
 
 internal interface IMyService
 {
@@ -16,4 +19,10 @@ internal interface IMyService
 	string DoSomethingAndReturn(int value);
 
 	event EventHandler? MyEvent;
+
+	TService GetInstance<TService>();
+
+	TService GetInstance<TService>(string key);
+
+	IEnumerable<TService> GetAllInstances<TService>();
 }
