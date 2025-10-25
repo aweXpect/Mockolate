@@ -71,19 +71,21 @@ public sealed partial class ForMockTests
 
 		await That(result.Sources).ContainsKey("ForMyBaseClass.g.cs").WhoseValue
 			.Contains("""
-			          			if (constructorParameters.Parameters.Length == 1
-			          			    && TryCast(constructorParameters.Parameters[0], out int p1))
-			          			{
-			          				Subject = new MockSubject(this, p1);
-			          			}
+			          					if (_constructorParameters.Parameters.Length == 1
+			          					    && TryCast(_constructorParameters.Parameters[0], out int p1))
+			          					{
+			          						MockSubject._mockProvider.Value = this;
+			          						_subject = new MockSubject(this, p1);
+			          					}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
-			          			if (constructorParameters.Parameters.Length == 2
-			          			    && TryCast(constructorParameters.Parameters[0], out int p1)
-			          			    && TryCast(constructorParameters.Parameters[1], out bool p2))
-			          			{
-			          				Subject = new MockSubject(this, p1, p2);
-			          			}
+			          					if (_constructorParameters.Parameters.Length == 2
+			          					    && TryCast(_constructorParameters.Parameters[0], out int p1)
+			          					    && TryCast(_constructorParameters.Parameters[1], out bool p2))
+			          					{
+			          						MockSubject._mockProvider.Value = this;
+			          						_subject = new MockSubject(this, p1, p2);
+			          					}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
 			          		public MockSubject(IMock mock, int value)
@@ -100,10 +102,10 @@ public sealed partial class ForMockTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          			if (constructorParameters is null || constructorParameters.Parameters.Length == 0)
-			          			{
-			          				throw new MockException("No parameterless constructor found for 'MyCode.MyBaseClass'. Please provide constructor parameters.");
-			          			}
+			          					if (_constructorParameters is null || _constructorParameters.Parameters.Length == 0)
+			          					{
+			          						throw new MockException("No parameterless constructor found for 'MyCode.MyBaseClass'. Please provide constructor parameters.");
+			          					}
 			          """).IgnoringNewlineStyle();
 	}
 
