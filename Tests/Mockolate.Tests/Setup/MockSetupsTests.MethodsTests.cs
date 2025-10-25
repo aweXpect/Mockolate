@@ -22,6 +22,19 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
+		public async Task Setup_ShouldUseNewestMatchingSetup()
+		{
+			Mock<IMethodService> mock = Mock.Create<IMethodService>();
+			mock.Setup.Method.MyIntMethodWithParameters(With.Any<int>(), With.Any<string>()).Returns(10);
+
+			await That(mock.Subject.MyIntMethodWithParameters(1, "")).IsEqualTo(10);
+
+			mock.Setup.Method.MyIntMethodWithParameters(With.Any<int>(), With.Any<string>()).Returns(20);
+
+			await That(mock.Subject.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
+		}
+
+		[Fact]
 		public async Task GenericMethods_ShouldConsiderGenericParameter()
 		{
 			Mock<IMethodService> mock = Mock.Create<IMethodService>();

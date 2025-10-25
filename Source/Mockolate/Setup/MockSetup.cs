@@ -85,7 +85,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	internal MethodSetup? GetMethodSetup(IInteraction invocation)
-		=> _methodSetups.FirstOrDefault(setup => ((IMethodSetup)setup).Matches(invocation));
+		=> _methodSetups.GetNewest(setup => ((IMethodSetup)setup).Matches(invocation));
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
@@ -373,15 +373,15 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class MethodSetups
 	{
-		private ConcurrentQueue<MethodSetup>? _storage;
+		private ConcurrentStack<MethodSetup>? _storage;
 
 		public void Add(MethodSetup setup)
 		{
-			_storage ??= new ConcurrentQueue<MethodSetup>();
-			_storage.Enqueue(setup);
+			_storage ??= new ConcurrentStack<MethodSetup>();
+			_storage.Push(setup);
 		}
 
-		public MethodSetup? FirstOrDefault(Func<MethodSetup, bool> predicate)
+		public MethodSetup? GetNewest(Func<MethodSetup, bool> predicate)
 		{
 			if (_storage is null)
 			{
