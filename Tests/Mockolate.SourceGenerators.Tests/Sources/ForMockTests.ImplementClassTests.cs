@@ -33,16 +33,16 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.IMyService.SomeEvent" />
 				          		public event System.EventHandler? SomeEvent
 				          		{
-				          			add => _mock.Raise.AddEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
-				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+				          			add => _mock?.Raise.AddEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+				          			remove => _mock?.Raise.RemoveEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyService.SomeOtherEvent" />
 				          		public event System.EventHandler? SomeOtherEvent
 				          		{
-				          			add => _mock.Raise.AddEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
-				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+				          			add => _mock?.Raise.AddEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+				          			remove => _mock?.Raise.RemoveEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -81,8 +81,8 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.MyService.SomeEvent" />
 				          		public override event System.EventHandler? SomeEvent
 				          		{
-				          			add => _mock.Raise.AddEvent("MyCode.MyService.SomeEvent", value?.Target, value?.Method);
-				          			remove => _mock.Raise.RemoveEvent("MyCode.MyService.SomeEvent", value?.Target, value?.Method);
+				          			add => _mock?.Raise.AddEvent("MyCode.MyService.SomeEvent", value?.Target, value?.Method);
+				          			remove => _mock?.Raise.RemoveEvent("MyCode.MyService.SomeEvent", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.DoesNotContain("SomeOtherEvent").Because("The event is not virtual!").And
@@ -90,8 +90,8 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.IMyOtherService.SomeThirdEvent" />
 				          		event System.EventHandler? MyCode.IMyOtherService.SomeThirdEvent
 				          		{
-				          			add => _mock.Raise.AddEvent("MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
-				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
+				          			add => _mock?.Raise.AddEvent("MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
+				          			remove => _mock?.Raise.RemoveEvent("MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -139,32 +139,32 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.IMyService.MyDirectEvent" />
 				          		public event System.EventHandler? MyDirectEvent
 				          		{
-				          			add => _mock.Raise.AddEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
-				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+				          			add => _mock?.Raise.AddEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+				          			remove => _mock?.Raise.RemoveEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseEvent1" />
 				          		public event System.EventHandler? MyBaseEvent1
 				          		{
-				          			add => _mock.Raise.AddEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
-				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+				          			add => _mock?.Raise.AddEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+				          			remove => _mock?.Raise.RemoveEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseEvent2" />
 				          		public event System.EventHandler? MyBaseEvent2
 				          		{
-				          			add => _mock.Raise.AddEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
-				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+				          			add => _mock?.Raise.AddEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+				          			remove => _mock?.Raise.RemoveEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseEvent3" />
 				          		public event System.EventHandler? MyBaseEvent3
 				          		{
-				          			add => _mock.Raise.AddEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
-				          			remove => _mock.Raise.RemoveEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+				          			add => _mock?.Raise.AddEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+				          			remove => _mock?.Raise.RemoveEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -201,11 +201,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.GetIndexer<int>(index);
+				          				return _mock?.GetIndexer<int>(index)
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.SetIndexer<int>(value, index);
+				          				_mock?.SetIndexer<int>(value, index);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -215,7 +216,8 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.GetIndexer<int>(index, isReadOnly);
+				          				return _mock?.GetIndexer<int>(index, isReadOnly)
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -225,7 +227,7 @@ public sealed partial class ForMockTests
 				          		{
 				          			set
 				          			{
-				          				_mock.SetIndexer<int>(value, index, isWriteOnly);
+				          				_mock?.SetIndexer<int>(value, index, isWriteOnly);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle();
@@ -269,11 +271,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.GetIndexer<int>(index);
+				          				return _mock?.GetIndexer<int>(index)
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.SetIndexer<int>(value, index);
+				          				_mock?.SetIndexer<int>(value, index);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -283,7 +286,8 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.GetIndexer<int>(index, isReadOnly);
+				          				return _mock?.GetIndexer<int>(index, isReadOnly)
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -293,7 +297,7 @@ public sealed partial class ForMockTests
 				          		{
 				          			set
 				          			{
-				          				_mock.SetIndexer<int>(value, index, isWriteOnly);
+				          				_mock?.SetIndexer<int>(value, index, isWriteOnly);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -304,11 +308,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.GetIndexer<int>(someAdditionalIndex);
+				          				return _mock?.GetIndexer<int>(someAdditionalIndex)
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.SetIndexer<int>(value, someAdditionalIndex);
+				          				_mock?.SetIndexer<int>(value, someAdditionalIndex);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle();
@@ -343,15 +348,15 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod1(int)" />
 				          		public bool MyMethod1(int index)
 				          		{
-				          			var result = _mock.Execute<bool>("MyCode.IMyService.MyMethod1", index);
-				          			return result.Result;
+				          			MethodSetupResult<bool>? methodExecution = _mock?.Execute<bool>("MyCode.IMyService.MyMethod1", index);
+				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<bool>();
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, bool)" />
 				          		public void MyMethod2(int index, bool isReadOnly)
 				          		{
-				          			var result = _mock.Execute("MyCode.IMyService.MyMethod2", index, isReadOnly);
+				          			MethodSetupResult? methodExecution = _mock?.Execute("MyCode.IMyService.MyMethod2", index, isReadOnly);
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -485,15 +490,15 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.MyService.MyMethod1(int)" />
 				          		public override void MyMethod1(int index)
 				          		{
-				          			var result = _mock.Execute("MyCode.MyService.MyMethod1", index);
+				          			MethodSetupResult? methodExecution = _mock?.Execute("MyCode.MyService.MyMethod1", index);
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.MyService.MyMethod2(int, bool)" />
 				          		protected override bool MyMethod2(int index, bool isReadOnly)
 				          		{
-				          			var result = _mock.Execute<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
-				          			return result.Result;
+				          			MethodSetupResult<bool>? methodExecution = _mock?.Execute<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
+				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<bool>();
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.DoesNotContain("MyNonVirtualMethod").Because("The method is not virtual!").And
@@ -501,8 +506,8 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.IMyOtherService.SomeOtherMethod()" />
 				          		int MyCode.IMyOtherService.SomeOtherMethod()
 				          		{
-				          			var result = _mock.Execute<int>("MyCode.IMyOtherService.SomeOtherMethod");
-				          			return result.Result;
+				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyOtherService.SomeOtherMethod");
+				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -536,17 +541,19 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod1(ref int)" />
 				          		public void MyMethod1(ref int index)
 				          		{
-				          			var result = _mock.Execute("MyCode.IMyService.MyMethod1", index);
-				          			index = result.SetRefParameter<int>("index", index);
+				          			MethodSetupResult? methodExecution = _mock?.Execute("MyCode.IMyService.MyMethod1", index);
+				          			index = methodExecution?.SetRefParameter<int>("index", index)
+				          				?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, out bool)" />
 				          		public bool MyMethod2(int index, out bool isReadOnly)
 				          		{
-				          			var result = _mock.Execute<bool>("MyCode.IMyService.MyMethod2", index, null);
-				          			isReadOnly = result.SetOutParameter<bool>("isReadOnly");
-				          			return result.Result;
+				          			MethodSetupResult<bool>? methodExecution = _mock?.Execute<bool>("MyCode.IMyService.MyMethod2", index, null);
+				          			isReadOnly = methodExecution?.SetOutParameter<bool>("isReadOnly")
+				          				?? MockBehavior.Default.DefaultValue.Generate<bool>();
+				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<bool>();
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -583,11 +590,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<int>("MyCode.IMyService.SomeProperty");
+				          				return _mock?.Get<int>("MyCode.IMyService.SomeProperty")
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.Set("MyCode.IMyService.SomeProperty", value);
+				          				_mock?.Set("MyCode.IMyService.SomeProperty", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -597,7 +605,8 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<bool?>("MyCode.IMyService.SomeReadOnlyProperty");
+				          				return _mock?.Get<bool?>("MyCode.IMyService.SomeReadOnlyProperty")
+				          					?? MockBehavior.Default.DefaultValue.Generate<bool?>();
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -607,7 +616,7 @@ public sealed partial class ForMockTests
 				          		{
 				          			set
 				          			{
-				          				_mock.Set("MyCode.IMyService.SomeWriteOnlyProperty", value);
+				          				_mock?.Set("MyCode.IMyService.SomeWriteOnlyProperty", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle();
@@ -653,11 +662,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			protected get
 				          			{
-				          				return _mock.Get<int>("MyCode.MyService.SomeProperty1");
+				          				return _mock?.Get<int>("MyCode.MyService.SomeProperty1")
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.Set("MyCode.MyService.SomeProperty1", value);
+				          				_mock?.Set("MyCode.MyService.SomeProperty1", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -667,11 +677,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<int>("MyCode.MyService.SomeProperty2");
+				          				return _mock?.Get<int>("MyCode.MyService.SomeProperty2")
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			protected set
 				          			{
-				          				_mock.Set("MyCode.MyService.SomeProperty2", value);
+				          				_mock?.Set("MyCode.MyService.SomeProperty2", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -681,7 +692,8 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<bool?>("MyCode.MyService.SomeReadOnlyProperty");
+				          				return _mock?.Get<bool?>("MyCode.MyService.SomeReadOnlyProperty")
+				          					?? MockBehavior.Default.DefaultValue.Generate<bool?>();
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -691,7 +703,7 @@ public sealed partial class ForMockTests
 				          		{
 				          			set
 				          			{
-				          				_mock.Set("MyCode.MyService.SomeWriteOnlyProperty", value);
+				          				_mock?.Set("MyCode.MyService.SomeWriteOnlyProperty", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -702,11 +714,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<int>("MyCode.IMyOtherService.SomeAdditionalProperty");
+				          				return _mock?.Get<int>("MyCode.IMyOtherService.SomeAdditionalProperty")
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.Set("MyCode.IMyOtherService.SomeAdditionalProperty", value);
+				          				_mock?.Set("MyCode.IMyOtherService.SomeAdditionalProperty", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle();
@@ -755,32 +768,32 @@ public sealed partial class ForMockTests
 				          		/// <inheritdoc cref="MyCode.IMyService.MyDirectMethod(int)" />
 				          		public int MyDirectMethod(int value)
 				          		{
-				          			var result = _mock.Execute<int>("MyCode.IMyService.MyDirectMethod", value);
-				          			return result.Result;
+				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyService.MyDirectMethod", value);
+				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseMethod1(int)" />
 				          		public int MyBaseMethod1(int value)
 				          		{
-				          			var result = _mock.Execute<int>("MyCode.IMyServiceBase1.MyBaseMethod1", value);
-				          			return result.Result;
+				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyServiceBase1.MyBaseMethod1", value);
+				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseMethod2(int)" />
 				          		public int MyBaseMethod2(int value)
 				          		{
-				          			var result = _mock.Execute<int>("MyCode.IMyServiceBase2.MyBaseMethod2", value);
-				          			return result.Result;
+				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyServiceBase2.MyBaseMethod2", value);
+				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseMethod3(int)" />
 				          		public int MyBaseMethod3(int value)
 				          		{
-				          			var result = _mock.Execute<int>("MyCode.IMyServiceBase3.MyBaseMethod3", value);
-				          			return result.Result;
+				          			MethodSetupResult<int>? methodExecution = _mock?.Execute<int>("MyCode.IMyServiceBase3.MyBaseMethod3", value);
+				          			return methodExecution?.Result ?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          		}
 				          """).IgnoringNewlineStyle();
 		}
@@ -830,11 +843,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<int>("MyCode.IMyService.MyDirectProperty");
+				          				return _mock?.Get<int>("MyCode.IMyService.MyDirectProperty")
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.Set("MyCode.IMyService.MyDirectProperty", value);
+				          				_mock?.Set("MyCode.IMyService.MyDirectProperty", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -844,11 +858,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<int>("MyCode.IMyServiceBase1.MyBaseProperty1");
+				          				return _mock?.Get<int>("MyCode.IMyServiceBase1.MyBaseProperty1")
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.Set("MyCode.IMyServiceBase1.MyBaseProperty1", value);
+				          				_mock?.Set("MyCode.IMyServiceBase1.MyBaseProperty1", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -858,11 +873,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<int>("MyCode.IMyServiceBase2.MyBaseProperty2");
+				          				return _mock?.Get<int>("MyCode.IMyServiceBase2.MyBaseProperty2")
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.Set("MyCode.IMyServiceBase2.MyBaseProperty2", value);
+				          				_mock?.Set("MyCode.IMyServiceBase2.MyBaseProperty2", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle().And
@@ -872,11 +888,12 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock.Get<int>("MyCode.IMyServiceBase3.MyBaseProperty3");
+				          				return _mock?.Get<int>("MyCode.IMyServiceBase3.MyBaseProperty3")
+				          					?? MockBehavior.Default.DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
-				          				_mock.Set("MyCode.IMyServiceBase3.MyBaseProperty3", value);
+				          				_mock?.Set("MyCode.IMyServiceBase3.MyBaseProperty3", value);
 				          			}
 				          		}
 				          """).IgnoringNewlineStyle();

@@ -512,4 +512,24 @@ public sealed partial class MockTests
 		await That(Act).Throws<MockException>()
 			.WithMessage("The third generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.");
 	}
+
+	[Fact]
+	public async Task Create_BaseClassWithVirtualCallsInConstructor()
+	{
+		var mock = Mock.Create<MyBaseClassWithVirtualCallsInConstructor>();
+
+		await That(mock.Verify.Invoked.VirtualMethod()).Never();
+	}
+
+	public class MyBaseClassWithVirtualCallsInConstructor
+	{
+		public MyBaseClassWithVirtualCallsInConstructor()
+		{
+			VirtualMethod();
+		}
+
+		public virtual void VirtualMethod()
+		{
+		}
+	}
 }
