@@ -22,4 +22,7 @@ internal readonly record struct Event
 
 	public Accessibility Accessibility { get; }
 	public string Name { get; }
+
+	internal string GetUniqueNameString()
+		=> $"\"{ContainingType}.{Name}\"";
 }
