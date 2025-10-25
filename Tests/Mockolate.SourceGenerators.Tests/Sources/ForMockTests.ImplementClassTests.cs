@@ -410,6 +410,47 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
+		public async Task Methods_Generic_WithoutConstraints_ShouldNotHaveWhereClause()
+		{
+			GeneratorResult result = Generator
+				.Run($$"""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         bool MyMethod1<T, U>(int index);
+				         void MyMethod2(int index, bool isReadOnly);
+				     }
+
+				     public interface IMyInterface
+				     {
+				     }
+
+				     public class MyClass<out T>
+				     {
+				     	T Value { get; set; }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("ForIMyService.g.cs").WhoseValue
+				.Contains($$"""
+				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod1{T, U}(int)" />
+				          		public bool MyMethod1<T, U>(int index)
+				          		{
+				          """).IgnoringNewlineStyle();
+		}
+
+		[Fact]
 		public async Task Methods_ShouldImplementVirtualMethodsOfClassesAndAllExplicitelyFromAdditionalInterfaces()
 		{
 			GeneratorResult result = Generator
