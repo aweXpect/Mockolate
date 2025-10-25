@@ -32,6 +32,7 @@ internal readonly record struct GenericParameter
 	public NullableAnnotation NullableAnnotation { get; }
 	public bool IsClass { get; }
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	public void AppendWhereConstraint(StringBuilder sb, string prefix)
 	{
 		if (!ConstraintTypes.Any() && !IsStruct && !IsClass && !IsNotNull && !IsUnmanaged && !HasConstructor && !AllowsRefStruct)
@@ -106,4 +107,5 @@ internal readonly record struct GenericParameter
 			sb.Append("allows ref struct");
 		}
 	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 }
