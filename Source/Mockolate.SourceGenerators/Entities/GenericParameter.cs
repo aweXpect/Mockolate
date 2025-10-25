@@ -32,10 +32,15 @@ internal readonly record struct GenericParameter
 	public NullableAnnotation NullableAnnotation { get; }
 	public bool IsClass { get; }
 
-	public void AppendWhereConstraint(StringBuilder sb)
+	public void AppendWhereConstraint(StringBuilder sb, string prefix)
 	{
+		if (!ConstraintTypes.Any() && !IsStruct && !IsClass && !IsNotNull && !IsUnmanaged && !HasConstructor && !AllowsRefStruct)
+		{
+			return;
+		}
+
 		int count = 0;
-		sb.Append("where ").Append(Name).Append(" : ");
+		sb.AppendLine().Append(prefix).Append("where ").Append(Name).Append(" : ");
 		foreach (var constraintType in ConstraintTypes)
 		{
 			if (count++ > 0)
