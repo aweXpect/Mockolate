@@ -99,7 +99,7 @@ public class ReturnMethodSetupWithParameters<TReturn>(string name, With.Paramete
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 	{
-		return $"{FormatType(typeof(TReturn))} {name}()";
+		return $"{FormatType(typeof(TReturn))} {name}({match})";
 	}
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters
