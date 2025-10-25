@@ -8,6 +8,5 @@ public class Initializer : IAweXpectInitializer
 	public void Initialize()
 	{
 		Customize.aweXpect.Formatting().MaximumNumberOfCollectionItems.Set(40);
-		Customize.aweXpect.Formatting().MaximumStringLength.Set(250);
 	}
 }
