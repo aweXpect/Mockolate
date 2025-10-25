@@ -67,23 +67,23 @@ internal static partial class Sources
 				sb.AppendLine("));");
 			}
 			else if (type.Fullname.StartsWith("System.Collections.Generic.IEnumerable<") && type.Fullname.EndsWith(">")
-				&& type.GenericTypeParameters.Count == 1 && !type.GenericTypeParameters.Single().IsTypeParameter)
+				&& type.GenericTypeParameters?.Count == 1 && !type.GenericTypeParameters.Value.Single().IsTypeParameter)
 			{
-				sb.Append("\t\tDefaultValueGenerator.Register(new TypedDefaultValueFactory<").Append(type.Fullname).Append(">(Array.Empty<").Append(type.GenericTypeParameters.Single().Fullname).Append(">()));").AppendLine();
+				sb.Append("\t\tDefaultValueGenerator.Register(new TypedDefaultValueFactory<").Append(type.Fullname).Append(">(Array.Empty<").Append(type.GenericTypeParameters.Value.Single().Fullname).Append(">()));").AppendLine();
 			}
-			else if (type.TupleTypes is not null && type.GenericTypeParameters.All(t => !t.IsTypeParameter))
+			else if (type.TupleTypes is not null && type.GenericTypeParameters.HasValue && type.GenericTypeParameters.Value.All(t => !t.IsTypeParameter))
 			{
 				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname).Append(">(defaultValueGenerator => (").Append(string.Join(", ", type.TupleTypes.Value.Select(t => $"defaultValueGenerator.Generate<{t.Fullname}>()"))).Append(")));").AppendLine();
 			}
 			else if (type.Fullname.StartsWith("System.Threading.Tasks.Task<") && type.Fullname.EndsWith(">")
-				&& type.GenericTypeParameters.Count == 1 && !type.GenericTypeParameters.Single().IsTypeParameter)
+				&& type.GenericTypeParameters?.Count == 1 && !type.GenericTypeParameters.Value.Single().IsTypeParameter)
 			{
-				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname).Append(">(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<").Append(type.GenericTypeParameters.Single().Fullname).Append(">(defaultValueGenerator.Generate<").Append(type.GenericTypeParameters.Single().Fullname).Append(">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(").Append(type.GenericTypeParameters.Single().Fullname).Append(")));").AppendLine();
+				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname).Append(">(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<").Append(type.GenericTypeParameters.Value.Single().Fullname).Append(">(defaultValueGenerator.Generate<").Append(type.GenericTypeParameters.Value.Single().Fullname).Append(">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(").Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
 			}
 			else if (type.Fullname.StartsWith("System.Threading.Tasks.ValueTask<") && type.Fullname.EndsWith(">")
-				&& type.GenericTypeParameters.Count == 1 && !type.GenericTypeParameters.Single().IsTypeParameter)
+				&& type.GenericTypeParameters?.Count == 1 && !type.GenericTypeParameters.Value.Single().IsTypeParameter)
 			{
-				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname).Append(">(defaultValueGenerator => new System.Threading.Tasks.ValueTask<").Append(type.GenericTypeParameters.Single().Fullname).Append(">(defaultValueGenerator.Generate<").Append(type.GenericTypeParameters.Single().Fullname).Append(">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(").Append(type.GenericTypeParameters.Single().Fullname).Append(")));").AppendLine();
+				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname).Append(">(defaultValueGenerator => new System.Threading.Tasks.ValueTask<").Append(type.GenericTypeParameters.Value.Single().Fullname).Append(">(defaultValueGenerator.Generate<").Append(type.GenericTypeParameters.Value.Single().Fullname).Append(">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(").Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
 			}
 		}
 

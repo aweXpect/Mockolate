@@ -39,7 +39,7 @@ internal record Type
 	public bool IsArray { get; }
 	public bool IsTypeParameter { get; }
 	public EquatableArray<Type>? TupleTypes { get; }
-	public EquatableArray<Type> GenericTypeParameters { get; }
+	public EquatableArray<Type>? GenericTypeParameters { get; }
 	public string? Namespace { get; }
 
 	internal static Type Void { get; } = new("void");
