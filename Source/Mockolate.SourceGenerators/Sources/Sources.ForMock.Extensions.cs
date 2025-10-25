@@ -138,9 +138,7 @@ internal static partial class Sources
 		{
 			foreach (GenericParameter gp in method.GenericParameters.Value)
 			{
-				sb.AppendLine();
-				sb.Append("\t\t\t");
-				gp.AppendWhereConstraint(sb);
+				gp.AppendWhereConstraint(sb, "\t\t\t");
 			}
 		}
 		sb.AppendLine("\t\t{");
@@ -434,9 +432,7 @@ internal static partial class Sources
 			{
 				foreach (GenericParameter gp in method.GenericParameters.Value)
 				{
-					sb.AppendLine();
-					sb.Append("\t\t\t");
-					gp.AppendWhereConstraint(sb);
+					gp.AppendWhereConstraint(sb, "\t\t\t");
 				}
 			}
 			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Method(\"")

@@ -471,9 +471,7 @@ internal static partial class Sources
 		{
 			foreach (GenericParameter gp in method.GenericParameters.Value)
 			{
-				sb.AppendLine();
-				sb.Append("\t\t\t");
-				gp.AppendWhereConstraint(sb);
+				gp.AppendWhereConstraint(sb, "\t\t\t");
 			}
 		}
 
