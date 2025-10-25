@@ -81,7 +81,7 @@ internal static partial class Sources
 					@event.Delegate.Parameters.Select(p => p.Type.Fullname + " " + p.Name)))
 				.Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\t((IMockRaises)mock).Raise(\"").Append(@class.ClassFullName).Append('.').Append(@event.Name).Append("\", ")
+			sb.Append("\t\t\t((IMockRaises)mock).Raise(").Append(@event.GetUniqueNameString()).Append(", ")
 				.Append(string.Join(", ", @event.Delegate.Parameters.Select(p => p.Name))).Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
@@ -142,8 +142,7 @@ internal static partial class Sources
 					.Append(">();").AppendLine();
 				sb.AppendLine("\t\t\t\tif (setup is IMockSetup mockSetup)");
 				sb.AppendLine("\t\t\t\t{");
-				sb.Append("\t\t\t\t\tmockSetup.RegisterProperty(\"").Append(@class.ClassFullName).Append('.').Append(property.Name)
-					.Append("\", propertySetup);").AppendLine();
+				sb.Append("\t\t\t\t\tmockSetup.RegisterProperty(").Append(property.GetUniqueNameString()).Append(", propertySetup);").AppendLine();
 				sb.AppendLine("\t\t\t\t}");
 				sb.AppendLine("\t\t\t\treturn propertySetup;");
 				sb.AppendLine("\t\t\t}");
@@ -353,7 +352,7 @@ internal static partial class Sources
 					}
 				}
 
-				sb.Append("(\"").Append(@class.ClassFullName).Append('.').Append(method.Name).Append("\"");
+				sb.Append("(").Append(method.GetUniqueNameString());
 				foreach (var parameter in method.Parameters)
 				{
 					sb.Append(", new With.NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);

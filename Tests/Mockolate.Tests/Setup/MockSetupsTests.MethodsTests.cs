@@ -22,6 +22,19 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
+		public async Task GenericMethods_ShouldConsiderGenericParameter()
+		{
+			Mock<IMethodService> mock = Mock.Create<IMethodService>();
+			mock.Setup.Method.MyGenericMethod<int>().Returns(42);
+
+			int matchingResult = mock.Subject.MyGenericMethod<int>();
+			int notMatchingResult = mock.Subject.MyGenericMethod<long>();
+
+			await That(matchingResult).IsEqualTo(42);
+			await That(notMatchingResult).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task WhenNotSetup_ShouldReturnDefault()
 		{
 			Mock<IMethodService> mock = Mock.Create<IMethodService>();
@@ -53,6 +66,7 @@ public sealed partial class MockSetupsTests
 			int MyIntMethodWithoutParameters();
 			int MyIntMethodWithParameters(int x, string y);
 			int MyGenericMethod<T1, T2>(T1 x, T2 y) where T1 : struct where T2 : class;
+			int MyGenericMethod<T>();
 		}
 	}
 }

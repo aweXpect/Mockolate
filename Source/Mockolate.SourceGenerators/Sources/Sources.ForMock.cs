@@ -331,10 +331,8 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("\t\t{");
-		sb.Append("\t\t\tadd => _mock.Raise.AddEvent(\"").Append(@event.ContainingType).Append('.').Append(@event.Name)
-			.Append("\", value?.Target, value?.Method);").AppendLine();
-		sb.Append("\t\t\tremove => _mock.Raise.RemoveEvent(\"").Append(@event.ContainingType).Append('.').Append(@event.Name)
-			.Append("\", value?.Target, value?.Method);").AppendLine();
+		sb.Append("\t\t\tadd => _mock.Raise.AddEvent(").Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
+		sb.Append("\t\t\tremove => _mock.Raise.RemoveEvent(").Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
 		sb.AppendLine("\t\t}");
 	}
 
@@ -389,7 +387,7 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\t\treturn _mock.Get<")
 					.Append(property.Type.Fullname)
-					.Append(">(\"").Append(property.ContainingType).Append('.').Append(property.Name).AppendLine("\");");
+					.Append(">(").Append(property.GetUniqueNameString()).AppendLine(");");
 			}
 			sb.AppendLine("\t\t\t}");
 		}
@@ -412,7 +410,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\t\t_mock.Set(\"").Append(property.ContainingType).Append('.').Append(property.Name).AppendLine("\", value);");
+				sb.Append("\t\t\t\t_mock.Set(").Append(property.GetUniqueNameString()).AppendLine(", value);");
 			}
 			sb.AppendLine("\t\t\t}");
 		}
@@ -481,7 +479,7 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\tvar result = _mock.Execute<")
 				.Append(method.ReturnType.Fullname)
-				.Append(">(\"").Append(method.ContainingType).Append('.').Append(method.Name).Append("\"");
+				.Append(">(").Append(method.GetUniqueNameString());
 			foreach (MethodParameter p in method.Parameters)
 			{
 				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -491,7 +489,7 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tvar result = _mock.Execute(\"").Append(className).Append('.').Append(method.Name).Append("\"");
+			sb.Append("\t\t\tvar result = _mock.Execute(").Append(method.GetUniqueNameString());
 			foreach (MethodParameter p in method.Parameters)
 			{
 				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);

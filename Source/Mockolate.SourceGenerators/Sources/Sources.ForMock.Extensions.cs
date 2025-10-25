@@ -435,9 +435,7 @@ internal static partial class Sources
 					gp.AppendWhereConstraint(sb, "\t\t\t");
 				}
 			}
-			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Method(\"")
-				.Append(@class.ClassFullName).Append('.').Append(method.Name)
-				.Append("\"");
+			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Method(").Append(method.GetUniqueNameString());
 
 			foreach (MethodParameter parameter in method.Parameters)
 			{
@@ -520,7 +518,7 @@ internal static partial class Sources
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>> ").Append(property.Name).Append("()").AppendLine();
-			sb.Append("\t\t\t=> ((IMockGot<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Property(\"").Append(@class.ClassFullName).Append('.').Append(property.Name).Append("\");").AppendLine();
+			sb.Append("\t\t\t=> ((IMockGot<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Property(").Append(property.GetUniqueNameString()).Append(");").AppendLine();
 		}
 
 		sb.AppendLine("\t}");
@@ -632,7 +630,7 @@ internal static partial class Sources
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>> ").Append(property.Name).Append("(With.Parameter<").Append(property.Type.Fullname).Append("> value)").AppendLine();
-			sb.Append("\t\t\t=> ((IMockSet<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Property(\"").Append(@class.ClassFullName).Append('.').Append(property.Name).Append("\", value);").AppendLine();
+			sb.Append("\t\t\t=> ((IMockSet<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Property(").Append(property.GetUniqueNameString()).Append(", value);").AppendLine();
 		}
 
 		sb.AppendLine("\t}");
@@ -768,7 +766,7 @@ internal static partial class Sources
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>> ")
 				.Append(@event.Name).Append("()").AppendLine();
-			sb.Append("\t\t\t=> ((IMockSubscribedTo<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Event(\"").Append(@class.ClassFullName).Append('.').Append(@event.Name).Append("\");").AppendLine();
+			sb.Append("\t\t\t=> ((IMockSubscribedTo<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Event(").Append(@event.GetUniqueNameString()).Append(");").AppendLine();
 		}
 
 		sb.AppendLine("\t}");
@@ -789,7 +787,7 @@ internal static partial class Sources
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>> ")
 				.Append(@event.Name).Append("()").AppendLine();
-			sb.Append("\t\t\t=> ((IMockUnsubscribedFrom<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Event(\"").Append(@class.ClassFullName).Append('.').Append(@event.Name).Append("\");").AppendLine();
+			sb.Append("\t\t\t=> ((IMockUnsubscribedFrom<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Event(").Append(@event.GetUniqueNameString()).Append(");").AppendLine();
 		}
 
 		sb.AppendLine("\t}");
