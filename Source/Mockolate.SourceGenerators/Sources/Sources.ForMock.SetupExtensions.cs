@@ -353,7 +353,7 @@ internal static partial class Sources
 					}
 				}
 
-				sb.Append("(\"").Append(@class.ClassFullName).Append('.').Append(method.Name).Append("\"");
+				sb.Append("(").Append(method.GenericParameters is null ? "" : "$").Append("\"").Append(method.GetUniqueName(@class.ClassFullName)).Append("\"");
 				foreach (var parameter in method.Parameters)
 				{
 					sb.Append(", new With.NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);

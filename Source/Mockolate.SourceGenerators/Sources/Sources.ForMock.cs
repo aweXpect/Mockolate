@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
@@ -481,7 +482,7 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\tvar result = _mock.Execute<")
 				.Append(method.ReturnType.Fullname)
-				.Append(">(\"").Append(method.ContainingType).Append('.').Append(method.Name).Append("\"");
+				.Append(">(").Append(method.GenericParameters is null ? "" : "$").Append("\"").Append(method.GetUniqueName(className)).Append("\"");
 			foreach (MethodParameter p in method.Parameters)
 			{
 				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -491,7 +492,8 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tvar result = _mock.Execute(\"").Append(className).Append('.').Append(method.Name).Append("\"");
+			sb.Append("\t\t\tvar result = _mock.Execute(")
+				.Append(method.GenericParameters is null ? "" : "$").Append("\"").Append(method.GetUniqueName(className)).Append("\"");
 			foreach (MethodParameter p in method.Parameters)
 			{
 				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);

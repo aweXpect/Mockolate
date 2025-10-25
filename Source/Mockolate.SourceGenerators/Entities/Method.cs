@@ -48,4 +48,16 @@ internal record Method
 	{
 		ExplicitImplementation = ContainingType;
 	}
+
+	internal string GetUniqueName(string classFullName)
+	{
+		if (GenericParameters != null)
+		{
+			var name = Name.Substring(0, Name.IndexOf('<'));
+			var parameters = string.Join(", ", GenericParameters.Value.Select(genericParameter => $"{{typeof({genericParameter.Name})}}"));
+			return $"{classFullName}.{name}<{parameters}>";
+		}
+
+		return $"{classFullName}.{Name}";
+	}
 }

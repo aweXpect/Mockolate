@@ -435,9 +435,8 @@ internal static partial class Sources
 					gp.AppendWhereConstraint(sb, "\t\t\t");
 				}
 			}
-			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Method(\"")
-				.Append(@class.ClassFullName).Append('.').Append(method.Name)
-				.Append("\"");
+			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">>>)mock).Method(")
+				.Append(method.GenericParameters is null ? "" : "$").Append("\"").Append(method.GetUniqueName(@class.ClassFullName)).Append("\"");
 
 			foreach (MethodParameter parameter in method.Parameters)
 			{
