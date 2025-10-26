@@ -514,6 +514,15 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task Create_BaseClassWithMultipleConstructors()
+	{
+		void Act()
+			=> _ = Mock.Create<MyBaseClassWithMultipleConstructors>(BaseClass.WithConstructorParameters(5));
+
+		await That(Act).DoesNotThrow();
+	}
+
+	[Fact]
 	public async Task Create_BaseClassWithVirtualCallsInConstructor()
 	{
 		var mock = Mock.Create<MyBaseClassWithVirtualCallsInConstructor>();
@@ -538,6 +547,16 @@ public sealed partial class MockTests
 		public virtual int[] VirtualMethod()
 		{
 			return [0, 1];
+		}
+	}
+
+	public class MyBaseClassWithMultipleConstructors
+	{
+		public MyBaseClassWithMultipleConstructors(int initialValue)
+		{
+		}
+		public MyBaseClassWithMultipleConstructors(DateTime initialValue)
+		{
 		}
 	}
 }
