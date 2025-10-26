@@ -367,7 +367,7 @@ public sealed partial class ForMockTests
 		}
 
 		[Theory]
-		[InlineData("T")]
+		[InlineData("class, T")]
 		[InlineData("struct")]
 		[InlineData("class")]
 		[InlineData("notnull")]
@@ -395,7 +395,7 @@ public sealed partial class ForMockTests
 				     public interface IMyService
 				     {
 				         bool MyMethod1<T, U>(int index)
-				             where T : class?, notnull, new()
+				             where T : notnull, new()
 				             where U : {{constraint}};
 				         void MyMethod2(int index, bool isReadOnly);
 				     }
@@ -414,7 +414,7 @@ public sealed partial class ForMockTests
 				.Contains($$"""
 				          		/// <inheritdoc cref="MyCode.IMyService.MyMethod1{T, U}(int)" />
 				          		public bool MyMethod1<T, U>(int index)
-				          			where T : class?, notnull, new()
+				          			where T : notnull, new()
 				          			where U : {{constraint}}
 				          """).IgnoringNewlineStyle();
 		}

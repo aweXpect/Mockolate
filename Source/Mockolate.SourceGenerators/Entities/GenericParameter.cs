@@ -42,18 +42,6 @@ internal readonly record struct GenericParameter
 
 		int count = 0;
 		sb.AppendLine().Append(prefix).Append("where ").Append(Name).Append(" : ");
-		foreach (var constraintType in ConstraintTypes)
-		{
-			if (count++ > 0)
-			{
-				sb.Append(", ");
-			}
-			sb.Append(constraintType.Fullname);
-			if (NullableAnnotation == NullableAnnotation.Annotated)
-			{
-				sb.Append('?');
-			}
-		}
 		if (IsStruct)
 		{
 			if (count++ > 0)
@@ -105,6 +93,18 @@ internal readonly record struct GenericParameter
 				sb.Append(", ");
 			}
 			sb.Append("allows ref struct");
+		}
+		foreach (var constraintType in ConstraintTypes)
+		{
+			if (count++ > 0)
+			{
+				sb.Append(", ");
+			}
+			sb.Append(constraintType.Fullname);
+			if (NullableAnnotation == NullableAnnotation.Annotated)
+			{
+				sb.Append('?');
+			}
 		}
 	}
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
