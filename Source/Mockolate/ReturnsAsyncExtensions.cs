@@ -4,12 +4,26 @@ using Mockolate.Setup;
 
 namespace Mockolate;
 
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
 ///     Extensions for setting up asynchronous return values.
 /// </summary>
 public static class ReturnsAsyncExtensions
 {
-#pragma warning disable S2436 // Types and methods should not have too many generic parameters
+	/// <summary>
+	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
+	/// </summary>
+	public static ReturnMethodSetupWithParameters<Task<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetupWithParameters<Task<TReturn>> setup,
+		TReturn returnValue)
+		=> setup.Returns(Task.FromResult(returnValue));
+
+	/// <summary>
+	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	public static ReturnMethodSetupWithParameters<Task<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetupWithParameters<Task<TReturn>> setup,
+		Func<TReturn> callback)
+		=> setup.Returns(() => Task.FromResult(callback()));
+
 	/// <summary>
 	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
 	/// </summary>
@@ -113,6 +127,20 @@ public static class ReturnsAsyncExtensions
 	/// <summary>
 	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
 	/// </summary>
+	public static ReturnMethodSetupWithParameters<ValueTask<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetupWithParameters<ValueTask<TReturn>> setup,
+		TReturn returnValue)
+		=> setup.Returns(ValueTask.FromResult(returnValue));
+
+	/// <summary>
+	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	public static ReturnMethodSetupWithParameters<ValueTask<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetupWithParameters<ValueTask<TReturn>> setup,
+		Func<TReturn> callback)
+		=> setup.Returns(() => ValueTask.FromResult(callback()));
+
+	/// <summary>
+	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
+	/// </summary>
 	public static ReturnMethodSetup<ValueTask<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetup<ValueTask<TReturn>> setup, TReturn returnValue)
 		=> setup.Returns(ValueTask.FromResult(returnValue));
 
@@ -195,5 +223,5 @@ public static class ReturnsAsyncExtensions
 		=> setup.Returns((v1, v2, v3, v4) => ValueTask.FromResult(callback(v1, v2, v3, v4)));
 #pragma warning restore CA2012 // Use ValueTasks correctly
 #endif
-#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
