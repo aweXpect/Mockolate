@@ -9,6 +9,7 @@ internal record Method
 	{
 		Accessibility = methodSymbol.DeclaredAccessibility;
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
+		IsAbstract = methodSymbol.IsAbstract;
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : new Type(methodSymbol.ReturnType);
 		Name = methodSymbol.Name;
 		ContainingType = methodSymbol.ContainingType.ToDisplayString();
@@ -36,7 +37,7 @@ internal record Method
 	public EquatableArray<GenericParameter>? GenericParameters { get; }
 
 	public bool UseOverride { get; }
-
+	public bool IsAbstract { get; }
 	public Accessibility Accessibility { get; }
 	public Type ReturnType { get; }
 	public string Name { get; }

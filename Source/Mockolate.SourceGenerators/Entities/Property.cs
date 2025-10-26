@@ -13,6 +13,7 @@ internal readonly record struct Property
 		Type = new Type(propertySymbol.Type);
 		ContainingType = propertySymbol.ContainingType.ToDisplayString();
 		IsIndexer = propertySymbol.IsIndexer;
+		IsAbstract = propertySymbol.IsAbstract;
 		if (IsIndexer && propertySymbol.Parameters.Length > 0)
 		{
 			IndexerParameters = new EquatableArray<MethodParameter>(
@@ -24,6 +25,7 @@ internal readonly record struct Property
 	}
 
 	public bool IsIndexer { get; }
+	public bool IsAbstract { get; }
 	public EquatableArray<MethodParameter>? IndexerParameters { get; }
 	public Type Type { get; }
 	public string ContainingType { get; }
