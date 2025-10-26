@@ -100,6 +100,8 @@ namespace Mockolate
     }
     public static class ReturnsAsyncExtensions
     {
+        public static Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
+        public static Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.Task<TReturn>> setup, TReturn returnValue) { }
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, TReturn returnValue) { }
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1> setup, System.Func<TReturn> callback) { }
