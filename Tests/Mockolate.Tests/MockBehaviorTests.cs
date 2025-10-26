@@ -5,7 +5,7 @@ using Mockolate.DefaultValues;
 
 namespace Mockolate.Tests;
 
-public class MockBehaviorTests
+public sealed partial class MockBehaviorTests
 {
 	public interface IDefaultValueGeneratorProperties
 	{

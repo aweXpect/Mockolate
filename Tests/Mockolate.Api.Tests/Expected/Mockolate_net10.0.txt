@@ -13,6 +13,12 @@ namespace Mockolate
             public object?[] Parameters { get; init; }
         }
     }
+    public enum BaseClassBehavior
+    {
+        DoNotCallBaseClass = 0,
+        OnlyCallBaseClass = 1,
+        UseBaseClassAsDefaultValue = 2,
+    }
     public interface IMock
     {
         Mockolate.MockBehavior Behavior { get; }
@@ -39,6 +45,7 @@ namespace Mockolate
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
     {
         public MockBehavior() { }
+        public Mockolate.BaseClassBehavior BaseClassBehavior { get; init; }
         public Mockolate.DefaultValues.IDefaultValueGenerator DefaultValue { get; init; }
         public bool ThrowWhenNotSetup { get; init; }
         public static Mockolate.MockBehavior Default { get; }
@@ -518,6 +525,7 @@ namespace Mockolate.Setup
     public class MethodSetupResult
     {
         public MethodSetupResult(Mockolate.Setup.IMethodSetup? setup, Mockolate.MockBehavior behavior) { }
+        public bool HasSetup { get; }
         public T SetOutParameter<T>(string parameterName) { }
         public T SetRefParameter<T>(string parameterName, T value) { }
     }

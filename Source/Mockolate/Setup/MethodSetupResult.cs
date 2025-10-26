@@ -34,8 +34,13 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 			return setup.SetRefParameter(parameterName, value, behavior);
 		}
 
-		return behavior.DefaultValue.Generate<T>();
+		return value;
 	}
+
+	/// <summary>
+	///     Flag indicating if the method setup result has an underlying setup.
+	/// </summary>
+	public bool HasSetup => setup is not null;
 }
 
 /// <summary>
