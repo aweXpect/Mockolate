@@ -1,6 +1,8 @@
+using aweXpect;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
+using static Mockolate.Tests.Setup.ReturnMethodSetupWithParametersTests;
 
 namespace Mockolate.Tests.Setup;
 
@@ -16,7 +18,7 @@ public class ReturnMethodSetupTests
 
 			sut.Setup.Method.Method0()
 				.Callback(() => { callCount++; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method0();
 
@@ -61,17 +63,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method0()
-				.Returns(4)
+				.Returns("d")
 				.Throws(new Exception("foo"))
-				.Returns(() => 2);
+				.Returns(() => "b");
 
-			int result1 = sut.Subject.Method0();
+			string result1 = sut.Subject.Method0();
 			Exception? result2 = Record.Exception(() => sut.Subject.Method0());
-			int result3 = sut.Subject.Method0();
+			string result3 = sut.Subject.Method0();
 
-			await That(result1).IsEqualTo(4);
+			await That(result1).IsEqualTo("d");
 			await That(result2).HasMessage("foo");
-			await That(result3).IsEqualTo(2);
+			await That(result3).IsEqualTo("b");
 		}
 
 		[Fact]
@@ -84,7 +86,7 @@ public class ReturnMethodSetupTests
 			sut.Setup.Method.Method0()
 				.Callback(() => { callCount1++; })
 				.Callback(() => { callCount2++; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method0();
 			sut.Subject.Method0();
@@ -99,17 +101,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method0()
-				.Returns(4)
-				.Returns(3)
-				.Returns(() => 2);
+				.Returns("d")
+				.Returns("c")
+				.Returns(() => "b");
 
-			int[] result = new int[10];
+			string[] result = new string[10];
 			for (int i = 0; i < 10; i++)
 			{
 				result[i] = sut.Subject.Method0();
 			}
 
-			await That(result).IsEqualTo([4, 3, 2, 4, 3, 2, 4, 3, 2, 4,]);
+			await That(result).IsEqualTo(["d", "c", "b", "d", "c", "b", "d", "c", "b", "d",]);
 		}
 
 		[Fact]
@@ -117,11 +119,11 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method0().Returns(() => 4);
+			sut.Setup.Method.Method0().Returns(() => "d");
 
-			int result = sut.Subject.Method0();
+			string result = sut.Subject.Method0();
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -129,11 +131,11 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method0().Returns(4);
+			sut.Setup.Method.Method0().Returns("d");
 
-			int result = sut.Subject.Method0();
+			string result = sut.Subject.Method0();
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -141,9 +143,9 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			int result = sut.Subject.Method0();
+			string result = sut.Subject.Method0();
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -151,9 +153,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup setup = new("foo");
 
-			int result = setup.SetOutParameter<int>("p0");
+			string result = setup.SetOutParameter<string>("p0");
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -161,9 +163,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup setup = new("foo");
 
-			int result = setup.SetRefParameter("p0", 4);
+			string result = setup.SetRefParameter("p0", "d");
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -192,6 +194,22 @@ public class ReturnMethodSetupTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method0()
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method0();
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+
 		private class MyReturnMethodSetup(string name) : ReturnMethodSetup<int>(name)
 		{
 			public T SetOutParameter<T>(string parameterName)
@@ -215,7 +233,7 @@ public class ReturnMethodSetupTests
 
 			sut.Setup.Method.Method1(With.Any<int>())
 				.Callback(() => { callCount++; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method1(3);
 
@@ -305,7 +323,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int> setup = new("foo");
 			setup.Returns(x => 3 * x);
-			MethodInvocation invocation = new(0, "foo", ["2",]);
+			MethodInvocation invocation = new(0, "foo", ["b",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -340,17 +358,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method1(With.Any<int>())
-				.Returns(4)
+				.Returns("d")
 				.Throws(new Exception("foo"))
-				.Returns(() => 2);
+				.Returns(() => "b");
 
-			int result1 = sut.Subject.Method1(1);
+			string result1 = sut.Subject.Method1(1);
 			Exception? result2 = Record.Exception(() => sut.Subject.Method1(2));
-			int result3 = sut.Subject.Method1(3);
+			string result3 = sut.Subject.Method1(3);
 
-			await That(result1).IsEqualTo(4);
+			await That(result1).IsEqualTo("d");
 			await That(result2).HasMessage("foo");
-			await That(result3).IsEqualTo(2);
+			await That(result3).IsEqualTo("b");
 		}
 
 		[Fact]
@@ -363,7 +381,7 @@ public class ReturnMethodSetupTests
 			sut.Setup.Method.Method1(With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback(v => { callCount2 += v; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method1(1);
 			sut.Subject.Method1(2);
@@ -378,17 +396,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method1(With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns(v => 10 * v);
+				.Returns("d")
+				.Returns(() => "c")
+				.Returns(v => $"foo-{v}");
 
-			int[] result = new int[10];
+			string[] result = new string[10];
 			for (int i = 0; i < 10; i++)
 			{
 				result[i] = sut.Subject.Method1(i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 20, 4, 3, 50, 4, 3, 80, 4,]);
+			await That(result).IsEqualTo(["d", "c", "foo-2", "d", "c", "foo-5", "d", "c", "foo-8", "d",]);
 		}
 
 		[Fact]
@@ -439,11 +457,11 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method1(With.Any<int>()).Returns(() => 4);
+			sut.Setup.Method.Method1(With.Any<int>()).Returns(() => "d");
 
-			int result = sut.Subject.Method1(3);
+			string result = sut.Subject.Method1(3);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -451,11 +469,11 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method1(With.Any<int>()).Returns(x => 4 * x);
+			sut.Setup.Method.Method1(With.Any<int>()).Returns(x => $"foo-{x}");
 
-			int result = sut.Subject.Method1(3);
+			string result = sut.Subject.Method1(3);
 
-			await That(result).IsEqualTo(12);
+			await That(result).IsEqualTo("foo-3");
 		}
 
 		[Fact]
@@ -463,11 +481,11 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method1(With.Any<int>()).Returns(4);
+			sut.Setup.Method.Method1(With.Any<int>()).Returns("d");
 
-			int result = sut.Subject.Method1(3);
+			string result = sut.Subject.Method1(3);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -475,9 +493,9 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			int result = sut.Subject.Method1(3);
+			string result = sut.Subject.Method1(3);
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -485,9 +503,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int> setup = new("foo");
 
-			int result = setup.SetOutParameter<int>("p1");
+			string result = setup.SetOutParameter<string>("p1");
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -495,9 +513,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int> setup = new("foo");
 
-			int result = setup.SetRefParameter("p1", 4);
+			string result = setup.SetRefParameter("p1", "d");
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -542,6 +560,22 @@ public class ReturnMethodSetupTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method1(With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method1(1);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+
 		private class MyReturnMethodSetup<T1>(string name)
 			: ReturnMethodSetup<int, T1>(name, new With.NamedParameter("p1", With.Matching<T1>(_ => false)))
 		{
@@ -566,7 +600,7 @@ public class ReturnMethodSetupTests
 
 			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method2(1, 2);
 
@@ -665,7 +699,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int> setup = new("foo");
 			setup.Returns((x, y) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", ["1", 2,]);
+			MethodInvocation invocation = new(0, "foo", ["a", 2,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -681,7 +715,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int> setup = new("foo");
 			setup.Returns((x, y) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", [1, "2",]);
+			MethodInvocation invocation = new(0, "foo", [1, "b",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -716,17 +750,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
-				.Returns(4)
+				.Returns("d")
 				.Throws(new Exception("foo"))
-				.Returns(() => 2);
+				.Returns(() => "b");
 
-			int result1 = sut.Subject.Method2(1, 2);
+			string result1 = sut.Subject.Method2(1, 2);
 			Exception? result2 = Record.Exception(() => sut.Subject.Method2(2, 3));
-			int result3 = sut.Subject.Method2(3, 4);
+			string result3 = sut.Subject.Method2(3, 4);
 
-			await That(result1).IsEqualTo(4);
+			await That(result1).IsEqualTo("d");
 			await That(result2).HasMessage("foo");
-			await That(result3).IsEqualTo(2);
+			await That(result3).IsEqualTo("b");
 		}
 
 		[Fact]
@@ -739,7 +773,7 @@ public class ReturnMethodSetupTests
 			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2) => { callCount2 += v1 * v2; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method2(1, 2);
 			sut.Subject.Method2(2, 2);
@@ -754,17 +788,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns((v1, v2) => 10 + v1 + v2);
+				.Returns("d")
+				.Returns(() => "c")
+				.Returns((v1, v2) => $"foo-{v1}-{v2}");
 
-			int[] result = new int[10];
+			string[] result = new string[10];
 			for (int i = 0; i < 10; i++)
 			{
 				result[i] = sut.Subject.Method2(i, 2 * i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 16, 4, 3, 25, 4, 3, 34, 4,]);
+			await That(result).IsEqualTo(["d", "c", "foo-2-4", "d", "c", "foo-5-10", "d", "c", "foo-8-16", "d",]);
 		}
 
 		[Fact]
@@ -824,11 +858,11 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns(() => 4);
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns(() => "d");
 
-			int result = sut.Subject.Method2(2, 3);
+			string result = sut.Subject.Method2(2, 3);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -836,11 +870,11 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns((x, y) => 4 * x * y);
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns((x, y) => $"foo-{x}-{y}");
 
-			int result = sut.Subject.Method2(2, 3);
+			string result = sut.Subject.Method2(2, 3);
 
-			await That(result).IsEqualTo(24);
+			await That(result).IsEqualTo("foo-2-3");
 		}
 
 		[Fact]
@@ -848,11 +882,11 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns(4);
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns("d");
 
-			int result = sut.Subject.Method2(2, 3);
+			string result = sut.Subject.Method2(2, 3);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -860,9 +894,9 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			int result = sut.Subject.Method2(2, 3);
+			string result = sut.Subject.Method2(2, 3);
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -870,9 +904,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int> setup = new("foo");
 
-			int result = setup.SetOutParameter<int>("p1");
+			string result = setup.SetOutParameter<string>("p1");
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -880,9 +914,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int> setup = new("foo");
 
-			int result = setup.SetRefParameter("p1", 4);
+			string result = setup.SetRefParameter("p1", "d");
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -927,6 +961,22 @@ public class ReturnMethodSetupTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method2(1, 2);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+
 		private class MyReturnMethodSetup<T1, T2>(string name)
 			: ReturnMethodSetup<int, T1, T2>(name,
 				new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
@@ -953,7 +1003,7 @@ public class ReturnMethodSetupTests
 
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method3(1, 2, 3);
 
@@ -1061,7 +1111,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", ["1", 2, 3,]);
+			MethodInvocation invocation = new(0, "foo", ["a", 2, 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1077,7 +1127,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", [1, "2", 3,]);
+			MethodInvocation invocation = new(0, "foo", [1, "b", 3,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1093,7 +1143,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 			setup.Returns((x, y, z) => 3 * x);
-			MethodInvocation invocation = new(0, "foo", [1, 2, "3",]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "c",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1128,17 +1178,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
+				.Returns("d")
 				.Throws(new Exception("foo"))
-				.Returns(() => 2);
+				.Returns(() => "b");
 
-			int result1 = sut.Subject.Method3(1, 2, 3);
+			string result1 = sut.Subject.Method3(1, 2, 3);
 			Exception? result2 = Record.Exception(() => sut.Subject.Method3(2, 3, 4));
-			int result3 = sut.Subject.Method3(3, 4, 5);
+			string result3 = sut.Subject.Method3(3, 4, 5);
 
-			await That(result1).IsEqualTo(4);
+			await That(result1).IsEqualTo("d");
 			await That(result2).HasMessage("foo");
-			await That(result3).IsEqualTo(2);
+			await That(result3).IsEqualTo("b");
 		}
 
 		[Fact]
@@ -1151,7 +1201,7 @@ public class ReturnMethodSetupTests
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2, v3) => { callCount2 += v1 * v2 * v3; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method3(1, 2, 3);
 			sut.Subject.Method3(2, 2, 3);
@@ -1166,17 +1216,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns((v1, v2, v3) => 10 + v1 + v2 + v3);
+				.Returns("d")
+				.Returns(() => "c")
+				.Returns((v1, v2, v3) => $"foo-{v1}-{v2}-{v3}");
 
-			int[] result = new int[10];
+			string[] result = new string[10];
 			for (int i = 0; i < 10; i++)
 			{
 				result[i] = sut.Subject.Method3(i, 2 * i, 3 * i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 22, 4, 3, 40, 4, 3, 58, 4,]);
+			await That(result).IsEqualTo(["d", "c", "foo-2-4-6", "d", "c", "foo-5-10-15", "d", "c", "foo-8-16-24", "d",]);
 		}
 
 		[Fact]
@@ -1247,11 +1297,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(() => 4);
+				.Returns(() => "d");
 
-			int result = sut.Subject.Method3(1, 2, 3);
+			string result = sut.Subject.Method3(1, 2, 3);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -1260,11 +1310,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns((x, y, z) => 4 * x * y * z);
+				.Returns((x, y, z) => $"foo-{x}-{y}-{z}");
 
-			int result = sut.Subject.Method3(2, 3, 4);
+			string result = sut.Subject.Method3(2, 3, 4);
 
-			await That(result).IsEqualTo(96);
+			await That(result).IsEqualTo("foo-2-3-4");
 		}
 
 		[Fact]
@@ -1273,11 +1323,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4);
+				.Returns("d");
 
-			int result = sut.Subject.Method3(1, 2, 3);
+			string result = sut.Subject.Method3(1, 2, 3);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -1285,9 +1335,9 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			int result = sut.Subject.Method3(2, 3, 4);
+			string result = sut.Subject.Method3(2, 3, 4);
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -1295,9 +1345,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 
-			int result = setup.SetOutParameter<int>("p1");
+			string result = setup.SetOutParameter<string>("p1");
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -1305,9 +1355,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int> setup = new("foo");
 
-			int result = setup.SetRefParameter("p1", 4);
+			string result = setup.SetRefParameter("p1", "d");
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -1352,6 +1402,22 @@ public class ReturnMethodSetupTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method3(1, 2, 3);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+
 		private class MyReturnMethodSetup<T1, T2, T3>(string name)
 			: ReturnMethodSetup<int, T1, T2, T3>(name,
 				new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
@@ -1379,7 +1445,7 @@ public class ReturnMethodSetupTests
 
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method4(1, 2, 3, 4);
 
@@ -1492,7 +1558,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new(0, "foo", ["1", 2, 3, 4,]);
+			MethodInvocation invocation = new(0, "foo", ["a", 2, 3, 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1508,7 +1574,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new(0, "foo", [1, "2", 3, 4,]);
+			MethodInvocation invocation = new(0, "foo", [1, "b", 3, 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1524,7 +1590,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new(0, "foo", [1, 2, "3", 4,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "c", 4,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1540,7 +1606,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "4",]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "d",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1575,17 +1641,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
+				.Returns("d")
 				.Throws(new Exception("foo"))
-				.Returns(() => 2);
+				.Returns(() => "b");
 
-			int result1 = sut.Subject.Method4(1, 2, 3, 4);
+			string result1 = sut.Subject.Method4(1, 2, 3, 4);
 			Exception? result2 = Record.Exception(() => sut.Subject.Method4(2, 3, 4, 5));
-			int result3 = sut.Subject.Method4(3, 4, 5, 6);
+			string result3 = sut.Subject.Method4(3, 4, 5, 6);
 
-			await That(result1).IsEqualTo(4);
+			await That(result1).IsEqualTo("d");
 			await That(result2).HasMessage("foo");
-			await That(result3).IsEqualTo(2);
+			await That(result3).IsEqualTo("b");
 		}
 
 		[Fact]
@@ -1598,7 +1664,7 @@ public class ReturnMethodSetupTests
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2, v3, v4) => { callCount2 += v1 * v2 * v3 * v4; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method4(1, 2, 3, 4);
 			sut.Subject.Method4(2, 2, 3, 4);
@@ -1613,17 +1679,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns((v1, v2, v3, v4) => 10 + v1 + v2 + v3 + v4);
+				.Returns("d")
+				.Returns(() => "c")
+				.Returns((v1, v2, v3, v4) => $"foo-{v1}-{v2}-{v3}-{v4}");
 
-			int[] result = new int[10];
+			string[] result = new string[10];
 			for (int i = 0; i < 10; i++)
 			{
 				result[i] = sut.Subject.Method4(i, 2 * i, 3 * i, 4 * i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 30, 4, 3, 60, 4, 3, 90, 4,]);
+			await That(result).IsEqualTo(["d", "c", "foo-2-4-6-8", "d", "c", "foo-5-10-15-20", "d", "c", "foo-8-16-24-32", "d",]);
 		}
 
 		[Fact]
@@ -1704,11 +1770,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(() => 4);
+				.Returns(() => "d");
 
-			int result = sut.Subject.Method4(1, 2, 3, 4);
+			string result = sut.Subject.Method4(1, 2, 3, 4);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -1717,11 +1783,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns((x, y, z, a) => 4 * x * y * z * a);
+				.Returns((x, y, z, a) => $"foo-{x}-{y}-{z}-{a}");
 
-			int result = sut.Subject.Method4(2, 3, 4, 5);
+			string result = sut.Subject.Method4(2, 3, 4, 5);
 
-			await That(result).IsEqualTo(480);
+			await That(result).IsEqualTo("foo-2-3-4-5");
 		}
 
 		[Fact]
@@ -1730,11 +1796,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4);
+				.Returns("d");
 
-			int result = sut.Subject.Method4(1, 2, 3, 4);
+			string result = sut.Subject.Method4(1, 2, 3, 4);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -1742,9 +1808,9 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			int result = sut.Subject.Method4(2, 3, 4, 5);
+			string result = sut.Subject.Method4(2, 3, 4, 5);
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -1752,9 +1818,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 
-			int result = setup.SetOutParameter<int>("p1");
+			string result = setup.SetOutParameter<string>("p1");
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -1762,9 +1828,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 
-			int result = setup.SetRefParameter("p1", 4);
+			string result = setup.SetRefParameter("p1", "d");
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -1809,6 +1875,22 @@ public class ReturnMethodSetupTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method4(1, 2, 3, 4);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+
 		private class MyReturnMethodSetup<T1, T2, T3, T4>(string name)
 			: ReturnMethodSetup<int, T1, T2, T3, T4>(name,
 				new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
@@ -1837,7 +1919,7 @@ public class ReturnMethodSetupTests
 
 			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount++; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method5(1, 2, 3, 4, 5);
 
@@ -1957,7 +2039,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", ["1", 2, 3, 4, 5,]);
+			MethodInvocation invocation = new(0, "foo", ["a", 2, 3, 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1973,7 +2055,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", [1, "2", 3, 4, 5,]);
+			MethodInvocation invocation = new(0, "foo", [1, "b", 3, 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -1989,7 +2071,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", [1, 2, "3", 4, 5,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, "c", 4, 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2005,7 +2087,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "4", 5,]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, "d", 5,]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2021,7 +2103,7 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 			setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, "5",]);
+			MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, "e",]);
 
 			void Act()
 				=> setup.GetReturnValue<int>(invocation);
@@ -2056,17 +2138,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
+				.Returns("d")
 				.Throws(new Exception("foo"))
-				.Returns(() => 2);
+				.Returns(() => "b");
 
-			int result1 = sut.Subject.Method5(1, 2, 3, 4, 5);
+			string result1 = sut.Subject.Method5(1, 2, 3, 4, 5);
 			Exception? result2 = Record.Exception(() => sut.Subject.Method5(2, 3, 4, 5, 6));
-			int result3 = sut.Subject.Method5(3, 4, 5, 6, 7);
+			string result3 = sut.Subject.Method5(3, 4, 5, 6, 7);
 
-			await That(result1).IsEqualTo(4);
+			await That(result1).IsEqualTo("d");
 			await That(result2).HasMessage("foo");
-			await That(result3).IsEqualTo(2);
+			await That(result3).IsEqualTo("b");
 		}
 
 		[Fact]
@@ -2079,7 +2161,7 @@ public class ReturnMethodSetupTests
 			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; })
-				.Returns(1);
+				.Returns("a");
 
 			sut.Subject.Method5(1, 2, 3, 4, 5);
 			sut.Subject.Method5(2, 2, 3, 4, 5);
@@ -2094,17 +2176,17 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns((v1, v2, v3, v4, v5) => 10 + v1 + v2 + v3 + v4 + v5);
+				.Returns("d")
+				.Returns(() => "c")
+				.Returns((v1, v2, v3, v4, v5) => $"foo-{v1}-{v2}-{v3}-{v4}-{v5}");
 
-			int[] result = new int[10];
+			string[] result = new string[10];
 			for (int i = 0; i < 10; i++)
 			{
 				result[i] = sut.Subject.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
 			}
 
-			await That(result).IsEqualTo([4, 3, 40, 4, 3, 85, 4, 3, 130, 4,]);
+			await That(result).IsEqualTo(["d", "c", "foo-2-4-6-8-10", "d", "c", "foo-5-10-15-20-25", "d", "c", "foo-8-16-24-32-40", "d",]);
 		}
 
 		[Fact]
@@ -2195,11 +2277,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(() => 4);
+				.Returns(() => "d");
 
-			int result = sut.Subject.Method5(1, 2, 3, 4, 5);
+			string result = sut.Subject.Method5(1, 2, 3, 4, 5);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -2208,11 +2290,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns((x, y, z, a, b) => 4 * x * y * z * a * b);
+				.Returns((x, y, z, a, b) => $"foo-{x}-{y}-{z}-{a}-{b}");
 
-			int result = sut.Subject.Method5(2, 3, 4, 5, 6);
+			string result = sut.Subject.Method5(2, 3, 4, 5, 6);
 
-			await That(result).IsEqualTo(2880);
+			await That(result).IsEqualTo("foo-2-3-4-5-6");
 		}
 
 		[Fact]
@@ -2221,11 +2303,11 @@ public class ReturnMethodSetupTests
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
 			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
-				.Returns(4);
+				.Returns("d");
 
-			int result = sut.Subject.Method5(1, 2, 3, 4, 5);
+			string result = sut.Subject.Method5(1, 2, 3, 4, 5);
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -2233,9 +2315,9 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			int result = sut.Subject.Method5(2, 3, 4, 5, 6);
+			string result = sut.Subject.Method5(2, 3, 4, 5, 6);
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -2243,9 +2325,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 
-			int result = setup.SetOutParameter<int>("p1");
+			string result = setup.SetOutParameter<string>("p1");
 
-			await That(result).IsEqualTo(0);
+			await That(result).IsEmpty();
 		}
 
 		[Fact]
@@ -2253,9 +2335,9 @@ public class ReturnMethodSetupTests
 		{
 			MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 
-			int result = setup.SetRefParameter("p1", 4);
+			string result = setup.SetRefParameter("p1", "d");
 
-			await That(result).IsEqualTo(4);
+			await That(result).IsEqualTo("d");
 		}
 
 		[Fact]
@@ -2300,6 +2382,22 @@ public class ReturnMethodSetupTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method5(1, 2, 3, 4, 5);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+
 		private class MyReturnMethodSetup<T1, T2, T3, T4, T5>(string name)
 			: ReturnMethodSetup<int, T1, T2, T3, T4, T5>(name,
 				new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
@@ -2321,27 +2419,27 @@ public class ReturnMethodSetupTests
 
 	public interface IReturnMethodSetupTest
 	{
-		int Method0();
-		int Method0(bool withOtherParameter);
-		int Method1(int p1);
-		int Method1(int p1, bool withOtherParameter);
-		int Method1WithOutParameter(out int p1);
-		int Method1WithRefParameter(ref int p1);
-		int Method2(int p1, int p2);
-		int Method2(int p1, int p2, bool withOtherParameter);
-		int Method2WithOutParameter(out int p1, out int p2);
-		int Method2WithRefParameter(ref int p1, ref int p2);
-		int Method3(int p1, int p2, int p3);
-		int Method3(int p1, int p2, int p3, bool withOtherParameter);
-		int Method3WithOutParameter(out int p1, out int p2, out int p3);
-		int Method3WithRefParameter(ref int p1, ref int p2, ref int p3);
-		int Method4(int p1, int p2, int p3, int p4);
-		int Method4(int p1, int p2, int p3, bool withOtherParameter);
-		int Method4WithOutParameter(out int p1, out int p2, out int p3, out int p4);
-		int Method4WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4);
-		int Method5(int p1, int p2, int p3, int p4, int p5);
-		int Method5(int p1, int p2, int p3, int p4, int p5, bool withOtherParameter);
-		int Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
-		int Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
+		string Method0();
+		string Method0(bool withOtherParameter);
+		string Method1(int p1);
+		string Method1(int p1, bool withOtherParameter);
+		string Method1WithOutParameter(out int p1);
+		string Method1WithRefParameter(ref int p1);
+		string Method2(int p1, int p2);
+		string Method2(int p1, int p2, bool withOtherParameter);
+		string Method2WithOutParameter(out int p1, out int p2);
+		string Method2WithRefParameter(ref int p1, ref int p2);
+		string Method3(int p1, int p2, int p3);
+		string Method3(int p1, int p2, int p3, bool withOtherParameter);
+		string Method3WithOutParameter(out int p1, out int p2, out int p3);
+		string Method3WithRefParameter(ref int p1, ref int p2, ref int p3);
+		string Method4(int p1, int p2, int p3, int p4);
+		string Method4(int p1, int p2, int p3, bool withOtherParameter);
+		string Method4WithOutParameter(out int p1, out int p2, out int p3, out int p4);
+		string Method4WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4);
+		string Method5(int p1, int p2, int p3, int p4, int p5);
+		string Method5(int p1, int p2, int p3, int p4, int p5, bool withOtherParameter);
+		string Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
+		string Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
 	}
 }

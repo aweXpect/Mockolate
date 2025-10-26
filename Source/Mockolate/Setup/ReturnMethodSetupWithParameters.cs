@@ -74,14 +74,21 @@ public class ReturnMethodSetupWithParameters<TReturn>(string name, With.Paramete
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-		if (returnCallback() is not TResult result)
+		Func<TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+
+		TReturn returnValue = returnCallback();
+		if (returnValue is null)
 		{
-			throw new MockException(
-				$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
+			return default!;
 		}
 
-		return result;
+		if (returnValue is TResult result)
+		{
+			return result;
+		}
+
+		throw new MockException(
+			$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
 	}
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />

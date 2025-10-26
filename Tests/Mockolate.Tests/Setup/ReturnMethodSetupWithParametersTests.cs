@@ -14,12 +14,12 @@ public class ReturnMethodSetupWithParametersTests
 
 		sut.Setup.Method.MethodWithoutOtherOverloads(With.AnyParameterCombination())
 			.Callback(() => { callCount++; })
-			.Returns(42);
+			.Returns("foo");
 
-		int result = sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
+		string result = sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
-		await That(result).IsEqualTo(42);
+		await That(result).IsEqualTo("foo");
 	}
 
 	[Fact]
@@ -30,22 +30,38 @@ public class ReturnMethodSetupWithParametersTests
 
 		sut.Setup.Method.MethodWithoutOtherOverloads(With.Any<int>(), With.Any<int>(), With.Any<int>())
 			.Callback(() => { callCount++; })
-			.Returns(42);
+			.Returns("foo");
 
-		int result = sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
+		string result = sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
-		await That(result).IsEqualTo(42);
+		await That(result).IsEqualTo("foo");
 		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(With.AnyParameterCombination())).Once();
+	}
+
+	[Fact]
+	public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+	{
+		int callCount = 0;
+		Mock<IReturnMethodSetupWithParametersTest> sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
+
+		sut.Setup.Method.MethodWithoutOtherOverloads(With.AnyParameterCombination())
+			.Callback(() => { callCount++; })
+			.Returns((string?)null!);
+
+		string result = sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
+
+		await That(callCount).IsEqualTo(1);
+		await That(result).IsNull();
 	}
 
 	public interface IReturnMethodSetupWithParametersTest
 	{
-		int MethodWithMultipleOverloads(int p1, int p2);
-		int MethodWithMultipleOverloads(int p1, bool p2);
-		int MethodWithOutParameter(int p1, out int p2);
-		int MethodWithRefParameter(int p1, ref int p2);
-		int MethodWithoutOtherOverloads(int p1, int p2, int p3);
-		int MethodWithSingleParameter(int p1);
+		string MethodWithMultipleOverloads(int p1, int p2);
+		string MethodWithMultipleOverloads(int p1, bool p2);
+		string MethodWithOutParameter(int p1, out int p2);
+		string MethodWithRefParameter(int p1, ref int p2);
+		string MethodWithoutOtherOverloads(int p1, int p2, int p3);
+		string MethodWithSingleParameter(int p1);
 	}
 }

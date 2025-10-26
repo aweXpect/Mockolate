@@ -455,16 +455,20 @@ internal static partial class Sources
 
 		sb.Append("\t\tvar index = Interlocked.Increment(ref _currentReturnCallbackIndex);").AppendLine();
 		sb.Append("\t\tvar returnCallback = _returnCallbacks[index % _returnCallbacks.Count];").AppendLine();
-		sb.Append("\t\tif (returnCallback(")
+		sb.Append("\t\tTReturn returnValue = returnCallback(")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}")))
-			.Append(") is TResult result)").AppendLine();
+			.Append(");").AppendLine();
+		sb.Append("\t\tif (returnValue is null)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\treturn default!;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\tif (returnValue is TResult result)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\treturn result;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append(
-				"\t\tthrow new MockException($\"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.\");")
-			.AppendLine();
+		sb.Append("\t\tthrow new MockException($\"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.\");").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 

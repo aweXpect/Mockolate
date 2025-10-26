@@ -74,14 +74,21 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-		if (returnCallback() is not TResult result)
+		Func<TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+
+		TReturn returnValue = returnCallback();
+		if (returnValue is null)
 		{
-			throw new MockException(
-				$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
+			return default!;
 		}
 
-		return result;
+		if (returnValue is TResult result)
+		{
+			return result;
+		}
+
+		throw new MockException(
+			$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
 	}
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
@@ -210,14 +217,21 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<T1, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-		if (returnCallback(p1) is not TResult result)
+		Func<T1, TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+
+		TReturn returnValue = returnCallback(p1);
+		if (returnValue is null)
 		{
-			throw new MockException(
-				$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
+			return default!;
 		}
 
-		return result;
+		if (returnValue is TResult result)
+		{
+			return result;
+		}
+
+		throw new MockException(
+			$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
 	}
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
@@ -368,14 +382,21 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<T1, T2, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-		if (returnCallback(p1, p2) is not TResult result)
+		Func<T1, T2, TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+
+		TReturn returnValue = returnCallback(p1, p2);
+		if (returnValue is null)
 		{
-			throw new MockException(
-				$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
+			return default!;
 		}
 
-		return result;
+		if (returnValue is TResult result)
+		{
+			return result;
+		}
+
+		throw new MockException(
+			$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
 	}
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
@@ -537,8 +558,15 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<T1, T2, T3, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-		if (returnCallback(p1, p2, p3) is TResult result)
+		Func<T1, T2, T3, TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+
+		TReturn returnValue = returnCallback(p1, p2, p3);
+		if (returnValue is null)
+		{
+			return default!;
+		}
+
+		if (returnValue is TResult result)
 		{
 			return result;
 		}
@@ -714,8 +742,15 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<T1, T2, T3, T4, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-		if (returnCallback(p1, p2, p3, p4) is TResult result)
+		Func<T1, T2, T3, T4, TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+
+		TReturn returnValue = returnCallback(p1, p2, p3, p4);
+		if (returnValue is null)
+		{
+			return default!;
+		}
+
+		if (returnValue is TResult result)
 		{
 			return result;
 		}
