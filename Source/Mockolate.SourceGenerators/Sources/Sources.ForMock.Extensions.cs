@@ -278,7 +278,7 @@ internal static partial class Sources
 			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassFullName).Append("> Setup").Append(name)
 				.AppendLine();
 			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassFullName).Append(">.Proxy(mock.Setup);").AppendLine();
-			if (@class.Events.Any())
+			if (@class.AllEvents().Any())
 			{
 				sb.AppendLine();
 				sb.Append("\t\t/// <summary>").AppendLine();
@@ -316,11 +316,11 @@ internal static partial class Sources
 
 	private static bool AppendProtectedMock(StringBuilder sb, Class @class)
 	{
-		bool hasProtectedEvents = @class.Events.Any(@event
+		bool hasProtectedEvents = @class.AllEvents().Any(@event
 				=> @event.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal);
-		bool hasProtectedMethods = @class.Methods.Any(method
+		bool hasProtectedMethods = @class.AllMethods().Any(method
 				=> method.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal);
-		bool hasProtectedProperties = @class.Properties.Any(property
+		bool hasProtectedProperties = @class.AllProperties().Any(property
 				=> property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal);
 		if (!hasProtectedEvents && !hasProtectedMethods && !hasProtectedProperties)
 		{
@@ -349,7 +349,7 @@ internal static partial class Sources
 			: new Func<Method, bool>(method
 				=> method.ExplicitImplementation is null &&
 				   method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
-		if (!@class.Methods.Any(method => method.ExplicitImplementation is null))
+		if (!@class.AllMethods().Any(method => method.ExplicitImplementation is null))
 		{
 			return;
 		}
@@ -367,7 +367,7 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		if (!@class.Methods.Any(predicate))
+		if (!@class.AllMethods().Any(predicate))
 		{
 			return;
 		}
@@ -388,7 +388,7 @@ internal static partial class Sources
 		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockInvoked<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Method method in @class.Methods.Where(predicate))
+		foreach (Method method in @class.AllMethods().Where(predicate))
 		{
 			if (count++ > 0)
 			{
@@ -451,7 +451,7 @@ internal static partial class Sources
 			sb.AppendLine(");");
 		}
 
-		foreach (Method method in @class.Methods
+		foreach (Method method in @class.AllMethods()
 				.Where(predicate)
 				.GroupBy(m => m.Name)
 				.Where(g => g.Count() == 1)
@@ -498,7 +498,7 @@ internal static partial class Sources
 				=> !property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Getter != null && property.Getter.Accessibility != Accessibility.Private);
 
-		if (!@class.Properties.Any(property => !property.IsIndexer))
+		if (!@class.AllProperties().Any(property => !property.IsIndexer))
 		{
 			return;
 		}
@@ -516,7 +516,7 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		if (!@class.Properties.Any(predicate))
+		if (!@class.AllProperties().Any(predicate))
 		{
 			return;
 		}
@@ -539,7 +539,7 @@ internal static partial class Sources
 			.Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Property property in @class.Properties.Where(predicate))
+		foreach (Property property in @class.AllProperties().Where(predicate))
 		{
 			if (count++ > 0)
 			{
@@ -567,7 +567,7 @@ internal static partial class Sources
 			: new Func<Property, bool>(property
 				=> property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Getter != null && property.Getter.Accessibility != Accessibility.Private);
-		if (!@class.Properties.Any(predicate))
+		if (!@class.AllProperties().Any(predicate))
 		{
 			return;
 		}
@@ -575,7 +575,7 @@ internal static partial class Sources
 		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (var indexerParameters in @class.Properties.Where(predicate).Select(x => x.IndexerParameters))
+		foreach (var indexerParameters in @class.AllProperties().Where(predicate).Select(x => x.IndexerParameters))
 		{
 			if (indexerParameters is null || indexerParameters.Value.Count == 0)
 			{
@@ -611,7 +611,7 @@ internal static partial class Sources
 				=> !property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Setter != null && property.Setter.Accessibility != Accessibility.Private);
 
-		if (!@class.Properties.Any(property => !property.IsIndexer))
+		if (!@class.AllProperties().Any(property => !property.IsIndexer))
 		{
 			return;
 		}
@@ -629,7 +629,7 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		if (!@class.Properties.Any(predicate))
+		if (!@class.AllProperties().Any(predicate))
 		{
 			return;
 		}
@@ -651,7 +651,7 @@ internal static partial class Sources
 			.Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Property property in @class.Properties.Where(predicate))
+		foreach (Property property in @class.AllProperties().Where(predicate))
 		{
 			if (count++ > 0)
 			{
@@ -679,7 +679,7 @@ internal static partial class Sources
 			: new Func<Property, bool>(property
 				=> property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Setter != null && property.Setter.Accessibility != Accessibility.Private);
-		if (!@class.Properties.Any(predicate))
+		if (!@class.AllProperties().Any(predicate))
 		{
 			return;
 		}
@@ -687,7 +687,7 @@ internal static partial class Sources
 		sb.Append("\textension(MockVerify<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> verify)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Property indexer in @class.Properties.Where(predicate))
+		foreach (Property indexer in @class.AllProperties().Where(predicate))
 		{
 			if (count++ > 0)
 			{
@@ -721,7 +721,7 @@ internal static partial class Sources
 			: new Func<Event, bool>(e
 				=> e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
-		if (!@class.Events.Any())
+		if (!@class.AllEvents().Any())
 		{
 			return;
 		}
@@ -745,7 +745,7 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		if (!@class.Events.Any(predicate))
+		if (!@class.AllEvents().Any(predicate))
 		{
 			return;
 		}
@@ -786,7 +786,7 @@ internal static partial class Sources
 		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSubscribedTo<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
-		foreach (Event @event in @class.Events.Where(predicate))
+		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
 			if (count++ > 0)
 			{
@@ -807,7 +807,7 @@ internal static partial class Sources
 		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockUnsubscribedFrom<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses).Append(">> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		count = 0;
-		foreach (Event @event in @class.Events.Where(predicate))
+		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
 			if (count++ > 0)
 			{
