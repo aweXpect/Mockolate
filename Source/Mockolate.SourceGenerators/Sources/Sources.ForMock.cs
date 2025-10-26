@@ -408,11 +408,34 @@ internal static partial class Sources
 
 			sb.AppendLine("get");
 			sb.AppendLine("\t\t\t{");
+			if (!isClassInterface && !property.IsAbstract)
+			{
+				sb.Append("\t\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)").AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				if (property.IsIndexer && property.IndexerParameters is not null)
+				{
+					sb.Append("\t\t\t\t\tvar baseResult = base[").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine("];");
+					sb.Append("\t\t\t\t\tif (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)").AppendLine();
+					sb.Append("\t\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\t\treturn _mock.GetIndexer<").Append(property.Type.Fullname).Append(">(() => baseResult, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine(");");
+					sb.Append("\t\t\t\t\t}").AppendLine();
+				}
+				else
+				{
+					sb.Append("\t\t\t\t\tvar baseResult = base.").Append(property.Name).Append(";").AppendLine();
+					sb.Append("\t\t\t\t\tif (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)").AppendLine();
+					sb.Append("\t\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\t\treturn _mock.Get<").Append(property.Type.Fullname).Append(">(").Append(property.GetUniqueNameString()).AppendLine(", () => baseResult);");
+					sb.Append("\t\t\t\t\t}").AppendLine();
+				}
+				sb.Append("\t\t\t\t}").AppendLine().AppendLine();
+			}
+
 			if (property.IsIndexer && property.IndexerParameters is not null)
 			{
 				sb.Append("\t\t\t\treturn ").Append(mockString).Append("?.GetIndexer<")
 					.Append(property.Type.Fullname)
-					.Append(">(").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine(")");
+					.Append(">(null, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine(")");
 				sb.Append("\t\t\t\t\t?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
 					.Append(property.Type.Fullname)
 					.Append(">();").AppendLine();
@@ -439,6 +462,21 @@ internal static partial class Sources
 
 			sb.AppendLine("set");
 			sb.AppendLine("\t\t\t{");
+			if (!isClassInterface && !property.IsAbstract)
+			{
+				sb.Append("\t\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)").AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				if (property.IsIndexer && property.IndexerParameters is not null)
+				{
+					sb.Append("\t\t\t\t\tbase[").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine("] = value;");
+				}
+				else
+				{
+					sb.Append("\t\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
+				}
+				sb.Append("\t\t\t\t}").AppendLine().AppendLine();
+			}
+
 			if (property.IsIndexer && property.IndexerParameters is not null)
 			{
 				sb.Append("\t\t\t\t").Append(mockString).Append("?.SetIndexer<")

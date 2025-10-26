@@ -95,7 +95,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	///     a <see cref="MockNotSetupException"/> is thrown. Otherwise, a default value is created and stored for future retrievals,
 	///     so that getter and setter work in tandem.
 	/// </remarks>
-	internal PropertySetup GetPropertySetup(string propertyName)
+	internal PropertySetup GetPropertySetup(string propertyName, Func<object?>? defaultValueGenerator)
 	{
 		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
 		{
@@ -104,7 +104,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
 			}
 
-			matchingSetup = new PropertySetup.Default();
+			matchingSetup = new PropertySetup.Default(defaultValueGenerator?.Invoke());
 			_propertySetups.TryAdd(propertyName, matchingSetup);
 		}
 
@@ -121,12 +121,17 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters"/>.
 	/// </summary>
-	internal TValue GetIndexerValue<TValue>(IIndexerSetup? setup, object?[] parameters)
+	internal TValue GetIndexerValue<TValue>(IIndexerSetup? setup, Func<TValue>? defaultValueGenerator, object?[] parameters)
 		=> _indexerSetups.GetOrAddValue(parameters, () =>
 		{
 			if (setup?.TryGetInitialValue(mock.Behavior, parameters, out TValue ? value) == true)
 			{
 				return value;
+			}
+
+			if (defaultValueGenerator is not null)
+			{
+				return defaultValueGenerator();
 			}
 
 			if (mock.Behavior.ThrowWhenNotSetup)

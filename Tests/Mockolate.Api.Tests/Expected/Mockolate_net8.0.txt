@@ -26,8 +26,8 @@ namespace Mockolate
         Mockolate.Setup.IMockSetup Setup { get; }
         Mockolate.Setup.MethodSetupResult Execute(string methodName, params object?[]? parameters);
         Mockolate.Setup.MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[]? parameters);
-        TResult Get<TResult>(string propertyName);
-        TResult GetIndexer<TResult>(params object?[] parameters);
+        TResult Get<TResult>(string propertyName, System.Func<TResult>? defaultValueGenerator = null);
+        TResult GetIndexer<TResult>(System.Func<TResult>? defaultValueGenerator, params object?[] parameters);
         void Set(string propertyName, object? value);
         void SetIndexer<TResult>(TResult value, params object?[] parameters);
     }

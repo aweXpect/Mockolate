@@ -201,7 +201,7 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock?.GetIndexer<int>(index)
+				          				return _mock?.GetIndexer<int>(null, index)
 				          					?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<int>();
 				          			}
 				          			set
@@ -216,7 +216,7 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return _mock?.GetIndexer<int>(index, isReadOnly)
+				          				return _mock?.GetIndexer<int>(null, index, isReadOnly)
 				          					?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<int>();
 				          			}
 				          		}
@@ -271,11 +271,25 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return (_mock ?? _mockProvider.Value)?.GetIndexer<int>(index)
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					var baseResult = base[index];
+				          					if (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)
+				          					{
+				          						return _mock.GetIndexer<int>(() => baseResult, index);
+				          					}
+				          				}
+
+				          				return (_mock ?? _mockProvider.Value)?.GetIndexer<int>(null, index)
 				          					?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					base[index] = value;
+				          				}
+
 				          				(_mock ?? _mockProvider.Value)?.SetIndexer<int>(value, index);
 				          			}
 				          		}
@@ -286,7 +300,16 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return (_mock ?? _mockProvider.Value)?.GetIndexer<int>(index, isReadOnly)
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					var baseResult = base[index, isReadOnly];
+				          					if (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)
+				          					{
+				          						return _mock.GetIndexer<int>(() => baseResult, index, isReadOnly);
+				          					}
+				          				}
+
+				          				return (_mock ?? _mockProvider.Value)?.GetIndexer<int>(null, index, isReadOnly)
 				          					?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<int>();
 				          			}
 				          		}
@@ -297,6 +320,11 @@ public sealed partial class ForMockTests
 				          		{
 				          			set
 				          			{
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					base[index, isWriteOnly] = value;
+				          				}
+
 				          				(_mock ?? _mockProvider.Value)?.SetIndexer<int>(value, index, isWriteOnly);
 				          			}
 				          		}
@@ -308,7 +336,7 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
-				          				return (_mock ?? _mockProvider.Value)?.GetIndexer<int>(someAdditionalIndex)
+				          				return (_mock ?? _mockProvider.Value)?.GetIndexer<int>(null, someAdditionalIndex)
 				          					?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<int>();
 				          			}
 				          			set
@@ -708,11 +736,25 @@ public sealed partial class ForMockTests
 				          		{
 				          			protected get
 				          			{
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					var baseResult = base.SomeProperty1;
+				          					if (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)
+				          					{
+				          						return _mock.Get<int>("MyCode.MyService.SomeProperty1", () => baseResult);
+				          					}
+				          				}
+
 				          				return (_mock ?? _mockProvider.Value)?.Get<int>("MyCode.MyService.SomeProperty1")
 				          					?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<int>();
 				          			}
 				          			set
 				          			{
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					base.SomeProperty1 = value;
+				          				}
+
 				          				(_mock ?? _mockProvider.Value)?.Set("MyCode.MyService.SomeProperty1", value);
 				          			}
 				          		}
@@ -723,11 +765,25 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					var baseResult = base.SomeProperty2;
+				          					if (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)
+				          					{
+				          						return _mock.Get<int>("MyCode.MyService.SomeProperty2", () => baseResult);
+				          					}
+				          				}
+
 				          				return (_mock ?? _mockProvider.Value)?.Get<int>("MyCode.MyService.SomeProperty2")
 				          					?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<int>();
 				          			}
 				          			protected set
 				          			{
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					base.SomeProperty2 = value;
+				          				}
+
 				          				(_mock ?? _mockProvider.Value)?.Set("MyCode.MyService.SomeProperty2", value);
 				          			}
 				          		}
@@ -738,6 +794,15 @@ public sealed partial class ForMockTests
 				          		{
 				          			get
 				          			{
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					var baseResult = base.SomeReadOnlyProperty;
+				          					if (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)
+				          					{
+				          						return _mock.Get<bool?>("MyCode.MyService.SomeReadOnlyProperty", () => baseResult);
+				          					}
+				          				}
+
 				          				return (_mock ?? _mockProvider.Value)?.Get<bool?>("MyCode.MyService.SomeReadOnlyProperty")
 				          					?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<bool?>();
 				          			}
@@ -749,6 +814,11 @@ public sealed partial class ForMockTests
 				          		{
 				          			set
 				          			{
+				          				if (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
+				          				{
+				          					base.SomeWriteOnlyProperty = value;
+				          				}
+
 				          				(_mock ?? _mockProvider.Value)?.Set("MyCode.MyService.SomeWriteOnlyProperty", value);
 				          			}
 				          		}
