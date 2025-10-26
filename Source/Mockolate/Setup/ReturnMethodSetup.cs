@@ -74,7 +74,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		Func<TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 
 		TReturn returnValue = returnCallback();
 		if (returnValue is null)
@@ -217,7 +217,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<T1, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		Func<T1, TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 
 		TReturn returnValue = returnCallback(p1);
 		if (returnValue is null)
@@ -382,7 +382,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<T1, T2, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		Func<T1, T2, TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 
 		TReturn returnValue = returnCallback(p1, p2);
 		if (returnValue is null)
@@ -558,7 +558,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<T1, T2, T3, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		Func<T1, T2, T3, TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 
 		TReturn returnValue = returnCallback(p1, p2, p3);
 		if (returnValue is null)
@@ -742,7 +742,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-		Func<T1, T2, T3, T4, TReturn>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+		Func<T1, T2, T3, T4, TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 
 		TReturn returnValue = returnCallback(p1, p2, p3, p4);
 		if (returnValue is null)
