@@ -121,13 +121,15 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t\t\tthrow new MockException(\"No parameterless constructor found for '").Append(mockClass.ClassFullName).Append("'. Please provide constructor parameters.\");").AppendLine();
 		}
 		sb.Append("\t\t\t\t\t}").AppendLine();
+		int constructorIndex = 0;
 		foreach (var constructorParameters in constructors.Select(constructor => constructor.Parameters))
 		{
+			constructorIndex++;
 			sb.Append("\t\t\t\t\telse if (_constructorParameters.Parameters.Length == ").Append(constructorParameters.Count);
 			int index = 0;
 			foreach (MethodParameter parameter in constructorParameters)
 			{
-				sb.AppendLine().Append("\t\t\t\t\t    && TryCast(_constructorParameters.Parameters[").Append(index++).Append("], out ").Append(parameter.Type.Fullname).Append(" p").Append(index).Append(")");
+				sb.AppendLine().Append("\t\t\t\t\t    && TryCast(_constructorParameters.Parameters[").Append(index++).Append("], out ").Append(parameter.Type.Fullname).Append(" c").Append(constructorIndex).Append('p').Append(index).Append(")");
 			}
 			sb.Append(")").AppendLine();
 			sb.Append("\t\t\t\t\t{").AppendLine();
@@ -135,7 +137,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t\t\t_subject = new MockSubject(this");
 			for (int i = 1; i <= constructorParameters.Count; i++)
 			{
-				sb.Append(", p").Append(i);
+				sb.Append(", c").Append(constructorIndex).Append('p').Append(i);
 			}
 			sb.Append(");").AppendLine();
 			sb.Append("\t\t\t\t\t}").AppendLine();

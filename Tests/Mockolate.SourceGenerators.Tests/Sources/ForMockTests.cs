@@ -72,19 +72,19 @@ public sealed partial class ForMockTests
 		await That(result.Sources).ContainsKey("ForMyBaseClass.g.cs").WhoseValue
 			.Contains("""
 			          					if (_constructorParameters.Parameters.Length == 1
-			          					    && TryCast(_constructorParameters.Parameters[0], out int p1))
+			          					    && TryCast(_constructorParameters.Parameters[0], out int c1p1))
 			          					{
 			          						MockSubject._mockProvider.Value = this;
-			          						_subject = new MockSubject(this, p1);
+			          						_subject = new MockSubject(this, c1p1);
 			          					}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
 			          					if (_constructorParameters.Parameters.Length == 2
-			          					    && TryCast(_constructorParameters.Parameters[0], out int p1)
-			          					    && TryCast(_constructorParameters.Parameters[1], out bool p2))
+			          					    && TryCast(_constructorParameters.Parameters[0], out int c2p1)
+			          					    && TryCast(_constructorParameters.Parameters[1], out bool c2p2))
 			          					{
 			          						MockSubject._mockProvider.Value = this;
-			          						_subject = new MockSubject(this, p1, p2);
+			          						_subject = new MockSubject(this, c2p1, c2p2);
 			          					}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
