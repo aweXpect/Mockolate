@@ -1,3 +1,4 @@
+using System;
 using Mockolate.Events;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -44,7 +45,7 @@ public interface IMock
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName" />.
 	/// </summary>
-	TResult Get<TResult>(string propertyName);
+	TResult Get<TResult>(string propertyName, Func<TResult>? defaultValueGenerator = null);
 
 	/// <summary>
 	///     Accesses the setter of the property with <paramref name="propertyName" /> and the matching
@@ -55,7 +56,7 @@ public interface IMock
 	/// <summary>
 	///     Gets the value from the indexer with the given parameters.
 	/// </summary>
-	TResult GetIndexer<TResult>(params object?[] parameters);
+	TResult GetIndexer<TResult>(Func<TResult>? defaultValueGenerator, params object?[] parameters);
 
 	/// <summary>
 	///     Sets the value of the indexer with the given parameters.

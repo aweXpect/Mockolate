@@ -30,9 +30,9 @@ public abstract class PropertySetup
 	/// </summary>
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior);
 
-	internal class Default : PropertySetup
+	internal class Default(object? initialValue) : PropertySetup
 	{
-		private object? _value;
+		private object? _value = initialValue;
 
 		/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 		protected override void InvokeSetter(object? value, MockBehavior behavior)

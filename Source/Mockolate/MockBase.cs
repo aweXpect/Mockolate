@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -115,13 +116,13 @@ public abstract class MockBase<T> : IMock
 		return new MethodSetupResult(matchingSetup, _behavior);
 	}
 
-	/// <inheritdoc cref="IMock.Get{TResult}(string)" />
-	TResult IMock.Get<TResult>(string propertyName)
+	/// <inheritdoc cref="IMock.Get{TResult}(string, Func{TResult})" />
+	TResult IMock.Get<TResult>(string propertyName, Func<TResult>? defaultValueGenerator)
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
 		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new PropertyGetterAccess(interactions.GetNextIndex(), propertyName));
-		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
+		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName, defaultValueGenerator is null ? null : () => defaultValueGenerator());
 		return matchingSetup.InvokeGetter<TResult>(interaction, _behavior);
 	}
 
@@ -131,19 +132,19 @@ public abstract class MockBase<T> : IMock
 		MockInteractions interactions = ((IMock)this).Interactions;
 		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(), propertyName, value));
-		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName);
+		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName, null);
 		matchingSetup.InvokeSetter(interaction, value, _behavior);
 	}
 
-	/// <inheritdoc cref="IMock.GetIndexer{TResult}(object?[])" />
-	TResult IMock.GetIndexer<TResult>(params object?[] parameters)
+	/// <inheritdoc cref="IMock.GetIndexer{TResult}(Func{TResult}, object?[])" />
+	TResult IMock.GetIndexer<TResult>(Func<TResult>? defaultValueGenerator, params object?[] parameters)
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
 		IndexerGetterAccess interaction = new IndexerGetterAccess(interactions.GetNextIndex(), parameters);
 		((IMockInteractions)interactions).RegisterInteraction(interaction);
 
 		IndexerSetup? matchingSetup = Setup.GetIndexerSetup(interaction);
-		TResult initialValue = Setup.GetIndexerValue<TResult>(matchingSetup, parameters);
+		TResult initialValue = Setup.GetIndexerValue(matchingSetup, defaultValueGenerator, parameters);
 		if (matchingSetup is not null)
 		{
 			var value = matchingSetup.InvokeGetter(interaction, initialValue, _behavior);
