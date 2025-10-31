@@ -50,6 +50,7 @@ internal readonly record struct GenericParameter
 			}
 			sb.Append("struct");
 		}
+
 		if (IsClass)
 		{
 			if (count++ > 0)
@@ -62,6 +63,7 @@ internal readonly record struct GenericParameter
 				sb.Append('?');
 			}
 		}
+
 		if (IsNotNull)
 		{
 			if (count++ > 0)
@@ -70,6 +72,7 @@ internal readonly record struct GenericParameter
 			}
 			sb.Append("notnull");
 		}
+
 		if (IsUnmanaged)
 		{
 			if (count++ > 0)
@@ -78,14 +81,7 @@ internal readonly record struct GenericParameter
 			}
 			sb.Append("unmanaged");
 		}
-		if (HasConstructor)
-		{
-			if (count++ > 0)
-			{
-				sb.Append(", ");
-			}
-			sb.Append("new()");
-		}
+
 		if (AllowsRefStruct)
 		{
 			if (count++ > 0)
@@ -94,6 +90,7 @@ internal readonly record struct GenericParameter
 			}
 			sb.Append("allows ref struct");
 		}
+
 		foreach (var constraintType in ConstraintTypes)
 		{
 			if (count++ > 0)
@@ -105,6 +102,15 @@ internal readonly record struct GenericParameter
 			{
 				sb.Append('?');
 			}
+		}
+
+		if (HasConstructor)
+		{
+			if (count++ > 0)
+			{
+				sb.Append(", ");
+			}
+			sb.Append("new()");
 		}
 	}
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
