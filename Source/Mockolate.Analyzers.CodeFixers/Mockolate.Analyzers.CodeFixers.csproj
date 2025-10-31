@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Code fix providers for Mockolate to help with the correct usage.</Description>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<IsRoslynComponent>true</IsRoslynComponent>
+		<DevelopmentDependency>false</DevelopmentDependency>
+		<NoPackageAnalysis>true</NoPackageAnalysis>
+		<NoWarn>RS2003</NoWarn>
+		<EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Mockolate.Analyzers\Mockolate.Analyzers.csproj"/>
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.Common"/>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<AdditionalFiles Remove="AnalyzerReleases.Unshipped.md"/>
+		<AdditionalFiles Remove="AnalyzerReleases.Shipped.md"/>
+	</ItemGroup>
+
+</Project>
