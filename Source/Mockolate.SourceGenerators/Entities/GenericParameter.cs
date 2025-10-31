@@ -106,7 +106,7 @@ internal readonly record struct GenericParameter
 
 		if (HasConstructor)
 		{
-			if (count++ > 0)
+			if (count > 0)
 			{
 				sb.Append(", ");
 			}
