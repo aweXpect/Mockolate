@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace Mockolate.Analyzers.CodeFixers;
 
 /// <summary>
-///     A code fix provider that append `AtLeastOnce()` to all VerificationResults that are not used.
+///     A code fix provider that appends `AtLeastOnce()` to all VerificationResults that are not used.
 /// </summary>
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseVerificationCodeFixProvider))]
 [Shared]
