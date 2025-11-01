@@ -16,7 +16,7 @@ Framework 4.8.
 - **Strongly-typed**: Setup and verify mocks with full IntelliSense and compile-time safety.
 - **AOT compatible**: Works with NativeAOT and trimming.
 
-## Getting Started
+# Getting Started
 
 1. Install the [`Mockolate`](https://www.nuget.org/packages/Mockolate) nuget package
    ```ps
@@ -71,9 +71,9 @@ Framework 4.8.
    }
    ```
 
-## Features
+# Features
 
-### Create mocks
+## Create mocks
 
 You can create mocks for interfaces and classes. For classes without a default constructor, use
 `BaseClass.WithConstructorParameters(…)` to provide constructor arguments:
@@ -99,7 +99,7 @@ var mock3 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
 - Only the first generic type can be a class; additional types must be interfaces.
 - Sealed classes cannot be mocked and will throw a `MockException`.
 
-#### Customizing mock behavior
+### Customizing mock behavior
 
 You can control the default behavior of the mock by providing a `MockBehavior`:
 
@@ -113,7 +113,7 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 );
 ```
 
-##### `MockBehavior` options
+#### `MockBehavior` options
 
 - `ThrowWhenNotSetup` (bool):
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
@@ -126,7 +126,7 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
 
-#### Using a factory for shared behavior
+### Using a factory for shared behavior
 
 Use `Mock.Factory` to create multiple mocks with a shared behavior:
 
@@ -138,12 +138,12 @@ var mock1 = factory.Create<IChocolateDispenser>();
 var mock2 = factory.Create<ILemonadeDispenser>();
 ```
 
-### Setup
+## Setup
 
 Set up return values or behaviors for methods, properties, and indexers on your mock. Control how the mock responds to
 calls in your tests.
 
-#### Method Setup
+### Method Setup
 
 Use `mock.Setup.Method.MethodName(…)` to set up methods. You can specify argument matchers for each parameter.
 
@@ -188,7 +188,7 @@ mock.Setup.Method.DispenseAsync(With.Any<string>(), With.Any<int>())
     .ReturnsAsync(true);
 ```
 
-##### Argument Matching
+#### Argument Matching
 
 Mockolate provides flexible argument matching for method setups and verifications:
 
@@ -199,7 +199,7 @@ Mockolate provides flexible argument matching for method setups and verification
 - `With.Out<T>(…)`/`With.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and predicates.
 - For .NET 8+: `With.ValueBetween<T>(min).And(max)` matches a range (numeric types).
 
-#### Property Setup
+### Property Setup
 
 Set up property getters and setters to control or verify property access on your mocks.
 
@@ -233,7 +233,7 @@ mock.Setup.Property.TotalDispensed.OnGet(() => Console.WriteLine("TotalDispensed
 mock.Setup.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.WriteLine($"Changed from {oldValue} to {newValue}!") );
 ```
 
-#### Indexer Setup
+### Indexer Setup
 
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
@@ -254,11 +254,11 @@ mock.Setup.Indexer("Dark")
 - `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each
   call.
 
-### Mock events
+## Mock events
 
 Easily raise events on your mock to test event handlers in your code.
 
-#### Raise
+### Raise
 
 Use the strongly-typed `Raise` property on your mock to trigger events declared on the mocked interface or class. The
 method signature matches the event delegate.
@@ -290,7 +290,7 @@ mock.Raise.ChocolateDispensed("Milk", 2);
 You can subscribe and unsubscribe handlers as needed. Only handlers subscribed at the time of raising the event will be
 called.
 
-### Verify interactions
+## Verify interactions
 
 You can verify that methods, properties, indexers, or events were called or accessed with specific arguments and how
 many times, using the `Verify` API:
@@ -308,7 +308,7 @@ Supported call count verifications in the `Mockolate.Verify` namespace:
 - `.AtMostTwice()`
 - `.AtMost(n)`
 
-#### Methods
+### Methods
 
 You can verify that methods were invoked with specific arguments and how many times:
 
@@ -323,7 +323,7 @@ mock.Verify.Invoked.Dispense("White", With.Any<int>()).Never();
 mock.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>()).Exactly(2);
 ```
 
-##### Argument Matchers
+#### Argument Matchers
 
 You can use argument matchers from the `With` class to verify calls with flexible conditions:
 
@@ -344,7 +344,7 @@ mock.Verify.Invoked.Dispense(With.Matching<string>(t => t.StartsWith("D")), With
 mock.Verify.Invoked.Dispense("Milk", With.ValueBetween(1).And(5)).AtLeastOnce();
 ```
 
-#### Properties
+### Properties
 
 You can verify access to property getter and setter:
 
@@ -359,7 +359,7 @@ mock.Verify.Set.TotalDispensed(42).Once();
 **Note:**  
 The setter value also supports argument matchers.
 
-#### Indexers
+### Indexers
 
 You can verify access to indexer getter and setter:
 
@@ -374,7 +374,7 @@ mock.Verify.SetIndexer("Milk", 7).AtLeastOnce();
 **Note:**  
 The keys and value also supports argument matchers.
 
-#### Events
+### Events
 
 You can verify event subscriptions and unsubscriptions:
 
@@ -386,7 +386,7 @@ mock.Verify.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 mock.Verify.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
 
-#### Call Ordering
+### Call Ordering
 
 Use `Then` to verify that calls occurred in a specific order:
 
@@ -406,7 +406,7 @@ mock.Verify.Invoked.Dispense("Dark", 1).Then(
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.
 
-#### Check for unexpected interactions
+### Check for unexpected interactions
 
 You can check if all interactions with the mock have been verified using `ThatAllInteractionsAreVerified`:
 
