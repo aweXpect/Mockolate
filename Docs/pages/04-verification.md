@@ -82,11 +82,11 @@ Note: The keys and value also supports argument matchers.
 You can verify event subscriptions and unsubscriptions:
 
 ```csharp
-// Verify that the event 'Changed' was subscribed to at least once
-mock.Verify.SubscribedTo.Changed().AtLeastOnce();
+// Verify that the event 'UsersChanged' was subscribed to at least once
+mock.Verify.SubscribedTo.UsersChanged().AtLeastOnce();
 
-// Verify that the event 'Changed' was unsubscribed from exactly once
-mock.Verify.UnsubscribedFrom.Changed().Once();
+// Verify that the event 'UsersChanged' was unsubscribed from exactly once
+mock.Verify.UnsubscribedFrom.UsersChanged().Once();
 ```
 
 ## Call Ordering
@@ -102,8 +102,9 @@ mock.Verify.Invoked.AddUser("Alice").Then(
 You can chain multiple calls for strict order verification:
 
 ```csharp
-mock.Verify.Invoked.DoSomething(1)
-    .Then(m => m.Invoked.DoSomething(2), m => m.Invoked.DoSomething(3));
+mock.Verify.Invoked.DoSomething(1).Then(
+    m => m.Invoked.DoSomething(2),
+    m => m.Invoked.DoSomething(3));
 ```
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.

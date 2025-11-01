@@ -13,7 +13,7 @@ mock.Setup.Method.AddUser(With.Any<string>())
 mock.Setup.Method.TryDelete(With.Any<Guid>(), With.Out<User?>(() => new User(id, "Alice")))
     .Returns(true);
 
-mock.Setup.Method.DoSomething(With.Matching<int>(x => x > 0), With.Value("foo"))
+mock.Setup.Method.DoSomething(With.Matching<int>(x => x > 0))
     .Throws(() => new InvalidOperationException());
 
 mock.Setup.Method.DoWork()
