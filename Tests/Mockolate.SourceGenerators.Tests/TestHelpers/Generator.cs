@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -38,7 +39,7 @@ public static class Generator
 		"CS8802" /* Only one compilation unit can have top-level statements */,
 	];
 
-	public static GeneratorResult Run(string source, params Type[] assemblyTypes)
+	public static GeneratorResult Run([StringSyntax("c#-test")] string source, params Type[] assemblyTypes)
 	{
 		MockGenerator generator = new();
 		CSharpParseOptions parseOptions = new(LanguageVersion.Latest);
