@@ -1,6 +1,6 @@
 # Create mocks
 
-You can create mocks for interfaces and classes. For classes without a default constructor, use `BaseClass.WithConstructorParameters(...)` to provide constructor arguments:
+You can create mocks for interfaces and classes. For classes without a default constructor, use `BaseClass.WithConstructorParameters(…)` to provide constructor arguments:
 
 ```csharp
 // Create a mock for an interface
