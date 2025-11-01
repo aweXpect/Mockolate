@@ -2,7 +2,7 @@
 
 Easily raise events on your mock to test event handlers in your code.
 
-## Usage
+## Raise
 
 Use the strongly-typed `Raise` property on your mock to trigger events declared on the mocked interface or class. The method signature matches the event delegate.
 
@@ -18,7 +18,7 @@ mock.Raise.UsersChanged(this, EventArgs.Empty);
 - Only currently subscribed handlers will be invoked.
 - Simulate notifications and test event-driven logic in your code.
 
-## Example
+**Example:**
 
 ```csharp
 int callCount = 0;

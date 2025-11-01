@@ -1,4 +1,4 @@
-# Verify mock interactions
+# Verify interactions
 
 You can verify that methods, properties, indexers, or events were called or accessed with specific arguments and how many times, using the `Verify` API:
 
@@ -16,16 +16,16 @@ Supported call count verifications in the `Mockolate.Verify` namespace:
 
 ## Methods
 
-You can verify that methods were called with specific arguments and how many times:
+You can verify that methods were invoked with specific arguments and how many times:
 
 ```csharp
-// Verify that AddUser("Bob") was called at least once
+// Verify that AddUser("Bob") was invoked at least once
 mock.Verify.Invoked.AddUser("Bob").AtLeastOnce();
 
-// Verify that TryDelete was never called with the given id and any out parameter
+// Verify that TryDelete was never invoked with the given id and any out parameter
 mock.Verify.Invoked.TryDelete(id, With.Out<User?>()).Never();
 
-// Verify that DoSomething was called exactly twice with any int argument
+// Verify that DoSomething was invoked exactly twice with any int argument
 mock.Verify.Invoked.DoSomething(With.Any<int>()).Exactly(2);
 ```
 
@@ -43,7 +43,8 @@ You can use argument matchers from the `With` class to verify calls with flexibl
 - `With.Ref<T>(setter)` — matches and sets a ref parameter
 - `With.ValueBetween<T>(min).And(max)` — matches a value between min and max (for numeric types, .NET 8+)
 
-Example:
+**Example:**
+
 ```csharp
 mock.Verify.Invoked.DoSomething(With.Matching<int>(x => x > 10)).Once();
 mock.Verify.Invoked.DoSomething(With.ValueBetween(1).And(5)).AtLeastOnce();
@@ -51,7 +52,7 @@ mock.Verify.Invoked.DoSomething(With.ValueBetween(1).And(5)).AtLeastOnce();
 
 ## Properties
 
-You can verify property gets and sets:
+You can verify access to property getter and setter:
 
 ```csharp
 // Verify that the property 'Name' was read at least once
@@ -61,11 +62,12 @@ mock.Verify.Got.Name().AtLeastOnce();
 mock.Verify.Set.Age(42).Once();
 ```
 
-Note: The setter value also supports argument matchers.
+**Note:**  
+The setter value also supports argument matchers.
 
 ## Indexers
 
-You can verify indexer gets and sets:
+You can verify access to indexer getter and setter:
 
 ```csharp
 // Verify that the indexer was read with key "foo" exactly once
@@ -75,7 +77,8 @@ mock.Verify.GotIndexer("foo").Once();
 mock.Verify.SetIndexer("bar", 123).AtLeastOnce();
 ```
 
-Note: The keys and value also supports argument matchers.
+**Note:**  
+The keys and value also supports argument matchers.
 
 ## Events
 
@@ -109,7 +112,7 @@ mock.Verify.Invoked.DoSomething(1).Then(
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.
 
-## Verifying All Interactions
+## Check for unexpected interactions
 
 You can check if all interactions with the mock have been verified using `ThatAllInteractionsAreVerified`:
 
@@ -118,4 +121,5 @@ You can check if all interactions with the mock have been verified using `ThatAl
 bool allVerified = mock.Verify.ThatAllInteractionsAreVerified();
 ```
 
-This is useful for ensuring that your test covers all interactions and that no unexpected calls were made. If any interaction was not verified, this method returns `false`.
+This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.
+If any interaction was not verified, this method returns `false`.

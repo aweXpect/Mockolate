@@ -1,7 +1,5 @@
 # Create mocks
 
-## Creating mocks for interfaces and classes
-
 You can create mocks for interfaces and classes. For classes without a default constructor, use `BaseClass.WithConstructorParameters(...)` to provide constructor arguments:
 
 ```csharp
@@ -14,7 +12,11 @@ var classWithArgsMock = Mock.Create<MyClassWithCtor>(
 );
 ```
 
-## Customizing mock behavior with `MockBehavior`
+**Notes:**
+- Only the first generic type can be a class; additional types must be interfaces.
+- Sealed classes cannot be mocked and will throw a `MockException`.
+
+## Customizing mock behavior
 
 You can control the default behavior of the mock by providing a `MockBehavior`:
 
@@ -28,7 +30,7 @@ var classMock = Mock.Create<MyVirtualClass>(
 );
 ```
 
-### MockBehavior options
+### `MockBehavior` options
 
 - `ThrowWhenNotSetup` (bool):
   - If `true`, the mock will throw an exception when a method or property is called without a setup.
@@ -41,7 +43,7 @@ var classMock = Mock.Create<MyVirtualClass>(
 - `DefaultValue` (IDefaultValueGenerator):
   - Customizes how default values are generated for methods/properties that are not set up.
 
-## Using `Mock.Factory` for shared behavior
+## Using a factory for shared behavior
 
 Use `Mock.Factory` to create multiple mocks with a shared behavior:
 
@@ -53,7 +55,3 @@ var mock1 = factory.Create<IMyInterface>();
 var mock2 = factory.Create<MyVirtualClass>();
 var mock3 = factory.Create<MyClass, IMyInterface, IAnotherInterface>();
 ```
-
-## Notes
-- Only the first generic type can be a class; additional types must be interfaces.
-- Sealed classes cannot be mocked and will throw a `MockException`.
