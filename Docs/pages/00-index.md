@@ -54,7 +54,7 @@ Framework 4.8.
    // Verify: Check interactions
    mock.Verify.Invoked.Dispense("Dark", With.Any<int>()).Exactly(3);
    
-   // Output: "Dispensed events: 9. Got chocolate? True, True, False"
+   // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
 
    public delegate void ChocolateDispensedDelegate(string type, int amount);
