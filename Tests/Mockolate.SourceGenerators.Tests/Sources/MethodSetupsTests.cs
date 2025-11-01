@@ -23,7 +23,7 @@ public sealed class MethodSetupsTests
 			     			_ = Mock.Create<IMyOutermostInterface>();
 			             }
 			         }
-			     
+
 			         public interface IMyOutermostInterface : IMyOuterInterface;
 			         public interface IMyOuterInterface : IMyInterface;
 			         public interface IMyInterface

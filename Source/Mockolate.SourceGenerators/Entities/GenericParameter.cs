@@ -20,7 +20,7 @@ internal readonly record struct GenericParameter
 		ConstraintTypes = new EquatableArray<Type>(typeSymbol.ConstraintTypes
 			.Select(x => new Type(x)).ToArray());
 	}
-	
+
 	public EquatableArray<Type> ConstraintTypes { get; }
 
 	public string Name { get; }
@@ -35,7 +35,8 @@ internal readonly record struct GenericParameter
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	public void AppendWhereConstraint(StringBuilder sb, string prefix)
 	{
-		if (!ConstraintTypes.Any() && !IsStruct && !IsClass && !IsNotNull && !IsUnmanaged && !HasConstructor && !AllowsRefStruct)
+		if (!ConstraintTypes.Any() && !IsStruct && !IsClass && !IsNotNull && !IsUnmanaged && !HasConstructor &&
+		    !AllowsRefStruct)
 		{
 			return;
 		}
@@ -48,6 +49,7 @@ internal readonly record struct GenericParameter
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append("struct");
 		}
 
@@ -57,6 +59,7 @@ internal readonly record struct GenericParameter
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append("class");
 			if (NullableAnnotation == NullableAnnotation.Annotated)
 			{
@@ -70,6 +73,7 @@ internal readonly record struct GenericParameter
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append("notnull");
 		}
 
@@ -79,6 +83,7 @@ internal readonly record struct GenericParameter
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append("unmanaged");
 		}
 
@@ -88,15 +93,17 @@ internal readonly record struct GenericParameter
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append("allows ref struct");
 		}
 
-		foreach (var constraintType in ConstraintTypes)
+		foreach (Type? constraintType in ConstraintTypes)
 		{
 			if (count++ > 0)
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append(constraintType.Fullname);
 			if (NullableAnnotation == NullableAnnotation.Annotated)
 			{
@@ -110,6 +117,7 @@ internal readonly record struct GenericParameter
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append("new()");
 		}
 	}

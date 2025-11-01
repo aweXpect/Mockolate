@@ -58,6 +58,6 @@ public sealed partial class MockInvokedTests
 		VerificationResult<MockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<int>());
 
 		await That(result).Never();
-		await That((((IVerificationResult)result).Expectation)).IsEqualTo("invoked method bar(With.Any<int>())");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(With.Any<int>())");
 	}
 }

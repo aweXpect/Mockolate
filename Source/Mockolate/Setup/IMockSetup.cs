@@ -19,7 +19,7 @@ public interface IMockSetup
 	void RegisterIndexer(IndexerSetup indexerSetup);
 
 	/// <summary>
-	///     Sets the indexer for the given <paramref name="parameters"/> to the given <paramref name="value"/>.
+	///     Sets the indexer for the given <paramref name="parameters" /> to the given <paramref name="value" />.
 	/// </summary>
 	void SetIndexerValue<TValue>(object?[] parameters, TValue value);
 

@@ -15,12 +15,12 @@ public class MockGot<T, TMock>(MockVerify<T, TMock> verify) : IMockGot<MockVerif
 	VerificationResult<MockVerify<T, TMock>> IMockGot<MockVerify<T, TMock>>.Property(string propertyName)
 	{
 		MockInteractions interactions = ((IMockVerify<TMock>)Verify).Interactions;
-		return new(Verify, interactions,
+		return new VerificationResult<MockVerify<T, TMock>>(Verify, interactions,
 			interactions.Interactions
 				.OfType<PropertyGetterAccess>()
 				.Where(property => property.Name.Equals(propertyName))
 				.Cast<IInteraction>()
 				.ToArray(),
-		$"got property {propertyName.SubstringAfterLast('.')}");
+			$"got property {propertyName.SubstringAfterLast('.')}");
 	}
 }

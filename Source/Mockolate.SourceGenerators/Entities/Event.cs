@@ -19,6 +19,7 @@ internal record Event
 			{
 				ExplicitImplementation = ContainingType;
 			}
+
 			alreadyDefinedEvents.Add(this);
 		}
 	}
@@ -40,10 +41,7 @@ internal record Event
 
 	private sealed class EventEqualityComparer : IEqualityComparer<Event>
 	{
-		public bool Equals(Event x, Event y)
-		{
-			return x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
-		}
+		public bool Equals(Event x, Event y) => x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
 		public int GetHashCode(Event obj) => obj.Name.GetHashCode();
 	}
 }

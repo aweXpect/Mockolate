@@ -15,14 +15,14 @@ public sealed partial class MockGotIndexerTests
 			IMockInteractions interactions = mockInteractions;
 			MyMock<int> mock = new(1);
 			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			MockGotIndexer<int, Mock<int>> inner = new MockGotIndexer<int, Mock<int>>(verify);
+			MockGotIndexer<int, Mock<int>> inner = new(verify);
 			IMockGotIndexer<MockVerify<int, Mock<int>>> mockIndexer = inner;
 			IMockGotIndexer<MockVerify<int, Mock<int>>> @protected = new ProtectedMockGotIndexer<int, Mock<int>>(inner);
-			interactions.RegisterInteraction(new IndexerGetterAccess(0, ["foo.bar"]));
-			interactions.RegisterInteraction(new IndexerGetterAccess(1, ["foo.bar"]));
+			interactions.RegisterInteraction(new IndexerGetterAccess(0, ["foo.bar",]));
+			interactions.RegisterInteraction(new IndexerGetterAccess(1, ["foo.bar",]));
 
-			var result1 = mockIndexer.Got(With.Any<string>());
-			var result2 = @protected.Got(With.Any<string>());
+			VerificationResult<MockVerify<int, Mock<int>>> result1 = mockIndexer.Got(With.Any<string>());
+			VerificationResult<MockVerify<int, Mock<int>>> result2 = @protected.Got(With.Any<string>());
 
 			await That(result1).Exactly(2);
 			await That(result2).Exactly(2);

@@ -8,52 +8,108 @@ public sealed partial class MockSetupsTests
 	public sealed class PropertiesTests
 	{
 		[Fact]
-		public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
+		public async Task InvokeGetter_InvalidType_ShouldThrowMockException()
 		{
-			Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
-			IMockSetup setup = mock.Setup;
-			IMock sut = mock;
-
-			int result0 = sut.Get<int>("my.other.property");
-			setup.RegisterProperty("my.property", new PropertySetup<int>().InitializeWith(42));
-			int result1 = sut.Get<int>("my.property");
-
-			await That(result0).IsEqualTo(0);
-			await That(result1).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task Register_SamePropertyTwice_ShouldThrowMockException()
-		{
-			Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
-			IMockSetup setup = mock.Setup;
-			IMock sut = mock;
-
-			setup.RegisterProperty("my.property", new PropertySetup<int>());
+			MyPropertySetup<int> setup = new();
 
 			void Act()
-				=> setup.RegisterProperty("my.property", new PropertySetup<int>());
+				=> setup.InvokeGetter<string>();
 
 			await That(Act).Throws<MockException>()
-				.WithMessage("You cannot setup property 'my.property' twice.");
-
-			setup.RegisterProperty("my.other.property", new PropertySetup<int>());
+				.WithMessage("""
+				             The property only supports 'int' and not 'string'.
+				             """);
 		}
 
 		[Fact]
-		public async Task ShouldStoreLastValue()
+		public async Task InvokeSetter_InvalidType_ShouldThrowMockException()
 		{
-			Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
-			IMock sut = mock;
+			MyPropertySetup<int> setup = new();
 
-			string result0 = sut.Get<string>("my.property");
-			sut.Set("my.property", "foo");
-			string result1 = sut.Get<string>("my.property");
-			string result2 = sut.Get<string>("my.other.property");
+			void Act()
+				=> setup.InvokeSetter("foo");
 
-			await That(result0).IsEmpty();
-			await That(result1).IsEqualTo("foo");
-			await That(result2).IsEmpty();
+			await That(Act).Throws<MockException>()
+				.WithMessage("""
+				             The property value only supports 'int', but is 'string'.
+				             """);
+		}
+
+		[Fact]
+		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+		{
+			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
+
+			sut.Setup.Property.MyProperty
+				.Returns(4)
+				.Throws(new Exception("foo"))
+				.Returns(() => 2);
+
+			int result1 = sut.Subject.MyProperty;
+			Exception? result2 = Record.Exception(() => _ = sut.Subject.MyProperty);
+			int result3 = sut.Subject.MyProperty;
+
+			await That(result1).IsEqualTo(4);
+			await That(result2).HasMessage("foo");
+			await That(result3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task MultipleOnGet_ShouldAllGetInvoked()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
+
+			sut.Setup.Property.MyProperty
+				.OnGet(() => { callCount1++; })
+				.OnGet(v => { callCount2 += v; });
+
+			sut.Subject.MyProperty = 1;
+			_ = sut.Subject.MyProperty;
+			sut.Subject.MyProperty = 2;
+			_ = sut.Subject.MyProperty;
+
+			await That(callCount1).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(3);
+		}
+
+		[Fact]
+		public async Task MultipleOnSet_ShouldAllGetInvoked()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
+
+			sut.Setup.Property.MyProperty
+				.InitializeWith(2)
+				.OnSet(() => { callCount1++; })
+				.OnSet((old, @new) => { callCount2 += old * @new; });
+
+			sut.Subject.MyProperty = 4; // 2 * 4 = 8
+			sut.Subject.MyProperty = 6; // 4 * 6 = 24
+
+			await That(callCount1).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(8 + 24);
+		}
+
+		[Fact]
+		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+		{
+			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
+
+			sut.Setup.Property.MyProperty
+				.Returns(4)
+				.Returns(() => 3)
+				.Returns(v => 10 * v);
+
+			int[] result = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut.Subject.MyProperty;
+			}
+
+			await That(result).IsEqualTo([4, 3, 30, 4, 3, 30, 4, 3, 30, 4,]);
 		}
 
 		[Fact]
@@ -160,7 +216,8 @@ public sealed partial class MockSetupsTests
 
 			sut.Setup.Property.MyProperty
 				.InitializeWith(4)
-				.OnSet((oldValue, newValue) => {
+				.OnSet((oldValue, newValue) =>
+				{
 					callCount++;
 					receivedOldValue = oldValue;
 					receivedNewValue = newValue;
@@ -189,108 +246,35 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
-		public async Task InvokeGetter_InvalidType_ShouldThrowMockException()
+		public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 		{
-			MyPropertySetup<int> setup = new();
+			Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
+			IMockSetup setup = mock.Setup;
+			IMock sut = mock;
+
+			int result0 = sut.Get<int>("my.other.property");
+			setup.RegisterProperty("my.property", new PropertySetup<int>().InitializeWith(42));
+			int result1 = sut.Get<int>("my.property");
+
+			await That(result0).IsEqualTo(0);
+			await That(result1).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task Register_SamePropertyTwice_ShouldThrowMockException()
+		{
+			Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
+			IMockSetup setup = mock.Setup;
+
+			setup.RegisterProperty("my.property", new PropertySetup<int>());
 
 			void Act()
-				=> setup.InvokeGetter<string>();
+				=> setup.RegisterProperty("my.property", new PropertySetup<int>());
 
 			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				             The property only supports 'int' and not 'string'.
-				             """);
-		}
+				.WithMessage("You cannot setup property 'my.property' twice.");
 
-		[Fact]
-		public async Task InvokeSetter_InvalidType_ShouldThrowMockException()
-		{
-			MyPropertySetup<int> setup = new();
-
-			void Act()
-				=> setup.InvokeSetter("foo");
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("""
-				             The property value only supports 'int', but is 'string'.
-				             """);
-		}
-
-		[Fact]
-		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
-		{
-			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
-
-			sut.Setup.Property.MyProperty
-				.Returns(4)
-				.Throws(new Exception("foo"))
-				.Returns(() => 2);
-
-			int result1 = sut.Subject.MyProperty;
-			Exception? result2 = Record.Exception(() => _ = sut.Subject.MyProperty);
-			int result3 = sut.Subject.MyProperty;
-
-			await That(result1).IsEqualTo(4);
-			await That(result2).HasMessage("foo");
-			await That(result3).IsEqualTo(2);
-		}
-
-		[Fact]
-		public async Task MultipleOnGet_ShouldAllGetInvoked()
-		{
-			int callCount1 = 0;
-			int callCount2 = 0;
-			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
-
-			sut.Setup.Property.MyProperty
-				.OnGet(() => { callCount1++; })
-				.OnGet(v => { callCount2 += v; });
-
-			sut.Subject.MyProperty = 1;
-			_ = sut.Subject.MyProperty;
-			sut.Subject.MyProperty = 2;
-			_ = sut.Subject.MyProperty;
-
-			await That(callCount1).IsEqualTo(2);
-			await That(callCount2).IsEqualTo(3);
-		}
-
-		[Fact]
-		public async Task MultipleOnSet_ShouldAllGetInvoked()
-		{
-			int callCount1 = 0;
-			int callCount2 = 0;
-			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
-
-			sut.Setup.Property.MyProperty
-				.InitializeWith(2)
-				.OnSet(() => { callCount1++; })
-				.OnSet((old, @new) => { callCount2 += old * @new; });
-
-			sut.Subject.MyProperty = 4; // 2 * 4 = 8
-			sut.Subject.MyProperty = 6; // 4 * 6 = 24
-
-			await That(callCount1).IsEqualTo(2);
-			await That(callCount2).IsEqualTo(8 + 24);
-		}
-
-		[Fact]
-		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
-		{
-			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
-
-			sut.Setup.Property.MyProperty
-				.Returns(4)
-				.Returns(() => 3)
-				.Returns(v => 10 * v);
-
-			int[] result = new int[10];
-			for (int i = 0; i < 10; i++)
-			{
-				result[i] = sut.Subject.MyProperty;
-			}
-
-			await That(result).IsEqualTo([4, 3, 30, 4, 3, 30, 4, 3, 30, 4,]);
+			setup.RegisterProperty("my.other.property", new PropertySetup<int>());
 		}
 
 		[Fact]
@@ -341,6 +325,22 @@ public sealed partial class MockSetupsTests
 			int result = sut.Subject.MyProperty;
 
 			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ShouldStoreLastValue()
+		{
+			Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
+			IMock sut = mock;
+
+			string result0 = sut.Get<string>("my.property");
+			sut.Set("my.property", "foo");
+			string result1 = sut.Get<string>("my.property");
+			string result2 = sut.Get<string>("my.other.property");
+
+			await That(result0).IsEmpty();
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
 		}
 
 		[Fact]

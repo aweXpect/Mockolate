@@ -57,8 +57,8 @@ public abstract class PropertySetup
 public class PropertySetup<T> : PropertySetup
 {
 	private readonly List<Action<T>> _getterCallbacks = [];
-	private readonly List<Action<T, T>> _setterCallbacks = [];
 	private readonly List<Func<T, T>> _returnCallbacks = [];
+	private readonly List<Action<T, T>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private T _value = default!;
 
@@ -209,10 +209,7 @@ public class PropertySetup<T> : PropertySetup
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"{typeof(T).FormatType()}";
-	}
+	public override string ToString() => $"{typeof(T).FormatType()}";
 
 	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result, MockBehavior behavior)
 	{

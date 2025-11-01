@@ -12,14 +12,14 @@ public class UseVerificationCodeFixProviderTests
 		"""
 		using Mockolate;
 		using Mockolate.Verify;
-		
+
 		public class MyClass
 		{
 		    public void MyTest()
 		    {
 		        [|VerifySomething()|];
 		    }
-		
+
 			public static VerificationResult<MockVerify<int, Mock<int>>> VerifySomething()
 				=> null!;
 		}
@@ -27,14 +27,14 @@ public class UseVerificationCodeFixProviderTests
 		"""
 		using Mockolate;
 		using Mockolate.Verify;
-		
+
 		public class MyClass
 		{
 		    public void MyTest()
 		    {
 		        VerifySomething().AtLeastOnce();
 		    }
-		
+
 			public static VerificationResult<MockVerify<int, Mock<int>>> VerifySomething()
 				=> null!;
 		}

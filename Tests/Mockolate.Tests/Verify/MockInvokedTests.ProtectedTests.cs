@@ -15,14 +15,14 @@ public sealed partial class MockInvokedTests
 			IMockInteractions interactions = mockInteractions;
 			MyMock<int> mock = new(1);
 			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			MockInvoked<int, Mock<int>> inner = new MockInvoked<int, Mock<int>>(verify);
+			MockInvoked<int, Mock<int>> inner = new(verify);
 			IMockInvoked<MockVerify<int, Mock<int>>> invoked = inner;
 			IMockInvoked<MockVerify<int, Mock<int>>> @protected = new ProtectedMockInvoked<int, Mock<int>>(inner);
 			interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [1,]));
 			interactions.RegisterInteraction(new MethodInvocation(1, "foo.bar", [2,]));
 
-			var result1 = invoked.Method("foo.bar", With.Any<int>());
-			var result2 = @protected.Method("foo.bar", With.Any<int>());
+			VerificationResult<MockVerify<int, Mock<int>>> result1 = invoked.Method("foo.bar", With.Any<int>());
+			VerificationResult<MockVerify<int, Mock<int>>> result2 = @protected.Method("foo.bar", With.Any<int>());
 
 			await That(result1).Exactly(2);
 			await That(result2).Exactly(2);

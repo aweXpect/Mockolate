@@ -36,7 +36,8 @@ public class MockRaises<T>(IMockSetup setup, MockInteractions interactions) : IM
 			throw new MockException("The method of an event subscription may not be null.");
 		}
 
-		((IMockInteractions)interactions).RegisterInteraction(new EventSubscription(interactions.GetNextIndex(), name, target, method));
+		((IMockInteractions)interactions).RegisterInteraction(new EventSubscription(interactions.GetNextIndex(), name,
+			target, method));
 		setup.AddEvent(name, target, method);
 	}
 
@@ -48,7 +49,8 @@ public class MockRaises<T>(IMockSetup setup, MockInteractions interactions) : IM
 			throw new MockException("The method of an event unsubscription may not be null.");
 		}
 
-		((IMockInteractions)interactions).RegisterInteraction(new EventUnsubscription(interactions.GetNextIndex(), name, target, method));
+		((IMockInteractions)interactions).RegisterInteraction(new EventUnsubscription(interactions.GetNextIndex(), name,
+			target, method));
 		setup.RemoveEvent(name, target, method);
 	}
 }

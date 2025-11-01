@@ -59,12 +59,13 @@ public class UseVerificationCodeFixProvider : CodeFixProvider
 	/// <param name="document">Affected source file.</param>
 	/// <param name="expressionSyntax">Highlighted class declaration Syntax Node.</param>
 	/// <param name="cancellationToken">Any fix is cancellable by the user, so we should support the cancellation token.</param>
-	private static async Task<Document> AppendAtLeastOnce(Document document, ExpressionSyntax expressionSyntax, CancellationToken cancellationToken)
+	private static async Task<Document> AppendAtLeastOnce(Document document, ExpressionSyntax expressionSyntax,
+		CancellationToken cancellationToken)
 	{
 		DocumentEditor? editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 
-		var atLeastOnceIdentifier = SyntaxFactory.IdentifierName("AtLeastOnce");
-		var atLeastOnceInvocation = SyntaxFactory.InvocationExpression(
+		IdentifierNameSyntax? atLeastOnceIdentifier = SyntaxFactory.IdentifierName("AtLeastOnce");
+		InvocationExpressionSyntax? atLeastOnceInvocation = SyntaxFactory.InvocationExpression(
 			SyntaxFactory.MemberAccessExpression(
 				SyntaxKind.SimpleMemberAccessExpression,
 				expressionSyntax,

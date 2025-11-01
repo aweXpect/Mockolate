@@ -18,5 +18,5 @@ public enum BaseClassBehavior
 	/// <summary>
 	///     Calls the base class implementation, and uses its return values as default values.
 	/// </summary>
-	UseBaseClassAsDefaultValue
+	UseBaseClassAsDefaultValue,
 }

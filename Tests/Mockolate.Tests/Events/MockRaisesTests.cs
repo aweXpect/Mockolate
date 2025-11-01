@@ -1,6 +1,5 @@
 ﻿using Mockolate.Events;
 using Mockolate.Exceptions;
-using Mockolate.Verify;
 
 namespace Mockolate.Tests.Events;
 

@@ -6,6 +6,11 @@ namespace Mockolate.Setup;
 public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 {
 	/// <summary>
+	///     Flag indicating if the method setup result has an underlying setup.
+	/// </summary>
+	public bool HasSetup => setup is not null;
+
+	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type
 	///     <typeparamref name="T" />.
 	/// </summary>
@@ -36,11 +41,6 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 
 		return value;
 	}
-
-	/// <summary>
-	///     Flag indicating if the method setup result has an underlying setup.
-	/// </summary>
-	public bool HasSetup => setup is not null;
 }
 
 /// <summary>

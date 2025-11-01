@@ -8,7 +8,7 @@ namespace Mockolate.DefaultValues;
 public interface IDefaultValueFactory
 {
 	/// <summary>
-	///     Determines whether the specified <paramref name="type"/> can be created by this factory.
+	///     Determines whether the specified <paramref name="type" /> can be created by this factory.
 	/// </summary>
 	public bool IsMatch(Type type);
 

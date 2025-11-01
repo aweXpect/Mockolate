@@ -6,22 +6,6 @@ namespace Mockolate.Tests;
 public sealed partial class MockTests
 {
 	[Fact]
-	public async Task Factory_ShouldUseDefinedBehavior()
-	{
-		MockBehavior behavior = MockBehavior.Default with
-		{
-			ThrowWhenNotSetup = true,
-		};
-		Mock.Factory factory = new(behavior);
-
-		Mock<IMyService> mock1 = factory.Create<IMyService>();
-		Mock<MyServiceBase, IMyService> mock2 = factory.Create<MyServiceBase, IMyService>();
-
-		await That(((IMock)mock1).Behavior).IsSameAs(behavior);
-		await That(((IMock)mock2).Behavior).IsSameAs(behavior);
-	}
-
-	[Fact]
 	public async Task Factory_Create_SealedClass_ShouldThrowMockException()
 	{
 		Mock.Factory factory = new(MockBehavior.Default);
@@ -105,7 +89,8 @@ public sealed partial class MockTests
 		Mock.Factory factory = new(MockBehavior.Default);
 
 		void Act()
-			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+			=> _ =
+				factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -118,7 +103,9 @@ public sealed partial class MockTests
 		Mock.Factory factory = new(MockBehavior.Default);
 
 		void Act()
-			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+			=> _ = factory
+				.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -131,7 +118,9 @@ public sealed partial class MockTests
 		Mock.Factory factory = new(MockBehavior.Default);
 
 		void Act()
-			=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+			=> _ = factory
+				.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -158,7 +147,8 @@ public sealed partial class MockTests
 		bool isDoSomethingCalled2 = false;
 		Mock.Factory factory = new(MockBehavior.Default);
 
-		var mock = factory.Create<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService>();
+		Mock<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService> mock =
+			factory.Create<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService>();
 
 		mock.SetupIMyService.Method.DoSomething(With.Any<int>()).Callback(() => isDoSomethingCalled1 = true);
 		mock.SetupIMyService__2.Method.DoSomething(With.Any<int>()).Callback(() => isDoSomethingCalled2 = true);
@@ -172,5 +162,21 @@ public sealed partial class MockTests
 
 		await That(isDoSomethingCalled1).IsTrue();
 		await That(isDoSomethingCalled2).IsTrue();
+	}
+
+	[Fact]
+	public async Task Factory_ShouldUseDefinedBehavior()
+	{
+		MockBehavior behavior = MockBehavior.Default with
+		{
+			ThrowWhenNotSetup = true,
+		};
+		Mock.Factory factory = new(behavior);
+
+		Mock<IMyService> mock1 = factory.Create<IMyService>();
+		Mock<MyServiceBase, IMyService> mock2 = factory.Create<MyServiceBase, IMyService>();
+
+		await That(((IMock)mock1).Behavior).IsSameAs(behavior);
+		await That(((IMock)mock2).Behavior).IsSameAs(behavior);
 	}
 }

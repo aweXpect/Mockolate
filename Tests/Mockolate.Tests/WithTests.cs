@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Mockolate.Verify;
 
 namespace Mockolate.Tests;
 
@@ -15,7 +14,7 @@ public sealed class WithTests
 	[InlineData(40, 42, false)]
 	public async Task Between_Exclusive_ShouldMatchExclusive(int minimum, int maximum, bool expectMatch)
 	{
-		var sut = With.ValueBetween(minimum).And(maximum).Exclusive();
+		With.BetweenParameter<int> sut = With.ValueBetween(minimum).And(maximum).Exclusive();
 
 		bool result = sut.Matches(42);
 
@@ -27,7 +26,7 @@ public sealed class WithTests
 	[Fact]
 	public async Task Between_MaximumLessThanMinimum_ShouldThrowArgumentOutOfRangeException()
 	{
-		void Act() => 
+		void Act() =>
 			_ = With.ValueBetween(42.0).And(41.0).Exclusive();
 
 		await That(Act).Throws<ArgumentOutOfRangeException>()
@@ -44,7 +43,7 @@ public sealed class WithTests
 	[InlineData(40, 41, false)]
 	public async Task Between_ShouldMatchInclusive(int minimum, int maximum, bool expectMatch)
 	{
-		var sut = With.ValueBetween(minimum).And(maximum);
+		With.BetweenParameter<int> sut = With.ValueBetween(minimum).And(maximum);
 
 		bool result = sut.Matches(42);
 
@@ -90,6 +89,32 @@ public sealed class WithTests
 
 		_ = constructors.Single().Invoke([]);
 	}
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task ToString_Between_Exclusive_ShouldMatchExpectedValue()
+	{
+		With.BetweenParameter<int> sut = With.ValueBetween(4).And(2 * 3).Exclusive();
+		string expectedValue = "With.ValueBetween<int>(4).And(2 * 3).Exclusive()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task ToString_Between_ShouldReturnExpectedValue()
+	{
+		With.BetweenParameter<int> sut = With.ValueBetween(4).And(2 * 3);
+		string expectedValue = "With.ValueBetween<int>(4).And(2 * 3)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedValue);
+	}
+#endif
 
 	[Fact]
 	public async Task ToString_ImplicitFromNull_ShouldBeNull()
@@ -168,32 +193,6 @@ public sealed class WithTests
 
 		await That(result).IsEqualTo(expectedValue);
 	}
-
-#if NET8_0_OR_GREATER
-	[Fact]
-	public async Task ToString_Between_ShouldReturnExpectedValue()
-	{
-		var sut = With.ValueBetween(4).And(2 * 3);
-		string expectedValue = "With.ValueBetween<int>(4).And(2 * 3)";
-
-		string? result = sut.ToString();
-
-		await That(result).IsEqualTo(expectedValue);
-	}
-#endif
-
-#if NET8_0_OR_GREATER
-	[Fact]
-	public async Task ToString_Between_Exclusive_ShouldMatchExpectedValue()
-	{
-		var sut = With.ValueBetween(4).And(2 * 3).Exclusive();
-		string expectedValue = "With.ValueBetween<int>(4).And(2 * 3).Exclusive()";
-
-		string? result = sut.ToString();
-
-		await That(result).IsEqualTo(expectedValue);
-	}
-#endif
 
 	[Fact]
 	public async Task ToString_WithRef_Invoked_ShouldReturnExpectedValue()

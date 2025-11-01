@@ -6,7 +6,8 @@ namespace Mockolate.Verify;
 public interface IMockSetIndexer<TMock>
 {
 	/// <summary>
-	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given <paramref name="value"/>.
+	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
+	///     <paramref name="value" />.
 	/// </summary>
 	VerificationResult<TMock> Set(With.Parameter? value, params With.Parameter?[] parameters);
 }

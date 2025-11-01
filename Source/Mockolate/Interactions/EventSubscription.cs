@@ -28,8 +28,5 @@ public class EventSubscription(int index, string name, object? target, MethodInf
 	public int Index { get; } = index;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"[{Index}] subscribe to event {Name}";
-	}
+	public override string ToString() => $"[{Index}] subscribe to event {Name}";
 }

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Mockolate.Internals;
 #if NET8_0_OR_GREATER
 using System.Numerics;
 #endif
-using System.Runtime.CompilerServices;
-using Mockolate.Internals;
 
 namespace Mockolate;
 
+#pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
 /// <summary>
 ///     Specify a matching condition for a method parameter.
 /// </summary>
@@ -34,7 +35,8 @@ public class With
 	/// <summary>
 	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
 	/// </summary>
-	public static Parameter<T> Matching<T>(Func<T, bool> predicate, [CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
+	public static Parameter<T> Matching<T>(Func<T, bool> predicate,
+		[CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
 		=> new PredicateParameter<T>(predicate, doNotPopulateThisValue);
 
 	/// <summary>
@@ -47,7 +49,8 @@ public class With
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
-	public static OutParameter<T> Out<T>(Func<T> setter, [CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+	public static OutParameter<T> Out<T>(Func<T> setter,
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new(setter, doNotPopulateThisValue);
 
 	/// <summary>
@@ -60,7 +63,8 @@ public class With
 	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
-	public static RefParameter<T> Ref<T>(Func<T, T> setter, [CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+	public static RefParameter<T> Ref<T>(Func<T, T> setter,
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new(_ => true, setter, null, doNotPopulateThisValue);
 
 	/// <summary>
@@ -69,7 +73,8 @@ public class With
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
 	public static RefParameter<T> Ref<T>(Func<T, bool> predicate, Func<T, T> setter,
-		[CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
 		=> new(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
 
@@ -80,27 +85,31 @@ public class With
 		=> new();
 
 	/// <summary>
-	///     Matches a parameter that is equal to <paramref name="value"/>.
+	///     Matches a parameter that is equal to <paramref name="value" />.
 	/// </summary>
-	public static Parameter<T> Value<T>(T value, [CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
+	public static Parameter<T> Value<T>(T value,
+		[CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
 		=> new ParameterEquals<T>(value, doNotPopulateThisValue);
 
 	/// <summary>
-	///     Matches a parameter that is equal to <paramref name="value"/> according to the <paramref name="comparer"/>.
+	///     Matches a parameter that is equal to <paramref name="value" /> according to the <paramref name="comparer" />.
 	/// </summary>
 	public static Parameter<T> Value<T>(T value, IEqualityComparer<T> comparer,
-		[CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue1 = "",
-		[CallerArgumentExpression(nameof(comparer))] string doNotPopulateThisValue2 = "")
+		[CallerArgumentExpression(nameof(value))]
+		string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression(nameof(comparer))]
+		string doNotPopulateThisValue2 = "")
 		=> new ParameterEquals<T>(value, doNotPopulateThisValue1, comparer, doNotPopulateThisValue2);
 
 #if NET8_0_OR_GREATER
 	/// <summary>
-	///     Matches a numeric parameter that is between <paramref name="minimum"/>…
+	///     Matches a numeric parameter that is between <paramref name="minimum"/>ï¿½
 	/// </summary>
 	/// <remarks>
 	///     By default, the comparison is inclusive of the <paramref name="minimum"/> and maximum values.
 	/// </remarks>
-	public static BetweenParameter<T>.Builder ValueBetween<T>(T minimum, [CallerArgumentExpression(nameof(minimum))] string doNotPopulateThisValue = "")
+	public static BetweenParameter<T>.Builder ValueBetween<T>(T minimum,
+		[CallerArgumentExpression(nameof(minimum))] string doNotPopulateThisValue = "")
 		where T : INumber<T>
 		=> new BetweenParameter<T>.Builder(minimum, doNotPopulateThisValue);
 
@@ -158,9 +167,10 @@ public class With
 		public class Builder(T minimum, string minimumExpression)
 		{
 			/// <summary>
-			///     …and <paramref name="maximum"/>.
+			///     ï¿½and <paramref name="maximum"/>.
 			/// </summary>
-			public BetweenParameter<T> And(T maximum, [CallerArgumentExpression(nameof(maximum))] string doNotPopulateThisValue = "")
+			public BetweenParameter<T> And(T maximum,
+				[CallerArgumentExpression(nameof(maximum))] string doNotPopulateThisValue = "")
 			{
 				if (maximum < minimum)
 				{
@@ -173,6 +183,7 @@ public class With
 	}
 #endif
 
+#pragma warning disable S1694 // Convert this 'abstract' class to an interface.
 	/// <summary>
 	///     Matches the method parameters against an expectation.
 	/// </summary>
@@ -198,6 +209,7 @@ public class With
 		/// </returns>
 		public abstract bool Matches(object? value);
 	}
+#pragma warning restore S1694 // Convert this 'abstract' class to an interface.
 
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
@@ -230,7 +242,9 @@ public class With
 		///     Implicitly converts to a <see cref="Parameter{T}" /> that compares the <paramref name="value" /> for equality.
 		/// </summary>
 		public static implicit operator Parameter<T>(T value)
-			=> new ParameterEquals<T>(value, GetValueExpression(value));
+		{
+			return new ParameterEquals<T>(value, GetValueExpression(value));
+		}
 
 		private static string GetValueExpression(T value)
 		{
@@ -263,10 +277,7 @@ public class With
 		public T GetValue() => setter();
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString()
-		{
-			return $"With.Out<{typeof(T).FormatType()}>({setterExpression})";
-		}
+		public override string ToString() => $"With.Out<{typeof(T).FormatType()}>({setterExpression})";
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
@@ -281,17 +292,18 @@ public class With
 		public override bool Matches(object? value) => true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString()
-		{
-			return $"With.Out<{typeof(T).FormatType()}>()";
-		}
+		public override string ToString() => $"With.Out<{typeof(T).FormatType()}>()";
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
-	public class RefParameter<T>(Func<T, bool> predicate, Func<T, T> setter, string? predicateExpression, string setterExpression) : Parameter
+	public class RefParameter<T>(
+		Func<T, bool> predicate,
+		Func<T, T> setter,
+		string? predicateExpression,
+		string setterExpression) : Parameter
 	{
 		/// <summary>
 		///     Checks if the <paramref name="value" /> is a matching parameter.
@@ -309,9 +321,7 @@ public class With
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-		{
-			return $"With.Ref<{typeof(T).FormatType()}>({(predicateExpression is null ? "" : $"{predicateExpression}, ")}{setterExpression})";
-		}
+			=> $"With.Ref<{typeof(T).FormatType()}>({(predicateExpression is null ? "" : $"{predicateExpression}, ")}{setterExpression})";
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
@@ -326,10 +336,7 @@ public class With
 		public override bool Matches(object? value) => true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString()
-		{
-			return $"With.Ref<{typeof(T).FormatType()}>()";
-		}
+		public override string ToString() => $"With.Ref<{typeof(T).FormatType()}>()";
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 
@@ -341,10 +348,7 @@ public class With
 	public record NamedParameter(string Name, Parameter Parameter)
 	{
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString()
-		{
-			return $"{Parameter} {Name}";
-		}
+		public override string ToString() => $"{Parameter} {Name}";
 	}
 
 	private sealed class AnyParameters : Parameters
@@ -359,10 +363,7 @@ public class With
 		protected override bool Matches(T value) => true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString()
-		{
-			return $"With.Any<{typeof(T).FormatType()}>()";
-		}
+		public override string ToString() => $"With.Any<{typeof(T).FormatType()}>()";
 	}
 
 	private sealed class NullParameter<T> : Parameter<T>
@@ -370,20 +371,18 @@ public class With
 		protected override bool Matches(T value) => value is null;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString()
-		{
-			return $"With.Null<{typeof(T).FormatType()}>()";
-		}
+		public override string ToString() => $"With.Null<{typeof(T).FormatType()}>()";
 	}
 
 	private sealed class ParameterEquals<T> : Parameter<T>
 	{
-		private readonly T _value;
-		private readonly string _valueExpression;
 		private readonly IEqualityComparer<T>? _comparer;
 		private readonly string? _comparerExpression;
+		private readonly T _value;
+		private readonly string _valueExpression;
 
-		public ParameterEquals(T value, string valueExpression, IEqualityComparer<T>? comparer = null, string? comparerExpression = null)
+		public ParameterEquals(T value, string valueExpression, IEqualityComparer<T>? comparer = null,
+			string? comparerExpression = null)
 		{
 			_value = value;
 			_valueExpression = valueExpression;
@@ -416,9 +415,7 @@ public class With
 	private sealed class PredicateParameter<T>(Func<T, bool> predicate, string predicateExpression) : Parameter<T>
 	{
 		protected override bool Matches(T value) => predicate(value);
-		public override string ToString()
-		{
-			return $"With.Matching<{typeof(T).FormatType()}>({predicateExpression})";
-		}
+		public override string ToString() => $"With.Matching<{typeof(T).FormatType()}>({predicateExpression})";
 	}
 }
+#pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

@@ -2,7 +2,7 @@
 
 internal class Program
 {
-	static void Main(string[] args)
+	private static void Main(string[] args)
 	{
 		Mock<IMyInterface> mock = Mock.Create<IMyInterface>();
 		mock.Setup.Method.MyMethod().Returns(2);

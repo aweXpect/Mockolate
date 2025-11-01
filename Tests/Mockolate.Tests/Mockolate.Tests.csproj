@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj" />
+		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj"/>
 		<ProjectReference Include="..\..\Source\Mockolate.SourceGenerators\Mockolate.SourceGenerators.csproj"
 						  OutputItemType="Analyzer"
-						  ReferenceOutputAssembly="false" />
+						  ReferenceOutputAssembly="false"/>
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers\Mockolate.Analyzers.csproj"
 						  PrivateAssets="all"
 						  ReferenceOutputAssembly="false"

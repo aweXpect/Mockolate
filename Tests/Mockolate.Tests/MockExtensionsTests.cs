@@ -1,13 +1,13 @@
 namespace Mockolate.Tests;
 
-public sealed partial class MockExtensionsTests
+public sealed class MockExtensionsTests
 {
 	[Fact]
 	public async Task ImplicitSetup_With1Type_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService>();
+		Mock<IMyMockExtensionsService> mock = Mock.Create<IMyMockExtensionsService>();
 
-		var result = mock.Setup(
+		Mock<IMyMockExtensionsService> result = mock.Setup(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 
@@ -19,9 +19,10 @@ public sealed partial class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With2Types_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2>();
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2> mock =
+			Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2>();
 
-		var result = mock.Setup(
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2> result = mock.Setup(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 
@@ -33,9 +34,10 @@ public sealed partial class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With3Types_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3>();
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3> mock =
+			Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3>();
 
-		var result = mock.Setup(
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3> result = mock.Setup(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 
@@ -47,11 +49,15 @@ public sealed partial class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With4Types_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4>();
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4>
+			mock = Mock
+				.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3,
+					IMyMockExtensionsService4>();
 
-		var result = mock.Setup(
-			m => m.Method.DoSomething1().Returns(3),
-			m => m.Method.DoSomething2().Returns(5));
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4>
+			result = mock.Setup(
+				m => m.Method.DoSomething1().Returns(3),
+				m => m.Method.DoSomething2().Returns(5));
 
 		await That(result).IsSameAs(mock);
 		await That(mock.Subject.DoSomething1()).IsEqualTo(3);
@@ -61,9 +67,13 @@ public sealed partial class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With5Types_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4, IMyMockExtensionsService5>();
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+			IMyMockExtensionsService5> mock =
+			Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3,
+				IMyMockExtensionsService4, IMyMockExtensionsService5>();
 
-		var result = mock.Setup(
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+			IMyMockExtensionsService5> result = mock.Setup(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 
@@ -75,9 +85,13 @@ public sealed partial class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With6Types_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4, IMyMockExtensionsService5, IMyMockExtensionsService6>();
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+			IMyMockExtensionsService5, IMyMockExtensionsService6> mock =
+			Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3,
+				IMyMockExtensionsService4, IMyMockExtensionsService5, IMyMockExtensionsService6>();
 
-		var result = mock.Setup(
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+			IMyMockExtensionsService5, IMyMockExtensionsService6> result = mock.Setup(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 
@@ -89,9 +103,14 @@ public sealed partial class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With7Types_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4, IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7>();
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+			IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7> mock =
+			Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3,
+				IMyMockExtensionsService4, IMyMockExtensionsService5, IMyMockExtensionsService6,
+				IMyMockExtensionsService7>();
 
-		var result = mock.Setup(
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+			IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7> result = mock.Setup(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 
@@ -103,11 +122,20 @@ public sealed partial class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With8Types_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4, IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7, IMyMockExtensionsService8>();
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+				IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7,
+				IMyMockExtensionsService8>
+			mock = Mock
+				.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3,
+					IMyMockExtensionsService4, IMyMockExtensionsService5, IMyMockExtensionsService6,
+					IMyMockExtensionsService7, IMyMockExtensionsService8>();
 
-		var result = mock.Setup(
-			m => m.Method.DoSomething1().Returns(3),
-			m => m.Method.DoSomething2().Returns(5));
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+				IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7,
+				IMyMockExtensionsService8>
+			result = mock.Setup(
+				m => m.Method.DoSomething1().Returns(3),
+				m => m.Method.DoSomething2().Returns(5));
 
 		await That(result).IsSameAs(mock);
 		await That(mock.Subject.DoSomething1()).IsEqualTo(3);
@@ -117,9 +145,16 @@ public sealed partial class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With9Types_ShouldSetupAndReturnTheMock()
 	{
-		var mock = Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4, IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7, IMyMockExtensionsService8, IMyMockExtensionsService9>();
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+			IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7, IMyMockExtensionsService8,
+			IMyMockExtensionsService9> mock = Mock
+			.Create<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3,
+				IMyMockExtensionsService4, IMyMockExtensionsService5, IMyMockExtensionsService6,
+				IMyMockExtensionsService7, IMyMockExtensionsService8, IMyMockExtensionsService9>();
 
-		var result = mock.Setup(
+		Mock<IMyMockExtensionsService, IMyMockExtensionsService2, IMyMockExtensionsService3, IMyMockExtensionsService4,
+			IMyMockExtensionsService5, IMyMockExtensionsService6, IMyMockExtensionsService7, IMyMockExtensionsService8,
+			IMyMockExtensionsService9> result = mock.Setup(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 

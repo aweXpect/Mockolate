@@ -17,8 +17,5 @@ public class PropertyGetterAccess(int index, string propertyName) : IInteraction
 	public int Index { get; } = index;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"[{Index}] get property {Name}";
-	}
+	public override string ToString() => $"[{Index}] get property {Name}";
 }

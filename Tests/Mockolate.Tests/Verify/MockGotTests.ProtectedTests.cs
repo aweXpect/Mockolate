@@ -15,7 +15,7 @@ public sealed partial class MockGotTests
 			IMockInteractions interactions = mockInteractions;
 			MyMock<int> mock = new(1);
 			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			MockGot<int, Mock<int>> inner = new MockGot<int, Mock<int>>(verify);
+			MockGot<int, Mock<int>> inner = new(verify);
 			IMockGot<MockVerify<int, Mock<int>>> mockGot = inner;
 			IMockGot<MockVerify<int, Mock<int>>> @protected = new ProtectedMockGot<int, Mock<int>>(inner);
 			interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));

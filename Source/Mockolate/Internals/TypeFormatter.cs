@@ -66,7 +66,7 @@ internal static class TypeFormatter
 
 	internal static string FormatType(this Type value)
 	{
-		var stringBuilder = new StringBuilder();
+		StringBuilder? stringBuilder = new();
 		FormatType(value, stringBuilder);
 		return stringBuilder.ToString();
 	}
@@ -138,6 +138,7 @@ internal static class TypeFormatter
 				stringBuilder.Append(underlyingAlias).Append('?');
 				return true;
 			}
+
 			FormatType(underlyingType, stringBuilder);
 			stringBuilder.Append('?');
 			return true;

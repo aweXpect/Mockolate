@@ -22,8 +22,5 @@ public class PropertySetterAccess(int index, string propertyName, object? value)
 	public int Index { get; } = index;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"[{Index}] set property {Name} to {Value ?? "null"}";
-	}
+	public override string ToString() => $"[{Index}] set property {Name} to {Value ?? "null"}";
 }

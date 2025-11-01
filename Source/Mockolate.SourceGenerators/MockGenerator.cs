@@ -43,7 +43,8 @@ public class MockGenerator : IIncrementalGenerator
 			context.AddSource($"For{mockToGenerate.Name}.g.cs",
 				SourceText.From(Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
 			context.AddSource($"For{mockToGenerate.Name}.Extensions.g.cs",
-				SourceText.From(Sources.ForMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
+				SourceText.From(Sources.ForMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass),
+					Encoding.UTF8));
 		}
 
 
@@ -55,9 +56,9 @@ public class MockGenerator : IIncrementalGenerator
 
 		HashSet<int> indexerSetups = new();
 		foreach (int item in mocksToGenerate
-					 .SelectMany(m => m.AllProperties())
-					 .Where(m => m.IndexerParameters?.Count > 4)
-					 .Select(m => m.IndexerParameters!.Value.Count))
+			         .SelectMany(m => m.AllProperties())
+			         .Where(m => m.IndexerParameters?.Count > 4)
+			         .Select(m => m.IndexerParameters!.Value.Count))
 		{
 			indexerSetups.Add(item);
 		}
@@ -87,14 +88,16 @@ public class MockGenerator : IIncrementalGenerator
 		if (methodSetups.Any(x => x.Item1 > dotNetFuncActionParameterLimit))
 		{
 			context.AddSource("MethodSetups.ActionFunc.g.cs",
-				SourceText.From(Sources.MethodSetupsActionFunc(methodSetups.Where(x => x.Item1 > dotNetFuncActionParameterLimit).Select(x => x.Item1).Distinct()), Encoding.UTF8));
+				SourceText.From(
+					Sources.MethodSetupsActionFunc(methodSetups.Where(x => x.Item1 > dotNetFuncActionParameterLimit)
+						.Select(x => x.Item1).Distinct()), Encoding.UTF8));
 		}
 
 		if (methodSetups.Any(x => !x.Item2))
 		{
 			context.AddSource("ReturnsAsyncExtensions.g.cs",
 				SourceText.From(Sources.ReturnsAsyncExtensions(methodSetups
-				.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
+					.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
 		}
 
 		context.AddSource("MockRegistration.g.cs",

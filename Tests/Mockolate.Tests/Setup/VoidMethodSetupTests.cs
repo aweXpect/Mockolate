@@ -1274,7 +1274,8 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Subject.Method5(1, 2, 3, 4, 5);
@@ -1311,7 +1312,8 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Subject.Method4(1, 2, 3, 4);
@@ -1331,7 +1333,8 @@ public class VoidMethodSetupTests
 			int receivedValue5 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) =>
 				{
 					callCount++;
@@ -1381,7 +1384,8 @@ public class VoidMethodSetupTests
 			int callCount = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) => { callCount++; });
 
 			sut.Subject.Method4(1, 2, 3, 4);
@@ -1395,7 +1399,8 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.DoesNotThrow()
 				.Throws(new Exception("foo"))
 				.DoesNotThrow();
@@ -1418,7 +1423,8 @@ public class VoidMethodSetupTests
 			int callCount2 = 0;
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; });
 
@@ -1536,7 +1542,8 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Throws(() => new Exception("foo"));
 
 			void Act()
@@ -1550,7 +1557,8 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
 			void Act()
@@ -1564,7 +1572,8 @@ public class VoidMethodSetupTests
 		{
 			Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Throws(new Exception("foo"));
 
 			void Act()

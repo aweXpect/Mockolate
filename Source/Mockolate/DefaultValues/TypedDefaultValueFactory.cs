@@ -3,7 +3,8 @@
 namespace Mockolate.DefaultValues;
 
 /// <summary>
-///     A <see cref="IDefaultValueFactory"/> that returns a specified <paramref name="value"/> for the given type parameter <typeparamref name="T"/>.
+///     A <see cref="IDefaultValueFactory" /> that returns a specified <paramref name="value" /> for the given type
+///     parameter <typeparamref name="T" />.
 /// </summary>
 internal class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
 {

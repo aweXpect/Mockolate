@@ -3,7 +3,8 @@ using Mockolate.Interactions;
 namespace Mockolate.Verify;
 
 /// <summary>
-///     Verifies the <see cref="Interactions"/> with the mocked subject in the <typeparamref name="TMock"/> <see cref="Mock"/>.
+///     Verifies the <see cref="Interactions" /> with the mocked subject in the <typeparamref name="TMock" />
+///     <see cref="Mock" />.
 /// </summary>
 public interface IMockVerify<out TMock> : IMockVerify
 {
@@ -14,7 +15,7 @@ public interface IMockVerify<out TMock> : IMockVerify
 }
 
 /// <summary>
-///     Verifies the <see cref="Interactions"/> with the mocked subject.
+///     Verifies the <see cref="Interactions" /> with the mocked subject.
 /// </summary>
 public interface IMockVerify
 {

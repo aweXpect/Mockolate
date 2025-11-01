@@ -58,6 +58,6 @@ public sealed partial class MockSetTests
 		VerificationResult<MockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", With.Any<int>());
 
 		await That(result).Never();
-		await That((((IVerificationResult)result).Expectation)).IsEqualTo("set property bar to value With.Any<int>()");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value With.Any<int>()");
 	}
 }

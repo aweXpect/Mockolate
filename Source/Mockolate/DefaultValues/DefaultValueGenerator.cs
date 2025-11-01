@@ -12,7 +12,7 @@ namespace Mockolate.DefaultValues;
 /// </summary>
 public class DefaultValueGenerator : IDefaultValueGenerator
 {
-	private static List<IDefaultValueFactory> _factories = new()
+	private static readonly List<IDefaultValueFactory> _factories = new()
 	{
 		new TypedDefaultValueFactory<string>(""),
 		new TypedDefaultValueFactory<Task>(Task.CompletedTask),
@@ -24,7 +24,7 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 	public T Generate<T>()
 	{
 		if (TryGenerate(typeof(T), out object? value) &&
-			value is T typedValue)
+		    value is T typedValue)
 		{
 			return typedValue;
 		}
@@ -33,12 +33,9 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="defaultValueFactory"/> to provide default values for a specific type.
+	///     Registers a <paramref name="defaultValueFactory" /> to provide default values for a specific type.
 	/// </summary>
-	public static void Register(IDefaultValueFactory defaultValueFactory)
-	{
-		_factories.Add(defaultValueFactory);
-	}
+	public static void Register(IDefaultValueFactory defaultValueFactory) => _factories.Add(defaultValueFactory);
 
 	/// <summary>
 	///     Tries to generate a default value for the specified type.

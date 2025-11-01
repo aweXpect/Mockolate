@@ -36,18 +36,18 @@ public class MockInteractions : IMockInteractions
 	public IEnumerable<IInteraction> Interactions
 		=> _interactions.Values.OrderBy(x => x.Index);
 
-	/// <summary>
-	///     Gets the next index for an interaction.
-	/// </summary>
-	public int GetNextIndex()
-		=> Interlocked.Increment(ref _index);
-
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction(IInteraction)" />
 	IInteraction IMockInteractions.RegisterInteraction(IInteraction interaction)
 	{
 		_interactions.TryAdd(interaction.Index, interaction);
 		return interaction;
 	}
+
+	/// <summary>
+	///     Gets the next index for an interaction.
+	/// </summary>
+	public int GetNextIndex()
+		=> Interlocked.Increment(ref _index);
 
 	internal void Verified(IEnumerable<IInteraction> interactions)
 	{

@@ -11,6 +11,16 @@ namespace Mockolate.Events;
 public interface IMockRaises
 {
 	/// <summary>
+	///     The setup of the mock.
+	/// </summary>
+	IMockSetup Setup { get; }
+
+	/// <summary>
+	///     The interactions recorded on the mock.
+	/// </summary>
+	MockInteractions Interactions { get; }
+
+	/// <summary>
 	///     Raises the event with <paramref name="eventName" /> and the given <paramref name="parameters" />.
 	/// </summary>
 	void Raise(string eventName, params object?[] parameters);
@@ -26,14 +36,4 @@ public interface IMockRaises
 	///     by the given <paramref name="name" />.
 	/// </summary>
 	void RemoveEvent(string name, object? target, MethodInfo? method);
-
-	/// <summary>
-	///     The setup of the mock.
-	/// </summary>
-	IMockSetup Setup { get; }
-
-	/// <summary>
-	///     The interactions recorded on the mock.
-	/// </summary>
-	MockInteractions Interactions { get; }
 }

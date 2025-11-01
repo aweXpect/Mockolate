@@ -24,7 +24,5 @@ public class MethodInvocation(int index, string name, object?[] parameters) : II
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-	{
-		return $"[{Index}] invoke method {Name}({string.Join(", ", Parameters.Select(p => p?.ToString() ?? "null"))})";
-	}
+		=> $"[{Index}] invoke method {Name}({string.Join(", ", Parameters.Select(p => p?.ToString() ?? "null"))})";
 }

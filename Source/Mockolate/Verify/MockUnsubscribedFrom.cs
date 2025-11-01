@@ -15,12 +15,12 @@ public class MockUnsubscribedFrom<T, TMock>(MockVerify<T, TMock> verify) : IMock
 	VerificationResult<MockVerify<T, TMock>> IMockUnsubscribedFrom<MockVerify<T, TMock>>.Event(string eventName)
 	{
 		MockInteractions interactions = ((IMockVerify<TMock>)Verify).Interactions;
-		return new(Verify, interactions,
+		return new VerificationResult<MockVerify<T, TMock>>(Verify, interactions,
 			interactions.Interactions
 				.OfType<EventUnsubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
 				.ToArray(),
-		$"unsubscribed from event {eventName.SubstringAfterLast('.')}");
+			$"unsubscribed from event {eventName.SubstringAfterLast('.')}");
 	}
 }

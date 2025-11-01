@@ -104,10 +104,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 		=> value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"{FormatType(typeof(TReturn))} {name}()";
-	}
+	public override string ToString() => $"{FormatType(typeof(TReturn))} {name}()";
 }
 
 /// <summary>
@@ -261,10 +258,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"{FormatType(typeof(TReturn))} {name}({match1})";
-	}
+	public override string ToString() => $"{FormatType(typeof(TReturn))} {name}({match1})";
 }
 
 /// <summary>
@@ -426,10 +420,7 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"{FormatType(typeof(TReturn))} {name}({match1}, {match2})";
-	}
+	public override string ToString() => $"{FormatType(typeof(TReturn))} {name}({match1}, {match2})";
 }
 
 /// <summary>
@@ -571,7 +562,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 			return result;
 		}
 
-		throw new MockException($"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
+		throw new MockException(
+			$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
 	}
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
@@ -601,10 +593,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"{FormatType(typeof(TReturn))} {name}({match1}, {match2}, {match3})";
-	}
+	public override string ToString() => $"{FormatType(typeof(TReturn))} {name}({match1}, {match2}, {match3})";
 }
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
@@ -755,7 +744,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 			return result;
 		}
 
-		throw new MockException($"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
+		throw new MockException(
+			$"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.");
 	}
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
@@ -786,8 +776,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-	{
-		return $"{FormatType(typeof(TReturn))} {name}({match1}, {match2}, {match3}, {match4})";
-	}
+		=> $"{FormatType(typeof(TReturn))} {name}({match1}, {match2}, {match3}, {match4})";
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters

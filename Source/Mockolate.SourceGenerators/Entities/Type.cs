@@ -20,6 +20,7 @@ internal record Type
 		{
 			ElementType = new Type(arrayType.ElementType);
 		}
+
 		IsTypeParameter = typeSymbol.TypeKind == TypeKind.TypeParameter;
 		if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
 		{

@@ -16,7 +16,7 @@ public sealed class StringExtensionsTests
 		VerificationResult<MockVerify<int, Mock<int>>> result = mockGot.Property("SomeNameWithoutADot");
 
 		result.Never();
-		await That((((IVerificationResult)result).Expectation)).IsEqualTo("got property SomeNameWithoutADot");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property SomeNameWithoutADot");
 	}
 
 	[Fact]
@@ -29,6 +29,6 @@ public sealed class StringExtensionsTests
 		VerificationResult<MockVerify<int, Mock<int>>> result = mockGot.Property(".bar");
 
 		result.Never();
-		await That((((IVerificationResult)result).Expectation)).IsEqualTo("got property bar");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property bar");
 	}
 }

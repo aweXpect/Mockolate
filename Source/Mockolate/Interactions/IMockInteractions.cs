@@ -6,7 +6,7 @@ namespace Mockolate.Interactions;
 public interface IMockInteractions
 {
 	/// <summary>
-	///     Registers an <paramref name="interaction"/>.
+	///     Registers an <paramref name="interaction" />.
 	/// </summary>
 	IInteraction RegisterInteraction(IInteraction interaction);
 }
