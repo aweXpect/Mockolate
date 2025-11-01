@@ -132,8 +132,7 @@ public sealed partial class MockBehaviorTests
 	public async Task DefaultValue_WithTaskInt_ShouldReturnZero()
 	{
 		Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
-		MockBehavior sut = ((IMock)mock).Behavior;
-
+		
 		Task<int> result = mock.Subject.IntTask;
 
 		await That(result.IsCompleted).IsTrue();
@@ -144,8 +143,7 @@ public sealed partial class MockBehaviorTests
 	public async Task DefaultValue_WithTaskIntArray_ShouldReturnZero()
 	{
 		Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
-		MockBehavior sut = ((IMock)mock).Behavior;
-
+		
 		Task<int[]> result = mock.Subject.IntArrayTask;
 
 		await That(result.IsCompleted).IsTrue();
@@ -156,8 +154,7 @@ public sealed partial class MockBehaviorTests
 	public async Task DefaultValue_WithValueTaskInt_ShouldReturnZero()
 	{
 		Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
-		MockBehavior sut = ((IMock)mock).Behavior;
-
+		
 		ValueTask<int> result = mock.Subject.IntValueTask;
 
 		await That(result.IsCompleted).IsTrue();
@@ -168,8 +165,7 @@ public sealed partial class MockBehaviorTests
 	public async Task DefaultValue_WithValueTaskIntArray_ShouldReturnZero()
 	{
 		Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
-		MockBehavior sut = ((IMock)mock).Behavior;
-
+		
 		ValueTask<int[]> result = mock.Subject.IntArrayValueTask;
 
 		await That(result.IsCompleted).IsTrue();
@@ -191,7 +187,6 @@ public sealed partial class MockBehaviorTests
 	public async Task DefaultValue_WithValueTuple8_ShouldReturnValueTupleWithDefaultValues()
 	{
 		Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
-		MockBehavior sut = ((IMock)mock).Behavior;
 
 		(int V1, string V2, int V3, string V4, int V5, string V6, int V7, string V8) result = mock.Subject.ValueTuple8;
 

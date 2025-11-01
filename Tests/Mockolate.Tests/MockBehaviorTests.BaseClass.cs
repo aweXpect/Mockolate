@@ -36,7 +36,7 @@ public sealed partial class MockBehaviorTests
 	{
 		Mock<MyBaseClassWithVirtualCalls> mock = Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
 
-		int[] result = mock.Subject.VirtualMethod();
+		_ = mock.Subject.VirtualMethod();
 
 		await That(mock.Subject.VirtualMethodCallCount).IsEqualTo(0);
 	}

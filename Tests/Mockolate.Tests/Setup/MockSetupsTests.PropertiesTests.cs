@@ -265,7 +265,6 @@ public sealed partial class MockSetupsTests
 		{
 			Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
 			IMockSetup setup = mock.Setup;
-			IMock sut = mock;
 
 			setup.RegisterProperty("my.property", new PropertySetup<int>());
 

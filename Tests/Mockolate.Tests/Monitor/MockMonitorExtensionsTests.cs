@@ -38,7 +38,7 @@ public sealed class MockMonitorExtensionsTests
 
 		mock.Subject.IsValid(1);
 		mock.Subject.IsValid(2);
-		IDisposable disposable = mock.Monitor(out MockMonitor<IMyService, Mock<IMyService>> monitor);
+		using IDisposable disposable = mock.Monitor(out MockMonitor<IMyService, Mock<IMyService>> monitor);
 		mock.Subject.IsValid(3);
 		mock.Subject.IsValid(4);
 
