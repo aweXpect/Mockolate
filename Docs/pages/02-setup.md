@@ -21,9 +21,9 @@ mock.Setup.Method.Dispense("Dark", With.Any<int>())
         return false;
     });
 
-// Setup method to throw
+// Setup method with callback
 mock.Setup.Method.Dispense("White", With.Any<int>())
-    .Callback((type, amount) => Console.WriteLine($"Disposed {amount} {type} chocolate."));
+    .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
 mock.Setup.Method.Dispense("Green", With.Any<int>())

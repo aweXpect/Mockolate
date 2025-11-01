@@ -58,7 +58,7 @@ Framework 4.8.
    // Verify: Check interactions
    mock.Verify.Invoked.Dispense("Dark", With.Any<int>()).Exactly(3);
    
-   // Output: "Dispensed events: 9. Got chocolate? True, True, False"
+   // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
 
    public delegate void ChocolateDispensedDelegate(string type, int amount);
@@ -160,9 +160,9 @@ mock.Setup.Method.Dispense("Dark", With.Any<int>())
         return false;
     });
 
-// Setup method to throw
+// Setup method with callback
 mock.Setup.Method.Dispense("White", With.Any<int>())
-    .Callback((type, amount) => Console.WriteLine($"Disposed {amount} {type} chocolate."));
+    .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
 mock.Setup.Method.Dispense("Green", With.Any<int>())
