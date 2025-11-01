@@ -19,10 +19,49 @@ Framework 4.8.
    dotnet add package Mockolate
    ```
 
-2. Create a mock
+2. Create and use the mock
    ```csharp
    using Mockolate;
    
-   var mock = Mock.Create<IMyInterface>();
+   public interface IChocolateDispenser
+   {
+       int Chocolates { get; set; }
+       void Refill(int count);
+       bool Dispense(int count);
+   }
+   
+   // Create a mock for IChocolateDispenser
+   var mock = Mock.Create<IChocolateDispenser>();
+   
+   // Setup: Refill increases Chocolates property
+   mock.Setup.Method.Refill(With.Any<int>())
+      .Callback((int count) => mock.Subject.Chocolates += count);
+   
+   // Setup: Dispense decreases Chocolates if enough, returns true/false
+   mock.Setup.Method.Dispense(With.Any<int>())
+   	.Returns((int count) =>
+   	{
+   		var current = mock.Subject.Chocolates;
+   		if (current >= count)
+   		{
+   			mock.Subject.Chocolates = current - count;
+   			return true;
+   		}
+   		return false;
+   	});
+   
+   // Use the mock
+   mock.Subject.Refill(8);
+   mock.Subject.Refill(10);
+   mock.Subject.Dispense(6);
+   var gotChocolates = mock.Subject.Dispense(3);
+   mock.Subject.Dispense(4);
+   
+   // Verify that methods were called as expected
+   mock.Verify.Invoked.Refill(10).AtLeastOnce();
+   mock.Verify.Invoked.Dispense(With.Any<int>()).Twice();
+   
+   // Output: "Chocolates left: 5. Did I get my sweet treat? True (If not, I demand a recount!)"
+   Console.WriteLine($"Chocolates left: {mock.Subject.Chocolates}. Did I get my sweet treat? {gotChocolates} (If not, I demand a recount!)");
    ```
 
