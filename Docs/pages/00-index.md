@@ -52,8 +52,7 @@ Framework 4.8.
    bool gotChoc3 = mock.Subject.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   mock.Verify.Invoked.Dispense("Dark", 8).AtLeastOnce();
-   mock.Verify.Invoked.Dispense("Dark", 6).AtLeastOnce();
+   mock.Verify.Invoked.Dispense("Dark", With.Any<int>()).Exactly(3);
    
    // Output: "Dispensed events: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
@@ -61,7 +60,8 @@ Framework 4.8.
    public delegate void ChocolateDispensedDelegate(string type, int amount);
    public interface IChocolateDispenser
    {
-       int this[string type] { get;set; }
+       int this[string type] { get; set; }
+       int TotalDispensed { get; set; }
        bool Dispense(string type, int amount);
        event ChocolateDispensedDelegate ChocolateDispensed;
    }
