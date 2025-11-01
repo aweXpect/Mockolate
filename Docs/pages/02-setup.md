@@ -1,4 +1,4 @@
-# Set up mocks
+# Setup
 
 Set up return values or behaviors for methods, properties, and indexers on your mock. Control how the mock responds to calls in your tests.
 

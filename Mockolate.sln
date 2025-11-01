@@ -78,10 +78,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{998DB807-840E-4E00-956E-350FDA8C851B}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\pages\00-index.md = Docs\pages\00-index.md
-		Docs\pages\01-mock-creation.md = Docs\pages\01-mock-creation.md
+		Docs\pages\01-create-mocks.md = Docs\pages\01-create-mocks.md
 		Docs\pages\02-setup.md = Docs\pages\02-setup.md
-		Docs\pages\03-events.md = Docs\pages\03-events.md
-		Docs\pages\04-verification.md = Docs\pages\04-verification.md
+		Docs\pages\03-mock-events.md = Docs\pages\03-mock-events.md
+		Docs\pages\04-verify-interactions.md = Docs\pages\04-verify-interactions.md
 	EndProjectSection
 EndProject
 Global
