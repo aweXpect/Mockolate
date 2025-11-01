@@ -19,14 +19,14 @@ Supported call count verifications in the `Mockolate.Verify` namespace:
 You can verify that methods were invoked with specific arguments and how many times:
 
 ```csharp
-// Verify that AddUser("Bob") was invoked at least once
-mock.Verify.Invoked.AddUser("Bob").AtLeastOnce();
+// Verify that Dispense("Dark", 5) was invoked at least once
+mock.Verify.Invoked.Dispense("Dark", 5).AtLeastOnce();
 
-// Verify that TryDelete was never invoked with the given id and any out parameter
-mock.Verify.Invoked.TryDelete(id, With.Out<User?>()).Never();
+// Verify that Dispense was never invoked with "White" and any amount
+mock.Verify.Invoked.Dispense("White", With.Any<int>()).Never();
 
-// Verify that DoSomething was invoked exactly twice with any int argument
-mock.Verify.Invoked.DoSomething(With.Any<int>()).Exactly(2);
+// Verify that Dispense was invoked exactly twice with any type and any amount
+mock.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>()).Exactly(2);
 ```
 
 ### Argument Matchers
@@ -46,8 +46,8 @@ You can use argument matchers from the `With` class to verify calls with flexibl
 **Example:**
 
 ```csharp
-mock.Verify.Invoked.DoSomething(With.Matching<int>(x => x > 10)).Once();
-mock.Verify.Invoked.DoSomething(With.ValueBetween(1).And(5)).AtLeastOnce();
+mock.Verify.Invoked.Dispense(With.Matching<string>(t => t.StartsWith("D")), With.ValueBetween(1).And(10)).Once();
+mock.Verify.Invoked.Dispense("Milk", With.ValueBetween(1).And(5)).AtLeastOnce();
 ```
 
 ## Properties
@@ -55,11 +55,11 @@ mock.Verify.Invoked.DoSomething(With.ValueBetween(1).And(5)).AtLeastOnce();
 You can verify access to property getter and setter:
 
 ```csharp
-// Verify that the property 'Name' was read at least once
-mock.Verify.Got.Name().AtLeastOnce();
+// Verify that the property 'TotalDispensed' was read at least once
+mock.Verify.Got.TotalDispensed().AtLeastOnce();
 
-// Verify that the property 'Age' was set to 42 exactly once
-mock.Verify.Set.Age(42).Once();
+// Verify that the property 'TotalDispensed' was set to 42 exactly once
+mock.Verify.Set.TotalDispensed(42).Once();
 ```
 
 **Note:**  
@@ -70,11 +70,11 @@ The setter value also supports argument matchers.
 You can verify access to indexer getter and setter:
 
 ```csharp
-// Verify that the indexer was read with key "foo" exactly once
-mock.Verify.GotIndexer("foo").Once();
+// Verify that the indexer was read with key "Dark" exactly once
+mock.Verify.GotIndexer("Dark").Once();
 
-// Verify that the indexer was set with key "bar" to value 123 at least once
-mock.Verify.SetIndexer("bar", 123).AtLeastOnce();
+// Verify that the indexer was set with key "Milk" to value 7 at least once
+mock.Verify.SetIndexer("Milk", 7).AtLeastOnce();
 ```
 
 **Note:**  
@@ -85,11 +85,11 @@ The keys and value also supports argument matchers.
 You can verify event subscriptions and unsubscriptions:
 
 ```csharp
-// Verify that the event 'UsersChanged' was subscribed to at least once
-mock.Verify.SubscribedTo.UsersChanged().AtLeastOnce();
+// Verify that the event 'ChocolateDispensed' was subscribed to at least once
+mock.Verify.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 
-// Verify that the event 'UsersChanged' was unsubscribed from exactly once
-mock.Verify.UnsubscribedFrom.UsersChanged().Once();
+// Verify that the event 'ChocolateDispensed' was unsubscribed from exactly once
+mock.Verify.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
 
 ## Call Ordering
@@ -97,17 +97,17 @@ mock.Verify.UnsubscribedFrom.UsersChanged().Once();
 Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
-mock.Verify.Invoked.AddUser("Alice").Then(
-    m => m.Invoked.DeleteUser("Alice")
+mock.Verify.Invoked.Dispense("Dark", 2).Then(
+    m => m.Invoked.Dispense("Dark", 3)
 );
 ```
 
 You can chain multiple calls for strict order verification:
 
 ```csharp
-mock.Verify.Invoked.DoSomething(1).Then(
-    m => m.Invoked.DoSomething(2),
-    m => m.Invoked.DoSomething(3));
+mock.Verify.Invoked.Dispense("Dark", 1).Then(
+    m => m.Invoked.Dispense("Milk", 2),
+    m => m.Invoked.Dispense("White", 3));
 ```
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.

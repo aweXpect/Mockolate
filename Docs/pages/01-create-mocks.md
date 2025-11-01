@@ -3,13 +3,19 @@
 You can create mocks for interfaces and classes. For classes without a default constructor, use `BaseClass.WithConstructorParameters(...)` to provide constructor arguments:
 
 ```csharp
-var mock = Mock.Create<IMyInterface>();
-var classMock = Mock.Create<MyVirtualClass>();
+// Create a mock for an interface
+var mock = Mock.Create<IChocolateDispenser>();
+
+// Create a mock for a class
+var classMock = Mock.Create<MyChocolateDispenser>();
 
 // For classes without a default constructor:
-var classWithArgsMock = Mock.Create<MyClassWithCtor>(
-    BaseClass.WithConstructorParameters("arg1", 42)
+var classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
+    BaseClass.WithConstructorParameters("Dark", 42)
 );
+
+// Specify up to 8 additional interfaces for the mock:
+var mock3 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**
@@ -21,11 +27,11 @@ var classWithArgsMock = Mock.Create<MyClassWithCtor>(
 You can control the default behavior of the mock by providing a `MockBehavior`:
 
 ```csharp
-var strictMock = Mock.Create<IMyInterface>(new MockBehavior { ThrowWhenNotSetup = true });
+var strictMock = Mock.Create<IChocolateDispenser>(new MockBehavior { ThrowWhenNotSetup = true });
 
 // For classes with constructor parameters and custom behavior:
-var classMock = Mock.Create<MyVirtualClass>(
-    BaseClass.WithConstructorParameters("arg1", 42),
+var classMock = Mock.Create<MyChocolateDispenser>(
+    BaseClass.WithConstructorParameters("Dark", 42),
     new MockBehavior { ThrowWhenNotSetup = true }
 );
 ```
@@ -51,7 +57,6 @@ Use `Mock.Factory` to create multiple mocks with a shared behavior:
 var behavior = new MockBehavior { ThrowWhenNotSetup = true };
 var factory = new Mock.Factory(behavior);
 
-var mock1 = factory.Create<IMyInterface>();
-var mock2 = factory.Create<MyVirtualClass>();
-var mock3 = factory.Create<MyClass, IMyInterface, IAnotherInterface>();
+var mock1 = factory.Create<IChocolateDispenser>();
+var mock2 = factory.Create<ILemonadeDispenser>();
 ```

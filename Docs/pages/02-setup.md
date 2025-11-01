@@ -7,17 +7,27 @@ Set up return values or behaviors for methods, properties, and indexers on your 
 Use `mock.Setup.Method.MethodName(...)` to set up methods. You can specify argument matchers for each parameter.
 
 ```csharp
-mock.Setup.Method.AddUser(With.Any<string>())
-    .Returns(name => new User(Guid.NewGuid(), name));
+// Setup Dispense to decrease stock and raise event
+mock.Setup.Method.Dispense("Dark", With.Any<int>())
+    .Returns((type, amount) =>
+    {
+        var current = mock.Subject[type];
+        if (current >= amount)
+        {
+            mock.Subject[type] = current - amount;
+            mock.Raise.ChocolateDispensed(type, amount);
+            return true;
+        }
+        return false;
+    });
 
-mock.Setup.Method.TryDelete(With.Any<Guid>(), With.Out<User?>(() => new User(id, "Alice")))
-    .Returns(true);
+// Setup method to throw
+mock.Setup.Method.Dispense("White", With.Any<int>())
+    .Callback((type, amount) => Console.WriteLine($"Disposed {amount} {type} chocolate."));
 
-mock.Setup.Method.DoSomething(With.Matching<int>(x => x > 0))
-    .Throws(() => new InvalidOperationException());
-
-mock.Setup.Method.DoWork()
-    .Callback(() => Console.WriteLine("Method called!"));
+// Setup method to throw
+mock.Setup.Method.Dispense("Green", With.Any<int>())
+    .Throws(() => new InvalidChocolateException());
 ```
 
 - Use `.Callback(...)` to run code when the method is called. Supports parameterless or parameter callbacks.
@@ -30,8 +40,8 @@ mock.Setup.Method.DoWork()
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(...)`:
 
 ```csharp
-mock.Setup.Method.GetValueAsync(With.Any<int>())
-    .ReturnsAsync(i => i * 2);
+mock.Setup.Method.DispenseAsync(With.Any<string>(), With.Any<int>())
+    .ReturnsAsync(true);
 ```
 
 ### Argument Matching
@@ -54,7 +64,7 @@ Set up property getters and setters to control or verify property access on your
 You can initialize properties so they work like normal properties (setter changes the value, getter returns the last set value):
 
 ```csharp
-mock.Setup.Property.MyProperty.InitializeWith(42);
+mock.Setup.Property.TotalDispensed.InitializeWith(42);
 ```
 
 **Returns / Throws**
@@ -62,7 +72,7 @@ mock.Setup.Property.MyProperty.InitializeWith(42);
 Alternatively, set up properties with `Returns` and `Throws` (supports sequences):
 
 ```csharp
-mock.Setup.Property.MyProperty
+mock.Setup.Property.TotalDispensed
     .Returns(1)
     .Returns(2)
     .Throws(new Exception("Error"))
@@ -74,8 +84,8 @@ mock.Setup.Property.MyProperty
 Register callbacks on the setter or getter:
 
 ```csharp
-mock.Setup.Property.MyProperty.OnGet(() => Console.WriteLine("MyProperty was read!"));
-mock.Setup.Property.MyProperty.OnSet((oldValue, newValue) => Console.WriteLine($"Changed from {oldValue} to {newValue}!"));
+mock.Setup.Property.TotalDispensed.OnGet(() => Console.WriteLine("TotalDispensed was read!"));
+mock.Setup.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.WriteLine($"Changed from {oldValue} to {newValue}!") );
 ```
 
 ## Indexer Setup
@@ -83,15 +93,13 @@ mock.Setup.Property.MyProperty.OnSet((oldValue, newValue) => Console.WriteLine($
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-mock.Setup.Indexer(With.Any<int>())
-    .InitializeWith(index => index * index)
-    .Returns((v, index) => v + 1)
-    .OnGet(index => Console.WriteLine($"Indexer this[{index}] was read"));
+mock.Setup.Indexer(With.Any<string>())
+    .InitializeWith(type => 20)
+    .OnGet(type => Console.WriteLine($"Stock for {type} was read"));
 
-mock.Setup.Indexer(With.Any<int>(), With.Matching<int>(i => i > 0))
-    .InitializeWith((i, j) => $"init-{i}-{j}")
-    .Returns((v, i, j) => $"{v}-{i}-{j}")
-    .OnSet((value, i, j) => Console.WriteLine($"Set [{i},{j}] to {value}"));
+mock.Setup.Indexer("Dark")
+    .InitializeWith(10)
+    .OnSet((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
 ```
 
 - `.InitializeWith(...)` can take a value or a callback with parameters.
