@@ -21,6 +21,7 @@ internal record Method
 				.Select(x => new GenericParameter((ITypeParameterSymbol)x)).ToArray());
 			Name += $"<{string.Join(", ", GenericParameters.Value.Select(x => x.Name))}>";
 		}
+
 		if (alreadyDefinedMethods is not null)
 		{
 			if (alreadyDefinedMethods.Any(m =>
@@ -34,6 +35,7 @@ internal record Method
 		}
 	}
 
+	public static IEqualityComparer<Method> EqualityComparer { get; } = new MethodEqualityComparer();
 	public EquatableArray<GenericParameter>? GenericParameters { get; }
 
 	public bool UseOverride { get; }
@@ -43,12 +45,7 @@ internal record Method
 	public string Name { get; }
 	public string ContainingType { get; }
 	public EquatableArray<MethodParameter> Parameters { get; }
-	public string? ExplicitImplementation { get; set; }
-
-	public void SetExplicitImplementation()
-	{
-		ExplicitImplementation = ContainingType;
-	}
+	public string? ExplicitImplementation { get; }
 
 	internal string GetUniqueNameString()
 	{
@@ -60,5 +57,17 @@ internal record Method
 		}
 
 		return $"\"{ContainingType}.{Name}\"";
+	}
+
+	private sealed class MethodEqualityComparer : IEqualityComparer<Method>
+	{
+		public bool Equals(Method x, Method y)
+		{
+			return x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType) &&
+				   x.Parameters.Count == y.Parameters.Count &&
+				   x.Parameters.SequenceEqual(y.Parameters);
+		}
+
+		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
 	}
 }

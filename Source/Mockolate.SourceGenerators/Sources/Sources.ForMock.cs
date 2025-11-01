@@ -253,11 +253,11 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine();
-		AppendMockSubject_ImplementClass(sb, mockClass, mockString, false);
+		AppendMockSubject_ImplementClass(sb, mockClass, mockString, null);
 		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
 		{
 			sb.AppendLine();
-			AppendMockSubject_ImplementClass(sb, additional, mockString, true);
+			AppendMockSubject_ImplementClass(sb, additional, mockString, mockClass);
 		}
 
 		sb.AppendLine("\t}");
@@ -302,11 +302,12 @@ internal static partial class Sources
 					""");
 	}
 
-	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class, string mockString, bool explicitInterfaceImplementation)
+	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class, string mockString, MockClass? mockClass)
 	{
 		var className = @class.ClassFullName;
 		sb.Append("\t\t#region ").Append(className).AppendLine();
 		int count = 0;
+		var mockEvents = mockClass?.AllEvents().ToList();
 		foreach (Event @event in @class.AllEvents())
 		{
 			if (count++ > 0)
@@ -314,9 +315,13 @@ internal static partial class Sources
 				sb.AppendLine();
 			}
 
-			AppendMockSubject_ImplementClass_AddEvent(sb, @event, className, mockString, explicitInterfaceImplementation, @class.IsInterface);
+			if (mockEvents?.All(e => !Event.EqualityComparer.Equals(@event, e)) != false)
+			{
+				AppendMockSubject_ImplementClass_AddEvent(sb, @event, className, mockString, mockClass is not null, @class.IsInterface);
+			}
 		}
 
+		var mockProperties = mockClass?.AllProperties().ToList();
 		foreach (Property property in @class.AllProperties())
 		{
 			if (count++ > 0)
@@ -324,9 +329,13 @@ internal static partial class Sources
 				sb.AppendLine();
 			}
 
-			AppendMockSubject_ImplementClass_AddProperty(sb, property, className, mockString, explicitInterfaceImplementation, @class.IsInterface);
+			if (mockProperties?.All(p => !Property.EqualityComparer.Equals(property, p)) != false)
+			{
+				AppendMockSubject_ImplementClass_AddProperty(sb, property, className, mockString, mockClass is not null, @class.IsInterface);
+			}
 		}
 
+		var mockMethods = mockClass?.AllMethods().ToList();
 		foreach (Method method in @class.AllMethods())
 		{
 			if (count++ > 0)
@@ -334,7 +343,11 @@ internal static partial class Sources
 				sb.AppendLine();
 			}
 
-			AppendMockSubject_ImplementClass_AddMethod(sb, method, className, mockString, explicitInterfaceImplementation, @class.IsInterface);
+
+			if (mockMethods?.All(m => !Method.EqualityComparer.Equals(method, m)) != false)
+			{
+				AppendMockSubject_ImplementClass_AddMethod(sb, method, className, mockString, mockClass is not null, @class.IsInterface);
+			}
 		}
 
 		sb.Append("\t\t#endregion ").Append(className).AppendLine();
@@ -351,14 +364,21 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t").Append(@event.Accessibility.ToVisibilityString()).Append(' ');
-			if (!isClassInterface && @event.UseOverride)
+			if (@event.ExplicitImplementation is null)
 			{
-				sb.Append("override ");
+				sb.Append("\t\t").Append(@event.Accessibility.ToVisibilityString()).Append(' ');
+				if (!isClassInterface && @event.UseOverride)
+				{
+					sb.Append("override ");
+				}
+				sb.Append("event ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ");
+			}
+			else
+			{
+				sb.Append("\t\t").Append("event ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ").Append(@event.ExplicitImplementation).Append('.');
 			}
 
-			sb.Append("event ").Append(@event.Type.Fullname.TrimEnd('?'))
-				.Append("? ").Append(@event.Name).AppendLine();
+			sb.Append(@event.Name).AppendLine();
 		}
 
 		sb.AppendLine("\t\t{");
@@ -384,14 +404,21 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t").Append(property.Accessibility.ToVisibilityString()).Append(' ');
-			if (!isClassInterface && property.UseOverride)
+			if (property.ExplicitImplementation is null)
 			{
-				sb.Append("override ");
+				sb.Append("\t\t").Append(property.Accessibility.ToVisibilityString()).Append(' ');
+				if (!isClassInterface && property.UseOverride)
+				{
+					sb.Append("override ");
+				}
+				sb.Append(property.Type.Fullname).Append(" ");
+			}
+			else
+			{
+				sb.Append("\t\t").Append(property.Type.Fullname).Append(" ").Append(property.ExplicitImplementation).Append('.');
 			}
 
-			sb.Append(property.Type.Fullname)
-				.Append(" ").Append(property.IndexerParameters is not null
+			sb.Append(property.IndexerParameters is not null
 					? property.Name.Replace("[]",
 						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname} {p.Name}"))}]")
 					: property.Name).AppendLine();

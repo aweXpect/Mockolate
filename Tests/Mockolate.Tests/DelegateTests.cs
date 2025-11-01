@@ -1,5 +1,4 @@
 ﻿using Mockolate.Verify;
-using static Mockolate.Tests.DelegateTests;
 
 namespace Mockolate.Tests;
 

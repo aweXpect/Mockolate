@@ -5,7 +5,10 @@ namespace Mockolate.SourceGenerators.Entities;
 
 internal record Class
 {
-	public Class(ITypeSymbol type, List<Method>? alreadyDefinedMethods = null)
+	public Class(ITypeSymbol type,
+		List<Method>? alreadyDefinedMethods = null,
+		List<Property>? alreadyDefinedProperties = null,
+		List<Event>? alreadyDefinedEvents = null)
 	{
 		Namespace = type.ContainingNamespace.ToString();
 		ClassName = GetTypeName(type);
@@ -30,26 +33,30 @@ internal record Class
 			.Select(x => new Method(x, alreadyDefinedMethods))
 			.Distinct()
 			.ToList();
-
 		Methods = new EquatableArray<Method>(methods.ToArray());
-		Properties = new EquatableArray<Property>(
+
+		List<Property> properties =
 			type.GetMembers().OfType<IPropertySymbol>()
 				.Where(x => !x.IsSealed)
 				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-				.Select(x => new Property(x))
+				.Select(x => new Property(x, alreadyDefinedProperties))
 				.Distinct()
-				.ToArray());
-		Events = new EquatableArray<Event>(
+				.ToList();
+		Properties = new EquatableArray<Property>(properties.ToArray());
+
+		List<Event> events =
 			type.GetMembers().OfType<IEventSymbol>()
 				.Where(x => !x.IsSealed)
 				.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 				.Select(x => (x, (x.Type as INamedTypeSymbol)?.DelegateInvokeMethod))
 				.Where(x => x.DelegateInvokeMethod is not null)
-				.Select(x => new Event(x.x, x.DelegateInvokeMethod!))
+				.Select(x => new Event(x.x, x.DelegateInvokeMethod!, alreadyDefinedEvents))
 				.Distinct()
-				.ToArray());
+				.ToList();
+		Events = new EquatableArray<Event>(events.ToArray());
+
 		InheritedTypes = new EquatableArray<Class>(
-			GetInheritedTypes(type).Select(t => new Class(t, methods))
+			GetInheritedTypes(type).Select(t => new Class(t, methods, properties, events))
 				.ToArray());
 	}
 
@@ -153,13 +160,13 @@ internal record Class
 	}
 
 	public IEnumerable<Property> AllProperties()
-		=> AllClasses().SelectMany(c => c.Properties);
+		=> AllClasses().SelectMany(c => c.Properties).Distinct(Property.EqualityComparer);
 
 	public IEnumerable<Method> AllMethods()
-		=> AllClasses().SelectMany(c => c.Methods);
+		=> AllClasses().SelectMany(c => c.Methods).Distinct(Method.EqualityComparer);
 
 	public IEnumerable<Event> AllEvents()
-		=> AllClasses().SelectMany(c => c.Events);
+		=> AllClasses().SelectMany(c => c.Events).Distinct(Event.EqualityComparer);
 
 	public IEnumerable<Class> AllClasses()
 	{

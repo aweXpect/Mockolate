@@ -1,7 +1,4 @@
-﻿using Mockolate.Setup;
-using Mockolate.Tests.TestHelpers;
-
-namespace Mockolate.Tests;
+﻿namespace Mockolate.Tests;
 
 public sealed partial class MethodSetupsTests
 {

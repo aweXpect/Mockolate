@@ -1,8 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using Mockolate.DefaultValues;
-
 namespace Mockolate.Tests;
 
 public sealed partial class MockBehaviorTests
