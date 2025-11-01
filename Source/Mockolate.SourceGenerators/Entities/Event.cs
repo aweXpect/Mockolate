@@ -38,7 +38,7 @@ internal record Event
 	internal string GetUniqueNameString()
 		=> $"\"{ContainingType}.{Name}\"";
 
-	private class EventEqualityComparer : IEqualityComparer<Event>
+	private sealed class EventEqualityComparer : IEqualityComparer<Event>
 	{
 		public bool Equals(Event x, Event y)
 		{

@@ -59,7 +59,7 @@ internal record Method
 		return $"\"{ContainingType}.{Name}\"";
 	}
 
-	private class MethodEqualityComparer : IEqualityComparer<Method>
+	private sealed class MethodEqualityComparer : IEqualityComparer<Method>
 	{
 		public bool Equals(Method x, Method y)
 		{

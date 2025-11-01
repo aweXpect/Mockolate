@@ -53,11 +53,11 @@ internal record Property
 	internal string GetUniqueNameString()
 		=> $"\"{ContainingType}.{Name}\"";
 
-	private class PropertyEqualityComparer : IEqualityComparer<Property>
+	private sealed class PropertyEqualityComparer : IEqualityComparer<Property>
 	{
 		public bool Equals(Property x, Property y)
 		{
-			return !x.IsIndexer && x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
+			return !x.IsIndexer && !y.IsIndexer && x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
 		}
 
 		public int GetHashCode(Property obj) => obj.Name.GetHashCode();
