@@ -8,10 +8,10 @@ Use the strongly-typed `Raise` property on your mock to trigger events declared 
 
 ```csharp
 // Arrange: subscribe a handler to the event
-mock.Subject.UsersChanged += (sender, args) => { /* handler code */ };
+mock.Subject.ChocolateDispensed += (type, amount) => { /* handler code */ };
 
 // Act: raise the event
-mock.Raise.UsersChanged(this, EventArgs.Empty);
+mock.Raise.ChocolateDispensed("Dark", 5);
 ```
 
 - Use the `Raise` property to trigger events declared on the mocked interface or class.
@@ -21,13 +21,13 @@ mock.Raise.UsersChanged(this, EventArgs.Empty);
 **Example:**
 
 ```csharp
-int callCount = 0;
-mock.Subject.UsersChanged += (sender, args) => callCount++;
+int dispensedAmount = 0;
+mock.Subject.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
 
-mock.Raise.UsersChanged(this, EventArgs.Empty);
-mock.Raise.UsersChanged(this, EventArgs.Empty);
+mock.Raise.ChocolateDispensed("Dark", 3);
+mock.Raise.ChocolateDispensed("Milk", 2);
 
-// callCount == 2
+// dispensedAmount == 5
 ```
 
 You can subscribe and unsubscribe handlers as needed. Only handlers subscribed at the time of raising the event will be called.
