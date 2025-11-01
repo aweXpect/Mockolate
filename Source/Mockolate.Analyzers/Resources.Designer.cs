@@ -61,7 +61,7 @@ namespace Mockolate.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use verifications.
+        ///   Looks up a localized string similar to Verify at least once..
         /// </summary>
         internal static string Mockolate0001CodeFixTitle {
             get {

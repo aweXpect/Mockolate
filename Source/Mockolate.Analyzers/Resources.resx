@@ -127,7 +127,7 @@
     <value>Verifications must be used</value>
   </data>
   <data name="Mockolate0001CodeFixTitle" xml:space="preserve">
-    <value>Use verifications</value>
+    <value>Verify at least once.</value>
     <comment>The title of the code fix.</comment>
   </data>
 </root>
