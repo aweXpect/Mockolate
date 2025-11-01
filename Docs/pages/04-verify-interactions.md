@@ -1,4 +1,4 @@
-﻿# Verify interactions
+# Verify interactions
 
 You can verify that methods, properties, indexers, or events were called or accessed with specific arguments and how many times, using the `Verify` API:
 
