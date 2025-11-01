@@ -8,6 +8,7 @@ using Mockolate.Internals;
 
 namespace Mockolate;
 
+#pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
 /// <summary>
 ///     Specify a matching condition for a method parameter.
 /// </summary>
@@ -173,6 +174,7 @@ public class With
 	}
 #endif
 
+#pragma warning disable S1694 // Convert this 'abstract' class to an interface.
 	/// <summary>
 	///     Matches the method parameters against an expectation.
 	/// </summary>
@@ -198,6 +200,7 @@ public class With
 		/// </returns>
 		public abstract bool Matches(object? value);
 	}
+#pragma warning restore S1694 // Convert this 'abstract' class to an interface.
 
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
@@ -422,3 +425,4 @@ public class With
 		}
 	}
 }
+#pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.
