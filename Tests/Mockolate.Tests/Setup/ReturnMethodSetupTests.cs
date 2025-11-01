@@ -1,8 +1,6 @@
-using aweXpect;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
-using static Mockolate.Tests.Setup.ReturnMethodSetupWithParametersTests;
 
 namespace Mockolate.Tests.Setup;
 

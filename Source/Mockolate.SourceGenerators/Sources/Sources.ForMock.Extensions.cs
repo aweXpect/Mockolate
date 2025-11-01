@@ -493,9 +493,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(property
-				=> !property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Getter != null && property.Getter.Accessibility != Accessibility.Private)
+				=> property.ExplicitImplementation is null && !property.IsIndexer &&
+				   property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Getter != null && property.Getter.Accessibility != Accessibility.Private)
 			: new Func<Property, bool>(property
-				=> !property.IsIndexer &&
+				=> property.ExplicitImplementation is null && !property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Getter != null && property.Getter.Accessibility != Accessibility.Private);
 
 		if (!@class.AllProperties().Any(property => !property.IsIndexer))
@@ -563,9 +564,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(property
-				=> property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Getter != null && property.Getter.Accessibility != Accessibility.Private)
+				=> property.ExplicitImplementation is null && property.IsIndexer &&
+				   property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Getter != null && property.Getter.Accessibility != Accessibility.Private)
 			: new Func<Property, bool>(property
-				=> property.IsIndexer &&
+				=> property.ExplicitImplementation is null && property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Getter != null && property.Getter.Accessibility != Accessibility.Private);
 		if (!@class.AllProperties().Any(predicate))
 		{
@@ -606,9 +608,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(property
-				=> !property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Setter != null && property.Setter.Accessibility != Accessibility.Private)
+				=> property.ExplicitImplementation is null && !property.IsIndexer &&
+				   property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Setter != null && property.Setter.Accessibility != Accessibility.Private)
 			: new Func<Property, bool>(property
-				=> !property.IsIndexer &&
+				=> property.ExplicitImplementation is null && !property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Setter != null && property.Setter.Accessibility != Accessibility.Private);
 
 		if (!@class.AllProperties().Any(property => !property.IsIndexer))
@@ -675,9 +678,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(property
-				=> property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Setter != null && property.Setter.Accessibility != Accessibility.Private)
+				=> property.ExplicitImplementation is null && property.IsIndexer &&
+				   property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal && property.Setter != null && property.Setter.Accessibility != Accessibility.Private)
 			: new Func<Property, bool>(property
-				=> property.IsIndexer &&
+				=> property.ExplicitImplementation is null && property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal) && property.Setter != null && property.Setter.Accessibility != Accessibility.Private);
 		if (!@class.AllProperties().Any(predicate))
 		{
@@ -716,10 +720,10 @@ internal static partial class Sources
 		bool isProtected = false)
 	{
 		Func<Event, bool> predicate = isProtected
-			? new Func<Event, bool>(e
-				=> e.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
-			: new Func<Event, bool>(e
-				=> e.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+			? new Func<Event, bool>(@event
+				=> @event.ExplicitImplementation is null && @event.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+			: new Func<Event, bool>(@event
+				=> @event.ExplicitImplementation is null && @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
 		if (!@class.AllEvents().Any())
 		{

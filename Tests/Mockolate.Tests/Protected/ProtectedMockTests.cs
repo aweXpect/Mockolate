@@ -1,5 +1,4 @@
-﻿using Mockolate.Interactions;
-using Mockolate.Verify;
+﻿using Mockolate.Verify;
 
 namespace Mockolate.Tests.Protected;
 

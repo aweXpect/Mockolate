@@ -54,9 +54,11 @@ internal static partial class Sources
 	{
 		Func<Event, bool> predicate = isProtected
 			? new Func<Event, bool>(@event
-				=> @event.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+				=> @event.ExplicitImplementation is null &&
+				   @event.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
 			: new Func<Event, bool>(@event
-				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+				=> @event.ExplicitImplementation is null &&
+				   @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 		if (!@class.AllEvents().Any(predicate))
 		{
 			return;
@@ -95,9 +97,10 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(property
-				=> !property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+				=> property.ExplicitImplementation is null && !property.IsIndexer &&
+				   property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
 			: new Func<Property, bool>(property
-				=> !property.IsIndexer &&
+				=> property.ExplicitImplementation is null && !property.IsIndexer &&
 				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
 		if (@class.AllProperties().Any(predicate))
@@ -160,9 +163,11 @@ internal static partial class Sources
 	{
 		Func<Property, bool> predicate = isProtected
 			? new Func<Property, bool>(property
-				=> property.IsIndexer && property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
+				=> property.ExplicitImplementation is null && property.IsIndexer &&
+				   property.Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal)
 			: new Func<Property, bool>(property
-				=> property.IsIndexer && property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
+				=> property.ExplicitImplementation is null && property.IsIndexer &&
+				   property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
 
 		if (@class.AllProperties().Any(predicate))
 		{

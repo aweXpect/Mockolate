@@ -102,4 +102,26 @@ public sealed partial class MockTests
 		await That(result1).IsEqualTo(true);
 		await That(result2).IsEqualTo(null);
 	}
+
+	[Fact]
+	public async Task WhenMockInheritsPropertyMultipleTimes()
+	{
+		var mock = Mock.Create<IMyPropertyService, IMyPropertyServiceBase1>();
+		mock.Setup.Property.Value.InitializeWith("Hello");
+		
+		var result = mock.Subject.Value;
+		
+		await That(mock.Verify.Got.Value()).Once();
+		await That(result).IsEqualTo("Hello");
+	}
+
+	public interface IMyPropertyService : IMyPropertyServiceBase1
+	{
+		new string Value { get; set; }
+	}
+
+	public interface IMyPropertyServiceBase1
+	{
+		int Value { get; set; }
+	}
 }
