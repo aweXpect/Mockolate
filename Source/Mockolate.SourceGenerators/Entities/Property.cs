@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Internals;
 
