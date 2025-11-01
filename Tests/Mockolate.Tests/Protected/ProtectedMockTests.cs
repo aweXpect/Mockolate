@@ -1,6 +1,4 @@
-﻿using Mockolate.Verify;
-
-namespace Mockolate.Tests.Protected;
+﻿namespace Mockolate.Tests.Protected;
 
 public sealed class ProtectedMockTests
 {
@@ -18,6 +16,33 @@ public sealed class ProtectedMockTests
 		await That(mock.Verify.UnsubscribedFrom.Protected.MyEvent()).Never();
 		mock.Subject.UnregisterEvent(handler);
 		await That(mock.Verify.UnsubscribedFrom.Protected.MyEvent()).Once();
+	}
+
+	[Fact]
+	public async Task CanAccessProtectedMethods()
+	{
+		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+
+		mock.Setup.Protected.Method.MyProtectedMethod(With.Any<string>())
+			.Returns(v => $"Hello, {v}!");
+
+		string result = mock.Subject.InvokeMyProtectedMethod("foo");
+
+		await That(mock.Verify.Invoked.Protected.MyProtectedMethod("foo")).Once();
+		await That(result).IsEqualTo("Hello, foo!");
+	}
+
+	[Fact]
+	public async Task CanAccessProtectedProperties()
+	{
+		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+
+		mock.Setup.Protected.Property.MyProtectedProperty.InitializeWith(42);
+
+		int result = mock.Subject.GetMyProtectedProperty();
+
+		await That(mock.Verify.Got.Protected.MyProtectedProperty()).Once();
+		await That(result).IsEqualTo(42);
 	}
 
 	[Fact]
@@ -48,33 +73,6 @@ public sealed class ProtectedMockTests
 		await That(mock.Verify.SetProtectedIndexer(3, 4)).Once();
 		await That(mock.Subject.GetMyProtectedIndexer(3)).IsEqualTo(4);
 		await That(callCount).IsEqualTo(1);
-	}
-
-	[Fact]
-	public async Task CanAccessProtectedMethods()
-	{
-		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
-
-		mock.Setup.Protected.Method.MyProtectedMethod(With.Any<string>())
-			.Returns(v => $"Hello, {v}!");
-
-		string result = mock.Subject.InvokeMyProtectedMethod("foo");
-
-		await That(mock.Verify.Invoked.Protected.MyProtectedMethod("foo")).Once();
-		await That(result).IsEqualTo("Hello, foo!");
-	}
-
-	[Fact]
-	public async Task CanAccessProtectedProperties()
-	{
-		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
-
-		mock.Setup.Protected.Property.MyProtectedProperty.InitializeWith(42);
-
-		int result = mock.Subject.GetMyProtectedProperty();
-
-		await That(mock.Verify.Got.Protected.MyProtectedProperty()).Once();
-		await That(result).IsEqualTo(42);
 	}
 
 #pragma warning disable CS0067 // Event is never used

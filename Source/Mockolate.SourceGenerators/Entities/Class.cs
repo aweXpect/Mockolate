@@ -14,7 +14,7 @@ internal record Class
 		ClassName = GetTypeName(type);
 		ClassFullName = GetTypeFullName(type);
 
-		var containingType = type.ContainingType;
+		INamedTypeSymbol? containingType = type.ContainingType;
 		if (containingType is not null)
 		{
 			ContainingType = new Type(containingType);
@@ -104,12 +104,13 @@ internal record Class
 		string GetPrefix(ITypeSymbol s)
 		{
 			string p = "";
-			var containingType = s.ContainingType;
+			INamedTypeSymbol? containingType = s.ContainingType;
 			while (containingType is not null)
 			{
 				p = $"{containingType.Name}.{p}";
 				containingType = containingType.ContainingType;
 			}
+
 			return $"{s.ContainingNamespace}.{p}";
 		}
 

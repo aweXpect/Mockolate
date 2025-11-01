@@ -44,6 +44,6 @@ public sealed partial class MockSubscribedToTests
 		VerificationResult<MockVerify<int, Mock<int>>> result = subscribedTo.Event("foo.bar");
 
 		await That(result).Never();
-		await That((((IVerificationResult)result).Expectation)).IsEqualTo("subscribed to event bar");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event bar");
 	}
 }

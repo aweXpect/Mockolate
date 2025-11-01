@@ -8,7 +8,7 @@ public class DelegateTests
 	public void Action_ShouldBeTreatedAsVoidDelegate()
 	{
 		bool isCalled = false;
-		var mock = Mock.Create<Action>();
+		Mock<Action> mock = Mock.Create<Action>();
 		mock.Setup.Delegate().Callback(() => isCalled = true);
 
 		mock.Subject.Invoke();
@@ -21,10 +21,10 @@ public class DelegateTests
 	public void Func_ShouldBeTreatedAsReturnDelegate()
 	{
 		bool isCalled = false;
-		var mock = Mock.Create<Func<int>>();
+		Mock<Func<int>> mock = Mock.Create<Func<int>>();
 		mock.Setup.Delegate().Callback(() => isCalled = true).Returns(3);
 
-		var result = mock.Subject();
+		int result = mock.Subject();
 
 		mock.Verify.Invoked().Once();
 		Assert.True(isCalled);
@@ -34,15 +34,15 @@ public class DelegateTests
 	[Fact]
 	public async Task WithCustomDelegate_SetupShouldWork()
 	{
-		var mock = Mock.Create<DoSomething>();
+		Mock<DoSomething> mock = Mock.Create<DoSomething>();
 		mock.Setup.Delegate(With.Any<int>(), With.Any<string>())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
 
-		var result1 = mock.Subject(1, "foo");
+		int result1 = mock.Subject(1, "foo");
 		await That(() => mock.Subject(2, "foo")).Throws<Exception>().WithMessage("foobar");
-		var result3 = mock.Subject(2, "bar");
+		int result3 = mock.Subject(2, "bar");
 
 		await That(result1).IsEqualTo(1);
 		await That(result3).IsEqualTo(3);
@@ -51,7 +51,7 @@ public class DelegateTests
 	[Fact]
 	public async Task WithCustomDelegate_VerifyShouldWork()
 	{
-		var mock = Mock.Create<DoSomething>();
+		Mock<DoSomething> mock = Mock.Create<DoSomething>();
 
 		_ = mock.Subject(1, "foo");
 		_ = mock.Subject(2, "bar");
@@ -62,15 +62,15 @@ public class DelegateTests
 	[Fact]
 	public async Task WithCustomGenericDelegate_SetupShouldWork()
 	{
-		var mock = Mock.Create<DoGeneric<long, string>>();
+		Mock<DoGeneric<long, string>> mock = Mock.Create<DoGeneric<long, string>>();
 		mock.Setup.Delegate(With.Any<long>(), With.Any<string>())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
 
-		var result1 = mock.Subject(1L, "foo");
+		int result1 = mock.Subject(1L, "foo");
 		await That(() => mock.Subject(2L, "foo")).Throws<Exception>().WithMessage("foobar");
-		var result3 = mock.Subject(2L, "bar");
+		int result3 = mock.Subject(2L, "bar");
 
 		await That(result1).IsEqualTo(1);
 		await That(result3).IsEqualTo(3);
@@ -79,7 +79,7 @@ public class DelegateTests
 	[Fact]
 	public async Task WithCustomGenericDelegate_VerifyShouldWork()
 	{
-		var mock = Mock.Create<DoGeneric<short, string>>();
+		Mock<DoGeneric<short, string>> mock = Mock.Create<DoGeneric<short, string>>();
 
 		_ = mock.Subject(1, "foo");
 		_ = mock.Subject(2, "bar");

@@ -44,6 +44,6 @@ public sealed partial class MockGotTests
 		VerificationResult<MockVerify<int, Mock<int>>> result = mockGot.Property("foo.bar");
 
 		await That(result).Never();
-		await That((((IVerificationResult)result).Expectation)).IsEqualTo("got property bar");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property bar");
 	}
 }

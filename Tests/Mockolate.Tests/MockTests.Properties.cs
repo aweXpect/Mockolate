@@ -1,5 +1,4 @@
 using Mockolate.Exceptions;
-using Mockolate.Verify;
 
 namespace Mockolate.Tests;
 
@@ -106,11 +105,12 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task WhenMockInheritsPropertyMultipleTimes()
 	{
-		var mock = Mock.Create<IMyPropertyService, IMyPropertyServiceBase1>();
+		Mock<IMyPropertyService, IMyPropertyServiceBase1> mock =
+			Mock.Create<IMyPropertyService, IMyPropertyServiceBase1>();
 		mock.Setup.Property.Value.InitializeWith("Hello");
-		
-		var result = mock.Subject.Value;
-		
+
+		string result = mock.Subject.Value;
+
 		await That(mock.Verify.Got.Value()).Once();
 		await That(result).IsEqualTo("Hello");
 	}

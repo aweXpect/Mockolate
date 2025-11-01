@@ -81,10 +81,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 		=> value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"void {name}()";
-	}
+	public override string ToString() => $"void {name}()";
 }
 
 /// <summary>
@@ -172,12 +169,12 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -188,7 +185,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -197,10 +194,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"void {name}({match1})";
-	}
+	public override string ToString() => $"void {name}({match1})";
 }
 
 /// <summary>
@@ -290,12 +284,12 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -306,7 +300,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -315,10 +309,7 @@ public class VoidMethodSetup<T1, T2>(string name, With.NamedParameter match1, Wi
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"void {name}({match1}, {match2})";
-	}
+	public override string ToString() => $"void {name}({match1}, {match2})";
 }
 
 /// <summary>
@@ -413,12 +404,12 @@ public class VoidMethodSetup<T1, T2, T3>(
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2, match3], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2, match3], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2, match3,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -429,7 +420,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2, match3], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2, match3,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -438,10 +429,7 @@ public class VoidMethodSetup<T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"void {name}({match1}, {match2}, {match3})";
-	}
+	public override string ToString() => $"void {name}({match1}, {match2}, {match3})";
 }
 
 /// <summary>
@@ -538,12 +526,12 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4], invocation.Parameters);
+		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2, match3, match4], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1, match2, match3, match4,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -554,7 +542,7 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2, match3, match4], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1, match2, match3, match4,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -563,8 +551,5 @@ public class VoidMethodSetup<T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"void {name}({match1}, {match2}, {match3}, {match4})";
-	}
+	public override string ToString() => $"void {name}({match1}, {match2}, {match3}, {match4})";
 }

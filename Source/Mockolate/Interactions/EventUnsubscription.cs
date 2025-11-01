@@ -28,8 +28,5 @@ public class EventUnsubscription(int index, string name, object? target, MethodI
 	public int Index { get; } = index;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"[{Index}] unsubscribe from event {Name}";
-	}
+	public override string ToString() => $"[{Index}] unsubscribe from event {Name}";
 }

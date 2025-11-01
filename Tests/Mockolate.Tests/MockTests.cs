@@ -18,6 +18,19 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
+	{
+		Mock<MyBaseClassWithoutConstructor> mock = Mock.Create<MyBaseClassWithoutConstructor>();
+
+		void Act()
+			=> _ = mock.Subject;
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"Could not find any constructor at all for the base type 'Mockolate.Tests.MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
+	}
+
+	[Fact]
 	public async Task Create_SealedClass_ShouldThrowMockException()
 	{
 		void Act()
@@ -98,7 +111,9 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With7AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+			=> _ = Mock
+				.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -109,11 +124,33 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With8AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+			=> _ = Mock
+				.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService, IMyService>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
 				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Create_WithConstructorParameters_SealedClass_ShouldThrowMockException()
+	{
+		void Act()
+			=> _ = Mock.Create<MySealedClass>(WithConstructorParameters());
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+	}
+
+	[Fact]
+	public async Task Create_WithMatchingParameters_ShouldCreateMock()
+	{
+		Mock<MyBaseClassWithConstructor> Act()
+			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
+
+		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
 	}
 
 	[Fact]
@@ -128,42 +165,9 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_WithConstructorParameters_SealedClass_ShouldThrowMockException()
-	{
-		void Act()
-			=> _ = Mock.Create<MySealedClass>(BaseClass.WithConstructorParameters());
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
-	{
-		var mock = Mock.Create<MyBaseClassWithoutConstructor>();
-
-		void Act()
-			=> _ = mock.Subject;
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Could not find any constructor at all for the base type 'Mockolate.Tests.MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
-	}
-
-	[Fact]
-	public async Task Create_WithMatchingParameters_ShouldCreateMock()
-	{
-		Mock<MyBaseClassWithConstructor> Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
-
-		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
-	}
-
-	[Fact]
 	public async Task Create_WithRequiredParameters_WithEmptyParameters_ShouldThrowMockException()
 	{
-		var mock = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
+		Mock<MyBaseClassWithConstructor> mock = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
 
 		void Act()
 			=> _ = mock.Subject;
@@ -176,7 +180,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithoutParameters_ShouldThrowMockException()
 	{
-		var mock = Mock.Create<MyBaseClassWithConstructor>();
+		Mock<MyBaseClassWithConstructor> mock = Mock.Create<MyBaseClassWithConstructor>();
 
 		void Act()
 			=> _ = mock.Subject;
@@ -189,7 +193,8 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithTooManyParameters_ShouldThrowMockException()
 	{
-		var mock = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
+		Mock<MyBaseClassWithConstructor> mock =
+			Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
 
 		void Act()
 			=> _ = mock.Subject;
@@ -315,5 +320,7 @@ public sealed partial class MockTests
 		}
 	}
 
-	public sealed class MySealedClass { }
+	public sealed class MySealedClass
+	{
+	}
 }

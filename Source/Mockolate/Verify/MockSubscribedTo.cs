@@ -15,12 +15,12 @@ public class MockSubscribedTo<T, TMock>(MockVerify<T, TMock> verify) : IMockSubs
 	VerificationResult<MockVerify<T, TMock>> IMockSubscribedTo<MockVerify<T, TMock>>.Event(string eventName)
 	{
 		MockInteractions interactions = ((IMockVerify<TMock>)Verify).Interactions;
-		return new(Verify, interactions,
+		return new VerificationResult<MockVerify<T, TMock>>(Verify, interactions,
 			interactions.Interactions
 				.OfType<EventSubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
 				.ToArray(),
-		$"subscribed to event {eventName.SubstringAfterLast('.')}");
+			$"subscribed to event {eventName.SubstringAfterLast('.')}");
 	}
 }

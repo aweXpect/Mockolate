@@ -25,12 +25,13 @@ internal record Method
 		if (alreadyDefinedMethods is not null)
 		{
 			if (alreadyDefinedMethods.Any(m =>
-					m.Name == Name &&
-					m.Parameters.Count == Parameters.Count &&
-					m.Parameters.SequenceEqual(Parameters)))
+				    m.Name == Name &&
+				    m.Parameters.Count == Parameters.Count &&
+				    m.Parameters.SequenceEqual(Parameters)))
 			{
 				ExplicitImplementation = ContainingType;
 			}
+
 			alreadyDefinedMethods.Add(this);
 		}
 	}
@@ -51,8 +52,9 @@ internal record Method
 	{
 		if (GenericParameters != null)
 		{
-			var name = Name.Substring(0, Name.IndexOf('<'));
-			var parameters = string.Join(", ", GenericParameters.Value.Select(genericParameter => $"{{typeof({genericParameter.Name})}}"));
+			string name = Name.Substring(0, Name.IndexOf('<'));
+			string parameters = string.Join(", ",
+				GenericParameters.Value.Select(genericParameter => $"{{typeof({genericParameter.Name})}}"));
 			return $"$\"{ContainingType}.{name}<{parameters}>\"";
 		}
 
@@ -61,12 +63,9 @@ internal record Method
 
 	private sealed class MethodEqualityComparer : IEqualityComparer<Method>
 	{
-		public bool Equals(Method x, Method y)
-		{
-			return x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType) &&
-				   x.Parameters.Count == y.Parameters.Count &&
-				   x.Parameters.SequenceEqual(y.Parameters);
-		}
+		public bool Equals(Method x, Method y) => x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType) &&
+		                                          x.Parameters.Count == y.Parameters.Count &&
+		                                          x.Parameters.SequenceEqual(y.Parameters);
 
 		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
 	}

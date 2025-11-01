@@ -17,14 +17,14 @@ namespace Mockolate;
 [DebuggerDisplay("Setup: {Setup}, {_interactions.Count} interactions")]
 public abstract class MockBase<T> : IMock
 {
-	private readonly MockInteractions _interactions;
 	private readonly MockBehavior _behavior;
+	private readonly MockInteractions _interactions;
 
 	/// <inheritdoc cref="MockBase{T}" />
 	protected MockBase(MockBehavior behavior)
 	{
 		_behavior = behavior;
-		_interactions = new();
+		_interactions = new MockInteractions();
 		Setup = new MockSetup<T>(this);
 		Raise = new MockRaises<T>(Setup, _interactions);
 	}
@@ -51,7 +51,26 @@ public abstract class MockBase<T> : IMock
 	///     This does not work implicitly (but only with an explicit cast) for interfaces due to
 	///     a limitation of the C# language.
 	/// </remarks>
-	public static implicit operator T(MockBase<T> mock) => mock.Subject;
+	public static implicit operator T(MockBase<T> mock)
+	{
+		return mock.Subject;
+	}
+
+	/// <summary>
+	///     Attempts to cast the specified value to the type parameter <typeparamref name="TValue" />,
+	///     returning a value that indicates whether the cast was successful.
+	/// </summary>
+	protected bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
+	{
+		if (value is TValue typedValue)
+		{
+			result = typedValue;
+			return true;
+		}
+
+		result = _behavior.DefaultValue.Generate<TValue>();
+		return value is null;
+	}
 
 	#region IMock
 
@@ -78,7 +97,8 @@ public abstract class MockBase<T> : IMock
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
 		IInteraction interaction =
-			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(), methodName, parameters));
+			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(),
+				methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(interaction);
 		if (matchingSetup is null)
@@ -103,7 +123,8 @@ public abstract class MockBase<T> : IMock
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
 		IInteraction interaction =
-			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(), methodName, parameters));
+			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(),
+				methodName, parameters));
 
 		MethodSetup? matchingSetup = Setup.GetMethodSetup(interaction);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
@@ -121,8 +142,10 @@ public abstract class MockBase<T> : IMock
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
 		IInteraction interaction =
-			((IMockInteractions)interactions).RegisterInteraction(new PropertyGetterAccess(interactions.GetNextIndex(), propertyName));
-		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName, defaultValueGenerator is null ? null : () => defaultValueGenerator());
+			((IMockInteractions)interactions).RegisterInteraction(new PropertyGetterAccess(interactions.GetNextIndex(),
+				propertyName));
+		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName,
+			defaultValueGenerator is null ? null : () => defaultValueGenerator());
 		return matchingSetup.InvokeGetter<TResult>(interaction, _behavior);
 	}
 
@@ -131,7 +154,8 @@ public abstract class MockBase<T> : IMock
 	{
 		MockInteractions interactions = ((IMock)this).Interactions;
 		IInteraction interaction =
-			((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(), propertyName, value));
+			((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(),
+				propertyName, value));
 		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName, null);
 		matchingSetup.InvokeSetter(interaction, value, _behavior);
 	}
@@ -140,15 +164,15 @@ public abstract class MockBase<T> : IMock
 	TResult IMock.GetIndexer<TResult>(Func<TResult>? defaultValueGenerator, params object?[] parameters)
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
-		IndexerGetterAccess interaction = new IndexerGetterAccess(interactions.GetNextIndex(), parameters);
+		IndexerGetterAccess interaction = new(interactions.GetNextIndex(), parameters);
 		((IMockInteractions)interactions).RegisterInteraction(interaction);
 
 		IndexerSetup? matchingSetup = Setup.GetIndexerSetup(interaction);
 		TResult initialValue = Setup.GetIndexerValue(matchingSetup, defaultValueGenerator, parameters);
 		if (matchingSetup is not null)
 		{
-			var value = matchingSetup.InvokeGetter(interaction, initialValue, _behavior);
-			if (!object.Equals(initialValue, value))
+			TResult? value = matchingSetup.InvokeGetter(interaction, initialValue, _behavior);
+			if (!Equals(initialValue, value))
 			{
 				((IMockSetup)Setup).SetIndexerValue(parameters, value);
 			}
@@ -163,7 +187,7 @@ public abstract class MockBase<T> : IMock
 	void IMock.SetIndexer<TResult>(TResult value, params object?[] parameters)
 	{
 		MockInteractions? interactions = ((IMock)this).Interactions;
-		IndexerSetterAccess interaction = new IndexerSetterAccess(interactions.GetNextIndex(), parameters, value);
+		IndexerSetterAccess interaction = new(interactions.GetNextIndex(), parameters, value);
 		((IMockInteractions)interactions).RegisterInteraction(interaction);
 
 		((IMockSetup)Setup).SetIndexerValue(parameters, value);
@@ -172,21 +196,5 @@ public abstract class MockBase<T> : IMock
 	}
 
 	#endregion IMock
-
-	/// <summary>
-	///     Attempts to cast the specified value to the type parameter <typeparamref name="TValue"/>,
-	///     returning a value that indicates whether the cast was successful.
-	/// </summary>
-	protected bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
-	{
-		if (value is TValue typedValue)
-		{
-			result = typedValue;
-			return true;
-		}
-
-		result = _behavior.DefaultValue.Generate<TValue>();
-		return value is null;
-	}
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters

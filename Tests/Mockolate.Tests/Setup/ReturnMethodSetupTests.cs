@@ -1224,7 +1224,8 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Subject.Method3(i, 2 * i, 3 * i);
 			}
 
-			await That(result).IsEqualTo(["d", "c", "foo-2-4-6", "d", "c", "foo-5-10-15", "d", "c", "foo-8-16-24", "d",]);
+			await That(result)
+				.IsEqualTo(["d", "c", "foo-2-4-6", "d", "c", "foo-5-10-15", "d", "c", "foo-8-16-24", "d",]);
 		}
 
 		[Fact]
@@ -1687,7 +1688,9 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Subject.Method4(i, 2 * i, 3 * i, 4 * i);
 			}
 
-			await That(result).IsEqualTo(["d", "c", "foo-2-4-6-8", "d", "c", "foo-5-10-15-20", "d", "c", "foo-8-16-24-32", "d",]);
+			await That(result).IsEqualTo([
+				"d", "c", "foo-2-4-6-8", "d", "c", "foo-5-10-15-20", "d", "c", "foo-8-16-24-32", "d",
+			]);
 		}
 
 		[Fact]
@@ -1915,7 +1918,8 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback(() => { callCount++; })
 				.Returns("a");
 
@@ -1953,7 +1957,8 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback(() => { callCount++; });
 
 			sut.Subject.Method4(1, 2, 3, 4);
@@ -1973,7 +1978,8 @@ public class ReturnMethodSetupTests
 			int receivedValue5 = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) =>
 				{
 					callCount++;
@@ -2023,7 +2029,8 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback((v1, v2, v3, v4, v5) => { callCount++; });
 
 			sut.Subject.Method4(1, 2, 3, 4);
@@ -2135,7 +2142,8 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Returns("d")
 				.Throws(new Exception("foo"))
 				.Returns(() => "b");
@@ -2156,7 +2164,8 @@ public class ReturnMethodSetupTests
 			int callCount2 = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback(() => { callCount1++; })
 				.Callback((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; })
 				.Returns("a");
@@ -2173,7 +2182,8 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Returns("d")
 				.Returns(() => "c")
 				.Returns((v1, v2, v3, v4, v5) => $"foo-{v1}-{v2}-{v3}-{v4}-{v5}");
@@ -2184,7 +2194,9 @@ public class ReturnMethodSetupTests
 				result[i] = sut.Subject.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
 			}
 
-			await That(result).IsEqualTo(["d", "c", "foo-2-4-6-8-10", "d", "c", "foo-5-10-15-20-25", "d", "c", "foo-8-16-24-32-40", "d",]);
+			await That(result).IsEqualTo([
+				"d", "c", "foo-2-4-6-8-10", "d", "c", "foo-5-10-15-20-25", "d", "c", "foo-8-16-24-32-40", "d",
+			]);
 		}
 
 		[Fact]
@@ -2274,7 +2286,8 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Returns(() => "d");
 
 			string result = sut.Subject.Method5(1, 2, 3, 4, 5);
@@ -2287,7 +2300,8 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Returns((x, y, z, a, b) => $"foo-{x}-{y}-{z}-{a}-{b}");
 
 			string result = sut.Subject.Method5(2, 3, 4, 5, 6);
@@ -2300,7 +2314,8 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Returns("d");
 
 			string result = sut.Subject.Method5(1, 2, 3, 4, 5);
@@ -2343,7 +2358,8 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Throws(() => new Exception("foo"));
 
 			void Act()
@@ -2357,7 +2373,8 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
 			void Act()
@@ -2371,7 +2388,8 @@ public class ReturnMethodSetupTests
 		{
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Throws(new Exception("foo"));
 
 			void Act()
@@ -2386,7 +2404,8 @@ public class ReturnMethodSetupTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 

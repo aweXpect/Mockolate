@@ -14,7 +14,8 @@ public interface IIndexerSetup
 	bool Matches(IInteraction invocation);
 
 	/// <summary>
-	///     Attempts to retrieve the initial <paramref name="value"/> for the <paramref name="parameters"/>, if an initialization is set up.
+	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
+	///     initialization is set up.
 	/// </summary>
 	bool TryGetInitialValue<TValue>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out TValue value);
 }

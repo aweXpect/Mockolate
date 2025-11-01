@@ -19,7 +19,7 @@ public interface IVerificationResult
 	MockInteractions MockInteractions { get; }
 
 	/// <summary>
-	/// Verifies that the specified <paramref name="predicate"/> holds true for the current set of interactions.
+	///     Verifies that the specified <paramref name="predicate" /> holds true for the current set of interactions.
 	/// </summary>
 	bool Verify(Func<IInteraction[], bool> predicate);
 }

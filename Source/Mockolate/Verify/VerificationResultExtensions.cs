@@ -19,10 +19,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length >= times;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length >= times;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} at least {times.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -37,10 +37,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length >= 1;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length >= 1;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} at least {1.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -55,10 +55,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length >= 2;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length >= 2;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} at least {2.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -73,10 +73,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length <= times;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length <= times;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} at most {times.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -91,10 +91,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length <= 1;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length <= 1;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} at most {1.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -109,10 +109,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length <= 2;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length <= 2;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} at most {2.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -127,10 +127,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length == times;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length == times;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} exactly {times.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -145,10 +145,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length == 0;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length == 0;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {0.ToTimes()} {result.Expectation}, but it {found.ToTimes("did")}.");
@@ -163,10 +163,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length == 1;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length == 1;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} exactly {1.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -181,10 +181,10 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
-		{
-			found = interactions.Length;
-			return interactions.Length == 2;
-		}))
+		    {
+			    found = interactions.Length;
+			    return interactions.Length == 2;
+		    }))
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} exactly {2.ToTimes()}, but it {found.ToTimes("did")}.");
@@ -194,7 +194,8 @@ public static class VerificationResultExtensions
 	/// <summary>
 	///     Supports fluent chaining of verifications in a given order.
 	/// </summary>
-	public static void Then<TMock>(this VerificationResult<TMock> verificationResult, params Func<TMock, VerificationResult<TMock>>[] orderedChecks)
+	public static void Then<TMock>(this VerificationResult<TMock> verificationResult,
+		params Func<TMock, VerificationResult<TMock>>[] orderedChecks)
 	{
 		string? error = null;
 		bool flag = true;
@@ -209,15 +210,18 @@ public static class VerificationResultExtensions
 			{
 				flag = false;
 			}
+
 			result = check(mock);
 		}
+
 		expectations.Add(result.Expectation);
 		if (!result.Verify(VerifyInteractions) || !flag)
 		{
-			var separator = $", then ";
+			string? separator = ", then ";
 			throw new MockVerificationException(
 				$"Expected that mock {string.Join(separator, expectations)} in order, but it {error}.");
 		}
+
 		bool VerifyInteractions(IInteraction[] interactions)
 		{
 			bool hasInteractionAfter = interactions.Any(x => x.Index > after);
@@ -226,8 +230,11 @@ public static class VerificationResultExtensions
 				: int.MaxValue;
 			if (!hasInteractionAfter && error is null)
 			{
-				error = interactions.Length > 0 ? $"{result.Expectation} too early" : $"{result.Expectation} not at all";
+				error = interactions.Length > 0
+					? $"{result.Expectation} too early"
+					: $"{result.Expectation} not at all";
 			}
+
 			return hasInteractionAfter;
 		}
 	}
@@ -242,6 +249,6 @@ public static class VerificationResultExtensions
 			(0, _) => $"never {verb}",
 			(1, _) => $"{verb} once",
 			(2, _) => $"{verb} twice",
-			(_, _) => $"{verb} {amount} times"
+			(_, _) => $"{verb} {amount} times",
 		};
 }

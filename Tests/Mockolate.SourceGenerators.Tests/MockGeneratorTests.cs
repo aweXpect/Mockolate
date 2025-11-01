@@ -3,6 +3,40 @@
 public class MockGeneratorTests
 {
 	[Fact]
+	public async Task SealedClass_ShouldNotBeIncluded()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<MyService>();
+			             }
+			         }
+
+			         public sealed class MyService { }
+			     }
+			     """);
+
+		await ThatAll(
+			That(result.Sources.Keys).IsEqualTo([
+				"Mock.g.cs",
+				"MockGeneratorAttribute.g.cs",
+				"MockRegistration.g.cs",
+			]).InAnyOrder().IgnoringCase(),
+			That(result.Diagnostics).IsEmpty()
+		);
+	}
+
+	[Fact]
 	public async Task WhenNamesConflict_ShouldAppendAnIndex()
 	{
 		GeneratorResult result = Generator
@@ -121,40 +155,6 @@ public class MockGeneratorTests
 			         }
 
 			         public class Mock<T>{ }
-			     }
-			     """);
-
-		await ThatAll(
-			That(result.Sources.Keys).IsEqualTo([
-				"Mock.g.cs",
-				"MockGeneratorAttribute.g.cs",
-				"MockRegistration.g.cs",
-			]).InAnyOrder().IgnoringCase(),
-			That(result.Diagnostics).IsEmpty()
-		);
-	}
-
-	[Fact]
-	public async Task SealedClass_ShouldNotBeIncluded()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using System.Threading;
-			     using System.Threading.Tasks;
-			     using Mockolate;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			_ = Mock.Create<MyService>();
-			             }
-			         }
-
-			         public sealed class MyService { }
 			     }
 			     """);
 

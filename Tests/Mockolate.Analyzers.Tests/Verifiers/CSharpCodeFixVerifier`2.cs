@@ -40,7 +40,6 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
 			{
 				AdditionalReferences =
 				{
-
 					typeof(MockBase<>).Assembly.Location,
 				},
 			},
@@ -80,7 +79,6 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
 			{
 				AdditionalReferences =
 				{
-
 					typeof(MockBase<>).Assembly.Location,
 				},
 			},

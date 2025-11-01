@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
+using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Internals;
 
@@ -32,6 +33,7 @@ internal static partial class Sources
 		{
 			AppendMockSubject(sb, mockClass);
 		}
+
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
@@ -41,11 +43,13 @@ internal static partial class Sources
 	{
 		bool isMockable = mockClass.Delegate is not null || mockClass.IsInterface || mockClass.Constructors?.Count > 0;
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.ClassFullName.EscapeForXmlDoc()).Append("\" />");
+		sb.Append("\t///     The mock class for <see cref=\"").Append(mockClass.ClassFullName.EscapeForXmlDoc())
+			.Append("\" />");
 		foreach (Class? additional in mockClass.AdditionalImplementations)
 		{
 			sb.Append(" and <see cref=\"").Append(additional.ClassFullName.EscapeForXmlDoc()).Append("\" />");
 		}
+
 		sb.AppendLine(".");
 		sb.Append("\t/// </summary>").AppendLine();
 
@@ -54,25 +58,28 @@ internal static partial class Sources
 		{
 			sb.Append(", ").Append(item.ClassFullName);
 		}
+
 		sb.AppendLine(">");
 		sb.AppendLine("\t{");
 		if (isMockable)
 		{
 			sb.Append("\t\tprivate ").Append(mockClass.ClassFullName).AppendLine("? _subject;");
 		}
+
 		sb.Append("\t\tprivate readonly BaseClass.ConstructorParameters? _constructorParameters;").AppendLine();
 		sb.Append("\t\tprivate readonly MockBehavior _mockBehavior;").AppendLine().AppendLine();
 		sb.AppendLine("""
-					/// <inheritdoc cref="Mock" />
-					public Mock(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior) : base(mockBehavior)
-					{
-						_constructorParameters = constructorParameters;
-						_mockBehavior = mockBehavior;
-					}
-			""");
+		              		/// <inheritdoc cref="Mock" />
+		              		public Mock(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior) : base(mockBehavior)
+		              		{
+		              			_constructorParameters = constructorParameters;
+		              			_mockBehavior = mockBehavior;
+		              		}
+		              """);
 		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc cref=\"Mock{").Append(mockClass.ClassFullName.EscapeForXmlDoc())
-			.Append(string.Join(", ", mockClass.AdditionalImplementations.Select(x => x.ClassFullName.EscapeForXmlDoc())))
+			.Append(string.Join(", ",
+				mockClass.AdditionalImplementations.Select(x => x.ClassFullName.EscapeForXmlDoc())))
 			.AppendLine("}.Subject\" />");
 		sb.Append("\t\tpublic override ").Append(mockClass.ClassFullName).AppendLine(" Subject");
 		sb.Append("\t\t{").AppendLine();
@@ -94,22 +101,27 @@ internal static partial class Sources
 			{
 				AppendMock_BaseClassSubject(sb, mockClass, mockClass.Constructors.Value);
 			}
+
 			sb.Append("\t\t\t\t}").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t\t\treturn _subject;").AppendLine();
 		}
 		else
 		{
-			sb.Append("\t\t\t\t\tthrow new MockException(\"Could not find any constructor at all for the base type '").Append(mockClass.ClassFullName).Append("'. Therefore mocking is not supported!\");").AppendLine();
+			sb.Append("\t\t\t\t\tthrow new MockException(\"Could not find any constructor at all for the base type '")
+				.Append(mockClass.ClassFullName).Append("'. Therefore mocking is not supported!\");").AppendLine();
 		}
+
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine("\t}");
 	}
 
-	private static void AppendMock_BaseClassSubject(StringBuilder sb, MockClass mockClass, EquatableArray<Method> constructors)
+	private static void AppendMock_BaseClassSubject(StringBuilder sb, MockClass mockClass,
+		EquatableArray<Method> constructors)
 	{
-		sb.Append("\t\t\t\t\tif (_constructorParameters is null || _constructorParameters.Parameters.Length == 0)").AppendLine();
+		sb.Append("\t\t\t\t\tif (_constructorParameters is null || _constructorParameters.Parameters.Length == 0)")
+			.AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		if (constructors.Any(mockClass => mockClass.Parameters.Count == 0))
 		{
@@ -118,19 +130,26 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\t\t\t\tthrow new MockException(\"No parameterless constructor found for '").Append(mockClass.ClassFullName).Append("'. Please provide constructor parameters.\");").AppendLine();
+			sb.Append("\t\t\t\t\t\tthrow new MockException(\"No parameterless constructor found for '")
+				.Append(mockClass.ClassFullName).Append("'. Please provide constructor parameters.\");").AppendLine();
 		}
+
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		int constructorIndex = 0;
-		foreach (var constructorParameters in constructors.Select(constructor => constructor.Parameters))
+		foreach (EquatableArray<MethodParameter> constructorParameters in constructors.Select(constructor
+			         => constructor.Parameters))
 		{
 			constructorIndex++;
-			sb.Append("\t\t\t\t\telse if (_constructorParameters.Parameters.Length == ").Append(constructorParameters.Count);
+			sb.Append("\t\t\t\t\telse if (_constructorParameters.Parameters.Length == ")
+				.Append(constructorParameters.Count);
 			int index = 0;
 			foreach (MethodParameter parameter in constructorParameters)
 			{
-				sb.AppendLine().Append("\t\t\t\t\t    && TryCast(_constructorParameters.Parameters[").Append(index++).Append("], out ").Append(parameter.Type.Fullname).Append(" c").Append(constructorIndex).Append('p').Append(index).Append(")");
+				sb.AppendLine().Append("\t\t\t\t\t    && TryCast(_constructorParameters.Parameters[").Append(index++)
+					.Append("], out ").Append(parameter.Type.Fullname).Append(" c").Append(constructorIndex).Append('p')
+					.Append(index).Append(")");
 			}
+
 			sb.Append(")").AppendLine();
 			sb.Append("\t\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\t\tMockSubject._mockProvider.Value = this;").AppendLine();
@@ -139,27 +158,31 @@ internal static partial class Sources
 			{
 				sb.Append(", c").Append(constructorIndex).Append('p').Append(i);
 			}
+
 			sb.Append(");").AppendLine();
 			sb.Append("\t\t\t\t\t}").AppendLine();
 		}
+
 		sb.Append("\t\t\t\t\telse").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\t\tthrow new MockException($\"Could not find any constructor for '").Append(mockClass.ClassFullName).Append("' that matches the {_constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", _constructorParameters.Parameters)}).\");").AppendLine();
+		sb.Append("\t\t\t\t\t\tthrow new MockException($\"Could not find any constructor for '")
+			.Append(mockClass.ClassFullName)
+			.Append(
+				"' that matches the {_constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", _constructorParameters.Parameters)}).\");")
+			.AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 	}
 
 	private static void AppendMock_InterfaceSubject(StringBuilder sb)
-	{
-		sb.Append("\t\t\t\t\t_subject = new MockSubject(this);").AppendLine();
-	}
+		=> sb.Append("\t\t\t\t\t_subject = new MockSubject(this);").AppendLine();
 
 	private static void AppendMock_DelegateSubject(StringBuilder sb, MockClass mockClass, Method @delegate)
 	{
 		sb.Append("\t\t\t\t\t_subject = new ").Append(mockClass.ClassFullName).Append("((")
-				.Append(string.Join(", ", @delegate.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
-				.Append(") =>").AppendLine();
+			.Append(string.Join(", ", @delegate.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+			.Append(") =>").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
-		if (@delegate.ReturnType != Entities.Type.Void)
+		if (@delegate.ReturnType != Type.Void)
 		{
 			sb.Append("\t\t\t\t\t\tvar result = ((IMock)this).Execute<")
 				.Append(@delegate.ReturnType.Fullname)
@@ -173,7 +196,8 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\t\t\t\tvar result = ((IMock)this).Execute(\"").Append(mockClass.ClassFullName).Append('.').Append(@delegate.Name).Append("\"");
+			sb.Append("\t\t\t\t\t\tvar result = ((IMock)this).Execute(\"").Append(mockClass.ClassFullName).Append('.')
+				.Append(@delegate.Name).Append("\"");
 			foreach (MethodParameter p in @delegate.Parameters)
 			{
 				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -198,7 +222,7 @@ internal static partial class Sources
 			}
 		}
 
-		if (@delegate.ReturnType != Entities.Type.Void)
+		if (@delegate.ReturnType != Type.Void)
 		{
 			sb.Append("\t\t\t\t\t\treturn result.Result;").AppendLine();
 		}
@@ -209,7 +233,8 @@ internal static partial class Sources
 	private static void AppendMockSubject(StringBuilder sb, MockClass mockClass)
 	{
 		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     The actual mock subject implementing <see cref=\"").Append(mockClass.ClassFullName.EscapeForXmlDoc())
+		sb.Append("\t///     The actual mock subject implementing <see cref=\"")
+			.Append(mockClass.ClassFullName.EscapeForXmlDoc())
 			.Append("\" />");
 		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
 		{
@@ -226,20 +251,22 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("""
-				{
-					private IMock _mock;
-			
-			""");
-		var mockString = "_mock";
+		              	{
+		              		private IMock _mock;
+
+		              """);
+		string mockString = "_mock";
 		if (mockClass.Constructors?.Count > 0)
 		{
-			sb.Append("\tinternal static System.Threading.AsyncLocal<IMock?> _mockProvider = new System.Threading.AsyncLocal<IMock?>();").AppendLine().AppendLine();
+			sb.Append(
+					"\tinternal static System.Threading.AsyncLocal<IMock?> _mockProvider = new System.Threading.AsyncLocal<IMock?>();")
+				.AppendLine().AppendLine();
 			mockString = "(_mock ?? _mockProvider.Value)";
 		}
 
 		sb.AppendLine("""
-					/// <inheritdoc cref="MockSubject" />
-			""");
+		              		/// <inheritdoc cref="MockSubject" />
+		              """);
 		if (mockClass.IsInterface)
 		{
 			AppendMockSubject_InterfaceConstructor(sb);
@@ -263,15 +290,12 @@ internal static partial class Sources
 		sb.AppendLine("\t}");
 	}
 
-	private static void AppendMockSubject_InterfaceConstructor(StringBuilder sb)
-	{
-		sb.AppendLine("""
-					public MockSubject(IMock mock)
-					{
-						_mock = mock;
-					}
-			""");
-	}
+	private static void AppendMockSubject_InterfaceConstructor(StringBuilder sb) => sb.AppendLine("""
+				public MockSubject(IMock mock)
+				{
+					_mock = mock;
+				}
+		""");
 
 	private static void AppendMockSubject_BaseClassConstructor(StringBuilder sb, Method constructor)
 	{
@@ -294,20 +318,22 @@ internal static partial class Sources
 
 			sb.Append(parameter.Name);
 		}
+
 		sb.AppendLine(")");
 		sb.AppendLine("""
-							{
-								_mock = mock;
-							}
-					""");
+		              		{
+		              			_mock = mock;
+		              		}
+		              """);
 	}
 
-	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class, string mockString, MockClass? mockClass)
+	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class, string mockString,
+		MockClass? mockClass)
 	{
-		var className = @class.ClassFullName;
+		string className = @class.ClassFullName;
 		sb.Append("\t\t#region ").Append(className).AppendLine();
 		int count = 0;
-		var mockEvents = mockClass?.AllEvents().ToList();
+		List<Event>? mockEvents = mockClass?.AllEvents().ToList();
 		foreach (Event @event in @class.AllEvents())
 		{
 			if (count++ > 0)
@@ -317,11 +343,12 @@ internal static partial class Sources
 
 			if (mockEvents?.All(e => !Event.EqualityComparer.Equals(@event, e)) != false)
 			{
-				AppendMockSubject_ImplementClass_AddEvent(sb, @event, className, mockString, mockClass is not null, @class.IsInterface);
+				AppendMockSubject_ImplementClass_AddEvent(sb, @event, className, mockString, mockClass is not null,
+					@class.IsInterface);
 			}
 		}
 
-		var mockProperties = mockClass?.AllProperties().ToList();
+		List<Property>? mockProperties = mockClass?.AllProperties().ToList();
 		foreach (Property property in @class.AllProperties())
 		{
 			if (count++ > 0)
@@ -331,11 +358,12 @@ internal static partial class Sources
 
 			if (mockProperties?.All(p => !Property.EqualityComparer.Equals(property, p)) != false)
 			{
-				AppendMockSubject_ImplementClass_AddProperty(sb, property, className, mockString, mockClass is not null, @class.IsInterface);
+				AppendMockSubject_ImplementClass_AddProperty(sb, property, className, mockString, mockClass is not null,
+					@class.IsInterface);
 			}
 		}
 
-		var mockMethods = mockClass?.AllMethods().ToList();
+		List<Method>? mockMethods = mockClass?.AllMethods().ToList();
 		foreach (Method method in @class.AllMethods())
 		{
 			if (count++ > 0)
@@ -346,16 +374,19 @@ internal static partial class Sources
 
 			if (mockMethods?.All(m => !Method.EqualityComparer.Equals(method, m)) != false)
 			{
-				AppendMockSubject_ImplementClass_AddMethod(sb, method, className, mockString, mockClass is not null, @class.IsInterface);
+				AppendMockSubject_ImplementClass_AddMethod(sb, method, className, mockString, mockClass is not null,
+					@class.IsInterface);
 			}
 		}
 
 		sb.Append("\t\t#endregion ").Append(className).AppendLine();
 	}
 
-	private static void AppendMockSubject_ImplementClass_AddEvent(StringBuilder sb, Event @event, string className, string mockString, bool explicitInterfaceImplementation, bool isClassInterface)
+	private static void AppendMockSubject_ImplementClass_AddEvent(StringBuilder sb, Event @event, string className,
+		string mockString, bool explicitInterfaceImplementation, bool isClassInterface)
 	{
-		sb.Append("\t\t/// <inheritdoc cref=\"").Append(@event.ContainingType.EscapeForXmlDoc()).Append('.').Append(@event.Name.EscapeForXmlDoc())
+		sb.Append("\t\t/// <inheritdoc cref=\"").Append(@event.ContainingType.EscapeForXmlDoc()).Append('.')
+			.Append(@event.Name.EscapeForXmlDoc())
 			.AppendLine("\" />");
 		if (explicitInterfaceImplementation)
 		{
@@ -371,28 +402,35 @@ internal static partial class Sources
 				{
 					sb.Append("override ");
 				}
+
 				sb.Append("event ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ");
 			}
 			else
 			{
-				sb.Append("\t\t").Append("event ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ").Append(@event.ExplicitImplementation).Append('.');
+				sb.Append("\t\t").Append("event ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ")
+					.Append(@event.ExplicitImplementation).Append('.');
 			}
 
 			sb.Append(@event.Name).AppendLine();
 		}
 
 		sb.AppendLine("\t\t{");
-		sb.Append("\t\t\tadd => ").Append(mockString).Append("?.Raise.AddEvent(").Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
-		sb.Append("\t\t\tremove => ").Append(mockString).Append("?.Raise.RemoveEvent(").Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
+		sb.Append("\t\t\tadd => ").Append(mockString).Append("?.Raise.AddEvent(").Append(@event.GetUniqueNameString())
+			.Append(", value?.Target, value?.Method);").AppendLine();
+		sb.Append("\t\t\tremove => ").Append(mockString).Append("?.Raise.RemoveEvent(")
+			.Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
 		sb.AppendLine("\t\t}");
 	}
 
-	private static void AppendMockSubject_ImplementClass_AddProperty(StringBuilder sb, Property property, string className, string mockString, bool explicitInterfaceImplementation, bool isClassInterface)
+	private static void AppendMockSubject_ImplementClass_AddProperty(StringBuilder sb, Property property,
+		string className, string mockString, bool explicitInterfaceImplementation, bool isClassInterface)
 	{
-		sb.Append("\t\t/// <inheritdoc cref=\"").Append(property.ContainingType.EscapeForXmlDoc()).Append('.').Append(property.IndexerParameters is not null
-				? property.Name.Replace("[]",
-					$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname}"))}]").EscapeForXmlDoc()
-				: property.Name.EscapeForXmlDoc())
+		sb.Append("\t\t/// <inheritdoc cref=\"").Append(property.ContainingType.EscapeForXmlDoc()).Append('.').Append(
+				property.IndexerParameters is not null
+					? property.Name.Replace("[]",
+							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname}"))}]")
+						.EscapeForXmlDoc()
+					: property.Name.EscapeForXmlDoc())
 			.AppendLine("\" />");
 		if (explicitInterfaceImplementation)
 		{
@@ -411,17 +449,19 @@ internal static partial class Sources
 				{
 					sb.Append("override ");
 				}
+
 				sb.Append(property.Type.Fullname).Append(" ");
 			}
 			else
 			{
-				sb.Append("\t\t").Append(property.Type.Fullname).Append(" ").Append(property.ExplicitImplementation).Append('.');
+				sb.Append("\t\t").Append(property.Type.Fullname).Append(" ").Append(property.ExplicitImplementation)
+					.Append('.');
 			}
 
 			sb.Append(property.IndexerParameters is not null
-					? property.Name.Replace("[]",
-						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname} {p.Name}"))}]")
-					: property.Name).AppendLine();
+				? property.Name.Replace("[]",
+					$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname} {p.Name}"))}]")
+				: property.Name).AppendLine();
 		}
 
 		sb.AppendLine("\t\t{");
@@ -437,24 +477,37 @@ internal static partial class Sources
 			sb.AppendLine("\t\t\t{");
 			if (!isClassInterface && !property.IsAbstract)
 			{
-				sb.Append("\t\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)").AppendLine();
+				sb.Append(
+						"\t\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
+					.AppendLine();
 				sb.Append("\t\t\t\t{").AppendLine();
 				if (property.IsIndexer && property.IndexerParameters is not null)
 				{
-					sb.Append("\t\t\t\t\tvar baseResult = base[").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine("];");
-					sb.Append("\t\t\t\t\tif (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)").AppendLine();
+					sb.Append("\t\t\t\t\tvar baseResult = base[")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.AppendLine("];");
+					sb.Append(
+							"\t\t\t\t\tif (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)")
+						.AppendLine();
 					sb.Append("\t\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t\treturn _mock.GetIndexer<").Append(property.Type.Fullname).Append(">(() => baseResult, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine(");");
+					sb.Append("\t\t\t\t\t\treturn _mock.GetIndexer<").Append(property.Type.Fullname)
+						.Append(">(() => baseResult, ")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.AppendLine(");");
 					sb.Append("\t\t\t\t\t}").AppendLine();
 				}
 				else
 				{
 					sb.Append("\t\t\t\t\tvar baseResult = base.").Append(property.Name).Append(";").AppendLine();
-					sb.Append("\t\t\t\t\tif (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)").AppendLine();
+					sb.Append(
+							"\t\t\t\t\tif (_mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)")
+						.AppendLine();
 					sb.Append("\t\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t\treturn _mock.Get<").Append(property.Type.Fullname).Append(">(").Append(property.GetUniqueNameString()).AppendLine(", () => baseResult);");
+					sb.Append("\t\t\t\t\t\treturn _mock.Get<").Append(property.Type.Fullname).Append(">(")
+						.Append(property.GetUniqueNameString()).AppendLine(", () => baseResult);");
 					sb.Append("\t\t\t\t\t}").AppendLine();
 				}
+
 				sb.Append("\t\t\t\t}").AppendLine().AppendLine();
 			}
 
@@ -462,7 +515,8 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\t\treturn ").Append(mockString).Append("?.GetIndexer<")
 					.Append(property.Type.Fullname)
-					.Append(">(null, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine(")");
+					.Append(">(null, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+					.AppendLine(")");
 				sb.Append("\t\t\t\t\t?? (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
 					.Append(property.Type.Fullname)
 					.Append(">();").AppendLine();
@@ -476,6 +530,7 @@ internal static partial class Sources
 					.Append(property.Type.Fullname)
 					.Append(">();").AppendLine();
 			}
+
 			sb.AppendLine("\t\t\t}");
 		}
 
@@ -491,16 +546,21 @@ internal static partial class Sources
 			sb.AppendLine("\t\t\t{");
 			if (!isClassInterface && !property.IsAbstract)
 			{
-				sb.Append("\t\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)").AppendLine();
+				sb.Append(
+						"\t\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
+					.AppendLine();
 				sb.Append("\t\t\t\t{").AppendLine();
 				if (property.IsIndexer && property.IndexerParameters is not null)
 				{
-					sb.Append("\t\t\t\t\tbase[").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine("] = value;");
+					sb.Append("\t\t\t\t\tbase[")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.AppendLine("] = value;");
 				}
 				else
 				{
 					sb.Append("\t\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
 				}
+
 				sb.Append("\t\t\t\t}").AppendLine().AppendLine();
 			}
 
@@ -508,22 +568,26 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\t\t").Append(mockString).Append("?.SetIndexer<")
 					.Append(property.Type.Fullname)
-					.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name))).AppendLine(");");
+					.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+					.AppendLine(");");
 			}
 			else
 			{
-				sb.Append("\t\t\t\t").Append(mockString).Append("?.Set(").Append(property.GetUniqueNameString()).AppendLine(", value);");
+				sb.Append("\t\t\t\t").Append(mockString).Append("?.Set(").Append(property.GetUniqueNameString())
+					.AppendLine(", value);");
 			}
+
 			sb.AppendLine("\t\t\t}");
 		}
 
 		sb.AppendLine("\t\t}");
 	}
 
-	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method, string className, string mockString, bool explicitInterfaceImplementation, bool isClassInterface)
+	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method, string className,
+		string mockString, bool explicitInterfaceImplementation, bool isClassInterface)
 	{
-
-		sb.Append("\t\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.').Append(method.Name.EscapeForXmlDoc())
+		sb.Append("\t\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.')
+			.Append(method.Name.EscapeForXmlDoc())
 			.Append('(').Append(string.Join(", ",
 				method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
 			.AppendLine(")\" />");
@@ -577,10 +641,11 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
-		if (method.ReturnType != Entities.Type.Void)
+		if (method.ReturnType != Type.Void)
 		{
 			sb.Append("\t\t\tMethodSetupResult<").Append(method.ReturnType.Fullname)
-				.Append(">? methodExecution = ").Append(mockString).Append("?.Execute<").Append(method.ReturnType.Fullname).Append(">(").Append(method.GetUniqueNameString());
+				.Append(">? methodExecution = ").Append(mockString).Append("?.Execute<")
+				.Append(method.ReturnType.Fullname).Append(">(").Append(method.GetUniqueNameString());
 			foreach (MethodParameter p in method.Parameters)
 			{
 				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -590,7 +655,8 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tMethodSetupResult? methodExecution = ").Append(mockString).Append("?.Execute(").Append(method.GetUniqueNameString());
+			sb.Append("\t\t\tMethodSetupResult? methodExecution = ").Append(mockString).Append("?.Execute(")
+				.Append(method.GetUniqueNameString());
 			foreach (MethodParameter p in method.Parameters)
 			{
 				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -607,58 +673,80 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\tif (methodExecution is null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<").Append(parameter.Type.Fullname).Append(">();").AppendLine();
+					sb.Append("\t\t\t\t").Append(parameter.Name)
+						.Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
+						.Append(parameter.Type.Fullname).Append(">();").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 					sb.Append("\t\t\telse").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<").Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
 					sb.Append("\t\t\t}").AppendLine().AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.Append("\t\t\tif (methodExecution is null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<").Append(parameter.Type.Fullname).Append(">();").AppendLine();
+					sb.Append("\t\t\t\t").Append(parameter.Name)
+						.Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
+						.Append(parameter.Type.Fullname).Append(">();").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 					sb.Append("\t\t\telse").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<").Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name).Append(");").AppendLine();
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
+						.Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t\t}").AppendLine().AppendLine();
 				}
 			}
 
-			if (method.ReturnType != Entities.Type.Void)
+			if (method.ReturnType != Type.Void)
 			{
 				sb.Append("\t\t\tif (methodExecution is null)").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\treturn (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<").Append(method.ReturnType.Fullname).Append(">();").AppendLine();
+				sb.Append("\t\t\t\treturn (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
+					.Append(method.ReturnType.Fullname).Append(">();").AppendLine();
 				sb.Append("\t\t\t}").AppendLine().AppendLine();
 				sb.Append("\t\t\treturn methodExecution.Result;").AppendLine();
 			}
 		}
-		else if (method.ReturnType != Entities.Type.Void)
+		else if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)").AppendLine();
+			sb.Append(
+					"\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
+				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tvar baseResult = base.").Append(method.Name).Append('(').Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}"))).Append(");").AppendLine();
+			sb.Append("\t\t\t\tvar baseResult = base.").Append(method.Name).Append('(')
+				.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+				.Append(");").AppendLine();
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				if (parameter.RefKind == RefKind.Out)
 				{
-					sb.Append("\t\t\t\tif (methodExecution?.HasSetup == true || _mock.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue)").AppendLine();
+					sb.Append(
+							"\t\t\t\tif (methodExecution?.HasSetup == true || _mock.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue)")
+						.AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<").Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
+					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
 					sb.Append("\t\t\t\t}").AppendLine().AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
-					sb.Append("\t\t\t\tif (methodExecution?.HasSetup == true || _mock.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue)").AppendLine();
+					sb.Append(
+							"\t\t\t\tif (methodExecution?.HasSetup == true || _mock.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue)")
+						.AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<").Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name).Append(");").AppendLine();
+					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
+						.Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine().AppendLine();
 				}
 			}
-			sb.Append("\t\t\t\tif (methodExecution?.HasSetup != true && _mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)").AppendLine();
+
+			sb.Append(
+					"\t\t\t\tif (methodExecution?.HasSetup != true && _mock.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)")
+				.AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\treturn baseResult;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
@@ -673,39 +761,53 @@ internal static partial class Sources
 					{
 						sb.Append("\t\t\t\tif (methodExecution is null)").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<").Append(parameter.Type.Fullname).Append(">();").AppendLine();
+						sb.Append("\t\t\t\t\t").Append(parameter.Name)
+							.Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
+							.Append(parameter.Type.Fullname).Append(">();").AppendLine();
 						sb.Append("\t\t\t\t}").AppendLine();
 						sb.Append("\t\t\t\telse").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<").Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
+						sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
 						sb.Append("\t\t\t\t}").AppendLine().AppendLine();
 					}
 					else if (parameter.RefKind == RefKind.Ref)
 					{
 						sb.Append("\t\t\t\tif (methodExecution is null)").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<").Append(parameter.Type.Fullname).Append(">();").AppendLine();
+						sb.Append("\t\t\t\t\t").Append(parameter.Name)
+							.Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
+							.Append(parameter.Type.Fullname).Append(">();").AppendLine();
 						sb.Append("\t\t\t\t}").AppendLine();
 						sb.Append("\t\t\t\telse").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<").Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name).Append(");").AppendLine();
+						sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
+							.Append(parameter.Name).Append(");").AppendLine();
 						sb.Append("\t\t\t\t}").AppendLine().AppendLine();
 					}
 				}
+
 				sb.Append("\t\t\t}").AppendLine();
 			}
+
 			sb.AppendLine();
 			sb.Append("\t\t\tif (methodExecution is null)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<").Append(method.ReturnType.Fullname).Append(">();").AppendLine();
+			sb.Append("\t\t\t\treturn (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
+				.Append(method.ReturnType.Fullname).Append(">();").AppendLine();
 			sb.Append("\t\t\t}").AppendLine().AppendLine();
 			sb.Append("\t\t\treturn methodExecution.Result;").AppendLine();
 		}
 		else
 		{
-			sb.Append("\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)").AppendLine();
+			sb.Append(
+					"\t\t\tif (_mock is not null && _mock.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
+				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tbase.").Append(method.Name).Append('(').Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}"))).Append(");").AppendLine();
+			sb.Append("\t\t\t\tbase.").Append(method.Name).Append('(')
+				.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+				.Append(");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			foreach (MethodParameter parameter in method.Parameters)
 			{
@@ -714,11 +816,14 @@ internal static partial class Sources
 					sb.AppendLine();
 					sb.Append("\t\t\tif (methodExecution is null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<").Append(parameter.Type.Fullname).Append(">();").AppendLine();
+					sb.Append("\t\t\t\t").Append(parameter.Name)
+						.Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
+						.Append(parameter.Type.Fullname).Append(">();").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 					sb.Append("\t\t\telse").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<").Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
 					sb.Append("\t\t\t}").AppendLine().AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
@@ -726,11 +831,15 @@ internal static partial class Sources
 					sb.AppendLine();
 					sb.Append("\t\t\tif (methodExecution is null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<").Append(parameter.Type.Fullname).Append(">();").AppendLine();
+					sb.Append("\t\t\t\t").Append(parameter.Name)
+						.Append(" = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<")
+						.Append(parameter.Type.Fullname).Append(">();").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 					sb.Append("\t\t\telse").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<").Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name).Append(");").AppendLine();
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
+						.Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 				}
 			}

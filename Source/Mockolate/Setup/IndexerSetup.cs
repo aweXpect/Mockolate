@@ -950,7 +950,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		MockBehavior behavior)
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
-			indexerSetterAccess.Parameters.Length == 4 &&
+		    indexerSetterAccess.Parameters.Length == 4 &&
 		    TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
 		    TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior) &&
 		    TryCast(indexerSetterAccess.Parameters[2], out T3 p3, behavior) &&

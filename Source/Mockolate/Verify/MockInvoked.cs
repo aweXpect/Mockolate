@@ -12,10 +12,11 @@ public class MockInvoked<T, TMock>(MockVerify<T, TMock> verify) : IMockInvoked<M
 	internal MockVerify<T, TMock> Verify { get; } = verify;
 
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
-	VerificationResult<MockVerify<T, TMock>> IMockInvoked<MockVerify<T, TMock>>.Method(string methodName, params With.Parameter[] parameters)
+	VerificationResult<MockVerify<T, TMock>> IMockInvoked<MockVerify<T, TMock>>.Method(string methodName,
+		params With.Parameter[] parameters)
 	{
 		MockInteractions interactions = ((IMockVerify<TMock>)Verify).Interactions;
-		return new(Verify, interactions,
+		return new VerificationResult<MockVerify<T, TMock>>(Verify, interactions,
 			interactions.Interactions
 				.OfType<MethodInvocation>()
 				.Where(method =>
@@ -24,14 +25,15 @@ public class MockInvoked<T, TMock>(MockVerify<T, TMock> verify) : IMockInvoked<M
 					!parameters.Where((parameter, i) => !parameter.Matches(method.Parameters[i])).Any())
 				.Cast<IInteraction>()
 				.ToArray(),
-		$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
+			$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
 	}
 
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameters)" />
-	VerificationResult<MockVerify<T, TMock>> IMockInvoked<MockVerify<T, TMock>>.Method(string methodName, With.Parameters parameters)
+	VerificationResult<MockVerify<T, TMock>> IMockInvoked<MockVerify<T, TMock>>.Method(string methodName,
+		With.Parameters parameters)
 	{
 		MockInteractions interactions = ((IMockVerify<TMock>)Verify).Interactions;
-		return new(Verify, interactions,
+		return new VerificationResult<MockVerify<T, TMock>>(Verify, interactions,
 			interactions.Interactions
 				.OfType<MethodInvocation>()
 				.Where(method =>
@@ -39,6 +41,6 @@ public class MockInvoked<T, TMock>(MockVerify<T, TMock> verify) : IMockInvoked<M
 					parameters.Matches(method.Parameters))
 				.Cast<IInteraction>()
 				.ToArray(),
-		$"invoked method {methodName.SubstringAfterLast('.')}({parameters})");
+			$"invoked method {methodName.SubstringAfterLast('.')}({parameters})");
 	}
 }

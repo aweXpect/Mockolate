@@ -525,10 +525,10 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_BaseClassWithVirtualCallsInConstructor()
 	{
-		var mock = Mock.Create<MyBaseClassWithVirtualCallsInConstructor>();
-		mock.Setup.Method.VirtualMethod().Returns([5, 6]);
+		Mock<MyBaseClassWithVirtualCallsInConstructor> mock = Mock.Create<MyBaseClassWithVirtualCallsInConstructor>();
+		mock.Setup.Method.VirtualMethod().Returns([5, 6,]);
 
-		var value = mock.Subject.VirtualProperty;
+		int value = mock.Subject.VirtualProperty;
 
 		await That(mock.Verify.Invoked.VirtualMethod()).Once();
 		await That(value).IsEqualTo(5);
@@ -538,16 +538,13 @@ public sealed partial class MockTests
 	{
 		public MyBaseClassWithVirtualCallsInConstructor()
 		{
-			var values = VirtualMethod();
+			int[] values = VirtualMethod();
 			VirtualProperty = values[0];
 		}
 
 		public virtual int VirtualProperty { get; set; }
 
-		public virtual int[] VirtualMethod()
-		{
-			return [0, 1];
-		}
+		public virtual int[] VirtualMethod() => [0, 1,];
 	}
 
 	public class MyBaseClassWithMultipleConstructors
@@ -555,6 +552,7 @@ public sealed partial class MockTests
 		public MyBaseClassWithMultipleConstructors(int initialValue)
 		{
 		}
+
 		public MyBaseClassWithMultipleConstructors(DateTime initialValue)
 		{
 		}

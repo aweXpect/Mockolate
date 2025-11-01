@@ -1,7 +1,4 @@
-﻿using Mockolate;
-using Mockolate.Verify;
-
-namespace Mockolate.Tests.Verify;
+﻿namespace Mockolate.Tests.Verify;
 
 public class MockVerifyTests
 {

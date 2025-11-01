@@ -1,5 +1,4 @@
 using Mockolate.Exceptions;
-using Mockolate.Verify;
 
 namespace Mockolate.Tests;
 
@@ -34,7 +33,8 @@ public sealed partial class MockTests
 			sut.Subject.SetIsValid(i % 2 == 0, () => true);
 		}
 
-		await That(sut.Verify.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>())).Exactly(numberOfInvocations);
+		await That(sut.Verify.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>()))
+			.Exactly(numberOfInvocations);
 	}
 
 	[Theory]

@@ -7,7 +7,7 @@ using Mockolate.Analyzers.Helpers;
 namespace Mockolate.Analyzers;
 
 /// <summary>
-///      An analyzer that checks that all <c>VerificationResult</c> invocations are properly used.
+///     An analyzer that checks that all <c>VerificationResult</c> invocations are properly used.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class UseVerificationAnalyzer : DiagnosticAnalyzer
@@ -28,9 +28,9 @@ public class UseVerificationAnalyzer : DiagnosticAnalyzer
 	{
 		if (context.Operation is IInvocationOperation invocationOperation)
 		{
-			var returnType = invocationOperation.Type;
+			ITypeSymbol? returnType = invocationOperation.Type;
 			if (returnType is INamedTypeSymbol namedReturnType &&
-				namedReturnType.MatchesFullName("Mockolate", "Verify", "VerificationResult"))
+			    namedReturnType.MatchesFullName("Mockolate", "Verify", "VerificationResult"))
 			{
 				CheckIsUsed(context, invocationOperation);
 			}
@@ -58,18 +58,18 @@ public class UseVerificationAnalyzer : DiagnosticAnalyzer
 		while (parent != null)
 		{
 			if (parent is
-				// Any assignment (including to variables, fields, properties, etc.)
-				IAssignmentOperation or
-				// Any variable initializer (e.g., var x = ...)
-				IVariableInitializerOperation or
-				// Used as an argument to another invocation)
-				IArgumentOperation or
-				// Used in a return statement
-				IReturnOperation or
-				// Used in a conditional expression
-				IConditionalOperation or
-				// Used in a member access or chained invocation (e.g. .Once(), .AtLeastOnce())
-				IInvocationOperation or IMemberReferenceOperation)
+			    // Any assignment (including to variables, fields, properties, etc.)
+			    IAssignmentOperation or
+			    // Any variable initializer (e.g., var x = ...)
+			    IVariableInitializerOperation or
+			    // Used as an argument to another invocation)
+			    IArgumentOperation or
+			    // Used in a return statement
+			    IReturnOperation or
+			    // Used in a conditional expression
+			    IConditionalOperation or
+			    // Used in a member access or chained invocation (e.g. .Once(), .AtLeastOnce())
+			    IInvocationOperation or IMemberReferenceOperation)
 			{
 				return true;
 			}

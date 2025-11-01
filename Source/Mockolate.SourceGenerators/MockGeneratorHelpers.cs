@@ -11,7 +11,7 @@ internal static class MockGeneratorHelpers
 		{
 			Expression: MemberAccessExpressionSyntax
 			{
-				Name: GenericNameSyntax { Arity: > 0},
+				Name: GenericNameSyntax { Arity: > 0, },
 			},
 		};
 
@@ -25,8 +25,9 @@ internal static class MockGeneratorHelpers
 		this SyntaxNode syntaxNode, SemanticModel semanticModel)
 	{
 		InvocationExpressionSyntax invocationSyntax = (InvocationExpressionSyntax)syntaxNode;
-		MemberAccessExpressionSyntax memberAccessExpressionSyntax = (MemberAccessExpressionSyntax)invocationSyntax.Expression;
-		var genericNameSyntax = (GenericNameSyntax)(memberAccessExpressionSyntax!.Name);
+		MemberAccessExpressionSyntax memberAccessExpressionSyntax =
+			(MemberAccessExpressionSyntax)invocationSyntax.Expression;
+		GenericNameSyntax genericNameSyntax = (GenericNameSyntax)memberAccessExpressionSyntax!.Name;
 		if (semanticModel.GetSymbolInfo(syntaxNode).Symbol.IsCreateInvocationOnMockOrMockFactory())
 		{
 			ITypeSymbol[] genericTypes = genericNameSyntax.TypeArgumentList.Arguments
@@ -45,8 +46,7 @@ internal static class MockGeneratorHelpers
 		return null;
 	}
 
-	private static bool IsMockable(ITypeSymbol typeSymbol)
-	{
-		return typeSymbol.TypeKind != TypeKind.TypeParameter && (!typeSymbol.IsSealed || typeSymbol.TypeKind == TypeKind.Delegate);
-	}
+	private static bool IsMockable(ITypeSymbol typeSymbol) => typeSymbol.TypeKind != TypeKind.TypeParameter &&
+	                                                          (!typeSymbol.IsSealed ||
+	                                                           typeSymbol.TypeKind == TypeKind.Delegate);
 }

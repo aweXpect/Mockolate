@@ -32,11 +32,11 @@ internal static partial class Sources
 		AppendMethodSetupExtensions(sb, @class);
 
 		if (@class.AllEvents().Any(@event
-				=> @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-			@class.AllMethods().Any(method
-				=> method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-			@class.AllProperties().Any(property
-				=> property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+		    @class.AllMethods().Any(method
+			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+		    @class.AllProperties().Any(property
+			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
 		{
 			AppendRaisesExtensions(sb, @class, true);
 			AppendPropertySetupExtensions(sb, @class, true);
@@ -64,7 +64,8 @@ internal static partial class Sources
 			return;
 		}
 
-		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockRaises<").Append(@class.ClassFullName).Append("> mock)").AppendLine();
+		sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockRaises<")
+			.Append(@class.ClassFullName).Append("> mock)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
@@ -105,10 +106,12 @@ internal static partial class Sources
 
 		if (@class.AllProperties().Any(predicate))
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<")
+				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up properties on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
+			sb.Append("\t\t///     Sets up properties on the mock for <see cref=\"")
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassFullName).Append(">")
 				.Append(isProtected ? ".Protected" : ".").Append("Properties Property").AppendLine();
@@ -129,7 +132,8 @@ internal static partial class Sources
 				}
 
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Setup for the property <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+				sb.Append("\t\t///     Setup for the property <see cref=\"")
+					.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
 					.Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic PropertySetup<").Append(property.Type.Fullname).Append("> ")
@@ -145,7 +149,8 @@ internal static partial class Sources
 					.Append(">();").AppendLine();
 				sb.AppendLine("\t\t\t\tif (setup is IMockSetup mockSetup)");
 				sb.AppendLine("\t\t\t\t{");
-				sb.Append("\t\t\t\t\tmockSetup.RegisterProperty(").Append(property.GetUniqueNameString()).Append(", propertySetup);").AppendLine();
+				sb.Append("\t\t\t\t\tmockSetup.RegisterProperty(").Append(property.GetUniqueNameString())
+					.Append(", propertySetup);").AppendLine();
 				sb.AppendLine("\t\t\t\t}");
 				sb.AppendLine("\t\t\t\treturn propertySetup;");
 				sb.AppendLine("\t\t\t}");
@@ -171,7 +176,8 @@ internal static partial class Sources
 
 		if (@class.AllProperties().Any(predicate))
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<")
+				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
 			foreach (Property indexer in @class.AllProperties().Where(predicate))
@@ -182,22 +188,30 @@ internal static partial class Sources
 				}
 
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Sets up the ").Append(indexer.Type.Fullname).Append(" indexer on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.")
+				sb.Append("\t\t///     Sets up the ").Append(indexer.Type.Fullname)
+					.Append(" indexer on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+					.Append("\" />.")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic IndexerSetup<").Append(indexer.Type.Fullname);
-				foreach (var parameter in indexer.IndexerParameters!)
+				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
 					sb.Append(", ").Append(parameter.Type.Fullname);
 				}
-				sb.Append("> Indexer").Append("(").Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"With.Parameter<{p.Type.Fullname}> parameter{i + 1}"))).Append(")").AppendLine();
+
+				sb.Append("> Indexer").Append("(").Append(string.Join(", ",
+					indexer.IndexerParameters.Value.Select((p, i)
+						=> $"With.Parameter<{p.Type.Fullname}> parameter{i + 1}"))).Append(")").AppendLine();
 				sb.Append("\t\t{").AppendLine();
 				sb.Append("\t\t\tvar indexerSetup = new IndexerSetup<").Append(indexer.Type.Fullname);
-				foreach (var parameter in indexer.IndexerParameters!)
+				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
 					sb.Append(", ").Append(parameter.Type.Fullname);
 				}
-				sb.Append(">(").Append(string.Join(", ", Enumerable.Range(1, indexer.IndexerParameters.Value.Count).Select(p => $"parameter{p}"))).Append(");").AppendLine();
+
+				sb.Append(">(").Append(string.Join(", ",
+						Enumerable.Range(1, indexer.IndexerParameters.Value.Count).Select(p => $"parameter{p}")))
+					.Append(");").AppendLine();
 				sb.Append("\t\t\t((IMockSetup)setup).RegisterIndexer(indexerSetup);").AppendLine();
 				sb.Append("\t\t\treturn indexerSetup;").AppendLine();
 				sb.Append("\t\t}").AppendLine();
@@ -221,10 +235,12 @@ internal static partial class Sources
 
 		if (@class.AllMethods().Any(predicate))
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
+			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<")
+				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up methods on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
+			sb.Append("\t\t///     Sets up methods on the mock for <see cref=\"")
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassFullName).Append(">")
 				.Append(isProtected ? ".Protected" : ".").Append("Methods Method").AppendLine();
@@ -245,7 +261,8 @@ internal static partial class Sources
 				}
 
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Setup for the method <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+				sb.Append("\t\t///     Setup for the method <see cref=\"")
+					.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
 					.Append(method.Name.EscapeForXmlDoc()).Append("(")
 					.Append(string.Join(", ",
 						method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
@@ -255,6 +272,7 @@ internal static partial class Sources
 					sb.Append(" with the given ")
 						.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>")));
 				}
+
 				sb.Append(".").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				if (method.ReturnType != Type.Void)
@@ -301,16 +319,17 @@ internal static partial class Sources
 					}
 
 					sb.Append(parameter.RefKind switch
-					{
-						RefKind.Ref => "With.RefParameter<",
-						RefKind.Out => "With.OutParameter<",
-						_ => "With.Parameter<",
-					}).Append(parameter.Type.Fullname)
+						{
+							RefKind.Ref => "With.RefParameter<",
+							RefKind.Out => "With.OutParameter<",
+							_ => "With.Parameter<",
+						}).Append(parameter.Type.Fullname)
 						.Append('>');
 					if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 					{
 						sb.Append('?');
 					}
+
 					sb.Append(' ').Append(parameter.Name);
 				}
 
@@ -322,6 +341,7 @@ internal static partial class Sources
 						gp.AppendWhereConstraint(sb, "\t\t\t");
 					}
 				}
+
 				sb.AppendLine("\t\t{");
 
 				if (method.ReturnType != Type.Void)
@@ -358,14 +378,16 @@ internal static partial class Sources
 				}
 
 				sb.Append("(").Append(method.GetUniqueNameString());
-				foreach (var parameter in method.Parameters)
+				foreach (MethodParameter parameter in method.Parameters)
 				{
-					sb.Append(", new With.NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
+					sb.Append(", new With.NamedParameter(\"").Append(parameter.Name).Append("\", ")
+						.Append(parameter.Name);
 					if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 					{
 						sb.Append(" ?? With.Null<").Append(parameter.Type.Fullname)
-						.Append(">()");
+							.Append(">()");
 					}
+
 					sb.Append(")");
 				}
 
@@ -379,11 +401,11 @@ internal static partial class Sources
 			}
 
 			foreach (Method method in @class.AllMethods()
-				.Where(predicate)
-				.GroupBy(m => m.Name)
-				.Where(g => g.Count() == 1)
-				.Select(g => g.Single())
-				.Where(m => m.Parameters.Count > 1 && m.Parameters.All(x => x.RefKind == RefKind.None)))
+				         .Where(predicate)
+				         .GroupBy(m => m.Name)
+				         .Where(g => g.Count() == 1)
+				         .Select(g => g.Single())
+				         .Where(m => m.Parameters.Count > 1 && m.Parameters.All(x => x.RefKind == RefKind.None)))
 			{
 				if (count++ > 0)
 				{
@@ -391,7 +413,8 @@ internal static partial class Sources
 				}
 
 				sb.Append("\t\t/// <summary>").AppendLine();
-				sb.Append("\t\t///     Setup for the method <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+				sb.Append("\t\t///     Setup for the method <see cref=\"")
+					.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
 					.Append(method.Name.EscapeForXmlDoc()).Append("(")
 					.Append(string.Join(", ",
 						method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
@@ -401,16 +424,19 @@ internal static partial class Sources
 					sb.Append(" with the given ")
 						.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>")));
 				}
+
 				sb.Append(".").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				if (method.ReturnType != Type.Void)
 				{
-					sb.Append("\t\tpublic ReturnMethodSetupWithParameters<").Append(method.ReturnType.Fullname).Append("> ").Append(method.Name).Append("(");
+					sb.Append("\t\tpublic ReturnMethodSetupWithParameters<").Append(method.ReturnType.Fullname)
+						.Append("> ").Append(method.Name).Append("(");
 				}
 				else
 				{
 					sb.Append("\t\tpublic VoidMethodSetupWithParameters ").Append(method.Name).Append("(");
 				}
+
 				sb.Append("With.Parameters parameters)").AppendLine();
 				if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 				{
@@ -419,6 +445,7 @@ internal static partial class Sources
 						gp.AppendWhereConstraint(sb, "\t\t\t");
 					}
 				}
+
 				sb.AppendLine("\t\t{");
 
 				if (method.ReturnType != Type.Void)

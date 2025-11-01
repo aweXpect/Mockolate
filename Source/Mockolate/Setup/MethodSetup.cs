@@ -146,7 +146,7 @@ public abstract class MethodSetup : IMethodSetup
 	}
 
 	/// <summary>
-	///     Attempts to cast the specified value to the type parameter <typeparamref name="T"/>,
+	///     Attempts to cast the specified value to the type parameter <typeparamref name="T" />,
 	///     returning a value that indicates whether the cast was successful.
 	/// </summary>
 	/// <remarks>

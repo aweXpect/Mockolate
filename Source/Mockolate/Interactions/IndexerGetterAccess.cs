@@ -19,7 +19,5 @@ public class IndexerGetterAccess(int index, object?[] parameters) : IInteraction
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-	{
-		return $"[{Index}] get indexer [{string.Join(", ", Parameters.Select(p => p?.ToString() ?? "null"))}]";
-	}
+		=> $"[{Index}] get indexer [{string.Join(", ", Parameters.Select(p => p?.ToString() ?? "null"))}]";
 }

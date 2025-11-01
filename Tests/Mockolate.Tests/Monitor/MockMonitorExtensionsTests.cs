@@ -1,5 +1,4 @@
 using Mockolate.Monitor;
-using Mockolate.Verify;
 
 namespace Mockolate.Tests.Monitor;
 
@@ -12,7 +11,7 @@ public sealed class MockMonitorExtensionsTests
 
 		mock.Subject.IsValid(1);
 		mock.Subject.IsValid(2);
-		var disposable = mock.Monitor(out var monitor);
+		IDisposable disposable = mock.Monitor(out MockMonitor<IMyService, Mock<IMyService>> monitor);
 		mock.Subject.IsValid(3);
 		mock.Subject.IsValid(4);
 		disposable.Dispose();
@@ -39,7 +38,7 @@ public sealed class MockMonitorExtensionsTests
 
 		mock.Subject.IsValid(1);
 		mock.Subject.IsValid(2);
-		var disposable = mock.Monitor(out var monitor);
+		IDisposable disposable = mock.Monitor(out MockMonitor<IMyService, Mock<IMyService>> monitor);
 		mock.Subject.IsValid(3);
 		mock.Subject.IsValid(4);
 

@@ -107,7 +107,7 @@ public sealed class MockMonitor<T, TMock> : MockMonitor
 	}
 
 	/// <summary>
-	///     Verifies the interactions with the mocked subject of <typeparamref name="T"/>.
+	///     Verifies the interactions with the mocked subject of <typeparamref name="T" />.
 	/// </summary>
 	public MockVerify<T, TMock> Verify
 	{

@@ -26,6 +26,7 @@ internal record Property
 			{
 				ExplicitImplementation = ContainingType;
 			}
+
 			alreadyDefinedProperties.Add(this);
 		}
 
@@ -54,10 +55,8 @@ internal record Property
 
 	private sealed class PropertyEqualityComparer : IEqualityComparer<Property>
 	{
-		public bool Equals(Property x, Property y)
-		{
-			return !x.IsIndexer && !y.IsIndexer && x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
-		}
+		public bool Equals(Property x, Property y) => !x.IsIndexer && !y.IsIndexer && x.Name.Equals(y.Name) &&
+		                                              x.ContainingType.Equals(y.ContainingType);
 
 		public int GetHashCode(Property obj) => obj.Name.GetHashCode();
 	}

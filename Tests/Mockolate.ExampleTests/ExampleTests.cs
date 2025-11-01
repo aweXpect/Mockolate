@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Mockolate.Tests.Dummy;
+using Mockolate.Verify;
+
 #if NET8_0_OR_GREATER
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 #endif
-using Mockolate.Tests.Dummy;
-using Mockolate.Verify;
 
 namespace Mockolate.ExampleTests;
 
@@ -162,7 +163,8 @@ public class ExampleTests
 	{
 		bool isCalled = false;
 		Guid id = Guid.NewGuid();
-		Mock<IList<int>, IExampleRepository, IOrderRepository> mock = Mock.Create<IList<int>, IExampleRepository, IOrderRepository>();
+		Mock<IList<int>, IExampleRepository, IOrderRepository> mock =
+			Mock.Create<IList<int>, IExampleRepository, IOrderRepository>();
 		mock.SetupIOrderRepository.Method
 			.SaveChanges()
 			.Callback(() => isCalled = true);

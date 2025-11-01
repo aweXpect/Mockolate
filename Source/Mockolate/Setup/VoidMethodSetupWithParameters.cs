@@ -81,8 +81,5 @@ public class VoidMethodSetupWithParameters(string name, With.Parameters match) :
 		=> throw new MockException("The method setup with parameters does not support ref parameters.");
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		return $"void {name}({match})";
-	}
+	public override string ToString() => $"void {name}({match})";
 }

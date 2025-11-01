@@ -36,5 +36,4 @@ public record MockBehavior
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
 		= new DefaultValueGenerator();
-
 }

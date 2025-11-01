@@ -132,7 +132,8 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_4Parameters_ReturnsConfiguredValue()
 		{
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>()).ReturnsAsync(42);
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.ReturnsAsync(42);
 
 			int result = await sut.Subject.Method4(1, 2, 3, 4);
 
@@ -315,7 +316,8 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_4Parameters_ReturnsConfiguredValue()
 		{
 			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>()).ReturnsAsync(42);
+			sut.Setup.Method.MethodVT4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.ReturnsAsync(42);
 
 			int result = await sut.Subject.MethodVT4(1, 2, 3, 4);
 

@@ -12,15 +12,16 @@ public class MockSet<T, TMock>(MockVerify<T, TMock> verify) : IMockSet<MockVerif
 	internal MockVerify<T, TMock> Verify { get; } = verify;
 
 	/// <inheritdoc cref="IMockSet{TMock}.Property(string, With.Parameter)" />
-	VerificationResult<MockVerify<T, TMock>> IMockSet<MockVerify<T, TMock>>.Property(string propertyName, With.Parameter value)
+	VerificationResult<MockVerify<T, TMock>> IMockSet<MockVerify<T, TMock>>.Property(string propertyName,
+		With.Parameter value)
 	{
 		MockInteractions interactions = ((IMockVerify<TMock>)Verify).Interactions;
-		return new(Verify, interactions,
+		return new VerificationResult<MockVerify<T, TMock>>(Verify, interactions,
 			interactions.Interactions
 				.OfType<PropertySetterAccess>()
 				.Where(property => property.Name.Equals(propertyName) && value.Matches(property.Value))
 				.Cast<IInteraction>()
 				.ToArray(),
-		$"set property {propertyName.SubstringAfterLast('.')} to value {value}");
+			$"set property {propertyName.SubstringAfterLast('.')} to value {value}");
 	}
 }

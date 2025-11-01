@@ -1,5 +1,3 @@
-using Mockolate.Verify;
-
 namespace Mockolate.Tests;
 
 public sealed partial class MockTests
@@ -7,9 +5,9 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task WhenMockInheritsEventMultipleTimes()
 	{
-		var mock = Mock.Create<IMyEventService, IMyEventServiceBase1>();
+		Mock<IMyEventService, IMyEventServiceBase1> mock = Mock.Create<IMyEventService, IMyEventServiceBase1>();
 		int callCount = 0;
-		
+
 		mock.Subject.SomeEvent += Subject_SomeEvent;
 		mock.Raise.SomeEvent(this, "event data");
 		mock.Subject.SomeEvent -= Subject_SomeEvent;
@@ -18,10 +16,7 @@ public sealed partial class MockTests
 		await That(mock.Verify.UnsubscribedFrom.SomeEvent()).Once();
 		await That(callCount).IsEqualTo(1);
 
-		void Subject_SomeEvent(object? sender, string e)
-		{
-			callCount++;
-		}
+		void Subject_SomeEvent(object? sender, string e) => callCount++;
 	}
 
 	public interface IMyEventService : IMyEventServiceBase1

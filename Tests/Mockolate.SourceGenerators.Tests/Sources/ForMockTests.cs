@@ -160,20 +160,20 @@ public sealed partial class ForMockTests
 			     	    }
 			     	}
 			     }
-			     
+
 			     namespace MyCode.Services
 			     {
 			         public interface IMyService<T> { }
 			     }
-			     
+
 			     namespace MyCode.Models
 			     {
 			         public record MyData(int Value);
 			     }
-			     
+
 			     """, typeof(List<>));
 
-		 await That(result.Sources).ContainsKey("ForIMyServiceListMyData.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("ForIMyServiceListMyData.g.cs").WhoseValue
 			.Contains("using Mockolate.Setup;").And
 			.DoesNotContain("using MyCode.Services;").And
 			.DoesNotContain("using MyCode.Models;");

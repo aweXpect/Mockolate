@@ -13,14 +13,16 @@ public static class ReturnsAsyncExtensions
 	/// <summary>
 	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
 	/// </summary>
-	public static ReturnMethodSetupWithParameters<Task<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetupWithParameters<Task<TReturn>> setup,
+	public static ReturnMethodSetupWithParameters<Task<TReturn>> ReturnsAsync<TReturn>(
+		this ReturnMethodSetupWithParameters<Task<TReturn>> setup,
 		TReturn returnValue)
 		=> setup.Returns(Task.FromResult(returnValue));
 
 	/// <summary>
 	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	public static ReturnMethodSetupWithParameters<Task<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetupWithParameters<Task<TReturn>> setup,
+	public static ReturnMethodSetupWithParameters<Task<TReturn>> ReturnsAsync<TReturn>(
+		this ReturnMethodSetupWithParameters<Task<TReturn>> setup,
 		Func<TReturn> callback)
 		=> setup.Returns(() => Task.FromResult(callback()));
 

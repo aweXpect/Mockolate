@@ -42,26 +42,26 @@ internal static partial class Sources
 		StringBuilder sb = InitializeBuilder([]);
 
 		sb.AppendLine("""
-		          namespace System;
+		              namespace System;
 
-		          #nullable enable
+		              #nullable enable
 
-		          """);
-		foreach (var parameterCount in parameterCounts)
+		              """);
+		foreach (int parameterCount in parameterCounts)
 		{
 			sb.AppendLine($$"""
-				/// <summary>
-				///     Encapsulates a method that has {{parameterCount}} parameters and does not return a value.
-				/// </summary>
-				public delegate void Action<{{string.Join(", ", Enumerable.Range(1, parameterCount).Select(i => $"in T{i}"))}}>({{string.Join(", ", Enumerable.Range(1, parameterCount).Select(i => $"T{i} arg{i}"))}});
-				""");
+			                /// <summary>
+			                ///     Encapsulates a method that has {{parameterCount}} parameters and does not return a value.
+			                /// </summary>
+			                public delegate void Action<{{string.Join(", ", Enumerable.Range(1, parameterCount).Select(i => $"in T{i}"))}}>({{string.Join(", ", Enumerable.Range(1, parameterCount).Select(i => $"T{i} arg{i}"))}});
+			                """);
 			sb.AppendLine();
 			sb.AppendLine($$"""
-				/// <summary>
-				///     Encapsulates a method that has {{parameterCount}} parameters and returns a value of the type specified by the <typeparamref name="TResult" /> parameter.
-				/// </summary>
-				public delegate TResult Func<{{string.Join(", ", Enumerable.Range(1, parameterCount).Select(i => $"in T{i}"))}}, out TResult>({{string.Join(", ", Enumerable.Range(1, parameterCount).Select(i => $"T{i} arg{i}"))}});
-				""");
+			                /// <summary>
+			                ///     Encapsulates a method that has {{parameterCount}} parameters and returns a value of the type specified by the <typeparamref name="TResult" /> parameter.
+			                /// </summary>
+			                public delegate TResult Func<{{string.Join(", ", Enumerable.Range(1, parameterCount).Select(i => $"in T{i}"))}}, out TResult>({{string.Join(", ", Enumerable.Range(1, parameterCount).Select(i => $"T{i} arg{i}"))}});
+			                """);
 			sb.AppendLine();
 		}
 
@@ -193,7 +193,8 @@ internal static partial class Sources
 		}
 
 		sb.Append("TryCast(invocation.Parameters[")
-			.Append(numberOfParameters - 1).Append("], out T").Append(numberOfParameters).Append(" p").Append(numberOfParameters).Append(", behavior))")
+			.Append(numberOfParameters - 1).Append("], out T").Append(numberOfParameters).Append(" p")
+			.Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_callbacks.ForEach(callback => callback.Invoke(")
@@ -419,7 +420,8 @@ internal static partial class Sources
 		}
 
 		sb.Append("TryCast(invocation.Parameters[")
-			.Append(numberOfParameters - 1).Append("], out T").Append(numberOfParameters).Append(" p").Append(numberOfParameters).Append(", behavior))")
+			.Append(numberOfParameters - 1).Append("], out T").Append(numberOfParameters).Append(" p")
+			.Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_callbacks.ForEach(callback => callback.Invoke(")
@@ -447,7 +449,8 @@ internal static partial class Sources
 				.Append("], out T").Append(i).Append(" p").Append(i).Append(", behavior))").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tthrow new MockException($\"The input parameter ").Append(i)
-				.Append(" only supports '{FormatType(typeof(T").Append(i).Append("))}', but is '{FormatType(invocation.Parameters[")
+				.Append(" only supports '{FormatType(typeof(T").Append(i)
+				.Append("))}', but is '{FormatType(invocation.Parameters[")
 				.Append(i - 1).Append("]?.GetType())}'.\");").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -468,7 +471,9 @@ internal static partial class Sources
 		sb.Append("\t\t\treturn result;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\tthrow new MockException($\"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.\");").AppendLine();
+		sb.Append(
+				"\t\tthrow new MockException($\"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.\");")
+			.AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 

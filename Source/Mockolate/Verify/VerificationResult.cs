@@ -8,30 +8,22 @@ namespace Mockolate.Verify;
 /// </summary>
 public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult
 {
-	private readonly string _expectation;
 	private readonly MockInteractions _interactions;
-	private readonly TVerify _verify;
 	private readonly IInteraction[] _matchingInteractions;
+	private readonly TVerify _verify;
 
 	/// <inheritdoc cref="VerificationResult{TMock}" />
-	public VerificationResult(TVerify verify, MockInteractions interactions, IInteraction[] matchingInteractions, string expectation)
+	public VerificationResult(TVerify verify, MockInteractions interactions, IInteraction[] matchingInteractions,
+		string expectation)
 	{
 		_verify = verify;
 		_interactions = interactions;
 		_matchingInteractions = matchingInteractions;
-		_expectation = expectation;
+		Expectation = expectation;
 	}
 
 	/// <inheritdoc cref="IVerificationResult.Expectation" />
-	public string Expectation
-		=> _expectation;
-
-	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
-	public bool Verify(Func<IInteraction[], bool> predicate)
-	{
-		_interactions.Verified(_matchingInteractions);
-		return predicate(_matchingInteractions);
-	}
+	public string Expectation { get; }
 
 	#region IVerificationResult<TVerify>
 
@@ -41,11 +33,18 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	#endregion
 
+	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
+	public bool Verify(Func<IInteraction[], bool> predicate)
+	{
+		_interactions.Verified(_matchingInteractions);
+		return predicate(_matchingInteractions);
+	}
+
 	#region IVerificationResult
 
 	/// <inheritdoc cref="IVerificationResult.Expectation" />
 	string IVerificationResult.Expectation
-		=> _expectation;
+		=> Expectation;
 
 	/// <inheritdoc cref="IVerificationResult.MockInteractions" />
 	MockInteractions IVerificationResult.MockInteractions
