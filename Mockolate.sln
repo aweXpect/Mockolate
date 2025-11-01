@@ -75,6 +75,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.Analyzers.CodeFix
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mockolate.Analyzers.Tests", "Tests\Mockolate.Analyzers.Tests\Mockolate.Analyzers.Tests.csproj", "{59D8A688-90F2-9C76-39EA-D334626F3D00}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{998DB807-840E-4E00-956E-350FDA8C851B}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\pages\00-index.md = Docs\pages\00-index.md
+		Docs\pages\01-mock-creation.md = Docs\pages\01-mock-creation.md
+		Docs\pages\02-setup.md = Docs\pages\02-setup.md
+		Docs\pages\03-events.md = Docs\pages\03-events.md
+		Docs\pages\04-verification.md = Docs\pages\04-verification.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +154,7 @@ Global
 		{D8D97888-0AE8-4558-8CAC-0C2A3E7F9B08} = {17A2EFA6-036A-4555-B74D-EDECCEA6072D}
 		{17A2EFA6-036A-4555-B74D-EDECCEA6072D} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
 		{59D8A688-90F2-9C76-39EA-D334626F3D00} = {9CC57AD0-4984-4618-96EA-01FFFCCD84FA}
+		{998DB807-840E-4E00-956E-350FDA8C851B} = {99D141BC-CCD6-4EEF-99DA-828CEF1F8928}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8D05DD33-55B6-4A6D-BB7A-68C505BBA67E}
