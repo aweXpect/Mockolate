@@ -58,8 +58,8 @@ Framework 4.8.
    mock.Subject.Dispense(4);
    
    // Verify that methods were called as expected
-   mock.Verify.Invoked.Refill(10).AtLeastOnce();
-   mock.Verify.Invoked.Dispense(With.Any<int>()).Twice();
+   mock.Verify.Invoked.Refill(With.Any<int>()).Twice();
+   mock.Verify.Invoked.Dispense(3).Once();
    
    // Output: "Chocolates left: 5. Did I get my sweet treat? True (If not, I demand a recount!)"
    Console.WriteLine($"Chocolates left: {mock.Subject.Chocolates}. Did I get my sweet treat? {gotChocolates} (If not, I demand a recount!)");
