@@ -16,7 +16,7 @@ Framework 4.8.
 - **Strongly-typed**: Setup and verify mocks with full IntelliSense and compile-time safety.
 - **AOT compatible**: Works with NativeAOT and trimming.
 
-# Getting Started
+## Getting Started
 
 1. Install the [`Mockolate`](https://www.nuget.org/packages/Mockolate) nuget package
    ```ps
@@ -70,8 +70,6 @@ Framework 4.8.
        event ChocolateDispensedDelegate ChocolateDispensed;
    }
    ```
-
-# Features
 
 ## Create mocks
 
