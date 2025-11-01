@@ -50,6 +50,7 @@ public class UseVerificationAnalyzer : DiagnosticAnalyzer
 		);
 	}
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static bool IsOperationUsed(IInvocationOperation invocationOperation)
 	{
 		IOperation? parent = invocationOperation.Parent;
@@ -57,48 +58,30 @@ public class UseVerificationAnalyzer : DiagnosticAnalyzer
 		// Walk up the parent chain
 		while (parent != null)
 		{
-			// Any assignment (including to variables, fields, properties, etc.)
-			if (parent is IAssignmentOperation)
+			if (parent is
+				// Any assignment (including to variables, fields, properties, etc.)
+				IAssignmentOperation or
+				// Any variable initializer (e.g., var x = ...)
+				IVariableInitializerOperation or
+				// Used as an argument to another invocation)
+				IArgumentOperation or
+				// Used in a return statement
+				IReturnOperation or
+				// Used in a conditional expression
+				IConditionalOperation or
+				// Used in a member access or chained invocation (e.g. .Once(), .AtLeastOnce())
+				IInvocationOperation or IMemberReferenceOperation)
 			{
 				return true;
 			}
 
-			// Any variable initializer (e.g., var x = ...)
-			if (parent is IVariableInitializerOperation)
-			{
-				return true;
-			}
-
-			// Used as an argument to another invocation
-			if (parent is IArgumentOperation)
-			{
-				return true;
-			}
-
-			// Used in a return statement
-			if (parent is IReturnOperation)
-			{
-				return true;
-			}
-
-			// Used in a conditional expression
-			if (parent is IConditionalOperation)
-			{
-				return true;
-			}
-
-			// Used in a member access or chained invocation (e.g. .Once(), .AtLeastOnce())
-			if (parent is IInvocationOperation || parent is IMemberReferenceOperation)
-			{
-				return true;
-			}
-
-			// If the parent is an ExpressionStatement, the result is discarded (not used)
+			// If the parent is an ExpressionStatement, check if the operation is the same as the invocationOperation
 			if (parent is IExpressionStatementOperation expr)
 			{
 				return expr.Operation != invocationOperation;
 			}
 
+			// If the parent is a block operation, we've reached the top of the statement without finding a usage
 			if (parent is IBlockOperation)
 			{
 				return false;
@@ -109,4 +92,5 @@ public class UseVerificationAnalyzer : DiagnosticAnalyzer
 
 		return false;
 	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 }
