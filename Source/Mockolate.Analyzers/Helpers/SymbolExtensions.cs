@@ -2,7 +2,7 @@
 
 namespace Mockolate.Analyzers.Helpers;
 
-internal static class MethodSymbolExtensions
+internal static class SymbolExtensions
 {
 	public static bool MatchesFullName(this INamedTypeSymbol methodSymbol,
 		string namespace1,

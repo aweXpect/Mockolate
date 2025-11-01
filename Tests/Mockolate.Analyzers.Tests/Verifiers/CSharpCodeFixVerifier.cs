@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Mockolate.Analyzers.Tests.Verifiers;
 
 namespace Mockolate.Analyzers.Tests.Verifiers;
 

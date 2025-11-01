@@ -1,5 +1,4 @@
-﻿using Mockolate.Analyzers;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 
 namespace Mockolate.Analyzers;
 

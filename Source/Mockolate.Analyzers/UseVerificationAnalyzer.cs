@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Mockolate.Analyzers.Helpers;
@@ -8,7 +7,7 @@ using Mockolate.Analyzers.Helpers;
 namespace Mockolate.Analyzers;
 
 /// <summary>
-///     An analyzer that checks that all <c>Expect.That</c> expectations are awaited.
+///      An analyzer that checks that all <c>VerificationResult</c> invocations are properly used.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class UseVerificationAnalyzer : DiagnosticAnalyzer
