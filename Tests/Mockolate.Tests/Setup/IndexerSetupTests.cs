@@ -1011,7 +1011,7 @@ public sealed class IndexerSetupTests
 				.OnSet(v => { callCount += v.Length; });
 
 			mock.Subject[1, 1, 1] = "a"; // yes (1)
-			mock.Subject[1, 2, 1] = "bb"; // yes (2)1
+			mock.Subject[1, 2, 1] = "bb"; // yes (2)
 			mock.Subject[3, 1, 2] = "ccc"; // yes (3)
 			mock.Subject[1, 1, 4] = "dddd"; // no
 			mock.Subject[1, 5, 1] = "eeeee"; // no

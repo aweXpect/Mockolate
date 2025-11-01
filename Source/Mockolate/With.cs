@@ -108,8 +108,8 @@ public class With
 	/// <remarks>
 	///     By default, the comparison is inclusive of the <paramref name="minimum"/> and maximum values.
 	/// </remarks>
-	public static BetweenParameter<T>.Builder ValueBetween<T>(T minimum, [CallerArgumentExpression(nameof(minimum))] string doNotPopulateThisValue
- = "")
+	public static BetweenParameter<T>.Builder ValueBetween<T>(T minimum,
+		[CallerArgumentExpression(nameof(minimum))] string doNotPopulateThisValue = "")
 		where T : INumber<T>
 		=> new BetweenParameter<T>.Builder(minimum, doNotPopulateThisValue);
 
@@ -157,8 +157,7 @@ public class With
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
-			string baseString =
- $"With.ValueBetween<{typeof(T).FormatType()}>({minimumExpression}).And({maximumExpression})";
+			string baseString = $"With.ValueBetween<{typeof(T).FormatType()}>({minimumExpression}).And({maximumExpression})";
 			return IsInclusive ? baseString : baseString + ".Exclusive()";
 		}
 
@@ -170,8 +169,8 @@ public class With
 			/// <summary>
 			///     �and <paramref name="maximum"/>.
 			/// </summary>
-			public BetweenParameter<T> And(T maximum, [CallerArgumentExpression(nameof(maximum))] string doNotPopulateThisValue
- = "")
+			public BetweenParameter<T> And(T maximum,
+				[CallerArgumentExpression(nameof(maximum))] string doNotPopulateThisValue = "")
 			{
 				if (maximum < minimum)
 				{
