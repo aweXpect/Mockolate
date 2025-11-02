@@ -84,7 +84,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 			if (mock.Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The indexer ['{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}'] was accessed without prior setup.");
+					$"The indexer [{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}] was accessed without prior setup.");
 			}
 
 			return mock.Behavior.DefaultValue.Generate<TValue>();
@@ -521,7 +521,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	}
 
 	[DebuggerDisplay("{ToString()}")]
-	private sealed class EventSetups : IEnumerable<(object?, MethodInfo, string)>
+	private sealed class EventSetups
 	{
 		private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _storage;
 
@@ -540,8 +540,6 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 				yield return item;
 			}
 		}
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		public void Add(object? target, MethodInfo method, string eventName)
 		{

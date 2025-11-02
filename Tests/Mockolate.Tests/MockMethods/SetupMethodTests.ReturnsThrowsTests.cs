@@ -853,6 +853,117 @@ public sealed partial class SetupMethodTests
 			}
 		}
 
+		public class ReturnMethodWithParameters
+		{
+			[Fact]
+			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
+			{
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Returns("d")
+					.Throws(new Exception("foo"))
+					.Returns(() => "b");
+
+				string result1 = sut.Subject.UniqueMethodWithParameters(1, 2);
+				Exception? result2 = Record.Exception(() => sut.Subject.UniqueMethodWithParameters(2, 3));
+				string result3 = sut.Subject.UniqueMethodWithParameters(3, 4);
+
+				await That(result1).IsEqualTo("d");
+				await That(result2).HasMessage("foo");
+				await That(result3).IsEqualTo("b");
+			}
+
+			[Fact]
+			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
+			{
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Returns("d")
+					.Returns(() => "c")
+					.Returns("b");
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut.Subject.UniqueMethodWithParameters(i, 2 * i);
+				}
+
+				await That(result).IsEqualTo(["d", "c", "b", "d", "c", "b", "d", "c", "b", "d",]);
+			}
+
+			[Fact]
+			public async Task Returns_Callback_ShouldReturnExpectedValue()
+			{
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Returns(() => "d");
+
+				string result = sut.Subject.UniqueMethodWithParameters(2, 3);
+
+				await That(result).IsEqualTo("d");
+			}
+
+			[Fact]
+			public async Task Returns_ShouldReturnExpectedValue()
+			{
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Returns("d");
+
+				string result = sut.Subject.UniqueMethodWithParameters(2, 3);
+
+				await That(result).IsEqualTo("d");
+			}
+
+			[Fact]
+			public async Task Throws_Callback_ShouldReturnExpectedValue()
+			{
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Throws(() => new Exception("foo"));
+
+				void Act()
+					=> sut.Subject.UniqueMethodWithParameters(1, 2);
+
+				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Throws_ShouldReturnExpectedValue()
+			{
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Throws(new Exception("foo"));
+
+				void Act()
+					=> sut.Subject.UniqueMethodWithParameters(1, 2);
+
+				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+			{
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Callback(() => { callCount++; })
+					.Returns((string?)null!);
+
+				string result = sut.Subject.UniqueMethodWithParameters(1, 2);
+
+				await That(callCount).IsEqualTo(1);
+				await That(result).IsNull();
+			}
+		}
+
 		public class VoidMethodWith0Parameters
 		{
 			[Fact]
@@ -1229,6 +1340,58 @@ public sealed partial class SetupMethodTests
 
 				void Act()
 					=> sut.Subject.Method5(1, 2, 3, 4, 5);
+
+				await That(Act).ThrowsException().WithMessage("foo");
+			}
+		}
+
+		public class VoidMethodWithParameters
+		{
+			[Fact]
+			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
+			{
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.DoesNotThrow()
+					.Throws(new Exception("foo"))
+					.DoesNotThrow();
+
+				sut.Subject.UniqueMethodWithParameters(1, 2);
+				Exception? result1 = Record.Exception(() => sut.Subject.UniqueMethodWithParameters(2, 3));
+				sut.Subject.UniqueMethodWithParameters(3, 4);
+				sut.Subject.UniqueMethodWithParameters(4, 5);
+				Exception? result2 = Record.Exception(() => sut.Subject.UniqueMethodWithParameters(5, 6));
+				sut.Subject.UniqueMethodWithParameters(6, 7);
+
+				await That(result1).HasMessage("foo");
+				await That(result2).HasMessage("foo");
+			}
+
+			[Fact]
+			public async Task Throws_Callback_ShouldReturnExpectedValue()
+			{
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Throws(() => new Exception("foo"));
+
+				void Act()
+					=> sut.Subject.UniqueMethodWithParameters(1, 2);
+
+				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Throws_ShouldReturnExpectedValue()
+			{
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Throws(new Exception("foo"));
+
+				void Act()
+					=> sut.Subject.UniqueMethodWithParameters(1, 2);
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}

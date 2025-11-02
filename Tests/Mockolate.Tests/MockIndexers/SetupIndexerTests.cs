@@ -139,10 +139,10 @@ public sealed partial class SetupIndexerTests
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>(MockBehavior.Default with { ThrowWhenNotSetup = true});
 
 		void Act()
-			=> _ = mock.Subject[1];
+			=> _ = mock.Subject[null, 1, 2];
 
 		await That(Act).Throws<MockNotSetupException>()
-			.WithMessage("The indexer ['1'] was accessed without prior setup.");
+			.WithMessage("The indexer [null, 1, 2] was accessed without prior setup.");
 	}
 
 	public interface IIndexerService

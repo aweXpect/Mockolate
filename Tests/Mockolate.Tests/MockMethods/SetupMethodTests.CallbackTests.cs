@@ -719,6 +719,58 @@ public sealed partial class SetupMethodTests
 			}
 		}
 
+		public class ReturnMethodWithParameters
+		{
+			[Fact]
+			public async Task Callback_ShouldExecuteWhenInvoked()
+			{
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Callback(() => { callCount++; })
+					.Returns("a");
+
+				sut.Subject.UniqueMethodWithParameters(1, 2);
+
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
+			{
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Callback(() => { callCount++; });
+
+				sut.Subject.Method1(1);
+				sut.Subject.Method2(1, 2, false);
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Callback(() => { callCount1++; })
+					.Callback(() => { callCount2 += 3; })
+					.Returns("a");
+
+				sut.Subject.UniqueMethodWithParameters(1, 2);
+				sut.Subject.UniqueMethodWithParameters(2, 2);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(6);
+			}
+		}
+
 		public class VoidMethodWith0Parameters
 		{
 			[Fact]
@@ -1418,6 +1470,56 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(360);
+			}
+		}
+
+		public class VoidMethodWithParameters
+		{
+			[Fact]
+			public async Task Callback_ShouldExecuteWhenInvoked()
+			{
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Callback(() => { callCount++; });
+
+				sut.Subject.UniqueMethodWithParameters(1, 2);
+
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
+			{
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Callback(() => { callCount++; });
+
+				sut.Subject.Method1(1);
+				sut.Subject.Method2(1, 2, false);
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination())
+					.Callback(() => { callCount1++; })
+					.Callback(() => { callCount2 += 3; });
+
+				sut.Subject.UniqueMethodWithParameters(1, 2);
+				sut.Subject.UniqueMethodWithParameters(2, 2);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(6);
 			}
 		}
 	}
