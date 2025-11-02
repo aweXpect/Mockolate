@@ -14,6 +14,7 @@ internal interface IMyService
 
 	void DoSomething(int value);
 	void DoSomething(int value, bool flag);
+	bool IsValid(int id);
 
 	string DoSomethingAndReturn(int value);
 

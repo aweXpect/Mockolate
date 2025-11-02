@@ -7,14 +7,12 @@ namespace Mockolate.Tests;
 public sealed partial class MockTests
 {
 	[Fact]
-	public async Task Behavior_ShouldBeSet()
+	public async Task Create_BaseClassWithMultipleConstructors()
 	{
-		MyMock<MyServiceBase> sut = new(new MyServiceBase(), MockBehavior.Default with
-		{
-			ThrowWhenNotSetup = true,
-		});
+		void Act()
+			=> _ = Mock.Create<MyServiceBaseWithMultipleConstructors>(WithConstructorParameters(5));
 
-		await That(sut.Hidden.Behavior.ThrowWhenNotSetup).IsTrue();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Fact]
@@ -28,6 +26,19 @@ public sealed partial class MockTests
 		await That(Act).Throws<MockException>()
 			.WithMessage(
 				"Could not find any constructor at all for the base type 'Mockolate.Tests.MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
+	}
+
+	[Fact]
+	public async Task Create_BaseClassWithVirtualCallsInConstructor()
+	{
+		Mock<MyServiceBaseWithVirtualCallsInConstructor> mock =
+			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>();
+		mock.Setup.Method.VirtualMethod().Returns([5, 6,]);
+
+		int value = mock.Subject.VirtualProperty;
+
+		await That(mock.Verify.Invoked.VirtualMethod()).Once();
+		await That(value).IsEqualTo(5);
 	}
 
 	[Fact]
@@ -218,59 +229,35 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task ShouldSupportImplicitOperator()
 	{
-		MyMock<string> sut = new("foo");
+		Mock<MyServiceBase> sut = Mock.Create<MyServiceBase>();
 
-		string value = sut;
+		MyServiceBase value = sut;
 
-		await That(value).IsEqualTo("foo");
+		await That(value).IsSameAs(sut.Subject);
 	}
 
-	[Fact]
-	public async Task TryCast_WhenMatching_ShouldReturnTrue()
+	public class MyServiceBaseWithVirtualCallsInConstructor
 	{
-		MyMock<MyBaseClass> mock = new(new MyBaseClass());
-		object parameter = 42;
+		public MyServiceBaseWithVirtualCallsInConstructor()
+		{
+			int[] values = VirtualMethod();
+			VirtualProperty = values[0];
+		}
 
-		bool result = mock.HiddenTryCast(parameter, out int value);
+		public virtual int VirtualProperty { get; set; }
 
-		await That(result).IsTrue();
-		await That(value).IsEqualTo(42);
+		public virtual int[] VirtualMethod() => [0, 1,];
 	}
 
-	[Fact]
-	public async Task TryCast_WhenNotMatching_ShouldReturnFalse()
+	public class MyServiceBaseWithMultipleConstructors
 	{
-		MyMock<MyBaseClass> mock = new(new MyBaseClass());
-		object parameter = "foo";
+		public MyServiceBaseWithMultipleConstructors(int initialValue)
+		{
+		}
 
-		bool result = mock.HiddenTryCast(parameter, out int value);
-
-		await That(result).IsFalse();
-		await That(value).IsEqualTo(0);
-	}
-
-	[Fact]
-	public async Task TryCast_WhenNullShouldReturnTrue()
-	{
-		MyMock<MyBaseClass> mock = new(new MyBaseClass());
-		object? parameter = null;
-
-		bool result = mock.HiddenTryCast(parameter, out int value);
-
-		await That(result).IsTrue();
-		await That(value).IsEqualTo(0);
-	}
-
-	[Fact]
-	public async Task WithTwoGenericArguments_WhenSecondIsNoInterface_ShouldThrowMockException()
-	{
-		void Act()
-			=> _ = new MyMock<IMyService, MyBaseClass>();
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("""
-			             The second generic type argument 'Mockolate.Tests.MockTests+MyBaseClass' is no interface.
-			             """);
+		public MyServiceBaseWithMultipleConstructors(DateTime initialValue)
+		{
+		}
 	}
 
 	public interface IMyService
@@ -281,11 +268,6 @@ public sealed partial class MockTests
 		public int Multiply(int value, int? multiplier);
 
 		public void SetIsValid(bool isValid, Func<bool>? predicate);
-	}
-
-	public class MyBaseClass
-	{
-		public virtual string VirtualMethod() => "Base";
 	}
 
 	public class MyBaseClassWithConstructor

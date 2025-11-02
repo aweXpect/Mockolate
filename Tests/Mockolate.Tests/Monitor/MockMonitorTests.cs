@@ -1,4 +1,5 @@
 using Mockolate.Monitor;
+using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests.Monitor;
 
@@ -114,10 +115,5 @@ public sealed class MockMonitorTests
 		await That(mock.Verify.Invoked.IsValid(3)).Once();
 		await That(mock.Verify.Invoked.IsValid(4)).Once();
 		await That(mock.Verify.Invoked.IsValid(5)).Once();
-	}
-
-	public interface IMyService
-	{
-		bool IsValid(int id);
 	}
 }

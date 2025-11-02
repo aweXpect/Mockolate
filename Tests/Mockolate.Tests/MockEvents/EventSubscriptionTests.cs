@@ -1,0 +1,16 @@
+﻿using Mockolate.Interactions;
+using Mockolate.Tests.TestHelpers;
+
+namespace Mockolate.Tests.MockEvents;
+
+public sealed class EventSubscriptionTests
+{
+	[Fact]
+	public async Task ToString_ShouldReturnExpectedValue()
+	{
+		EventSubscription interaction = new(3, "SomeEvent", this, Helper.GetMethodInfo());
+		string expectedValue = "[3] subscribe to event SomeEvent";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+}
