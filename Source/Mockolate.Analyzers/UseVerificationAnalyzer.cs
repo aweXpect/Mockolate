@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Mockolate.Analyzers.Helpers;
 
 namespace Mockolate.Analyzers;
 
@@ -30,7 +29,10 @@ public class UseVerificationAnalyzer : DiagnosticAnalyzer
 		{
 			ITypeSymbol? returnType = invocationOperation.Type;
 			if (returnType is INamedTypeSymbol namedReturnType &&
-			    namedReturnType.MatchesFullName("Mockolate", "Verify", "VerificationResult"))
+				namedReturnType.ContainingNamespace?.ContainingNamespace?.ContainingNamespace?.IsGlobalNamespace == true &&
+				namedReturnType.ContainingNamespace.ContainingNamespace.Name == "Mockolate" &&
+				namedReturnType.ContainingNamespace.Name == "Verify" &&
+				namedReturnType.Name == "VerificationResult")
 			{
 				CheckIsUsed(context, invocationOperation);
 			}
@@ -75,15 +77,15 @@ public class UseVerificationAnalyzer : DiagnosticAnalyzer
 			}
 
 			// If the parent is an ExpressionStatement, check if the operation is the same as the invocationOperation
-			if (parent is IExpressionStatementOperation expr)
+			if (parent is IExpressionStatementOperation expr && expr.Operation != invocationOperation)
 			{
-				return expr.Operation != invocationOperation;
+				return true;
 			}
 
 			// If the parent is a block operation, we've reached the top of the statement without finding a usage
 			if (parent is IBlockOperation)
 			{
-				return false;
+				break;
 			}
 
 			parent = parent.Parent;
