@@ -6,7 +6,6 @@ public sealed partial class SetupIndexerTests
 	public async Task SetOnDifferentLevel_ShouldNotBeUsed()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		IMock sut = mock;
 
 		mock.Subject[1] = "foo";
 		string result1 = mock.Subject[1, 2];
@@ -20,7 +19,6 @@ public sealed partial class SetupIndexerTests
 	public async Task ShouldSupportNullAsParameter()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		IMock sut = mock;
 
 		mock.Subject[null, 2] = "foo";
 		string result1 = mock.Subject[null, 2];
@@ -34,7 +32,6 @@ public sealed partial class SetupIndexerTests
 	public async Task ShouldUseInitializedValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		IMock sut = mock;
 		mock.Setup.Indexer(2).InitializeWith("foo");
 
 		string result1 = mock.Subject[2];
@@ -48,7 +45,6 @@ public sealed partial class SetupIndexerTests
 	public async Task ThreeLevels_ShouldUseInitializedValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		IMock sut = mock;
 		mock.Setup.Indexer("foo", 1, 2).InitializeWith(42);
 
 		int result1 = mock.Subject["foo", 1, 2];
@@ -82,7 +78,6 @@ public sealed partial class SetupIndexerTests
 	public async Task TwoLevels_ShouldUseInitializedValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		IMock sut = mock;
 		mock.Setup.Indexer(2, 3).InitializeWith("foo");
 
 		string result1 = mock.Subject[2, 3];
@@ -96,7 +91,6 @@ public sealed partial class SetupIndexerTests
 	public async Task TwoLevels_WithoutSetup_ShouldStoreLastValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		IMock sut = mock;
 
 		string result0 = mock.Subject[1, 2];
 		mock.Subject[1, 2] = "foo";
@@ -112,7 +106,6 @@ public sealed partial class SetupIndexerTests
 	public async Task WithoutSetup_ShouldStoreLastValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		IMock sut = mock;
 
 		string result0 = mock.Subject[1];
 		mock.Subject[1] = "foo";
