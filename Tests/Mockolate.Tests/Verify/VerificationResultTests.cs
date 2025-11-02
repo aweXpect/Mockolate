@@ -6,55 +6,82 @@ namespace Mockolate.Tests.Verify;
 public class VerificationResultTests
 {
 	[Fact]
-	public async Task Expectation_EventSubscription_ShouldHaveExpectedValue()
+	public async Task VerificationResult_Got_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.Create<IMyService>();
+		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		VerificationResult<MockVerify<IMyService, Mock<IMyService>>> result =
-			sut.Verify.SubscribedTo.MyEvent();
+		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+			= sut.Verify.Got.TotalDispensed();
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event MyEvent");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property TotalDispensed");
 	}
 
 	[Fact]
-	public async Task Expectation_EventUnsubscription_ShouldHaveExpectedValue()
+	public async Task VerificationResult_GotIndexer_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.Create<IMyService>();
+		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		var result = sut.Verify.UnsubscribedFrom.MyEvent();
+		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+			= sut.Verify.GotIndexer(With.Any<string>());
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event MyEvent");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer With.Any<string>()");
 	}
 
 	[Fact]
-	public async Task Expectation_Method_ShouldHaveExpectedValue()
+	public async Task VerificationResult_Invoked_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.Create<IMyService>();
+		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		var result = sut.Verify.Invoked.DoSomethingAndReturn(With.Any<int>());
+		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+			= sut.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>());
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("invoked method DoSomethingAndReturn(With.Any<int>())");
+			.IsEqualTo("invoked method Dispense(With.Any<string>(), With.Any<int>())");
 	}
 
 	[Fact]
-	public async Task Expectation_PropertyGetter_ShouldHaveExpectedValue()
+	public async Task VerificationResult_Set_ShouldHaveExpectedValue()
 	{
-		Mock<IMyService> sut = Mock.Create<IMyService>();
+		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		var result = sut.Verify.Got.SomeFlag();
-
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property SomeFlag");
-	}
-
-	[Fact]
-	public async Task Expectation_PropertySetter_ShouldHaveExpectedValue()
-	{
-		Mock<IMyService> sut = Mock.Create<IMyService>();
-
-		var result = sut.Verify.Set.SomeFlag(With.Any<bool>());
+		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+			= sut.Verify.Set.TotalDispensed(5);
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("set property SomeFlag to value With.Any<bool>()");
+			.IsEqualTo("set property TotalDispensed to value 5");
+	}
+
+	[Fact]
+	public async Task VerificationResult_SetIndexer_ShouldHaveExpectedValue()
+	{
+		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
+
+		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+			= sut.Verify.SetIndexer(With.Any<string>(), 5);
+
+		await That(((IVerificationResult)result).Expectation)
+			.IsEqualTo("set indexer With.Any<string>() to value 5");
+	}
+
+	[Fact]
+	public async Task VerificationResult_SubscribedTo_ShouldHaveExpectedValue()
+	{
+		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
+
+		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+			= sut.Verify.SubscribedTo.ChocolateDispensed();
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event ChocolateDispensed");
+	}
+
+	[Fact]
+	public async Task VerificationResult_UnsubscribedFrom_ShouldHaveExpectedValue()
+	{
+		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
+
+		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+			= sut.Verify.UnsubscribedFrom.ChocolateDispensed();
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event ChocolateDispensed");
 	}
 }
