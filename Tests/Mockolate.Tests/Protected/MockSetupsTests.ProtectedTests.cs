@@ -31,6 +31,18 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
+		public async Task RegisterIndexer_ShouldForwardToInner()
+		{
+			Mock<IMyService> mock = Mock.Create<IMyService>();
+			IMockSetup @protected = new ProtectedMockSetup<int>(mock.Setup);
+
+			@protected.RegisterIndexer(new IndexerSetup<int, string>("foo.bar").Returns(42));
+
+			int result = ((IMock)mock).GetIndexer<int>(null, ["foo.bar"]);
+			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
 		public async Task RegisterMethod_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();

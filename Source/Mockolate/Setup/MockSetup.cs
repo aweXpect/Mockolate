@@ -62,7 +62,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	internal IndexerSetup? GetIndexerSetup(IInteraction interaction)
-		=> _indexerSetups.FirstOrDefault(setup => ((IIndexerSetup)setup).Matches(interaction));
+		=> _indexerSetups.GetNewestOrDefault(setup => ((IIndexerSetup)setup).Matches(interaction));
 
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters" />.
@@ -95,22 +95,22 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	public override string ToString()
 	{
 		StringBuilder? sb = new();
-		if (_methodSetups?.Count > 0)
+		if (_methodSetups.Count > 0)
 		{
 			sb.Append(_methodSetups.Count).Append(_methodSetups.Count == 1 ? " method, " : " methods, ");
 		}
 
-		if (_propertySetups?.Count > 0)
+		if (_propertySetups.Count > 0)
 		{
 			sb.Append(_propertySetups.Count).Append(_propertySetups.Count == 1 ? " property, " : " properties, ");
 		}
 
-		if (_eventHandlers?.Count > 0)
+		if (_eventHandlers.Count > 0)
 		{
 			sb.Append(_eventHandlers.Count).Append(_eventHandlers.Count == 1 ? " event, " : " events, ");
 		}
 
-		if (_indexerSetups?.Count > 0)
+		if (_indexerSetups.Count > 0)
 		{
 			sb.Append(_indexerSetups.Count).Append(_indexerSetups.Count == 1 ? " indexer, " : " indexers, ");
 		}
@@ -348,6 +348,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
+		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
 			if (_storage is null || _storage.IsEmpty)
@@ -388,6 +389,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
+		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
 			if (_storage is null || _storage.IsEmpty)
@@ -410,13 +412,13 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class IndexerSetups
 	{
-		private ConcurrentQueue<IndexerSetup>? _storage;
+		private ConcurrentStack<IndexerSetup>? _storage;
 
 		private ValueStorage? _valueStorage;
 
 		public int Count => _storage?.Count ?? 0;
 
-		public IndexerSetup? FirstOrDefault(Func<IndexerSetup, bool> predicate)
+		public IndexerSetup? GetNewestOrDefault(Func<IndexerSetup, bool> predicate)
 		{
 			if (_storage is null)
 			{
@@ -427,6 +429,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
+		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
 			if (_storage is null || Count == 0)
@@ -447,8 +450,8 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 
 		internal void Add(IndexerSetup setup)
 		{
-			_storage ??= new ConcurrentQueue<IndexerSetup>();
-			_storage.Enqueue(setup);
+			_storage ??= new ConcurrentStack<IndexerSetup>();
+			_storage.Push(setup);
 		}
 
 		internal TValue GetOrAddValue<TValue>(object?[] parameters, Func<TValue> valueGenerator)
@@ -463,11 +466,6 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 			if (storage.Value is TValue value)
 			{
 				return value;
-			}
-
-			if (storage.HasValue && storage.Value is null)
-			{
-				return default!;
 			}
 
 			value = valueGenerator();
@@ -558,6 +556,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
+		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
 			if (_storage is null || _storage.IsEmpty)

@@ -54,6 +54,22 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
+		public async Task InitializeWith_ShouldSupportNull()
+		{
+			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+			mock.Setup.Indexer(With.Any<string?>(), 1, 2)
+				.InitializeWith(42);
+			mock.Setup.Indexer("foo", 1, 2)
+				.InitializeWith((int?)null);
+
+			int? result1 = mock.Subject["bar", 1, 2];
+			int? result2 = mock.Subject["foo", 1, 2];
+
+			await That(result1).IsEqualTo(42);
+			await That(result2).IsNull();
+		}
+
+		[Fact]
 		public async Task InitializeWith_Twice_ShouldThrowMockException()
 		{
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
