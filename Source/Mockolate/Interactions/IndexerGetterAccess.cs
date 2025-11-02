@@ -1,7 +1,5 @@
-using System;
 using System.Diagnostics;
 using System.Linq;
-using static Mockolate.With;
 
 namespace Mockolate.Interactions;
 

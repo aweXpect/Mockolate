@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
-using System.Xml.Linq;
-
 #if NET8_0_OR_GREATER
 using System.Numerics;
 #endif
