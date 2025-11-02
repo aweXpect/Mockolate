@@ -724,7 +724,7 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append(
-							"\t\t\t\tif (methodExecution?.HasSetup == true || _mock.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue)")
+							"\t\t\t\tif (methodExecution is not null && (methodExecution.HasSetup == true || _mock.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue))")
 						.AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
@@ -734,7 +734,7 @@ internal static partial class Sources
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.Append(
-							"\t\t\t\tif (methodExecution?.HasSetup == true || _mock.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue)")
+							"\t\t\t\tif (methodExecution is not null && (methodExecution.HasSetup == true || _mock.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue))")
 						.AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
