@@ -6,6 +6,16 @@ namespace Mockolate.Tests.MockProperties;
 public sealed class SetupPropertyTests
 {
 	[Fact]
+	public async Task ToString_ShouldReturnType()
+	{
+		var setup = new PropertySetup<int>();
+
+		var result = setup.ToString();
+
+		await That(result).IsEqualTo("int");
+	}
+
+	[Fact]
 	public async Task InvokeGetter_InvalidType_ShouldThrowMockException()
 	{
 		MyPropertySetup<int> setup = new();
