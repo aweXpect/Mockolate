@@ -232,6 +232,8 @@ public sealed partial class MockTests
 		Mock<MyServiceBase> sut = Mock.Create<MyServiceBase>();
 
 		MyServiceBase value = sut;
+
+		await That(value).IsSameAs(sut.Subject);
 	}
 
 	public class MyServiceBaseWithVirtualCallsInConstructor
