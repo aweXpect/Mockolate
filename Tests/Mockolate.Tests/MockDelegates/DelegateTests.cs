@@ -58,6 +58,32 @@ public class DelegateTests
 	}
 
 	[Fact]
+	public async Task WithCustomDelegateWithRefAndOut_SetupShouldWork()
+	{
+		Mock<DoSomethingWithRefAndOut> mock = Mock.Create<DoSomethingWithRefAndOut>();
+		int value = 5;
+		mock.Setup.Delegate(With.Any<int>(), With.Ref<int>(v => v + 1), With.Out(() => 10));
+
+		mock.Subject(1, ref value, out int value2);
+
+		await That(mock.Verify.Invoked(With.Any<int>(), With.Ref<int>(), With.Out<int>())).Once();
+		await That(value).IsEqualTo(6);
+		await That(value2).IsEqualTo(10);
+	}
+
+	[Fact]
+	public async Task WithCustomDelegateWithRefAndOut_VerifyShouldWork()
+	{
+		Mock<DoSomethingWithRefAndOut> mock = Mock.Create<DoSomethingWithRefAndOut>();
+		int value = 5;
+
+		mock.Subject(1, ref value, out int value2);
+
+		await That(mock.Verify.Invoked(With.Any<int>(), With.Ref<int>(), With.Out<int>())).Once();
+		await That(value).IsEqualTo(5);
+	}
+
+	[Fact]
 	public async Task WithCustomGenericDelegate_SetupShouldWork()
 	{
 		Mock<DoGeneric<long, string>> mock = Mock.Create<DoGeneric<long, string>>();
@@ -86,6 +112,8 @@ public class DelegateTests
 	}
 
 	internal delegate int DoSomething(int x, string y);
+
+	internal delegate void DoSomethingWithRefAndOut(int x, ref int y, out int z);
 
 	internal delegate int DoGeneric<T1, T2>(T1 x, T2 y)
 		where T1 : struct

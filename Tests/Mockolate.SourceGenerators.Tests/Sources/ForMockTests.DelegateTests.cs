@@ -47,6 +47,50 @@ public sealed partial class ForMockTests
 	}
 
 	[Fact]
+	public async Task CustomVoidDelegates_ShouldOnlyCreateTwoExtensions()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<DoSomething>();
+			         }
+
+			         public delegate void DoSomething(int x, ref int y, out int z);
+			     }
+			     """);
+
+		await That(result.Sources)
+			.DoesNotContainKey("ForProgramDoSomething.SetupExtensions.g.cs").And
+			.ContainsKey("ForProgramDoSomething.Extensions.g.cs").WhoseValue
+			.Contains("""
+			          		public VoidMethodSetup<int, int, int> Delegate(With.Parameter<int>? x, With.RefParameter<int> y, With.OutParameter<int> z)
+			          		{
+			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new With.NamedParameter("x", x ?? With.Null<int>()), new With.NamedParameter("y", y), new With.NamedParameter("z", z));
+			          			if (setup is IMockSetup mockSetup)
+			          			{
+			          				mockSetup.RegisterMethod(methodSetup);
+			          			}
+			          			return methodSetup;
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public VerificationResult<MockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(With.Parameter<int>? x, With.InvokedRefParameter<int> y, With.InvokedOutParameter<int> z)
+			          		{
+			          			IMockInvoked<MockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = new MockInvoked<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>(verify);
+			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? With.Null<int>(), y, z);
+			          		}
+			          """).IgnoringNewlineStyle();
+	}
+
+	[Fact]
 	public async Task Delegates_ShouldCreateDelegateInsteadOfMockSubject()
 	{
 		GeneratorResult result = Generator
