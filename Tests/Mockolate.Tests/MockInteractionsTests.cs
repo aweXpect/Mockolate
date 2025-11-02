@@ -2,7 +2,7 @@
 using System.Threading;
 using Mockolate.Interactions;
 
-namespace Mockolate.Tests.Interactions;
+namespace Mockolate.Tests;
 
 public sealed class MockInteractionsTests
 {

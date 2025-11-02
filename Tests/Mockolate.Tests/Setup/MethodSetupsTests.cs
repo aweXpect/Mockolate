@@ -1,4 +1,6 @@
-﻿namespace Mockolate.Tests;
+﻿using Mockolate;
+
+namespace Mockolate.Tests.Setup;
 
 public sealed class MethodSetupsTests
 {

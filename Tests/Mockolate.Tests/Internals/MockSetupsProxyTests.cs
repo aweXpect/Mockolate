@@ -1,7 +1,7 @@
 ﻿using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
 
-namespace Mockolate.Tests.Setup;
+namespace Mockolate.Tests.Internals;
 
 public sealed class MockSetupsProxyTests
 {

@@ -1,7 +1,7 @@
 ﻿using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
 
-namespace Mockolate.Tests.Setup;
+namespace Mockolate.Tests.Protected;
 
 public sealed partial class MockSetupsTests
 {
