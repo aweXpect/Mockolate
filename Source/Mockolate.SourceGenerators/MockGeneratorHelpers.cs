@@ -35,7 +35,9 @@ internal static class MockGeneratorHelpers
 				.Where(t => t is not null)
 				.Cast<ITypeSymbol>()
 				.ToArray();
-			if (genericTypes.Length == 0 || !IsMockable(genericTypes[0]))
+			if (genericTypes.Length == 0 || !IsMockable(genericTypes[0]) ||
+				// Ignore types from the global namespace, as they are not generated correctly.
+				genericTypes.Any(x => x.ContainingNamespace.IsGlobalNamespace))
 			{
 				return null;
 			}
