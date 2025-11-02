@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,13 +13,12 @@ namespace Mockolate.DefaultValues;
 /// </summary>
 public class DefaultValueGenerator : IDefaultValueGenerator
 {
-	private static readonly List<IDefaultValueFactory> _factories = new()
-	{
+	private static readonly ConcurrentQueue<IDefaultValueFactory> _factories = new([
 		new TypedDefaultValueFactory<string>(""),
 		new TypedDefaultValueFactory<Task>(Task.CompletedTask),
 		new TypedDefaultValueFactory<CancellationToken>(CancellationToken.None),
 		new TypedDefaultValueFactory<IEnumerable>(Array.Empty<object?>()),
-	};
+	]);
 
 	/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}" />
 	public T Generate<T>()
@@ -35,7 +35,8 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 	/// <summary>
 	///     Registers a <paramref name="defaultValueFactory" /> to provide default values for a specific type.
 	/// </summary>
-	public static void Register(IDefaultValueFactory defaultValueFactory) => _factories.Add(defaultValueFactory);
+	public static void Register(IDefaultValueFactory defaultValueFactory)
+		=> _factories.Enqueue(defaultValueFactory);
 
 	/// <summary>
 	///     Tries to generate a default value for the specified type.
