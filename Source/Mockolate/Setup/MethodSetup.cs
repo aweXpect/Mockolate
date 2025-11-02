@@ -19,19 +19,14 @@ public abstract class MethodSetup : IMethodSetup
 	T IMethodSetup.SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 		=> SetRefParameter(parameterName, value, behavior);
 
-	/// <inheritdoc cref="IMethodSetup.Matches(IInteraction)" />
-	bool IMethodSetup.Matches(IInteraction invocation)
-		=> invocation is MethodInvocation methodInvocation && IsMatch(methodInvocation);
+	/// <inheritdoc cref="IMethodSetup.Matches(MethodInvocation)" />
+	bool IMethodSetup.Matches(MethodInvocation methodInvocation)
+		=> IsMatch(methodInvocation);
 
-	internal TResult Invoke<TResult>(IInteraction invocation, MockBehavior behavior)
+	internal TResult Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior)
 	{
-		if (invocation is MethodInvocation methodInvocation)
-		{
-			ExecuteCallback(methodInvocation, behavior);
-			return GetReturnValue<TResult>(methodInvocation, behavior);
-		}
-
-		throw new MockException("Invalid registered invocation for a method.");
+		ExecuteCallback(methodInvocation, behavior);
+		return GetReturnValue<TResult>(methodInvocation, behavior);
 	}
 
 	internal void Invoke(IInteraction invocation, MockBehavior behavior)
@@ -169,6 +164,6 @@ public abstract class MethodSetup : IMethodSetup
 	/// <summary>
 	///     Returns a formatted string representation of the given <paramref name="type" />.
 	/// </summary>
-	protected static string FormatType(Type? type)
-		=> type?.FormatType() ?? "null";
+	protected static string FormatType(Type type)
+		=> type.FormatType();
 }

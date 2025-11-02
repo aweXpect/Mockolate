@@ -451,7 +451,7 @@ internal static partial class Sources
 			sb.Append("\t\t\tthrow new MockException($\"The input parameter ").Append(i)
 				.Append(" only supports '{FormatType(typeof(T").Append(i)
 				.Append("))}', but is '{FormatType(invocation.Parameters[")
-				.Append(i - 1).Append("]?.GetType())}'.\");").AppendLine();
+				.Append(i - 1).Append("]!.GetType())}'.\");").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
 		}

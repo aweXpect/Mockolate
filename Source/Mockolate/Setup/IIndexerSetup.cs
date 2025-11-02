@@ -9,9 +9,9 @@ namespace Mockolate.Setup;
 public interface IIndexerSetup
 {
 	/// <summary>
-	///     Checks if the <paramref name="invocation" /> matches the setup.
+	///     Checks if the <paramref name="indexerAccess" /> matches the setup.
 	/// </summary>
-	bool Matches(IInteraction invocation);
+	bool Matches(IndexerAccess indexerAccess);
 
 	/// <summary>
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an

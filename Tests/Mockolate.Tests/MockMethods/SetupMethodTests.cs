@@ -273,14 +273,307 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
-	public async Task WhenNotSetup_ShouldReturnDefault()
+	public async Task WhenNotSetup_ShouldReturnDefaultValue()
 	{
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		IMock sut = mock;
 
-		MethodSetupResult<string> result0 = sut.Execute<string>("my.method");
+		int result1 = mock.Subject.MyIntMethodWithoutParameters();
+		int result2 = mock.Subject.MyIntMethodWithParameters(0, "foo");
 
-		await That(result0.Result).IsEmpty();
+		await That(result1).IsEqualTo(0);
+		await That(result2).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task WhenNotSetup_ThrowWhenNotSetup_ShouldThrowMockNotSetupException()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>(MockBehavior.Default with
+		{
+			ThrowWhenNotSetup = true,
+		});
+
+		void Act()
+			=> mock.Subject.MyIntMethodWithoutParameters();
+
+		await That(Act).Throws<MockNotSetupException>()
+			.WithMessage(
+				"The method 'Mockolate.Tests.MockMethods.SetupMethodTests.IMethodService.MyIntMethodWithoutParameters()' was invoked without prior setup.");
+	}
+
+	public class ReturnMethodWith0Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int> setup = new("Foo");
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo()");
+		}
+
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method0()
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method0();
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+	}
+
+	public class ReturnMethodWith1Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string> setup = new("Foo", new With.NamedParameter("bar", With.Any<string>()));
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(With.Any<string>() bar)");
+		}
+
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method1(With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method1(1);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+	}
+
+	public class ReturnMethodWith2Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long> setup = new("Foo", new With.NamedParameter("p1", With.Any<string>()),
+				new With.NamedParameter("p2", With.Any<long>()));
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(With.Any<string>() p1, With.Any<long>() p2)");
+		}
+
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method2(1, 2);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+	}
+
+	public class ReturnMethodWith3Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int> setup = new("Foo",
+				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
+				new With.NamedParameter("p3", With.Any<int>()));
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3)");
+		}
+
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method3(1, 2, 3);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+	}
+
+	public class ReturnMethodWith4Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo",
+				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
+				new With.NamedParameter("p3", With.Any<int>()), new With.NamedParameter("p4", With.Any<int>()));
+
+			string result = setup.ToString();
+
+			await That(result)
+				.IsEqualTo(
+					"int Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4)");
+		}
+
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method4(1, 2, 3, 4);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+	}
+
+	public class ReturnMethodWith5Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo",
+				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
+				new With.NamedParameter("p3", With.Any<int>()), new With.NamedParameter("p4", With.Any<int>()),
+				new With.NamedParameter("p5", With.Any<int>()));
+
+			string result = setup.ToString();
+
+			await That(result)
+				.IsEqualTo(
+					"int Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4, With.Any<int>() p5)");
+		}
+
+		[Fact]
+		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
+		{
+			int callCount = 0;
+			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
+					With.Any<int>())
+				.Callback(() => { callCount++; })
+				.Returns((string?)null!);
+
+			string result = sut.Subject.Method5(1, 2, 3, 4, 5);
+
+			await That(callCount).IsEqualTo(1);
+			await That(result).IsNull();
+		}
+	}
+
+	public class VoidMethodWith0Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup setup = new("Foo");
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo()");
+		}
+	}
+
+	public class VoidMethodWith1Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string> setup = new("Foo", new With.NamedParameter("bar", With.Any<string>()));
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(With.Any<string>() bar)");
+		}
+	}
+
+	public class VoidMethodWith2Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string, long> setup = new("Foo", new With.NamedParameter("p1", With.Any<string>()),
+				new With.NamedParameter("p2", With.Any<long>()));
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(With.Any<string>() p1, With.Any<long>() p2)");
+		}
+	}
+
+	public class VoidMethodWith3Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string, long, int> setup = new("Foo", new With.NamedParameter("p1", With.Any<string>()),
+				new With.NamedParameter("p2", With.Any<long>()), new With.NamedParameter("p3", With.Any<int>()));
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3)");
+		}
+	}
+
+	public class VoidMethodWith4Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string, long, int, int> setup = new("Foo",
+				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
+				new With.NamedParameter("p3", With.Any<int>()), new With.NamedParameter("p4", With.Any<int>()));
+
+			string result = setup.ToString();
+
+			await That(result)
+				.IsEqualTo(
+					"void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4)");
+		}
+	}
+
+	public class VoidMethodWith5Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string, long, int, int, int> setup = new("Foo",
+				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
+				new With.NamedParameter("p3", With.Any<int>()), new With.NamedParameter("p4", With.Any<int>()),
+				new With.NamedParameter("p5", With.Any<int>()));
+
+			string result = setup.ToString();
+
+			await That(result)
+				.IsEqualTo(
+					"void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4, With.Any<int>() p5)");
+		}
 	}
 
 	public interface IVoidMethodSetupWithParametersTest
@@ -334,5 +627,57 @@ public sealed partial class SetupMethodTests
 			int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8,
 			int p9, int p10, int p11, int p12, int p13, int p14, int p15, int p16,
 			int p17, int p18);
+	}
+
+	public interface IReturnMethodSetupTest
+	{
+		string Method0();
+		string Method0(bool withOtherParameter);
+		string Method1(int p1);
+		string Method1(int p1, bool withOtherParameter);
+		string Method1WithOutParameter(out int p1);
+		string Method1WithRefParameter(ref int p1);
+		string Method2(int p1, int p2);
+		string Method2(int p1, int p2, bool withOtherParameter);
+		string Method2WithOutParameter(out int p1, out int p2);
+		string Method2WithRefParameter(ref int p1, ref int p2);
+		string Method3(int p1, int p2, int p3);
+		string Method3(int p1, int p2, int p3, bool withOtherParameter);
+		string Method3WithOutParameter(out int p1, out int p2, out int p3);
+		string Method3WithRefParameter(ref int p1, ref int p2, ref int p3);
+		string Method4(int p1, int p2, int p3, int p4);
+		string Method4(int p1, int p2, int p3, bool withOtherParameter);
+		string Method4WithOutParameter(out int p1, out int p2, out int p3, out int p4);
+		string Method4WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4);
+		string Method5(int p1, int p2, int p3, int p4, int p5);
+		string Method5(int p1, int p2, int p3, int p4, int p5, bool withOtherParameter);
+		string Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
+		string Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
+	}
+
+	public interface IVoidMethodSetupTest
+	{
+		void Method0();
+		void Method0(bool withOtherParameter);
+		void Method1(int p1);
+		void Method1(int p1, bool withOtherParameter);
+		void Method1WithOutParameter(out int p1);
+		void Method1WithRefParameter(ref int p1);
+		void Method2(int p1, int p2);
+		void Method2(int p1, int p2, bool withOtherParameter);
+		void Method2WithOutParameter(out int p1, out int p2);
+		void Method2WithRefParameter(ref int p1, ref int p2);
+		void Method3(int p1, int p2, int p3);
+		void Method3(int p1, int p2, int p3, bool withOtherParameter);
+		void Method3WithOutParameter(out int p1, out int p2, out int p3);
+		void Method3WithRefParameter(ref int p1, ref int p2, ref int p3);
+		void Method4(int p1, int p2, int p3, int p4);
+		void Method4(int p1, int p2, int p3, bool withOtherParameter);
+		void Method4WithOutParameter(out int p1, out int p2, out int p3, out int p4);
+		void Method4WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4);
+		void Method5(int p1, int p2, int p3, int p4, int p5);
+		void Method5(int p1, int p2, int p3, int p4, int p5, bool withOtherParameter);
+		void Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
+		void Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
 	}
 }
