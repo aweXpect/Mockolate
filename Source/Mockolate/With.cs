@@ -356,6 +356,9 @@ public class With
 		/// <inheritdoc cref="Parameters.Matches(object?[])" />
 		public override bool Matches(object?[] values)
 			=> true;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString() => $"With.AnyParameterCombination()";
 	}
 
 	private sealed class AnyParameter<T> : Parameter<T>

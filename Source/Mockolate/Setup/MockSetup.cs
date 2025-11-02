@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -84,7 +83,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 			if (mock.Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The indexer ['{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}'] was accessed without prior setup.");
+					$"The indexer [{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}] was accessed without prior setup.");
 			}
 
 			return mock.Behavior.DefaultValue.Generate<TValue>();
@@ -521,14 +520,14 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	}
 
 	[DebuggerDisplay("{ToString()}")]
-	private sealed class EventSetups : IEnumerable<(object?, MethodInfo, string)>
+	private sealed class EventSetups
 	{
 		private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _storage;
 
 		public int Count
 			=> _storage?.Count ?? 0;
 
-		public IEnumerator<(object?, MethodInfo, string)> GetEnumerator()
+		public IEnumerable<(object?, MethodInfo, string)> Enumerate()
 		{
 			if (_storage is null)
 			{
@@ -540,8 +539,6 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 				yield return item;
 			}
 		}
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		public void Add(object? target, MethodInfo method, string eventName)
 		{
@@ -603,7 +600,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
 	IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
 	{
-		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers)
+		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers.Enumerate())
 		{
 			if (name != eventName)
 			{

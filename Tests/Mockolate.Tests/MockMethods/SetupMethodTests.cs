@@ -212,6 +212,22 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
+	{
+		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+		sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination());
+
+		void Act()
+			=> ((IMock)sut).Execute<int>(
+				$"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters",
+				[1, 2]);
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The method setup does not support return values.");
+	}
+
+	[Fact]
 	public async Task VoidMethod_Verify_ShouldMatchAnyParameters()
 	{
 		int callCount = 0;
@@ -487,6 +503,52 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
+	public class ReturnMethodWithParameters
+	{
+		[Fact]
+		public async Task SetOutParameter_ShouldThrowMockException()
+		{
+			MyReturnMethodSetupWithParameters<string> setup = new("Foo");
+
+			void Act()
+				=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The method setup with parameters does not support out parameters.");
+		}
+
+		[Fact]
+		public async Task SetRefParameter_ShouldThrowMockException()
+		{
+			MyReturnMethodSetupWithParameters<string> setup = new("Foo");
+
+			void Act()
+				=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The method setup with parameters does not support ref parameters.");
+		}
+
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetupWithParameters<int> setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
+		}
+
+		private class MyReturnMethodSetupWithParameters<T>(string name) : ReturnMethodSetupWithParameters<Task>(name, With.AnyParameterCombination())
+		{
+			public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+				=> SetOutParameter<TValue>(parameterName, behavior);
+
+			public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+				=> SetRefParameter(parameterName, value, behavior);
+		}
+	}
+
 	public class VoidMethodWith0Parameters
 	{
 		[Fact]
@@ -576,6 +638,52 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
+	public class VoidMethodWithParameters
+	{
+		[Fact]
+		public async Task SetOutParameter_ShouldThrowMockException()
+		{
+			MyVoidMethodSetupWithParameters setup = new("Foo");
+
+			void Act()
+				=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The method setup with parameters does not support out parameters.");
+		}
+
+		[Fact]
+		public async Task SetRefParameter_ShouldThrowMockException()
+		{
+			MyVoidMethodSetupWithParameters setup = new("Foo");
+
+			void Act()
+				=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The method setup with parameters does not support ref parameters.");
+		}
+
+		[Fact]
+		public async Task ToString_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetupWithParameters setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
+		}
+
+		private class MyVoidMethodSetupWithParameters(string name) : VoidMethodSetupWithParameters(name, With.AnyParameterCombination())
+		{
+			public T HiddenSetOutParameter<T>(string parameterName, MockBehavior behavior)
+				=> SetOutParameter<T>(parameterName, behavior);
+
+			public T HiddenSetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+				=> SetRefParameter(parameterName, value, behavior);
+		}
+	}
+
 	public interface IVoidMethodSetupWithParametersTest
 	{
 		void MethodWithMultipleOverloads(int p1, int p2);
@@ -653,6 +761,7 @@ public sealed partial class SetupMethodTests
 		string Method5(int p1, int p2, int p3, int p4, int p5, bool withOtherParameter);
 		string Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
 		string Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
+		string UniqueMethodWithParameters(int p1, int p2);
 	}
 
 	public interface IVoidMethodSetupTest
@@ -679,5 +788,6 @@ public sealed partial class SetupMethodTests
 		void Method5(int p1, int p2, int p3, int p4, int p5, bool withOtherParameter);
 		void Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
 		void Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
+		void UniqueMethodWithParameters(int p1, int p2);
 	}
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 
