@@ -21,6 +21,16 @@ public sealed partial class MockSetupsTests
 		}
 
 		[Fact]
+		public async Task Mock_ShouldBeInnerMock()
+		{
+			Mock<IMyService> mock = Mock.Create<IMyService>();
+			IMockSetup setup = mock.Setup;
+			IMockSetup @protected = new ProtectedMockSetup<int>(mock.Setup);
+
+			await That(@protected.Mock).IsSameAs(setup.Mock);
+		}
+
+		[Fact]
 		public async Task RegisterMethod_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
@@ -41,6 +51,18 @@ public sealed partial class MockSetupsTests
 			@protected.RegisterProperty("foo.bar", new PropertySetup<int>().InitializeWith(42));
 
 			int result = ((IMock)mock).Get<int>("foo.bar");
+			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task SetIndexerValue_ShouldForwardToInner()
+		{
+			Mock<IMyService> mock = Mock.Create<IMyService>();
+			IMockSetup @protected = new ProtectedMockSetup<int>(mock.Setup);
+
+			@protected.SetIndexerValue(["foo.bar"], 42);
+
+			int result = ((IMock)mock).GetIndexer<int>(null, ["foo.bar"]);
 			await That(result).IsEqualTo(42);
 		}
 

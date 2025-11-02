@@ -209,7 +209,8 @@ public class PropertySetup<T> : PropertySetup
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"{typeof(T).FormatType()}";
+	public override string ToString()
+		=> typeof(T).FormatType();
 
 	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result, MockBehavior behavior)
 	{
