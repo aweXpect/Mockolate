@@ -1,6 +1,6 @@
 ﻿using Mockolate.Verify;
 
-namespace Mockolate.Tests;
+namespace Mockolate.Tests.Delegates;
 
 public class DelegateTests
 {

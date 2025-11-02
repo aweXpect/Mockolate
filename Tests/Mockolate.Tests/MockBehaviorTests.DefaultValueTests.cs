@@ -1,0 +1,210 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+
+namespace Mockolate.Tests;
+
+public sealed partial class MockBehaviorTests
+{
+	public sealed class DefaultValueTests
+	{
+		[Fact]
+		public async Task WithArray_ShouldReturnEmptyArray()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			int[] result = mock.Subject.SimpleArray;
+
+			await That(result).HasCount(0);
+		}
+
+		[Fact]
+		public async Task WithCancellationToken_ShouldReturnNone()
+		{
+			MockBehavior sut = MockBehavior.Default;
+
+			CancellationToken result = sut.DefaultValue.Generate<CancellationToken>();
+
+			await That(result).IsEqualTo(CancellationToken.None);
+		}
+
+		[Fact]
+		public async Task WithIEnumerable_ShouldReturnEmptyEnumerable()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			IEnumerable result = mock.Subject.IEnumerable;
+
+			await That(result).HasCount(0);
+		}
+
+		[Fact]
+		public async Task WithIEnumerableOfInt_ShouldReturnEmptyEnumerable()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			IEnumerable<int> result = mock.Subject.IEnumerableOfInt;
+
+			await That(result).HasCount(0);
+		}
+
+		[Fact]
+		public async Task WithInt_ShouldReturnZero()
+		{
+			MockBehavior sut = MockBehavior.Default;
+
+			int result = sut.DefaultValue.Generate<int>();
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task WithMultidimensionalArray_ShouldReturnEmptyArray()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			int[,,][,][] result = mock.Subject.MultiDimensionalArray;
+
+			await That(result).HasCount(0);
+		}
+
+		[Fact]
+		public async Task WithNullableInt_ShouldReturnNull()
+		{
+			MockBehavior sut = MockBehavior.Default;
+
+			int? result = sut.DefaultValue.Generate<int?>();
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithObject_ShouldReturnNull()
+		{
+			MockBehavior sut = MockBehavior.Default;
+
+			object result = sut.DefaultValue.Generate<object>();
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithString_ShouldReturnEmptyString()
+		{
+			MockBehavior sut = MockBehavior.Default;
+
+			string result = sut.DefaultValue.Generate<string>();
+
+			await That(result).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithStruct_ShouldReturnDefault()
+		{
+			MockBehavior sut = MockBehavior.Default;
+
+			DateTime result = sut.DefaultValue.Generate<DateTime>();
+
+			await That(result).IsEqualTo(DateTime.MinValue);
+		}
+
+		[Fact]
+		public async Task WithTask_ShouldReturnCompletedTask()
+		{
+			MockBehavior sut = MockBehavior.Default;
+
+			Task result = sut.DefaultValue.Generate<Task>();
+
+			await That(result).IsNotNull();
+			await That(result.IsCompleted).IsTrue();
+			await That(result.IsFaulted).IsFalse();
+		}
+
+		[Fact]
+		public async Task WithTaskInt_ShouldReturnZero()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			Task<int> result = mock.Subject.IntTask;
+
+			await That(result.IsCompleted).IsTrue();
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task WithTaskIntArray_ShouldReturnZero()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			Task<int[]> result = mock.Subject.IntArrayTask;
+
+			await That(result.IsCompleted).IsTrue();
+			await That(result).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithValueTaskInt_ShouldReturnZero()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			ValueTask<int> result = mock.Subject.IntValueTask;
+
+			await That(result.IsCompleted).IsTrue();
+			await That(await result).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task WithValueTaskIntArray_ShouldReturnZero()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			ValueTask<int[]> result = mock.Subject.IntArrayValueTask;
+
+			await That(result.IsCompleted).IsTrue();
+			await That(await result).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithValueTuple_ShouldReturnValueTupleWithDefaultValues()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			(int V1, string V2) result = mock.Subject.NamedValueTuple;
+
+			await That(result.V1).IsEqualTo(0);
+			await That(result.V2).IsEqualTo("");
+		}
+
+		[Fact]
+		public async Task WithValueTuple8_ShouldReturnValueTupleWithDefaultValues()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			(int V1, string V2, int V3, string V4, int V5, string V6, int V7, string V8) result =
+				mock.Subject.ValueTuple8;
+
+			await That(result.V1).IsEqualTo(0);
+			await That(result.V2).IsEqualTo("");
+			await That(result.V3).IsEqualTo(0);
+			await That(result.V4).IsEqualTo("");
+			await That(result.V5).IsEqualTo(0);
+			await That(result.V6).IsEqualTo("");
+			await That(result.V7).IsEqualTo(0);
+			await That(result.V8).IsEqualTo("");
+		}
+
+		public interface IDefaultValueGeneratorProperties
+		{
+			int[] SimpleArray { get; }
+			int[,,][,][] MultiDimensionalArray { get; }
+			IEnumerable IEnumerable { get; }
+			IEnumerable<int> IEnumerableOfInt { get; }
+			(int V1, string V2) NamedValueTuple { get; }
+			(int, string, int, string, int, string, int, string) ValueTuple8 { get; }
+			Task<int> IntTask { get; }
+			Task<int[]> IntArrayTask { get; }
+			ValueTask<int> IntValueTask { get; }
+			ValueTask<int[]> IntArrayValueTask { get; }
+		}
+	}
+}
