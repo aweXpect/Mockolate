@@ -527,7 +527,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 		public int Count
 			=> _storage?.Count ?? 0;
 
-		public IEnumerator<(object?, MethodInfo, string)> GetEnumerator()
+		public IEnumerable<(object?, MethodInfo, string)> Enumerate()
 		{
 			if (_storage is null)
 			{
@@ -600,7 +600,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	/// <inheritdoc cref="IMockSetup.GetEventHandlers(string)" />
 	IEnumerable<(object?, MethodInfo)> IMockSetup.GetEventHandlers(string eventName)
 	{
-		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers)
+		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers.Enumerate())
 		{
 			if (name != eventName)
 			{

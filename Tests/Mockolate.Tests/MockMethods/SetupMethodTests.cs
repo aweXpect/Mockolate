@@ -541,10 +541,10 @@ public sealed partial class SetupMethodTests
 
 		private class MyReturnMethodSetupWithParameters<T>(string name) : ReturnMethodSetupWithParameters<Task>(name, With.AnyParameterCombination())
 		{
-			public T HiddenSetOutParameter<T>(string parameterName, MockBehavior behavior)
-				=> SetOutParameter<T>(parameterName, behavior);
+			public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+				=> SetOutParameter<TValue>(parameterName, behavior);
 
-			public T HiddenSetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+			public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 				=> SetRefParameter(parameterName, value, behavior);
 		}
 	}
