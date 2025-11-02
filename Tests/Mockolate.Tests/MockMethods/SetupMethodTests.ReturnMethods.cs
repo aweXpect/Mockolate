@@ -4,9 +4,9 @@ using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockMethods;
 
-public class ReturnMethodSetupTests
+public sealed partial class SetupMethodTests
 {
-	public class With0Parameters
+	public class ReturnMethodWith0Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -221,7 +221,7 @@ public class ReturnMethodSetupTests
 		}
 	}
 
-	public class With1Parameters
+	public class ReturnMethodWith1Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -588,7 +588,7 @@ public class ReturnMethodSetupTests
 		}
 	}
 
-	public class With2Parameters
+	public class ReturnMethodWith2Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -991,7 +991,7 @@ public class ReturnMethodSetupTests
 		}
 	}
 
-	public class With3Parameters
+	public class ReturnMethodWith3Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -1434,7 +1434,7 @@ public class ReturnMethodSetupTests
 		}
 	}
 
-	public class With4Parameters
+	public class ReturnMethodWith4Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -1910,7 +1910,7 @@ public class ReturnMethodSetupTests
 		}
 	}
 
-	public class With5Parameters
+	public class ReturnMethodWith5Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()

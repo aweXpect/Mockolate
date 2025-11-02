@@ -1,9 +1,10 @@
-﻿using Mockolate.Setup;
+﻿using Mockolate;
+using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
 
-namespace Mockolate.Tests.Setup;
+namespace Mockolate.Tests.Internals;
 
-public sealed partial class MockSetupsTests
+public sealed class MockSetupsTests
 {
 	[Theory]
 	[InlineData(0, 0, 0, 0, "(none)")]

@@ -4,36 +4,9 @@ using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockMethods;
 
-public class VoidMethodSetupTests
+public sealed partial class SetupMethodTests
 {
-	[Theory]
-	[InlineData("Method0")]
-	[InlineData("Method1", 1)]
-	[InlineData("Method2", 1, 2)]
-	[InlineData("Method3", 1, 2, 3)]
-	[InlineData("Method4", 1, 2, 3, 4)]
-	[InlineData("Method5", 1, 2, 3, 4, 5)]
-	public async Task GetReturnValue_ShouldThrowMockException(string methodName, params int[] parameters)
-	{
-		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-		sut.Setup.Method.Method0();
-		sut.Setup.Method.Method1(With.Any<int>());
-		sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>());
-		sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>());
-		sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>());
-		sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>());
-
-		void Act()
-			=> ((IMock)sut).Execute<int>(
-				$"Mockolate.Tests.MockMethods.VoidMethodSetupTests.IVoidMethodSetupTest.{methodName}",
-				parameters.Select(x => (object?)x).ToArray());
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The method setup does not support return values.");
-	}
-
-	public class With0Parameters
+	public class VoidMethodWith0Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -157,7 +130,7 @@ public class VoidMethodSetupTests
 		}
 	}
 
-	public class With1Parameters
+	public class VoidMethodWith1Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -403,7 +376,7 @@ public class VoidMethodSetupTests
 		}
 	}
 
-	public class With2Parameters
+	public class VoidMethodWith2Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -672,7 +645,7 @@ public class VoidMethodSetupTests
 		}
 	}
 
-	public class With3Parameters
+	public class VoidMethodWith3Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -961,7 +934,7 @@ public class VoidMethodSetupTests
 		}
 	}
 
-	public class With4Parameters
+	public class VoidMethodWith4Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
@@ -1266,7 +1239,7 @@ public class VoidMethodSetupTests
 		}
 	}
 
-	public class With5Parameters
+	public class VoidMethodWith5Parameters
 	{
 		[Fact]
 		public async Task Callback_ShouldExecuteWhenInvoked()
