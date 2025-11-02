@@ -96,11 +96,11 @@ public abstract class MockBase<T> : IMock
 	{
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
-		IInteraction interaction =
+		MethodInvocation methodInvocation =
 			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(),
 				methodName, parameters));
 
-		MethodSetup? matchingSetup = Setup.GetMethodSetup(interaction);
+		MethodSetup? matchingSetup = Setup.GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
 			if (_behavior.ThrowWhenNotSetup)
@@ -114,7 +114,7 @@ public abstract class MockBase<T> : IMock
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, _behavior,
-			matchingSetup.Invoke<TResult>(interaction, _behavior));
+			matchingSetup.Invoke<TResult>(methodInvocation, _behavior));
 	}
 
 	/// <inheritdoc cref="IMock.Execute(string, object?[])" />
@@ -122,18 +122,18 @@ public abstract class MockBase<T> : IMock
 	{
 		MockInteractions interactions = ((IMock)this).Interactions;
 		parameters ??= [null,];
-		IInteraction interaction =
+		MethodInvocation methodInvocation =
 			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(),
 				methodName, parameters));
 
-		MethodSetup? matchingSetup = Setup.GetMethodSetup(interaction);
+		MethodSetup? matchingSetup = Setup.GetMethodSetup(methodInvocation);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
 				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 		}
 
-		matchingSetup?.Invoke(interaction, _behavior);
+		matchingSetup?.Invoke(methodInvocation, _behavior);
 		return new MethodSetupResult(matchingSetup, _behavior);
 	}
 

@@ -25,11 +25,11 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	private readonly PropertySetups _propertySetups = new();
 
 	/// <summary>
-	///     Retrieves the first method setup that matches the specified <paramref name="invocation" />,
+	///     Retrieves the first method setup that matches the specified <paramref name="methodInvocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	internal MethodSetup? GetMethodSetup(IInteraction invocation)
-		=> _methodSetups.GetNewest(setup => ((IMethodSetup)setup).Matches(invocation));
+	internal MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
+		=> _methodSetups.GetNewest(setup => ((IMethodSetup)setup).Matches(methodInvocation));
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.

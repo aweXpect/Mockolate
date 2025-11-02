@@ -8,5 +8,6 @@ public interface IMockInteractions
 	/// <summary>
 	///     Registers an <paramref name="interaction" />.
 	/// </summary>
-	IInteraction RegisterInteraction(IInteraction interaction);
+	TInteraction RegisterInteraction<TInteraction>(TInteraction interaction)
+		where TInteraction : IInteraction;
 }

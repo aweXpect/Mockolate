@@ -210,7 +210,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			throw new MockException(
-				$"The input parameter only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]?.GetType())}'.");
+				$"The input parameter only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]!.GetType())}'.");
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
@@ -366,13 +366,13 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]?.GetType())}'.");
+				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]!.GetType())}'.");
 		}
 
 		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]?.GetType())}'.");
+				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]!.GetType())}'.");
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
@@ -533,19 +533,19 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]?.GetType())}'.");
+				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]!.GetType())}'.");
 		}
 
 		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]?.GetType())}'.");
+				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]!.GetType())}'.");
 		}
 
 		if (!TryCast(invocation.Parameters[2], out T3 p3, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 3 only supports '{FormatType(typeof(T3))}', but is '{FormatType(invocation.Parameters[2]?.GetType())}'.");
+				$"The input parameter 3 only supports '{FormatType(typeof(T3))}', but is '{FormatType(invocation.Parameters[2]!.GetType())}'.");
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
@@ -709,25 +709,25 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]?.GetType())}'.");
+				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]!.GetType())}'.");
 		}
 
 		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]?.GetType())}'.");
+				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]!.GetType())}'.");
 		}
 
 		if (!TryCast(invocation.Parameters[2], out T3 p3, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 3 only supports '{FormatType(typeof(T3))}', but is '{FormatType(invocation.Parameters[2]?.GetType())}'.");
+				$"The input parameter 3 only supports '{FormatType(typeof(T3))}', but is '{FormatType(invocation.Parameters[2]!.GetType())}'.");
 		}
 
 		if (!TryCast(invocation.Parameters[3], out T4 p4, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 4 only supports '{FormatType(typeof(T4))}', but is '{FormatType(invocation.Parameters[3]?.GetType())}'.");
+				$"The input parameter 4 only supports '{FormatType(typeof(T4))}', but is '{FormatType(invocation.Parameters[3]!.GetType())}'.");
 		}
 
 		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);

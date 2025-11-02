@@ -308,7 +308,8 @@ namespace Mockolate.Interactions
     }
     public interface IMockInteractions
     {
-        Mockolate.Interactions.IInteraction RegisterInteraction(Mockolate.Interactions.IInteraction interaction);
+        TInteraction RegisterInteraction<TInteraction>(TInteraction interaction)
+            where TInteraction : Mockolate.Interactions.IInteraction;
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess : Mockolate.Interactions.IInteraction
@@ -391,7 +392,7 @@ namespace Mockolate.Setup
     }
     public interface IMethodSetup
     {
-        bool Matches(Mockolate.Interactions.IInteraction invocation);
+        bool Matches(Mockolate.Interactions.MethodInvocation methodInvocation);
         T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
         T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
     }
@@ -516,7 +517,7 @@ namespace Mockolate.Setup
         protected abstract bool IsMatch(Mockolate.Interactions.MethodInvocation invocation);
         protected abstract T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
         protected abstract T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
-        protected static string FormatType(System.Type? type) { }
+        protected static string FormatType(System.Type type) { }
         protected static bool HasOutParameter<T>(Mockolate.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.With.OutParameter<T>? parameter) { }
         protected static bool HasRefParameter<T>(Mockolate.With.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.With.RefParameter<T>? parameter) { }
         protected static bool Matches(Mockolate.With.NamedParameter[] namedParameters, object?[] values) { }

@@ -36,8 +36,8 @@ public class MockInteractions : IMockInteractions
 	public IEnumerable<IInteraction> Interactions
 		=> _interactions.Values.OrderBy(x => x.Index);
 
-	/// <inheritdoc cref="IMockInteractions.RegisterInteraction(IInteraction)" />
-	IInteraction IMockInteractions.RegisterInteraction(IInteraction interaction)
+	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
+	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{
 		_interactions.TryAdd(interaction.Index, interaction);
 		return interaction;

@@ -8,9 +8,9 @@ namespace Mockolate.Setup;
 public interface IMethodSetup
 {
 	/// <summary>
-	///     Checks if the <paramref name="invocation" /> matches the setup.
+	///     Checks if the <paramref name="methodInvocation" /> matches the setup.
 	/// </summary>
-	bool Matches(IInteraction invocation);
+	bool Matches(MethodInvocation methodInvocation);
 
 	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type
