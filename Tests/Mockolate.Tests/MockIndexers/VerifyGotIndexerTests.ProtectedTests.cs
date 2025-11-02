@@ -4,7 +4,7 @@ using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockIndexers;
 
-public sealed partial class MockGotIndexerTests
+public sealed partial class VerifyGotIndexerTests
 {
 	public sealed class ProtectedTests
 	{

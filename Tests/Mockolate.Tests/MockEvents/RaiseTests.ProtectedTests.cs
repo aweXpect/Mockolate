@@ -3,7 +3,7 @@ using Mockolate.Exceptions;
 
 namespace Mockolate.Tests.MockEvents;
 
-public sealed partial class MockRaisesTests
+public sealed partial class RaiseTests
 {
 	public sealed class ProtectedTests
 	{
