@@ -13,10 +13,9 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class IndexerSetup : IIndexerSetup
 {
-	/// <inheritdoc cref="IIndexerSetup.Matches(IInteraction)" />
-	bool IIndexerSetup.Matches(IInteraction invocation)
-		=> (invocation is IndexerGetterAccess getterAccess && IsMatch(getterAccess.Parameters)) ||
-		   (invocation is IndexerSetterAccess setterAccess && IsMatch(setterAccess.Parameters));
+	/// <inheritdoc cref="IIndexerSetup.Matches(IndexerAccess)" />
+	bool IIndexerSetup.Matches(IndexerAccess indexerAccess)
+		=> IsMatch(indexerAccess.Parameters);
 
 	/// <inheritdoc cref="IIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, object?[], out TValue)" />
 	bool IIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, object?[] parameters,

@@ -9,7 +9,6 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-			IMock sut = mock;
 			mock.Setup.Indexer(With.Any<int>())
 				.OnGet(() => { callCount++; });
 
@@ -27,7 +26,6 @@ public sealed partial class SetupIndexerTests
 			int callCount2 = 0;
 			int callCount3 = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-			IMock sut = mock;
 			mock.Setup.Indexer(With.Value(2))
 				.OnGet(() => { callCount1++; })
 				.OnGet(v => { callCount2 += v; })
@@ -48,7 +46,6 @@ public sealed partial class SetupIndexerTests
 			int callCount2 = 0;
 			int callCount3 = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-			IMock sut = mock;
 			mock.Setup.Indexer(With.Any<int>())
 				.OnSet(() => { callCount1++; })
 				.OnSet((_, v) => { callCount2 += v; })
@@ -67,7 +64,6 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-			IMock sut = mock;
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 				.OnGet(() => { callCount++; });
 
@@ -86,7 +82,6 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-			IMock sut = mock;
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 				.OnGet(v => { callCount += v; });
 
@@ -104,7 +99,6 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-			IMock sut = mock;
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 				.OnSet(_ => { callCount++; });
 
@@ -123,7 +117,6 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount = 0;
 			Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-			IMock sut = mock;
 			mock.Setup.Indexer(With.Matching<int>(i => i < 4))
 				.OnSet(() => { callCount++; });
 
@@ -143,7 +136,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 					.OnGet(() => { callCount++; });
 
@@ -161,7 +153,6 @@ public sealed partial class SetupIndexerTests
 				int callCount2 = 0;
 				int callCount3 = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 					.OnGet(() => { callCount1++; })
 					.OnGet((v1, v2) => { callCount2 += v1 * v2; })
@@ -182,7 +173,6 @@ public sealed partial class SetupIndexerTests
 				int callCount2 = 0;
 				int callCount3 = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Any<int>(), With.Any<int>())
 					.OnSet(() => { callCount1++; })
 					.OnSet((value, v1, v2) => { callCount2 += (v1 * v2) + value.Length; })
@@ -201,7 +191,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 					.OnGet(() => { callCount++; });
 
@@ -220,7 +209,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 					.OnGet((v1, v2) => { callCount += v1 * v2; });
 
@@ -239,7 +227,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 					.OnSet(v => { callCount += v.Length; });
 
@@ -261,7 +248,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Matching<int>(i => i < 4), With.Matching<int>(i => i < 4))
 					.OnSet(() => { callCount++; });
 
@@ -283,7 +269,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>())
 					.OnGet(() => { callCount++; });
 
@@ -425,7 +410,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 					.OnGet(() => { callCount++; });
 
@@ -568,7 +552,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 					.OnGet(() => { callCount++; });
 
@@ -588,7 +571,6 @@ public sealed partial class SetupIndexerTests
 				int callCount2 = 0;
 				int callCount3 = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 					.OnGet(() => { callCount1++; })
 					.OnGet((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; })
@@ -609,7 +591,6 @@ public sealed partial class SetupIndexerTests
 				int callCount2 = 0;
 				int callCount3 = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
 					.OnSet(() => { callCount1++; })
 					.OnSet((value, v1, v2, v3, v4, v5) => { callCount2 += (v1 * v2 * v3 * v4 * v5) + value.Length; })
@@ -628,7 +609,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6),
 						With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
 					.OnGet(() => { callCount++; });
@@ -650,7 +630,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6),
 						With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
 					.OnGet((v1, v2, v3, v4, v5) => { callCount += v1 * v2 * v3 * v4 * v5; });
@@ -672,7 +651,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6),
 						With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
 					.OnSet(v => { callCount += v.Length; });
@@ -695,7 +673,6 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-				IMock sut = mock;
 				mock.Setup.Indexer(With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6),
 						With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6), With.Matching<int>(i => i < 6))
 					.OnSet(() => { callCount++; });

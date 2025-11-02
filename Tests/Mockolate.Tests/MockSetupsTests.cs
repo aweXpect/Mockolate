@@ -3,6 +3,7 @@ using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
 
+#pragma warning disable CA1859 // Use concrete types when possible for improved performance
 public sealed class MockSetupsTests
 {
 	[Theory]
@@ -543,3 +544,4 @@ public sealed class MockSetupsTests
 		}
 	}
 }
+#pragma warning restore CA1859 // Use concrete types when possible for improved performance

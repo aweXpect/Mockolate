@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
+using static Mockolate.With;
 
 namespace Mockolate.Interactions;
 
@@ -7,16 +9,8 @@ namespace Mockolate.Interactions;
 ///     An access of an indexer getter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
-public class IndexerGetterAccess(int index, object?[] parameters) : IInteraction
+public class IndexerGetterAccess(int index, object?[] parameters) : IndexerAccess(index, parameters)
 {
-	/// <summary>
-	///     The parameters of the indexer.
-	/// </summary>
-	public object?[] Parameters { get; } = parameters;
-
-	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index { get; } = index;
-
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"[{Index}] get indexer [{string.Join(", ", Parameters.Select(p => p?.ToString() ?? "null"))}]";

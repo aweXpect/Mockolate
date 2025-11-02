@@ -25,11 +25,11 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	private readonly PropertySetups _propertySetups = new();
 
 	/// <summary>
-	///     Retrieves the first method setup that matches the specified <paramref name="methodInvocation" />,
+	///     Retrieves the latest method setup that matches the specified <paramref name="methodInvocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	internal MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
-		=> _methodSetups.GetNewest(setup => ((IMethodSetup)setup).Matches(methodInvocation));
+		=> _methodSetups.GetLatestOrDefault(setup => ((IMethodSetup)setup).Matches(methodInvocation));
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
@@ -58,11 +58,11 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 	}
 
 	/// <summary>
-	///     Retrieves the first indexer setup that matches the specified <paramref name="interaction" />,
+	///     Retrieves the latest indexer setup that matches the specified <paramref name="interaction" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	internal IndexerSetup? GetIndexerSetup(IInteraction interaction)
-		=> _indexerSetups.GetNewestOrDefault(setup => ((IIndexerSetup)setup).Matches(interaction));
+	internal IndexerSetup? GetIndexerSetup(IndexerAccess interaction)
+		=> _indexerSetups.GetLastestOrDefault(setup => ((IIndexerSetup)setup).Matches(interaction));
 
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters" />.
@@ -337,7 +337,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 			_storage.Push(setup);
 		}
 
-		public MethodSetup? GetNewest(Func<MethodSetup, bool> predicate)
+		public MethodSetup? GetLatestOrDefault(Func<MethodSetup, bool> predicate)
 		{
 			if (_storage is null)
 			{
@@ -418,7 +418,7 @@ public class MockSetup<T>(IMock mock) : IMockSetup
 
 		public int Count => _storage?.Count ?? 0;
 
-		public IndexerSetup? GetNewestOrDefault(Func<IndexerSetup, bool> predicate)
+		public IndexerSetup? GetLastestOrDefault(Func<IndexerSetup, bool> predicate)
 		{
 			if (_storage is null)
 			{

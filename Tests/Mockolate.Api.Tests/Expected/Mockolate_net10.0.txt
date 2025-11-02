@@ -311,20 +311,22 @@ namespace Mockolate.Interactions
         TInteraction RegisterInteraction<TInteraction>(TInteraction interaction)
             where TInteraction : Mockolate.Interactions.IInteraction;
     }
-    [System.Diagnostics.DebuggerDisplay("{ToString()}")]
-    public class IndexerGetterAccess : Mockolate.Interactions.IInteraction
+    public abstract class IndexerAccess : Mockolate.Interactions.IInteraction
     {
-        public IndexerGetterAccess(int index, object?[] parameters) { }
+        protected IndexerAccess(int index, object?[] parameters) { }
         public int Index { get; }
         public object?[] Parameters { get; }
+    }
+    [System.Diagnostics.DebuggerDisplay("{ToString()}")]
+    public class IndexerGetterAccess : Mockolate.Interactions.IndexerAccess
+    {
+        public IndexerGetterAccess(int index, object?[] parameters) { }
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
-    public class IndexerSetterAccess : Mockolate.Interactions.IInteraction
+    public class IndexerSetterAccess : Mockolate.Interactions.IndexerAccess
     {
         public IndexerSetterAccess(int index, object?[] parameters, object? value) { }
-        public int Index { get; }
-        public object?[] Parameters { get; }
         public object? Value { get; }
         public override string ToString() { }
     }
@@ -387,7 +389,7 @@ namespace Mockolate.Setup
 {
     public interface IIndexerSetup
     {
-        bool Matches(Mockolate.Interactions.IInteraction invocation);
+        bool Matches(Mockolate.Interactions.IndexerAccess indexerAccess);
         bool TryGetInitialValue<TValue>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TValue value);
     }
     public interface IMethodSetup
