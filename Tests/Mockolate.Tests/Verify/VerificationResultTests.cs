@@ -1,3 +1,4 @@
+using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
 namespace Mockolate.Tests.Verify;
@@ -10,9 +11,9 @@ public class VerificationResultTests
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
 		VerificationResult<MockVerify<IMyService, Mock<IMyService>>> result =
-			sut.Verify.SubscribedTo.SomethingHappened();
+			sut.Verify.SubscribedTo.MyEvent();
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event SomethingHappened");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event MyEvent");
 	}
 
 	[Fact]
@@ -20,9 +21,9 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		var result = sut.Verify.UnsubscribedFrom.SomethingHappened();
+		var result = sut.Verify.UnsubscribedFrom.MyEvent();
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event SomethingHappened");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event MyEvent");
 	}
 
 	[Fact]
@@ -30,10 +31,10 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		var result = sut.Verify.Invoked.DoSomething(With.Any<int?>(), "foo");
+		var result = sut.Verify.Invoked.DoSomethingAndReturn(With.Any<int>());
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("invoked method DoSomething(With.Any<int?>(), \"foo\")");
+			.IsEqualTo("invoked method DoSomethingAndReturn(With.Any<int>())");
 	}
 
 	[Fact]
@@ -41,9 +42,9 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		var result = sut.Verify.Got.MyProperty();
+		var result = sut.Verify.Got.SomeFlag();
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property MyProperty");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property SomeFlag");
 	}
 
 	[Fact]
@@ -51,16 +52,9 @@ public class VerificationResultTests
 	{
 		Mock<IMyService> sut = Mock.Create<IMyService>();
 
-		var result = sut.Verify.Set.MyProperty(With.Any<int>());
+		var result = sut.Verify.Set.SomeFlag(With.Any<bool>());
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("set property MyProperty to value With.Any<int>()");
-	}
-
-	public interface IMyService
-	{
-		int MyProperty { get; set; }
-		event EventHandler? SomethingHappened;
-		void DoSomething(int? value, string otherValue);
+			.IsEqualTo("set property SomeFlag to value With.Any<bool>()");
 	}
 }
