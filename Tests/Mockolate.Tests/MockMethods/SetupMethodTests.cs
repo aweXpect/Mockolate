@@ -212,22 +212,6 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
-	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
-	{
-		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-		sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination());
-
-		void Act()
-			=> ((IMock)sut).Execute<int>(
-				$"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters",
-				[1, 2]);
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The method setup does not support return values.");
-	}
-
-	[Fact]
 	public async Task VoidMethod_Verify_ShouldMatchAnyParameters()
 	{
 		int callCount = 0;
@@ -240,6 +224,21 @@ public sealed partial class SetupMethodTests
 
 		await That(callCount).IsEqualTo(1);
 		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(With.AnyParameterCombination())).Once();
+	}
+
+	[Fact]
+	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
+	{
+		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+		sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination());
+
+		void Act()
+			=> ((IMock)sut).Execute<int>(
+				"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters", 1, 2);
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The method setup does not support return values.");
 	}
 
 	[Fact]
