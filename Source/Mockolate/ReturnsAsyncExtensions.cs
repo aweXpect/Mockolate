@@ -13,22 +13,6 @@ public static class ReturnsAsyncExtensions
 	/// <summary>
 	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
 	/// </summary>
-	public static ReturnMethodSetupWithParameters<Task<TReturn>> ReturnsAsync<TReturn>(
-		this ReturnMethodSetupWithParameters<Task<TReturn>> setup,
-		TReturn returnValue)
-		=> setup.Returns(Task.FromResult(returnValue));
-
-	/// <summary>
-	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	public static ReturnMethodSetupWithParameters<Task<TReturn>> ReturnsAsync<TReturn>(
-		this ReturnMethodSetupWithParameters<Task<TReturn>> setup,
-		Func<TReturn> callback)
-		=> setup.Returns(() => Task.FromResult(callback()));
-
-	/// <summary>
-	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
-	/// </summary>
 	public static ReturnMethodSetup<Task<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetup<Task<TReturn>> setup,
 		TReturn returnValue)
 		=> setup.Returns(Task.FromResult(returnValue));
@@ -126,20 +110,6 @@ public static class ReturnsAsyncExtensions
 
 #if NET8_0_OR_GREATER
 #pragma warning disable CA2012 // Use ValueTasks correctly
-	/// <summary>
-	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
-	/// </summary>
-	public static ReturnMethodSetupWithParameters<ValueTask<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetupWithParameters<ValueTask<TReturn>> setup,
-		TReturn returnValue)
-		=> setup.Returns(ValueTask.FromResult(returnValue));
-
-	/// <summary>
-	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	public static ReturnMethodSetupWithParameters<ValueTask<TReturn>> ReturnsAsync<TReturn>(this ReturnMethodSetupWithParameters<ValueTask<TReturn>> setup,
-		Func<TReturn> callback)
-		=> setup.Returns(() => ValueTask.FromResult(callback()));
-
 	/// <summary>
 	///     Registers the <see langword="async" /> <paramref name="returnValue" /> for this method.
 	/// </summary>

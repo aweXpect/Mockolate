@@ -137,7 +137,7 @@ internal static partial class Sources
 			sb.Append(' ').Append(parameter.Name);
 		}
 
-		sb.Append(")").AppendLine();
+		sb.Append(")");
 		if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 		{
 			foreach (GenericParameter gp in method.GenericParameters.Value)
@@ -145,6 +145,7 @@ internal static partial class Sources
 				gp.AppendWhereConstraint(sb, "\t\t\t");
 			}
 		}
+		sb.AppendLine();
 
 		sb.AppendLine("\t\t{");
 
@@ -463,7 +464,7 @@ internal static partial class Sources
 				sb.Append(' ').Append(parameter.Name);
 			}
 
-			sb.Append(")").AppendLine();
+			sb.Append(")");
 			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 			{
 				foreach (GenericParameter gp in method.GenericParameters.Value)
@@ -471,6 +472,7 @@ internal static partial class Sources
 					gp.AppendWhereConstraint(sb, "\t\t\t");
 				}
 			}
+			sb.AppendLine();
 
 			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.ClassFullName).Append(", Mock<")
 				.Append(allClasses).Append(">>>)mock).Method(").Append(method.GetUniqueNameString());
@@ -512,8 +514,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<MockVerify<").Append(@class.ClassFullName).Append(", Mock<")
-				.Append(allClasses).Append(">>> ").Append(method.Name).Append("(With.Parameters parameters)")
-				.AppendLine();
+				.Append(allClasses).Append(">>> ").Append(method.Name).Append("(With.Parameters parameters)");
 			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 			{
 				foreach (GenericParameter gp in method.GenericParameters.Value)
@@ -521,6 +522,7 @@ internal static partial class Sources
 					gp.AppendWhereConstraint(sb, "\t\t\t");
 				}
 			}
+			sb.AppendLine();
 
 			sb.Append("\t\t\t=> ((IMockInvoked<MockVerify<").Append(@class.ClassFullName).Append(", Mock<")
 				.Append(allClasses).Append(">>>)mock).Method(").Append(method.GetUniqueNameString());

@@ -109,10 +109,6 @@ namespace Mockolate
     }
     public static class ReturnsAsyncExtensions
     {
-        public static Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
-        public static Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.Task<TReturn>> setup, TReturn returnValue) { }
-        public static Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.ValueTask<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.ValueTask<TReturn>> setup, System.Func<TReturn> callback) { }
-        public static Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.ValueTask<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetupWithParameters<System.Threading.Tasks.ValueTask<TReturn>> setup, TReturn returnValue) { }
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, TReturn returnValue) { }
         public static Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.ReturnMethodSetup<System.Threading.Tasks.ValueTask<TReturn>> setup, System.Func<TReturn> callback) { }
@@ -603,21 +599,6 @@ namespace Mockolate.Setup
         public Mockolate.IMock Mock { get; }
         public void SetIndexerValue<TValue>(object?[] parameters, TValue value) { }
     }
-    public class ReturnMethodSetupWithParameters<TReturn> : Mockolate.Setup.MethodSetup
-    {
-        public ReturnMethodSetupWithParameters(string name, Mockolate.With.Parameters match) { }
-        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Callback(System.Action callback) { }
-        protected override void ExecuteCallback(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
-        protected override TResult GetReturnValue<TResult>(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockolate.Interactions.MethodInvocation invocation) { }
-        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Returns(System.Func<TReturn> callback) { }
-        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Returns(TReturn returnValue) { }
-        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
-        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
-        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Throws(System.Exception exception) { }
-        public Mockolate.Setup.ReturnMethodSetupWithParameters<TReturn> Throws(System.Func<System.Exception> callback) { }
-        public override string ToString() { }
-    }
     public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup
     {
         public ReturnMethodSetup(string name) { }
@@ -653,6 +634,7 @@ namespace Mockolate.Setup
     }
     public class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup
     {
+        public ReturnMethodSetup(string name, Mockolate.With.Parameters matches) { }
         public ReturnMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Callback(System.Action callback) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Callback(System.Action<T1, T2> callback) { }
@@ -671,6 +653,7 @@ namespace Mockolate.Setup
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup
     {
+        public ReturnMethodSetup(string name, Mockolate.With.Parameters matches) { }
         public ReturnMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2, Mockolate.With.NamedParameter match3) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Callback(System.Action callback) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Callback(System.Action<T1, T2, T3> callback) { }
@@ -689,6 +672,7 @@ namespace Mockolate.Setup
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup
     {
+        public ReturnMethodSetup(string name, Mockolate.With.Parameters matches) { }
         public ReturnMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2, Mockolate.With.NamedParameter match3, Mockolate.With.NamedParameter match4) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Callback(System.Action callback) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Callback(System.Action<T1, T2, T3, T4> callback) { }
@@ -719,20 +703,6 @@ namespace Mockolate.Setup
         public Mockolate.Setup.VoidMethodSetup Throws(System.Func<System.Exception> callback) { }
         public override string ToString() { }
     }
-    public class VoidMethodSetupWithParameters : Mockolate.Setup.MethodSetup
-    {
-        public VoidMethodSetupWithParameters(string name, Mockolate.With.Parameters match) { }
-        public Mockolate.Setup.VoidMethodSetupWithParameters Callback(System.Action callback) { }
-        public Mockolate.Setup.VoidMethodSetupWithParameters DoesNotThrow() { }
-        protected override void ExecuteCallback(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
-        protected override TResult GetReturnValue<TResult>(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior) { }
-        protected override bool IsMatch(Mockolate.Interactions.MethodInvocation invocation) { }
-        protected override T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior) { }
-        protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
-        public Mockolate.Setup.VoidMethodSetupWithParameters Throws(System.Exception exception) { }
-        public Mockolate.Setup.VoidMethodSetupWithParameters Throws(System.Func<System.Exception> callback) { }
-        public override string ToString() { }
-    }
     public class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup
     {
         public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1) { }
@@ -751,6 +721,7 @@ namespace Mockolate.Setup
     }
     public class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup
     {
+        public VoidMethodSetup(string name, Mockolate.With.Parameters matches) { }
         public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2> Callback(System.Action callback) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2> Callback(System.Action<T1, T2> callback) { }
@@ -767,6 +738,7 @@ namespace Mockolate.Setup
     }
     public class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup
     {
+        public VoidMethodSetup(string name, Mockolate.With.Parameters matches) { }
         public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2, Mockolate.With.NamedParameter match3) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Callback(System.Action callback) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Callback(System.Action<T1, T2, T3> callback) { }
@@ -783,6 +755,7 @@ namespace Mockolate.Setup
     }
     public class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup
     {
+        public VoidMethodSetup(string name, Mockolate.With.Parameters matches) { }
         public VoidMethodSetup(string name, Mockolate.With.NamedParameter match1, Mockolate.With.NamedParameter match2, Mockolate.With.NamedParameter match3, Mockolate.With.NamedParameter match4) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Callback(System.Action callback) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Callback(System.Action<T1, T2, T3, T4> callback) { }

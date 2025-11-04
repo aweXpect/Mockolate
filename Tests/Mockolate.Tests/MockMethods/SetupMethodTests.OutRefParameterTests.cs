@@ -312,6 +312,39 @@ public sealed partial class SetupMethodTests
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 			}
+
+			[Fact]
+			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support out parameters.");
+			}
+
+			[Fact]
+			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support ref parameters.");
+			}
+
+			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name) : ReturnMethodSetup<Task, string, long>(name, With.AnyParameterCombination())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
+			}
 		}
 
 		public class ReturnMethodWith3Parameters
@@ -478,6 +511,39 @@ public sealed partial class SetupMethodTests
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+			}
+
+			[Fact]
+			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support out parameters.");
+			}
+
+			[Fact]
+			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support ref parameters.");
+			}
+
+			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name) : ReturnMethodSetup<Task, string, long, int>(name, With.AnyParameterCombination())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -672,6 +738,39 @@ public sealed partial class SetupMethodTests
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+			}
+
+			[Fact]
+			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support out parameters.");
+			}
+
+			[Fact]
+			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support ref parameters.");
+			}
+
+			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name) : ReturnMethodSetup<Task, string, long, int, int>(name, With.AnyParameterCombination())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -894,33 +993,38 @@ public sealed partial class SetupMethodTests
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 			}
-		}
 
-		public class ReturnMethodWithParameters
-		{
 			[Fact]
-			public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
+			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
 			{
-				int callCount = 0;
-				MyReturnMethodSetup setup = new("foo");
-				setup.Callback(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo", [2, 3,]);
+				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
 
 				void Act()
-					=> setup.GetReturnValue<string>(invocation);
+					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
 
 				await That(Act).Throws<MockException>()
-					.WithMessage("""
-					             The return callback only supports 'int' and not 'string'.
-					             """);
-				await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
+					.WithMessage("The method setup with parameters does not support out parameters.");
 			}
 
-			private class MyReturnMethodSetup(string name)
-				: ReturnMethodSetupWithParameters<int>(name, With.AnyParameterCombination())
+			[Fact]
+			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
 			{
-				public T GetReturnValue<T>(MethodInvocation invocation)
-					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support ref parameters.");
+			}
+
+			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name) : ReturnMethodSetup<Task, string, long, int, int, int>(name, With.AnyParameterCombination())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -1118,6 +1222,39 @@ public sealed partial class SetupMethodTests
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 			}
+
+			[Fact]
+			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyVoidMethodSetupWithParameters setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support out parameters.");
+			}
+
+			[Fact]
+			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyVoidMethodSetupWithParameters setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support ref parameters.");
+			}
+
+			private class MyVoidMethodSetupWithParameters(string name) : VoidMethodSetup<string, long>(name, With.AnyParameterCombination())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
+			}
 		}
 
 		public class VoidMethodWith3Parameters
@@ -1215,6 +1352,39 @@ public sealed partial class SetupMethodTests
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
+			}
+
+			[Fact]
+			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyVoidMethodSetupWithParameters setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support out parameters.");
+			}
+
+			[Fact]
+			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyVoidMethodSetupWithParameters setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support ref parameters.");
+			}
+
+			private class MyVoidMethodSetupWithParameters(string name) : VoidMethodSetup<string, long, int>(name, With.AnyParameterCombination())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -1324,6 +1494,39 @@ public sealed partial class SetupMethodTests
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
+			}
+
+			[Fact]
+			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyVoidMethodSetupWithParameters setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support out parameters.");
+			}
+
+			[Fact]
+			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyVoidMethodSetupWithParameters setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support ref parameters.");
+			}
+
+			private class MyVoidMethodSetupWithParameters(string name) : VoidMethodSetup<string, long, int, int>(name, With.AnyParameterCombination())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -1444,6 +1647,39 @@ public sealed partial class SetupMethodTests
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
+			}
+
+			[Fact]
+			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyVoidMethodSetupWithParameters setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support out parameters.");
+			}
+
+			[Fact]
+			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
+			{
+				MyVoidMethodSetupWithParameters setup = new("Foo");
+
+				void Act()
+					=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
+
+				await That(Act).Throws<MockException>()
+					.WithMessage("The method setup with parameters does not support ref parameters.");
+			}
+
+			private class MyVoidMethodSetupWithParameters(string name) : VoidMethodSetup<string, long, int, int, int>(name, With.AnyParameterCombination())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 	}

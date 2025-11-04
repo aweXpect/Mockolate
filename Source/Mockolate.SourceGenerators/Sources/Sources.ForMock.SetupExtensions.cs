@@ -333,7 +333,7 @@ internal static partial class Sources
 					sb.Append(' ').Append(parameter.Name);
 				}
 
-				sb.Append(")").AppendLine();
+				sb.Append(")");
 				if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 				{
 					foreach (GenericParameter gp in method.GenericParameters.Value)
@@ -341,7 +341,7 @@ internal static partial class Sources
 						gp.AppendWhereConstraint(sb, "\t\t\t");
 					}
 				}
-
+				sb.AppendLine();
 				sb.AppendLine("\t\t{");
 
 				if (method.ReturnType != Type.Void)
@@ -429,15 +429,21 @@ internal static partial class Sources
 				sb.Append("\t\t/// </summary>").AppendLine();
 				if (method.ReturnType != Type.Void)
 				{
-					sb.Append("\t\tpublic ReturnMethodSetupWithParameters<").Append(method.ReturnType.Fullname)
-						.Append("> ").Append(method.Name).Append("(");
+					sb.Append("\t\tpublic ReturnMethodSetup<").Append(method.ReturnType.Fullname);
+					foreach (MethodParameter parameter in method.Parameters)
+					{
+						sb.Append(", ").Append(parameter.Type.Fullname);
+					}
+					sb.Append("> ").Append(method.Name).Append("(");
 				}
 				else
 				{
-					sb.Append("\t\tpublic VoidMethodSetupWithParameters ").Append(method.Name).Append("(");
+					sb.Append("\t\tpublic VoidMethodSetup<")
+						.Append(string.Join(", ", method.Parameters.Select(parameter => parameter.Type.Fullname)))
+						.Append("> ").Append(method.Name).Append("(");
 				}
 
-				sb.Append("With.Parameters parameters)").AppendLine();
+				sb.Append("With.Parameters parameters)");
 				if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 				{
 					foreach (GenericParameter gp in method.GenericParameters.Value)
@@ -445,17 +451,25 @@ internal static partial class Sources
 						gp.AppendWhereConstraint(sb, "\t\t\t");
 					}
 				}
+				sb.AppendLine();
 
 				sb.AppendLine("\t\t{");
 
 				if (method.ReturnType != Type.Void)
 				{
-					sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetupWithParameters<")
-						.Append(method.ReturnType.Fullname).Append(">(");
+					sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<")
+						.Append(method.ReturnType.Fullname);
+					foreach (MethodParameter parameter in method.Parameters)
+					{
+						sb.Append(", ").Append(parameter.Type.Fullname);
+					}
+					sb.Append(">(");
 				}
 				else
 				{
-					sb.Append("\t\t\tvar methodSetup = new VoidMethodSetupWithParameters(");
+					sb.Append("\t\t\tvar methodSetup = new VoidMethodSetup<")
+						.Append(string.Join(", ", method.Parameters.Select(parameter => parameter.Type.Fullname)))
+						.Append(">(");
 				}
 
 				sb.Append(method.GetUniqueNameString()).Append(", parameters);").AppendLine();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -263,12 +264,30 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 ///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
 ///     <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter match1, With.NamedParameter match2)
-	: MethodSetup
+public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 {
 	private readonly List<Action<T1, T2>> _callbacks = [];
 	private readonly List<Func<T1, T2, TReturn>> _returnCallbacks = [];
+	private readonly string _name;
+	private readonly With.Parameters? _matches;
+	private readonly With.NamedParameter? _match1;
+	private readonly With.NamedParameter? _match2;
 	private int _currentReturnCallbackIndex = -1;
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
+	public ReturnMethodSetup(string name, With.NamedParameter match1, With.NamedParameter match2)
+	{
+		_name = name;
+		_match1 = match1;
+		_match2 = match2;
+	}
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
+	public ReturnMethodSetup(string name, With.Parameters matches)
+	{
+		_name = name;
+		_matches = matches;
+	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -393,12 +412,20 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2,], invocation.Parameters);
+		=> invocation.Name.Equals(_name) &&
+		   _matches is not null
+		       ? _matches.Matches(invocation.Parameters)
+		       : Matches([_match1!, _match2!,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2,], parameterName, out With.OutParameter<T>? outParameter))
+		if (_match1 is null || _match2 is null)
+		{
+			throw new MockException("The method setup with parameters does not support out parameters.");
+		}
+
+		if (HasOutParameter([_match1, _match2,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -409,7 +436,12 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2,], parameterName, out With.RefParameter<T>? refParameter))
+		if (_match1 is null || _match2 is null)
+		{
+			throw new MockException("The method setup with parameters does not support ref parameters.");
+		}
+
+		if (HasRefParameter([_match1, _match2,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -418,23 +450,46 @@ public class ReturnMethodSetup<TReturn, T1, T2>(string name, With.NamedParameter
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"{FormatType(typeof(TReturn))} {name}({match1}, {match2})";
+	public override string ToString()
+		=> _matches is not null
+			? $"{FormatType(typeof(TReturn))} {_name}({_matches})"
+			: $"{FormatType(typeof(TReturn))} {_name}({_match1}, {_match2})";
 }
 
 /// <summary>
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1, T2, T3>(
-	string name,
-	With.NamedParameter match1,
-	With.NamedParameter match2,
-	With.NamedParameter match3)
-	: MethodSetup
+public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 {
 	private readonly List<Action<T1, T2, T3>> _callbacks = [];
 	private readonly List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
+	private readonly string _name;
+	private readonly With.Parameters? _matches;
+	private readonly With.NamedParameter? _match1;
+	private readonly With.NamedParameter? _match2;
+	private readonly With.NamedParameter? _match3;
 	private int _currentReturnCallbackIndex = -1;
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
+	public ReturnMethodSetup(
+		string name,
+		With.NamedParameter match1,
+		With.NamedParameter match2,
+		With.NamedParameter match3)
+	{
+		_name = name;
+		_match1 = match1;
+		_match2 = match2;
+		_match3 = match3;
+	}
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
+	public ReturnMethodSetup(string name, With.Parameters matches)
+	{
+		_name = name;
+		_matches = matches;
+	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -566,12 +621,20 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2, match3,], invocation.Parameters);
+		=> invocation.Name.Equals(_name) &&
+			_matches is not null
+				? _matches.Matches(invocation.Parameters)
+				: Matches([_match1!, _match2!, _match3!,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2, match3,], parameterName, out With.OutParameter<T>? outParameter))
+		if (_match1 is null || _match2 is null || _match3 is null)
+		{
+			throw new MockException("The method setup with parameters does not support out parameters.");
+		}
+
+		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -582,7 +645,12 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2, match3,], parameterName, out With.RefParameter<T>? refParameter))
+		if (_match1 is null || _match2 is null || _match3 is null)
+		{
+			throw new MockException("The method setup with parameters does not support ref parameters.");
+		}
+
+		if (HasRefParameter([_match1, _match2, _match3,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -591,7 +659,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"{FormatType(typeof(TReturn))} {name}({match1}, {match2}, {match3})";
+	public override string ToString()
+		=> _matches is not null
+			? $"{FormatType(typeof(TReturn))} {_name}({_matches})"
+			: $"{FormatType(typeof(TReturn))} {_name}({_match1}, {_match2}, {_match3})";
 }
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
@@ -599,17 +670,39 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3>(
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
-	string name,
-	With.NamedParameter match1,
-	With.NamedParameter match2,
-	With.NamedParameter match3,
-	With.NamedParameter match4)
-	: MethodSetup
+public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 {
 	private readonly List<Action<T1, T2, T3, T4>> _callbacks = [];
 	private readonly List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
+	private readonly string _name;
+	private readonly With.Parameters? _matches;
+	private readonly With.NamedParameter? _match1;
+	private readonly With.NamedParameter? _match2;
+	private readonly With.NamedParameter? _match3;
+	private readonly With.NamedParameter? _match4;
 	private int _currentReturnCallbackIndex = -1;
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
+	public ReturnMethodSetup(
+		string name,
+		With.NamedParameter match1,
+		With.NamedParameter match2,
+		With.NamedParameter match3,
+		With.NamedParameter match4)
+	{
+		_name = name;
+		_match1 = match1;
+		_match2 = match2;
+		_match3 = match3;
+		_match4 = match4;
+	}
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
+	public ReturnMethodSetup(string name, With.Parameters matches)
+	{
+		_name = name;
+		_matches = matches;
+	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -748,12 +841,20 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1, match2, match3, match4,], invocation.Parameters);
+		=> invocation.Name.Equals(_name) &&
+		   _matches is not null
+			   ? _matches.Matches(invocation.Parameters)
+			   : Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters);
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1, match2, match3, match4,], parameterName, out With.OutParameter<T>? outParameter))
+		if (_match1 is null || _match2 is null || _match3 is null || _match4 is null)
+		{
+			throw new MockException("The method setup with parameters does not support out parameters.");
+		}
+
+		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName, out With.OutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -764,7 +865,12 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1, match2, match3, match4,], parameterName, out With.RefParameter<T>? refParameter))
+		if (_match1 is null || _match2 is null || _match3 is null || _match4 is null)
+		{
+			throw new MockException("The method setup with parameters does not support ref parameters.");
+		}
+
+		if (HasRefParameter([_match1, _match2, _match3, _match4,], parameterName, out With.RefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -774,6 +880,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4>(
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{FormatType(typeof(TReturn))} {name}({match1}, {match2}, {match3}, {match4})";
+		=> _matches is not null
+			? $"{FormatType(typeof(TReturn))} {_name}({_matches})"
+			: $"{FormatType(typeof(TReturn))} {_name}({_match1}, {_match2}, {_match3}, {_match4})";
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters
