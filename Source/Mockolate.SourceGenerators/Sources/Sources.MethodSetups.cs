@@ -83,18 +83,43 @@ internal static partial class Sources
 		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
 			.Append(numberOfParameters).Append("\" /> returning <see langword=\"void\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
-		sb.Append("internal class VoidMethodSetup<").Append(typeParams).Append(">(string name");
-		for (int i = 1; i <= numberOfParameters; i++)
-		{
-			sb.Append(", With.NamedParameter match").Append(i);
-		}
-
-		sb.Append(") : MethodSetup").AppendLine();
+		sb.Append("internal class VoidMethodSetup<").Append(typeParams).Append("> : MethodSetup").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _callbacks = [];").AppendLine();
 		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _returnCallbacks = [];")
 			.AppendLine();
+		sb.Append("\tprivate readonly string _name;").AppendLine();
+		sb.Append("\tprivate readonly With.Parameters? _matches;").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\tprivate readonly With.NamedParameter? _match").Append(i).Append(";").AppendLine();
+		}
 		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup(").AppendLine();
+		sb.Append("\t\tstring name");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(',').AppendLine().Append("\t\tWith.NamedParameter match").Append(i);
+		}
+		sb.Append(')').AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_name = name;").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t_match").Append(i).Append(" = match").Append(i).Append(";").AppendLine();
+		}
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup(string name, With.Parameters matches)").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_name = name;").AppendLine();
+		sb.Append("\t\t_matches = matches;").AppendLine();
+		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
@@ -223,17 +248,27 @@ internal static partial class Sources
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
 		sb.Append("\tprotected override bool IsMatch(MethodInvocation invocation)").AppendLine();
-		sb.Append("\t\t=> invocation.Name.Equals(name) && Matches([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"match{x}")))
-			.Append("], invocation.Parameters);").AppendLine();
+		sb.Append("\t\t=> invocation.Name.Equals(_name) &&").AppendLine();
+		sb.Append("\t\t\t(_matches is not null").AppendLine();
+		sb.Append("\t\t\t\t? _matches.Matches(invocation.Parameters)").AppendLine();
+		sb.Append("\t\t\t\t: Matches([")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
+			.Append("], invocation.Parameters));").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
 		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
+		sb.Append("\t\tif (")
+			.Append(string.Join(" || ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is null")))
+			.Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthrow new MockException(\"The method setup with parameters does not support out parameters.\");").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
 		sb.Append("\t\tif (HasOutParameter([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"match{x}")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out With.OutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\treturn outParameter.GetValue();").AppendLine();
@@ -247,8 +282,15 @@ internal static partial class Sources
 		sb.Append("\tprotected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
+		sb.Append("\t\tif (")
+			.Append(string.Join(" || ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is null")))
+			.Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthrow new MockException(\"The method setup with parameters does not support ref parameters.\");").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
 		sb.Append("\t\tif (HasRefParameter([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"match{x}")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out With.RefParameter<T>? refParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\treturn refParameter.GetValue(value);").AppendLine();
@@ -261,8 +303,13 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 		sb.Append("\tpublic override string ToString()").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\treturn $\"void {name}(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{match{x}}}")))
+		sb.Append("\t\tif (_matches is not null)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\treturn $\"void {_name}({_matches})\";").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\treturn $\"void {_name}(")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{_match{x}}}")))
 			.Append(")\";").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.Append("}").AppendLine();
@@ -283,18 +330,43 @@ internal static partial class Sources
 		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
 			.Append(numberOfParameters).Append("\" /> returning <typeparamref name=\"TReturn\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
-		sb.Append("internal class ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">(string name");
-		for (int i = 1; i <= numberOfParameters; i++)
-		{
-			sb.Append(", With.NamedParameter match").Append(i);
-		}
-
-		sb.Append(") : MethodSetup").AppendLine();
+		sb.Append("internal class ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> : MethodSetup").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _callbacks = [];").AppendLine();
 		sb.Append("\tprivate readonly List<Func<").Append(typeParams).Append(", TReturn>> _returnCallbacks = [];")
 			.AppendLine();
-		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
+		sb.Append("\tprivate readonly string _name;").AppendLine();
+		sb.Append("\tprivate readonly With.Parameters? _matches;").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\tprivate readonly With.NamedParameter? _match").Append(i).Append(";").AppendLine();
+		}
+		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />").AppendLine();
+		sb.Append("\tpublic ReturnMethodSetup(").AppendLine();
+		sb.Append("\t\tstring name");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(',').AppendLine().Append("\t\tWith.NamedParameter match").Append(i);
+		}
+		sb.Append(')').AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_name = name;").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t_match").Append(i).Append(" = match").Append(i).Append(";").AppendLine();
+		}
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />").AppendLine();
+		sb.Append("\tpublic ReturnMethodSetup(string name, With.Parameters matches)").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_name = name;").AppendLine();
+		sb.Append("\t\t_matches = matches;").AppendLine();
+		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
@@ -479,17 +551,27 @@ internal static partial class Sources
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
 		sb.Append("\tprotected override bool IsMatch(MethodInvocation invocation)").AppendLine();
-		sb.Append("\t\t=> invocation.Name.Equals(name) && Matches([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"match{x}")))
-			.Append("], invocation.Parameters);").AppendLine();
+		sb.Append("\t\t=> invocation.Name.Equals(_name) &&").AppendLine();
+		sb.Append("\t\t\t(_matches is not null").AppendLine();
+		sb.Append("\t\t\t\t? _matches.Matches(invocation.Parameters)").AppendLine();
+		sb.Append("\t\t\t\t: Matches([")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
+			.Append("], invocation.Parameters));").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
 		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
+		sb.Append("\t\tif (")
+			.Append(string.Join(" || ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is null")))
+			.Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthrow new MockException(\"The method setup with parameters does not support out parameters.\");").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
 		sb.Append("\t\tif (HasOutParameter([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"match{x}")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out With.OutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\treturn outParameter.GetValue();").AppendLine();
@@ -503,8 +585,15 @@ internal static partial class Sources
 		sb.Append("\tprotected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
+		sb.Append("\t\tif (")
+			.Append(string.Join(" || ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is null")))
+			.Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthrow new MockException(\"The method setup with parameters does not support ref parameters.\");").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
 		sb.Append("\t\tif (HasRefParameter([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"match{x}")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out With.RefParameter<T>? refParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\treturn refParameter.GetValue(value);").AppendLine();
@@ -517,8 +606,13 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 		sb.Append("\tpublic override string ToString()").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\treturn $\"{FormatType(typeof(TReturn))} {name}(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{match{x}}}")))
+		sb.Append("\t\tif (_matches is not null)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\treturn $\"{FormatType(typeof(TReturn))} {_name}({_matches})\";").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\treturn $\"{FormatType(typeof(TReturn))} {_name}(")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{_match{x}}}")))
 			.Append(")\";").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.Append("}").AppendLine();

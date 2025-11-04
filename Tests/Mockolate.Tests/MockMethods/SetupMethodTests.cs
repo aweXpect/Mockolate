@@ -212,22 +212,6 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
-	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
-	{
-		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-		sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination());
-
-		void Act()
-			=> ((IMock)sut).Execute<int>(
-				$"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters",
-				[1, 2]);
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The method setup does not support return values.");
-	}
-
-	[Fact]
 	public async Task VoidMethod_Verify_ShouldMatchAnyParameters()
 	{
 		int callCount = 0;
@@ -240,6 +224,21 @@ public sealed partial class SetupMethodTests
 
 		await That(callCount).IsEqualTo(1);
 		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(With.AnyParameterCombination())).Once();
+	}
+
+	[Fact]
+	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
+	{
+		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+		sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination());
+
+		void Act()
+			=> ((IMock)sut).Execute<int>(
+				"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters", 1, 2);
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The method setup does not support return values.");
 	}
 
 	[Fact]
@@ -388,6 +387,16 @@ public sealed partial class SetupMethodTests
 		}
 
 		[Fact]
+		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long> setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
+		}
+
+		[Fact]
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
@@ -416,6 +425,16 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("int Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3)");
+		}
+
+		[Fact]
+		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int> setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
 		}
 
 		[Fact]
@@ -449,6 +468,16 @@ public sealed partial class SetupMethodTests
 			await That(result)
 				.IsEqualTo(
 					"int Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4)");
+		}
+
+		[Fact]
+		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
 		}
 
 		[Fact]
@@ -486,6 +515,16 @@ public sealed partial class SetupMethodTests
 		}
 
 		[Fact]
+		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
+		}
+
+		[Fact]
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
@@ -500,52 +539,6 @@ public sealed partial class SetupMethodTests
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
-		}
-	}
-
-	public class ReturnMethodWithParameters
-	{
-		[Fact]
-		public async Task SetOutParameter_ShouldThrowMockException()
-		{
-			MyReturnMethodSetupWithParameters<string> setup = new("Foo");
-
-			void Act()
-				=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("The method setup with parameters does not support out parameters.");
-		}
-
-		[Fact]
-		public async Task SetRefParameter_ShouldThrowMockException()
-		{
-			MyReturnMethodSetupWithParameters<string> setup = new("Foo");
-
-			void Act()
-				=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("The method setup with parameters does not support ref parameters.");
-		}
-
-		[Fact]
-		public async Task ToString_ShouldReturnMethodSignature()
-		{
-			ReturnMethodSetupWithParameters<int> setup = new("Foo", With.AnyParameterCombination());
-
-			string result = setup.ToString();
-
-			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
-		}
-
-		private class MyReturnMethodSetupWithParameters<T>(string name) : ReturnMethodSetupWithParameters<Task>(name, With.AnyParameterCombination())
-		{
-			public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-				=> SetOutParameter<TValue>(parameterName, behavior);
-
-			public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-				=> SetRefParameter(parameterName, value, behavior);
 		}
 	}
 
@@ -587,6 +580,16 @@ public sealed partial class SetupMethodTests
 
 			await That(result).IsEqualTo("void Foo(With.Any<string>() p1, With.Any<long>() p2)");
 		}
+
+		[Fact]
+		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string, long> setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
+		}
 	}
 
 	public class VoidMethodWith3Parameters
@@ -600,6 +603,16 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3)");
+		}
+
+		[Fact]
+		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string, long, int> setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
 		}
 	}
 
@@ -617,6 +630,16 @@ public sealed partial class SetupMethodTests
 			await That(result)
 				.IsEqualTo(
 					"void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4)");
+		}
+
+		[Fact]
+		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string, long, int, int> setup = new("Foo", With.AnyParameterCombination());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
 		}
 	}
 
@@ -636,51 +659,15 @@ public sealed partial class SetupMethodTests
 				.IsEqualTo(
 					"void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4, With.Any<int>() p5)");
 		}
-	}
-
-	public class VoidMethodWithParameters
-	{
-		[Fact]
-		public async Task SetOutParameter_ShouldThrowMockException()
-		{
-			MyVoidMethodSetupWithParameters setup = new("Foo");
-
-			void Act()
-				=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("The method setup with parameters does not support out parameters.");
-		}
 
 		[Fact]
-		public async Task SetRefParameter_ShouldThrowMockException()
+		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			MyVoidMethodSetupWithParameters setup = new("Foo");
-
-			void Act()
-				=> setup.HiddenSetRefParameter<int>("param1", 2, MockBehavior.Default);
-
-			await That(Act).Throws<MockException>()
-				.WithMessage("The method setup with parameters does not support ref parameters.");
-		}
-
-		[Fact]
-		public async Task ToString_ShouldReturnMethodSignature()
-		{
-			VoidMethodSetupWithParameters setup = new("Foo", With.AnyParameterCombination());
+			VoidMethodSetup<string, long, int, int, int> setup = new("Foo", With.AnyParameterCombination());
 
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
-		}
-
-		private class MyVoidMethodSetupWithParameters(string name) : VoidMethodSetupWithParameters(name, With.AnyParameterCombination())
-		{
-			public T HiddenSetOutParameter<T>(string parameterName, MockBehavior behavior)
-				=> SetOutParameter<T>(parameterName, behavior);
-
-			public T HiddenSetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
-				=> SetRefParameter(parameterName, value, behavior);
 		}
 	}
 

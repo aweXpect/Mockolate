@@ -36,10 +36,10 @@ public sealed class MethodSetupsTests
 
 		await That(result.Sources).ContainsKey("MethodSetups.g.cs").WhoseValue
 			.Contains(
-				"internal class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5>(string name, With.NamedParameter match1, With.NamedParameter match2, With.NamedParameter match3, With.NamedParameter match4, With.NamedParameter match5) : MethodSetup")
+				"internal class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5> : MethodSetup")
 			.And
 			.Contains(
-				"internal class VoidMethodSetup<T1, T2, T3, T4, T5>(string name, With.NamedParameter match1, With.NamedParameter match2, With.NamedParameter match3, With.NamedParameter match4, With.NamedParameter match5) : MethodSetup");
+				"internal class VoidMethodSetup<T1, T2, T3, T4, T5> : MethodSetup");
 	}
 
 	[Fact]
@@ -101,10 +101,10 @@ public sealed class MethodSetupsTests
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
 		await That(result.Sources).ContainsKey("MethodSetups.g.cs").WhoseValue
-			.Contains("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>(").And
-			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5, T6>(").And
-			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5>(").And
-			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6, T7>(");
+			.Contains("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
+			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5, T6>").And
+			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5>").And
+			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6, T7>");
 	}
 
 	[Fact]
@@ -135,9 +135,9 @@ public sealed class MethodSetupsTests
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
 		await That(result.Sources).ContainsKey("MethodSetups.g.cs").WhoseValue
-			.Contains("class VoidMethodSetup<T1, T2, T3, T4, T5, T6>(").And
-			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>(").And
-			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5>(").And
-			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5, T6, T7>(");
+			.Contains("class VoidMethodSetup<T1, T2, T3, T4, T5, T6>").And
+			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
+			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5>").And
+			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5, T6, T7>");
 	}
 }
