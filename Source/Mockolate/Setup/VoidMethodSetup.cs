@@ -303,9 +303,10 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) && _matches is not null
+		=> invocation.Name.Equals(_name) && 
+		   (_matches is not null
 			   ? _matches.Matches(invocation.Parameters)
-			   : Matches([_match1!, _match2!,], invocation.Parameters);
+			   : Matches([_match1!, _match2!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
@@ -459,9 +460,10 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) && _matches is not null
+		=> invocation.Name.Equals(_name) &&
+		   (_matches is not null
 			   ? _matches.Matches(invocation.Parameters)
-			   : Matches([_match1!, _match2!, _match3!,], invocation.Parameters);
+			   : Matches([_match1!, _match2!, _match3!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
@@ -619,9 +621,10 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) && _matches is not null
+		=> invocation.Name.Equals(_name) &&
+		   (_matches is not null
 			   ? _matches.Matches(invocation.Parameters)
-			   : Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters);
+			   : Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)

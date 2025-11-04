@@ -249,11 +249,11 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
 		sb.Append("\tprotected override bool IsMatch(MethodInvocation invocation)").AppendLine();
 		sb.Append("\t\t=> invocation.Name.Equals(_name) &&").AppendLine();
-		sb.Append("\t\t\t_matches is not null").AppendLine();
+		sb.Append("\t\t\t(_matches is not null").AppendLine();
 		sb.Append("\t\t\t\t? _matches.Matches(invocation.Parameters)").AppendLine();
 		sb.Append("\t\t\t\t: Matches([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
-			.Append("], invocation.Parameters);").AppendLine();
+			.Append("], invocation.Parameters));").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
@@ -552,11 +552,11 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
 		sb.Append("\tprotected override bool IsMatch(MethodInvocation invocation)").AppendLine();
 		sb.Append("\t\t=> invocation.Name.Equals(_name) &&").AppendLine();
-		sb.Append("\t\t\t_matches is not null").AppendLine();
+		sb.Append("\t\t\t(_matches is not null").AppendLine();
 		sb.Append("\t\t\t\t? _matches.Matches(invocation.Parameters)").AppendLine();
 		sb.Append("\t\t\t\t: Matches([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
-			.Append("], invocation.Parameters);").AppendLine();
+			.Append("], invocation.Parameters));").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
