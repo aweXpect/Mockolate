@@ -91,7 +91,7 @@ public sealed class VerifyInvokedTests
 	{
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
 
-		var result = mock.Subject.ToString();
+		_ = mock.Subject.ToString();
 
 		await That(mock.Verify.Invoked.ToString()).Once();
 	}
@@ -101,7 +101,7 @@ public sealed class VerifyInvokedTests
 	{
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
 
-		var result = mock.Subject.GetHashCode();
+		_ = mock.Subject.GetHashCode();
 
 		await That(mock.Verify.Invoked.GetHashCode()).Once();
 	}
@@ -109,10 +109,10 @@ public sealed class VerifyInvokedTests
 	[Fact]
 	public async Task Equals_ShouldWork()
 	{
-		var obj = new object();
+		object obj = new();
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
 
-		var result = mock.Subject.Equals(obj);
+		_ = mock.Subject.Equals(obj);
 
 		await That(mock.Verify.Invoked.Equals(obj)).Once();
 	}

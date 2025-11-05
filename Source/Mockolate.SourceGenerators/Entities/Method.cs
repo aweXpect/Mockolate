@@ -88,7 +88,7 @@ internal record Method
 
 	public bool IsEquals()
 	{
-		return Name == "Equals" && Parameters.Count == 1 &&IsObjectOrNullableObject(Parameters.Single());
+		return Name == "Equals" && Parameters.Count == 1 && IsObjectOrNullableObject(Parameters.Single());
 
 		static bool IsObjectOrNullableObject(MethodParameter parameter)
 			=> parameter.Type.Namespace == "System" &&
