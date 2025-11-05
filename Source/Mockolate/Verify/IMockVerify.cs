@@ -25,6 +25,7 @@ public interface IMockVerify<out TMock> : IMockVerify
 	TMock Mock { get; }
 }
 
+#pragma warning disable S2326 // Unused type parameters should be removed
 /// <summary>
 ///     Verifies the interactions with the mocked subject in the <typeparamref name="TMock" />.
 /// </summary>
@@ -35,3 +36,4 @@ public interface IMockVerify<T, out TMock>
 	/// </summary>
 	bool ThatAllInteractionsAreVerified();
 }
+#pragma warning restore S2326 // Unused type parameters should be removed

@@ -470,29 +470,20 @@ public class MockSetup<T>(IMock mock, string prefix) : IMockSetup,
 	ReturnMethodSetup<string> IMockMethodSetupWithToString<T>.ToString()
 	{
 		var methodSetup = new ReturnMethodSetup<string>(prefix + ".ToString");
-		if (this is IMockSetup mockSetup)
-		{
-			mockSetup.RegisterMethod(methodSetup);
-		}
+		_methodSetups.Add(methodSetup);
 		return methodSetup;
 	}
 
 	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(With.Parameter<object?> obj)
 	{
 		var methodSetup = new ReturnMethodSetup<bool, object?>(prefix + ".Equals", new With.NamedParameter("obj", obj));
-		if (this is IMockSetup mockSetup)
-		{
-			mockSetup.RegisterMethod(methodSetup);
-		}
+		_methodSetups.Add(methodSetup);
 		return methodSetup;
 	}
 	ReturnMethodSetup<int> IMockMethodSetupWithGetHashCode<T>.GetHashCode()
 	{
 		var methodSetup = new ReturnMethodSetup<int>(prefix + ".GetHashCode");
-		if (this is IMockSetup mockSetup)
-		{
-			mockSetup.RegisterMethod(methodSetup);
-		}
+		_methodSetups.Add(methodSetup);
 		return methodSetup;
 	}
 
