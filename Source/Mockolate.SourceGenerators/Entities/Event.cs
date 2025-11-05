@@ -26,6 +26,8 @@ internal record Event
 
 	public static IEqualityComparer<Event> EqualityComparer { get; } = new EventEqualityComparer();
 
+	public static IEqualityComparer<Event> ContainingTypeIndependentEqualityComparer { get; } = new ContainingTypeIndependentEventEqualityComparer();
+
 	public Method Delegate { get; }
 
 	public Type Type { get; }
@@ -42,6 +44,12 @@ internal record Event
 	private sealed class EventEqualityComparer : IEqualityComparer<Event>
 	{
 		public bool Equals(Event x, Event y) => x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
+		public int GetHashCode(Event obj) => obj.Name.GetHashCode();
+	}
+
+	private sealed class ContainingTypeIndependentEventEqualityComparer : IEqualityComparer<Event>
+	{
+		public bool Equals(Event x, Event y) => x.Name.Equals(y.Name);
 		public int GetHashCode(Event obj) => obj.Name.GetHashCode();
 	}
 }

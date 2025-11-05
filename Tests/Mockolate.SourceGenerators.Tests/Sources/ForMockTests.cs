@@ -141,6 +141,139 @@ public sealed partial class ForMockTests
 	}
 
 	[Fact]
+	public async Task ForTypesWithSealedOverrideEvent_ShouldNotOverrideEvent()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyClassWithSealedEvents>();
+			         }
+			     }
+
+			     public class MyClassWithSealedEvents : MySubClass
+			     {
+			     	public sealed override event EventHandler<long> SomeEvent;
+			     }
+
+			     public class MySubClass
+			     {
+			     	public virtual event EventHandler<long> SomeEvent;
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("ForMyClassWithSealedEvents.g.cs").WhoseValue
+			.DoesNotContain("event System.EventHandler<long>? SomeEvent");
+	}
+
+	[Fact]
+	public async Task ForTypesWithSealedOverrideIndexer_ShouldNotOverrideIndexer()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyClassWithSealedIndexers>();
+			         }
+			     }
+
+			     public class MyClassWithSealedIndexers : MySubClass
+			     {
+			     	public sealed override int this[int index] { get => 3 * index; }
+			     }
+
+			     public class MySubClass
+			     {
+			     	public virtual int this[int index] { get => 2 * index; }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("ForMyClassWithSealedIndexers.g.cs").WhoseValue
+			.DoesNotContain("override int this[int index]");
+	}
+
+	[Fact]
+	public async Task ForTypesWithSealedOverrideMethod_ShouldNotOverrideMethod()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyClassWithSealedMethods>();
+			         }
+			     }
+
+			     public class MyClassWithSealedMethods : MySubClass
+			     {
+			     	public sealed override void MyMethod(int value)
+			     		=> base.MyMethod(value);
+			     }
+
+			     public class MySubClass
+			     {
+			     	public virtual void MyMethod(int value) { }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("ForMyClassWithSealedMethods.g.cs").WhoseValue
+			.DoesNotContain("override void MyMethod(int value)");
+	}
+
+	[Fact]
+	public async Task ForTypesWithSealedOverrideProperty_ShouldNotOverrideProperty()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyClassWithSealedProperties>();
+			         }
+			     }
+
+			     public class MyClassWithSealedProperties : MySubClass
+			     {
+			     	public sealed override int MyProperty { get; set; }
+			     }
+
+			     public class MySubClass
+			     {
+			     	public virtual int MyProperty { get; set; }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("ForMyClassWithSealedProperties.g.cs").WhoseValue
+			.DoesNotContain("override int MyProperty");
+	}
+
+	[Fact]
 	public async Task ShouldNotIncludeNamespacesFromMockTypes()
 	{
 		GeneratorResult result = Generator
