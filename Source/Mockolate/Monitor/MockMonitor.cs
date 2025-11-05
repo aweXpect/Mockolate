@@ -98,18 +98,18 @@ public abstract class MockMonitor
 public sealed class MockMonitor<T, TMock> : MockMonitor
 	where TMock : IMock
 {
-	private readonly MockVerify<T, TMock> _verify;
+	private readonly IMockVerify<T, TMock> _verify;
 
 	/// <inheritdoc cref="MockMonitor{T, TMock}" />
 	public MockMonitor(TMock mock) : base(mock)
 	{
-		_verify = new MockVerify<T, TMock>(Interactions, mock);
+		_verify = new MockVerify<T, TMock>(Interactions, mock, mock.Prefix);
 	}
 
 	/// <summary>
 	///     Verifies the interactions with the mocked subject of <typeparamref name="T" />.
 	/// </summary>
-	public MockVerify<T, TMock> Verify
+	public IMockVerify<T, TMock> Verify
 	{
 		get
 		{

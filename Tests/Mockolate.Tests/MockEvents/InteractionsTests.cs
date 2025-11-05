@@ -28,11 +28,11 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockSubscribedTo<MockVerify<int, Mock<int>>> subscribedTo = new MockSubscribedTo<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockSubscribedTo<IMockVerify<int, Mock<int>>> subscribedTo = verify;
 		interactions.RegisterInteraction(new EventSubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = subscribedTo.Event("baz.bar");
+		VerificationResult<IMockVerify<int, Mock<int>>> result = subscribedTo.Event("baz.bar");
 
 		await That(result).Never();
 	}
@@ -42,11 +42,11 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockSubscribedTo<MockVerify<int, Mock<int>>> subscribedTo = new MockSubscribedTo<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockSubscribedTo<IMockVerify<int, Mock<int>>> subscribedTo = verify;
 		interactions.RegisterInteraction(new EventSubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = subscribedTo.Event("foo.bar");
+		VerificationResult<IMockVerify<int, Mock<int>>> result = subscribedTo.Event("foo.bar");
 
 		await That(result).Once();
 	}
@@ -55,10 +55,10 @@ public sealed class InteractionsTests
 	public async Task Subscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		MockInteractions mockInteractions = new();
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockSubscribedTo<MockVerify<int, Mock<int>>> subscribedTo = new MockSubscribedTo<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockSubscribedTo<IMockVerify<int, Mock<int>>> subscribedTo = verify;
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = subscribedTo.Event("foo.bar");
+		VerificationResult<IMockVerify<int, Mock<int>>> result = subscribedTo.Event("foo.bar");
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event bar");
@@ -68,12 +68,11 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom =
-			new MockUnsubscribedFrom<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockUnsubscribedFrom<IMockVerify<int, Mock<int>>> unsubscribedFrom = verify;
 		interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("baz.bar");
+		VerificationResult<IMockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("baz.bar");
 
 		await That(result).Never();
 	}
@@ -83,12 +82,11 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom =
-			new MockUnsubscribedFrom<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockUnsubscribedFrom<IMockVerify<int, Mock<int>>> unsubscribedFrom = verify;
 		interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("foo.bar");
+		VerificationResult<IMockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("foo.bar");
 
 		await That(result).Once();
 	}
@@ -97,58 +95,12 @@ public sealed class InteractionsTests
 	public async Task Unsubscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		MockInteractions mockInteractions = new();
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom =
-			new MockUnsubscribedFrom<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockUnsubscribedFrom<IMockVerify<int, Mock<int>>> unsubscribedFrom = verify;
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("foo.bar");
+		VerificationResult<IMockVerify<int, Mock<int>>> result = unsubscribedFrom.Event("foo.bar");
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event bar");
-	}
-
-	public sealed class ProtectedTests
-	{
-		[Fact]
-		public async Task Unsubscribed_ShouldForwardToInner()
-		{
-			MockInteractions mockInteractions = new();
-			IMockInteractions interactions = mockInteractions;
-			MyMock<int> mock = new(1);
-			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			MockUnsubscribedFrom<int, Mock<int>> inner = new(verify);
-			IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> unsubscribedFrom = inner;
-			IMockUnsubscribedFrom<MockVerify<int, Mock<int>>> @protected =
-				new ProtectedMockUnsubscribedFrom<int, Mock<int>>(inner);
-			interactions.RegisterInteraction(new EventUnsubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
-			interactions.RegisterInteraction(new EventUnsubscription(1, "foo.bar", mock, Helper.GetMethodInfo()));
-
-			VerificationResult<MockVerify<int, Mock<int>>> result1 = unsubscribedFrom.Event("foo.bar");
-			VerificationResult<MockVerify<int, Mock<int>>> result2 = @protected.Event("foo.bar");
-
-			await That(result1).Exactly(2);
-			await That(result2).Exactly(2);
-		}
-
-		[Fact]
-		public async Task Subscribed_ShouldForwardToInner()
-		{
-			MockInteractions mockInteractions = new();
-			IMockInteractions interactions = mockInteractions;
-			MyMock<int> mock = new(1);
-			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			MockSubscribedTo<int, Mock<int>> inner = new(verify);
-			IMockSubscribedTo<MockVerify<int, Mock<int>>> subscribedTo = inner;
-			IMockSubscribedTo<MockVerify<int, Mock<int>>> @protected =
-				new ProtectedMockSubscribedTo<int, Mock<int>>(inner);
-			interactions.RegisterInteraction(new EventSubscription(0, "foo.bar", this, Helper.GetMethodInfo()));
-			interactions.RegisterInteraction(new EventSubscription(1, "foo.bar", mock, Helper.GetMethodInfo()));
-
-			VerificationResult<MockVerify<int, Mock<int>>> result1 = subscribedTo.Event("foo.bar");
-			VerificationResult<MockVerify<int, Mock<int>>> result2 = @protected.Event("foo.bar");
-
-			await That(result1).Exactly(2);
-			await That(result2).Exactly(2);
-		}
 	}
 }

@@ -43,7 +43,7 @@ public sealed class MockSetupsTests
 			sut.RegisterIndexer(new IndexerSetup<string, int>(With.Any<int>()));
 		}
 
-		string result = mock.Setup.ToString();
+		string? result = mock.Setup.ToString();
 
 		await That(result).IsEqualTo(expected);
 	}

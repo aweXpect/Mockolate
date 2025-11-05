@@ -18,6 +18,7 @@ namespace Mockolate;
 public abstract class MockBase<T> : IMock
 {
 	private readonly MockBehavior _behavior;
+	private readonly string _prefix;
 	private readonly MockInteractions _interactions;
 	private readonly MockSetup<T> _setup;
 
@@ -25,6 +26,7 @@ public abstract class MockBase<T> : IMock
 	protected MockBase(MockBehavior behavior, string prefix)
 	{
 		_behavior = behavior;
+		_prefix = prefix;
 		_interactions = new MockInteractions();
 		_setup = new(this, prefix);
 		Raise = new MockRaises<T>(_setup, _interactions);
@@ -91,6 +93,10 @@ public abstract class MockBase<T> : IMock
 	/// <inheritdoc cref="IMock.Raise" />
 	IMockRaises IMock.Raise
 		=> Raise;
+
+	/// <inheritdoc cref="IMock.Prefix" />
+	public string Prefix
+		=> _prefix;
 
 	/// <inheritdoc cref="IMock.Execute{TResult}(string, object?[])" />
 	MethodSetupResult<TResult> IMock.Execute<TResult>(string methodName, params object?[]? parameters)

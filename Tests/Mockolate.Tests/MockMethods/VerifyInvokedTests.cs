@@ -1,4 +1,6 @@
 using Mockolate.Exceptions;
+using Mockolate.Verify;
+using static Mockolate.Tests.MockMethods.SetupMethodTests;
 
 namespace Mockolate.Tests.MockMethods;
 
@@ -82,5 +84,40 @@ public sealed class VerifyInvokedTests
 		int result = sut.Subject.Multiply(3, 4);
 
 		await That(result).IsEqualTo(default(int));
+	}
+
+	[Fact]
+	public async Task ToString_ShouldWork()
+	{
+		var expectedResult = Guid.NewGuid().ToString();
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+
+		var result = mock.Subject.ToString();
+
+		await That(mock.Verify.Invoked.ToString()).Once();
+	}
+
+	[Fact]
+	public async Task GetHashCode_ShouldWork()
+	{
+		int expectedResult = Guid.NewGuid().GetHashCode();
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+
+		var result = mock.Subject.GetHashCode();
+
+		//TODO
+		//await That(mock.Verify.Invoked.GetHashCode()).Once();
+	}
+
+	[Fact]
+	public async Task Equals_ShouldWork()
+	{
+		var obj = new object();
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+
+		var result = mock.Subject.Equals(obj);
+
+		//TODO
+		//await That(mock.Verify.Invoked.Equals(obj)).Once();
 	}
 }

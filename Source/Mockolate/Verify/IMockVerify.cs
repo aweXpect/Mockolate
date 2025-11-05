@@ -1,6 +1,18 @@
+using System.Threading;
 using Mockolate.Interactions;
 
 namespace Mockolate.Verify;
+
+/// <summary>
+///     Verifies the <see cref="Interactions" /> with the mocked subject.
+/// </summary>
+public interface IMockVerify
+{
+	/// <summary>
+	///     The interactions recorded on the mock.
+	/// </summary>
+	MockInteractions Interactions { get; }
+}
 
 /// <summary>
 ///     Verifies the <see cref="Interactions" /> with the mocked subject in the <typeparamref name="TMock" />
@@ -15,12 +27,12 @@ public interface IMockVerify<out TMock> : IMockVerify
 }
 
 /// <summary>
-///     Verifies the <see cref="Interactions" /> with the mocked subject.
+///     Verifies the interactions with the mocked subject in the <typeparamref name="TMock" />.
 /// </summary>
-public interface IMockVerify
+public interface IMockVerify<T, out TMock>
 {
 	/// <summary>
-	///     The interactions recorded on the mock.
+	///     Gets a value indicating whether all expected interactions have been verified.
 	/// </summary>
-	MockInteractions Interactions { get; }
+	bool ThatAllInteractionsAreVerified();
 }

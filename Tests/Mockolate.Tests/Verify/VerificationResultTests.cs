@@ -10,7 +10,7 @@ public class VerificationResultTests
 	{
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
 			= sut.Verify.Got.TotalDispensed();
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property TotalDispensed");
@@ -21,7 +21,7 @@ public class VerificationResultTests
 	{
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
 			= sut.Verify.GotIndexer(With.Any<string>());
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer With.Any<string>()");
@@ -32,7 +32,7 @@ public class VerificationResultTests
 	{
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
 			= sut.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>());
 
 		await That(((IVerificationResult)result).Expectation)
@@ -44,7 +44,7 @@ public class VerificationResultTests
 	{
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
 			= sut.Verify.Set.TotalDispensed(5);
 
 		await That(((IVerificationResult)result).Expectation)
@@ -56,7 +56,7 @@ public class VerificationResultTests
 	{
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
 			= sut.Verify.SetIndexer(With.Any<string>(), 5);
 
 		await That(((IVerificationResult)result).Expectation)
@@ -68,7 +68,7 @@ public class VerificationResultTests
 	{
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
 			= sut.Verify.SubscribedTo.ChocolateDispensed();
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event ChocolateDispensed");
@@ -79,7 +79,7 @@ public class VerificationResultTests
 	{
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
-		VerificationResult<MockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
+		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
 			= sut.Verify.UnsubscribedFrom.ChocolateDispensed();
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event ChocolateDispensed");
