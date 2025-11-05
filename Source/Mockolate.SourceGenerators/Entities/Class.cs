@@ -161,18 +161,8 @@ internal record Class
 			return source.ToList();
 		}
 
-		var result = new List<T>();
-		foreach (var item in source)
-		{
-			if (except.All(e => !comparer.Equals(e, item)))
-			{
-				result.Add(item);
-			}
-		}
-
-		return result;
+		return source.Except(except, comparer).ToList();
 	}
-
 
 	public static IEnumerable<ITypeSymbol> GetInheritedTypes(ITypeSymbol type)
 	{
