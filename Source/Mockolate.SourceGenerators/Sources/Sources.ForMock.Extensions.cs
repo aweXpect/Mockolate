@@ -74,7 +74,7 @@ internal static partial class Sources
 	{
 		#region Setup
 
-		sb.Append("\textension(MockSetup<").Append(mockClass.ClassFullName).AppendLine("> setup)");
+		sb.Append("\textension(IMockSetup<").Append(mockClass.ClassFullName).AppendLine("> setup)");
 		sb.AppendLine("\t{");
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Sets up the delegate <see cref=\"").Append(mockClass.ClassFullName.EscapeForXmlDoc())
@@ -295,9 +295,9 @@ internal static partial class Sources
 				.Append("\" />")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassFullName).Append("> Setup").Append(name)
+			sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).Append("> Setup").Append(name)
 				.AppendLine();
-			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassFullName).Append(">.Proxy(mock.Setup);")
+			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassFullName).Append(">.Proxy(((IMock)mock).Setup, \"").Append(@class.DisplayString).Append("\");")
 				.AppendLine();
 			if (@class.AllEvents().Any())
 			{
@@ -310,7 +310,7 @@ internal static partial class Sources
 				sb.Append("\t\tpublic MockRaises<").Append(@class.ClassFullName).Append("> RaiseOn")
 					.Append(name).AppendLine();
 				sb.Append("\t\t\t=> new MockRaises<").Append(@class.ClassFullName)
-					.Append(">(mock.Setup, ((IMock)mock).Interactions);").AppendLine();
+					.Append(">((IMockSetup)mock.Setup, ((IMock)mock).Interactions);").AppendLine();
 			}
 
 			sb.AppendLine();
@@ -350,15 +350,15 @@ internal static partial class Sources
 			return false;
 		}
 
-		sb.Append("\textension(MockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
+		sb.Append("\textension(IMockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
 		sb.AppendLine("\t{");
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append(
 				"\t\t///     Sets up the protected methods or properties of the mock for <typeparamref name=\"TMock\" />.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic ProtectedMockSetup<").Append(@class.ClassFullName).Append("> Protected").AppendLine();
-		sb.Append("\t\t\t=> new ProtectedMockSetup<").Append(@class.ClassFullName).Append(">(setup);").AppendLine();
+		sb.Append("\t\tpublic IProtectedMockSetup<").Append(@class.ClassFullName).Append("> Protected").AppendLine();
+		sb.Append("\t\t\t=> setup as IProtectedMockSetup<").Append(@class.ClassFullName).Append(">;").AppendLine();
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 		return true;

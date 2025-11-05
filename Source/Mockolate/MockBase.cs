@@ -19,14 +19,15 @@ public abstract class MockBase<T> : IMock
 {
 	private readonly MockBehavior _behavior;
 	private readonly MockInteractions _interactions;
+	private readonly MockSetup<T> _setup;
 
 	/// <inheritdoc cref="MockBase{T}" />
-	protected MockBase(MockBehavior behavior)
+	protected MockBase(MockBehavior behavior, string prefix)
 	{
 		_behavior = behavior;
 		_interactions = new MockInteractions();
-		Setup = new MockSetup<T>(this);
-		Raise = new MockRaises<T>(Setup, _interactions);
+		_setup = new(this, prefix);
+		Raise = new MockRaises<T>(_setup, _interactions);
 	}
 
 	/// <summary>
@@ -42,7 +43,7 @@ public abstract class MockBase<T> : IMock
 	/// <summary>
 	///     Sets up the mock for <typeparamref name="T" />.
 	/// </summary>
-	public MockSetup<T> Setup { get; }
+	public IMockSetup<T> Setup => _setup;
 
 	/// <summary>
 	///     Implicitly converts the mock to the mocked object instance.
@@ -85,7 +86,7 @@ public abstract class MockBase<T> : IMock
 
 	/// <inheritdoc cref="IMock.Setup" />
 	IMockSetup IMock.Setup
-		=> Setup;
+		=> _setup;
 
 	/// <inheritdoc cref="IMock.Raise" />
 	IMockRaises IMock.Raise
@@ -100,7 +101,7 @@ public abstract class MockBase<T> : IMock
 			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(),
 				methodName, parameters));
 
-		MethodSetup? matchingSetup = Setup.GetMethodSetup(methodInvocation);
+		MethodSetup? matchingSetup = _setup.GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
 			if (_behavior.ThrowWhenNotSetup)
@@ -126,7 +127,7 @@ public abstract class MockBase<T> : IMock
 			((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation(interactions.GetNextIndex(),
 				methodName, parameters));
 
-		MethodSetup? matchingSetup = Setup.GetMethodSetup(methodInvocation);
+		MethodSetup? matchingSetup = _setup.GetMethodSetup(methodInvocation);
 		if (matchingSetup is null && _behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
@@ -144,7 +145,7 @@ public abstract class MockBase<T> : IMock
 		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new PropertyGetterAccess(interactions.GetNextIndex(),
 				propertyName));
-		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName,
+		PropertySetup matchingSetup = _setup.GetPropertySetup(propertyName,
 			defaultValueGenerator is null ? null : () => defaultValueGenerator());
 		return matchingSetup.InvokeGetter<TResult>(interaction, _behavior);
 	}
@@ -156,7 +157,7 @@ public abstract class MockBase<T> : IMock
 		IInteraction interaction =
 			((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess(interactions.GetNextIndex(),
 				propertyName, value));
-		PropertySetup matchingSetup = Setup.GetPropertySetup(propertyName, null);
+		PropertySetup matchingSetup = _setup.GetPropertySetup(propertyName, null);
 		matchingSetup.InvokeSetter(interaction, value, _behavior);
 	}
 
@@ -167,8 +168,8 @@ public abstract class MockBase<T> : IMock
 		IndexerGetterAccess interaction = new(interactions.GetNextIndex(), parameters);
 		((IMockInteractions)interactions).RegisterInteraction(interaction);
 
-		IndexerSetup? matchingSetup = Setup.GetIndexerSetup(interaction);
-		TResult initialValue = Setup.GetIndexerValue(matchingSetup, defaultValueGenerator, parameters);
+		IndexerSetup? matchingSetup = _setup.GetIndexerSetup(interaction);
+		TResult initialValue = _setup.GetIndexerValue(matchingSetup, defaultValueGenerator, parameters);
 		if (matchingSetup is not null)
 		{
 			TResult? value = matchingSetup.InvokeGetter(interaction, initialValue, _behavior);
@@ -191,7 +192,7 @@ public abstract class MockBase<T> : IMock
 		((IMockInteractions)interactions).RegisterInteraction(interaction);
 
 		((IMockSetup)Setup).SetIndexerValue(parameters, value);
-		IndexerSetup? matchingSetup = Setup.GetIndexerSetup(interaction);
+		IndexerSetup? matchingSetup = _setup.GetIndexerSetup(interaction);
 		matchingSetup?.InvokeSetter(interaction, value, _behavior);
 	}
 

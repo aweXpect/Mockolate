@@ -4,6 +4,102 @@ using System.Reflection;
 namespace Mockolate.Setup;
 
 /// <summary>
+///     Sets up the mock for <typeparamref name="T" />.
+/// </summary>
+public interface IMockSetup<T>
+{
+
+}
+/// <summary>
+///     Sets up methods on the mock for <typeparamref name="T" />.
+/// </summary>
+public interface IMockMethodSetup<T>
+{
+}
+/// <summary>
+///     Sets up methods on the mock for <typeparamref name="T" /> when it contains a <see cref="object.ToString()" /> method.
+/// </summary>
+public interface IMockMethodSetupWithToString<T> : IMockMethodSetup<T>
+{
+	/// <summary>
+	///     Setup for the method <see cref="object.ToString()"/>.
+	/// </summary>
+	ReturnMethodSetup<string> ToString();
+}
+/// <summary>
+///     Sets up methods on the mock for <typeparamref name="T" /> when it contains a <see cref="object.Equals(object)" /> method.
+/// </summary>
+public interface IMockMethodSetupWithEquals<T> : IMockMethodSetup<T>
+{
+	/// <summary>
+	///     Setup for the method <see cref="object.Equals(object?)"/> with the given <paramref name="obj"/>.
+	/// </summary>
+	ReturnMethodSetup<bool, object?> Equals(With.Parameter<object?> obj);
+}
+/// <summary>
+///     Sets up methods on the mock for <typeparamref name="T" /> when it contains a <see cref="object.GetHashCode()" /> method.
+/// </summary>
+public interface IMockMethodSetupWithGetHashCode<T> : IMockMethodSetup<T>
+{
+	/// <summary>
+	///     Setup for the method <see cref="object.GetHashCode()"/>.
+	/// </summary>
+	ReturnMethodSetup<int> GetHashCode();
+}
+/// <summary>
+///     Sets up methods on the mock for <typeparamref name="T" /> when it contains a <see cref="object.ToString()" />, <see cref="object.Equals(object)" /> and <see cref="object.GetHashCode()" /> method.
+/// </summary>
+public interface IMockMethodSetupWithToStringWithEqualsWithGetHashCode<T> : IMockMethodSetupWithToString<T>, IMockMethodSetupWithEquals<T>, IMockMethodSetupWithGetHashCode<T>
+{
+}
+/// <summary>
+///     Sets up methods on the mock for <typeparamref name="T" /> when it contains a <see cref="object.Equals(object)" /> and <see cref="object.GetHashCode()" /> method.
+/// </summary>
+public interface IMockMethodSetupWithEqualsWithGetHashCode<T> : IMockMethodSetupWithEquals<T>, IMockMethodSetupWithGetHashCode<T>
+{
+}
+/// <summary>
+///     Sets up methods on the mock for <typeparamref name="T" /> when it contains a <see cref="object.ToString()" /> and <see cref="object.GetHashCode()" /> method.
+/// </summary>
+public interface IMockMethodSetupWithToStringWithGetHashCode<T> : IMockMethodSetupWithToString<T>, IMockMethodSetupWithGetHashCode<T>
+{
+}
+/// <summary>
+///     Sets up methods on the mock for <typeparamref name="T" /> when it contains a <see cref="object.ToString()" /> and <see cref="object.Equals(object)" /> method.
+/// </summary>
+public interface IMockMethodSetupWithToStringWithEquals<T> : IMockMethodSetupWithToString<T>, IMockMethodSetupWithEquals<T>
+{
+}
+/// <summary>
+///     Sets up properties on the mock for <typeparamref name="T" />.
+/// </summary>
+public interface IMockPropertySetup<T>
+{
+
+}
+/// <summary>
+///     Sets up the protected elements of the mock for <typeparamref name="T" />.
+/// </summary>
+public interface IProtectedMockSetup<T>
+{
+
+}
+/// <summary>
+///     Sets up protected methods on the mock for <typeparamref name="T" />.
+/// </summary>
+public interface IProtectedMockMethodSetup<T>
+{
+
+}
+/// <summary>
+///     Sets up protected properties on the mock for <typeparamref name="T" />.
+/// </summary>
+public interface IProtectedMockPropertySetup<T>
+{
+
+}
+
+/// <summary>
 ///     Allows registration of <see cref="MethodSetup" /> in the mock.
 /// </summary>
 public interface IMockSetup

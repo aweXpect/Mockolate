@@ -10,7 +10,7 @@ namespace Mockolate;
 public abstract class Mock<T> : MockBase<T>
 {
 	/// <inheritdoc cref="Mock{T}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		MockInteractions? checks = ((IMock)this).Interactions;
 		Verify = new MockVerify<T, Mock<T>>(checks, this);
@@ -28,7 +28,7 @@ public abstract class Mock<T> : MockBase<T>
 public abstract class Mock<T1, T2> : MockBase<T1>
 {
 	/// <inheritdoc cref="Mock{T1, T2}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		if (!typeof(T2).IsInterface)
 		{
@@ -52,7 +52,7 @@ public abstract class Mock<T1, T2> : MockBase<T1>
 public abstract class Mock<T1, T2, T3> : MockBase<T1>
 {
 	/// <inheritdoc cref="Mock{T1, T2, T3}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		if (!typeof(T2).IsInterface)
 		{
@@ -82,7 +82,7 @@ public abstract class Mock<T1, T2, T3> : MockBase<T1>
 public abstract class Mock<T1, T2, T3, T4> : MockBase<T1>
 {
 	/// <inheritdoc cref="Mock{T1, T2, T3, T4}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		if (!typeof(T2).IsInterface)
 		{
@@ -118,7 +118,7 @@ public abstract class Mock<T1, T2, T3, T4> : MockBase<T1>
 public abstract class Mock<T1, T2, T3, T4, T5> : MockBase<T1>
 {
 	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		if (!typeof(T2).IsInterface)
 		{
@@ -158,7 +158,7 @@ public abstract class Mock<T1, T2, T3, T4, T5> : MockBase<T1>
 public abstract class Mock<T1, T2, T3, T4, T5, T6> : MockBase<T1>
 {
 	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5, T6}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		if (!typeof(T2).IsInterface)
 		{
@@ -204,7 +204,7 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6> : MockBase<T1>
 public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : MockBase<T1>
 {
 	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5, T6, T7}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		if (!typeof(T2).IsInterface)
 		{
@@ -256,7 +256,7 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7> : MockBase<T1>
 public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : MockBase<T1>
 {
 	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5, T6, T7, T8}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		if (!typeof(T2).IsInterface)
 		{
@@ -313,7 +313,7 @@ public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8> : MockBase<T1>
 public abstract class Mock<T1, T2, T3, T4, T5, T6, T7, T8, T9> : MockBase<T1>
 {
 	/// <inheritdoc cref="Mock{T1, T2, T3, T4, T5, T6, T7, T8, T9}" />
-	protected Mock(MockBehavior behavior) : base(behavior)
+	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
 	{
 		if (!typeof(T2).IsInterface)
 		{

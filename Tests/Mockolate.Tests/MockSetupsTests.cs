@@ -1,6 +1,5 @@
 ﻿using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
-
 namespace Mockolate.Tests;
 
 #pragma warning disable CA1859 // Use concrete types when possible for improved performance
@@ -22,7 +21,7 @@ public sealed class MockSetupsTests
 		int methodCount, int propertyCount, int eventCount, int indexerCount, string expected)
 	{
 		Mock<IMyService> mock = Mock.Create<IMyService>();
-		IMockSetup sut = mock.Setup;
+		IMockSetup sut = (IMockSetup)mock.Setup;
 
 		for (int i = 0; i < methodCount; i++)
 		{
@@ -49,410 +48,14 @@ public sealed class MockSetupsTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	public sealed class MethodsTests
-	{
-		[Fact]
-		public async Task GetEventHandlers_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.Methods(mock.Setup);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-			proxy.AddEvent("foo.bar", setup, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(2);
-
-			await That(proxy.GetEventHandlers("foo.bar")).HasCount(2);
-		}
-
-		[Fact]
-		public async Task Mock_ShouldBeInnerMock()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.Methods(mock.Setup);
-
-			await That(proxy.Mock).IsSameAs(setup.Mock);
-		}
-
-		[Fact]
-		public async Task RegisterIndexer_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.Methods(mock.Setup);
-
-			proxy.RegisterIndexer(new IndexerSetup<int, string>("foo.bar").Returns(42));
-
-			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task RegisterMethod_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.Methods(mock.Setup);
-
-			proxy.RegisterMethod(new ReturnMethodSetup<int>("foo.bar").Returns(42));
-
-			int result = ((IMock)mock).Execute<int>("foo.bar").Result;
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task RegisterProperty_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.Methods(mock.Setup);
-
-			proxy.RegisterProperty("foo.bar", new PropertySetup<int>().InitializeWith(42));
-
-			int result = ((IMock)mock).Get<int>("foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task SetIndexerValue_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.Methods(mock.Setup);
-
-			proxy.SetIndexerValue(["foo.bar",], 42);
-
-			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task SubscribeToEvent_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.Methods(mock.Setup);
-
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);
-		}
-
-		[Fact]
-		public async Task UnsubscribeFromEvent_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.Methods(mock.Setup);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);
-			proxy.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
-		}
-	}
-
-	public sealed class PropertiesTests
-	{
-		[Fact]
-		public async Task GetEventHandlers_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.Properties(mock.Setup);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-			proxy.AddEvent("foo.bar", setup, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(2);
-
-			await That(proxy.GetEventHandlers("foo.bar")).HasCount(2);
-		}
-
-		[Fact]
-		public async Task Mock_ShouldBeInnerMock()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.Properties(mock.Setup);
-
-			await That(proxy.Mock).IsSameAs(setup.Mock);
-		}
-
-		[Fact]
-		public async Task RegisterIndexer_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.Properties(mock.Setup);
-
-			proxy.RegisterIndexer(new IndexerSetup<int, string>("foo.bar").Returns(42));
-
-			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task RegisterMethod_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.Properties(mock.Setup);
-
-			proxy.RegisterMethod(new ReturnMethodSetup<int>("foo.bar").Returns(42));
-
-			int result = ((IMock)mock).Execute<int>("foo.bar").Result;
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task RegisterProperty_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.Properties(mock.Setup);
-
-			proxy.RegisterProperty("foo.bar", new PropertySetup<int>().InitializeWith(42));
-
-			int result = ((IMock)mock).Get<int>("foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task SetIndexerValue_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.Properties(mock.Setup);
-
-			proxy.SetIndexerValue(["foo.bar",], 42);
-
-			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task SubscribeToEvent_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.Properties(mock.Setup);
-
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);
-		}
-
-		[Fact]
-		public async Task UnsubscribeFromEvent_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.Properties(mock.Setup);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);
-			proxy.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
-		}
-	}
-
-	public sealed class ProtectedMethodsTests
-	{
-		[Fact]
-		public async Task GetEventHandlers_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedMethods(mock.Setup);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-			proxy.AddEvent("foo.bar", setup, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(2);
-
-			await That(proxy.GetEventHandlers("foo.bar")).HasCount(2);
-		}
-
-		[Fact]
-		public async Task Mock_ShouldBeInnerMock()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedMethods(mock.Setup);
-
-			await That(proxy.Mock).IsSameAs(setup.Mock);
-		}
-
-		[Fact]
-		public async Task RegisterIndexer_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedMethods(mock.Setup);
-
-			proxy.RegisterIndexer(new IndexerSetup<int, string>("foo.bar").Returns(42));
-
-			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task RegisterMethod_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedMethods(mock.Setup);
-
-			proxy.RegisterMethod(new ReturnMethodSetup<int>("foo.bar").Returns(42));
-
-			int result = ((IMock)mock).Execute<int>("foo.bar").Result;
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task RegisterProperty_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedMethods(mock.Setup);
-
-			proxy.RegisterProperty("foo.bar", new PropertySetup<int>().InitializeWith(42));
-
-			int result = ((IMock)mock).Get<int>("foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task SetIndexerValue_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedMethods(mock.Setup);
-
-			proxy.SetIndexerValue(["foo.bar",], 42);
-
-			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task SubscribeToEvent_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedMethods(mock.Setup);
-
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);
-		}
-
-		[Fact]
-		public async Task UnsubscribeFromEvent_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedMethods(mock.Setup);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);
-			proxy.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
-		}
-	}
-
-	public sealed class ProtectedPropertiesTests
-	{
-		[Fact]
-		public async Task GetEventHandlers_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedProperties(mock.Setup);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-			proxy.AddEvent("foo.bar", setup, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(2);
-
-			await That(proxy.GetEventHandlers("foo.bar")).HasCount(2);
-		}
-
-		[Fact]
-		public async Task Mock_ShouldBeInnerMock()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedProperties(mock.Setup);
-
-			await That(proxy.Mock).IsSameAs(setup.Mock);
-		}
-
-		[Fact]
-		public async Task RegisterIndexer_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedProperties(mock.Setup);
-
-			proxy.RegisterIndexer(new IndexerSetup<int, string>("foo.bar").Returns(42));
-
-			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task RegisterMethod_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedProperties(mock.Setup);
-
-			proxy.RegisterMethod(new ReturnMethodSetup<int>("foo.bar").Returns(42));
-
-			int result = ((IMock)mock).Execute<int>("foo.bar").Result;
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task RegisterProperty_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedProperties(mock.Setup);
-
-			proxy.RegisterProperty("foo.bar", new PropertySetup<int>().InitializeWith(42));
-
-			int result = ((IMock)mock).Get<int>("foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task SetIndexerValue_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedProperties(mock.Setup);
-
-			proxy.SetIndexerValue(["foo.bar",], 42);
-
-			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
-			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task SubscribeToEvent_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedProperties(mock.Setup);
-
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);
-		}
-
-		[Fact]
-		public async Task UnsubscribeFromEvent_ShouldForwardToInner()
-		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<IMyService>.ProtectedProperties(mock.Setup);
-			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
-
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);
-			proxy.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
-			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
-		}
-	}
-
 	public sealed class ProxyTests
 	{
 		[Fact]
 		public async Task GetEventHandlers_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
+			IMockSetup setup = (IMockSetup)mock.Setup;
+			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 			proxy.AddEvent("foo.bar", setup, Helper.GetMethodInfo());
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(2);
@@ -464,8 +67,8 @@ public sealed class MockSetupsTests
 		public async Task Mock_ShouldBeInnerMock()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
+			IMockSetup setup = (IMockSetup)mock.Setup;
+			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 
 			await That(proxy.Mock).IsSameAs(setup.Mock);
 		}
@@ -474,7 +77,8 @@ public sealed class MockSetupsTests
 		public async Task RegisterIndexer_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
+			IMockSetup setup = (IMockSetup)mock.Setup;
+			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 
 			proxy.RegisterIndexer(new IndexerSetup<int, string>("foo.bar").Returns(42));
 
@@ -486,7 +90,8 @@ public sealed class MockSetupsTests
 		public async Task RegisterMethod_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
+			IMockSetup setup = (IMockSetup)mock.Setup;
+			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 
 			proxy.RegisterMethod(new ReturnMethodSetup<int>("foo.bar").Returns(42));
 
@@ -498,7 +103,8 @@ public sealed class MockSetupsTests
 		public async Task RegisterProperty_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
+			IMockSetup setup = (IMockSetup)mock.Setup;
+			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 
 			proxy.RegisterProperty("foo.bar", new PropertySetup<int>().InitializeWith(42));
 
@@ -510,7 +116,8 @@ public sealed class MockSetupsTests
 		public async Task SetIndexerValue_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
+			IMockSetup setup = (IMockSetup)mock.Setup;
+			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 
 			proxy.SetIndexerValue(["foo.bar",], 42);
 
@@ -522,8 +129,8 @@ public sealed class MockSetupsTests
 		public async Task SubscribeToEvent_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
+			IMockSetup setup = (IMockSetup)mock.Setup;
+			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(0);
 			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
@@ -534,8 +141,8 @@ public sealed class MockSetupsTests
 		public async Task UnsubscribeFromEvent_ShouldForwardToInner()
 		{
 			Mock<IMyService> mock = Mock.Create<IMyService>();
-			IMockSetup setup = mock.Setup;
-			IMockSetup proxy = new MockSetup<int>.Proxy(mock.Setup);
+			IMockSetup setup = (IMockSetup)mock.Setup;
+			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 			proxy.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
 			await That(setup.GetEventHandlers("foo.bar")).HasCount(1);

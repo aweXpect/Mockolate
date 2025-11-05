@@ -15,7 +15,6 @@ public class ExampleTests
 	[Fact]
 	public async Task BaseClassWithConstructorParameters()
 	{
-		_ = Mock.Create<IList<int>>();
 		Guid id = Guid.NewGuid();
 		Mock<MyClass> mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
 

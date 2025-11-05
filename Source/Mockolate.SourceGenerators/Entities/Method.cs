@@ -79,4 +79,14 @@ internal record Method
 
 		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
 	}
+
+	public bool IsToString()
+		=> Name == "ToString" && Parameters.Count == 0;
+
+	public bool IsGetHashCode()
+		=> Name == "GetHashCode" && Parameters.Count == 0;
+
+	public bool IsEquals()
+		=> Name == "Equals" && Parameters.Count == 1 &&
+		   Parameters.Single().Type.Fullname == "object" && Parameters.Single().Type.Namespace == "System";
 }

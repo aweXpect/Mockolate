@@ -37,7 +37,7 @@ public sealed partial class SetupMethodTests
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		IMockSetup setup = mock.Setup;
+		IMockSetup setup = (IMockSetup)mock.Setup;
 		IMock sut = mock;
 
 		MethodSetupResult<int> result0 = sut.Execute<int>("my.method");
@@ -297,6 +297,42 @@ public sealed partial class SetupMethodTests
 
 		await That(result1).IsEqualTo(0);
 		await That(result2).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task ToString_ShouldWork()
+	{
+		var expectedResult = Guid.NewGuid().ToString();
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.ToString().Returns(expectedResult);
+
+		var result = mock.Subject.ToString();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
+	public async Task GetHashCode_ShouldWork()
+	{
+		int expectedResult = Guid.NewGuid().GetHashCode();
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.GetHashCode().Returns(expectedResult);
+
+		var result = mock.Subject.GetHashCode();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
+	public async Task Equals_ShouldWork()
+	{
+		var obj = new object();
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.Equals(With.Any<object?>()).Returns(true);
+
+		var result = mock.Subject.Equals(obj);
+
+		await That(result).IsEqualTo(true);
 	}
 
 	[Fact]
@@ -699,6 +735,9 @@ public sealed partial class SetupMethodTests
 		int MyIntMethodWithParameters(int x, string y);
 		int MyGenericMethod<T1, T2>(T1 x, T2 y) where T1 : struct where T2 : class;
 		int MyGenericMethod<T>();
+		string ToString();
+		bool Equals(object obj);
+		int GetHashCode();
 	}
 
 	public interface IMyServiceWithMethodsWithMoreThan16Parameters
