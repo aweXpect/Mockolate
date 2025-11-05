@@ -1,5 +1,4 @@
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
@@ -197,13 +196,13 @@ internal record Class
 		}
 	}
 
-	public virtual IEnumerable<Property> AllProperties()
+	public IEnumerable<Property> AllProperties()
 		=> AllClasses().SelectMany(c => c.Properties).Distinct(Property.EqualityComparer);
 
-	public virtual IEnumerable<Method> AllMethods()
+	public IEnumerable<Method> AllMethods()
 		=> AllClasses().SelectMany(c => c.Methods).Distinct(Method.EqualityComparer);
 
-	public virtual IEnumerable<Event> AllEvents()
+	public IEnumerable<Event> AllEvents()
 		=> AllClasses().SelectMany(c => c.Events).Distinct(Event.EqualityComparer);
 
 	public IEnumerable<Class> AllClasses()
