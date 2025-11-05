@@ -68,9 +68,9 @@ internal static partial class Sources
 
 		sb.Append("\t\tprivate readonly BaseClass.ConstructorParameters? _constructorParameters;").AppendLine();
 		sb.Append("\t\tprivate readonly MockBehavior _mockBehavior;").AppendLine().AppendLine();
-		sb.AppendLine("""
+		sb.AppendLine($$"""
 		              		/// <inheritdoc cref="Mock" />
-		              		public Mock(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior) : base(mockBehavior)
+		              		public Mock(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior) : base(mockBehavior, "{{mockClass.DisplayString}}")
 		              		{
 		              			_constructorParameters = constructorParameters;
 		              			_mockBehavior = mockBehavior;
@@ -603,7 +603,7 @@ internal static partial class Sources
 			if (method.ExplicitImplementation is null)
 			{
 				sb.Append(method.Accessibility.ToVisibilityString()).Append(' ');
-				if (!isClassInterface && method.UseOverride)
+				if (!isClassInterface && method.UseOverride || method.IsEquals() || method.IsGetHashCode() || method.IsToString())
 				{
 					sb.Append("override ");
 				}

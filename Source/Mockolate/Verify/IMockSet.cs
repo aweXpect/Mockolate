@@ -1,5 +1,6 @@
 namespace Mockolate.Verify;
 
+#pragma warning disable S2326 // Unused type parameters should be removed
 /// <summary>
 ///     Get results for property set access on the mock.
 /// </summary>
@@ -11,3 +12,4 @@ public interface IMockSet<TMock>
 	/// </summary>
 	VerificationResult<TMock> Property(string propertyName, With.Parameter value);
 }
+#pragma warning restore S2326 // Unused type parameters should be removed

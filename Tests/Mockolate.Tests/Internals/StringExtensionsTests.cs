@@ -10,10 +10,10 @@ public sealed class StringExtensionsTests
 	public async Task SubstringAfterLast_WhenNameContainsNoDot_ShouldIncludeFullName()
 	{
 		MockInteractions interactions = new();
-		MockVerify<int, Mock<int>> verify = new(interactions, new MyMock<int>(1));
-		IMockGot<MockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(interactions, new MyMock<int>(1), "MyMock");
+		IMockGot<IMockVerify<int, Mock<int>>> mockGot = verify;
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = mockGot.Property("SomeNameWithoutADot");
+		VerificationResult<IMockVerify<int, Mock<int>>> result = mockGot.Property("SomeNameWithoutADot");
 
 		result.Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property SomeNameWithoutADot");
@@ -23,10 +23,10 @@ public sealed class StringExtensionsTests
 	public async Task SubstringAfterLast_WhenNameStartsWithDot_ShouldOmitDot()
 	{
 		MockInteractions interactions = new();
-		MockVerify<int, Mock<int>> verify = new(interactions, new MyMock<int>(1));
-		IMockGot<MockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(interactions, new MyMock<int>(1), "MyMock");
+		IMockGot<IMockVerify<int, Mock<int>>> mockGot = verify;
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = mockGot.Property(".bar");
+		VerificationResult<IMockVerify<int, Mock<int>>> result = mockGot.Property(".bar");
 
 		result.Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property bar");

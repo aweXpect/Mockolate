@@ -14,6 +14,7 @@ internal record Class
 		List<Event>? exceptEvents = null)
 	{
 		Namespace = type.ContainingNamespace.ToString();
+		DisplayString = type.ToDisplayString();
 		ClassName = GetTypeName(type);
 		ClassFullName = GetTypeFullName(type);
 
@@ -86,6 +87,7 @@ internal record Class
 
 	public bool IsInterface { get; }
 	public string Namespace { get; }
+	public string DisplayString { get; }
 	public string ClassName { get; }
 	public string ClassFullName { get; }
 

@@ -106,22 +106,21 @@ internal static partial class Sources
 
 		if (@class.AllProperties().Any(predicate))
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<")
+			sb.Append("\textension(I").Append(isProtected ? "Protected" : "").Append("MockSetup<")
 				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up properties on the mock for <see cref=\"")
 				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : ".").Append("Properties Property").AppendLine();
-			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : ".").Append("Properties(setup);").AppendLine();
+			sb.Append("\t\tpublic I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<").Append(@class.ClassFullName).Append(">")
+				.Append("Property").AppendLine();
+			sb.Append("\t\t\t=> (I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<").Append(@class.ClassFullName).Append(">)setup;").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
-			sb.Append("\textension(MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : ".").Append("Properties setup)").AppendLine();
+			sb.Append("\textension(I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<").Append(@class.ClassFullName).Append(">")
+				.Append("setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
 			foreach (Property property in @class.AllProperties().Where(predicate))
@@ -176,7 +175,7 @@ internal static partial class Sources
 
 		if (@class.AllProperties().Any(predicate))
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<")
+			sb.Append("\textension(I").Append(isProtected ? "Protected" : "").Append("MockSetup<")
 				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
@@ -232,29 +231,36 @@ internal static partial class Sources
 			: new Func<Method, bool>(method
 				=> method.ExplicitImplementation is null &&
 				   method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal));
-
-		if (@class.AllMethods().Any(predicate))
+		var methods = @class.AllMethods().Where(predicate).ToList();
+		if (methods.Any())
 		{
-			sb.Append("\textension(").Append(isProtected ? "Protected" : "").Append("MockSetup<")
+			bool hasToString = !isProtected && methods.Any(m => m.IsToString());
+			bool hasGetHashCode = !isProtected && methods.Any(m => m.IsGetHashCode());
+			bool hasEquals = !isProtected && methods.Any(m => m.IsEquals());
+			sb.Append("\textension(I").Append(isProtected ? "Protected" : "").Append("MockSetup<")
 				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up methods on the mock for <see cref=\"")
 				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : ".").Append("Methods Method").AppendLine();
-			sb.Append("\t\t\t=> new MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : ".").Append("Methods(setup);").AppendLine();
+			sb.Append("\t\tpublic I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup").Append(hasToString ? "WithToString" : "").Append(hasEquals ? "WithEquals" : "").Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.ClassFullName).Append(">")
+				.Append(" Method").AppendLine();
+			sb.Append("\t\t\t=> (I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup").Append(hasToString ? "WithToString" : "").Append(hasEquals ? "WithEquals" : "").Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.ClassFullName).Append(">)setup")
+				.Append(";").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
-			sb.Append("\textension(MockSetup<").Append(@class.ClassFullName).Append(">")
-				.Append(isProtected ? ".Protected" : ".").Append("Methods setup)").AppendLine();
+			sb.Append("\textension(I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
-			foreach (Method method in @class.AllMethods().Where(predicate))
+			foreach (Method method in methods)
 			{
+				if (method.IsToString() || method.IsGetHashCode() || method.IsEquals())
+				{
+					continue;
+				}
+
 				if (count++ > 0)
 				{
 					sb.AppendLine();

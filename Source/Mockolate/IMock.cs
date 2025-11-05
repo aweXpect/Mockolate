@@ -11,6 +11,11 @@ namespace Mockolate;
 public interface IMock
 {
 	/// <summary>
+	///     Gets the prefix string used to identify or categorize items within the context.
+	/// </summary>
+	string Prefix { get; }
+
+	/// <summary>
 	///     Gets the behavior settings used by this mock instance.
 	/// </summary>
 	MockBehavior Behavior { get; }

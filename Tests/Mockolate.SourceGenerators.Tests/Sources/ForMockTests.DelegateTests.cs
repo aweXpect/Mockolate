@@ -38,9 +38,9 @@ public sealed partial class ForMockTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<MockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(With.Parameter<int>? x, With.Parameter<int>? y)
+			          		public VerificationResult<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(With.Parameter<int>? x, With.Parameter<int>? y)
 			          		{
-			          			IMockInvoked<MockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = new MockInvoked<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>(verify);
+			          			IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = (IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>>)verify;
 			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? With.Null<int>(), y ?? With.Null<int>());
 			          		}
 			          """).IgnoringNewlineStyle();
@@ -82,9 +82,9 @@ public sealed partial class ForMockTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<MockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(With.Parameter<int>? x, With.InvokedRefParameter<int> y, With.InvokedOutParameter<int> z)
+			          		public VerificationResult<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(With.Parameter<int>? x, With.InvokedRefParameter<int> y, With.InvokedOutParameter<int> z)
 			          		{
-			          			IMockInvoked<MockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = new MockInvoked<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>(verify);
+			          			IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = (IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>>)verify;
 			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? With.Null<int>(), y, z);
 			          		}
 			          """).IgnoringNewlineStyle();

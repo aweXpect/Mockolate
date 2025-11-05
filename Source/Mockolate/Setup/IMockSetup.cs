@@ -52,3 +52,12 @@ public interface IMockSetup
 	/// </summary>
 	void RemoveEvent(string eventName, object? target, MethodInfo method);
 }
+
+#pragma warning disable S2326 // Unused type parameters should be removed
+/// <summary>
+///     Sets up the mock for <typeparamref name="T" />.
+/// </summary>
+public interface IMockSetup<T>
+{
+}
+#pragma warning restore S2326 // Unused type parameters should be removed

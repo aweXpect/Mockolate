@@ -3,7 +3,6 @@ using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockMethods;
-
 public sealed class InteractionsTests
 {
 	[Fact]
@@ -11,11 +10,11 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockInvoked<MockVerify<int, Mock<int>>> invoked = new MockInvoked<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
 		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<int>());
 
 		await That(result).Once();
 	}
@@ -25,11 +24,11 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockInvoked<MockVerify<int, Mock<int>>> invoked = new MockInvoked<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
 		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<string>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<string>());
 
 		await That(result).Never();
 	}
@@ -39,11 +38,11 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockInvoked<MockVerify<int, Mock<int>>> invoked = new MockInvoked<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
 		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = invoked.Method("baz.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("baz.bar", With.Any<int>());
 
 		await That(result).Never();
 	}
@@ -52,10 +51,10 @@ public sealed class InteractionsTests
 	public async Task Method_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		MockInteractions mockInteractions = new();
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1));
-		IMockInvoked<MockVerify<int, Mock<int>>> invoked = new MockInvoked<int, Mock<int>>(verify);
+		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
+		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
 
-		VerificationResult<MockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<int>());
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(With.Any<int>())");
@@ -68,28 +67,5 @@ public sealed class InteractionsTests
 		string expectedValue = "[3] invoke method SomeMethod(1, null, 00:01:30)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
-	}
-
-	public sealed class ProtectedTests
-	{
-		[Fact]
-		public async Task PropertySetter_ShouldForwardToInner()
-		{
-			MockInteractions mockInteractions = new();
-			IMockInteractions interactions = mockInteractions;
-			MyMock<int> mock = new(1);
-			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock);
-			MockInvoked<int, Mock<int>> inner = new(verify);
-			IMockInvoked<MockVerify<int, Mock<int>>> invoked = inner;
-			IMockInvoked<MockVerify<int, Mock<int>>> @protected = new ProtectedMockInvoked<int, Mock<int>>(inner);
-			interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [1,]));
-			interactions.RegisterInteraction(new MethodInvocation(1, "foo.bar", [2,]));
-
-			VerificationResult<MockVerify<int, Mock<int>>> result1 = invoked.Method("foo.bar", With.Any<int>());
-			VerificationResult<MockVerify<int, Mock<int>>> result2 = @protected.Method("foo.bar", With.Any<int>());
-
-			await That(result1).Exactly(2);
-			await That(result2).Exactly(2);
-		}
 	}
 }

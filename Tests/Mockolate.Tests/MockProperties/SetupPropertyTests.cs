@@ -37,7 +37,7 @@ public sealed partial class SetupPropertyTests
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
-		IMockSetup setup = mock.Setup;
+		IMockSetup setup = (IMockSetup)mock.Setup;
 		IMock sut = mock;
 
 		int result0 = sut.Get<int>("my.other.property");
@@ -52,7 +52,7 @@ public sealed partial class SetupPropertyTests
 	public async Task Register_SamePropertyTwice_ShouldThrowMockException()
 	{
 		Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
-		IMockSetup setup = mock.Setup;
+		IMockSetup setup = (IMockSetup)mock.Setup;
 
 		setup.RegisterProperty("my.property", new PropertySetup<int>());
 
