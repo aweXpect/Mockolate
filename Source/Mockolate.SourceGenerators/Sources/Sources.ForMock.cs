@@ -259,7 +259,7 @@ internal static partial class Sources
 		if (mockClass.Constructors?.Count > 0)
 		{
 			sb.Append(
-					"\tinternal static System.Threading.AsyncLocal<IMock?> _mockProvider = new System.Threading.AsyncLocal<IMock?>();")
+					"\t\tinternal static System.Threading.AsyncLocal<IMock?> _mockProvider = new System.Threading.AsyncLocal<IMock?>();")
 				.AppendLine().AppendLine();
 			mockString = "(_mock ?? _mockProvider.Value)";
 		}
