@@ -736,7 +736,7 @@ public sealed partial class SetupMethodTests
 		int MyGenericMethod<T1, T2>(T1 x, T2 y) where T1 : struct where T2 : class;
 		int MyGenericMethod<T>();
 		string ToString();
-		bool Equals(object obj);
+		bool Equals(object? obj);
 		int GetHashCode();
 	}
 

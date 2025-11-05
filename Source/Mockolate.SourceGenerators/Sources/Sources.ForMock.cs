@@ -603,7 +603,7 @@ internal static partial class Sources
 			if (method.ExplicitImplementation is null)
 			{
 				sb.Append(method.Accessibility.ToVisibilityString()).Append(' ');
-				if (!isClassInterface && method.UseOverride)
+				if (!isClassInterface && method.UseOverride || method.IsEquals() || method.IsGetHashCode() || method.IsToString())
 				{
 					sb.Append("override ");
 				}

@@ -1,5 +1,3 @@
-using System;
-using System.Security.Claims;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
@@ -364,7 +362,7 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\tpublic IProtectedMockSetup<").Append(@class.ClassFullName).Append("> Protected").AppendLine();
-		sb.Append("\t\t\t=> setup as IProtectedMockSetup<").Append(@class.ClassFullName).Append(">;").AppendLine();
+		sb.Append("\t\t\t=> (IProtectedMockSetup<").Append(@class.ClassFullName).Append(">)setup;").AppendLine();
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 		return true;

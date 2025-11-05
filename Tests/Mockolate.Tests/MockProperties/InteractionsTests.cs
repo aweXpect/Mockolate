@@ -3,7 +3,6 @@ using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockProperties;
-/* TODO Re-enable
 public sealed class InteractionsTests
 {
 	[Fact]
@@ -12,7 +11,7 @@ public sealed class InteractionsTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockGot<IMockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
+		IMockGot<IMockVerify<int, Mock<int>>> mockGot = verify;
 		interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));
 
 		VerificationResult<IMockVerify<int, Mock<int>>> result = mockGot.Property("baz.bar");
@@ -26,7 +25,7 @@ public sealed class InteractionsTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockGot<IMockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
+		IMockGot<IMockVerify<int, Mock<int>>> mockGot = verify;
 		interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));
 
 		VerificationResult<IMockVerify<int, Mock<int>>> result = mockGot.Property("foo.bar");
@@ -39,7 +38,7 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockGot<IMockVerify<int, Mock<int>>> mockGot = new MockGot<int, Mock<int>>(verify);
+		IMockGot<IMockVerify<int, Mock<int>>> mockGot = verify;
 
 		VerificationResult<IMockVerify<int, Mock<int>>> result = mockGot.Property("foo.bar");
 
@@ -53,7 +52,7 @@ public sealed class InteractionsTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockSet<IMockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
+		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
 		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", With.Any<int>());
@@ -67,7 +66,7 @@ public sealed class InteractionsTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockSet<IMockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
+		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
 		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", With.Any<string>());
@@ -81,7 +80,7 @@ public sealed class InteractionsTests
 		MockInteractions mockInteractions = new();
 		IMockInteractions interactions = mockInteractions;
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockSet<IMockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
+		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
 		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("baz.bar", With.Any<int>());
@@ -94,7 +93,7 @@ public sealed class InteractionsTests
 	{
 		MockInteractions mockInteractions = new();
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockSet<IMockVerify<int, Mock<int>>> mockSet = new MockSet<int, Mock<int>>(verify);
+		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
 
 		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", With.Any<int>());
 
@@ -128,48 +127,4 @@ public sealed class InteractionsTests
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
-
-	public sealed class ProtectedTests
-	{
-		[Fact]
-		public async Task MockGot_ShouldForwardToInner()
-		{
-			MockInteractions mockInteractions = new();
-			IMockInteractions interactions = mockInteractions;
-			MyMock<int> mock = new(1);
-			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock, "MyMock");
-			MockGot<int, Mock<int>> inner = new(verify);
-			IMockGot<IMockVerify<int, Mock<int>>> mockGot = inner;
-			IMockGot<IMockVerify<int, Mock<int>>> @protected = new ProtectedMockGot<int, Mock<int>>(inner);
-			interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));
-			interactions.RegisterInteraction(new PropertyGetterAccess(1, "foo.bar"));
-
-			VerificationResult<IMockVerify<int, Mock<int>>> result1 = mockGot.Property("foo.bar");
-			VerificationResult<IMockVerify<int, Mock<int>>> result2 = @protected.Property("foo.bar");
-
-			await That(result1).Exactly(2);
-			await That(result2).Exactly(2);
-		}
-
-		[Fact]
-		public async Task MockSet_ShouldForwardToInner()
-		{
-			MockInteractions mockInteractions = new();
-			IMockInteractions interactions = mockInteractions;
-			MyMock<int> mock = new(1);
-			MockVerify<int, Mock<int>> verify = new(mockInteractions, mock, "MyMock");
-			MockSet<int, Mock<int>> inner = new(verify);
-			IMockSet<IMockVerify<int, Mock<int>>> mockSet = inner;
-			IMockSet<IMockVerify<int, Mock<int>>> @protected = new ProtectedMockSet<int, Mock<int>>(inner);
-			interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 1));
-			interactions.RegisterInteraction(new PropertySetterAccess(1, "foo.bar", 2));
-
-			VerificationResult<IMockVerify<int, Mock<int>>> result1 = mockSet.Property("foo.bar", With.Any<int>());
-			VerificationResult<IMockVerify<int, Mock<int>>> result2 = @protected.Property("foo.bar", With.Any<int>());
-
-			await That(result1).Exactly(2);
-			await That(result2).Exactly(2);
-		}
-	}
 }
-*/

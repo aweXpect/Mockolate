@@ -12,6 +12,7 @@ using Mockolate.Interactions;
 
 namespace Mockolate.Setup;
 
+#pragma warning disable S1939 // Inheritance list should not be redundant
 /// <summary>
 ///     Sets up the mock for <typeparamref name="T" />.
 /// </summary>
@@ -497,3 +498,4 @@ public class MockSetup<T>(IMock mock, string prefix) : IMockSetup,
 
 	#endregion IMockSetup
 }
+#pragma warning restore S1939 // Inheritance list should not be redundant

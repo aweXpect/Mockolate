@@ -87,6 +87,11 @@ internal record Method
 		=> Name == "GetHashCode" && Parameters.Count == 0;
 
 	public bool IsEquals()
-		=> Name == "Equals" && Parameters.Count == 1 &&
-		   Parameters.Single().Type.Fullname == "object" && Parameters.Single().Type.Namespace == "System";
+	{
+		return Name == "Equals" && Parameters.Count == 1 &&IsObjectOrNullableObject(Parameters.Single());
+
+		static bool IsObjectOrNullableObject(MethodParameter parameter)
+			=> parameter.Type.Namespace == "System" &&
+			  (parameter.Type.Fullname == "object" || parameter.Type.Fullname == "object?");
+	}
 }

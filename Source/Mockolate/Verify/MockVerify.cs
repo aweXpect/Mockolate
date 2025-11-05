@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -6,6 +5,7 @@ using Mockolate.Internals;
 namespace Mockolate.Verify;
 
 #pragma warning disable S2326 // Unused type parameters should be removed
+#pragma warning disable S1939 // Inheritance list should not be redundant
 /// <summary>
 ///     Verifies the <paramref name="interactions" /> with the mocked subject in the <typeparamref name="TMock" />
 ///     <paramref name="mock" />.
@@ -164,4 +164,5 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, str
 		return ((IMockInvoked<IMockVerify<T, TMock>>)this).Method(prefix + ".GetHashCode");
 	}
 }
+#pragma warning restore S1939 // Inheritance list should not be redundant
 #pragma warning restore S2326 // Unused type parameters should be removed

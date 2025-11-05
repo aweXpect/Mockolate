@@ -1,4 +1,3 @@
-using System.Threading;
 using Mockolate.Interactions;
 
 namespace Mockolate.Verify;

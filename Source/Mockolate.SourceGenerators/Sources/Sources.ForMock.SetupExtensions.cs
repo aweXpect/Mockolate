@@ -115,7 +115,7 @@ internal static partial class Sources
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<").Append(@class.ClassFullName).Append(">")
 				.Append("Property").AppendLine();
-			sb.Append("\t\t\t=> setup as I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<").Append(@class.ClassFullName).Append(">;").AppendLine();
+			sb.Append("\t\t\t=> (I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<").Append(@class.ClassFullName).Append(">)setup;").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
@@ -246,7 +246,7 @@ internal static partial class Sources
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup").Append(hasToString ? "WithToString" : "").Append(hasEquals ? "WithEquals" : "").Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.ClassFullName).Append(">")
 				.Append(" Method").AppendLine();
-			sb.Append("\t\t\t=> setup as I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup").Append(hasToString ? "WithToString" : "").Append(hasEquals ? "WithEquals" : "").Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.ClassFullName).Append(">")
+			sb.Append("\t\t\t=> (I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup").Append(hasToString ? "WithToString" : "").Append(hasEquals ? "WithEquals" : "").Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.ClassFullName).Append(">)setup")
 				.Append(";").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();

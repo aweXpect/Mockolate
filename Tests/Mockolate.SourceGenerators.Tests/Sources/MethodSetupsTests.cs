@@ -166,6 +166,9 @@ public sealed class MethodSetupsTests
 		bool Equals(object obj);
 		""", "IMockMethodSetupWithEquals")]
 	[InlineData("""
+		bool Equals(object? obj);
+		""", "IMockMethodSetupWithEquals")]
+	[InlineData("""
 		int GetHashCode();
 		""", "IMockMethodSetupWithGetHashCode")]
 	public async Task WhenImplementingObjectMethods_ShouldUseSpecialInterfaces(string methods, string expectedType)

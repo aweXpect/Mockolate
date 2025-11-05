@@ -89,7 +89,6 @@ public sealed class VerifyInvokedTests
 	[Fact]
 	public async Task ToString_ShouldWork()
 	{
-		var expectedResult = Guid.NewGuid().ToString();
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
 
 		var result = mock.Subject.ToString();
@@ -100,13 +99,11 @@ public sealed class VerifyInvokedTests
 	[Fact]
 	public async Task GetHashCode_ShouldWork()
 	{
-		int expectedResult = Guid.NewGuid().GetHashCode();
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
 
 		var result = mock.Subject.GetHashCode();
 
-		//TODO
-		//await That(mock.Verify.Invoked.GetHashCode()).Once();
+		await That(mock.Verify.Invoked.GetHashCode()).Once();
 	}
 
 	[Fact]
@@ -117,7 +114,6 @@ public sealed class VerifyInvokedTests
 
 		var result = mock.Subject.Equals(obj);
 
-		//TODO
-		//await That(mock.Verify.Invoked.Equals(obj)).Once();
+		await That(mock.Verify.Invoked.Equals(obj)).Once();
 	}
 }
