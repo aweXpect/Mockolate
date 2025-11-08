@@ -411,7 +411,7 @@ internal static partial class Sources
 				         .GroupBy(m => m.Name)
 				         .Where(g => g.Count() == 1)
 				         .Select(g => g.Single())
-				         .Where(m => m.Parameters.Count > 1 && m.Parameters.All(x => x.RefKind == RefKind.None)))
+				         .Where(m => m.Parameters.Count > 0))
 			{
 				if (count++ > 0)
 				{

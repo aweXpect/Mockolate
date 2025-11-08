@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -87,11 +88,28 @@ public class VoidMethodSetup(string name) : MethodSetup
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1>(string name, Match.NamedParameter match1) : MethodSetup
+public class VoidMethodSetup<T1> : MethodSetup
 {
 	private readonly List<Action<T1>> _callbacks = [];
 	private readonly List<Action<T1>> _returnCallbacks = [];
+	private readonly string _name;
+	private readonly Match.IParameters? _matches;
+	private readonly Match.NamedParameter? _match1;
 	private int _currentReturnCallbackIndex = -1;
+
+	/// <inheritdoc cref="VoidMethodSetup{T1}" />
+	public VoidMethodSetup(string name, Match.NamedParameter match1)
+	{
+		_name = name;
+		_match1 = match1;
+	}
+
+	/// <inheritdoc cref="VoidMethodSetup{T1}" />
+	public VoidMethodSetup(string name, Match.IParameters matches)
+	{
+		_name = name;
+		_matches = matches;
+	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -169,12 +187,16 @@ public class VoidMethodSetup<T1>(string name, Match.NamedParameter match1) : Met
 
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && Matches([match1,], invocation.Parameters);
+		=> invocation.Name.Equals(_name) &&
+		   (_matches is not null
+			   ? _matches.Matches(invocation.Parameters)
+			   : Matches([_match1!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1,], parameterName, out Match.IOutParameter<T>? outParameter))
+		if (_match1 is not null &&
+			HasOutParameter([_match1,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(behavior);
 		}
@@ -185,7 +207,8 @@ public class VoidMethodSetup<T1>(string name, Match.NamedParameter match1) : Met
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1,], parameterName, out Match.IRefParameter<T>? refParameter))
+		if (_match1 is not null &&
+			HasRefParameter([_match1,], parameterName, out Match.IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -194,7 +217,10 @@ public class VoidMethodSetup<T1>(string name, Match.NamedParameter match1) : Met
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"void {name}({match1})";
+	public override string ToString()
+		=> _matches is not null
+			? $"void {_name}({_matches})"
+			: $"void {_name}({_match1})";
 }
 
 /// <summary>
@@ -311,12 +337,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (_match1 is null || _match2 is null)
-		{
-			throw new MockException("The method setup with parameters does not support out parameters.");
-		}
-
-		if (HasOutParameter([_match1, _match2,], parameterName, out Match.IOutParameter<T>? outParameter))
+		if (_match1 is not null && _match2 is not null &&
+			HasOutParameter([_match1, _match2,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(behavior);
 		}
@@ -327,12 +349,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (_match1 is null || _match2 is null)
-		{
-			throw new MockException("The method setup with parameters does not support ref parameters.");
-		}
-
-		if (HasRefParameter([_match1, _match2,], parameterName, out Match.IRefParameter<T>? refParameter))
+		if (_match1 is not null && _match2 is not null &&
+			HasRefParameter([_match1, _match2,], parameterName, out Match.IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -468,12 +486,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (_match1 is null || _match2 is null || _match3 is null)
-		{
-			throw new MockException("The method setup with parameters does not support out parameters.");
-		}
-
-		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out Match.IOutParameter<T>? outParameter))
+		if (_match1 is not null && _match2 is not null && _match3 is not null &&
+			HasOutParameter([_match1, _match2, _match3,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(behavior);
 		}
@@ -484,12 +498,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (_match1 is null || _match2 is null || _match3 is null)
-		{
-			throw new MockException("The method setup with parameters does not support ref parameters.");
-		}
-
-		if (HasRefParameter([_match1, _match2, _match3,], parameterName, out Match.IRefParameter<T>? refParameter))
+		if (_match1 is not null && _match2 is not null && _match3 is not null &&
+			HasRefParameter([_match1, _match2, _match3,], parameterName, out Match.IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -629,12 +639,8 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (_match1 is null || _match2 is null || _match3 is null || _match4 is null)
-		{
-			throw new MockException("The method setup with parameters does not support out parameters.");
-		}
-
-		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName, out Match.IOutParameter<T>? outParameter))
+		if (_match1 is not null && _match2 is not null && _match3 is not null && _match4 is not null &&
+			HasOutParameter([_match1, _match2, _match3, _match4,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(behavior);
 		}
@@ -645,12 +651,8 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (_match1 is null || _match2 is null || _match3 is null || _match4 is null)
-		{
-			throw new MockException("The method setup with parameters does not support ref parameters.");
-		}
-
-		if (HasRefParameter([_match1, _match2, _match3, _match4,], parameterName, out Match.IRefParameter<T>? refParameter))
+		if (_match1 is not null && _match2 is not null && _match3 is not null && _match4 is not null &&
+			HasRefParameter([_match1, _match2, _match3, _match4,], parameterName, out Match.IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
