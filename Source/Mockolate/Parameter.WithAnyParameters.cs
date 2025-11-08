@@ -2,6 +2,7 @@ using Mockolate.Match;
 
 namespace Mockolate;
 
+#pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
 public partial class Parameter
 {
 	/// <summary>
@@ -20,3 +21,4 @@ public partial class Parameter
 		public override string ToString() => $"WithAnyParameters()";
 	}
 }
+#pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

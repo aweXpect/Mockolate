@@ -3,6 +3,7 @@ using Mockolate.Match;
 
 namespace Mockolate;
 
+#pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
 public partial class Parameter
 {
 	/// <summary>
@@ -19,3 +20,4 @@ public partial class Parameter
 		public override string ToString() => $"Null<{typeof(T).FormatType()}>()";
 	}
 }
+#pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

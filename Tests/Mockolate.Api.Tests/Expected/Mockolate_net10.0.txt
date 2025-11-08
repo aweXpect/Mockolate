@@ -297,7 +297,7 @@ namespace Mockolate.Interactions
 }
 namespace Mockolate.Match
 {
-    public interface IOutParameter<T> : Mockolate.Match.IParameter
+    public interface IOutParameter<out T> : Mockolate.Match.IParameter
     {
         T GetValue();
     }
