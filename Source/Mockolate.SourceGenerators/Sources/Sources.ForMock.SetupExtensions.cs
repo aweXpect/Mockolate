@@ -89,6 +89,31 @@ internal static partial class Sources
 			sb.AppendLine("\t\t}");
 		}
 
+		foreach (Event @event in @class.AllEvents()
+					 .Where(predicate)
+					 .GroupBy(m => m.Name)
+					 .Where(g => g.Count() == 1)
+					 .Select(g => g.Single())
+					 .Where(m => m.Delegate.Parameters.Count > 0))
+		{
+			if (count++ > 0)
+			{
+				sb.AppendLine();
+			}
+
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(".").Append(@event.Name.EscapeForXmlDoc())
+				.Append("\"/> event.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(Match.IDefaultEventParameters parameters)").AppendLine();
+			sb.AppendLine("\t\t{");
+			sb.Append("\t\t\tMockBehavior mockBehavior = ((IMockRaises)mock).Behavior;").AppendLine();
+			sb.Append("\t\t\t((IMockRaises)mock).Raise(").Append(@event.GetUniqueNameString()).Append(", ")
+				.Append(string.Join(", ", @event.Delegate.Parameters.Select(p => $"mockBehavior.DefaultValue.Generate<{p.Type.Fullname}>()"))).Append(");").AppendLine();
+			sb.AppendLine("\t\t}");
+		}
+
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 	}

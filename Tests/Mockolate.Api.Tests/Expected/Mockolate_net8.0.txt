@@ -46,6 +46,8 @@ namespace Mockolate
         public static Mockolate.Match.IParameter<T> With<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Match.IParameter<T> WithAny<T>() { }
         public static Mockolate.Match.IParameters WithAnyParameters() { }
+        public static Mockolate.Match.IDefaultEventParameters WithDefaultParameters() { }
+        public interface IDefaultEventParameters { }
         public interface IOutParameter<out T> : Mockolate.Match.IParameter
         {
             T GetValue(Mockolate.MockBehavior mockBehavior);
@@ -204,6 +206,7 @@ namespace Mockolate.Events
 {
     public interface IMockRaises
     {
+        Mockolate.MockBehavior Behavior { get; }
         Mockolate.Interactions.MockInteractions Interactions { get; }
         Mockolate.Setup.IMockSetup Setup { get; }
         void AddEvent(string name, object? target, System.Reflection.MethodInfo? method);

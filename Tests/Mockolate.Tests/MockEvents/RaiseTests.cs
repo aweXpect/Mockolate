@@ -90,6 +90,23 @@ public sealed partial class RaiseTests
 		await That(callCount).IsEqualTo(2);
 	}
 
+	[Fact]
+	public async Task WhenUsingRaise_WithAnyParameters_ShouldInvokeEvent()
+	{
+		int callCount = 0;
+		Mock<IRaiseEvent> mock = Mock.Create<IRaiseEvent>();
+		EventHandler handler = (s, e) => { callCount++; };
+
+		mock.Subject.SomeEvent += handler;
+		mock.Raise.SomeEvent(WithDefaultParameters());
+		mock.Raise.SomeEvent(WithDefaultParameters());
+		mock.Subject.SomeEvent -= handler;
+		mock.Raise.SomeEvent(WithDefaultParameters());
+		mock.Raise.SomeEvent(WithDefaultParameters());
+
+		await That(callCount).IsEqualTo(2);
+	}
+
 	public interface IMyEventService : IMyEventServiceBase1
 	{
 		new event EventHandler<string> SomeEvent;

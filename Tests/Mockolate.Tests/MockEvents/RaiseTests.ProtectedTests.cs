@@ -75,6 +75,23 @@ public sealed partial class RaiseTests
 			await That(callCount).IsEqualTo(2);
 		}
 
+		[Fact]
+		public async Task WhenUsingRaise_WithAnyParameters_ShouldInvokeEvent()
+		{
+			int callCount = 0;
+			Mock<MyRaiseEvent> mock = Mock.Create<MyRaiseEvent>();
+			EventHandler handler = (s, e) => { callCount++; };
+
+			mock.Subject.SubscribeToSomeEvent += handler;
+			mock.Raise.Protected.SomeEvent(WithDefaultParameters());
+			mock.Raise.Protected.SomeEvent(WithDefaultParameters());
+			mock.Subject.SubscribeToSomeEvent -= handler;
+			mock.Raise.Protected.SomeEvent(WithDefaultParameters());
+			mock.Raise.Protected.SomeEvent(WithDefaultParameters());
+
+			await That(callCount).IsEqualTo(2);
+		}
+
 #pragma warning disable CS0067 // Event is never used
 #pragma warning disable CA1070 // Do not declare event fields as virtual
 		public class MyRaiseEvent

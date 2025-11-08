@@ -11,6 +11,10 @@ namespace Mockolate.Events;
 /// </summary>
 public class MockRaises<T>(IMockSetup setup, MockInteractions interactions) : IMockRaises
 {
+	/// <inheritdoc cref="IMockRaises.Behavior" />
+	MockBehavior IMockRaises.Behavior
+		=> setup.Mock.Behavior;
+
 	/// <inheritdoc cref="IMockRaises.Setup" />
 	IMockSetup IMockRaises.Setup
 		=> setup;
