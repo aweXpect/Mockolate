@@ -36,7 +36,7 @@ public class ExampleTests
 	{
 		Mock<HttpMessageHandler> mock = Mock.Create<HttpMessageHandler>();
 		mock.Setup.Protected.Method
-			.SendAsync(Parameter.WithAny<HttpRequestMessage>(), Parameter.WithAny<CancellationToken>())
+			.SendAsync(Match.WithAny<HttpRequestMessage>(), Match.WithAny<CancellationToken>())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 
 		HttpClient httpClient = new(mock.Subject);

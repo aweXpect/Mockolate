@@ -21,8 +21,8 @@ public interface IChocolateDispenser
 
 ```csharp
 var mock = Mock.Create<IChocolateDispenser>();
-mock.Setup.Method.Dispense("Dark", 2).Returns(true);
-mock.Setup.Indexer("Dark").Returns(10);
+mock.Setup.Method.Dispense(With("Dark"), With(2)).Returns(true);
+mock.Setup.Indexer(With("Dark")).Returns(10);
 ```
 
 **Moq**
@@ -88,8 +88,8 @@ fake.ChocolateDispensed += Raise.FreeForm.With("Dark", 2);
 **Mockolate**
 
 ```csharp
-mock.Verify.Invoked.Dispense("Dark", 2).Once();
-mock.Verify.GotIndexer("Dark").Once();
+mock.Verify.Invoked.Dispense(With("Dark"), With(2)).Once();
+mock.Verify.GotIndexer(With("Dark")).Once();
 ```
 
 **Moq**

@@ -13,7 +13,6 @@ internal static partial class Sources
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Events",
-			"Mockolate.Match",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
 		]);
@@ -129,9 +128,9 @@ internal static partial class Sources
 
 			sb.Append(parameter.RefKind switch
 				{
-					RefKind.Ref => "IRefParameter<",
-					RefKind.Out => "IOutParameter<",
-					_ => "IParameter<",
+					RefKind.Ref => "Match.IRefParameter<",
+					RefKind.Out => "Match.IOutParameter<",
+					_ => "Match.IParameter<",
 				}).Append(parameter.Type.Fullname)
 				.Append('>');
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
@@ -190,10 +189,10 @@ internal static partial class Sources
 		sb.Append("(\"").Append(mockClass.ClassFullName).Append('.').Append(method.Name).Append("\"");
 		foreach (MethodParameter parameter in method.Parameters)
 		{
-			sb.Append(", new NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
+			sb.Append(", new Match.NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
-				sb.Append(" ?? Parameter.Null<").Append(parameter.Type.Fullname)
+				sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
 					.Append(">()");
 			}
 
@@ -234,9 +233,9 @@ internal static partial class Sources
 
 			sb.Append(parameter.RefKind switch
 				{
-					RefKind.Ref => "IVerifyRefParameter<",
-					RefKind.Out => "IVerifyOutParameter<",
-					_ => "IParameter<",
+					RefKind.Ref => "Match.IVerifyRefParameter<",
+					RefKind.Out => "Match.IVerifyOutParameter<",
+					_ => "Match.IParameter<",
 				}).Append(parameter.Type.Fullname)
 				.Append('>');
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
@@ -262,7 +261,7 @@ internal static partial class Sources
 			sb.Append(parameter.Name);
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
-				sb.Append(" ?? Parameter.Null<").Append(parameter.Type.Fullname)
+				sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
 					.Append(">()");
 			}
 		}
@@ -458,9 +457,9 @@ internal static partial class Sources
 
 				sb.Append(parameter.RefKind switch
 					{
-						RefKind.Ref => "IVerifyRefParameter<",
-						RefKind.Out => "IVerifyOutParameter<",
-						_ => "IParameter<",
+						RefKind.Ref => "Match.IVerifyRefParameter<",
+						RefKind.Out => "Match.IVerifyOutParameter<",
+						_ => "Match.IParameter<",
 					}).Append(parameter.Type.Fullname)
 					.Append('>');
 				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
@@ -490,7 +489,7 @@ internal static partial class Sources
 				sb.Append(parameter.Name);
 				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 				{
-					sb.Append(" ?? Parameter.Null<").Append(parameter.Type.Fullname)
+					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
 						.Append(">()");
 				}
 			}
@@ -521,7 +520,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<IMockVerify<").Append(@class.ClassFullName).Append(", Mock<")
-				.Append(allClasses).Append(">>> ").Append(method.Name).Append("(IParameters parameters)");
+				.Append(allClasses).Append(">>> ").Append(method.Name).Append("(Match.IParameters parameters)");
 			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 			{
 				foreach (GenericParameter gp in method.GenericParameters.Value)
@@ -666,7 +665,7 @@ internal static partial class Sources
 			sb.Append("\t\tpublic VerificationResult<IMockVerify<").Append(@class.ClassFullName).Append(", Mock<")
 				.Append(allClasses).Append(">>> Got").Append(isProtected ? "Protected" : "").Append("Indexer")
 				.Append("(").Append(string.Join(", ",
-					indexerParameters.Value.Select((p, i) => $"IParameter<{p.Type.Fullname}>? parameter{i + 1}")))
+					indexerParameters.Value.Select((p, i) => $"Match.IParameter<{p.Type.Fullname}>? parameter{i + 1}")))
 				.Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tIMockVerifyGotIndexer<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses)
@@ -758,7 +757,7 @@ internal static partial class Sources
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<IMockVerify<").Append(@class.ClassFullName).Append(", Mock<")
-				.Append(allClasses).Append(">>> ").Append(property.Name).Append("(IParameter<")
+				.Append(allClasses).Append(">>> ").Append(property.Name).Append("(Match.IParameter<")
 				.Append(property.Type.Fullname).Append("> value)").AppendLine();
 			sb.Append("\t\t\t=> ((IMockSet<IMockVerify<").Append(@class.ClassFullName).Append(", Mock<")
 				.Append(allClasses).Append(">>>)mock).Property(").Append(property.GetUniqueNameString())
@@ -811,7 +810,7 @@ internal static partial class Sources
 				.Append("(")
 				.Append(string.Join(", ",
 					indexer.IndexerParameters.Value.Select((p, i)
-						=> $"IParameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(", IParameter<")
+						=> $"Match.IParameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(", Match.IParameter<")
 				.Append(indexer.Type.Fullname).Append(">? value)").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tIMockVerifySetIndexer<").Append(@class.ClassFullName).Append(", Mock<").Append(allClasses)

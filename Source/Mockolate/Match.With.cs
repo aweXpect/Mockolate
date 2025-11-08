@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
-using Mockolate.Match;
 
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
-public partial class Parameter
+public partial class Match
 {
 	/// <summary>
 	///     Matches a parameter that is equal to <paramref name="value" />.

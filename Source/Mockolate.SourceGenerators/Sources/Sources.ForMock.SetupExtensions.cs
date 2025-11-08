@@ -12,7 +12,6 @@ internal static partial class Sources
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Events",
-			"Mockolate.Match",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
 		]);
@@ -139,7 +138,7 @@ internal static partial class Sources
 				sb.Append("\t\tpublic PropertySetup<").Append(property.Type.Fullname).Append("> ")
 					.Append(property.IndexerParameters is not null
 						? property.Name.Replace("[]",
-							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"IParameter<{p.Type.Fullname}> {p.Name}"))}]")
+							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"Match.IParameter<{p.Type.Fullname}> {p.Name}"))}]")
 						: property.Name).AppendLine();
 
 				sb.AppendLine("\t\t{");
@@ -201,7 +200,7 @@ internal static partial class Sources
 
 				sb.Append("> Indexer").Append("(").Append(string.Join(", ",
 					indexer.IndexerParameters.Value.Select((p, i)
-						=> $"IParameter<{p.Type.Fullname}> parameter{i + 1}"))).Append(")").AppendLine();
+						=> $"Match.IParameter<{p.Type.Fullname}> parameter{i + 1}"))).Append(")").AppendLine();
 				sb.Append("\t\t{").AppendLine();
 				sb.Append("\t\t\tvar indexerSetup = new IndexerSetup<").Append(indexer.Type.Fullname);
 				foreach (MethodParameter parameter in indexer.IndexerParameters!)
@@ -327,9 +326,9 @@ internal static partial class Sources
 
 					sb.Append(parameter.RefKind switch
 						{
-							RefKind.Ref => "IRefParameter<",
-							RefKind.Out => "IOutParameter<",
-							_ => "IParameter<",
+							RefKind.Ref => "Match.IRefParameter<",
+							RefKind.Out => "Match.IOutParameter<",
+							_ => "Match.IParameter<",
 						}).Append(parameter.Type.Fullname)
 						.Append('>');
 					if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
@@ -387,11 +386,11 @@ internal static partial class Sources
 				sb.Append("(").Append(method.GetUniqueNameString());
 				foreach (MethodParameter parameter in method.Parameters)
 				{
-					sb.Append(", new NamedParameter(\"").Append(parameter.Name).Append("\", ")
+					sb.Append(", new Match.NamedParameter(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name);
 					if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 					{
-						sb.Append(" ?? Parameter.Null<").Append(parameter.Type.Fullname)
+						sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
 							.Append(">()");
 					}
 
@@ -450,7 +449,7 @@ internal static partial class Sources
 						.Append("> ").Append(method.Name).Append("(");
 				}
 
-				sb.Append("IParameters parameters)");
+				sb.Append("Match.IParameters parameters)");
 				if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 				{
 					foreach (GenericParameter gp in method.GenericParameters.Value)

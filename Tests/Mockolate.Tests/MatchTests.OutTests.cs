@@ -1,8 +1,6 @@
-using Mockolate.Match;
-
 namespace Mockolate.Tests;
 
-public sealed partial class ParameterTests
+public sealed partial class MatchTests
 {
 	public sealed class OutTests
 	{

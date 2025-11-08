@@ -52,11 +52,11 @@ mock.Setup.Method.DispenseAsync(WithAny<string>(), WithAny<int>())
 
 Mockolate provides flexible argument matching for method setups and verifications:
 
-- `Parameter.WithAny<T>()`: Matches any value of type `T`.
-- `Parameter.With<T>(predicate)`: Matches values based on a predicate.
-- `Parameter.With<T>(value)`: Matches a specific value.
-- `Parameter.Null<T>()`: Matches null.
-- `Parameter.Out<T>(…)`/`Parameter.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and
+- `Match.WithAny<T>()`: Matches any value of type `T`.
+- `Match.With<T>(predicate)`: Matches values based on a predicate.
+- `Match.With<T>(value)`: Matches a specific value.
+- `Match.Null<T>()`: Matches null.
+- `Match.Out<T>(…)`/`Match.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and
   predicates.
 
 ## Property Setup

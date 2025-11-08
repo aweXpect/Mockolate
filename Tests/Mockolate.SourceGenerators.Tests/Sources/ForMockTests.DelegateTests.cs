@@ -27,9 +27,9 @@ public sealed partial class ForMockTests
 			.DoesNotContainKey("ForProgramDoSomething.SetupExtensions.g.cs").And
 			.ContainsKey("ForProgramDoSomething.Extensions.g.cs").WhoseValue
 			.Contains("""
-			          		public ReturnMethodSetup<int, int, int> Delegate(IParameter<int>? x, IParameter<int>? y)
+			          		public ReturnMethodSetup<int, int, int> Delegate(Match.IParameter<int>? x, Match.IParameter<int>? y)
 			          		{
-			          			var methodSetup = new ReturnMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", x ?? Parameter.Null<int>()), new NamedParameter("y", y ?? Parameter.Null<int>()));
+			          			var methodSetup = new ReturnMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", x ?? Match.Null<int>()), new Match.NamedParameter("y", y ?? Match.Null<int>()));
 			          			if (setup is IMockSetup mockSetup)
 			          			{
 			          				mockSetup.RegisterMethod(methodSetup);
@@ -38,10 +38,10 @@ public sealed partial class ForMockTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(IParameter<int>? x, IParameter<int>? y)
+			          		public VerificationResult<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(Match.IParameter<int>? x, Match.IParameter<int>? y)
 			          		{
 			          			IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = (IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>>)verify;
-			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? Parameter.Null<int>(), y ?? Parameter.Null<int>());
+			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? Match.Null<int>(), y ?? Match.Null<int>());
 			          		}
 			          """).IgnoringNewlineStyle();
 	}
@@ -71,9 +71,9 @@ public sealed partial class ForMockTests
 			.DoesNotContainKey("ForProgramDoSomething.SetupExtensions.g.cs").And
 			.ContainsKey("ForProgramDoSomething.Extensions.g.cs").WhoseValue
 			.Contains("""
-			          		public VoidMethodSetup<int, int, int> Delegate(IParameter<int>? x, IRefParameter<int> y, IOutParameter<int> z)
+			          		public VoidMethodSetup<int, int, int> Delegate(Match.IParameter<int>? x, Match.IRefParameter<int> y, Match.IOutParameter<int> z)
 			          		{
-			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", x ?? Parameter.Null<int>()), new NamedParameter("y", y), new NamedParameter("z", z));
+			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", x ?? Match.Null<int>()), new Match.NamedParameter("y", y), new Match.NamedParameter("z", z));
 			          			if (setup is IMockSetup mockSetup)
 			          			{
 			          				mockSetup.RegisterMethod(methodSetup);
@@ -82,10 +82,10 @@ public sealed partial class ForMockTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(IParameter<int>? x, IVerifyRefParameter<int> y, IVerifyOutParameter<int> z)
+			          		public VerificationResult<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(Match.IParameter<int>? x, Match.IVerifyRefParameter<int> y, Match.IVerifyOutParameter<int> z)
 			          		{
 			          			IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = (IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>>)verify;
-			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? Parameter.Null<int>(), y, z);
+			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? Match.Null<int>(), y, z);
 			          		}
 			          """).IgnoringNewlineStyle();
 	}

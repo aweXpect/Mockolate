@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Mockolate.Match;
 
 namespace Mockolate.Tests;
 
-public sealed partial class ParameterTests
+public sealed partial class MatchTests
 {
 	[Fact]
 	public async Task ShouldOnlyHaveOneParameterlessPrivateConstructor()
 	{
-		ConstructorInfo[] constructors = typeof(Parameter)
+		ConstructorInfo[] constructors = typeof(Match)
 			.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
 
 		await That(constructors).HasSingle().Which

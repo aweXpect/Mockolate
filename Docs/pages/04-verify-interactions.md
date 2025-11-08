@@ -33,14 +33,14 @@ mock.Verify.Invoked.Dispense(WithAnyParameters()).Exactly(2);
 
 ### Argument Matchers
 
-You can use argument matchers from the `Parameter` class to verify calls with flexible conditions:
+You can use argument matchers from the `Match` class to verify calls with flexible conditions:
 
-- `Parameter.WithAny<T>()`: matches any value of type `T`
-- `Parameter.Null<T>()`: matches `null`
-- `Parameter.With<T>(predicate)`: matches values satisfying a predicate
-- `Parameter.With(value)`: matches a specific value
-- `Parameter.Out<T>()`: matches any out parameter of type `T`
-- `Parameter.Ref<T>()`: matches any ref parameter of type `T`
+- `Match.WithAny<T>()`: matches any value of type `T`
+- `Match.Null<T>()`: matches `null`
+- `Match.With<T>(predicate)`: matches values satisfying a predicate
+- `Match.With(value)`: matches a specific value
+- `Match.Out<T>()`: matches any out parameter of type `T`
+- `Match.Ref<T>()`: matches any ref parameter of type `T`
 
 **Example:**
 

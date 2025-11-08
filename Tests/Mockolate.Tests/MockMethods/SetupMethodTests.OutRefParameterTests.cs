@@ -1,6 +1,5 @@
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
-using Mockolate.Match;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockMethods;
