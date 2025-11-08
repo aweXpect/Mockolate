@@ -8,7 +8,7 @@ Use `mock.Setup.Method.MethodName(…)` to set up methods. You can specify argum
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-mock.Setup.Method.Dispense("Dark", With.Any<int>())
+mock.Setup.Method.Dispense(With("Dark"), WithAny<int>())
     .Returns((type, amount) =>
     {
         var current = mock.Subject[type];
@@ -22,11 +22,11 @@ mock.Setup.Method.Dispense("Dark", With.Any<int>())
     });
 
 // Setup method with callback
-mock.Setup.Method.Dispense("White", With.Any<int>())
+mock.Setup.Method.Dispense(With("White"), WithAny<int>())
     .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
-mock.Setup.Method.Dispense("Green", With.Any<int>())
+mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
     .Throws(() => new InvalidChocolateException());
 ```
 
@@ -40,7 +40,7 @@ mock.Setup.Method.Dispense("Green", With.Any<int>())
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
 
 ```csharp
-mock.Setup.Method.DispenseAsync(With.Any<string>(), With.Any<int>())
+mock.Setup.Method.DispenseAsync(WithAny<string>(), WithAny<int>())
     .ReturnsAsync(true);
 ```
 
@@ -48,12 +48,11 @@ mock.Setup.Method.DispenseAsync(With.Any<string>(), With.Any<int>())
 
 Mockolate provides flexible argument matching for method setups and verifications:
 
-- `With.Any<T>()`: Matches any value of type `T`.
+- `Parameter.WithAny<T>()`: Matches any value of type `T`.
 - `Parameter.With<T>(predicate)`: Matches values based on a predicate.
 - `Parameter.With<T>(value)`: Matches a specific value.
 - `Parameter.Null<T>()`: Matches null.
 - `Parameter.Out<T>(…)`/`Parameter.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and predicates.
-- For .NET 8+: `With.ValueBetween<T>(min).And(max)` matches a range (numeric types).
 
 ## Property Setup
 
@@ -93,11 +92,11 @@ mock.Setup.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.WriteLi
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-mock.Setup.Indexer(With.Any<string>())
+mock.Setup.Indexer(WithAny<string>())
     .InitializeWith(type => 20)
     .OnGet(type => Console.WriteLine($"Stock for {type} was read"));
 
-mock.Setup.Indexer("Dark")
+mock.Setup.Indexer(With("Dark"))
     .InitializeWith(10)
     .OnSet((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
 ```

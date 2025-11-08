@@ -20,34 +20,31 @@ You can verify that methods were invoked with specific arguments and how many ti
 
 ```csharp
 // Verify that Dispense("Dark", 5) was invoked at least once
-mock.Verify.Invoked.Dispense("Dark", 5).AtLeastOnce();
+mock.Verify.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-mock.Verify.Invoked.Dispense("White", With.Any<int>()).Never();
+mock.Verify.Invoked.Dispense(With("White"), WithAny<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-mock.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>()).Exactly(2);
+mock.Verify.Invoked.Dispense(WithAnyParameters()).Exactly(2);
 ```
 
 ### Argument Matchers
 
-You can use argument matchers from the `With` class to verify calls with flexible conditions:
+You can use argument matchers from the `Parameter` class to verify calls with flexible conditions:
 
-- `With.Any<T>()` — matches any value of type `T`
-- `Parameter.Null<T>()` — matches `null`
-- `Parameter.With<T>(predicate)` — matches values satisfying a predicate
-- `Parameter.With(value)` — matches a specific value
-- `Parameter.Out<T>()` — matches any out parameter of type `T`
-- `Parameter.Ref<T>()` — matches any ref parameter of type `T`
-- `Parameter.Out<T>(setter)` — matches and sets an out parameter
-- `Parameter.Ref<T>(setter)` — matches and sets a ref parameter
-- `With.ValueBetween<T>(min).And(max)` — matches a value between min and max (for numeric types, .NET 8+)
+- `Parameter.WithAny<T>()`: matches any value of type `T`
+- `Parameter.Null<T>()`: matches `null`
+- `Parameter.With<T>(predicate)`: matches values satisfying a predicate
+- `Parameter.With(value)`: matches a specific value
+- `Parameter.Out<T>()`: matches any out parameter of type `T`
+- `Parameter.Ref<T>()`: matches any ref parameter of type `T`
 
 **Example:**
 
 ```csharp
-mock.Verify.Invoked.Dispense(Parameter.With<string>(t => t.StartsWith("D")), With.ValueBetween(1).And(10)).Once();
-mock.Verify.Invoked.Dispense("Milk", With.ValueBetween(1).And(5)).AtLeastOnce();
+mock.Verify.Invoked.Dispense(With<string>(t => t.StartsWith("D")), WithAny<int>()).Once();
+mock.Verify.Invoked.Dispense(With("Milk"), WithAny<int>()).AtLeastOnce();
 ```
 
 ## Properties
@@ -59,7 +56,7 @@ You can verify access to property getter and setter:
 mock.Verify.Got.TotalDispensed().AtLeastOnce();
 
 // Verify that the property 'TotalDispensed' was set to 42 exactly once
-mock.Verify.Set.TotalDispensed(42).Once();
+mock.Verify.Set.TotalDispensed(With(42)).Once();
 ```
 
 **Note:**  
@@ -71,10 +68,10 @@ You can verify access to indexer getter and setter:
 
 ```csharp
 // Verify that the indexer was read with key "Dark" exactly once
-mock.Verify.GotIndexer("Dark").Once();
+mock.Verify.GotIndexer(With("Dark")).Once();
 
 // Verify that the indexer was set with key "Milk" to value 7 at least once
-mock.Verify.SetIndexer("Milk", 7).AtLeastOnce();
+mock.Verify.SetIndexer(With("Milk"), 7).AtLeastOnce();
 ```
 
 **Note:**  
@@ -97,17 +94,17 @@ mock.Verify.UnsubscribedFrom.ChocolateDispensed().Once();
 Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
-mock.Verify.Invoked.Dispense("Dark", 2).Then(
-    m => m.Invoked.Dispense("Dark", 3)
+mock.Verify.Invoked.Dispense(With("Dark"), With(2)).Then(
+    m => m.Invoked.Dispense(With("Dark"), With(3))
 );
 ```
 
 You can chain multiple calls for strict order verification:
 
 ```csharp
-mock.Verify.Invoked.Dispense("Dark", 1).Then(
-    m => m.Invoked.Dispense("Milk", 2),
-    m => m.Invoked.Dispense("White", 3));
+mock.Verify.Invoked.Dispense(With("Dark"), With(1)).Then(
+    m => m.Invoked.Dispense(With("Milk"), With(2)),
+    m => m.Invoked.Dispense(With("White"), With(3)));
 ```
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.
