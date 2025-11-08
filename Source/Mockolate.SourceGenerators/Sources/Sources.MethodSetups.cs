@@ -271,7 +271,7 @@ internal static partial class Sources
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out Match.IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\treturn outParameter.GetValue();").AppendLine();
+		sb.Append("\t\t\treturn outParameter.GetValue(behavior);").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\treturn behavior.DefaultValue.Generate<T>();").AppendLine();
@@ -574,7 +574,7 @@ internal static partial class Sources
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out Match.IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\treturn outParameter.GetValue();").AppendLine();
+		sb.Append("\t\t\treturn outParameter.GetValue(behavior);").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\treturn behavior.DefaultValue.Generate<T>();").AppendLine();

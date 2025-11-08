@@ -50,14 +50,14 @@ public partial class Match
 		/// <summary>
 		///     Retrieves the value to which the <see langword="out" /> parameter should be set.
 		/// </summary>
-		T GetValue();
+		T GetValue(MockBehavior mockBehavior);
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
-	public interface IVerifyOutParameter<out T> : IParameter
+	public interface IVerifyOutParameter<out T> : IOutParameter<T>
 	{
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
@@ -77,7 +77,7 @@ public partial class Match
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter.
 	/// </summary>
-	public interface IVerifyRefParameter<out T> : IParameter
+	public interface IVerifyRefParameter<T> : IRefParameter<T>
 	{
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed

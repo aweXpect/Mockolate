@@ -39,6 +39,7 @@ namespace Mockolate
         public static Mockolate.Match.IOutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IVerifyRefParameter<T> Ref<T>() { }
         public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Match.IParameter<T> With<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IParameter<T> With<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
@@ -47,7 +48,7 @@ namespace Mockolate
         public static Mockolate.Match.IParameters WithAnyParameters() { }
         public interface IOutParameter<out T> : Mockolate.Match.IParameter
         {
-            T GetValue();
+            T GetValue(Mockolate.MockBehavior mockBehavior);
         }
         public interface IParameter
         {
@@ -62,8 +63,8 @@ namespace Mockolate
         {
             T GetValue(T value);
         }
-        public interface IVerifyOutParameter<out T> : Mockolate.Match.IParameter { }
-        public interface IVerifyRefParameter<out T> : Mockolate.Match.IParameter { }
+        public interface IVerifyOutParameter<out T> : Mockolate.Match.IOutParameter<T>, Mockolate.Match.IParameter { }
+        public interface IVerifyRefParameter<T> : Mockolate.Match.IParameter, Mockolate.Match.IRefParameter<T> { }
         public class NamedParameter : System.IEquatable<Mockolate.Match.NamedParameter>
         {
             public NamedParameter(string Name, Mockolate.Match.IParameter Parameter) { }
