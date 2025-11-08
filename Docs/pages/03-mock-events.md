@@ -4,7 +4,8 @@ Easily raise events on your mock to test event handlers in your code.
 
 ## Raise
 
-Use the strongly-typed `Raise` property on your mock to trigger events declared on the mocked interface or class. The method signature matches the event delegate.
+Use the strongly-typed `Raise` property on your mock to trigger events declared on the mocked interface or class. The
+method signature matches the event delegate.
 
 ```csharp
 // Arrange: subscribe a handler to the event
@@ -30,4 +31,5 @@ mock.Raise.ChocolateDispensed("Milk", 2);
 // dispensedAmount == 5
 ```
 
-You can subscribe and unsubscribe handlers as needed. Only handlers subscribed at the time of raising the event will be called.
+You can subscribe and unsubscribe handlers as needed. Only handlers subscribed at the time of raising the event will be
+called.

@@ -1,6 +1,7 @@
 # Create mocks
 
-You can create mocks for interfaces and classes. For classes without a default constructor, use `BaseClass.WithConstructorParameters(…)` to provide constructor arguments:
+You can create mocks for interfaces and classes. For classes without a default constructor, use
+`BaseClass.WithConstructorParameters(…)` to provide constructor arguments:
 
 ```csharp
 // Create a mock for an interface
@@ -19,6 +20,7 @@ var mock3 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**
+
 - Only the first generic type can be a class; additional types must be interfaces.
 - Sealed classes cannot be mocked and will throw a `MockException`.
 

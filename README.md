@@ -195,7 +195,8 @@ Mockolate provides flexible argument matching for method setups and verification
 - `Parameter.With<T>(predicate)`: Matches values based on a predicate.
 - `Parameter.With<T>(value)`: Matches a specific value.
 - `Parameter.Null<T>()`: Matches null.
-- `Parameter.Out<T>(…)`/`Parameter.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and predicates.
+- `Parameter.Out<T>(…)`/`Parameter.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and
+  predicates.
 
 ### Property Setup
 

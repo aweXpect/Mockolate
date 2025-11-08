@@ -1,6 +1,7 @@
 # Setup
 
-Set up return values or behaviors for methods, properties, and indexers on your mock. Control how the mock responds to calls in your tests.
+Set up return values or behaviors for methods, properties, and indexers on your mock. Control how the mock responds to
+calls in your tests.
 
 ## Method Setup
 
@@ -31,9 +32,12 @@ mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
 ```
 
 - Use `.Callback(…)` to run code when the method is called. Supports parameterless or parameter callbacks.
-- Use `.Returns(…)` to specify the value to return. You can provide a direct value, a callback, or a callback with parameters.
-- Use `.Throws(…)` to specify an exception to throw. Supports direct exceptions, exception factories, or factories with parameters.
-- Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each call).
+- Use `.Returns(…)` to specify the value to return. You can provide a direct value, a callback, or a callback with
+  parameters.
+- Use `.Throws(…)` to specify an exception to throw. Supports direct exceptions, exception factories, or factories with
+  parameters.
+- Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each
+  call).
 
 **Async Methods**
 
@@ -52,7 +56,8 @@ Mockolate provides flexible argument matching for method setups and verification
 - `Parameter.With<T>(predicate)`: Matches values based on a predicate.
 - `Parameter.With<T>(value)`: Matches a specific value.
 - `Parameter.Null<T>()`: Matches null.
-- `Parameter.Out<T>(…)`/`Parameter.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and predicates.
+- `Parameter.Out<T>(…)`/`Parameter.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and
+  predicates.
 
 ## Property Setup
 
@@ -60,7 +65,8 @@ Set up property getters and setters to control or verify property access on your
 
 **Initialization**
 
-You can initialize properties so they work like normal properties (setter changes the value, getter returns the last set value):
+You can initialize properties so they work like normal properties (setter changes the value, getter returns the last set
+value):
 
 ```csharp
 mock.Setup.Property.TotalDispensed.InitializeWith(42);
@@ -102,6 +108,8 @@ mock.Setup.Indexer(With("Dark"))
 ```
 
 - `.InitializeWith(…)` can take a value or a callback with parameters.
-- `.Returns(…)` and `.Throws(…)` support direct values, callbacks, and callbacks with parameters and/or the current value.
+- `.Returns(…)` and `.Throws(…)` support direct values, callbacks, and callbacks with parameters and/or the current
+  value.
 - `.OnGet(…)` and `.OnSet(…)` support callbacks with or without parameters.
-- `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each call.
+- `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each
+  call.

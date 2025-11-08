@@ -18,7 +18,7 @@ public partial class Parameter
 			=> true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"WithAnyParameters()";
+		public override string ToString() => "WithAnyParameters()";
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

@@ -16,6 +16,7 @@ public sealed partial class ParameterTests
 
 			await That(result).IsEqualTo(expectedValue);
 		}
+
 		[Theory]
 		[InlineData(null, 1)]
 		[InlineData(1, 0)]

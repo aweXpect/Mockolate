@@ -7,17 +7,6 @@ public sealed partial class ParameterTests
 	public sealed class OutTests
 	{
 		[Fact]
-		public async Task ToString_Verify_ShouldReturnExpectedValue()
-		{
-			IVerifyOutParameter<int> sut = Out<int>();
-			string expectedValue = "Out<int>()";
-
-			string? result = sut.ToString();
-
-			await That(result).IsEqualTo(expectedValue);
-		}
-
-		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IOutParameter<int> sut = Out(() => 3);
@@ -27,16 +16,16 @@ public sealed partial class ParameterTests
 
 			await That(result).IsEqualTo(expectedValue);
 		}
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
-		public async Task WithOut_Verify_ShouldAlwaysMatch(object? value)
+
+		[Fact]
+		public async Task ToString_Verify_ShouldReturnExpectedValue()
 		{
-			IVerifyOutParameter<int?> sut = Out<int?>();
+			IVerifyOutParameter<int> sut = Out<int>();
+			string expectedValue = "Out<int>()";
 
-			bool result = sut.Matches(value);
+			string? result = sut.ToString();
 
-			await That(result).IsTrue();
+			await That(result).IsEqualTo(expectedValue);
 		}
 
 		[Theory]
@@ -61,6 +50,18 @@ public sealed partial class ParameterTests
 			int? result = sut.GetValue();
 
 			await That(result).IsEqualTo(value);
+		}
+
+		[Theory]
+		[InlineData(42L)]
+		[InlineData("foo")]
+		public async Task WithOut_Verify_ShouldAlwaysMatch(object? value)
+		{
+			IVerifyOutParameter<int?> sut = Out<int?>();
+
+			bool result = sut.Matches(value);
+
+			await That(result).IsTrue();
 		}
 	}
 }

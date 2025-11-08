@@ -13,7 +13,8 @@ public partial class Parameter
 	///     Matches a parameter that is equal to <paramref name="value" />.
 	/// </summary>
 	public static IParameter<T> With<T>(T value,
-		[CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
+		[CallerArgumentExpression(nameof(value))]
+		string doNotPopulateThisValue = "")
 		=> new ParameterEquals<T>(value, doNotPopulateThisValue);
 
 	/// <summary>
@@ -30,7 +31,8 @@ public partial class Parameter
 	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
 	/// </summary>
 	public static IParameter<T> With<T>(Func<T, bool> predicate,
-		[CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue = "")
 		=> new PredicateParameter<T>(predicate, doNotPopulateThisValue);
 
 	private sealed class ParameterEquals<T> : TypedParameter<T>

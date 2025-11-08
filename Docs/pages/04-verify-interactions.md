@@ -1,8 +1,10 @@
 # Verify interactions
 
-You can verify that methods, properties, indexers, or events were called or accessed with specific arguments and how many times, using the `Verify` API:
+You can verify that methods, properties, indexers, or events were called or accessed with specific arguments and how
+many times, using the `Verify` API:
 
 Supported call count verifications in the `Mockolate.Verify` namespace:
+
 - `.Never()`
 - `.Once()`
 - `.Twice()`

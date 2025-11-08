@@ -6,17 +6,6 @@ public sealed partial class ParameterTests
 {
 	public sealed class WithAnyParametersTests
 	{
-		[Fact]
-		public async Task ToString_ShouldReturnExpectedValue()
-		{
-			IParameters sut = WithAnyParameters();
-			string expectedValue = "WithAnyParameters()";
-
-			string? result = sut.ToString();
-
-			await That(result).IsEqualTo(expectedValue);
-		}
-
 		[Theory]
 		[InlineData(null, null)]
 		[InlineData("", 1)]
@@ -28,6 +17,17 @@ public sealed partial class ParameterTests
 			bool result = sut.Matches(values);
 
 			await That(result).IsTrue();
+		}
+
+		[Fact]
+		public async Task ToString_ShouldReturnExpectedValue()
+		{
+			IParameters sut = WithAnyParameters();
+			string expectedValue = "WithAnyParameters()";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
 		}
 	}
 }
