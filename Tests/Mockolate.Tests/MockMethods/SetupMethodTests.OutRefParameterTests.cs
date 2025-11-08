@@ -119,6 +119,27 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method1WithOutParameter(WithAnyParameters())
+					.Callback(v =>
+					{
+						callCount++;
+						receivedValue = v;
+					});
+
+				sut.Subject.Method1WithOutParameter(out int value);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value).IsEqualTo(0);
+				await That(receivedValue).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue = 0;
@@ -137,6 +158,28 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(3);
+				await That(receivedValue).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method1WithRefParameter(WithAnyParameters())
+					.Callback(v =>
+					{
+						callCount++;
+						receivedValue = v;
+					});
+
+				int value = 2;
+				sut.Subject.Method1WithRefParameter(ref value);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value).IsEqualTo(2);
 				await That(receivedValue).IsEqualTo(2);
 			}
 
@@ -171,6 +214,16 @@ public sealed partial class SetupMethodTests
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+			}
+
+			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
+				: ReturnMethodSetup<Task, string>(name, WithAnyParameters())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -252,6 +305,31 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method2WithOutParameter(WithAnyParameters())
+					.Callback((v1, v2) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+					});
+
+				sut.Subject.Method2WithOutParameter(out int value1, out int value2);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -279,6 +357,33 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method2WithRefParameter(WithAnyParameters())
+					.Callback((v1, v2) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				sut.Subject.Method2WithRefParameter(ref value1, ref value2);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+			}
+
+			[Fact]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
@@ -289,18 +394,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support out parameters.");
-			}
-
-			[Fact]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
@@ -308,18 +401,6 @@ public sealed partial class SetupMethodTests
 				string result = setup.SetRefParameter("p1", "d");
 
 				await That(result).IsEqualTo("d");
-			}
-
-			[Fact]
-			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetRefParameter("param1", 2, MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support ref parameters.");
 			}
 
 			private class MyReturnMethodSetup<T1, T2>(string name)
@@ -446,6 +527,35 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method3WithOutParameter(WithAnyParameters())
+					.Callback((v1, v2, v3) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+					});
+
+				sut.Subject.Method3WithOutParameter(out int value1, out int value2, out int value3);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -479,6 +589,38 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method3WithRefParameter(WithAnyParameters())
+					.Callback((v1, v2, v3) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				sut.Subject.Method3WithRefParameter(ref value1, ref value2, ref value3);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+			}
+
+			[Fact]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
@@ -489,18 +631,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support out parameters.");
-			}
-
-			[Fact]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
@@ -508,18 +638,6 @@ public sealed partial class SetupMethodTests
 				string result = setup.SetRefParameter("p1", "d");
 
 				await That(result).IsEqualTo("d");
-			}
-
-			[Fact]
-			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetRefParameter("param1", 2, MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support ref parameters.");
 			}
 
 			private class MyReturnMethodSetup<T1, T2, T3>(string name)
@@ -668,6 +786,39 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method4WithOutParameter(WithAnyParameters())
+					.Callback((v1, v2, v3, v4) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+					});
+
+				sut.Subject.Method4WithOutParameter(out int value1, out int value2, out int value3, out int value4);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+				await That(value4).IsEqualTo(0);
+				await That(receivedValue4).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -706,6 +857,43 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method4WithRefParameter(WithAnyParameters())
+					.Callback((v1, v2, v3, v4) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				int value4 = 8;
+				sut.Subject.Method4WithRefParameter(ref value1, ref value2, ref value3, ref value4);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(value4).IsEqualTo(8);
+				await That(receivedValue4).IsEqualTo(8);
+			}
+
+			[Fact]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
@@ -716,18 +904,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support out parameters.");
-			}
-
-			[Fact]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
@@ -735,18 +911,6 @@ public sealed partial class SetupMethodTests
 				string result = setup.SetRefParameter("p1", "d");
 
 				await That(result).IsEqualTo("d");
-			}
-
-			[Fact]
-			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetRefParameter("param1", 2, MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support ref parameters.");
 			}
 
 			private class MyReturnMethodSetup<T1, T2, T3, T4>(string name)
@@ -917,6 +1081,44 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int receivedValue5 = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method5WithOutParameter(WithAnyParameters())
+					.Callback((v1, v2, v3, v4, v5) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+						receivedValue5 = v5;
+					});
+
+				sut.Subject.Method5WithOutParameter(out int value1, out int value2, out int value3, out int value4,
+					out int value5);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+				await That(value4).IsEqualTo(0);
+				await That(receivedValue4).IsEqualTo(0);
+				await That(value5).IsEqualTo(0);
+				await That(receivedValue5).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -960,6 +1162,48 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int receivedValue5 = 0;
+				int callCount = 0;
+				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.Setup.Method.Method5WithRefParameter(WithAnyParameters())
+					.Callback((v1, v2, v3, v4, v5) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+						receivedValue5 = v5;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				int value4 = 8;
+				int value5 = 10;
+				sut.Subject.Method5WithRefParameter(ref value1, ref value2, ref value3, ref value4, ref value5);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(value4).IsEqualTo(8);
+				await That(receivedValue4).IsEqualTo(8);
+				await That(value5).IsEqualTo(10);
+				await That(receivedValue5).IsEqualTo(10);
+			}
+
+			[Fact]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -970,18 +1214,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support out parameters.");
-			}
-
-			[Fact]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -989,18 +1221,6 @@ public sealed partial class SetupMethodTests
 				string result = setup.SetRefParameter("p1", "d");
 
 				await That(result).IsEqualTo("d");
-			}
-
-			[Fact]
-			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyReturnMethodSetupWithAnyParameterCombination<string> setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetRefParameter("param1", 2, MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support ref parameters.");
 			}
 
 			private class MyReturnMethodSetup<T1, T2, T3, T4, T5>(string name)
@@ -1089,6 +1309,27 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method1WithOutParameter(WithAnyParameters())
+					.Callback(v =>
+					{
+						callCount++;
+						receivedValue = v;
+					});
+
+				sut.Subject.Method1WithOutParameter(out int value);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value).IsEqualTo(0);
+				await That(receivedValue).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue = 0;
@@ -1107,6 +1348,28 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(3);
+				await That(receivedValue).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method1WithRefParameter(WithAnyParameters())
+					.Callback(v =>
+					{
+						callCount++;
+						receivedValue = v;
+					});
+
+				int value = 2;
+				sut.Subject.Method1WithRefParameter(ref value);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value).IsEqualTo(2);
 				await That(receivedValue).IsEqualTo(2);
 			}
 
@@ -1139,6 +1402,16 @@ public sealed partial class SetupMethodTests
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 			}
+
+			private class MyVoidMethodSetupWithParameters(string name)
+				: VoidMethodSetup<string>(name, WithAnyParameters())
+			{
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
+					=> SetOutParameter<TValue>(parameterName, behavior);
+
+				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
+					=> SetRefParameter(parameterName, value, behavior);
+			}
 		}
 
 		public class VoidMethodWith2Parameters
@@ -1165,6 +1438,31 @@ public sealed partial class SetupMethodTests
 				await That(value1).IsEqualTo(2);
 				await That(receivedValue1).IsEqualTo(0);
 				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method2WithOutParameter(WithAnyParameters())
+					.Callback((v1, v2) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+					});
+
+				sut.Subject.Method2WithOutParameter(out int value1, out int value2);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
 				await That(receivedValue2).IsEqualTo(0);
 			}
 
@@ -1196,6 +1494,33 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method2WithRefParameter(WithAnyParameters())
+					.Callback((v1, v2) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				sut.Subject.Method2WithRefParameter(ref value1, ref value2);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+			}
+
+			[Fact]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int, int> setup = new("foo");
@@ -1206,18 +1531,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyVoidMethodSetupWithParameters setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support out parameters.");
-			}
-
-			[Fact]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int, int> setup = new("foo");
@@ -1225,18 +1538,6 @@ public sealed partial class SetupMethodTests
 				int result = setup.SetRefParameter("p1", 4);
 
 				await That(result).IsEqualTo(4);
-			}
-
-			[Fact]
-			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyVoidMethodSetupWithParameters setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetRefParameter("param1", 2, MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support ref parameters.");
 			}
 
 			private class MyVoidMethodSetup<T1, T2>(string name)
@@ -1294,6 +1595,35 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method3WithOutParameter(WithAnyParameters())
+					.Callback((v1, v2, v3) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+					});
+
+				sut.Subject.Method3WithOutParameter(out int value1, out int value2, out int value3);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1327,6 +1657,38 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method3WithRefParameter(WithAnyParameters())
+					.Callback((v1, v2, v3) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				sut.Subject.Method3WithRefParameter(ref value1, ref value2, ref value3);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+			}
+
+			[Fact]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int, int, int> setup = new("foo");
@@ -1337,18 +1699,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyVoidMethodSetupWithParameters setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support out parameters.");
-			}
-
-			[Fact]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int, int, int> setup = new("foo");
@@ -1356,18 +1706,6 @@ public sealed partial class SetupMethodTests
 				int result = setup.SetRefParameter("p1", 4);
 
 				await That(result).IsEqualTo(4);
-			}
-
-			[Fact]
-			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyVoidMethodSetupWithParameters setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetRefParameter("param1", 2, MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support ref parameters.");
 			}
 
 			private class MyVoidMethodSetup<T1, T2, T3>(string name)
@@ -1431,6 +1769,39 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method4WithOutParameter(WithAnyParameters())
+					.Callback((v1, v2, v3, v4) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+					});
+
+				sut.Subject.Method4WithOutParameter(out int value1, out int value2, out int value3, out int value4);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+				await That(value4).IsEqualTo(0);
+				await That(receivedValue4).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1469,6 +1840,43 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method4WithRefParameter(WithAnyParameters())
+					.Callback((v1, v2, v3, v4) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				int value4 = 8;
+				sut.Subject.Method4WithRefParameter(ref value1, ref value2, ref value3, ref value4);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(value4).IsEqualTo(8);
+				await That(receivedValue4).IsEqualTo(8);
+			}
+
+			[Fact]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int, int, int, int> setup = new("foo");
@@ -1479,18 +1887,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyVoidMethodSetupWithParameters setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support out parameters.");
-			}
-
-			[Fact]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int, int, int, int> setup = new("foo");
@@ -1498,18 +1894,6 @@ public sealed partial class SetupMethodTests
 				int result = setup.SetRefParameter("p1", 4);
 
 				await That(result).IsEqualTo(4);
-			}
-
-			[Fact]
-			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyVoidMethodSetupWithParameters setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetRefParameter("param1", 2, MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support ref parameters.");
 			}
 
 			private class MyVoidMethodSetup<T1, T2, T3, T4>(string name)
@@ -1579,6 +1963,44 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int receivedValue5 = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method5WithOutParameter(WithAnyParameters())
+					.Callback((v1, v2, v3, v4, v5) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+						receivedValue5 = v5;
+					});
+
+				sut.Subject.Method5WithOutParameter(out int value1, out int value2, out int value3, out int value4,
+					out int value5);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+				await That(value4).IsEqualTo(0);
+				await That(receivedValue4).IsEqualTo(0);
+				await That(value5).IsEqualTo(0);
+				await That(receivedValue5).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1622,6 +2044,48 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int receivedValue5 = 0;
+				int callCount = 0;
+				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.Setup.Method.Method5WithRefParameter(WithAnyParameters())
+					.Callback((v1, v2, v3, v4, v5) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+						receivedValue5 = v5;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				int value4 = 8;
+				int value5 = 10;
+				sut.Subject.Method5WithRefParameter(ref value1, ref value2, ref value3, ref value4, ref value5);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(value4).IsEqualTo(8);
+				await That(receivedValue4).IsEqualTo(8);
+				await That(value5).IsEqualTo(10);
+				await That(receivedValue5).IsEqualTo(10);
+			}
+
+			[Fact]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1632,18 +2096,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetOutParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyVoidMethodSetupWithParameters setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetOutParameter<int>("param1", MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support out parameters.");
-			}
-
-			[Fact]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1651,18 +2103,6 @@ public sealed partial class SetupMethodTests
 				int result = setup.SetRefParameter("p1", 4);
 
 				await That(result).IsEqualTo(4);
-			}
-
-			[Fact]
-			public async Task SetRefParameter_WithAnyParameterCombination_ShouldThrowMockException()
-			{
-				MyVoidMethodSetupWithParameters setup = new("Foo");
-
-				void Act()
-					=> setup.HiddenSetRefParameter("param1", 2, MockBehavior.Default);
-
-				await That(Act).Throws<MockException>()
-					.WithMessage("The method setup with parameters does not support ref parameters.");
 			}
 
 			private class MyVoidMethodSetup<T1, T2, T3, T4, T5>(string name)

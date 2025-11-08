@@ -553,6 +553,7 @@ namespace Mockolate.Setup
     }
     public class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup
     {
+        public ReturnMethodSetup(string name, Mockolate.Match.IParameters matches) { }
         public ReturnMethodSetup(string name, Mockolate.Match.NamedParameter match1) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Callback(System.Action callback) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Callback(System.Action<T1> callback) { }
@@ -642,6 +643,7 @@ namespace Mockolate.Setup
     }
     public class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup
     {
+        public VoidMethodSetup(string name, Mockolate.Match.IParameters matches) { }
         public VoidMethodSetup(string name, Mockolate.Match.NamedParameter match1) { }
         public Mockolate.Setup.VoidMethodSetup<T1> Callback(System.Action callback) { }
         public Mockolate.Setup.VoidMethodSetup<T1> Callback(System.Action<T1> callback) { }

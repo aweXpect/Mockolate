@@ -261,13 +261,9 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tif (")
-			.Append(string.Join(" || ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is null")))
-			.Append(")").AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tthrow new MockException(\"The method setup with parameters does not support out parameters.\");").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\tif (HasOutParameter([")
+			.Append(string.Join(" && ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is not null")))
+			.Append(" &&").AppendLine();
+		sb.Append("\t\t\tHasOutParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out Match.IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -283,13 +279,9 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tif (")
-			.Append(string.Join(" || ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is null")))
-			.Append(")").AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tthrow new MockException(\"The method setup with parameters does not support ref parameters.\");").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\tif (HasRefParameter([")
+			.Append(string.Join(" && ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is not null")))
+			.Append(" &&").AppendLine();
+		sb.Append("\t\t\tHasRefParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out Match.IRefParameter<T>? refParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -564,13 +556,9 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tif (")
-			.Append(string.Join(" || ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is null")))
-			.Append(")").AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tthrow new MockException(\"The method setup with parameters does not support out parameters.\");").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\tif (HasOutParameter([")
+			.Append(string.Join(" && ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is not null")))
+			.Append(" &&").AppendLine();
+		sb.Append("\t\t\tHasOutParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out Match.IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -586,13 +574,9 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tif (")
-			.Append(string.Join(" || ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is null")))
-			.Append(")").AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tthrow new MockException(\"The method setup with parameters does not support ref parameters.\");").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\tif (HasRefParameter([")
+			.Append(string.Join(" && ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is not null")))
+			.Append(" &&").AppendLine();
+		sb.Append("\t\t\tHasRefParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out Match.IRefParameter<T>? refParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
