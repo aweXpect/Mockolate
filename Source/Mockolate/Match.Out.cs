@@ -26,19 +26,11 @@ public partial class Match
 	/// </summary>
 	private sealed class OutParameter<T>(Func<T> setter, string setterExpression) : IOutParameter<T>
 	{
-		/// <summary>
-		///     Checks if the <paramref name="value" /> is a matching parameter.
-		/// </summary>
-		/// <returns>
-		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
-		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
-		/// </returns>
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;
 
-		/// <summary>
-		///     Retrieves the value to which the <see langword="out" /> parameter should be set.
-		/// </summary>
-		public T GetValue() => setter();
+		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
+		public T GetValue(MockBehavior mockBehavior) => setter();
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Out<{typeof(T).FormatType()}>({setterExpression})";
@@ -49,10 +41,12 @@ public partial class Match
 	/// </summary>
 	private sealed class InvokedOutParameter<T> : IVerifyOutParameter<T>
 	{
-		/// <summary>
-		///     Matches any <paramref name="value" />.
-		/// </summary>
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;
+
+		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
+		public T GetValue(MockBehavior mockBehavior)
+			=> mockBehavior.DefaultValue.Generate<T>();
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Out<{typeof(T).FormatType()}>()";

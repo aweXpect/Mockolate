@@ -171,6 +171,145 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task Setup_WithOutParameter_ShouldUseCallbackToSetValue()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.MyMethodWithOutParameter(Out(() => 4));
+
+		mock.Subject.MyMethodWithOutParameter(out var value);
+
+		await That(value).IsEqualTo(4);
+	}
+
+	[Fact]
+	public async Task Setup_WithOutParameterWithoutCallback_ShouldUseDefaultValueSetValue()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.MyMethodWithOutParameter(Out<int>());
+
+		mock.Subject.MyMethodWithOutParameter(out var value);
+
+		await That(value).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task Setup_WithRefParameter_WithCallback_ShouldUseCallbackToSetValue()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.MyMethodWithRefParameter(Ref<int>(_ => 4));
+		int value = 2;
+
+		mock.Subject.MyMethodWithRefParameter(ref value);
+
+		await That(value).IsEqualTo(4);
+	}
+
+	[Fact]
+	public async Task Setup_WithRefParameter_WithPredicate_ShouldUseCallbackToSetValue()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.MyMethodWithRefParameter(Ref<int>(v => v > 2));
+		int value = 2;
+
+		mock.Subject.MyMethodWithRefParameter(ref value);
+
+		await That(value).IsEqualTo(2);
+	}
+
+	[Fact]
+	public async Task Setup_WithRefParameter_WithPredicateAndCallback_ShouldUseCallbackToSetValueWhenPredicateMatches()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.MyMethodWithRefParameter(Ref<int>(v => v > 2, _ => 4));
+		int value1 = 2;
+		int value2 = 3;
+
+		mock.Subject.MyMethodWithRefParameter(ref value1);
+		mock.Subject.MyMethodWithRefParameter(ref value2);
+
+		await That(value1).IsEqualTo(2);
+		await That(value2).IsEqualTo(4);
+	}
+
+	[Fact]
+	public async Task Setup_WithRefParameter_WithoutPredicateOrCallback_ShouldNotChangeValue()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.MyMethodWithRefParameter(Ref<int>());
+		int value = 2;
+
+		mock.Subject.MyMethodWithRefParameter(ref value);
+
+		await That(value).IsEqualTo(2);
+	}
+
+	[Fact]
+	public async Task ToString_OutParameter_ShouldReturnExpectedValue()
+	{
+		var sut = Out<int>();
+		string expectedResult = "Out<int>()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
+	public async Task ToString_OutParameter_WithCallback_ShouldReturnExpectedValue()
+	{
+		var sut = Out<int>(() => 4);
+		string expectedResult = "Out<int>(() => 4)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
+	public async Task ToString_RefParameter_ShouldReturnExpectedValue()
+	{
+		var sut = Ref<int>();
+		string expectedResult = "Ref<int>()";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
+	public async Task ToString_RefParameter_WithCallback_ShouldReturnExpectedValue()
+	{
+		var sut = Ref<int>(v => 4);
+		string expectedResult = "Ref<int>(v => 4)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
+	public async Task ToString_RefParameter_WithPredicate_ShouldReturnExpectedValue()
+	{
+		var sut = Ref<int>(v => v > 4);
+		string expectedResult = "Ref<int>(v => v > 4)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
+	public async Task ToString_RefParameter_WithPredicateAndCallback_ShouldReturnExpectedValue()
+	{
+		var sut = Ref<int>(v => v > 4, v => v * 5);
+		string expectedResult = "Ref<int>(v => v > 4, v => v * 5)";
+
+		string? result = sut.ToString();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
 	public async Task VoidMethod_Callback_ShouldExecuteWhenInvoked()
 	{
 		int callCount = 0;
@@ -735,6 +874,8 @@ public sealed partial class SetupMethodTests
 		int MyIntMethodWithParameters(int x, string y);
 		int MyGenericMethod<T1, T2>(T1 x, T2 y) where T1 : struct where T2 : class;
 		int MyGenericMethod<T>();
+		void MyMethodWithRefParameter(ref int value);
+		void MyMethodWithOutParameter(out int value);
 		string ToString();
 		bool Equals(object? obj);
 		int GetHashCode();

@@ -238,7 +238,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, Match.NamedParameter ma
 	{
 		if (HasOutParameter([match1,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
-			return outParameter.GetValue();
+			return outParameter.GetValue(behavior);
 		}
 
 		return behavior.DefaultValue.Generate<T>();
@@ -426,7 +426,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 
 		if (HasOutParameter([_match1, _match2,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
-			return outParameter.GetValue();
+			return outParameter.GetValue(behavior);
 		}
 
 		return behavior.DefaultValue.Generate<T>();
@@ -635,7 +635,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 
 		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
-			return outParameter.GetValue();
+			return outParameter.GetValue(behavior);
 		}
 
 		return behavior.DefaultValue.Generate<T>();
@@ -855,7 +855,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 
 		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
-			return outParameter.GetValue();
+			return outParameter.GetValue(behavior);
 		}
 
 		return behavior.DefaultValue.Generate<T>();

@@ -27,6 +27,15 @@ public partial class Match
 		=> new RefParameter<T>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
 
 	/// <summary>
+	///     Matches a <see langword="ref" /> parameter of type <typeparamref name="T" /> that satisfies the
+	///     <paramref name="predicate" />.
+	/// </summary>
+	public static IRefParameter<T> Ref<T>(Func<T, bool> predicate,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue = "")
+		=> new RefParameter<T>(predicate, null, doNotPopulateThisValue, null);
+
+	/// <summary>
 	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
 	public static IVerifyRefParameter<T> Ref<T>()
@@ -37,27 +46,33 @@ public partial class Match
 	/// </summary>
 	private sealed class RefParameter<T>(
 		Func<T, bool> predicate,
-		Func<T, T> setter,
+		Func<T, T>? setter,
 		string? predicateExpression,
-		string setterExpression) : IRefParameter<T>
+		string? setterExpression) : IRefParameter<T>
 	{
-		/// <summary>
-		///     Checks if the <paramref name="value" /> is a matching parameter.
-		/// </summary>
-		/// <returns>
-		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
-		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
-		/// </returns>
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => value is T typedValue && predicate(typedValue);
 
-		/// <summary>
-		///     Retrieves the value to which the <see langword="ref" /> parameter should be set.
-		/// </summary>
-		public T GetValue(T value) => setter(value);
+		/// <inheritdoc cref="IRefParameter{T}.GetValue(T)" />
+		public T GetValue(T value)
+		{
+			if (setter is null)
+			{
+				return value;
+			}
+
+			return setter(value);
+		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> $"Ref<{typeof(T).FormatType()}>({(predicateExpression is null ? "" : $"{predicateExpression}, ")}{setterExpression})";
+			=> (predicateExpression is not null, setterExpression is not null) switch
+			{
+				(true, true) => $"Ref<{typeof(T).FormatType()}>({predicateExpression}, {setterExpression})",
+				(true, false) => $"Ref<{typeof(T).FormatType()}>({predicateExpression})",
+				(false, true) => $"Ref<{typeof(T).FormatType()}>({setterExpression})",
+				(false, false) => $"Ref<{typeof(T).FormatType()}>()"
+			};
 	}
 
 	/// <summary>
@@ -65,10 +80,11 @@ public partial class Match
 	/// </summary>
 	private sealed class InvokedRefParameter<T> : IVerifyRefParameter<T>
 	{
-		/// <summary>
-		///     Matches any <paramref name="value" />.
-		/// </summary>
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;
+
+		/// <inheritdoc cref="IRefParameter{T}.GetValue(T)" />
+		public T GetValue(T value) => value;
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Ref<{typeof(T).FormatType()}>()";
