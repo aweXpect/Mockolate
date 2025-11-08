@@ -111,8 +111,6 @@ namespace Mockolate
     }
     public class Parameter
     {
-        public static Mockolate.Parameter.IRangeParameter<T> InRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
-            where T : System.Numerics.INumber<T> { }
         public static Mockolate.Match.IParameter<T> Null<T>() { }
         public static Mockolate.Match.IVerifyOutParameter<T> Out<T>() { }
         public static Mockolate.Match.IOutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
@@ -124,12 +122,6 @@ namespace Mockolate
         public static Mockolate.Match.IParameter<T> With<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Match.IParameter<T> WithAny<T>() { }
         public static Mockolate.Match.IParameters WithAnyParameters() { }
-        public interface IRangeParameter<T> : Mockolate.Match.IParameter, Mockolate.Match.IParameter<T>
-        {
-            T Maximum { get; }
-            T Minimum { get; }
-            Mockolate.Parameter.IRangeParameter<T> Exclusive();
-        }
     }
     public static class ReturnsAsyncExtensions
     {
