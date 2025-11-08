@@ -77,4 +77,4 @@ public partial class Parameter
 		public override string ToString() => $"With<{typeof(T).FormatType()}>({predicateExpression})";
 	}
 }
-#pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.
+#pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.

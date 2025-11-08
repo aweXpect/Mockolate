@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Mockolate.Match;
 
 namespace Mockolate.Tests;
@@ -113,6 +114,102 @@ public sealed partial class ParameterTests
 			bool result = sut.Matches(value);
 
 			await That(result).IsTrue();
+		}
+
+		[Fact]
+		public async Task WithPredicate_ShouldSupportCovarianceInSetup()
+		{
+			Mock<IMyService> mock = Mock.Create<IMyService>();
+			mock.Setup.Method.DoSomething(With<MyImplementation>(_ => true))
+				.Returns(3);
+			var value1 = new MyImplementation();
+			var value2 = new MyOtherImplementation();
+
+			var result1 = mock.Subject.DoSomething(value1);
+			var result2 = mock.Subject.DoSomething(value2);
+
+			await That(result1).IsEqualTo(3);
+			await That(result2).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task WithPredicate_ShouldSupportCovarianceInVerify()
+		{
+			Mock<IMyService> mock = Mock.Create<IMyService>();
+			mock.Setup.Method.DoSomething(With<MyImplementation>(_ => true))
+				.Callback(d => d.DoWork())
+				.Returns(3);
+			var value1 = new MyImplementation();
+
+			var result1 = mock.Subject.DoSomething(value1);
+
+			await That(mock.Verify.Invoked.DoSomething(With<MyImplementation>(p => p.Progress > 0))).Once();
+			await That(mock.Verify.Invoked.DoSomething(With<MyImplementation>(p => p.Progress > 1))).Never();
+			await That(value1.Progress).IsEqualTo(1);
+			await That(mock.Verify.Invoked.DoSomething(With<MyOtherImplementation>(_ => true))).Never();
+		}
+
+		[Fact]
+		public async Task WithValue_ShouldSupportCovarianceInVerify()
+		{
+			Mock<IMyService> mock = Mock.Create<IMyService>();
+			mock.Setup.Method.DoSomething(With<MyImplementation>(_ => true))
+				.Callback(d => d.DoWork())
+				.Returns(3);
+			var value1 = new MyImplementation();
+			var value2 = new MyOtherImplementation();
+
+			var result1 = mock.Subject.DoSomething(value1);
+
+			await That(mock.Verify.Invoked.DoSomething(With(value1))).Once();
+			await That(value1.Progress).IsEqualTo(1);
+			await That(mock.Verify.Invoked.DoSomething(With(value2))).Never();
+		}
+
+		[Fact]
+		public async Task WithValue_ShouldSupportCovarianceInSetup()
+		{
+			Mock<IMyService> mock = Mock.Create<IMyService>();
+			var value1 = new MyImplementation();
+			var value2 = new MyOtherImplementation();
+			mock.Setup.Method.DoSomething(With(value1))
+				.Returns(3);
+
+			var result1 = mock.Subject.DoSomething(value1);
+			var result2 = mock.Subject.DoSomething(value2);
+
+			await That(result1).IsEqualTo(3);
+			await That(result2).IsEqualTo(0);
+		}
+
+		public interface IMyBase
+		{
+			int DoWork();
+		}
+
+		public class MyImplementation : IMyBase
+		{
+			public int Progress { get; private set; }
+			public int DoWork()
+			{
+				Progress++;
+				return Progress;
+			}
+		}
+
+		public class MyOtherImplementation : IMyBase
+		{
+			public string Output { get; private set; } = "";
+			public int DoWork()
+			{
+				Output += "did something\n";
+				return 1;
+			}
+		}
+
+		public interface IMyService
+		{
+			int DoSomething(IMyBase value);
 		}
 	}
 }
