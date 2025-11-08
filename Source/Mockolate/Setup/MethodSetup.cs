@@ -75,13 +75,13 @@ public abstract class MethodSetup : IMethodSetup
 	///     Determines whether the specified collection of named parameters contains a reference parameter of the given name
 	///     and type.
 	/// </summary>
-	protected static bool HasRefParameter<T>(With.NamedParameter[] namedParameters, string parameterName,
-		[NotNullWhen(true)] out With.RefParameter<T>? parameter)
+	protected static bool HasRefParameter<T>(Match.NamedParameter[] namedParameters, string parameterName,
+		[NotNullWhen(true)] out Match.IRefParameter<T>? parameter)
 	{
-		foreach (With.NamedParameter? namedParameter in namedParameters)
+		foreach (Match.NamedParameter? namedParameter in namedParameters)
 		{
 			if (namedParameter.Name.Equals(parameterName, StringComparison.Ordinal) &&
-			    namedParameter.Parameter is With.RefParameter<T> refParameter)
+			    namedParameter.Parameter is Match.IRefParameter<T> refParameter)
 			{
 				parameter = refParameter;
 				return true;
@@ -96,13 +96,13 @@ public abstract class MethodSetup : IMethodSetup
 	///     Determines whether the specified collection of named parameters contains an out parameter with the given name and
 	///     type.
 	/// </summary>
-	protected static bool HasOutParameter<T>(With.NamedParameter[] namedParameters, string parameterName,
-		[NotNullWhen(true)] out With.OutParameter<T>? parameter)
+	protected static bool HasOutParameter<T>(Match.NamedParameter[] namedParameters, string parameterName,
+		[NotNullWhen(true)] out Match.IOutParameter<T>? parameter)
 	{
-		foreach (With.NamedParameter? namedParameter in namedParameters)
+		foreach (Match.NamedParameter? namedParameter in namedParameters)
 		{
 			if (namedParameter.Name.Equals(parameterName, StringComparison.Ordinal) &&
-			    namedParameter.Parameter is With.OutParameter<T> outParameter)
+			    namedParameter.Parameter is Match.IOutParameter<T> outParameter)
 			{
 				parameter = outParameter;
 				return true;
@@ -121,7 +121,7 @@ public abstract class MethodSetup : IMethodSetup
 	///     The method returns false if the lengths of the namedParameters and values arrays do not match.
 	///     Each value is compared to its corresponding named parameter using the parameter's matching logic.
 	/// </remarks>
-	protected static bool Matches(With.NamedParameter[] namedParameters, object?[] values)
+	protected static bool Matches(Match.NamedParameter[] namedParameters, object?[] values)
 	{
 		if (namedParameters.Length != values.Length)
 		{

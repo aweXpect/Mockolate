@@ -10,6 +10,6 @@ public interface IMockSetIndexer<TMock>
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" />.
 	/// </summary>
-	VerificationResult<TMock> Set(With.Parameter? value, params With.Parameter?[] parameters);
+	VerificationResult<TMock> Set(Match.IParameter? value, params Match.IParameter?[] parameters);
 }
 #pragma warning restore S2326 // Unused type parameters should be removed

@@ -112,7 +112,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>())
+				sut.Setup.Method.Method1(WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -131,7 +131,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>())
+				sut.Setup.Method.Method1(WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns(v => $"foo-{v}");
@@ -150,7 +150,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>()).Returns(() => "d");
+				sut.Setup.Method.Method1(WithAny<int>()).Returns(() => "d");
 
 				string result = sut.Subject.Method1(3);
 
@@ -162,7 +162,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>()).Returns(x => $"foo-{x}");
+				sut.Setup.Method.Method1(WithAny<int>()).Returns(x => $"foo-{x}");
 
 				string result = sut.Subject.Method1(3);
 
@@ -174,7 +174,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>()).Returns("d");
+				sut.Setup.Method.Method1(WithAny<int>()).Returns("d");
 
 				string result = sut.Subject.Method1(3);
 
@@ -196,7 +196,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>())
+				sut.Setup.Method.Method1(WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -210,7 +210,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>())
+				sut.Setup.Method.Method1(WithAny<int>())
 					.Throws(v1 => new Exception("foo-" + v1));
 
 				void Act()
@@ -224,7 +224,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>())
+				sut.Setup.Method.Method1(WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -239,7 +239,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>())
+				sut.Setup.Method.Method1(WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -257,7 +257,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -276,7 +276,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2) => $"foo-{v1}-{v2}");
@@ -295,7 +295,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns(() => "d");
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).Returns(() => "d");
 
 				string result = sut.Subject.Method2(2, 3);
 
@@ -307,7 +307,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns((x, y) => $"foo-{x}-{y}");
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).Returns((x, y) => $"foo-{x}-{y}");
 
 				string result = sut.Subject.Method2(2, 3);
 
@@ -319,7 +319,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>()).Returns("d");
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).Returns("d");
 
 				string result = sut.Subject.Method2(2, 3);
 
@@ -341,7 +341,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -355,7 +355,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
 
 				void Act()
@@ -369,7 +369,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -384,7 +384,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -402,7 +402,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -421,7 +421,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2, v3) => $"foo-{v1}-{v2}-{v3}");
@@ -441,7 +441,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns(() => "d");
 
 				string result = sut.Subject.Method3(1, 2, 3);
@@ -454,7 +454,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns((x, y, z) => $"foo-{x}-{y}-{z}");
 
 				string result = sut.Subject.Method3(2, 3, 4);
@@ -467,7 +467,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d");
 
 				string result = sut.Subject.Method3(1, 2, 3);
@@ -490,7 +490,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -504,7 +504,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
 
 				void Act()
@@ -518,7 +518,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -533,7 +533,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -551,7 +551,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -570,7 +570,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2, v3, v4) => $"foo-{v1}-{v2}-{v3}-{v4}");
@@ -591,7 +591,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns(() => "d");
 
 				string result = sut.Subject.Method4(1, 2, 3, 4);
@@ -604,7 +604,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns((x, y, z, a) => $"foo-{x}-{y}-{z}-{a}");
 
 				string result = sut.Subject.Method4(2, 3, 4, 5);
@@ -617,7 +617,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d");
 
 				string result = sut.Subject.Method4(1, 2, 3, 4);
@@ -640,7 +640,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -654,7 +654,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
 
 				void Act()
@@ -668,7 +668,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -683,7 +683,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -701,8 +701,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -721,8 +721,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2, v3, v4, v5) => $"foo-{v1}-{v2}-{v3}-{v4}-{v5}");
@@ -743,8 +743,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Returns(() => "d");
 
 				string result = sut.Subject.Method5(1, 2, 3, 4, 5);
@@ -757,8 +757,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Returns((x, y, z, a, b) => $"foo-{x}-{y}-{z}-{a}-{b}");
 
 				string result = sut.Subject.Method5(2, 3, 4, 5, 6);
@@ -771,8 +771,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Returns("d");
 
 				string result = sut.Subject.Method5(1, 2, 3, 4, 5);
@@ -795,8 +795,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -810,8 +810,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
 				void Act()
@@ -825,8 +825,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -841,8 +841,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -910,7 +910,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>())
+				sut.Setup.Method.Method1(WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -931,7 +931,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>()).Throws(() => new Exception("foo"));
+				sut.Setup.Method.Method1(WithAny<int>()).Throws(() => new Exception("foo"));
 
 				void Act()
 					=> sut.Subject.Method1(1);
@@ -944,7 +944,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>()).Throws(v1 => new Exception($"foo-{v1}"));
+				sut.Setup.Method.Method1(WithAny<int>()).Throws(v1 => new Exception($"foo-{v1}"));
 
 				void Act()
 					=> sut.Subject.Method1(1);
@@ -957,7 +957,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1(With.Any<int>()).Throws(new Exception("foo"));
+				sut.Setup.Method.Method1(WithAny<int>()).Throws(new Exception("foo"));
 
 				void Act()
 					=> sut.Subject.Method1(1);
@@ -973,7 +973,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -994,7 +994,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1008,7 +1008,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
 
 				void Act()
@@ -1022,7 +1022,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -1039,7 +1039,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -1060,7 +1060,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1074,7 +1074,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
 
 				void Act()
@@ -1088,7 +1088,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -1105,7 +1105,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -1126,7 +1126,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1140,7 +1140,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
 
 				void Act()
@@ -1154,7 +1154,7 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -1171,8 +1171,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -1193,8 +1193,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1208,8 +1208,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
 				void Act()
@@ -1223,8 +1223,8 @@ public sealed partial class SetupMethodTests
 			{
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-						With.Any<int>())
+				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()

@@ -20,7 +20,7 @@ public class MockVerifyTests
 		sut.Subject.Dispense("Dark", 1);
 		sut.Subject.Dispense("Dark", 2);
 
-		await That(sut.Verify.Invoked.Dispense("Dark", 1)).Once();
+		await That(sut.Verify.Invoked.Dispense(With("Dark"), With(1))).Once();
 		await That(sut.Verify.ThatAllInteractionsAreVerified()).IsFalse();
 	}
 
@@ -32,7 +32,7 @@ public class MockVerifyTests
 		sut.Subject.Dispense("Dark", 1);
 		sut.Subject.Dispense("Dark", 2);
 
-		await That(sut.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>())).AtLeastOnce();
+		await That(sut.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>())).AtLeastOnce();
 		await That(sut.Verify.ThatAllInteractionsAreVerified()).IsTrue();
 	}
 }

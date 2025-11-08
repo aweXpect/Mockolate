@@ -47,7 +47,7 @@ internal static partial class Sources
 			.Append(numberOfParameters).Append("\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
 		sb.Append("internal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"With.Parameter match{i}")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"Match.IParameter match{i}")))
 			.Append(") : IndexerSetup").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _getterCallbacks = [];")

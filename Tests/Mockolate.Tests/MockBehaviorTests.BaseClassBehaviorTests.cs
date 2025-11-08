@@ -84,7 +84,7 @@ public sealed partial class MockBehaviorTests
 				BaseClassBehavior = BaseClassBehavior.OnlyCallBaseClass,
 			});
 			int value1 = 5;
-			mock.Setup.Method.VirtualMethodWithRefAndOutParameters(With.Ref<int>(x => x + 1), With.Out(() => 8))
+			mock.Setup.Method.VirtualMethodWithRefAndOutParameters(Ref<int>(x => x + 1), Out(() => 8))
 				.Returns(10);
 
 			int sum = mock.Subject.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
@@ -203,7 +203,7 @@ public sealed partial class MockBehaviorTests
 				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
 			});
 			int value1 = 5;
-			mock.Setup.Method.VirtualMethodWithRefAndOutParameters(With.Ref<int>(x => x + 1), With.Out(() => 8))
+			mock.Setup.Method.VirtualMethodWithRefAndOutParameters(Ref<int>(x => x + 1), Out(() => 8))
 				.Returns(10);
 
 			int sum = mock.Subject.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
@@ -242,7 +242,7 @@ public sealed partial class MockBehaviorTests
 			{
 				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
 			});
-			mock.Setup.Indexer(With.Any<int>()).Returns(15);
+			mock.Setup.Indexer(WithAny<int>()).Returns(15);
 
 			int result = mock.Subject[1];
 			mock.Subject[1] = 42;

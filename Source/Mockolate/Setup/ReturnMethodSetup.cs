@@ -108,7 +108,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter match1)
+public class ReturnMethodSetup<TReturn, T1>(string name, Match.NamedParameter match1)
 	: MethodSetup
 {
 	private readonly List<Action<T1>> _callbacks = [];
@@ -236,7 +236,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -247,7 +247,7 @@ public class ReturnMethodSetup<TReturn, T1>(string name, With.NamedParameter mat
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1,], parameterName, out Match.IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -268,13 +268,13 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 	private readonly List<Action<T1, T2>> _callbacks = [];
 	private readonly List<Func<T1, T2, TReturn>> _returnCallbacks = [];
 	private readonly string _name;
-	private readonly With.Parameters? _matches;
-	private readonly With.NamedParameter? _match1;
-	private readonly With.NamedParameter? _match2;
+	private readonly Match.IParameters? _matches;
+	private readonly Match.NamedParameter? _match1;
+	private readonly Match.NamedParameter? _match2;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
-	public ReturnMethodSetup(string name, With.NamedParameter match1, With.NamedParameter match2)
+	public ReturnMethodSetup(string name, Match.NamedParameter match1, Match.NamedParameter match2)
 	{
 		_name = name;
 		_match1 = match1;
@@ -282,7 +282,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 	}
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
-	public ReturnMethodSetup(string name, With.Parameters matches)
+	public ReturnMethodSetup(string name, Match.IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -424,7 +424,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 			throw new MockException("The method setup with parameters does not support out parameters.");
 		}
 
-		if (HasOutParameter([_match1, _match2,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([_match1, _match2,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -440,7 +440,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 			throw new MockException("The method setup with parameters does not support ref parameters.");
 		}
 
-		if (HasRefParameter([_match1, _match2,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([_match1, _match2,], parameterName, out Match.IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -464,18 +464,18 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 	private readonly List<Action<T1, T2, T3>> _callbacks = [];
 	private readonly List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
 	private readonly string _name;
-	private readonly With.Parameters? _matches;
-	private readonly With.NamedParameter? _match1;
-	private readonly With.NamedParameter? _match2;
-	private readonly With.NamedParameter? _match3;
+	private readonly Match.IParameters? _matches;
+	private readonly Match.NamedParameter? _match1;
+	private readonly Match.NamedParameter? _match2;
+	private readonly Match.NamedParameter? _match3;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
 	public ReturnMethodSetup(
 		string name,
-		With.NamedParameter match1,
-		With.NamedParameter match2,
-		With.NamedParameter match3)
+		Match.NamedParameter match1,
+		Match.NamedParameter match2,
+		Match.NamedParameter match3)
 	{
 		_name = name;
 		_match1 = match1;
@@ -484,7 +484,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 	}
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
-	public ReturnMethodSetup(string name, With.Parameters matches)
+	public ReturnMethodSetup(string name, Match.IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -633,7 +633,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 			throw new MockException("The method setup with parameters does not support out parameters.");
 		}
 
-		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -649,7 +649,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 			throw new MockException("The method setup with parameters does not support ref parameters.");
 		}
 
-		if (HasRefParameter([_match1, _match2, _match3,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([_match1, _match2, _match3,], parameterName, out Match.IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -674,20 +674,20 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 	private readonly List<Action<T1, T2, T3, T4>> _callbacks = [];
 	private readonly List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
 	private readonly string _name;
-	private readonly With.Parameters? _matches;
-	private readonly With.NamedParameter? _match1;
-	private readonly With.NamedParameter? _match2;
-	private readonly With.NamedParameter? _match3;
-	private readonly With.NamedParameter? _match4;
+	private readonly Match.IParameters? _matches;
+	private readonly Match.NamedParameter? _match1;
+	private readonly Match.NamedParameter? _match2;
+	private readonly Match.NamedParameter? _match3;
+	private readonly Match.NamedParameter? _match4;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
 	public ReturnMethodSetup(
 		string name,
-		With.NamedParameter match1,
-		With.NamedParameter match2,
-		With.NamedParameter match3,
-		With.NamedParameter match4)
+		Match.NamedParameter match1,
+		Match.NamedParameter match2,
+		Match.NamedParameter match3,
+		Match.NamedParameter match4)
 	{
 		_name = name;
 		_match1 = match1;
@@ -697,7 +697,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 	}
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
-	public ReturnMethodSetup(string name, With.Parameters matches)
+	public ReturnMethodSetup(string name, Match.IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -853,7 +853,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 			throw new MockException("The method setup with parameters does not support out parameters.");
 		}
 
-		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -869,7 +869,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 			throw new MockException("The method setup with parameters does not support ref parameters.");
 		}
 
-		if (HasRefParameter([_match1, _match2, _match3, _match4,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([_match1, _match2, _match3, _match4,], parameterName, out Match.IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}

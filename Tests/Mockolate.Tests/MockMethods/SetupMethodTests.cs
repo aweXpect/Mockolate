@@ -10,12 +10,12 @@ public sealed partial class SetupMethodTests
 	public async Task GenericMethod_SetupShouldWork()
 	{
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyGenericMethod<int, string>(0, "foo").Returns(42);
+		mock.Setup.Method.MyGenericMethod(With(0), With("foo")).Returns(42);
 
-		int result1 = mock.Subject.MyGenericMethod<int, string>(0, "foo");
-		int result2 = mock.Subject.MyGenericMethod<long, string>(0, "foo");
+		int result1 = mock.Subject.MyGenericMethod(0, "foo");
+		int result2 = mock.Subject.MyGenericMethod(0L, "foo");
 
-		await That(mock.Verify.Invoked.MyGenericMethod<long, string>(With.Any<long>(), With.Any<string>())).Once();
+		await That(mock.Verify.Invoked.MyGenericMethod(WithAny<long>(), WithAny<string>())).Once();
 		await That(result1).IsEqualTo(42);
 		await That(result2).IsEqualTo(0);
 	}
@@ -54,7 +54,7 @@ public sealed partial class SetupMethodTests
 		int callCount = 0;
 		Mock<IReturnMethodSetupWithParametersTest> sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(With.AnyParameterCombination())
+		sut.Setup.Method.MethodWithoutOtherOverloads(WithAnyParameters())
 			.Callback(() => { callCount++; })
 			.Returns("foo");
 
@@ -70,7 +70,7 @@ public sealed partial class SetupMethodTests
 		int callCount = 0;
 		Mock<IReturnMethodSetupWithParametersTest> sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(With.Any<int>(), With.Any<int>(), With.Any<int>())
+		sut.Setup.Method.MethodWithoutOtherOverloads(WithAny<int>(), WithAny<int>(), WithAny<int>())
 			.Callback(() => { callCount++; })
 			.Returns("foo");
 
@@ -78,7 +78,7 @@ public sealed partial class SetupMethodTests
 
 		await That(callCount).IsEqualTo(1);
 		await That(result).IsEqualTo("foo");
-		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(With.AnyParameterCombination())).Once();
+		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(WithAnyParameters())).Once();
 	}
 
 	[Fact]
@@ -87,7 +87,7 @@ public sealed partial class SetupMethodTests
 		int callCount = 0;
 		Mock<IReturnMethodSetupWithParametersTest> sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(With.AnyParameterCombination())
+		sut.Setup.Method.MethodWithoutOtherOverloads(WithAnyParameters())
 			.Callback(() => { callCount++; })
 			.Returns((string?)null!);
 
@@ -105,9 +105,9 @@ public sealed partial class SetupMethodTests
 			Mock.Create<IMyServiceWithMethodsWithMoreThan16Parameters>();
 
 		mock.Setup.Method.ReturnMethod17(
-				1, 2, 3, 4, 5, 6, 7, 8,
-				9, 10, 11, 12, 13, 14, 15, 16,
-				17)
+				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
+				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
+				With(17))
 			.Callback((
 					int p1, int p2, int p3, int p4, int p5,
 					int p6, int p7, int p8, int p9, int p10,
@@ -135,9 +135,9 @@ public sealed partial class SetupMethodTests
 			Mock.Create<IMyServiceWithMethodsWithMoreThan16Parameters>();
 
 		mock.Setup.Method.ReturnMethod18(
-				1, 2, 3, 4, 5, 6, 7, 8,
-				9, 10, 11, 12, 13, 14, 15, 16,
-				17, 18)
+				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
+				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
+				With(17), With(18))
 			.Callback((
 					int p1, int p2, int p3, int p4, int p5,
 					int p6, int p7, int p8, int p9, int p10,
@@ -161,11 +161,11 @@ public sealed partial class SetupMethodTests
 	public async Task Setup_ShouldUseNewestMatchingSetup()
 	{
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyIntMethodWithParameters(With.Any<int>(), With.Any<string>()).Returns(10);
+		mock.Setup.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(10);
 
 		await That(mock.Subject.MyIntMethodWithParameters(1, "")).IsEqualTo(10);
 
-		mock.Setup.Method.MyIntMethodWithParameters(With.Any<int>(), With.Any<string>()).Returns(20);
+		mock.Setup.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(20);
 
 		await That(mock.Subject.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
 	}
@@ -176,7 +176,7 @@ public sealed partial class SetupMethodTests
 		int callCount = 0;
 		Mock<IVoidMethodSetupWithParametersTest> sut = Mock.Create<IVoidMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(With.AnyParameterCombination())
+		sut.Setup.Method.MethodWithoutOtherOverloads(WithAnyParameters())
 			.Callback(() => { callCount++; });
 
 		sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
@@ -196,11 +196,11 @@ public sealed partial class SetupMethodTests
 		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
 		sut.Setup.Method.Method0();
-		sut.Setup.Method.Method1(With.Any<int>());
-		sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>());
-		sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>());
-		sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>());
-		sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>());
+		sut.Setup.Method.Method1(WithAny<int>());
+		sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>());
+		sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>());
+		sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>());
+		sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>());
 
 		void Act()
 			=> ((IMock)sut).Execute<int>(
@@ -217,13 +217,13 @@ public sealed partial class SetupMethodTests
 		int callCount = 0;
 		Mock<IVoidMethodSetupWithParametersTest> sut = Mock.Create<IVoidMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(With.Any<int>(), With.Any<int>(), With.Any<int>())
+		sut.Setup.Method.MethodWithoutOtherOverloads(WithAny<int>(), WithAny<int>(), WithAny<int>())
 			.Callback(() => { callCount++; });
 
 		sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
-		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(With.AnyParameterCombination())).Once();
+		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(WithAnyParameters())).Once();
 	}
 
 	[Fact]
@@ -231,7 +231,7 @@ public sealed partial class SetupMethodTests
 	{
 		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-		sut.Setup.Method.UniqueMethodWithParameters(With.AnyParameterCombination());
+		sut.Setup.Method.UniqueMethodWithParameters(WithAnyParameters());
 
 		void Act()
 			=> ((IMock)sut).Execute<int>(
@@ -249,9 +249,9 @@ public sealed partial class SetupMethodTests
 			Mock.Create<IMyServiceWithMethodsWithMoreThan16Parameters>();
 
 		mock.Setup.Method.VoidMethod17(
-				1, 2, 3, 4, 5, 6, 7, 8,
-				9, 10, 11, 12, 13, 14, 15, 16,
-				17)
+				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
+				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
+				With(17))
 			.Callback((
 					int p1, int p2, int p3, int p4, int p5,
 					int p6, int p7, int p8, int p9, int p10,
@@ -272,9 +272,9 @@ public sealed partial class SetupMethodTests
 			Mock.Create<IMyServiceWithMethodsWithMoreThan16Parameters>();
 
 		mock.Setup.Method.VoidMethod18(
-				1, 2, 3, 4, 5, 6, 7, 8,
-				9, 10, 11, 12, 13, 14, 15, 16,
-				17, 18)
+				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
+				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
+				With(17), With(18))
 			.Callback((
 					int p1, int p2, int p3, int p4, int p5,
 					int p6, int p7, int p8, int p9, int p10,
@@ -328,7 +328,7 @@ public sealed partial class SetupMethodTests
 	{
 		var obj = new object();
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.Equals(With.Any<object?>()).Returns(true);
+		mock.Setup.Method.Equals(WithAny<object?>()).Returns(true);
 
 		var result = mock.Subject.Equals(obj);
 
@@ -385,11 +385,11 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string> setup = new("Foo", new With.NamedParameter("bar", With.Any<string>()));
+			ReturnMethodSetup<int, string> setup = new("Foo", new NamedParameter("bar", WithAny<string>()));
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(With.Any<string>() bar)");
+			await That(result).IsEqualTo("int Foo(WithAny<string>() bar)");
 		}
 
 		[Fact]
@@ -398,7 +398,7 @@ public sealed partial class SetupMethodTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method1(With.Any<int>())
+			sut.Setup.Method.Method1(WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
@@ -414,22 +414,22 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long> setup = new("Foo", new With.NamedParameter("p1", With.Any<string>()),
-				new With.NamedParameter("p2", With.Any<long>()));
+			ReturnMethodSetup<int, string, long> setup = new("Foo", new NamedParameter("p1", WithAny<string>()),
+				new NamedParameter("p2", WithAny<long>()));
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(With.Any<string>() p1, With.Any<long>() p2)");
+			await That(result).IsEqualTo("int Foo(WithAny<string>() p1, WithAny<long>() p2)");
 		}
 
 		[Fact]
 		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long> setup = new("Foo", With.AnyParameterCombination());
+			ReturnMethodSetup<int, string, long> setup = new("Foo", WithAnyParameters());
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
+			await That(result).IsEqualTo("int Foo(WithAnyParameters())");
 		}
 
 		[Fact]
@@ -438,7 +438,7 @@ public sealed partial class SetupMethodTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method2(With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
@@ -455,22 +455,22 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int> setup = new("Foo",
-				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
-				new With.NamedParameter("p3", With.Any<int>()));
+				new NamedParameter("p1", WithAny<string>()), new NamedParameter("p2", WithAny<long>()),
+				new NamedParameter("p3", WithAny<int>()));
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3)");
+			await That(result).IsEqualTo("int Foo(WithAny<string>() p1, WithAny<long>() p2, WithAny<int>() p3)");
 		}
 
 		[Fact]
 		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int> setup = new("Foo", With.AnyParameterCombination());
+			ReturnMethodSetup<int, string, long, int> setup = new("Foo", WithAnyParameters());
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
+			await That(result).IsEqualTo("int Foo(WithAnyParameters())");
 		}
 
 		[Fact]
@@ -479,7 +479,7 @@ public sealed partial class SetupMethodTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method3(With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
@@ -496,24 +496,24 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo",
-				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
-				new With.NamedParameter("p3", With.Any<int>()), new With.NamedParameter("p4", With.Any<int>()));
+				new NamedParameter("p1", WithAny<string>()), new NamedParameter("p2", WithAny<long>()),
+				new NamedParameter("p3", WithAny<int>()), new NamedParameter("p4", WithAny<int>()));
 
 			string result = setup.ToString();
 
 			await That(result)
 				.IsEqualTo(
-					"int Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4)");
+					"int Foo(WithAny<string>() p1, WithAny<long>() p2, WithAny<int>() p3, WithAny<int>() p4)");
 		}
 
 		[Fact]
 		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo", With.AnyParameterCombination());
+			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo", WithAnyParameters());
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
+			await That(result).IsEqualTo("int Foo(WithAnyParameters())");
 		}
 
 		[Fact]
@@ -522,7 +522,7 @@ public sealed partial class SetupMethodTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method4(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>())
+			sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
@@ -539,25 +539,25 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo",
-				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
-				new With.NamedParameter("p3", With.Any<int>()), new With.NamedParameter("p4", With.Any<int>()),
-				new With.NamedParameter("p5", With.Any<int>()));
+				new NamedParameter("p1", WithAny<string>()), new NamedParameter("p2", WithAny<long>()),
+				new NamedParameter("p3", WithAny<int>()), new NamedParameter("p4", WithAny<int>()),
+				new NamedParameter("p5", WithAny<int>()));
 
 			string result = setup.ToString();
 
 			await That(result)
 				.IsEqualTo(
-					"int Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4, With.Any<int>() p5)");
+					"int Foo(WithAny<string>() p1, WithAny<long>() p2, WithAny<int>() p3, WithAny<int>() p4, WithAny<int>() p5)");
 		}
 
 		[Fact]
 		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo", With.AnyParameterCombination());
+			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo", WithAnyParameters());
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(With.AnyParameterCombination())");
+			await That(result).IsEqualTo("int Foo(WithAnyParameters())");
 		}
 
 		[Fact]
@@ -566,8 +566,8 @@ public sealed partial class SetupMethodTests
 			int callCount = 0;
 			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(With.Any<int>(), With.Any<int>(), With.Any<int>(), With.Any<int>(),
-					With.Any<int>())
+			sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+					WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
@@ -596,11 +596,11 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string> setup = new("Foo", new With.NamedParameter("bar", With.Any<string>()));
+			VoidMethodSetup<string> setup = new("Foo", new NamedParameter("bar", WithAny<string>()));
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(With.Any<string>() bar)");
+			await That(result).IsEqualTo("void Foo(WithAny<string>() bar)");
 		}
 	}
 
@@ -609,22 +609,22 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long> setup = new("Foo", new With.NamedParameter("p1", With.Any<string>()),
-				new With.NamedParameter("p2", With.Any<long>()));
+			VoidMethodSetup<string, long> setup = new("Foo", new NamedParameter("p1", WithAny<string>()),
+				new NamedParameter("p2", WithAny<long>()));
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(With.Any<string>() p1, With.Any<long>() p2)");
+			await That(result).IsEqualTo("void Foo(WithAny<string>() p1, WithAny<long>() p2)");
 		}
 
 		[Fact]
 		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long> setup = new("Foo", With.AnyParameterCombination());
+			VoidMethodSetup<string, long> setup = new("Foo", WithAnyParameters());
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
+			await That(result).IsEqualTo("void Foo(WithAnyParameters())");
 		}
 	}
 
@@ -633,22 +633,22 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int> setup = new("Foo", new With.NamedParameter("p1", With.Any<string>()),
-				new With.NamedParameter("p2", With.Any<long>()), new With.NamedParameter("p3", With.Any<int>()));
+			VoidMethodSetup<string, long, int> setup = new("Foo", new NamedParameter("p1", WithAny<string>()),
+				new NamedParameter("p2", WithAny<long>()), new NamedParameter("p3", WithAny<int>()));
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3)");
+			await That(result).IsEqualTo("void Foo(WithAny<string>() p1, WithAny<long>() p2, WithAny<int>() p3)");
 		}
 
 		[Fact]
 		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int> setup = new("Foo", With.AnyParameterCombination());
+			VoidMethodSetup<string, long, int> setup = new("Foo", WithAnyParameters());
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
+			await That(result).IsEqualTo("void Foo(WithAnyParameters())");
 		}
 	}
 
@@ -658,24 +658,24 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int> setup = new("Foo",
-				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
-				new With.NamedParameter("p3", With.Any<int>()), new With.NamedParameter("p4", With.Any<int>()));
+				new NamedParameter("p1", WithAny<string>()), new NamedParameter("p2", WithAny<long>()),
+				new NamedParameter("p3", WithAny<int>()), new NamedParameter("p4", WithAny<int>()));
 
 			string result = setup.ToString();
 
 			await That(result)
 				.IsEqualTo(
-					"void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4)");
+					"void Foo(WithAny<string>() p1, WithAny<long>() p2, WithAny<int>() p3, WithAny<int>() p4)");
 		}
 
 		[Fact]
 		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int> setup = new("Foo", With.AnyParameterCombination());
+			VoidMethodSetup<string, long, int, int> setup = new("Foo", WithAnyParameters());
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
+			await That(result).IsEqualTo("void Foo(WithAnyParameters())");
 		}
 	}
 
@@ -685,25 +685,25 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int, int> setup = new("Foo",
-				new With.NamedParameter("p1", With.Any<string>()), new With.NamedParameter("p2", With.Any<long>()),
-				new With.NamedParameter("p3", With.Any<int>()), new With.NamedParameter("p4", With.Any<int>()),
-				new With.NamedParameter("p5", With.Any<int>()));
+				new NamedParameter("p1", WithAny<string>()), new NamedParameter("p2", WithAny<long>()),
+				new NamedParameter("p3", WithAny<int>()), new NamedParameter("p4", WithAny<int>()),
+				new NamedParameter("p5", WithAny<int>()));
 
 			string result = setup.ToString();
 
 			await That(result)
 				.IsEqualTo(
-					"void Foo(With.Any<string>() p1, With.Any<long>() p2, With.Any<int>() p3, With.Any<int>() p4, With.Any<int>() p5)");
+					"void Foo(WithAny<string>() p1, WithAny<long>() p2, WithAny<int>() p3, WithAny<int>() p4, WithAny<int>() p5)");
 		}
 
 		[Fact]
 		public async Task ToString_WithAnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int, int> setup = new("Foo", With.AnyParameterCombination());
+			VoidMethodSetup<string, long, int, int, int> setup = new("Foo", WithAnyParameters());
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(With.AnyParameterCombination())");
+			await That(result).IsEqualTo("void Foo(WithAnyParameters())");
 		}
 	}
 

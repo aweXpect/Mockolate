@@ -10,6 +10,6 @@ public interface IMockSet<TMock>
 	///     Counts the setter accesses of property <paramref name="propertyName" />
 	///     with the matching <paramref name="value" />.
 	/// </summary>
-	VerificationResult<TMock> Property(string propertyName, With.Parameter value);
+	VerificationResult<TMock> Property(string propertyName, Match.IParameter value);
 }
 #pragma warning restore S2326 // Unused type parameters should be removed

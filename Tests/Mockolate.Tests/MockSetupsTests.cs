@@ -40,7 +40,7 @@ public sealed class MockSetupsTests
 
 		for (int i = 0; i < indexerCount; i++)
 		{
-			sut.RegisterIndexer(new IndexerSetup<string, int>(With.Any<int>()));
+			sut.RegisterIndexer(new IndexerSetup<string, int>(WithAny<int>()));
 		}
 
 		string? result = mock.Setup.ToString();
@@ -80,7 +80,7 @@ public sealed class MockSetupsTests
 			IMockSetup setup = (IMockSetup)mock.Setup;
 			IMockSetup proxy = new MockSetup<int>.Proxy(setup, "baz");
 
-			proxy.RegisterIndexer(new IndexerSetup<int, string>("foo.bar").Returns(42));
+			proxy.RegisterIndexer(new IndexerSetup<int, string>(With("foo.bar")).Returns(42));
 
 			int result = ((IMock)mock).GetIndexer<int>(null, "foo.bar");
 			await That(result).IsEqualTo(42);

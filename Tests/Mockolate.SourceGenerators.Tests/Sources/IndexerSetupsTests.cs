@@ -33,7 +33,7 @@ public sealed class IndexerSetupsTests
 
 		await That(result.Sources).ContainsKey("IndexerSetups.g.cs").WhoseValue
 			.Contains(
-				"internal class IndexerSetup<TValue, T1, T2, T3, T4, T5>(With.Parameter match1, With.Parameter match2, With.Parameter match3, With.Parameter match4, With.Parameter match5) : IndexerSetup");
+				"internal class IndexerSetup<TValue, T1, T2, T3, T4, T5>(Match.IParameter match1, Match.IParameter match2, Match.IParameter match3, Match.IParameter match4, Match.IParameter match5) : IndexerSetup");
 	}
 
 	[Fact]

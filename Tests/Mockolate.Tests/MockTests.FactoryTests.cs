@@ -154,8 +154,8 @@ public sealed partial class MockTests
 			Mock<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService> mock =
 				factory.Create<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService>();
 
-			mock.SetupIMyService.Method.DoSomething(With.Any<int>()).Callback(() => isDoSomethingCalled1 = true);
-			mock.SetupIMyService__2.Method.DoSomething(With.Any<int>()).Callback(() => isDoSomethingCalled2 = true);
+			mock.SetupIMyService.Method.DoSomething(WithAny<int>()).Callback(() => isDoSomethingCalled1 = true);
+			mock.SetupIMyService__2.Method.DoSomething(WithAny<int>()).Callback(() => isDoSomethingCalled2 = true);
 
 			mock.SubjectForIMyService.DoSomething(1);
 

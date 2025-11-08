@@ -12,7 +12,7 @@ public sealed class VerifySetTests
 		sut.Subject.Counter = 42;
 
 		await That(sut.Verify.Got.Counter()).Never();
-		await That(sut.Verify.Set.Counter(With.Any<int>())).Once();
+		await That(sut.Verify.Set.Counter(WithAny<int>())).Once();
 	}
 
 	[Theory]

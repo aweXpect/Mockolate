@@ -12,14 +12,14 @@ public sealed class VerifyInvokedTests
 	public async Task MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>();
-		sut.Setup.Method.Multiply(With.Any<int>(), With.Any<int?>()).Returns(1);
+		sut.Setup.Method.Multiply(WithAny<int>(), WithAny<int?>()).Returns(1);
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
 			sut.Subject.Multiply(i, 4);
 		}
 
-		await That(sut.Verify.Invoked.Multiply(With.Any<int>(), With.Any<int?>())).Exactly(numberOfInvocations);
+		await That(sut.Verify.Invoked.Multiply(WithAny<int>(), WithAny<int?>())).Exactly(numberOfInvocations);
 	}
 
 	[Theory]
@@ -28,14 +28,14 @@ public sealed class VerifyInvokedTests
 	public async Task VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
 		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>();
-		sut.Setup.Method.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>());
+		sut.Setup.Method.SetIsValid(WithAny<bool>(), WithAny<Func<bool>?>());
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
 			sut.Subject.SetIsValid(i % 2 == 0, () => true);
 		}
 
-		await That(sut.Verify.Invoked.SetIsValid(With.Any<bool>(), With.Any<Func<bool>?>()))
+		await That(sut.Verify.Invoked.SetIsValid(WithAny<bool>(), WithAny<Func<bool>?>()))
 			.Exactly(numberOfInvocations);
 	}
 
@@ -114,6 +114,6 @@ public sealed class VerifyInvokedTests
 
 		_ = mock.Subject.Equals(obj);
 
-		await That(mock.Verify.Invoked.Equals(obj)).Once();
+		await That(mock.Verify.Invoked.Equals(With(obj))).Once();
 	}
 }

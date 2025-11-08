@@ -9,11 +9,11 @@ public interface IMockInvoked<TMock>
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
-	VerificationResult<TMock> Method(string methodName, params With.Parameter[] parameters);
+	VerificationResult<TMock> Method(string methodName, params Match.IParameter[] parameters);
 
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
-	VerificationResult<TMock> Method(string methodName, With.Parameters parameters);
+	VerificationResult<TMock> Method(string methodName, Match.IParameters parameters);
 }
 #pragma warning restore S2326 // Unused type parameters should be removed

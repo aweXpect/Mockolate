@@ -14,7 +14,7 @@ public sealed class InteractionsTests
 		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
 		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", WithAny<int>());
 
 		await That(result).Once();
 	}
@@ -28,7 +28,7 @@ public sealed class InteractionsTests
 		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
 		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<string>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", WithAny<string>());
 
 		await That(result).Never();
 	}
@@ -42,7 +42,7 @@ public sealed class InteractionsTests
 		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
 		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("baz.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("baz.bar", WithAny<int>());
 
 		await That(result).Never();
 	}
@@ -54,10 +54,10 @@ public sealed class InteractionsTests
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
 		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", WithAny<int>());
 
 		await That(result).Never();
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(With.Any<int>())");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(WithAny<int>())");
 	}
 
 	[Fact]

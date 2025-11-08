@@ -2,6 +2,7 @@ using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using NSubstitute;
 using Mockolate.Verify;
+using static Mockolate.Match;
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -11,17 +12,17 @@ namespace Mockolate.Benchmarks;
 public partial class HappyCaseBenchmarks
 {
 	/// <summary>
-	///     <see href="https://github.com/Mockolate/Mockolate"/>
+	///     <see href="https://awexpect.com/Mockolate"/>
 	/// </summary>
 	[Benchmark]
 	public void Simple_Mockolate()
 	{
 		var mock = Mock.Create<IMyInterface>();
-		mock.Setup.Method.MyFunc(With.Any<int>()).Returns(true);
+		mock.Setup.Method.MyFunc(WithAny<int>()).Returns(true);
 
 		mock.Subject.MyFunc(42);
 
-		mock.Verify.Invoked.MyFunc(With.Any<int>()).Once();
+		mock.Verify.Invoked.MyFunc(WithAny<int>()).Once();
 	}
 
 	/// <summary>

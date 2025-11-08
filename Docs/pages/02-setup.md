@@ -1,6 +1,7 @@
 # Setup
 
-Set up return values or behaviors for methods, properties, and indexers on your mock. Control how the mock responds to calls in your tests.
+Set up return values or behaviors for methods, properties, and indexers on your mock. Control how the mock responds to
+calls in your tests.
 
 ## Method Setup
 
@@ -8,7 +9,7 @@ Use `mock.Setup.Method.MethodName(…)` to set up methods. You can specify argum
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-mock.Setup.Method.Dispense("Dark", With.Any<int>())
+mock.Setup.Method.Dispense(With("Dark"), WithAny<int>())
     .Returns((type, amount) =>
     {
         var current = mock.Subject[type];
@@ -22,25 +23,28 @@ mock.Setup.Method.Dispense("Dark", With.Any<int>())
     });
 
 // Setup method with callback
-mock.Setup.Method.Dispense("White", With.Any<int>())
+mock.Setup.Method.Dispense(With("White"), WithAny<int>())
     .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
-mock.Setup.Method.Dispense("Green", With.Any<int>())
+mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
     .Throws(() => new InvalidChocolateException());
 ```
 
 - Use `.Callback(…)` to run code when the method is called. Supports parameterless or parameter callbacks.
-- Use `.Returns(…)` to specify the value to return. You can provide a direct value, a callback, or a callback with parameters.
-- Use `.Throws(…)` to specify an exception to throw. Supports direct exceptions, exception factories, or factories with parameters.
-- Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each call).
+- Use `.Returns(…)` to specify the value to return. You can provide a direct value, a callback, or a callback with
+  parameters.
+- Use `.Throws(…)` to specify an exception to throw. Supports direct exceptions, exception factories, or factories with
+  parameters.
+- Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each
+  call).
 
 **Async Methods**
 
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
 
 ```csharp
-mock.Setup.Method.DispenseAsync(With.Any<string>(), With.Any<int>())
+mock.Setup.Method.DispenseAsync(WithAny<string>(), WithAny<int>())
     .ReturnsAsync(true);
 ```
 
@@ -48,12 +52,12 @@ mock.Setup.Method.DispenseAsync(With.Any<string>(), With.Any<int>())
 
 Mockolate provides flexible argument matching for method setups and verifications:
 
-- `With.Any<T>()`: Matches any value of type `T`.
-- `With.Matching<T>(predicate)`: Matches values based on a predicate.
-- `With.Value<T>(value)`: Matches a specific value.
-- `With.Null<T>()`: Matches null.
-- `With.Out<T>(…)`/`With.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and predicates.
-- For .NET 8+: `With.ValueBetween<T>(min).And(max)` matches a range (numeric types).
+- `Match.WithAny<T>()`: Matches any value of type `T`.
+- `Match.With<T>(predicate)`: Matches values based on a predicate.
+- `Match.With<T>(value)`: Matches a specific value.
+- `Match.Null<T>()`: Matches null.
+- `Match.Out<T>(…)`/`Match.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and
+  predicates.
 
 ## Property Setup
 
@@ -61,7 +65,8 @@ Set up property getters and setters to control or verify property access on your
 
 **Initialization**
 
-You can initialize properties so they work like normal properties (setter changes the value, getter returns the last set value):
+You can initialize properties so they work like normal properties (setter changes the value, getter returns the last set
+value):
 
 ```csharp
 mock.Setup.Property.TotalDispensed.InitializeWith(42);
@@ -93,16 +98,18 @@ mock.Setup.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.WriteLi
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-mock.Setup.Indexer(With.Any<string>())
+mock.Setup.Indexer(WithAny<string>())
     .InitializeWith(type => 20)
     .OnGet(type => Console.WriteLine($"Stock for {type} was read"));
 
-mock.Setup.Indexer("Dark")
+mock.Setup.Indexer(With("Dark"))
     .InitializeWith(10)
     .OnSet((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
 ```
 
 - `.InitializeWith(…)` can take a value or a callback with parameters.
-- `.Returns(…)` and `.Throws(…)` support direct values, callbacks, and callbacks with parameters and/or the current value.
+- `.Returns(…)` and `.Throws(…)` support direct values, callbacks, and callbacks with parameters and/or the current
+  value.
 - `.OnGet(…)` and `.OnSet(…)` support callbacks with or without parameters.
-- `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each call.
+- `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each
+  call.

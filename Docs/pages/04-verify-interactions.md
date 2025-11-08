@@ -1,8 +1,10 @@
 # Verify interactions
 
-You can verify that methods, properties, indexers, or events were called or accessed with specific arguments and how many times, using the `Verify` API:
+You can verify that methods, properties, indexers, or events were called or accessed with specific arguments and how
+many times, using the `Verify` API:
 
 Supported call count verifications in the `Mockolate.Verify` namespace:
+
 - `.Never()`
 - `.Once()`
 - `.Twice()`
@@ -20,34 +22,31 @@ You can verify that methods were invoked with specific arguments and how many ti
 
 ```csharp
 // Verify that Dispense("Dark", 5) was invoked at least once
-mock.Verify.Invoked.Dispense("Dark", 5).AtLeastOnce();
+mock.Verify.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-mock.Verify.Invoked.Dispense("White", With.Any<int>()).Never();
+mock.Verify.Invoked.Dispense(With("White"), WithAny<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-mock.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>()).Exactly(2);
+mock.Verify.Invoked.Dispense(WithAnyParameters()).Exactly(2);
 ```
 
 ### Argument Matchers
 
-You can use argument matchers from the `With` class to verify calls with flexible conditions:
+You can use argument matchers from the `Match` class to verify calls with flexible conditions:
 
-- `With.Any<T>()` — matches any value of type `T`
-- `With.Null<T>()` — matches `null`
-- `With.Matching<T>(predicate)` — matches values satisfying a predicate
-- `With.Value(value)` — matches a specific value
-- `With.Out<T>()` — matches any out parameter of type `T`
-- `With.Ref<T>()` — matches any ref parameter of type `T`
-- `With.Out<T>(setter)` — matches and sets an out parameter
-- `With.Ref<T>(setter)` — matches and sets a ref parameter
-- `With.ValueBetween<T>(min).And(max)` — matches a value between min and max (for numeric types, .NET 8+)
+- `Match.WithAny<T>()`: matches any value of type `T`
+- `Match.Null<T>()`: matches `null`
+- `Match.With<T>(predicate)`: matches values satisfying a predicate
+- `Match.With(value)`: matches a specific value
+- `Match.Out<T>()`: matches any out parameter of type `T`
+- `Match.Ref<T>()`: matches any ref parameter of type `T`
 
 **Example:**
 
 ```csharp
-mock.Verify.Invoked.Dispense(With.Matching<string>(t => t.StartsWith("D")), With.ValueBetween(1).And(10)).Once();
-mock.Verify.Invoked.Dispense("Milk", With.ValueBetween(1).And(5)).AtLeastOnce();
+mock.Verify.Invoked.Dispense(With<string>(t => t.StartsWith("D")), WithAny<int>()).Once();
+mock.Verify.Invoked.Dispense(With("Milk"), WithAny<int>()).AtLeastOnce();
 ```
 
 ## Properties
@@ -59,7 +58,7 @@ You can verify access to property getter and setter:
 mock.Verify.Got.TotalDispensed().AtLeastOnce();
 
 // Verify that the property 'TotalDispensed' was set to 42 exactly once
-mock.Verify.Set.TotalDispensed(42).Once();
+mock.Verify.Set.TotalDispensed(With(42)).Once();
 ```
 
 **Note:**  
@@ -71,10 +70,10 @@ You can verify access to indexer getter and setter:
 
 ```csharp
 // Verify that the indexer was read with key "Dark" exactly once
-mock.Verify.GotIndexer("Dark").Once();
+mock.Verify.GotIndexer(With("Dark")).Once();
 
 // Verify that the indexer was set with key "Milk" to value 7 at least once
-mock.Verify.SetIndexer("Milk", 7).AtLeastOnce();
+mock.Verify.SetIndexer(With("Milk"), 7).AtLeastOnce();
 ```
 
 **Note:**  
@@ -97,17 +96,17 @@ mock.Verify.UnsubscribedFrom.ChocolateDispensed().Once();
 Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
-mock.Verify.Invoked.Dispense("Dark", 2).Then(
-    m => m.Invoked.Dispense("Dark", 3)
+mock.Verify.Invoked.Dispense(With("Dark"), With(2)).Then(
+    m => m.Invoked.Dispense(With("Dark"), With(3))
 );
 ```
 
 You can chain multiple calls for strict order verification:
 
 ```csharp
-mock.Verify.Invoked.Dispense("Dark", 1).Then(
-    m => m.Invoked.Dispense("Milk", 2),
-    m => m.Invoked.Dispense("White", 3));
+mock.Verify.Invoked.Dispense(With("Dark"), With(1)).Then(
+    m => m.Invoked.Dispense(With("Milk"), With(2)),
+    m => m.Invoked.Dispense(With("White"), With(3)));
 ```
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.

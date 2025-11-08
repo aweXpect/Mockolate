@@ -1,6 +1,7 @@
 # Create mocks
 
-You can create mocks for interfaces and classes. For classes without a default constructor, use `BaseClass.WithConstructorParameters(…)` to provide constructor arguments:
+You can create mocks for interfaces and classes. For classes without a default constructor, use
+`BaseClass.WithConstructorParameters(…)` to provide constructor arguments:
 
 ```csharp
 // Create a mock for an interface
@@ -19,6 +20,7 @@ var mock3 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**
+
 - Only the first generic type can be a class; additional types must be interfaces.
 - Sealed classes cannot be mocked and will throw a `MockException`.
 
@@ -39,15 +41,15 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 ### `MockBehavior` options
 
 - `ThrowWhenNotSetup` (bool):
-  - If `true`, the mock will throw an exception when a method or property is called without a setup.
-  - If `false`, the mock will return a default value (see `DefaultValue`).
+	- If `true`, the mock will throw an exception when a method or property is called without a setup.
+	- If `false`, the mock will return a default value (see `DefaultValue`).
 - `BaseClassBehavior` (enum):
-  - Controls how the mock interacts with base class members. Options:
-    - `DoNotCallBaseClass`: Do not call base class implementation (default).
-    - `OnlyCallBaseClass`: Only call base class implementation.
-    - `UseBaseClassAsDefaultValue`: Use base class as a fallback for default values.
+	- Controls how the mock interacts with base class members. Options:
+		- `DoNotCallBaseClass`: Do not call base class implementation (default).
+		- `OnlyCallBaseClass`: Only call base class implementation.
+		- `UseBaseClassAsDefaultValue`: Use base class as a fallback for default values.
 - `DefaultValue` (IDefaultValueGenerator):
-  - Customizes how default values are generated for methods/properties that are not set up.
+	- Customizes how default values are generated for methods/properties that are not set up.
 
 ## Using a factory for shared behavior
 

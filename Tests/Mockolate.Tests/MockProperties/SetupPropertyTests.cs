@@ -123,9 +123,9 @@ public sealed partial class SetupPropertyTests
 	private sealed class MyPropertySetup<T> : PropertySetup<T>
 	{
 		public void InvokeSetter(object? value)
-			=> base.InvokeSetter(value, MockBehavior.Default);
+			=> InvokeSetter(value, MockBehavior.Default);
 
 		public TResult InvokeGetter<TResult>()
-			=> base.InvokeGetter<TResult>(MockBehavior.Default);
+			=> InvokeGetter<TResult>(MockBehavior.Default);
 	}
 }
