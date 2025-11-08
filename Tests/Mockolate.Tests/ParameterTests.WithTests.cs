@@ -38,6 +38,7 @@ public sealed partial class ParameterTests
 
 			await That(result).IsEqualTo(expectedValue);
 		}
+
 		[Theory]
 		[InlineData(null, true)]
 		[InlineData(1, false)]

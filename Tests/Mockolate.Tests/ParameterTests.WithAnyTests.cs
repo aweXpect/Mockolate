@@ -21,7 +21,7 @@ public sealed partial class ParameterTests
 		[InlineData(null)]
 		[InlineData("")]
 		[InlineData("foo")]
-		public async Task WithAny_ShouldAlwaysMatch(string? value)
+		public async Task ShouldAlwaysMatch(string? value)
 		{
 			IParameter<string> sut = WithAny<string>();
 
