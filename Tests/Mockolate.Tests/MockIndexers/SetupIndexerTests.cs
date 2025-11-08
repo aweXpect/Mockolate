@@ -34,7 +34,7 @@ public sealed partial class SetupIndexerTests
 	public async Task ShouldUseInitializedValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		mock.Setup.Indexer(2).InitializeWith("foo");
+		mock.Setup.Indexer(With(2)).InitializeWith("foo");
 
 		string result1 = mock.Subject[2];
 		string result2 = mock.Subject[3];
@@ -47,7 +47,7 @@ public sealed partial class SetupIndexerTests
 	public async Task ThreeLevels_ShouldUseInitializedValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		mock.Setup.Indexer("foo", 1, 2).InitializeWith(42);
+		mock.Setup.Indexer(With("foo"), With(1), With(2)).InitializeWith(42);
 
 		int? result1 = mock.Subject["foo", 1, 2];
 		int? result2 = mock.Subject["bar", 1, 2];
@@ -80,7 +80,7 @@ public sealed partial class SetupIndexerTests
 	public async Task TwoLevels_ShouldUseInitializedValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		mock.Setup.Indexer(2, 3).InitializeWith("foo");
+		mock.Setup.Indexer(With(2), With(3)).InitializeWith("foo");
 
 		string result1 = mock.Subject[2, 3];
 		string result2 = mock.Subject[1, 4];
@@ -108,7 +108,7 @@ public sealed partial class SetupIndexerTests
 	public async Task WhenTypeOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
-		mock.Setup.Indexer(With.Any<int>()).Returns("foo");
+		mock.Setup.Indexer(WithAny<int>()).Returns("foo");
 		IMock hiddenMock = mock;
 
 		string result1 = hiddenMock.GetIndexer<string>(null, 1);

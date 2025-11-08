@@ -16,6 +16,6 @@ public partial class Parameter
 		protected override bool Matches(T value) => value is null;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"With.Null<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"Null<{typeof(T).FormatType()}>()";
 	}
 }

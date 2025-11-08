@@ -41,7 +41,7 @@ public partial class Parameter
 		public T GetValue() => setter();
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"With.Out<{typeof(T).FormatType()}>({setterExpression})";
+		public override string ToString() => $"Out<{typeof(T).FormatType()}>({setterExpression})";
 	}
 
 	/// <summary>
@@ -55,6 +55,6 @@ public partial class Parameter
 		public bool Matches(object? value) => true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"With.Out<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"Out<{typeof(T).FormatType()}>()";
 	}
 }

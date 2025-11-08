@@ -10,7 +10,7 @@ public sealed partial class VerifySetIndexerTests
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		mock.Subject[null, null, null, null] = null;
 
-		await That(mock.Verify.SetIndexer(With.Any<int?>(), null, With.Null<int?>(), With.Any<int?>(), null)).Once();
+		await That(mock.Verify.SetIndexer(WithAny<int?>(), null, Null<int?>(), WithAny<int?>(), null)).Once();
 	}
 
 	[Fact]
@@ -19,19 +19,19 @@ public sealed partial class VerifySetIndexerTests
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		mock.Subject[1, 2] = "foo";
 
-		await That(mock.Verify.SetIndexer(With.Any<int>(), "foo")).Never();
-		await That(mock.Verify.SetIndexer(With.Any<int>(), With.Any<int>(), "foo")).Once();
-		await That(mock.Verify.SetIndexer(With.Any<int>(), With.Any<int>(), With.Any<int>(), "foo")).Never();
+		await That(mock.Verify.SetIndexer(WithAny<int>(), With("foo"))).Never();
+		await That(mock.Verify.SetIndexer(WithAny<int>(), WithAny<int>(), With("foo"))).Once();
+		await That(mock.Verify.SetIndexer(WithAny<int>(), WithAny<int>(), WithAny<int>(), With("foo"))).Never();
 	}
 
 	[Fact]
-	public async Task WhenParametersDontMatch_ShouldReturnNever()
+	public async Task WhenParametersDoNotMatch_ShouldReturnNever()
 	{
 		Mock<IMyService> mock = Mock.Create<IMyService>();
 		mock.Subject[1, 2] = "foo";
 
-		await That(mock.Verify.SetIndexer(1, 2, "foo")).Once();
-		await That(mock.Verify.SetIndexer(With.Matching<int>(i => i != 1), 2, "foo")).Never();
-		await That(mock.Verify.SetIndexer(1, With.Matching<int>(i => i != 2), "foo")).Never();
+		await That(mock.Verify.SetIndexer(With(1), With(2), With("foo"))).Once();
+		await That(mock.Verify.SetIndexer(With<int>(i => i != 1), With(2), With("foo"))).Never();
+		await That(mock.Verify.SetIndexer(With(1), With<int>(i => i != 2), With("foo"))).Never();
 	}
 }

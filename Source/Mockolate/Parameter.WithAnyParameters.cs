@@ -17,6 +17,6 @@ public partial class Parameter
 			=> true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"With.AnyParameterCombination()";
+		public override string ToString() => $"WithAnyParameters()";
 	}
 }

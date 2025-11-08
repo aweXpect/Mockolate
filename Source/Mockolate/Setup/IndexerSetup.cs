@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Match;
 
 namespace Mockolate.Setup;
 
@@ -74,7 +75,7 @@ public abstract class IndexerSetup : IIndexerSetup
 	///     The method returns false if the lengths of the parameters and values arrays do not match.
 	///     Each value is compared to its corresponding parameter using the parameter's matching logic.
 	/// </remarks>
-	protected static bool Matches(With.Parameter[] parameters, object?[] values)
+	protected static bool Matches(IParameter[] parameters, object?[] values)
 	{
 		if (parameters.Length != values.Length)
 		{
@@ -103,7 +104,7 @@ public abstract class IndexerSetup : IIndexerSetup
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
-public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
+public class IndexerSetup<TValue, T1>(IParameter<T1> match1) : IndexerSetup
 {
 	private readonly List<Action<T1>> _getterCallbacks = [];
 	private readonly List<Func<TValue, T1, TValue>> _returnCallbacks = [];
@@ -317,7 +318,7 @@ public class IndexerSetup<TValue, T1>(With.Parameter<T1> match1) : IndexerSetup
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
 /// </summary>
-public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parameter<T2> match2) : IndexerSetup
+public class IndexerSetup<TValue, T1, T2>(IParameter<T1> match1, IParameter<T2> match2) : IndexerSetup
 {
 	private readonly List<Action<T1, T2>> _getterCallbacks = [];
 	private readonly List<Func<TValue, T1, T2, TValue>> _returnCallbacks = [];
@@ -536,9 +537,9 @@ public class IndexerSetup<TValue, T1, T2>(With.Parameter<T1> match1, With.Parame
 ///     <typeparamref name="T3" />.
 /// </summary>
 public class IndexerSetup<TValue, T1, T2, T3>(
-	With.Parameter<T1> match1,
-	With.Parameter<T2> match2,
-	With.Parameter<T3> match3) : IndexerSetup
+	IParameter<T1> match1,
+	IParameter<T2> match2,
+	IParameter<T3> match3) : IndexerSetup
 {
 	private readonly List<Action<T1, T2, T3>> _getterCallbacks = [];
 	private readonly List<Func<TValue, T1, T2, T3, TValue>> _returnCallbacks = [];
@@ -761,10 +762,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public class IndexerSetup<TValue, T1, T2, T3, T4>(
-	With.Parameter<T1> match1,
-	With.Parameter<T2> match2,
-	With.Parameter<T3> match3,
-	With.Parameter<T4> match4) : IndexerSetup
+	IParameter<T1> match1,
+	IParameter<T2> match2,
+	IParameter<T3> match3,
+	IParameter<T4> match4) : IndexerSetup
 {
 	private readonly List<Action<T1, T2, T3, T4>> _getterCallbacks = [];
 	private readonly List<Func<TValue, T1, T2, T3, T4, TValue>> _returnCallbacks = [];

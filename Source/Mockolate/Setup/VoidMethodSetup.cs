@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Match;
 
 namespace Mockolate.Setup;
 
@@ -87,7 +88,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : MethodSetup
+public class VoidMethodSetup<T1>(string name, NamedParameter match1) : MethodSetup
 {
 	private readonly List<Action<T1>> _callbacks = [];
 	private readonly List<Action<T1>> _returnCallbacks = [];
@@ -174,7 +175,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
-		if (HasOutParameter([match1,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([match1,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -185,7 +186,7 @@ public class VoidMethodSetup<T1>(string name, With.NamedParameter match1) : Meth
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (HasRefParameter([match1,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([match1,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -206,13 +207,13 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 	private readonly List<Action<T1, T2>> _callbacks = [];
 	private readonly List<Action<T1, T2>> _returnCallbacks = [];
 	private readonly string _name;
-	private readonly With.Parameters? _matches;
-	private readonly With.NamedParameter? _match1;
-	private readonly With.NamedParameter? _match2;
+	private readonly IParameters? _matches;
+	private readonly NamedParameter? _match1;
+	private readonly NamedParameter? _match2;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
-	public VoidMethodSetup(string name, With.NamedParameter match1, With.NamedParameter match2)
+	public VoidMethodSetup(string name, NamedParameter match1, NamedParameter match2)
 	{
 		_name = name;
 		_match1 = match1;
@@ -220,7 +221,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 	}
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
-	public VoidMethodSetup(string name, With.Parameters matches)
+	public VoidMethodSetup(string name, IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -316,7 +317,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 			throw new MockException("The method setup with parameters does not support out parameters.");
 		}
 
-		if (HasOutParameter([_match1, _match2,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([_match1, _match2,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -332,7 +333,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 			throw new MockException("The method setup with parameters does not support ref parameters.");
 		}
 
-		if (HasRefParameter([_match1, _match2,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([_match1, _match2,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -356,18 +357,18 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 	private readonly List<Action<T1, T2, T3>> _callbacks = [];
 	private readonly List<Action<T1, T2, T3>> _returnCallbacks = [];
 	private readonly string _name;
-	private readonly With.Parameters? _matches;
-	private readonly With.NamedParameter? _match1;
-	private readonly With.NamedParameter? _match2;
-	private readonly With.NamedParameter? _match3;
+	private readonly IParameters? _matches;
+	private readonly NamedParameter? _match1;
+	private readonly NamedParameter? _match2;
+	private readonly NamedParameter? _match3;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
 	public VoidMethodSetup(
 		string name,
-		With.NamedParameter match1,
-		With.NamedParameter match2,
-		With.NamedParameter match3)
+		NamedParameter match1,
+		NamedParameter match2,
+		NamedParameter match3)
 	{
 		_name = name;
 		_match1 = match1;
@@ -376,7 +377,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 	}
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
-	public VoidMethodSetup(string name, With.Parameters matches)
+	public VoidMethodSetup(string name, IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -473,7 +474,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 			throw new MockException("The method setup with parameters does not support out parameters.");
 		}
 
-		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -489,7 +490,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 			throw new MockException("The method setup with parameters does not support ref parameters.");
 		}
 
-		if (HasRefParameter([_match1, _match2, _match3,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([_match1, _match2, _match3,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -513,20 +514,20 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 	private readonly List<Action<T1, T2, T3, T4>> _callbacks = [];
 	private readonly List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
 	private readonly string _name;
-	private readonly With.Parameters? _matches;
-	private readonly With.NamedParameter? _match1;
-	private readonly With.NamedParameter? _match2;
-	private readonly With.NamedParameter? _match3;
-	private readonly With.NamedParameter? _match4;
+	private readonly IParameters? _matches;
+	private readonly NamedParameter? _match1;
+	private readonly NamedParameter? _match2;
+	private readonly NamedParameter? _match3;
+	private readonly NamedParameter? _match4;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
 	public VoidMethodSetup(
 		string name,
-		With.NamedParameter match1,
-		With.NamedParameter match2,
-		With.NamedParameter match3,
-		With.NamedParameter match4)
+		NamedParameter match1,
+		NamedParameter match2,
+		NamedParameter match3,
+		NamedParameter match4)
 	{
 		_name = name;
 		_match1 = match1;
@@ -536,7 +537,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 	}
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
-	public VoidMethodSetup(string name, With.Parameters matches)
+	public VoidMethodSetup(string name, IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -634,7 +635,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 			throw new MockException("The method setup with parameters does not support out parameters.");
 		}
 
-		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName, out With.OutParameter<T>? outParameter))
+		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue();
 		}
@@ -650,7 +651,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 			throw new MockException("The method setup with parameters does not support ref parameters.");
 		}
 
-		if (HasRefParameter([_match1, _match2, _match3, _match4,], parameterName, out With.RefParameter<T>? refParameter))
+		if (HasRefParameter([_match1, _match2, _match3, _match4,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}

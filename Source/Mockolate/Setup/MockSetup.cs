@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Match;
 
 namespace Mockolate.Setup;
 
@@ -474,9 +475,9 @@ public class MockSetup<T>(IMock mock, string prefix) : IMockSetup,
 		return methodSetup;
 	}
 
-	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(With.Parameter<object?> obj)
+	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(IParameter<object?> obj)
 	{
-		var methodSetup = new ReturnMethodSetup<bool, object?>(prefix + ".Equals", new With.NamedParameter("obj", obj));
+		var methodSetup = new ReturnMethodSetup<bool, object?>(prefix + ".Equals", new NamedParameter("obj", obj));
 		_methodSetups.Add(methodSetup);
 		return methodSetup;
 	}

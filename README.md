@@ -191,10 +191,10 @@ mock.Setup.Method.DispenseAsync(With.Any<string>(), With.Any<int>())
 Mockolate provides flexible argument matching for method setups and verifications:
 
 - `With.Any<T>()`: Matches any value of type `T`.
-- `With.Matching<T>(predicate)`: Matches values based on a predicate.
-- `With.Value<T>(value)`: Matches a specific value.
-- `With.Null<T>()`: Matches null.
-- `With.Out<T>(…)`/`With.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and predicates.
+- `Parameter.With<T>(predicate)`: Matches values based on a predicate.
+- `Parameter.With<T>(value)`: Matches a specific value.
+- `Parameter.Null<T>()`: Matches null.
+- `Parameter.Out<T>(…)`/`Parameter.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and predicates.
 - For .NET 8+: `With.ValueBetween<T>(min).And(max)` matches a range (numeric types).
 
 ### Property Setup
@@ -326,19 +326,19 @@ mock.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>()).Exactly(2);
 You can use argument matchers from the `With` class to verify calls with flexible conditions:
 
 - `With.Any<T>()` � matches any value of type `T`
-- `With.Null<T>()` � matches `null`
-- `With.Matching<T>(predicate)` � matches values satisfying a predicate
-- `With.Value(value)` � matches a specific value
-- `With.Out<T>()` � matches any out parameter of type `T`
-- `With.Ref<T>()` � matches any ref parameter of type `T`
-- `With.Out<T>(setter)` � matches and sets an out parameter
-- `With.Ref<T>(setter)` � matches and sets a ref parameter
+- `Parameter.Null<T>()` � matches `null`
+- `Parameter.With<T>(predicate)` � matches values satisfying a predicate
+- `Parameter.With(value)` � matches a specific value
+- `Parameter.Out<T>()` � matches any out parameter of type `T`
+- `Parameter.Ref<T>()` � matches any ref parameter of type `T`
+- `Parameter.Out<T>(setter)` � matches and sets an out parameter
+- `Parameter.Ref<T>(setter)` � matches and sets a ref parameter
 - `With.ValueBetween<T>(min).And(max)` � matches a value between min and max (for numeric types, .NET 8+)
 
 **Example:**
 
 ```csharp
-mock.Verify.Invoked.Dispense(With.Matching<string>(t => t.StartsWith("D")), With.ValueBetween(1).And(10)).Once();
+mock.Verify.Invoked.Dispense(Parameter.With<string>(t => t.StartsWith("D")), With.ValueBetween(1).And(10)).Once();
 mock.Verify.Invoked.Dispense("Milk", With.ValueBetween(1).And(5)).AtLeastOnce();
 ```
 

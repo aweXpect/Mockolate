@@ -55,7 +55,7 @@ public sealed class InteractionsTests
 		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", WithAny<int>());
 
 		await That(result).Once();
 	}
@@ -69,7 +69,7 @@ public sealed class InteractionsTests
 		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", With.Any<string>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", WithAny<string>());
 
 		await That(result).Never();
 	}
@@ -83,7 +83,7 @@ public sealed class InteractionsTests
 		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
 		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("baz.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("baz.bar", WithAny<int>());
 
 		await That(result).Never();
 	}
@@ -95,10 +95,10 @@ public sealed class InteractionsTests
 		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
 		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", With.Any<int>());
+		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", WithAny<int>());
 
 		await That(result).Never();
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value With.Any<int>()");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value WithAny<int>()");
 	}
 
 	[Fact]

@@ -17,6 +17,6 @@ public partial class Parameter
 		protected override bool Matches(T value) => true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"With.Any<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"WithAny<{typeof(T).FormatType()}>()";
 	}
 }

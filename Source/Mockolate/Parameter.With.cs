@@ -63,7 +63,7 @@ public partial class Parameter
 		{
 			if (_comparer is not null)
 			{
-				return $"With.Value({_valueExpression}, {_comparerExpression})";
+				return $"With({_valueExpression}, {_comparerExpression})";
 			}
 
 			return _valueExpression;
@@ -73,6 +73,6 @@ public partial class Parameter
 	private sealed class PredicateParameter<T>(Func<T, bool> predicate, string predicateExpression) : TypedParameter<T>
 	{
 		protected override bool Matches(T value) => predicate(value);
-		public override string ToString() => $"With.Matching<{typeof(T).FormatType()}>({predicateExpression})";
+		public override string ToString() => $"With<{typeof(T).FormatType()}>({predicateExpression})";
 	}
 }

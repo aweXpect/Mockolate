@@ -1,6 +1,7 @@
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
+using Mockolate.Match;
 
 namespace Mockolate.Verify;
 
@@ -35,9 +36,9 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, str
 	TMock IMockVerify<TMock>.Mock
 		=> mock;
 
-	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameter[])" />
+	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, IParameter[])" />
 	VerificationResult<IMockVerify<T, TMock>> IMockInvoked<IMockVerify<T, TMock>>.Method(string methodName,
-		params With.Parameter[] parameters)
+		params IParameter[] parameters)
 	{
 		return new VerificationResult<IMockVerify<T, TMock>>(this, interactions,
 			interactions.Interactions
@@ -51,9 +52,9 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, str
 			$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
 	}
 
-	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, With.Parameters)" />
+	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, IParameters)" />
 	VerificationResult<IMockVerify<T, TMock>> IMockInvoked<IMockVerify<T, TMock>>.Method(string methodName,
-		With.Parameters parameters)
+		IParameters parameters)
 	{
 		return new VerificationResult<IMockVerify<T, TMock>>(this, interactions,
 			interactions.Interactions
@@ -77,9 +78,9 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, str
 				.ToArray(),
 			$"got property {propertyName.SubstringAfterLast('.')}");
 	}
-	/// <inheritdoc cref="IMockSet{TMock}.Property(string, With.Parameter)" />
+	/// <inheritdoc cref="IMockSet{TMock}.Property(string, IParameter)" />
 	VerificationResult<IMockVerify<T, TMock>> IMockSet<IMockVerify<T, TMock>>.Property(string propertyName,
-		With.Parameter value)
+		IParameter value)
 	{
 		return new VerificationResult<IMockVerify<T, TMock>>(this, interactions,
 			interactions.Interactions
@@ -90,9 +91,9 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, str
 			$"set property {propertyName.SubstringAfterLast('.')} to value {value}");
 	}
 
-	/// <inheritdoc cref="IMockGotIndexer{TMock}.Got(With.Parameter?[])" />
+	/// <inheritdoc cref="IMockGotIndexer{TMock}.Got(IParameter?[])" />
 	VerificationResult<IMockVerify<T, TMock>> IMockGotIndexer<IMockVerify<T, TMock>>.Got(
-		params With.Parameter?[] parameters)
+		params IParameter?[] parameters)
 	{
 		return new VerificationResult<IMockVerify<T, TMock>>(this, interactions,
 			interactions.Interactions
@@ -106,9 +107,9 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, str
 			$"got indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))}");
 	}
 
-	/// <inheritdoc cref="IMockSetIndexer{TMock}.Set(With.Parameter?, With.Parameter?[])" />
-	VerificationResult<IMockVerify<T, TMock>> IMockSetIndexer<IMockVerify<T, TMock>>.Set(With.Parameter? value,
-		params With.Parameter?[] parameters)
+	/// <inheritdoc cref="IMockSetIndexer{TMock}.Set(IParameter?, IParameter?[])" />
+	VerificationResult<IMockVerify<T, TMock>> IMockSetIndexer<IMockVerify<T, TMock>>.Set(IParameter? value,
+		params IParameter?[] parameters)
 	{
 		return new VerificationResult<IMockVerify<T, TMock>>(this, interactions,
 			interactions.Interactions
@@ -153,10 +154,10 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, str
 	{
 		return ((IMockInvoked<IMockVerify<T, TMock>>)this).Method(prefix + ".ToString");
 	}
-	/// <inheritdoc cref="IMockVerifyInvokedWithEquals{T,TMock}.Equals(With.Parameter{object})" />
-	VerificationResult<IMockVerify<T, TMock>> IMockVerifyInvokedWithEquals<T, TMock>.Equals(With.Parameter<object>? obj)
+	/// <inheritdoc cref="IMockVerifyInvokedWithEquals{T,TMock}.Equals(IParameter{object})" />
+	VerificationResult<IMockVerify<T, TMock>> IMockVerifyInvokedWithEquals<T, TMock>.Equals(IParameter<object>? obj)
 	{
-		return ((IMockInvoked<IMockVerify<T, TMock>>)this).Method(prefix + ".Equals", obj ?? With.Null<object>());
+		return ((IMockInvoked<IMockVerify<T, TMock>>)this).Method(prefix + ".Equals", obj ?? Parameter.Null<object>());
 	}
 	/// <inheritdoc cref="IMockVerifyInvokedWithGetHashCode{T,TMock}.GetHashCode()" />
 	VerificationResult<IMockVerify<T, TMock>> IMockVerifyInvokedWithGetHashCode<T, TMock>.GetHashCode()

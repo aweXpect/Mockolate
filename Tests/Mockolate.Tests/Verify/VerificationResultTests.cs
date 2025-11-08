@@ -22,9 +22,9 @@ public class VerificationResultTests
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
 		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
-			= sut.Verify.GotIndexer(With.Any<string>());
+			= sut.Verify.GotIndexer(WithAny<string>());
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer With.Any<string>()");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer WithAny<string>()");
 	}
 
 	[Fact]
@@ -33,10 +33,10 @@ public class VerificationResultTests
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
 		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
-			= sut.Verify.Invoked.Dispense(With.Any<string>(), With.Any<int>());
+			= sut.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>());
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("invoked method Dispense(With.Any<string>(), With.Any<int>())");
+			.IsEqualTo("invoked method Dispense(WithAny<string>(), WithAny<int>())");
 	}
 
 	[Fact]
@@ -45,7 +45,7 @@ public class VerificationResultTests
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
 		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
-			= sut.Verify.Set.TotalDispensed(5);
+			= sut.Verify.Set.TotalDispensed(With(5));
 
 		await That(((IVerificationResult)result).Expectation)
 			.IsEqualTo("set property TotalDispensed to value 5");
@@ -57,10 +57,10 @@ public class VerificationResultTests
 		Mock<IChocolateDispenser> sut = Mock.Create<IChocolateDispenser>();
 
 		VerificationResult<IMockVerify<IChocolateDispenser, Mock<IChocolateDispenser>>> result
-			= sut.Verify.SetIndexer(With.Any<string>(), 5);
+			= sut.Verify.SetIndexer(WithAny<string>(), With(5));
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("set indexer With.Any<string>() to value 5");
+			.IsEqualTo("set indexer WithAny<string>() to value 5");
 	}
 
 	[Fact]

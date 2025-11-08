@@ -23,14 +23,14 @@ public sealed class MockMonitorTests
 		mock.Subject.IsValid(7);
 		mock.Subject.IsValid(8);
 
-		await That(monitor.Verify.Invoked.IsValid(1)).Never();
-		await That(monitor.Verify.Invoked.IsValid(2)).Never();
-		await That(monitor.Verify.Invoked.IsValid(3)).Once();
-		await That(monitor.Verify.Invoked.IsValid(4)).Once();
-		await That(monitor.Verify.Invoked.IsValid(5)).Never();
-		await That(monitor.Verify.Invoked.IsValid(6)).Never();
-		await That(monitor.Verify.Invoked.IsValid(7)).Never();
-		await That(monitor.Verify.Invoked.IsValid(8)).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(1))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(2))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(3))).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(4))).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(5))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(6))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(7))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(8))).Never();
 	}
 
 	[Fact]
@@ -58,16 +58,16 @@ public sealed class MockMonitorTests
 		mock.Subject.IsValid(9);
 		mock.Subject.IsValid(10);
 
-		await That(monitor.Verify.Invoked.IsValid(1)).Never();
-		await That(monitor.Verify.Invoked.IsValid(2)).Never();
-		await That(monitor.Verify.Invoked.IsValid(3)).Once();
-		await That(monitor.Verify.Invoked.IsValid(4)).Once();
-		await That(monitor.Verify.Invoked.IsValid(5)).Never();
-		await That(monitor.Verify.Invoked.IsValid(6)).Never();
-		await That(monitor.Verify.Invoked.IsValid(7)).Once();
-		await That(monitor.Verify.Invoked.IsValid(8)).Once();
-		await That(monitor.Verify.Invoked.IsValid(9)).Never();
-		await That(monitor.Verify.Invoked.IsValid(10)).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(1))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(2))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(3))).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(4))).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(5))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(6))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(7))).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(8))).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(9))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(10))).Never();
 	}
 
 	[Fact]
@@ -105,15 +105,15 @@ public sealed class MockMonitorTests
 
 		mock.Subject.IsValid(5);
 
-		await That(monitor.Verify.Invoked.IsValid(1)).Never();
-		await That(monitor.Verify.Invoked.IsValid(2)).Never();
-		await That(monitor.Verify.Invoked.IsValid(3)).Once();
-		await That(monitor.Verify.Invoked.IsValid(4)).Once();
-		await That(monitor.Verify.Invoked.IsValid(5)).Never();
-		await That(mock.Verify.Invoked.IsValid(1)).Once();
-		await That(mock.Verify.Invoked.IsValid(2)).Once();
-		await That(mock.Verify.Invoked.IsValid(3)).Once();
-		await That(mock.Verify.Invoked.IsValid(4)).Once();
-		await That(mock.Verify.Invoked.IsValid(5)).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(1))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(2))).Never();
+		await That(monitor.Verify.Invoked.IsValid(With(3))).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(4))).Once();
+		await That(monitor.Verify.Invoked.IsValid(With(5))).Never();
+		await That(mock.Verify.Invoked.IsValid(With(1))).Once();
+		await That(mock.Verify.Invoked.IsValid(With(2))).Once();
+		await That(mock.Verify.Invoked.IsValid(With(3))).Once();
+		await That(mock.Verify.Invoked.IsValid(With(4))).Once();
+		await That(mock.Verify.Invoked.IsValid(With(5))).Once();
 	}
 }

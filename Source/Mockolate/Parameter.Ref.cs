@@ -57,7 +57,7 @@ public partial class Parameter
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> $"With.Ref<{typeof(T).FormatType()}>({(predicateExpression is null ? "" : $"{predicateExpression}, ")}{setterExpression})";
+			=> $"Ref<{typeof(T).FormatType()}>({(predicateExpression is null ? "" : $"{predicateExpression}, ")}{setterExpression})";
 	}
 
 	/// <summary>
@@ -71,6 +71,6 @@ public partial class Parameter
 		public bool Matches(object? value) => true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"With.Ref<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"Ref<{typeof(T).FormatType()}>()";
 	}
 }

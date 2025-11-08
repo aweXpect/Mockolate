@@ -33,7 +33,7 @@ public class DelegateTests
 	public async Task WithCustomDelegate_SetupShouldWork()
 	{
 		Mock<DoSomething> mock = Mock.Create<DoSomething>();
-		mock.Setup.Delegate(With.Any<int>(), With.Any<string>())
+		mock.Setup.Delegate(WithAny<int>(), WithAny<string>())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
@@ -54,7 +54,7 @@ public class DelegateTests
 		_ = mock.Subject(1, "foo");
 		_ = mock.Subject(2, "bar");
 
-		await That(mock.Verify.Invoked(With.Any<int>(), With.Any<string>())).Twice();
+		await That(mock.Verify.Invoked(WithAny<int>(), WithAny<string>())).Twice();
 	}
 
 	[Fact]
@@ -62,11 +62,11 @@ public class DelegateTests
 	{
 		Mock<DoSomethingWithRefAndOut> mock = Mock.Create<DoSomethingWithRefAndOut>();
 		int value = 5;
-		mock.Setup.Delegate(With.Any<int>(), With.Ref<int>(v => v + 1), With.Out(() => 10));
+		mock.Setup.Delegate(WithAny<int>(), Ref<int>(v => v + 1), Out(() => 10));
 
 		mock.Subject(1, ref value, out int value2);
 
-		await That(mock.Verify.Invoked(With.Any<int>(), With.Ref<int>(), With.Out<int>())).Once();
+		await That(mock.Verify.Invoked(WithAny<int>(), Ref<int>(), Out<int>())).Once();
 		await That(value).IsEqualTo(6);
 		await That(value2).IsEqualTo(10);
 	}
@@ -79,7 +79,7 @@ public class DelegateTests
 
 		mock.Subject(1, ref value, out int value2);
 
-		await That(mock.Verify.Invoked(With.Any<int>(), With.Ref<int>(), With.Out<int>())).Once();
+		await That(mock.Verify.Invoked(WithAny<int>(), Ref<int>(), Out<int>())).Once();
 		await That(value).IsEqualTo(5);
 	}
 
@@ -87,7 +87,7 @@ public class DelegateTests
 	public async Task WithCustomGenericDelegate_SetupShouldWork()
 	{
 		Mock<DoGeneric<long, string>> mock = Mock.Create<DoGeneric<long, string>>();
-		mock.Setup.Delegate(With.Any<long>(), With.Any<string>())
+		mock.Setup.Delegate(WithAny<long>(), WithAny<string>())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
@@ -108,7 +108,7 @@ public class DelegateTests
 		_ = mock.Subject(1, "foo");
 		_ = mock.Subject(2, "bar");
 
-		await That(mock.Verify.Invoked(With.Any<short>(), With.Any<string>())).Twice();
+		await That(mock.Verify.Invoked(WithAny<short>(), WithAny<string>())).Twice();
 	}
 
 	internal delegate int DoSomething(int x, string y);

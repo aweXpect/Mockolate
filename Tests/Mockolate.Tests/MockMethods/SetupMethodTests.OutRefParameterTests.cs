@@ -1,5 +1,6 @@
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Match;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockMethods;
@@ -104,7 +105,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1WithOutParameter(With.Out(() => 3))
+				sut.Setup.Method.Method1WithOutParameter(Out(() => 3))
 					.Callback(v =>
 					{
 						callCount++;
@@ -125,7 +126,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1WithRefParameter(With.Ref<int>(v => 3))
+				sut.Setup.Method.Method1WithRefParameter(Ref<int>(v => 3))
 					.Callback(v =>
 					{
 						callCount++;
@@ -161,7 +162,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyReturnMethodSetup<T1>(string name)
-				: ReturnMethodSetup<int, T1>(name, new With.NamedParameter("p1", With.Matching<T1>(_ => false)))
+				: ReturnMethodSetup<int, T1>(name, new NamedParameter("p1", With<T1>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -234,7 +235,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2WithOutParameter(With.Out(() => 2), With.Out(() => 4))
+				sut.Setup.Method.Method2WithOutParameter(Out(() => 2), Out(() => 4))
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -259,7 +260,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+				sut.Setup.Method.Method2WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10))
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -324,8 +325,8 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2>(string name)
 				: ReturnMethodSetup<int, T1, T2>(name,
-					new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
-					new With.NamedParameter("p2", With.Matching<T2>(_ => false)))
+					new NamedParameter("p1", With<T1>(_ => false)),
+					new NamedParameter("p2", With<T2>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -338,7 +339,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long>(name, With.AnyParameterCombination())
+				: ReturnMethodSetup<Task, string, long>(name, WithAnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -425,7 +426,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6))
+				sut.Setup.Method.Method3WithOutParameter(Out(() => 2), Out(() => 4), Out(() => 6))
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -454,8 +455,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
-						With.Ref<int>(v => v * 10))
+				sut.Setup.Method.Method3WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10),
+						Ref<int>(v => v * 10))
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -524,9 +525,9 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3>(name,
-					new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
-					new With.NamedParameter("p2", With.Matching<T2>(_ => false)),
-					new With.NamedParameter("p3", With.Matching<T3>(_ => false)))
+					new NamedParameter("p1", With<T1>(_ => false)),
+					new NamedParameter("p2", With<T2>(_ => false)),
+					new NamedParameter("p3", With<T3>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -539,7 +540,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int>(name, With.AnyParameterCombination())
+				: ReturnMethodSetup<Task, string, long, int>(name, WithAnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -643,8 +644,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
-						With.Out(() => 8))
+				sut.Setup.Method.Method4WithOutParameter(Out(() => 2), Out(() => 4), Out(() => 6),
+						Out(() => 8))
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -677,8 +678,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
-						With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+				sut.Setup.Method.Method4WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10),
+						Ref<int>(v => v * 10), Ref<int>(v => v * 10))
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -751,10 +752,10 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3, T4>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3, T4>(name,
-					new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
-					new With.NamedParameter("p2", With.Matching<T2>(_ => false)),
-					new With.NamedParameter("p3", With.Matching<T3>(_ => false)),
-					new With.NamedParameter("p4", With.Matching<T4>(_ => false)))
+					new NamedParameter("p1", With<T1>(_ => false)),
+					new NamedParameter("p2", With<T2>(_ => false)),
+					new NamedParameter("p3", With<T3>(_ => false)),
+					new NamedParameter("p4", With<T4>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -767,7 +768,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int, int>(name, With.AnyParameterCombination())
+				: ReturnMethodSetup<Task, string, long, int, int>(name, WithAnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -888,8 +889,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
-						With.Out(() => 8), With.Out(() => 10))
+				sut.Setup.Method.Method5WithOutParameter(Out(() => 2), Out(() => 4), Out(() => 6),
+						Out(() => 8), Out(() => 10))
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -927,8 +928,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
-						With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+				sut.Setup.Method.Method5WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10),
+						Ref<int>(v => v * 10), Ref<int>(v => v * 10), Ref<int>(v => v * 10))
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -1005,11 +1006,11 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3, T4, T5>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3, T4, T5>(name,
-					new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
-					new With.NamedParameter("p2", With.Matching<T2>(_ => false)),
-					new With.NamedParameter("p3", With.Matching<T3>(_ => false)),
-					new With.NamedParameter("p4", With.Matching<T4>(_ => false)),
-					new With.NamedParameter("p5", With.Matching<T5>(_ => false)))
+					new NamedParameter("p1", With<T1>(_ => false)),
+					new NamedParameter("p2", With<T2>(_ => false)),
+					new NamedParameter("p3", With<T3>(_ => false)),
+					new NamedParameter("p4", With<T4>(_ => false)),
+					new NamedParameter("p5", With<T5>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1022,7 +1023,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int, int, int>(name, With.AnyParameterCombination())
+				: ReturnMethodSetup<Task, string, long, int, int, int>(name, WithAnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1074,7 +1075,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1WithOutParameter(With.Out(() => 3))
+				sut.Setup.Method.Method1WithOutParameter(Out(() => 3))
 					.Callback(v =>
 					{
 						callCount++;
@@ -1095,7 +1096,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1WithRefParameter(With.Ref<int>(v => 3))
+				sut.Setup.Method.Method1WithRefParameter(Ref<int>(v => 3))
 					.Callback(v =>
 					{
 						callCount++;
@@ -1131,7 +1132,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetup<T1>(string name)
-				: VoidMethodSetup<T1>(name, new With.NamedParameter("p1", With.Matching<T1>(_ => false)))
+				: VoidMethodSetup<T1>(name, new NamedParameter("p1", With<T1>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1151,7 +1152,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2WithOutParameter(With.Out(() => 2), With.Out(() => 4))
+				sut.Setup.Method.Method2WithOutParameter(Out(() => 2), Out(() => 4))
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -1176,7 +1177,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+				sut.Setup.Method.Method2WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10))
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -1241,8 +1242,8 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2>(string name)
 				: VoidMethodSetup<T1, T2>(name,
-					new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
-					new With.NamedParameter("p2", With.Matching<T2>(_ => false)))
+					new NamedParameter("p1", With<T1>(_ => false)),
+					new NamedParameter("p2", With<T2>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1252,7 +1253,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long>(name, With.AnyParameterCombination())
+				: VoidMethodSetup<string, long>(name, WithAnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1273,7 +1274,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6))
+				sut.Setup.Method.Method3WithOutParameter(Out(() => 2), Out(() => 4), Out(() => 6))
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -1302,8 +1303,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
-						With.Ref<int>(v => v * 10))
+				sut.Setup.Method.Method3WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10),
+						Ref<int>(v => v * 10))
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -1372,9 +1373,9 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3>(string name)
 				: VoidMethodSetup<T1, T2, T3>(name,
-					new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
-					new With.NamedParameter("p2", With.Matching<T2>(_ => false)),
-					new With.NamedParameter("p3", With.Matching<T3>(_ => false)))
+					new NamedParameter("p1", With<T1>(_ => false)),
+					new NamedParameter("p2", With<T2>(_ => false)),
+					new NamedParameter("p3", With<T3>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1384,7 +1385,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int>(name, With.AnyParameterCombination())
+				: VoidMethodSetup<string, long, int>(name, WithAnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1406,8 +1407,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
-						With.Out(() => 8))
+				sut.Setup.Method.Method4WithOutParameter(Out(() => 2), Out(() => 4), Out(() => 6),
+						Out(() => 8))
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -1440,8 +1441,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
-						With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+				sut.Setup.Method.Method4WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10),
+						Ref<int>(v => v * 10), Ref<int>(v => v * 10))
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -1514,10 +1515,10 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3, T4>(string name)
 				: VoidMethodSetup<T1, T2, T3, T4>(name,
-					new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
-					new With.NamedParameter("p2", With.Matching<T2>(_ => false)),
-					new With.NamedParameter("p3", With.Matching<T3>(_ => false)),
-					new With.NamedParameter("p4", With.Matching<T4>(_ => false)))
+					new NamedParameter("p1", With<T1>(_ => false)),
+					new NamedParameter("p2", With<T2>(_ => false)),
+					new NamedParameter("p3", With<T3>(_ => false)),
+					new NamedParameter("p4", With<T4>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1527,7 +1528,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int, int>(name, With.AnyParameterCombination())
+				: VoidMethodSetup<string, long, int, int>(name, WithAnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1550,8 +1551,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5WithOutParameter(With.Out(() => 2), With.Out(() => 4), With.Out(() => 6),
-						With.Out(() => 8), With.Out(() => 10))
+				sut.Setup.Method.Method5WithOutParameter(Out(() => 2), Out(() => 4), Out(() => 6),
+						Out(() => 8), Out(() => 10))
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -1589,8 +1590,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5WithRefParameter(With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10),
-						With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10), With.Ref<int>(v => v * 10))
+				sut.Setup.Method.Method5WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10),
+						Ref<int>(v => v * 10), Ref<int>(v => v * 10), Ref<int>(v => v * 10))
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -1667,11 +1668,11 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3, T4, T5>(string name)
 				: VoidMethodSetup<T1, T2, T3, T4, T5>(name,
-					new With.NamedParameter("p1", With.Matching<T1>(_ => false)),
-					new With.NamedParameter("p2", With.Matching<T2>(_ => false)),
-					new With.NamedParameter("p3", With.Matching<T3>(_ => false)),
-					new With.NamedParameter("p4", With.Matching<T4>(_ => false)),
-					new With.NamedParameter("p5", With.Matching<T5>(_ => false)))
+					new NamedParameter("p1", With<T1>(_ => false)),
+					new NamedParameter("p2", With<T2>(_ => false)),
+					new NamedParameter("p3", With<T3>(_ => false)),
+					new NamedParameter("p4", With<T4>(_ => false)),
+					new NamedParameter("p5", With<T5>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1681,7 +1682,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int, int, int>(name, With.AnyParameterCombination())
+				: VoidMethodSetup<string, long, int, int, int>(name, WithAnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
