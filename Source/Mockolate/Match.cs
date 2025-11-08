@@ -83,6 +83,13 @@ public partial class Match
 #pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
+	///     Use default event parameters when raising events.
+	/// </summary>
+	public interface IDefaultEventParameters
+	{
+	}
+
+	/// <summary>
 	///     A named <see cref="Parameter" />.
 	/// </summary>
 	/// <param name="Name">The name of the <paramref name="Parameter" />.</param>

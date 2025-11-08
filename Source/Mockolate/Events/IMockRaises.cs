@@ -11,6 +11,11 @@ namespace Mockolate.Events;
 public interface IMockRaises
 {
 	/// <summary>
+	///     Gets the behavior settings used by this mock instance.
+	/// </summary>
+	MockBehavior Behavior { get; }
+
+	/// <summary>
 	///     The setup of the mock.
 	/// </summary>
 	IMockSetup Setup { get; }
