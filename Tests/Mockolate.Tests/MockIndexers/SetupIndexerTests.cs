@@ -5,6 +5,38 @@ namespace Mockolate.Tests.MockIndexers;
 public sealed partial class SetupIndexerTests
 {
 	[Fact]
+	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
+	{
+		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+		mock.Setup.Indexer(WithAny<int>()).InitializeWith("foo");
+		mock.Setup.Indexer(With(2)).InitializeWith("bar");
+
+		string result1 = mock.Subject[1];
+		string result2 = mock.Subject[2];
+		string result3 = mock.Subject[3];
+
+		await That(result1).IsEqualTo("foo");
+		await That(result2).IsEqualTo("bar");
+		await That(result3).IsEqualTo("foo");
+	}
+
+	[Fact]
+	public async Task OverlappingSetups_WhenGeneralSetupIsLater_ShouldOnlyUseGeneralSetup()
+	{
+		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();
+		mock.Setup.Indexer(With(2)).InitializeWith("bar");
+		mock.Setup.Indexer(WithAny<int>()).InitializeWith("foo");
+
+		string result1 = mock.Subject[1];
+		string result2 = mock.Subject[2];
+		string result3 = mock.Subject[3];
+
+		await That(result1).IsEqualTo("foo");
+		await That(result2).IsEqualTo("foo");
+		await That(result3).IsEqualTo("foo");
+	}
+
+	[Fact]
 	public async Task SetOnDifferentLevel_ShouldNotBeUsed()
 	{
 		Mock<IIndexerService> mock = Mock.Create<IIndexerService>();

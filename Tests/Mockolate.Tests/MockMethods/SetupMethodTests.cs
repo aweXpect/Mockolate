@@ -34,6 +34,38 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(1);
+		mock.Setup.Method.MyIntMethodWithParameters(With(0), With("foo")).Returns(2);
+
+		int result1 = mock.Subject.MyIntMethodWithParameters(1, "foo");
+		int result2 = mock.Subject.MyIntMethodWithParameters(0, "foo");
+		int result3 = mock.Subject.MyIntMethodWithParameters(0, "bar");
+
+		await That(result1).IsEqualTo(1);
+		await That(result2).IsEqualTo(2);
+		await That(result3).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task OverlappingSetups_WhenGeneralSetupIsLater_ShouldOnlyUseGeneralSetup()
+	{
+		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		mock.Setup.Method.MyIntMethodWithParameters(With(0), With("foo")).Returns(2);
+		mock.Setup.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(1);
+
+		int result1 = mock.Subject.MyIntMethodWithParameters(1, "foo");
+		int result2 = mock.Subject.MyIntMethodWithParameters(0, "foo");
+		int result3 = mock.Subject.MyIntMethodWithParameters(0, "bar");
+
+		await That(result1).IsEqualTo(1);
+		await That(result2).IsEqualTo(1);
+		await That(result3).IsEqualTo(1);
+	}
+
+	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		Mock<IMethodService> mock = Mock.Create<IMethodService>();
