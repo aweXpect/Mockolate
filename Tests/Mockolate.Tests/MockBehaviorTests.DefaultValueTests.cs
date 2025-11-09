@@ -49,6 +49,26 @@ public sealed partial class MockBehaviorTests
 		}
 
 		[Fact]
+		public async Task WithLazyInt_ShouldReturnLazyWithZero()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			Lazy<int> result = mock.Subject.LazyInt;
+
+			await That(result.Value).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task WithLazyString_ShouldReturnLazyWithEmptyString()
+		{
+			Mock<IDefaultValueGeneratorProperties> mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			Lazy<string> result = mock.Subject.LazyString;
+
+			await That(result.Value).IsEmpty();
+		}
+
+		[Fact]
 		public async Task WithInt_ShouldReturnZero()
 		{
 			MockBehavior sut = MockBehavior.Default;
@@ -201,6 +221,8 @@ public sealed partial class MockBehaviorTests
 			IEnumerable<int> IEnumerableOfInt { get; }
 			(int V1, string V2) NamedValueTuple { get; }
 			(int, string, int, string, int, string, int, string) ValueTuple8 { get; }
+			Lazy<int> LazyInt { get; }
+			Lazy<string> LazyString { get; }
 			Task<int> IntTask { get; }
 			Task<int[]> IntArrayTask { get; }
 			ValueTask<int> IntValueTask { get; }

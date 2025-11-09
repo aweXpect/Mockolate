@@ -90,9 +90,9 @@ internal static partial class Sources
 					.Append(")));").AppendLine();
 			}
 			else if (type.Fullname.StartsWith("System.Threading.Tasks.Task<") && type.Fullname.EndsWith(">")
-			                                                                  && type.GenericTypeParameters?.Count ==
-			                                                                  1 && !type.GenericTypeParameters.Value
-				                                                                  .Single().IsTypeParameter)
+																			  && type.GenericTypeParameters?.Count ==
+																			  1 && !type.GenericTypeParameters.Value
+																				  .Single().IsTypeParameter)
 			{
 				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname)
 					.Append(">(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<")
@@ -101,6 +101,20 @@ internal static partial class Sources
 					.Append(type.GenericTypeParameters.Value.Single().Fullname)
 					.Append(
 						">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(")
+					.Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
+			}
+			else if (type.Fullname.StartsWith("System.Lazy<") && type.Fullname.EndsWith(">")
+																			  && type.GenericTypeParameters?.Count ==
+																			  1 && !type.GenericTypeParameters.Value
+																				  .Single().IsTypeParameter)
+			{
+				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname)
+					.Append(">(defaultValueGenerator => new System.Lazy<")
+					.Append(type.GenericTypeParameters.Value.Single().Fullname)
+					.Append(">(() => defaultValueGenerator.Generate<")
+					.Append(type.GenericTypeParameters.Value.Single().Fullname)
+					.Append(
+						">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Lazy<>) && type.GenericTypeArguments[0] == typeof(")
 					.Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
 			}
 			else if (type.Fullname.StartsWith("System.Threading.Tasks.ValueTask<") && type.Fullname.EndsWith(">")
