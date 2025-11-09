@@ -28,7 +28,7 @@ mock.Setup.Method.Dispense(With("White"), WithAny<int>())
 
 // Setup method to throw
 mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
-    .Throws(() => new InvalidChocolateException());
+    .Throws<InvalidChocolateException>();
 ```
 
 - Use `.Callback(…)` to run code when the method is called. Supports parameterless or parameter callbacks.

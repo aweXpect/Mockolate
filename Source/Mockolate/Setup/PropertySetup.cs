@@ -156,6 +156,16 @@ public class PropertySetup<T> : PropertySetup
 	}
 
 	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
+	/// </summary>
+	public PropertySetup<T> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add(_ => throw new TException());
+		return this;
+	}
+
+	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
 	public PropertySetup<T> Throws(Exception exception)

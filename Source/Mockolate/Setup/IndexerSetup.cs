@@ -221,6 +221,16 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1) : IndexerSetu
 	}
 
 	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add((_, _) => throw new TException());
+		return this;
+	}
+
+	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
 	public IndexerSetup<TValue, T1> Throws(Exception exception)
@@ -431,6 +441,16 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 	public IndexerSetup<TValue, T1, T2> Returns(TValue returnValue)
 	{
 		_returnCallbacks.Add((_, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add((_, _, _) => throw new TException());
 		return this;
 	}
 
@@ -652,6 +672,16 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IndexerSetup<TValue, T1, T2, T3> Returns(TValue returnValue)
 	{
 		_returnCallbacks.Add((_, _, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add((_, _, _, _) => throw new TException());
 		return this;
 	}
 
@@ -878,6 +908,16 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IndexerSetup<TValue, T1, T2, T3, T4> Returns(TValue returnValue)
 	{
 		_returnCallbacks.Add((_, _, _, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
+	/// </summary>
+	public IndexerSetup<TValue, T1, T2, T3, T4> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add((_, _, _, _, _) => throw new TException());
 		return this;
 	}
 

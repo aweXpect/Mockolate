@@ -43,6 +43,16 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	}
 
 	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add(() => throw new TException());
+		return this;
+	}
+
+	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
 	public ReturnMethodSetup<TReturn> Throws(Exception exception)
@@ -173,6 +183,16 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup
 	public ReturnMethodSetup<TReturn, T1> Returns(TReturn returnValue)
 	{
 		_returnCallbacks.Add(_ => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add(_ => throw new TException());
 		return this;
 	}
 
@@ -354,6 +374,16 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 	public ReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue)
 	{
 		_returnCallbacks.Add((_, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add((_, _) => throw new TException());
 		return this;
 	}
 
@@ -548,6 +578,16 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 	public ReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue)
 	{
 		_returnCallbacks.Add((_, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2, T3> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add((_, _, _) => throw new TException());
 		return this;
 	}
 
@@ -753,6 +793,16 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue)
 	{
 		_returnCallbacks.Add((_, _, _, _) => returnValue);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	/// </summary>
+	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws<TException>()
+		where TException : Exception, new()
+	{
+		_returnCallbacks.Add((_, _, _, _) => throw new TException());
 		return this;
 	}
 
