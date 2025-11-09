@@ -162,6 +162,35 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the method is invoked.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws<TException>()")
+			.AppendLine();
+		sb.Append("\t\twhere TException : Exception, new()").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => throw new TException());").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws(Exception exception)")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => throw exception);").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append(
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
@@ -186,20 +215,6 @@ internal static partial class Sources
 		sb.Append("\t\t_returnCallbacks.Add((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw callback());").AppendLine();
-		sb.Append("\t\treturn this;").AppendLine();
-		sb.Append("\t}").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
-			.AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> Throws(Exception exception)")
-			.AppendLine();
-		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
-			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
-			.Append(") => throw exception);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -427,6 +442,35 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the method is invoked.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws<TException>()")
+			.AppendLine();
+		sb.Append("\t\twhere TException : Exception, new()").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => throw new TException());").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Exception exception)")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((")
+			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
+			.Append(") => throw exception);").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append(
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
@@ -452,20 +496,6 @@ internal static partial class Sources
 		sb.Append("\t\t_returnCallbacks.Add((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw callback());").AppendLine();
-		sb.Append("\t\treturn this;").AppendLine();
-		sb.Append("\t}").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
-			.AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Exception exception)")
-			.AppendLine();
-		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
-			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
-			.Append(") => throw exception);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();

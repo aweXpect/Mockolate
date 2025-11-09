@@ -107,7 +107,7 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
-		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		public async Task Throws_Callback_ShouldThrowException()
 		{
 			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -121,7 +121,7 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
-		public async Task Throws_CallbackWithParameters_ShouldReturnExpectedValue()
+		public async Task Throws_CallbackWithParameters_ShouldThrowException()
 		{
 			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -136,7 +136,7 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
-		public async Task Throws_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
+		public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 		{
 			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -151,7 +151,7 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
-		public async Task Throws_ShouldReturnExpectedValue()
+		public async Task Throws_ShouldThrowException()
 		{
 			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -162,6 +162,20 @@ public sealed partial class SetupIndexerTests
 				=> _ = sut.Subject[3];
 
 			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Generic_ShouldThrowException()
+		{
+			Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+			sut.Setup.Indexer(WithAny<int>())
+				.Throws<ArgumentNullException>();
+
+			void Act()
+				=> _ = sut.Subject[3];
+
+			await That(Act).ThrowsExactly<ArgumentNullException>();
 		}
 
 		public sealed class With2Levels
@@ -269,7 +283,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_Callback_ShouldReturnExpectedValue()
+			public async Task Throws_Callback_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -283,7 +297,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_CallbackWithParameters_ShouldReturnExpectedValue()
+			public async Task Throws_CallbackWithParameters_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -298,7 +312,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
+			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -313,7 +327,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_ShouldReturnExpectedValue()
+			public async Task Throws_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -324,6 +338,20 @@ public sealed partial class SetupIndexerTests
 					=> _ = sut.Subject[1, 2];
 
 				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Throws_Generic_ShouldThrowException()
+			{
+				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+				sut.Setup.Indexer(WithAny<int>(), WithAny<int>())
+					.Throws<ArgumentNullException>();
+
+				void Act()
+					=> _ = sut.Subject[1, 2];
+
+				await That(Act).ThrowsExactly<ArgumentNullException>();
 			}
 		}
 
@@ -433,7 +461,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_Callback_ShouldReturnExpectedValue()
+			public async Task Throws_Callback_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -447,7 +475,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_CallbackWithParameters_ShouldReturnExpectedValue()
+			public async Task Throws_CallbackWithParameters_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -462,7 +490,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
+			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -477,7 +505,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_ShouldReturnExpectedValue()
+			public async Task Throws_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -488,6 +516,20 @@ public sealed partial class SetupIndexerTests
 					=> _ = sut.Subject[1, 2, 3];
 
 				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Throws_Generic_ShouldThrowException()
+			{
+				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+				sut.Setup.Indexer(WithAny<int>(), WithAny<int>(), WithAny<int>())
+					.Throws<ArgumentNullException>();
+
+				void Act()
+					=> _ = sut.Subject[1, 2, 3];
+
+				await That(Act).ThrowsExactly<ArgumentNullException>();
 			}
 		}
 
@@ -598,7 +640,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_Callback_ShouldReturnExpectedValue()
+			public async Task Throws_Callback_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -612,7 +654,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_CallbackWithParameters_ShouldReturnExpectedValue()
+			public async Task Throws_CallbackWithParameters_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -627,7 +669,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
+			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -642,7 +684,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_ShouldReturnExpectedValue()
+			public async Task Throws_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -653,6 +695,20 @@ public sealed partial class SetupIndexerTests
 					=> _ = sut.Subject[1, 2, 3, 4];
 
 				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Throws_Generic_ShouldThrowException()
+			{
+				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+				sut.Setup.Indexer(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+					.Throws<ArgumentNullException>();
+
+				void Act()
+					=> _ = sut.Subject[1, 2, 3, 4];
+
+				await That(Act).ThrowsExactly<ArgumentNullException>();
 			}
 		}
 
@@ -763,7 +819,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_Callback_ShouldReturnExpectedValue()
+			public async Task Throws_Callback_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -777,7 +833,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_CallbackWithParameters_ShouldReturnExpectedValue()
+			public async Task Throws_CallbackWithParameters_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -792,7 +848,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
+			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -807,7 +863,7 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task Throws_ShouldReturnExpectedValue()
+			public async Task Throws_ShouldThrowException()
 			{
 				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
 
@@ -818,6 +874,20 @@ public sealed partial class SetupIndexerTests
 					=> _ = sut.Subject[1, 2, 3, 4, 5];
 
 				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Throws_Generic_ShouldThrowException()
+			{
+				Mock<IIndexerService> sut = Mock.Create<IIndexerService>();
+
+				sut.Setup.Indexer(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+					.Throws<ArgumentNullException>();
+
+				void Act()
+					=> _ = sut.Subject[1, 2, 3, 4, 5];
+
+				await That(Act).ThrowsExactly<ArgumentNullException>();
 			}
 		}
 	}

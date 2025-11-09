@@ -210,6 +210,19 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the indexer is read.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\tpublic IndexerSetup<TValue, ").Append(typeParams).Append("> Throws<TException>()")
+			.AppendLine();
+		sb.Append("\t\twhere TException : Exception, new()").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(discards).Append(") => throw new TException());").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();

@@ -93,7 +93,7 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task Throws_Callback_ShouldReturnExpectedValue()
+		public async Task Throws_Callback_ShouldThrowException()
 		{
 			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
 
@@ -107,7 +107,7 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task Throws_CallbackWithValue_ShouldReturnExpectedValue()
+		public async Task Throws_CallbackWithValue_ShouldThrowException()
 		{
 			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
 
@@ -122,7 +122,7 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task Throws_ShouldReturnExpectedValue()
+		public async Task Throws_ShouldThrowException()
 		{
 			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
 
@@ -133,6 +133,20 @@ public sealed partial class SetupPropertyTests
 				=> _ = sut.Subject.MyProperty;
 
 			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task Throws_Generic_ShouldThrowException()
+		{
+			Mock<IPropertyService> sut = Mock.Create<IPropertyService>();
+
+			sut.Setup.Property.MyProperty
+				.Throws<ArgumentNullException>();
+
+			void Act()
+				=> _ = sut.Subject.MyProperty;
+
+			await That(Act).ThrowsExactly<ArgumentNullException>();
 		}
 	}
 }

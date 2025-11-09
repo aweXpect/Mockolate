@@ -406,6 +406,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IndexerSetup<TValue, T1> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1> Throws(System.Func<T1, System.Exception> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1> Throws(System.Func<TValue, T1, System.Exception> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1> Throws<TException>()
+            where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
     public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup
@@ -429,6 +431,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2> Throws(System.Func<TValue, T1, T2, System.Exception> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2> Throws<TException>()
+            where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
     public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup
@@ -452,6 +456,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> Throws(System.Func<TValue, T1, T2, T3, System.Exception> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3> Throws<TException>()
+            where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
     public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup
@@ -475,6 +481,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback) { }
         public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> Throws(System.Func<TValue, T1, T2, T3, T4, System.Exception> callback) { }
+        public Mockolate.Setup.IndexerSetup<TValue, T1, T2, T3, T4> Throws<TException>()
+            where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup
@@ -537,6 +545,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.PropertySetup<T> Throws(System.Exception exception) { }
         public Mockolate.Setup.PropertySetup<T> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.PropertySetup<T> Throws(System.Func<T, System.Exception> callback) { }
+        public Mockolate.Setup.PropertySetup<T> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup
@@ -552,6 +562,8 @@ namespace Mockolate.Setup
         protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn> Throws(System.Exception exception) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup
@@ -571,6 +583,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Exception exception) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Throws(System.Func<T1, System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup
@@ -590,6 +604,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Exception exception) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup
@@ -609,6 +625,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Exception exception) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup
@@ -628,6 +646,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Exception exception) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback) { }
+        public Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class VoidMethodSetup : Mockolate.Setup.MethodSetup
@@ -642,6 +662,8 @@ namespace Mockolate.Setup
         protected override T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior) { }
         public Mockolate.Setup.VoidMethodSetup Throws(System.Exception exception) { }
         public Mockolate.Setup.VoidMethodSetup Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup
@@ -659,6 +681,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.VoidMethodSetup<T1> Throws(System.Exception exception) { }
         public Mockolate.Setup.VoidMethodSetup<T1> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.VoidMethodSetup<T1> Throws(System.Func<T1, System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup
@@ -676,6 +700,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.VoidMethodSetup<T1, T2> Throws(System.Exception exception) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2> Throws(System.Func<T1, T2, System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup
@@ -693,6 +719,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Exception exception) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
     public class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup
@@ -710,6 +738,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Exception exception) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback) { }
+        public Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4> Throws<TException>()
+            where TException : System.Exception, new () { }
         public override string ToString() { }
     }
 }
