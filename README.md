@@ -177,6 +177,7 @@ mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
   parameters.
 - Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each
   call).
+- When you specify overlapping setups, the most recently defined setup takes precedence.
 
 **Async Methods**
 
@@ -252,6 +253,7 @@ mock.Setup.Indexer(With("Dark"))
 - `.OnGet(…)` and `.OnSet(…)` support callbacks with or without parameters.
 - `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each
   call.
+- When you specify overlapping setups, the most recently defined setup takes precedence.
 
 ## Mock events
 
