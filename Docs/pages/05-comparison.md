@@ -1,7 +1,9 @@
 # Comparison
 
-This page compares **Mockolate** with other .NET mocking libraries: **[Moq](https://github.com/devlooped/moq)**, *
-*[NSubstitute](https://nsubstitute.github.io/)**, and **[FakeItEasy](https://fakeiteasy.github.io/)** with the example
+This page compares **Mockolate** with other .NET mocking libraries:
+**[Moq](https://github.com/devlooped/moq)**,
+**[NSubstitute](https://nsubstitute.github.io/)**, and
+**[FakeItEasy](https://fakeiteasy.github.io/)** with the example
 interface:
 
 ```csharp
