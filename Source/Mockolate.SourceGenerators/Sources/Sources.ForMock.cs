@@ -249,7 +249,7 @@ internal static partial class Sources
 			sb.Append(",").AppendLine();
 			sb.Append("\t\t").Append(additional.ClassFullName);
 		}
-
+		sb.AppendLine();
 		sb.AppendLine("""
 		              	{
 		              		private IMock _mock;
