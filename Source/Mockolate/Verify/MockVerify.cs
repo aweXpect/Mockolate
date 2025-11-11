@@ -10,7 +10,7 @@ namespace Mockolate.Verify;
 ///     Verifies the <paramref name="interactions" /> with the mocked subject in the <typeparamref name="TMock" />
 ///     <paramref name="mock" />.
 /// </summary>
-public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, string prefix) : IMockVerify<TMock>, IMockVerify<T, TMock>,
+public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, string prefix) : IMockVerify<T, TMock>, IMockVerify,
 	IMockInvoked<IMockVerify<T, TMock>>,
 	IMockVerifyInvoked<T, TMock>, IMockVerifyInvokedProtected<T, TMock>,
 	IMockVerifyInvokedWithToStringWithEqualsWithGetHashCode<T, TMock>, IMockVerifyInvokedWithEqualsWithGetHashCode<T, TMock>, IMockVerifyInvokedWithToStringWithGetHashCode<T, TMock>, IMockVerifyInvokedWithToStringWithEquals<T, TMock>,
@@ -31,8 +31,8 @@ public class MockVerify<T, TMock>(MockInteractions interactions, TMock mock, str
 	MockInteractions IMockVerify.Interactions
 		=> interactions;
 
-	/// <inheritdoc cref="IMockVerify{TMock}.Mock" />
-	TMock IMockVerify<TMock>.Mock
+	/// <inheritdoc cref="IMockVerify{T, TMock}.Mock" />
+	TMock IMockVerify<T, TMock>.Mock
 		=> mock;
 
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, Match.IParameter[])" />

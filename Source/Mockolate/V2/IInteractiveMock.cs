@@ -1,16 +1,11 @@
 using System;
-using Mockolate.Events;
 using Mockolate.Interactions;
 using Mockolate.Setup;
-using Mockolate.Verify;
 
-namespace Mockolate;
+namespace Mockolate.V2;
 
-/// <summary>
-///     Allows registration of method calls and property accesses on a mock.
-/// </summary>
-public interface IMock
-{
+public interface IInteractiveMock {
+
 	/// <summary>
 	///     Gets the prefix string used to identify or categorize items within the context.
 	/// </summary>
@@ -25,16 +20,6 @@ public interface IMock
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
 	MockInteractions Interactions { get; }
-
-	/// <summary>
-	///     Raise events on the mock object.
-	/// </summary>
-	IMockRaises Raise { get; }
-
-	/// <summary>
-	///     Sets up the mock object.
-	/// </summary>
-	IMockSetup Setup { get; }
 
 	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
@@ -68,9 +53,4 @@ public interface IMock
 	///     Sets the value of the indexer with the given parameters.
 	/// </summary>
 	void SetIndexer<TResult>(TResult value, params object?[] parameters);
-}
-
-public interface IMock<T> : IMock
-{
-	IMockVerify<T, Mock<T>> Verify { get; }
 }

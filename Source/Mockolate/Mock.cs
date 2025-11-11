@@ -1,5 +1,7 @@
+using System;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Setup;
 using Mockolate.Verify;
 
 namespace Mockolate;
@@ -7,7 +9,7 @@ namespace Mockolate;
 /// <summary>
 ///     A mock for type <typeparamref name="T" />.
 /// </summary>
-public abstract class Mock<T> : MockBase<T>
+public abstract class Mock<T> : MockBase<T>, IMock<T>
 {
 	/// <inheritdoc cref="Mock{T}" />
 	protected Mock(MockBehavior behavior, string prefix) : base(behavior, prefix)
@@ -20,6 +22,12 @@ public abstract class Mock<T> : MockBase<T>
 	///     Verifies the interactions with the mocked subject of <typeparamref name="T" />.
 	/// </summary>
 	public IMockVerify<T, Mock<T>> Verify { get; }
+}
+
+public class Mock2<T>(T subject, MockBehavior behavior, string prefix) : Mock<T>(behavior, prefix)
+{
+	/// <inheritdoc cref="MockBase{T}.Subject" />
+	public override T Subject { get; } = subject;
 }
 
 /// <summary>

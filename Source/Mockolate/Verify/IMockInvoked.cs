@@ -4,16 +4,16 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Get results for method invocations on the mock.
 /// </summary>
-public interface IMockInvoked<TMock>
+public interface IMockInvoked<T>
 {
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
-	VerificationResult<TMock> Method(string methodName, params Match.IParameter[] parameters);
+	VerificationResult<T> Method(string methodName, params Match.IParameter[] parameters);
 
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
-	VerificationResult<TMock> Method(string methodName, Match.IParameters parameters);
+	VerificationResult<T> Method(string methodName, Match.IParameters parameters);
 }
 #pragma warning restore S2326 // Unused type parameters should be removed
