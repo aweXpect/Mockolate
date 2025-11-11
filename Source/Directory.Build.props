@@ -19,7 +19,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<LangVersion>preview</LangVersion>
+		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<NoWarn>$(NoWarn);1701;1702</NoWarn>
 		<WarningsNotAsErrors>CS1591;NU5104</WarningsNotAsErrors>
