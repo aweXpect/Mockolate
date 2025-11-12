@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -10,17 +9,10 @@ using System.Text;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
-using Mockolate.Verify;
 
 namespace Mockolate.V2;
 
-public partial class Mock<T> : IMockSetup,
-	IMockSetup<T>, IProtectedMockSetup<T>,
-	IMockMethodSetup<T>, IProtectedMockMethodSetup<T>,
-	IMockMethodSetupWithToString<T>, IMockMethodSetupWithEquals<T>, IMockMethodSetupWithGetHashCode<T>,
-	IMockMethodSetupWithToStringWithEquals<T>, IMockMethodSetupWithToStringWithGetHashCode<T>,IMockMethodSetupWithEqualsWithGetHashCode<T>,
-	IMockMethodSetupWithToStringWithEqualsWithGetHashCode<T>,
-	IMockPropertySetup<T>, IProtectedMockPropertySetup<T>
+public partial class MockRegistration
 {
 	private readonly EventSetups _eventHandlers = new();
 	private readonly IndexerSetups _indexerSetups = new();
@@ -93,47 +85,23 @@ public partial class Mock<T> : IMockSetup,
 			return Behavior.DefaultValue.Generate<TValue>();
 		});
 
-	/// <inheritdoc cref="IMockSetup.RegisterIndexer(IndexerSetup)" />
-	public void RegisterIndexer(IndexerSetup indexerSetup) => _indexerSetups.Add(indexerSetup);
+	/// <inheritdoc cref="IMockSetup.RegisterIndexer(Setup.IndexerSetup)" />
+	public void SetupIndexer(IndexerSetup indexerSetup) => _indexerSetups.Add(indexerSetup);
 
 	/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
-	public void SetIndexerValue<TValue>(object?[] parameters, TValue value)
+	public void SetupIndexerValue<TValue>(object?[] parameters, TValue value)
 		=> _indexerSetups.UpdateValue(parameters, value);
 
-	/// <inheritdoc cref="IMockSetup.RegisterMethod(MethodSetup)" />
-	public void RegisterMethod(MethodSetup methodSetup) => _methodSetups.Add(methodSetup);
+	/// <inheritdoc cref="IMockSetup.RegisterMethod(Setup.MethodSetup)" />
+	public void SetupMethod(MethodSetup methodSetup) => _methodSetups.Add(methodSetup);
 
-	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, PropertySetup)" />
-	public void RegisterProperty(string propertyName, PropertySetup propertySetup)
+	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, Setup.PropertySetup)" />
+	public void SetupProperty(string propertyName, PropertySetup propertySetup)
 	{
 		if (!_propertySetups.TryAdd(propertyName, propertySetup))
 		{
 			throw new MockException($"You cannot setup property '{propertyName}' twice.");
 		}
-	}
-	
-
-	/// <inheritdoc cref="IMockSetup.AddEvent(string, object?, MethodInfo)" />
-	void IMockSetup.AddEvent(string eventName, object? target, MethodInfo method)
-		=> _eventHandlers.Add(target, method, eventName);
-
-	/// <inheritdoc cref="IMockSetup.RemoveEvent(string, object?, MethodInfo)" />
-	void IMockSetup.RemoveEvent(string eventName, object? target, MethodInfo method)
-		=> _eventHandlers.Remove(target, method, eventName);
-
-	/// <inheritdoc cref="IMockMethodSetupWithToString{T}.ToString()" />
-	ReturnMethodSetup<string> IMockMethodSetupWithToString<T>.ToString()
-	{
-		var methodSetup = new ReturnMethodSetup<string>(Prefix + ".ToString");
-		_methodSetups.Add(methodSetup);
-		return methodSetup;
-	}
-
-	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(Match.IParameter<object?> obj)
-	{
-		var methodSetup = new ReturnMethodSetup<bool, object?>(Prefix + ".Equals", new Match.NamedParameter("obj", obj));
-		_methodSetups.Add(methodSetup);
-		return methodSetup;
 	}
 
 	[DebuggerDisplay("{ToString()}")]

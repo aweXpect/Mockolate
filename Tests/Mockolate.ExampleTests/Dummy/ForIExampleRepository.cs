@@ -19,33 +19,33 @@ public class MockForIExampleRepository : Mockolate.Tests.Dummy.IExampleRepositor
 	/// <inheritdoc cref="MockForIExampleRepository" />
 	public MockForIExampleRepository(MockBehavior mockBehavior)
 	{
-		_mock = new V2.Mock<Mockolate.Tests.Dummy.IExampleRepository>(mockBehavior, "Mockolate.Tests.Dummy.IExampleRepository");
+		_mock = new V2.Mock<Mockolate.Tests.Dummy.IExampleRepository>(this, new MockRegistration(mockBehavior, "Mockolate.Tests.Dummy.IExampleRepository"));
 	}
 	
-	V2.IMock<Mockolate.Tests.Dummy.IExampleRepository> IMockSubject<Mockolate.Tests.Dummy.IExampleRepository>.Mock => _mock;
+	V2.Mock<Mockolate.Tests.Dummy.IExampleRepository> IMockSubject<Mockolate.Tests.Dummy.IExampleRepository>.Mock => _mock;
 
 	#region Mockolate.Tests.Dummy.IExampleRepository
 	/// <inheritdoc cref="Mockolate.Tests.Dummy.IExampleRepository.UsersChanged" />
 	public event System.EventHandler? UsersChanged
 	{
-		add => _mock.AddEvent("Mockolate.Tests.Dummy.IExampleRepository.UsersChanged", value?.Target, value?.Method);
-		remove => _mock.RemoveEvent("Mockolate.Tests.Dummy.IExampleRepository.UsersChanged", value?.Target, value?.Method);
+		add => _mock.Registrations.AddEvent("Mockolate.Tests.Dummy.IExampleRepository.UsersChanged", value?.Target, value?.Method);
+		remove => _mock.Registrations.RemoveEvent("Mockolate.Tests.Dummy.IExampleRepository.UsersChanged", value?.Target, value?.Method);
 	}
 
 	/// <inheritdoc cref="Mockolate.Tests.Dummy.IExampleRepository.MyEvent" />
 	public event Mockolate.Tests.Dummy.MyDelegate? MyEvent
 	{
-		add => _mock.AddEvent("Mockolate.Tests.Dummy.IExampleRepository.MyEvent", value?.Target, value?.Method);
-		remove => _mock.RemoveEvent("Mockolate.Tests.Dummy.IExampleRepository.MyEvent", value?.Target, value?.Method);
+		add => _mock.Registrations.AddEvent("Mockolate.Tests.Dummy.IExampleRepository.MyEvent", value?.Target, value?.Method);
+		remove => _mock.Registrations.RemoveEvent("Mockolate.Tests.Dummy.IExampleRepository.MyEvent", value?.Target, value?.Method);
 	}
 
 	/// <inheritdoc cref="Mockolate.Tests.Dummy.IExampleRepository.AddUser(string)" />
 	public Mockolate.Tests.Dummy.User AddUser(string name)
 	{
-		MethodSetupResult<Mockolate.Tests.Dummy.User>? methodExecution = _mock?.Execute<Mockolate.Tests.Dummy.User>("Mockolate.Tests.Dummy.IExampleRepository.AddUser", name);
+		MethodSetupResult<Mockolate.Tests.Dummy.User>? methodExecution = _mock?.Registrations.Execute<Mockolate.Tests.Dummy.User>("Mockolate.Tests.Dummy.IExampleRepository.AddUser", name);
 		if (methodExecution is null)
 		{
-			return (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<Mockolate.Tests.Dummy.User>();
+			return (_mock?.Registrations.Behavior ?? MockBehavior.Default).DefaultValue.Generate<Mockolate.Tests.Dummy.User>();
 		}
 
 		return methodExecution.Result;
@@ -54,10 +54,10 @@ public class MockForIExampleRepository : Mockolate.Tests.Dummy.IExampleRepositor
 	/// <inheritdoc cref="Mockolate.Tests.Dummy.IExampleRepository.RemoveUser(System.Guid)" />
 	public bool RemoveUser(System.Guid id)
 	{
-		MethodSetupResult<bool>? methodExecution = _mock?.Execute<bool>("Mockolate.Tests.Dummy.IExampleRepository.RemoveUser", id);
+		MethodSetupResult<bool>? methodExecution = _mock?.Registrations.Execute<bool>("Mockolate.Tests.Dummy.IExampleRepository.RemoveUser", id);
 		if (methodExecution is null)
 		{
-			return (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<bool>();
+			return (_mock?.Registrations.Behavior ?? MockBehavior.Default).DefaultValue.Generate<bool>();
 		}
 
 		return methodExecution.Result;
@@ -66,16 +66,16 @@ public class MockForIExampleRepository : Mockolate.Tests.Dummy.IExampleRepositor
 	/// <inheritdoc cref="Mockolate.Tests.Dummy.IExampleRepository.UpdateUser(System.Guid, string)" />
 	public void UpdateUser(System.Guid id, string newName)
 	{
-		MethodSetupResult? methodExecution = _mock?.Execute("Mockolate.Tests.Dummy.IExampleRepository.UpdateUser", id, newName);
+		MethodSetupResult? methodExecution = _mock?.Registrations.Execute("Mockolate.Tests.Dummy.IExampleRepository.UpdateUser", id, newName);
 	}
 
 	/// <inheritdoc cref="Mockolate.Tests.Dummy.IExampleRepository.TryDelete(System.Guid, out Mockolate.Tests.Dummy.User?)" />
 	public bool TryDelete(System.Guid id, out Mockolate.Tests.Dummy.User? user)
 	{
-		MethodSetupResult<bool>? methodExecution = _mock?.Execute<bool>("Mockolate.Tests.Dummy.IExampleRepository.TryDelete", id, null);
+		MethodSetupResult<bool>? methodExecution = _mock?.Registrations.Execute<bool>("Mockolate.Tests.Dummy.IExampleRepository.TryDelete", id, null);
 		if (methodExecution is null)
 		{
-			user = (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<Mockolate.Tests.Dummy.User?>();
+			user = (_mock?.Registrations.Behavior ?? MockBehavior.Default).DefaultValue.Generate<Mockolate.Tests.Dummy.User?>();
 		}
 		else
 		{
@@ -84,7 +84,7 @@ public class MockForIExampleRepository : Mockolate.Tests.Dummy.IExampleRepositor
 
 		if (methodExecution is null)
 		{
-			return (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<bool>();
+			return (_mock?.Registrations.Behavior ?? MockBehavior.Default).DefaultValue.Generate<bool>();
 		}
 
 		return methodExecution.Result;
@@ -93,10 +93,10 @@ public class MockForIExampleRepository : Mockolate.Tests.Dummy.IExampleRepositor
 	/// <inheritdoc cref="Mockolate.Tests.Dummy.IExampleRepository.SaveChanges()" />
 	public bool SaveChanges()
 	{
-		MethodSetupResult<bool>? methodExecution = _mock?.Execute<bool>("Mockolate.Tests.Dummy.IExampleRepository.SaveChanges");
+		MethodSetupResult<bool>? methodExecution = _mock?.Registrations.Execute<bool>("Mockolate.Tests.Dummy.IExampleRepository.SaveChanges");
 		if (methodExecution is null)
 		{
-			return (_mock?.Behavior ?? MockBehavior.Default).DefaultValue.Generate<bool>();
+			return (_mock?.Registrations.Behavior ?? MockBehavior.Default).DefaultValue.Generate<bool>();
 		}
 
 		return methodExecution.Result;
@@ -121,7 +121,7 @@ internal static class ExtensionsForIExampleRepository
 			=> (V2.IMockVerify<Mockolate.Tests.Dummy.IExampleRepository>)subject.GetMockOrThrow();
 	}
 
-	private static V2.IMock<T> GetMockOrThrow<T>(this T subject)
+	private static V2.Mock<T> GetMockOrThrow<T>(this T subject)
 	{
 		if (subject is IMockSubject<T> mock)
 		{
@@ -246,14 +246,14 @@ internal static class ExtensionsForIExampleRepository
 
 internal static class SetupExtensionsForIExampleRepository
 {
-	extension(MockRaises<Mockolate.Tests.Dummy.IExampleRepository> mock)
+	extension(IMockRaises<Mockolate.Tests.Dummy.IExampleRepository> mock)
 	{
 		/// <summary>
 		///     Raise the <see cref="Mockolate.Tests.Dummy.IExampleRepository.UsersChanged"/> event.
 		/// </summary>
 		public void UsersChanged(object? sender, System.EventArgs e)
 		{
-			((IMockRaises)mock).Raise("Mockolate.Tests.Dummy.IExampleRepository.UsersChanged", sender, e);
+			((V2.Mock<Mockolate.Tests.Dummy.IExampleRepository>)mock).Registrations.Raise("Mockolate.Tests.Dummy.IExampleRepository.UsersChanged", sender, e);
 		}
 
 		/// <summary>
@@ -261,7 +261,7 @@ internal static class SetupExtensionsForIExampleRepository
 		/// </summary>
 		public void MyEvent(int x, int y)
 		{
-			((IMockRaises)mock).Raise("Mockolate.Tests.Dummy.IExampleRepository.MyEvent", x, y);
+			((V2.Mock<Mockolate.Tests.Dummy.IExampleRepository>)mock).Registrations.Raise("Mockolate.Tests.Dummy.IExampleRepository.MyEvent", x, y);
 		}
 
 		/// <summary>
@@ -269,8 +269,8 @@ internal static class SetupExtensionsForIExampleRepository
 		/// </summary>
 		public void UsersChanged(Match.IDefaultEventParameters parameters)
 		{
-			MockBehavior mockBehavior = ((IMockRaises)mock).Behavior;
-			((IMockRaises)mock).Raise("Mockolate.Tests.Dummy.IExampleRepository.UsersChanged", mockBehavior.DefaultValue.Generate<object?>(), mockBehavior.DefaultValue.Generate<System.EventArgs>());
+			MockBehavior mockBehavior = ((V2.Mock<Mockolate.Tests.Dummy.IExampleRepository>)mock).Registrations.Behavior;
+			((V2.Mock<Mockolate.Tests.Dummy.IExampleRepository>)mock).Registrations.Raise("Mockolate.Tests.Dummy.IExampleRepository.UsersChanged", mockBehavior.DefaultValue.Generate<object?>(), mockBehavior.DefaultValue.Generate<System.EventArgs>());
 		}
 
 		/// <summary>
@@ -278,8 +278,8 @@ internal static class SetupExtensionsForIExampleRepository
 		/// </summary>
 		public void MyEvent(Match.IDefaultEventParameters parameters)
 		{
-			MockBehavior mockBehavior = ((IMockRaises)mock).Behavior;
-			((IMockRaises)mock).Raise("Mockolate.Tests.Dummy.IExampleRepository.MyEvent", mockBehavior.DefaultValue.Generate<int>(), mockBehavior.DefaultValue.Generate<int>());
+			MockBehavior mockBehavior = ((V2.Mock<Mockolate.Tests.Dummy.IExampleRepository>)mock).Registrations.Behavior;
+			((V2.Mock<Mockolate.Tests.Dummy.IExampleRepository>)mock).Registrations.Raise("Mockolate.Tests.Dummy.IExampleRepository.MyEvent", mockBehavior.DefaultValue.Generate<int>(), mockBehavior.DefaultValue.Generate<int>());
 		}
 	}
 
@@ -300,9 +300,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public ReturnMethodSetup<Mockolate.Tests.Dummy.User, string> AddUser(Match.IParameter<string>? name)
 		{
 			var methodSetup = new ReturnMethodSetup<Mockolate.Tests.Dummy.User, string>("Mockolate.Tests.Dummy.IExampleRepository.AddUser", new Match.NamedParameter("name", name ?? Match.Null<string>()));
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}
@@ -313,9 +313,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public ReturnMethodSetup<bool, System.Guid> RemoveUser(Match.IParameter<System.Guid>? id)
 		{
 			var methodSetup = new ReturnMethodSetup<bool, System.Guid>("Mockolate.Tests.Dummy.IExampleRepository.RemoveUser", new Match.NamedParameter("id", id ?? Match.Null<System.Guid>()));
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}
@@ -326,9 +326,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public VoidMethodSetup<System.Guid, string> UpdateUser(Match.IParameter<System.Guid>? id, Match.IParameter<string>? newName)
 		{
 			var methodSetup = new VoidMethodSetup<System.Guid, string>("Mockolate.Tests.Dummy.IExampleRepository.UpdateUser", new Match.NamedParameter("id", id ?? Match.Null<System.Guid>()), new Match.NamedParameter("newName", newName ?? Match.Null<string>()));
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}
@@ -339,9 +339,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public ReturnMethodSetup<bool, System.Guid, Mockolate.Tests.Dummy.User?> TryDelete(Match.IParameter<System.Guid>? id, Match.IOutParameter<Mockolate.Tests.Dummy.User?> user)
 		{
 			var methodSetup = new ReturnMethodSetup<bool, System.Guid, Mockolate.Tests.Dummy.User?>("Mockolate.Tests.Dummy.IExampleRepository.TryDelete", new Match.NamedParameter("id", id ?? Match.Null<System.Guid>()), new Match.NamedParameter("user", user));
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}
@@ -352,9 +352,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public ReturnMethodSetup<bool> SaveChanges()
 		{
 			var methodSetup = new ReturnMethodSetup<bool>("Mockolate.Tests.Dummy.IExampleRepository.SaveChanges");
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}
@@ -365,9 +365,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public ReturnMethodSetup<Mockolate.Tests.Dummy.User, string> AddUser(Match.IParameters parameters)
 		{
 			var methodSetup = new ReturnMethodSetup<Mockolate.Tests.Dummy.User, string>("Mockolate.Tests.Dummy.IExampleRepository.AddUser", parameters);
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}
@@ -378,9 +378,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public ReturnMethodSetup<bool, System.Guid> RemoveUser(Match.IParameters parameters)
 		{
 			var methodSetup = new ReturnMethodSetup<bool, System.Guid>("Mockolate.Tests.Dummy.IExampleRepository.RemoveUser", parameters);
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}
@@ -391,9 +391,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public VoidMethodSetup<System.Guid, string> UpdateUser(Match.IParameters parameters)
 		{
 			var methodSetup = new VoidMethodSetup<System.Guid, string>("Mockolate.Tests.Dummy.IExampleRepository.UpdateUser", parameters);
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}
@@ -404,9 +404,9 @@ internal static class SetupExtensionsForIExampleRepository
 		public ReturnMethodSetup<bool, System.Guid, Mockolate.Tests.Dummy.User?> TryDelete(Match.IParameters parameters)
 		{
 			var methodSetup = new ReturnMethodSetup<bool, System.Guid, Mockolate.Tests.Dummy.User?>("Mockolate.Tests.Dummy.IExampleRepository.TryDelete", parameters);
-			if (setup is IMockSetup mockSetup)
+			if (setup is IHasMockRegistration hasMockRegistration)
 			{
-				mockSetup.RegisterMethod(methodSetup);
+				hasMockRegistration.Registrations.SetupMethod(methodSetup);
 			}
 			return methodSetup;
 		}

@@ -1,36 +1,44 @@
 using Mockolate.Interactions;
 using Mockolate.Setup;
-using Mockolate.Verify;
 
 namespace Mockolate.V2;
 
-public partial class Mock<T> : IInteractiveMock, IMock<T>, IMockSetup<T>, IMockVerify<T>
+public partial class Mock<T> : IHasMockRegistration, IMockSetup<T>, IMockRaises<T>, IProtectedMockSetup<T>,
+	IMockMethodSetup<T>, IProtectedMockMethodSetup<T>,
+	IMockMethodSetupWithToString<T>, IMockMethodSetupWithEquals<T>, IMockMethodSetupWithGetHashCode<T>,
+	IMockMethodSetupWithToStringWithEquals<T>, IMockMethodSetupWithToStringWithGetHashCode<T>,IMockMethodSetupWithEqualsWithGetHashCode<T>,
+	IMockMethodSetupWithToStringWithEqualsWithGetHashCode<T>,
+	IMockPropertySetup<T>, IProtectedMockPropertySetup<T>
 {
-	/// <inheritdoc cref="MockBase{T}" />
-	public Mock(MockBehavior behavior, string prefix)
+	public IMockRegistration Registrations { get; }
+	
+	public Mock(T subject, IMockRegistration mockRegistration)
 	{
-		Behavior = behavior;
-		Prefix = prefix;
-		Interactions = new MockInteractions();
+		Subject = subject;
+		Registrations = mockRegistration;
+	}
+	ReturnMethodSetup<int> IMockMethodSetupWithGetHashCode<T>.GetHashCode()
+	{
+		var methodSetup = new ReturnMethodSetup<int>(Registrations.Prefix + ".GetHashCode");
+		Registrations.SetupMethod(methodSetup);
+		return methodSetup;
 	}
 
-	/// <summary>
-	///     Gets the behavior settings used by this mock instance.
-	/// </summary>
-	public MockBehavior Behavior { get; }
+	/// <inheritdoc cref="IMockMethodSetupWithToString{T}.ToString()" />
+	ReturnMethodSetup<string> IMockMethodSetupWithToString<T>.ToString()
+	{
+		var methodSetup = new ReturnMethodSetup<string>(Registrations.Prefix + ".ToString");
+		Registrations.SetupMethod(methodSetup);
+		return methodSetup;
+	}
 
-	/// <summary>
-	///     Gets the prefix string used to identify or categorize items within the context.
-	/// </summary>
-	public string Prefix { get; }
+	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(Match.IParameter<object?> obj)
+	{
+		var methodSetup = new ReturnMethodSetup<bool, object?>(Registrations.Prefix + ".Equals", new Match.NamedParameter("obj", obj));
+		Registrations.SetupMethod(methodSetup);
+		return methodSetup;
+	}
 
-	/// <summary>
-	///     Gets the collection of interactions recorded by the mock object.
-	/// </summary>
-	public MockInteractions Interactions { get; }
-
-	/// <summary>
-	///     TODO: VAB
-	/// </summary>
-	public T Subject => Behavior.DefaultValue.Generate<T>();
+	public T Subject { get; }
+	public MockInteractions Interactions => Registrations.Interactions;
 }

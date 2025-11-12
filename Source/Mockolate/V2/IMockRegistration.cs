@@ -1,10 +1,11 @@
 using System;
+using System.Reflection;
 using Mockolate.Interactions;
 using Mockolate.Setup;
 
 namespace Mockolate.V2;
 
-public interface IInteractiveMock {
+public interface IMockRegistration {
 
 	/// <summary>
 	///     Gets the prefix string used to identify or categorize items within the context.
@@ -53,4 +54,46 @@ public interface IInteractiveMock {
 	///     Sets the value of the indexer with the given parameters.
 	/// </summary>
 	void SetIndexer<TResult>(TResult value, params object?[] parameters);
+	
+	
+	/// <summary>
+	///     Raises the event with <paramref name="eventName" /> and the given <paramref name="parameters" />.
+	/// </summary>
+	void Raise(string eventName, params object?[] parameters);
+
+	/// <summary>
+	///     Associates the specified event <paramref name="method" /> on the <paramref name="target" /> with the event
+	///     identified by the given <paramref name="name" />.
+	/// </summary>
+	void AddEvent(string name, object? target, MethodInfo? method);
+
+	/// <summary>
+	///     Removes the specified event <paramref name="method" /> on the <paramref name="target" /> from the event identified
+	///     by the given <paramref name="name" />.
+	/// </summary>
+	void RemoveEvent(string name, object? target, MethodInfo? method);
+	
+	
+	
+	
+	
+	/// <summary>
+	///     Registers the <paramref name="indexerSetup" /> in the mock.
+	/// </summary>
+	void SetupIndexer(IndexerSetup indexerSetup);
+
+	/// <summary>
+	///     Sets the indexer for the given <paramref name="parameters" /> to the given <paramref name="value" />.
+	/// </summary>
+	void SetupIndexerValue<TValue>(object?[] parameters, TValue value);
+
+	/// <summary>
+	///     Registers the <paramref name="methodSetup" /> in the mock.
+	/// </summary>
+	void SetupMethod(MethodSetup methodSetup);
+
+	/// <summary>
+	///     Registers the <paramref name="propertySetup" /> in the mock.
+	/// </summary>
+	void SetupProperty(string propertyName, PropertySetup propertySetup);
 }

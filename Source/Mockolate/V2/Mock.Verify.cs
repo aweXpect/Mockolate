@@ -24,12 +24,12 @@ public partial class Mock<T> : IMockVerify<T>,
 	IMockVerifyUnsubscribedFrom<T>, IMockVerifyUnsubscribedFromProtected<T>
 {
 	/// <inheritdoc cref="IMockVerify{T,TMock}.ThatAllInteractionsAreVerified()" />
-	public bool ThatAllInteractionsAreVerified() => !Interactions.HasMissingVerifications;
+	public bool ThatAllInteractionsAreVerified() => !Registrations.Interactions.HasMissingVerifications;
 
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, Match.IParameter[])" />
 	public VerificationResult<IMockVerify<T>> Method(string methodName, params Match.IParameter[] parameters) => new(this,
-		Interactions,
-		Interactions.Interactions
+		Registrations.Interactions,
+		Registrations.Interactions.Interactions
 			.OfType<MethodInvocation>()
 			.Where(method =>
 				method.Name.Equals(methodName) &&
@@ -40,8 +40,9 @@ public partial class Mock<T> : IMockVerify<T>,
 		$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
 
 	/// <inheritdoc cref="IMockInvoked{TMock}.Method(string, Match.IParameters)" />
-	public VerificationResult<IMockVerify<T>> Method(string methodName, Match.IParameters parameters) => new(this, Interactions,
-		Interactions.Interactions
+	public VerificationResult<IMockVerify<T>> Method(string methodName, Match.IParameters parameters) => new(this,
+		Registrations.Interactions,
+		Registrations.Interactions.Interactions
 			.OfType<MethodInvocation>()
 			.Where(method =>
 				method.Name.Equals(methodName) &&
@@ -51,8 +52,9 @@ public partial class Mock<T> : IMockVerify<T>,
 		$"invoked method {methodName.SubstringAfterLast('.')}({parameters})");
 
 	/// <inheritdoc cref="IMockGot{TMock}.Property(string)" />
-	public VerificationResult<IMockVerify<T>> Property(string propertyName) => new(this, Interactions,
-		Interactions.Interactions
+	public VerificationResult<IMockVerify<T>> Property(string propertyName) => new(this,
+		Registrations.Interactions,
+		Registrations.Interactions.Interactions
 			.OfType<PropertyGetterAccess>()
 			.Where(property => property.Name.Equals(propertyName))
 			.Cast<IInteraction>()
@@ -62,8 +64,9 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// <inheritdoc cref="IMockSet{TMock}.Property(string, Match.IParameter)" />
 	public VerificationResult<IMockVerify<T>> Property(string propertyName,
 		Match.IParameter value)
-		=> new(this, Interactions,
-			Interactions.Interactions
+		=> new(this,
+			Registrations.Interactions,
+			Registrations.Interactions.Interactions
 				.OfType<PropertySetterAccess>()
 				.Where(property => property.Name.Equals(propertyName) && value.Matches(property.Value))
 				.Cast<IInteraction>()
@@ -73,8 +76,9 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// <inheritdoc cref="IMockGotIndexer{TMock}.Got(Match.IParameter?[])" />
 	public VerificationResult<IMockVerify<T>> Got(
 		params Match.IParameter?[] parameters)
-		=> new(this, Interactions,
-			Interactions.Interactions
+		=> new(this,
+			Registrations.Interactions,
+			Registrations.Interactions.Interactions
 				.OfType<IndexerGetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  !parameters.Where((parameter, i) => parameter is null
@@ -87,8 +91,9 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// <inheritdoc cref="IMockSetIndexer{TMock}.Set(Match.IParameter?, Match.IParameter?[])" />
 	public VerificationResult<IMockVerify<T>> Set(Match.IParameter? value,
 		params Match.IParameter?[] parameters)
-		=> new(this, Interactions,
-			Interactions.Interactions
+		=> new(this,
+			Registrations.Interactions,
+			Registrations.Interactions.Interactions
 				.OfType<IndexerSetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  (value is null ? indexer.Value is null : value!.Matches(indexer.Value)) &&
@@ -106,8 +111,6 @@ public partial class Mock<T> : IMockVerify<T>,
 	VerificationResult<IMockVerify<T>> IMockUnsubscribedFrom<IMockVerify<T>>.Event(string eventName) => throw new System.NotImplementedException();
 
 	VerificationResult<IMockVerify<T>> IMockVerifyInvokedWithGetHashCode<T>.GetHashCode() => throw new System.NotImplementedException();
-
-	ReturnMethodSetup<int> IMockMethodSetupWithGetHashCode<T>.GetHashCode() => throw new System.NotImplementedException();
 
 	VerificationResult<IMockVerify<T>> IMockVerifyInvokedWithToString<T>.ToString() => throw new System.NotImplementedException();
 }

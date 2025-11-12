@@ -11,8 +11,9 @@ public class DummyTest
 		IExampleRepository sut = new MockForIExampleRepository(MockBehavior.Default);
 		sut.SetupMock.Method.SaveChanges().Returns(true);
 
-		sut.SaveChanges();
+		var result = sut.SaveChanges();
 
 		sut.VerifyMock.Invoked.SaveChanges().Once();
+		await That(result).IsTrue();
 	}
 }
