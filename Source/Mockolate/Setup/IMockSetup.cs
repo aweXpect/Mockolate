@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System.Reflection;
+using Mockolate.Verify;
 
 namespace Mockolate.Setup;
 
@@ -8,11 +8,6 @@ namespace Mockolate.Setup;
 /// </summary>
 public interface IMockSetup
 {
-	/// <summary>
-	///     Gets the underlying <see cref="IMock" /> instance.
-	/// </summary>
-	IMock Mock { get; }
-
 	/// <summary>
 	///     Registers the <paramref name="indexerSetup" /> in the mock.
 	/// </summary>
@@ -34,13 +29,6 @@ public interface IMockSetup
 	void RegisterProperty(string propertyName, PropertySetup propertySetup);
 
 	/// <summary>
-	///     Gets all event handlers registered for the specified <paramref name="eventName" />.
-	/// </summary>
-	/// <param name="eventName"></param>
-	/// <returns></returns>
-	IEnumerable<(object?, MethodInfo)> GetEventHandlers(string eventName);
-
-	/// <summary>
 	///     Registers an event handler <paramref name="method" /> on <paramref name="target" /> for the specified
 	///     <paramref name="eventName" />.
 	/// </summary>
@@ -58,6 +46,22 @@ public interface IMockSetup
 ///     Sets up the mock for <typeparamref name="T" />.
 /// </summary>
 public interface IMockSetup<T>
+{
+}
+
+/// <summary>
+///     Provides methods for managing events on a mock object, including raising events and associating or dissociating
+///     event handlers.
+/// </summary>
+public interface IMockRaises<T> : IMockVerifyVerb<T>
+{
+}
+
+/// <summary>
+///     Provides methods for managing events on a mock object, including raising events and associating or dissociating
+///     event handlers.
+/// </summary>
+public interface IProtectedMockRaises<T> : IMockVerifyVerb<T>
 {
 }
 #pragma warning restore S2326 // Unused type parameters should be removed

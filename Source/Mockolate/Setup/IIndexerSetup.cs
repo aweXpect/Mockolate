@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Interactions;
+using Mockolate.Setup;
 
 namespace Mockolate.Setup;
 

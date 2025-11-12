@@ -1,8 +1,9 @@
 using System.Text;
 using Mockolate.SourceGenerators.Entities;
+using Mockolate.SourceGenerators.Internals;
 using Type = Mockolate.SourceGenerators.Entities.Type;
 
-namespace Mockolate.SourceGenerators.Internals;
+namespace Mockolate.SourceGenerators.Sources;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
@@ -29,6 +30,7 @@ internal static partial class Sources
 			?
 			[
 				"System",
+				"Mockolate.Exceptions",
 				"Mockolate.Generated",
 				"Mockolate.DefaultValues",
 			]
@@ -168,14 +170,87 @@ internal static partial class Sources
 
 			sb.AppendLine(")");
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t_value = new For").Append(mock.Name)
-				.Append(".Mock(constructorParameters, mockBehavior);").AppendLine();
+			if (mock.MockClass.IsInterface)
+			{
+				sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
+			}
+			else if (mock.MockClass.Constructors?.Count > 0)
+			{
+				sb.Append(
+						"\t\t\t\tif (constructorParameters is null || constructorParameters.Parameters.Length == 0)")
+					.AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				if (mock.MockClass.Constructors.Value.Any(mockClass => mockClass.Parameters.Count == 0))
+				{
+					sb.Append("\t\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
+				}
+				else
+				{
+					sb.Append("\t\t\t\t\tthrow new MockException(\"No parameterless constructor found for '")
+						.Append(mock.MockClass.ClassFullName).Append("'. Please provide constructor parameters.\");")
+						.AppendLine();
+				}
+
+				sb.Append("\t\t\t\t}").AppendLine();
+				int constructorIndex = 0;
+				foreach (EquatableArray<MethodParameter> constructorParameters in mock.MockClass.Constructors.Value
+					         .Select(constructor => constructor.Parameters))
+				{
+					constructorIndex++;
+					sb.Append("\t\t\t\telse if (constructorParameters.Parameters.Length == ")
+						.Append(constructorParameters.Count);
+					int constructorParameterIndex = 0;
+					foreach (MethodParameter parameter in constructorParameters)
+					{
+						sb.AppendLine().Append("\t\t\t\t    && TryCast(constructorParameters.Parameters[")
+							.Append(constructorParameterIndex++)
+							.Append("], mockBehavior, out ").Append(parameter.Type.Fullname).Append(" c").Append(constructorIndex)
+							.Append('p')
+							.Append(constructorParameterIndex).Append(")");
+					}
+
+					sb.Append(")").AppendLine();
+					sb.Append("\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(");
+					for (int i = 1; i <= constructorParameters.Count; i++)
+					{
+						sb.Append('c').Append(constructorIndex).Append('p').Append(i).Append(", ");
+					}
+
+					sb.Append("mockBehavior);").AppendLine();
+					sb.Append("\t\t\t\t}").AppendLine();
+				}
+
+				sb.Append("\t\t\t\telse").AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\tthrow new MockException($\"Could not find any constructor for '")
+					.Append(mock.MockClass.ClassFullName)
+					.Append(
+						"' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", constructorParameters.Parameters)}).\");")
+					.AppendLine();
+				sb.Append("\t\t\t\t}").AppendLine();
+			}
+
 			sb.Append("\t\t\t}").AppendLine();
 		}
 
 		sb.AppendLine("\t\t}");
 		sb.AppendLine("\t}");
-
+		sb.AppendLine();
+		sb.Append("""
+		          	private static bool TryCast<TValue>(object? value, MockBehavior behavior, out TValue result)
+		          	{
+		          		if (value is TValue typedValue)
+		          		{
+		          			result = typedValue;
+		          			return true;
+		          		}
+		          	
+		          		result = behavior.DefaultValue.Generate<TValue>();
+		          		return value is null;
+		          	}
+		          """);
+		sb.AppendLine();
 		sb.AppendLine();
 		sb.AppendLine("\tprivate class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory");
 		sb.AppendLine("\t{");

@@ -18,11 +18,11 @@ public partial class HappyCaseBenchmarks
 	public void Simple_Mockolate()
 	{
 		var mock = Mock.Create<IMyInterface>();
-		mock.Setup.Method.MyFunc(WithAny<int>()).Returns(true);
+		mock.SetupMock.Method.MyFunc(WithAny<int>()).Returns(true);
 
-		mock.Subject.MyFunc(42);
+		mock.MyFunc(42);
 
-		mock.Verify.Invoked.MyFunc(WithAny<int>()).Once();
+		mock.VerifyMock.Invoked.MyFunc(WithAny<int>()).Once();
 	}
 
 	/// <summary>

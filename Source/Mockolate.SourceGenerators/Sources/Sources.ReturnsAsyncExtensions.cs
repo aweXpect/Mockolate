@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Mockolate.SourceGenerators.Internals;
+namespace Mockolate.SourceGenerators.Sources;
 
 internal static partial class Sources
 {

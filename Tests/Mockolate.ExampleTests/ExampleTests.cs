@@ -16,13 +16,13 @@ public class ExampleTests
 	public async Task BaseClassWithConstructorParameters()
 	{
 		Guid id = Guid.NewGuid();
-		Mock<MyClass> mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
+		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
 
-		mock.Setup.Method.MyMethod(WithAny<int>()).Returns(5);
+		mock.SetupMock.Method.MyMethod(WithAny<int>()).Returns(5);
 
-		int result = mock.Subject.MyMethod(3);
+		int result = mock.MyMethod(3);
 
-		var check = mock.Verify.Invoked.MyMethod(WithAny<int>());
+		var check = mock.VerifyMock.Invoked.MyMethod(WithAny<int>());
 		await That(result).IsEqualTo(5);
 		check.Once();
 	}
@@ -34,12 +34,12 @@ public class ExampleTests
 	[InlineData(HttpStatusCode.ServiceUnavailable)]
 	public async Task HttpClientTest(HttpStatusCode statusCode)
 	{
-		Mock<HttpMessageHandler> mock = Mock.Create<HttpMessageHandler>();
-		mock.Setup.Protected.Method
+		HttpMessageHandler httpMessageHandler = Mock.Create<HttpMessageHandler>();
+		httpMessageHandler.SetupMock.Protected.Method
 			.SendAsync(WithAny<HttpRequestMessage>(), WithAny<CancellationToken>())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 
-		HttpClient httpClient = new(mock.Subject);
+		HttpClient httpClient = new(httpMessageHandler);
 
 		HttpResponseMessage result = await httpClient.GetAsync("https://www.example.com");
 
@@ -50,13 +50,13 @@ public class ExampleTests
 	public async Task SimpleInterfaceMock()
 	{
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository, IOrderRepository> mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.Setup.Method
+		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
+		mock.SetupMock.Method
 			.AddUser(WithAny<string>())
 			.Returns(new User(id, "Alice"));
-		User result = mock.Subject.AddUser("Bob");
+		User result = mock.AddUser("Bob");
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		mock.Verify.Invoked.AddUser(WithAny<string>()).Once();
+		mock.VerifyMock.Invoked.AddUser(WithAny<string>()).Once();
 	}
 
 	[Fact]
@@ -64,33 +64,32 @@ public class ExampleTests
 	{
 		EventArgs eventArgs = EventArgs.Empty;
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository, IOrderRepository> mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.SetupIOrderRepository.Method
+		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
+		mock.SetupIOrderRepositoryMock.Method
 			.AddOrder(WithAny<string>())
 			.Returns(new Order(id, "Order1"));
 
-		var result = mock.SubjectForIOrderRepository.AddOrder("foo");
+		var result = ((IOrderRepository)mock).AddOrder("foo");
 
 		await That(result.Name).IsEqualTo("Order1");
-		mock.VerifyOnIOrderRepository.Invoked.AddOrder(With("foo")).Once();
-		await That(mock.Subject).Is<IExampleRepository>();
-		await That(mock.Subject).Is<IOrderRepository>();
+		mock.VerifyOnIOrderRepositoryMock.Invoked.AddOrder(With("foo")).Once();
+		await That(mock).Is<IExampleRepository>();
+		await That(mock).Is<IOrderRepository>();
 	}
 
 	[Fact]
 	public async Task WithAny_ShouldAlwaysMatch()
 	{
 		Guid id = Guid.NewGuid();
-		Mock<MyClass, IExampleRepository, IOrderRepository> mock =
-			Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
-		mock.SetupIExampleRepository.Method.AddUser(
+		MyClass mock = Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
+		mock.SetupIExampleRepositoryMock.Method.AddUser(
 				WithAny<string>())
 			.Returns(new User(id, "Alice"));
 
-		var result = mock.SubjectForIExampleRepository.AddUser("Bob");
+		var result = ((IExampleRepository)mock).AddUser("Bob");
 
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		mock.VerifyOnIExampleRepository.Invoked.AddUser(With("Bob")).Once();
+		mock.VerifyOnIExampleRepositoryMock.Invoked.AddUser(With("Bob")).Once();
 	}
 
 	[Fact]
@@ -99,14 +98,14 @@ public class ExampleTests
 		EventArgs eventArgs = EventArgs.Empty;
 		int raiseCount = 0;
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository> mock = Mock.Create<IExampleRepository>();
+		IExampleRepository mock = Mock.Create<IExampleRepository>();
 
-		mock.Raise.UsersChanged(this, eventArgs);
-		mock.Subject.UsersChanged += Register;
-		mock.Raise.UsersChanged(this, eventArgs);
-		mock.Raise.UsersChanged(this, eventArgs);
-		mock.Subject.UsersChanged -= Register;
-		mock.Raise.UsersChanged(this, eventArgs);
+		mock.RaiseOnMock.UsersChanged(this, eventArgs);
+		mock.UsersChanged += Register;
+		mock.RaiseOnMock.UsersChanged(this, eventArgs);
+		mock.RaiseOnMock.UsersChanged(this, eventArgs);
+		mock.UsersChanged -= Register;
+		mock.RaiseOnMock.UsersChanged(this, eventArgs);
 
 		await That(raiseCount).IsEqualTo(2);
 
@@ -125,16 +124,16 @@ public class ExampleTests
 	public async Task WithMatching_ShouldAlwaysMatch(string name, bool expectResult)
 	{
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository> mock = Mock.Create<IExampleRepository>();
+		IExampleRepository mock = Mock.Create<IExampleRepository>();
 
-		mock.Setup.Method.AddUser(
+		mock.SetupMock.Method.AddUser(
 				With<string>(x => x == "Alice"))
 			.Returns(new User(id, "Alice"));
 
-		User result = mock.Subject.AddUser(name);
+		User result = mock.AddUser(name);
 
 		await That(result).IsEqualTo(expectResult ? new User(id, "Alice") : null);
-		mock.Verify.Invoked.AddUser(With(name)).Once();
+		mock.VerifyMock.Invoked.AddUser(With(name)).Once();
 	}
 
 	[Theory]
@@ -143,18 +142,18 @@ public class ExampleTests
 	public async Task WithOut_ShouldSupportOutParameter(bool returnValue)
 	{
 		Guid id = Guid.NewGuid();
-		Mock<IExampleRepository> mock = Mock.Create<IExampleRepository>();
+		IExampleRepository mock = Mock.Create<IExampleRepository>();
 
-		mock.Setup.Method.TryDelete(
+		mock.SetupMock.Method.TryDelete(
 				WithAny<Guid>(),
 				Out<User?>(() => new User(id, "Alice")))
 			.Returns(returnValue);
 
-		bool result = mock.Subject.TryDelete(id, out User? deletedUser);
+		bool result = mock.TryDelete(id, out User? deletedUser);
 
 		await That(deletedUser).IsEqualTo(new User(id, "Alice"));
 		await That(result).IsEqualTo(returnValue);
-		mock.Verify.Invoked.TryDelete(With(id), Out<User?>()).Once();
+		mock.VerifyMock.Invoked.TryDelete(With(id), Out<User?>()).Once();
 	}
 
 	[Fact]
@@ -162,13 +161,12 @@ public class ExampleTests
 	{
 		bool isCalled = false;
 		Guid id = Guid.NewGuid();
-		Mock<IList<int>, IExampleRepository, IOrderRepository> mock =
-			Mock.Create<IList<int>, IExampleRepository, IOrderRepository>();
-		mock.SetupIOrderRepository.Method
+		IList<int> mock = Mock.Create<IList<int>, IExampleRepository, IOrderRepository>();
+		mock.SetupIOrderRepositoryMock.Method
 			.SaveChanges()
 			.Callback(() => isCalled = true);
 
-		mock.SubjectForIExampleRepository.SaveChanges();
+		((IExampleRepository)mock).SaveChanges();
 
 		await That(isCalled).IsFalse();
 	}

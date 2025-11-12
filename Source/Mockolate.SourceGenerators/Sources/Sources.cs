@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace Mockolate.SourceGenerators.Internals;
+namespace Mockolate.SourceGenerators.Sources;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
@@ -64,7 +64,8 @@ internal static partial class Sources
 		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              	/// </remarks>
 		              	[MockGenerator]
-		              	public static Mock<T> Create<T>(BaseClass.ConstructorParameters? constructorParameters = null)
+		              	public static T Create<T>(BaseClass.ConstructorParameters? constructorParameters = null)
+		              		where T : class
 		              	{
 		              		ThrowIfNotMockable(typeof(T));
 
@@ -81,10 +82,11 @@ internal static partial class Sources
 		              	/// <remarks>
 		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              	///     <para />
-		              	///     The behavior of the mock with regards to the setups and the actual calls is determined by the <see cref="MockBehavior" />.
+		              	///     The behavior of the mock regarding the setups and the actual calls is determined by the <see cref="MockBehavior" />.
 		              	/// </remarks>
 		              	[MockGenerator]
-		              	public static Mock<T> Create<T>(MockBehavior mockBehavior)
+		              	public static T Create<T>(MockBehavior mockBehavior)
+		              		where T : class
 		              	{
 		              		ThrowIfNotMockable(typeof(T));
 		              	
@@ -101,10 +103,11 @@ internal static partial class Sources
 		              	/// <remarks>
 		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              	///     <para />
-		              	///     The behavior of the mock with regards to the setups and the actual calls is determined by the <see cref="MockBehavior" />.
+		              	///     The behavior of the mock regarding the setups and the actual calls is determined by the <see cref="MockBehavior" />.
 		              	/// </remarks>
 		              	[MockGenerator]
-		              	public static Mock<T> Create<T>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior)
+		              	public static T Create<T>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior)
+		              		where T : class
 		              	{
 		              		ThrowIfNotMockable(typeof(T));
 		              	
@@ -138,7 +141,8 @@ internal static partial class Sources
 			                	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 			                	/// </remarks>
 			                	[MockGenerator]
-			                	public static Mock<T, {{types}}> Create<T, {{types}}>(BaseClass.ConstructorParameters? constructorParameters = null)
+			                	public static T Create<T, {{types}}>(BaseClass.ConstructorParameters? constructorParameters = null)
+			                		where T : class
 			                	{
 			                		ThrowIfNotMockable(typeof(T));
 
@@ -170,7 +174,8 @@ internal static partial class Sources
 			                	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 			                	/// </remarks>
 			                	[MockGenerator]
-			                	public static Mock<T, {{types}}> Create<T, {{types}}>(MockBehavior mockBehavior)
+			                	public static T Create<T, {{types}}>(MockBehavior mockBehavior)
+			                		where T : class
 			                	{
 			                		ThrowIfNotMockable(typeof(T));
 
@@ -202,7 +207,8 @@ internal static partial class Sources
 			                	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 			                	/// </remarks>
 			                	[MockGenerator]
-			                	public static Mock<T, {{types}}> Create<T, {{types}}>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior)
+			                	public static T Create<T, {{types}}>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior)
+			                		where T : class
 			                	{
 			                		ThrowIfNotMockable(typeof(T));
 
@@ -237,7 +243,8 @@ internal static partial class Sources
 		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              		/// </remarks>
 		              		[MockGenerator]
-		              		public Mock<T> Create<T>(BaseClass.ConstructorParameters? constructorParameters = null)
+		              		public T Create<T>(BaseClass.ConstructorParameters? constructorParameters = null)
+		              			where T : class
 		              		{
 		              			ThrowIfNotMockable(typeof(T));
 		              		
@@ -270,7 +277,8 @@ internal static partial class Sources
 			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 			                		/// </remarks>
 			                		[MockGenerator]
-			                		public Mock<T, {{types}}> Create<T, {{types}}>(BaseClass.ConstructorParameters? constructorParameters = null)
+			                		public T Create<T, {{types}}>(BaseClass.ConstructorParameters? constructorParameters = null)
+			                			where T : class
 			                		{
 			                			ThrowIfNotMockable(typeof(T));
 
@@ -303,10 +311,11 @@ internal static partial class Sources
 
 		              		partial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types);
 
-		              		public Mock<T>? Get<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior)
+		              		public T? Get<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior)
+		              			where T : class
 		              		{
 		              			Generate(constructorParameters, mockBehavior, typeof(T));
-		              			return _value as Mock<T>;
+		              			return _value as T;
 		              		}
 		              """);
 		for (int i = 1; i < maxNumberOfArguments; i++)
@@ -314,10 +323,11 @@ internal static partial class Sources
 			string types = string.Join(", ", Enumerable.Range(2, i).Select(n => $"T{n}"));
 			string typeOfTypes = string.Join(", ", Enumerable.Range(2, i).Select(n => $"typeof(T{n})"));
 			sb.AppendLine($$"""
-			                		public Mock<T, {{types}}>? Get<T, {{types}}>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior)
+			                		public T? Get<T, {{types}}>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior)
+			                			where T : class
 			                		{
 			                			Generate(constructorParameters, mockBehavior, typeof(T), {{typeOfTypes}});
-			                			return _value as Mock<T, {{types}}>;
+			                			return _value as T;
 			                		}
 			                """);
 		}
