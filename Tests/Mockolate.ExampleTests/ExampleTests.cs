@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+using Mockolate.Exceptions;
 using Mockolate.Tests.Dummy;
 using Mockolate.Verify;
-
 #if NET8_0_OR_GREATER
 using System.Net;
 using System.Net.Http;
@@ -15,14 +14,13 @@ public class ExampleTests
 	[Fact]
 	public async Task BaseClassWithConstructorParameters()
 	{
-		Guid id = Guid.NewGuid();
 		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
 
 		mock.SetupMock.Method.MyMethod(WithAny<int>()).Returns(5);
 
 		int result = mock.MyMethod(3);
 
-		var check = mock.VerifyMock.Invoked.MyMethod(WithAny<int>());
+		VerificationResult<MyClass> check = mock.VerifyMock.Invoked.MyMethod(WithAny<int>());
 		await That(result).IsEqualTo(5);
 		check.Once();
 	}
@@ -62,14 +60,47 @@ public class ExampleTests
 	[Fact]
 	public async Task WithAdditionalInterface_ShouldWork()
 	{
-		EventArgs eventArgs = EventArgs.Empty;
 		Guid id = Guid.NewGuid();
 		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
 		mock.SetupIOrderRepositoryMock.Method
 			.AddOrder(WithAny<string>())
 			.Returns(new Order(id, "Order1"));
 
-		var result = ((IOrderRepository)mock).AddOrder("foo");
+		Order result = ((IOrderRepository)mock).AddOrder("foo");
+
+		await That(result.Name).IsEqualTo("Order1");
+		mock.VerifyOnIOrderRepositoryMock.Invoked.AddOrder(With("foo")).Once();
+		await That(mock).Is<IExampleRepository>();
+		await That(mock).Is<IOrderRepository>();
+	}
+
+	[Fact]
+	public async Task WithExplicitCastToAdditionalInterfaceVerify_ShouldWork()
+	{
+		Guid id = Guid.NewGuid();
+		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
+		mock.SetupIOrderRepositoryMock.Method
+			.AddOrder(WithAny<string>())
+			.Returns(new Order(id, "Order1"));
+
+		Order result = ((IOrderRepository)mock).AddOrder("foo");
+
+		await That(result.Name).IsEqualTo("Order1");
+		((IOrderRepository)mock).VerifyMock.Invoked.AddOrder(With("foo")).Once();
+		await That(mock).Is<IExampleRepository>();
+		await That(mock).Is<IOrderRepository>();
+	}
+
+	[Fact]
+	public async Task WithExplicitCastToAdditionalInterfaceSetup_ShouldWork()
+	{
+		Guid id = Guid.NewGuid();
+		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
+		((IOrderRepository)mock).SetupMock.Method
+			.AddOrder(WithAny<string>())
+			.Returns(new Order(id, "Order1"));
+
+		Order result = ((IOrderRepository)mock).AddOrder("foo");
 
 		await That(result.Name).IsEqualTo("Order1");
 		mock.VerifyOnIOrderRepositoryMock.Invoked.AddOrder(With("foo")).Once();
@@ -81,12 +112,13 @@ public class ExampleTests
 	public async Task WithAny_ShouldAlwaysMatch()
 	{
 		Guid id = Guid.NewGuid();
-		MyClass mock = Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
+		MyClass mock =
+			Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
 		mock.SetupIExampleRepositoryMock.Method.AddUser(
 				WithAny<string>())
 			.Returns(new User(id, "Alice"));
 
-		var result = ((IExampleRepository)mock).AddUser("Bob");
+		User result = ((IExampleRepository)mock).AddUser("Bob");
 
 		await That(result).IsEqualTo(new User(id, "Alice"));
 		mock.VerifyOnIExampleRepositoryMock.Invoked.AddUser(With("Bob")).Once();
@@ -97,7 +129,6 @@ public class ExampleTests
 	{
 		EventArgs eventArgs = EventArgs.Empty;
 		int raiseCount = 0;
-		Guid id = Guid.NewGuid();
 		IExampleRepository mock = Mock.Create<IExampleRepository>();
 
 		mock.RaiseOnMock.UsersChanged(this, eventArgs);
@@ -154,20 +185,5 @@ public class ExampleTests
 		await That(deletedUser).IsEqualTo(new User(id, "Alice"));
 		await That(result).IsEqualTo(returnValue);
 		mock.VerifyMock.Invoked.TryDelete(With(id), Out<User?>()).Once();
-	}
-
-	[Fact]
-	public async Task XXX()
-	{
-		bool isCalled = false;
-		Guid id = Guid.NewGuid();
-		IList<int> mock = Mock.Create<IList<int>, IExampleRepository, IOrderRepository>();
-		mock.SetupIOrderRepositoryMock.Method
-			.SaveChanges()
-			.Callback(() => isCalled = true);
-
-		((IExampleRepository)mock).SaveChanges();
-
-		await That(isCalled).IsFalse();
 	}
 }

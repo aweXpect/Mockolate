@@ -41,9 +41,14 @@ internal static partial class Sources
 		}
 		sb.Append("\tIMockSubject<").Append(mockClass.ClassFullName).Append(">").AppendLine();
 		sb.Append("{").AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"IMockSubject{T}.Mock\" />").AppendLine();
+		sb.Append("\tMock<").Append(mockClass.ClassFullName).Append("> IMockSubject<").Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
 		sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
 		sb.Append("\tprivate readonly Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
-		sb.Append("\tMock<").Append(mockClass.ClassFullName).Append("> IMockSubject<").Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"IHasMockRegistration.Registrations\" />").AppendLine();
+		sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
+		sb.Append("\tMockRegistration IHasMockRegistration.Registrations => _mock.Registrations;").AppendLine();
 		sb.AppendLine();
 		string mockString = "_mock";
 		/* TODO Check how to deal with this!

@@ -103,6 +103,11 @@ internal static partial class Sources
 		              		{
 		              			return mock.Mock;
 		              		}
+		              
+		              		if (subject is IHasMockRegistration hasMockRegistration)
+		              		{
+		              			return new Mock<T>(subject, hasMockRegistration.Registrations);
+		              		}
 		              	
 		              		throw new MockException("The subject is no mock subject.");
 		              	}

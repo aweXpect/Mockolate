@@ -39,6 +39,7 @@ public partial class MockRegistration
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	public MockInteractions Interactions { get; }
 
 	/// <summary>
@@ -178,7 +179,7 @@ public partial class MockRegistration
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(Interactions.GetNextIndex(), name,
 			target, method));
-		AddEvent(name, target, method);
+		_eventHandlers.Add(target, method, name);
 	}
 
 	/// <summary>
@@ -194,7 +195,7 @@ public partial class MockRegistration
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(Interactions.GetNextIndex(), name,
 			target, method));
-		RemoveEvent(name, target, method);
+		_eventHandlers.Remove(target, method, name);
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
