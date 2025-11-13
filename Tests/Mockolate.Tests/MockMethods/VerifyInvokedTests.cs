@@ -1,25 +1,55 @@
 using Mockolate.Exceptions;
-using Mockolate.Verify;
 using static Mockolate.Tests.MockMethods.SetupMethodTests;
 
 namespace Mockolate.Tests.MockMethods;
 
 public sealed class VerifyInvokedTests
 {
+	[Fact]
+	public async Task Equals_ShouldWork()
+	{
+		object obj = new();
+		IMethodService mock = Mock.Create<IMethodService>();
+
+		_ = mock.Equals(obj);
+
+		await That(mock.VerifyMock.Invoked.Equals(With(obj))).Once();
+	}
+
+	[Fact]
+	public async Task GetHashCode_ShouldWork()
+	{
+		IMethodService mock = Mock.Create<IMethodService>();
+
+		_ = mock.GetHashCode();
+
+		await That(mock.VerifyMock.Invoked.GetHashCode()).Once();
+	}
+
 	[Theory]
 	[InlineData(2)]
 	[InlineData(42)]
 	public async Task MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
 	{
-		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>();
-		sut.Setup.Method.Multiply(WithAny<int>(), WithAny<int?>()).Returns(1);
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+		sut.SetupMock.Method.Multiply(WithAny<int>(), WithAny<int?>()).Returns(1);
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
-			sut.Subject.Multiply(i, 4);
+			sut.Multiply(i, 4);
 		}
 
-		await That(sut.Verify.Invoked.Multiply(WithAny<int>(), WithAny<int?>())).Exactly(numberOfInvocations);
+		await That(sut.VerifyMock.Invoked.Multiply(WithAny<int>(), WithAny<int?>())).Exactly(numberOfInvocations);
+	}
+
+	[Fact]
+	public async Task ToString_ShouldWork()
+	{
+		IMethodService mock = Mock.Create<IMethodService>();
+
+		_ = mock.ToString();
+
+		await That(mock.VerifyMock.Invoked.ToString()).Once();
 	}
 
 	[Theory]
@@ -27,15 +57,15 @@ public sealed class VerifyInvokedTests
 	[InlineData(42)]
 	public async Task VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
-		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>();
-		sut.Setup.Method.SetIsValid(WithAny<bool>(), WithAny<Func<bool>?>());
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+		sut.SetupMock.Method.SetIsValid(WithAny<bool>(), WithAny<Func<bool>?>());
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
-			sut.Subject.SetIsValid(i % 2 == 0, () => true);
+			sut.SetIsValid(i % 2 == 0, () => true);
 		}
 
-		await That(sut.Verify.Invoked.SetIsValid(WithAny<bool>(), WithAny<Func<bool>?>()))
+		await That(sut.VerifyMock.Invoked.SetIsValid(WithAny<bool>(), WithAny<Func<bool>?>()))
 			.Exactly(numberOfInvocations);
 	}
 
@@ -45,13 +75,15 @@ public sealed class VerifyInvokedTests
 	public async Task VoidMethod_ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(
 		bool throwWhenNotSetup)
 	{
-		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = throwWhenNotSetup,
+			ThrowWhenNotSetup = throwWhenNotSetup
 		});
 
 		void Act()
-			=> sut.Subject.SetIsValid(true, null);
+		{
+			sut.SetIsValid(true, null);
+		}
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
@@ -62,13 +94,15 @@ public sealed class VerifyInvokedTests
 	[Fact]
 	public async Task WhenBehaviorIsSetToThrow_ShouldThrowMockNotSetupException()
 	{
-		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = true,
+			ThrowWhenNotSetup = true
 		});
 
 		void Act()
-			=> sut.Subject.Multiply(3, null);
+		{
+			sut.Multiply(3, null);
+		}
 
 		await That(Act).Throws<MockNotSetupException>()
 			.WithMessage("""
@@ -79,41 +113,10 @@ public sealed class VerifyInvokedTests
 	[Fact]
 	public async Task WhenNotSetup_ShouldReturnDefaultValue()
 	{
-		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>();
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
 
-		int result = sut.Subject.Multiply(3, 4);
+		int result = sut.Multiply(3, 4);
 
 		await That(result).IsEqualTo(default(int));
-	}
-
-	[Fact]
-	public async Task ToString_ShouldWork()
-	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-
-		_ = mock.Subject.ToString();
-
-		await That(mock.Verify.Invoked.ToString()).Once();
-	}
-
-	[Fact]
-	public async Task GetHashCode_ShouldWork()
-	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-
-		_ = mock.Subject.GetHashCode();
-
-		await That(mock.Verify.Invoked.GetHashCode()).Once();
-	}
-
-	[Fact]
-	public async Task Equals_ShouldWork()
-	{
-		object obj = new();
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-
-		_ = mock.Subject.Equals(obj);
-
-		await That(mock.Verify.Invoked.Equals(With(obj))).Once();
 	}
 }

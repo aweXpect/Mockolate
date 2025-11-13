@@ -7,21 +7,21 @@ public sealed class VerifyGotTests
 	[Fact]
 	public async Task ShouldIncreaseInvocationCountOfGetter()
 	{
-		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>();
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
 
-		_ = sut.Subject.Counter;
+		_ = sut.Counter;
 
-		await That(sut.Verify.Got.Counter()).Once();
-		await That(sut.Verify.Set.Counter(WithAny<int>())).Never();
+		await That(sut.VerifyMock.Got.Counter()).Once();
+		await That(sut.VerifyMock.Set.Counter(WithAny<int>())).Never();
 	}
 
 	[Fact]
 	public async Task ShouldReturnInitializedValue()
 	{
-		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>();
-		sut.Setup.Property.Counter.InitializeWith(24);
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+		sut.SetupMock.Property.Counter.InitializeWith(24);
 
-		int result = sut.Subject.Counter;
+		int result = sut.Counter;
 
 		await That(result).IsEqualTo(24);
 	}
@@ -31,13 +31,15 @@ public sealed class VerifyGotTests
 	[InlineData(false)]
 	public async Task ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
-		Mock<MockTests.IMyService> sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = throwWhenNotSetup,
+			ThrowWhenNotSetup = throwWhenNotSetup
 		});
 
 		void Act()
-			=> _ = sut.Subject.IsValid;
+		{
+			_ = sut.IsValid;
+		}
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""

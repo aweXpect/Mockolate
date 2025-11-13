@@ -5,30 +5,30 @@ public sealed class MockExtensionsTests
 	[Fact]
 	public async Task ImplicitSetup_With1Type_ShouldSetupAndReturnTheMock()
 	{
-		Mock<IMyMockExtensionsService> mock = Mock.Create<IMyMockExtensionsService>();
+		IMyMockExtensionsService mock = Mock.Create<IMyMockExtensionsService>();
 
-		Mock<IMyMockExtensionsService> result = mock.Setup(
+		IMyMockExtensionsService result = mock.SetupMock(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 
 		await That(result).IsSameAs(mock);
-		await That(mock.Subject.DoSomething1()).IsEqualTo(3);
-		await That(mock.Subject.DoSomething2()).IsEqualTo(5);
+		await That(mock.DoSomething1()).IsEqualTo(3);
+		await That(mock.DoSomething2()).IsEqualTo(5);
 	}
 
 	[Fact]
 	public async Task ImplicitSetup_With2Types_ShouldSetupAndReturnTheMock()
 	{
-		Mock<IMyMockExtensionsService, IMyMockExtensionsService2> mock =
+		IMyMockExtensionsService mock =
 			Mock.Create<IMyMockExtensionsService, IMyMockExtensionsService2>();
 
-		Mock<IMyMockExtensionsService, IMyMockExtensionsService2> result = mock.Setup(
+		IMyMockExtensionsService result = mock.SetupMock(
 			m => m.Method.DoSomething1().Returns(3),
 			m => m.Method.DoSomething2().Returns(5));
 
 		await That(result).IsSameAs(mock);
-		await That(mock.Subject.DoSomething1()).IsEqualTo(3);
-		await That(mock.Subject.DoSomething2()).IsEqualTo(5);
+		await That(mock.DoSomething1()).IsEqualTo(3);
+		await That(mock.DoSomething2()).IsEqualTo(5);
 	}
 
 	[Fact]

@@ -3,18 +3,17 @@ using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockProperties;
+
 public sealed class InteractionsTests
 {
 	[Fact]
 	public async Task MockGot_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
-		MockInteractions mockInteractions = new();
-		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockGot<IMockVerify<int, Mock<int>>> mockGot = verify;
-		interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		registration.Get<int>("foo.bar");
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockGot.Property("baz.bar");
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "baz.bar");
 
 		await That(result).Never();
 	}
@@ -22,13 +21,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task MockGot_WhenNameMatches_ShouldReturnOnce()
 	{
-		MockInteractions mockInteractions = new();
-		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockGot<IMockVerify<int, Mock<int>>> mockGot = verify;
-		interactions.RegisterInteraction(new PropertyGetterAccess(0, "foo.bar"));
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		registration.Get<int>("foo.bar");
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockGot.Property("foo.bar");
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar");
 
 		await That(result).Once();
 	}
@@ -36,11 +33,10 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task MockGot_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		MockInteractions mockInteractions = new();
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockGot<IMockVerify<int, Mock<int>>> mockGot = verify;
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockGot.Property("foo.bar");
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar");
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property bar");
@@ -49,13 +45,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task MockSet_WhenNameAndValueMatches_ShouldReturnOnce()
 	{
-		MockInteractions mockInteractions = new();
-		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
-		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		registration.Set("foo.bar", 4);
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", WithAny<int>());
 
 		await That(result).Once();
 	}
@@ -63,13 +57,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task MockSet_WhenOnlyNameMatches_ShouldReturnNever()
 	{
-		MockInteractions mockInteractions = new();
-		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
-		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		registration.Set("foo.bar", 4);
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", WithAny<string>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", WithAny<string>());
 
 		await That(result).Never();
 	}
@@ -77,13 +69,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task MockSet_WhenOnlyValueMatches_ShouldReturnNever()
 	{
-		MockInteractions mockInteractions = new();
-		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
-		interactions.RegisterInteraction(new PropertySetterAccess(0, "foo.bar", 4));
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		registration.Set("foo.bar", 4);
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("baz.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "baz.bar", WithAny<int>());
 
 		await That(result).Never();
 	}
@@ -91,11 +81,10 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task MockSet_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		MockInteractions mockInteractions = new();
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockSet<IMockVerify<int, Mock<int>>> mockSet = verify;
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = mockSet.Property("foo.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", WithAny<int>());
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value WithAny<int>()");

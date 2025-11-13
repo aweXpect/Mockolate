@@ -8,8 +8,8 @@ public sealed partial class MockBehaviorTests
 	[Fact]
 	public async Task Default_ShouldInitializeCorrectly()
 	{
-		Mock<IMyService> mock = Mock.Create<IMyService>();
-		MockBehavior sut = ((IMock)mock).Behavior;
+		IMyService mock = Mock.Create<IMyService>();
+		MockBehavior sut = ((IHasMockRegistration)mock).Registrations.Behavior;
 
 		await That(sut.BaseClassBehavior).IsEqualTo(BaseClassBehavior.DoNotCallBaseClass);
 		await That(sut.ThrowWhenNotSetup).IsFalse();

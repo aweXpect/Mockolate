@@ -6,7 +6,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up the mock for <typeparamref name="T" />.
 /// </summary>
-public interface IMockSetup<out T>;
+public interface IMockSetup<out T> : IInteractiveMock<T>;
 
 /// <summary>
 ///     Sets up methods on the mock for <typeparamref name="T" />.
@@ -84,5 +84,5 @@ public interface IProtectedMockPropertySetup<out T> : IInteractiveMock<T>;
 /// <summary>
 ///     Sets up the protected elements of the mock for <typeparamref name="T" />.
 /// </summary>
-public interface IProtectedMockSetup<out T>;
+public interface IProtectedMockSetup<out T> : IInteractiveMock<T>;
 #pragma warning restore S2326 // Unused type parameters should be removed

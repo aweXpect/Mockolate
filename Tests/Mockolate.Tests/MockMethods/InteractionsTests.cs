@@ -3,18 +3,17 @@ using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockMethods;
+
 public sealed class InteractionsTests
 {
 	[Fact]
 	public async Task Method_WhenNameAndValueMatches_ShouldReturnOnce()
 	{
-		MockInteractions mockInteractions = new();
-		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
-		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		registration.Execute("foo.bar", 4);
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", WithAny<int>());
 
 		await That(result).Once();
 	}
@@ -22,13 +21,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Method_WhenOnlyNameMatches_ShouldReturnNever()
 	{
-		MockInteractions mockInteractions = new();
-		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
-		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		registration.Execute("foo.bar", 4);
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", WithAny<string>());
+		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", WithAny<string>());
 
 		await That(result).Never();
 	}
@@ -36,13 +33,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Method_WhenOnlyValueMatches_ShouldReturnNever()
 	{
-		MockInteractions mockInteractions = new();
-		IMockInteractions interactions = mockInteractions;
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
-		interactions.RegisterInteraction(new MethodInvocation(0, "foo.bar", [4,]));
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		registration.Execute("foo.bar", 4);
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("baz.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "baz.bar", WithAny<int>());
 
 		await That(result).Never();
 	}
@@ -50,11 +45,10 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Method_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		MockInteractions mockInteractions = new();
-		MockVerify<int, Mock<int>> verify = new(mockInteractions, new MyMock<int>(1), "MyMock");
-		IMockInvoked<IMockVerify<int, Mock<int>>> invoked = verify;
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		VerificationResult<IMockVerify<int, Mock<int>>> result = invoked.Method("foo.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", WithAny<int>());
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(WithAny<int>())");

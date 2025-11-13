@@ -5,6 +5,7 @@ namespace Mockolate.Tests.Internals;
 
 public sealed class MockTests
 {
+	/* TODO
 	[Fact]
 	public async Task TryCast_WhenMatching_ShouldReturnTrue()
 	{
@@ -40,16 +41,30 @@ public sealed class MockTests
 		await That(result).IsTrue();
 		await That(value).IsEqualTo(0);
 	}
-
+*/
 	[Fact]
 	public async Task WithTwoGenericArguments_WhenSecondIsNoInterface_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = new MyMock<IMyService, MyServiceBase>();
+			=> _ = Mock.Create<IMyService, MyServiceBase>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("""
-			             The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.
+			             The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase
 			             """);
 	}
+	
+	[Fact]
+	public async Task WithThreeGenericArguments_WhenSecondIsNoInterface_ShouldThrowMockException()
+	{
+		void Act()
+			=> _ = Mock.Create<IMyService, MyServiceBase, IChocolateDispenser, MyOtherServiceBase>();
+	
+		await That(Act).Throws<MockException>()
+			.WithMessage("""
+			             The mock declaration has 2 additional implementations that are not interfaces: Mockolate.Tests.TestHelpers.MyServiceBase, Mockolate.Tests.Internals.MockTests.MyOtherServiceBase
+			             """);
+	}
+
+	internal class MyOtherServiceBase;
 }

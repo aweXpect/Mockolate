@@ -66,11 +66,15 @@ public partial class Mock<T> : IMockVerify<T>,
 	///     Counts the subscriptions to the event <paramref name="eventName" />.
 	/// </summary>
 	public VerificationResult<T> SubscribedTo(string eventName)
-		=> Registrations.UnsubscribedFrom(Subject, eventName);
+		=> Registrations.SubscribedTo(Subject, eventName);
 	
 	/// <summary>
 	///     Counts the unsubscriptions from the event <paramref name="eventName" />.
 	/// </summary>
 	public VerificationResult<T> UnsubscribedFrom(string eventName)
 		=> Registrations.UnsubscribedFrom(Subject, eventName);
+
+	/// <inheritdoc cref="IMockVerify{T}.ThatAllInteractionsAreVerified()" />
+	bool IMockVerify<T>.ThatAllInteractionsAreVerified()
+		=> !Interactions.HasMissingVerifications;
 }

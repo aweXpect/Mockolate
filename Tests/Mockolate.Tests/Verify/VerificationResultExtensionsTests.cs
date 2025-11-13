@@ -13,11 +13,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(2, 1, true)]
 	public async Task AtLeast_ShouldReturnExpectedResult(int count, int times, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeast(times);
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeast(times);
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -31,11 +31,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(3, true)]
 	public async Task AtLeastOnce_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastOnce();
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastOnce();
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -49,11 +49,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(3, true)]
 	public async Task AtLeastTwice_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastTwice();
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastTwice();
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -67,11 +67,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(2, 3, true)]
 	public async Task AtMost_ShouldReturnExpectedResult(int count, int times, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMost(times);
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMost(times);
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -85,11 +85,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(3, false)]
 	public async Task AtMostOnce_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostOnce();
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostOnce();
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -103,11 +103,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(3, false)]
 	public async Task AtMostTwice_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostTwice();
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostTwice();
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -121,11 +121,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(2, 1, false)]
 	public async Task Exactly_ShouldReturnExpectedResult(int count, int times, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Exactly(times);
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Exactly(times);
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -139,11 +139,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(3, false)]
 	public async Task Never_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Never();
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Never();
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -157,11 +157,11 @@ public class VerificationResultExtensionsTests
 	[InlineData(3, false)]
 	public async Task Once_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Once();
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Once();
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -171,45 +171,45 @@ public class VerificationResultExtensionsTests
 	[Fact]
 	public async Task Then_ShouldVerifyInOrder()
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
-		mock.Subject.Dispense("Dark", 1);
-		mock.Subject.Dispense("Dark", 2);
-		mock.Subject.Dispense("Dark", 3);
-		mock.Subject.Dispense("Dark", 4);
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		mock.Dispense("Dark", 1);
+		mock.Dispense("Dark", 2);
+		mock.Dispense("Dark", 3);
+		mock.Dispense("Dark", 4);
 
-		mock.Verify.Invoked.Dispense(WithAny<string>(), With(3)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(4)));
+		mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(3)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(4)));
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), With(2)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(2)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
 
 		await That(Act).Throws<MockVerificationException>()
 			.WithMessage(
 				"Expected that mock invoked method Dispense(WithAny<string>(), 2), then invoked method Dispense(WithAny<string>(), 1) in order, but it invoked method Dispense(WithAny<string>(), 1) too early.");
-		mock.Verify.Invoked.Dispense(WithAny<string>(), With(1)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)));
+		mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)));
 	}
 
 	[Fact]
 	public async Task Then_WhenNoMatch_ShouldFail()
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
-		mock.Subject.Dispense("Dark", 1);
-		mock.Subject.Dispense("Dark", 2);
-		mock.Subject.Dispense("Dark", 3);
-		mock.Subject.Dispense("Dark", 4);
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		mock.Dispense("Dark", 1);
+		mock.Dispense("Dark", 2);
+		mock.Dispense("Dark", 3);
+		mock.Dispense("Dark", 4);
 
-		await That(void () => mock.Verify.Invoked.Dispense(WithAny<string>(), With(6))
+		await That(void () => mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(6))
 				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(4))))
 			.Throws<MockVerificationException>()
 			.WithMessage(
 				"Expected that mock invoked method Dispense(WithAny<string>(), 6), then invoked method Dispense(WithAny<string>(), 4) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
 
-		await That(void () => mock.Verify.Invoked.Dispense(WithAny<string>(), With(1))
+		await That(void () => mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1))
 				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(6)), m => m.Invoked.Dispense(WithAny<string>(), With(3))))
 			.Throws<MockVerificationException>()
 			.WithMessage(
 				"Expected that mock invoked method Dispense(WithAny<string>(), 1), then invoked method Dispense(WithAny<string>(), 6), then invoked method Dispense(WithAny<string>(), 3) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
 
-		await That(void () => mock.Verify.Invoked.Dispense(WithAny<string>(), With(1))
+		await That(void () => mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1))
 				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)), m => m.Invoked.Dispense(WithAny<string>(), With(6))))
 			.Throws<MockVerificationException>()
 			.WithMessage(
@@ -223,22 +223,22 @@ public class VerificationResultExtensionsTests
 	[InlineData(3, false)]
 	public async Task Twice_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
-		Mock<IChocolateDispenser> mock = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.Verify.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Twice();
+			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Twice();
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				$"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) exactly twice, but it {count switch { 0 => "never did", 1 => "did once", _ => $"did {count} times", }}.");
 	}
 
-	internal static void ExecuteDoSomethingOn(Mock<IChocolateDispenser> mock, int amount)
+	internal static void ExecuteDoSomethingOn(IChocolateDispenser mock, int amount)
 	{
 		for (int i = 0; i < amount; i++)
 		{
-			mock.Subject.Dispense("Dark", i);
+			mock.Dispense("Dark", i);
 		}
 	}
 }

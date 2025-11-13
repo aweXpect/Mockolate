@@ -8,60 +8,27 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Exceptions\**" />
-	  <Compile Remove="Internals\**" />
 	  <Compile Remove="MockDelegates\**" />
-	  <Compile Remove="MockEvents\**" />
-	  <Compile Remove="MockIndexers\**" />
-	  <Compile Remove="MockMethods\**" />
-	  <Compile Remove="MockProperties\**" />
 	  <Compile Remove="Monitor\**" />
-	  <Compile Remove="Protected\**" />
-	  <Compile Remove="Verify\**" />
-	  <Compile Remove="MatchTests.cs" />
-	  <Compile Remove="MatchTests.NullTests.cs" />
-	  <Compile Remove="MatchTests.OutTests.cs" />
-	  <Compile Remove="MatchTests.RefTests.cs" />
-	  <Compile Remove="MatchTests.WithAnyParametersTests.cs" />
-	  <Compile Remove="MatchTests.WithAnyTests.cs" />
-	  <Compile Remove="MatchTests.WithTests.cs" />
-	  <Compile Remove="MockBehaviorTests.cs" />
-	  <Compile Remove="MockBehaviorTests.BaseClassBehaviorTests.cs" />
-	  <Compile Remove="MockBehaviorTests.DefaultValueTests.cs" />
-	  <Compile Remove="MockBehaviorTests.ThrowWhenNotSetupTests.cs" />
 	  <Compile Remove="MockExtensionsTests.cs" />
-	  <Compile Remove="MockGeneratorAttributeTests.cs" />
-	  <Compile Remove="MockInteractionsTests.cs" />
-	  <Compile Remove="MockSetupsTests.cs" />
-	  <Compile Remove="MockTests.cs" />
 	  <Compile Remove="MockTests.CreateTests.cs" />
 	  <Compile Remove="MockTests.FactoryTests.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Remove="Exceptions\**" />
-	  <EmbeddedResource Remove="Internals\**" />
-	  <EmbeddedResource Remove="MockDelegates\**" />
-	  <EmbeddedResource Remove="MockEvents\**" />
-	  <EmbeddedResource Remove="MockIndexers\**" />
-	  <EmbeddedResource Remove="MockMethods\**" />
-	  <EmbeddedResource Remove="MockProperties\**" />
-	  <EmbeddedResource Remove="Monitor\**" />
-	  <EmbeddedResource Remove="Protected\**" />
-	  <EmbeddedResource Remove="Verify\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="Exceptions\**" />
-	  <None Remove="Internals\**" />
 	  <None Remove="MockDelegates\**" />
-	  <None Remove="MockEvents\**" />
-	  <None Remove="MockIndexers\**" />
-	  <None Remove="MockMethods\**" />
-	  <None Remove="MockProperties\**" />
 	  <None Remove="Monitor\**" />
 	  <None Remove="Protected\**" />
 	  <None Remove="Verify\**" />
+	  <None Remove="MockIndexers\**" />
+	  <None Remove="MockMethods\**" />
+	  <None Remove="MockProperties\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Remove="MockIndexers\**" />
+	  <EmbeddedResource Remove="MockMethods\**" />
+	  <EmbeddedResource Remove="MockProperties\**" />
 	</ItemGroup>
 
 </Project>

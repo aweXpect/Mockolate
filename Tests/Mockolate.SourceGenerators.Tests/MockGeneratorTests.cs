@@ -37,6 +37,47 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WithClassAsAdditionalImplementation_ShouldNotThrow()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyInterface1, MyService, IMyInterface2, MyOtherService>();
+			             }
+			         }
+			     
+			     	public interface IMyInterface1 { }
+			     	public class MyService { }
+			     	public interface IMyInterface2 { }
+			     	public class MyOtherService { }
+			     }
+			     """);
+
+		await ThatAll(
+			That(result.Sources.Keys).IsEqualTo([
+				"Mock.g.cs",
+				"MockGeneratorAttribute.g.cs",
+				"MockForIMyInterface1Extensions.g.cs",
+				"MockForMyServiceExtensions.g.cs",
+				"MockForIMyInterface2Extensions.g.cs",
+				"MockForMyOtherServiceExtensions.g.cs",
+				"MockRegistration.g.cs",
+			]).InAnyOrder(),
+			That(result.Diagnostics).IsEmpty()
+		);
+	}
+	
+	[Fact]
 	public async Task WhenNamesConflict_ShouldAppendAnIndex()
 	{
 		GeneratorResult result = Generator

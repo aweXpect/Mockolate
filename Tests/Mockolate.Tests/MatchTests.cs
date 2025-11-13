@@ -24,7 +24,7 @@ public sealed partial class MatchTests
 		NamedParameter sut = new("foo", Out<int>());
 		string expectedValue = "Out<int>() foo";
 
-		string? result = sut.ToString();
+		string result = sut.ToString();
 
 		await That(result).IsEqualTo(expectedValue);
 	}

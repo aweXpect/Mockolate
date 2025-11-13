@@ -3,7 +3,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Mockolate.SourceGenerators.Entities;
-using Mockolate.SourceGenerators.Internals;
 using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators;
@@ -40,6 +39,11 @@ public class MockGenerator : IIncrementalGenerator
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
 		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate)
 		{
+			if (!IsValidMockDeclaration(mockToGenerate.MockClass))
+			{
+				continue;
+			}
+
 			context.AddSource($"MockFor{mockToGenerate.Name}.g.cs",
 				SourceText.From(Sources.Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
 			if (mockToGenerate.MockClass.AdditionalImplementations.Any())
@@ -91,7 +95,8 @@ public class MockGenerator : IIncrementalGenerator
 		{
 			context.AddSource("MethodSetups.ActionFunc.g.cs",
 				SourceText.From(
-					Sources.Sources.MethodSetupsActionFunc(methodSetups.Where(x => x.Item1 > dotNetFuncActionParameterLimit)
+					Sources.Sources.MethodSetupsActionFunc(methodSetups
+						.Where(x => x.Item1 > dotNetFuncActionParameterLimit)
 						.Select(x => x.Item1).Distinct()), Encoding.UTF8));
 		}
 
@@ -103,7 +108,9 @@ public class MockGenerator : IIncrementalGenerator
 		}
 
 		context.AddSource("MockRegistration.g.cs",
-			SourceText.From(Sources.Sources.MockRegistration(namedMocksToGenerate), Encoding.UTF8));
+			SourceText.From(
+				Sources.Sources.MockRegistration(namedMocksToGenerate,
+					namedMocksToGenerate.Any(x => IsValidMockDeclaration(x.MockClass))), Encoding.UTF8));
 	}
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)
@@ -168,4 +175,8 @@ public class MockGenerator : IIncrementalGenerator
 
 		return result;
 	}
+
+	private static bool IsValidMockDeclaration(MockClass mockClass)
+		=> (mockClass.IsInterface || mockClass.Constructors is { Count: > 0, }) &&
+		   mockClass.AdditionalImplementations.All(x => x.IsInterface);
 }

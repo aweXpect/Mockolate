@@ -31,19 +31,19 @@ internal static partial class Sources
 		sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).AppendLine("> SetupMock").AppendLine();
-		sb.Append("\t\t\t=> subject.GetMockOrThrow();").AppendLine();
+		sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Raise events on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\tpublic IMockRaises<").Append(@class.ClassFullName).AppendLine("> RaiseOnMock").AppendLine();
-		sb.Append("\t\t\t=> subject.GetMockOrThrow();").AppendLine();
+		sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
-		sb.Append("\t\t\t=> subject.GetMockOrThrow();").AppendLine();
+		sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 
@@ -86,7 +86,7 @@ internal static partial class Sources
 			AppendEventExtensions(sb, @class, true);
 		}
 		sb.AppendLine("""
-		              	private static Mock<T> CastToMockOrThrow<T>(this IInteractiveMock<T> subject)
+		              	private static Mock<T> CastToMockOrThrow<T>(IInteractiveMock<T> subject)
 		              	{
 		              		if (subject is Mock<T> mock)
 		              		{
@@ -98,7 +98,7 @@ internal static partial class Sources
 		              """);
 		sb.AppendLine();
 		sb.AppendLine("""
-		              	private static Mock<T> GetMockOrThrow<T>(this T subject)
+		              	private static Mock<T> GetMockOrThrow<T>(T subject)
 		              	{
 		              		if (subject is IMockSubject<T> mock)
 		              		{
@@ -153,7 +153,7 @@ internal static partial class Sources
 					@event.Delegate.Parameters.Select(p => p.Type.Fullname + " " + p.Name)))
 				.Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\tmockRaises.CastToMockOrThrow().Registrations.Raise(").Append(@event.GetUniqueNameString()).Append(", ")
+			sb.Append("\t\t\tCastToMockOrThrow(mockRaises).Registrations.Raise(").Append(@event.GetUniqueNameString()).Append(", ")
 				.Append(string.Join(", ", @event.Delegate.Parameters.Select(p => p.Name))).Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
@@ -177,7 +177,7 @@ internal static partial class Sources
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(Match.IDefaultEventParameters parameters)").AppendLine();
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\tMock<").Append(@class.ClassFullName).Append("> mock = mockRaises.CastToMockOrThrow();");
+			sb.Append("\t\t\tMock<").Append(@class.ClassFullName).Append("> mock = CastToMockOrThrow(mockRaises);");
 			sb.Append("\t\t\tMockBehavior mockBehavior = mock.Registrations.Behavior;").AppendLine();
 			sb.Append("\t\t\tmock.Registrations.Raise(").Append(@event.GetUniqueNameString()).Append(", ")
 				.Append(string.Join(", ", @event.Delegate.Parameters.Select(p => $"mockBehavior.DefaultValue.Generate<{p.Type.Fullname}>()"))).Append(");").AppendLine();
@@ -241,7 +241,7 @@ internal static partial class Sources
 				sb.AppendLine("\t\t\t{");
 				sb.Append("\t\t\t\tvar propertySetup = new PropertySetup<").Append(property.Type.Fullname)
 					.Append(">();").AppendLine();
-				sb.AppendLine("\t\t\t\tsetup.CastToMockOrThrow().Registrations.SetupProperty(").Append(property.GetUniqueNameString())
+				sb.AppendLine("\t\t\t\tCastToMockOrThrow(setup).Registrations.SetupProperty(").Append(property.GetUniqueNameString())
 					.Append(", propertySetup);").AppendLine();
 				sb.AppendLine("\t\t\t\treturn propertySetup;");
 				sb.AppendLine("\t\t\t}");
@@ -303,7 +303,7 @@ internal static partial class Sources
 				sb.Append(">(").Append(string.Join(", ",
 						Enumerable.Range(1, indexer.IndexerParameters.Value.Count).Select(p => $"parameter{p}")))
 					.Append(");").AppendLine();
-				sb.Append("\t\t\t((IMockSetup)setup).RegisterIndexer(indexerSetup);").AppendLine();
+				sb.Append("\t\t\tCastToMockOrThrow(setup).Registrations.SetupIndexer(indexerSetup);").AppendLine();
 				sb.Append("\t\t\treturn indexerSetup;").AppendLine();
 				sb.Append("\t\t}").AppendLine();
 			}
@@ -490,7 +490,7 @@ internal static partial class Sources
 				}
 
 				sb.Append(");").AppendLine();
-				sb.AppendLine("\t\t\tsetup.CastToMockOrThrow().Registrations.SetupMethod(methodSetup);");
+				sb.AppendLine("\t\t\tCastToMockOrThrow(setup).Registrations.SetupMethod(methodSetup);");
 				sb.AppendLine("\t\t\treturn methodSetup;");
 				sb.AppendLine("\t\t}");
 			}
@@ -562,7 +562,7 @@ internal static partial class Sources
 				}
 
 				sb.Append(method.GetUniqueNameString()).Append(", parameters);").AppendLine();
-				sb.AppendLine("\t\t\tsetup.CastToMockOrThrow().Registrations.SetupMethod(methodSetup);");
+				sb.AppendLine("\t\t\tCastToMockOrThrow(setup).Registrations.SetupMethod(methodSetup);");
 				sb.AppendLine("\t\t\treturn methodSetup;");
 				sb.AppendLine("\t\t}");
 			}

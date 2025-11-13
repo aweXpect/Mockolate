@@ -8,7 +8,7 @@ namespace Mockolate.SourceGenerators.Sources;
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
-	public static string MockRegistration(ICollection<(string Name, MockClass MockClass)> mocks)
+	public static string MockRegistration(ICollection<(string Name, MockClass MockClass)> mocks, bool hasAnyMocks)
 	{
 		static IEnumerable<Type> GetTypes(MockClass mockClass)
 		{
@@ -26,17 +26,17 @@ internal static partial class Sources
 			}
 		}
 
-		StringBuilder sb = InitializeBuilder(mocks.Any()
+		StringBuilder sb = InitializeBuilder(hasAnyMocks
 			?
 			[
 				"System",
 				"Mockolate.Exceptions",
 				"Mockolate.Generated",
-				"Mockolate.DefaultValues",
+				"Mockolate.DefaultValues"
 			]
 			:
 			[
-				"System",
+				"System"
 			]);
 
 		sb.Append("""
@@ -92,9 +92,9 @@ internal static partial class Sources
 					.Append(")));").AppendLine();
 			}
 			else if (type.Fullname.StartsWith("System.Threading.Tasks.Task<") && type.Fullname.EndsWith(">")
-																			  && type.GenericTypeParameters?.Count ==
-																			  1 && !type.GenericTypeParameters.Value
-																				  .Single().IsTypeParameter)
+			                                                                  && type.GenericTypeParameters?.Count ==
+			                                                                  1 && !type.GenericTypeParameters.Value
+				                                                                  .Single().IsTypeParameter)
 			{
 				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname)
 					.Append(">(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<")
@@ -106,9 +106,9 @@ internal static partial class Sources
 					.Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
 			}
 			else if (type.Fullname.StartsWith("System.Lazy<") && type.Fullname.EndsWith(">")
-																			  && type.GenericTypeParameters?.Count ==
-																			  1 && !type.GenericTypeParameters.Value
-																				  .Single().IsTypeParameter)
+			                                                  && type.GenericTypeParameters?.Count ==
+			                                                  1 && !type.GenericTypeParameters.Value
+				                                                  .Single().IsTypeParameter)
 			{
 				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname)
 					.Append(">(defaultValueGenerator => new System.Lazy<")
@@ -170,7 +170,21 @@ internal static partial class Sources
 
 			sb.AppendLine(")");
 			sb.Append("\t\t\t{").AppendLine();
-			if (mock.MockClass.IsInterface)
+			if (mock.MockClass.AdditionalImplementations.Any(x => !x.IsInterface))
+			{
+				List<Class> incorrectDeclarations = mock.MockClass.AdditionalImplementations
+					.Where(x => !x.IsInterface).ToList();
+				sb.Append("\t\t\t\tthrow new MockException($\"The mock declaration has ")
+					.Append(incorrectDeclarations.Count)
+					.Append(" additional ")
+					.Append(incorrectDeclarations.Count == 1
+						? "implementation that is not an interface: "
+						: "implementations that are not interfaces: ")
+					.Append(string.Join(", ", incorrectDeclarations.Select(x => x.ClassFullName)))
+					.Append("\");")
+					.AppendLine();
+			}
+			else if (mock.MockClass.IsInterface)
 			{
 				sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
 			}
@@ -182,7 +196,12 @@ internal static partial class Sources
 				sb.Append("\t\t\t\t{").AppendLine();
 				if (mock.MockClass.Constructors.Value.Any(mockClass => mockClass.Parameters.Count == 0))
 				{
-					sb.Append("\t\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
+					sb.Append("\t\t\t\t\tMockRegistration mockRegistration = new MockRegistration(mockBehavior, \"")
+						.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
+					sb.Append("\t\t\t\t\tMockFor").Append(mock.Name)
+						.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
+					sb.Append("\t\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockRegistration);")
+						.AppendLine();
 				}
 				else
 				{
@@ -204,20 +223,25 @@ internal static partial class Sources
 					{
 						sb.AppendLine().Append("\t\t\t\t    && TryCast(constructorParameters.Parameters[")
 							.Append(constructorParameterIndex++)
-							.Append("], mockBehavior, out ").Append(parameter.Type.Fullname).Append(" c").Append(constructorIndex)
+							.Append("], mockBehavior, out ").Append(parameter.Type.Fullname).Append(" c")
+							.Append(constructorIndex)
 							.Append('p')
 							.Append(constructorParameterIndex).Append(")");
 					}
 
 					sb.Append(")").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\tMockRegistration mockRegistration = new MockRegistration(mockBehavior, \"")
+						.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
+					sb.Append("\t\t\t\t\tMockFor").Append(mock.Name)
+						.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
 					sb.Append("\t\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(");
 					for (int i = 1; i <= constructorParameters.Count; i++)
 					{
 						sb.Append('c').Append(constructorIndex).Append('p').Append(i).Append(", ");
 					}
 
-					sb.Append("mockBehavior);").AppendLine();
+					sb.Append("mockRegistration);").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
 				}
 
@@ -229,6 +253,14 @@ internal static partial class Sources
 						"' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", constructorParameters.Parameters)}).\");")
 					.AppendLine();
 				sb.Append("\t\t\t\t}").AppendLine();
+			}
+			else
+			{
+				sb.Append(
+						"\t\t\t\tthrow new MockException($\"Could not find any constructor at all for the base type '")
+					.Append(mock.MockClass.ClassFullName)
+					.Append("'. Therefore mocking is not supported!\");")
+					.AppendLine();
 			}
 
 			sb.Append("\t\t\t}").AppendLine();

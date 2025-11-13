@@ -4,7 +4,13 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Verifies the <see cref="Interactions" /> with the mocked subject in the <typeparamref name="T" />.
 /// </summary>
-public interface IMockVerify<out T> : IInteractiveMock<T>;
+public interface IMockVerify<out T> : IInteractiveMock<T>
+{
+	/// <summary>
+	///     Gets a value indicating whether all expected interactions have been verified.
+	/// </summary>
+	bool ThatAllInteractionsAreVerified();
+}
 /// <summary>
 ///     Check which properties got read on the mocked instance <typeparamref name="T" />.
 /// </summary>

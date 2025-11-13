@@ -1,4 +1,5 @@
 using Mockolate.Exceptions;
+using Mockolate.Generated;
 using Mockolate.Tests.TestHelpers;
 using static Mockolate.BaseClass;
 
@@ -18,10 +19,8 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
 	{
-		Mock<MyBaseClassWithoutConstructor> mock = Mock.Create<MyBaseClassWithoutConstructor>();
-
 		void Act()
-			=> _ = mock.Subject;
+			=> _ = Mock.Create<MyBaseClassWithoutConstructor>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -29,16 +28,18 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_BaseClassWithVirtualCallsInConstructor()
+	public async Task Create_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
 	{
-		Mock<MyServiceBaseWithVirtualCallsInConstructor> mock =
-			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>();
-		mock.Setup.Method.VirtualMethod().Returns([5, 6,]);
+		MyServiceBaseWithVirtualCallsInConstructor mock =
+			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue
+			});
 
-		int value = mock.Subject.VirtualProperty;
+		int value = mock.VirtualProperty;
 
-		await That(mock.Verify.Invoked.VirtualMethod()).Once();
-		await That(value).IsEqualTo(5);
+		await That(mock.VerifyMock.Invoked.VirtualMethod()).Once();
+		await That(value).IsEqualTo(1);
 	}
 
 	[Fact]
@@ -158,7 +159,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithMatchingParameters_ShouldCreateMock()
 	{
-		Mock<MyBaseClassWithConstructor> Act()
+		MyBaseClassWithConstructor Act()
 			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
 
 		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
@@ -178,10 +179,8 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithEmptyParameters_ShouldThrowMockException()
 	{
-		Mock<MyBaseClassWithConstructor> mock = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
-
 		void Act()
-			=> _ = mock.Subject;
+			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -191,10 +190,8 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithRequiredParameters_WithoutParameters_ShouldThrowMockException()
 	{
-		Mock<MyBaseClassWithConstructor> mock = Mock.Create<MyBaseClassWithConstructor>();
-
 		void Act()
-			=> _ = mock.Subject;
+			=> _ = Mock.Create<MyBaseClassWithConstructor>();
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -204,11 +201,8 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithTooManyParameters_ShouldThrowMockException()
 	{
-		Mock<MyBaseClassWithConstructor> mock =
-			Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
-
 		void Act()
-			=> _ = mock.Subject;
+			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -218,35 +212,27 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task DoubleNestedInterfaces_ShouldStillWork()
 	{
-		Mock<Nested.Nested2.IMyDoubleNestedService> mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
-		mock.Setup.Property.IsValid.InitializeWith(true);
+		Nested.Nested2.IMyDoubleNestedService mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
+		mock.SetupMock.Property.IsValid.InitializeWith(true);
 
-		bool result = mock.Subject.IsValid;
+		bool result = mock.IsValid;
 
 		await That(result).IsTrue();
 	}
 
-	[Fact]
-	public async Task ShouldSupportImplicitOperator()
-	{
-		Mock<MyServiceBase> sut = Mock.Create<MyServiceBase>();
-
-		MyServiceBase value = sut;
-
-		await That(value).IsSameAs(sut.Subject);
-	}
-
 	public class MyServiceBaseWithVirtualCallsInConstructor
 	{
+		// ReSharper disable VirtualMemberCallInConstructor
 		public MyServiceBaseWithVirtualCallsInConstructor()
 		{
 			int[] values = VirtualMethod();
 			VirtualProperty = values[0];
 		}
+		// ReSharper restore VirtualMemberCallInConstructor
 
 		public virtual int VirtualProperty { get; set; }
 
-		public virtual int[] VirtualMethod() => [0, 1,];
+		public virtual int[] VirtualMethod() => [1, 2,];
 	}
 
 	public class MyServiceBaseWithMultipleConstructors
