@@ -7,10 +7,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_1Parameter_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method1(WithAny<int>()).ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method1(WithAny<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.Method1(1);
+			int result = await sut.Method1(1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -18,10 +18,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_1Parameter_CallbackWithValue_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method1(WithAny<int>()).ReturnsAsync(v1 => v1 + 10);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method1(WithAny<int>()).ReturnsAsync(v1 => v1 + 10);
 
-			int result = await sut.Subject.Method1(2);
+			int result = await sut.Method1(2);
 
 			await That(result).IsEqualTo(12);
 		}
@@ -29,10 +29,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_1Parameter_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method1(WithAny<int>()).ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method1(WithAny<int>()).ReturnsAsync(42);
 
-			int result = await sut.Subject.Method1(1);
+			int result = await sut.Method1(1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -40,10 +40,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_2Parameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.Method2(1, 2);
+			int result = await sut.Method2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -51,10 +51,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_2Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
 
-			int result = await sut.Subject.Method2(1, 2);
+			int result = await sut.Method2(1, 2);
 
 			await That(result).IsEqualTo(13);
 		}
@@ -62,10 +62,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_2Parameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
 
-			int result = await sut.Subject.Method2(1, 2);
+			int result = await sut.Method2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -73,10 +73,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_3Parameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.Method3(1, 2, 3);
+			int result = await sut.Method3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -84,11 +84,11 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_3Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.ReturnsAsync((v1, v2, v3) => v1 + v2 + v3 + 10);
 
-			int result = await sut.Subject.Method3(1, 2, 3);
+			int result = await sut.Method3(1, 2, 3);
 
 			await That(result).IsEqualTo(16);
 		}
@@ -96,10 +96,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_3Parameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
 
-			int result = await sut.Subject.Method3(1, 2, 3);
+			int result = await sut.Method3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -107,11 +107,11 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_4Parameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.Method4(1, 2, 3, 4);
+			int result = await sut.Method4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -119,11 +119,11 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_4Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.ReturnsAsync((v1, v2, v3, v4) => v1 + v2 + v3 + v4 + 10);
 
-			int result = await sut.Subject.Method4(1, 2, 3, 4);
+			int result = await sut.Method4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(20);
 		}
@@ -131,11 +131,11 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_4Parameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.ReturnsAsync(42);
 
-			int result = await sut.Subject.Method4(1, 2, 3, 4);
+			int result = await sut.Method4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -143,10 +143,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_NoParameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method0().ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method0().ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.Method0();
+			int result = await sut.Method0();
 
 			await That(result).IsEqualTo(42);
 		}
@@ -154,10 +154,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_NoParameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method0().ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method0().ReturnsAsync(42);
 
-			int result = await sut.Subject.Method0();
+			int result = await sut.Method0();
 
 			await That(result).IsEqualTo(42);
 		}
@@ -165,10 +165,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_WithParameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method2(WithAnyParameters()).ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method2(WithAnyParameters()).ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.Method2(1, 2);
+			int result = await sut.Method2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -176,10 +176,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_WithParameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.Method2(WithAnyParameters()).ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method2(WithAnyParameters()).ReturnsAsync(42);
 
-			int result = await sut.Subject.Method2(1, 2);
+			int result = await sut.Method2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -191,10 +191,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_1Parameter_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT1(WithAny<int>()).ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT1(WithAny<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.MethodVT1(1);
+			int result = await sut.MethodVT1(1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -202,10 +202,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_1Parameter_CallbackWithValue_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT1(WithAny<int>()).ReturnsAsync(v1 => v1 + 10);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT1(WithAny<int>()).ReturnsAsync(v1 => v1 + 10);
 
-			int result = await sut.Subject.MethodVT1(2);
+			int result = await sut.MethodVT1(2);
 
 			await That(result).IsEqualTo(12);
 		}
@@ -213,10 +213,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_1Parameter_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT1(WithAny<int>()).ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT1(WithAny<int>()).ReturnsAsync(42);
 
-			int result = await sut.Subject.MethodVT1(1);
+			int result = await sut.MethodVT1(1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -224,10 +224,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_2Parameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.MethodVT2(1, 2);
+			int result = await sut.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -235,10 +235,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_2Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
 
-			int result = await sut.Subject.MethodVT2(1, 2);
+			int result = await sut.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(13);
 		}
@@ -246,10 +246,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_2Parameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
 
-			int result = await sut.Subject.MethodVT2(1, 2);
+			int result = await sut.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -257,10 +257,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_3Parameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.MethodVT3(1, 2, 3);
+			int result = await sut.MethodVT3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -268,11 +268,11 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_3Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.ReturnsAsync((v1, v2, v3) => v1 + v2 + v3 + 10);
 
-			int result = await sut.Subject.MethodVT3(1, 2, 3);
+			int result = await sut.MethodVT3(1, 2, 3);
 
 			await That(result).IsEqualTo(16);
 		}
@@ -280,10 +280,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_3Parameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
 
-			int result = await sut.Subject.MethodVT3(1, 2, 3);
+			int result = await sut.MethodVT3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -291,11 +291,11 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_4Parameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.MethodVT4(1, 2, 3, 4);
+			int result = await sut.MethodVT4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -303,11 +303,11 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_4Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.ReturnsAsync((v1, v2, v3, v4) => v1 + v2 + v3 + v4 + 10);
 
-			int result = await sut.Subject.MethodVT4(1, 2, 3, 4);
+			int result = await sut.MethodVT4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(20);
 		}
@@ -315,11 +315,11 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_4Parameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.ReturnsAsync(42);
 
-			int result = await sut.Subject.MethodVT4(1, 2, 3, 4);
+			int result = await sut.MethodVT4(1, 2, 3, 4);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -327,10 +327,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_NoParameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT0().ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT0().ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.MethodVT0();
+			int result = await sut.MethodVT0();
 
 			await That(result).IsEqualTo(42);
 		}
@@ -338,10 +338,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_NoParameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT0().ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT0().ReturnsAsync(42);
 
-			int result = await sut.Subject.MethodVT0();
+			int result = await sut.MethodVT0();
 
 			await That(result).IsEqualTo(42);
 		}
@@ -349,10 +349,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_WithParameters_Callback_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT2(WithAnyParameters()).ReturnsAsync(() => 42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT2(WithAnyParameters()).ReturnsAsync(() => 42);
 
-			int result = await sut.Subject.MethodVT2(1, 2);
+			int result = await sut.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -360,10 +360,10 @@ public sealed class ReturnsAsyncExtensionsTests
 		[Fact]
 		public async Task ReturnsAsync_WithParameters_ReturnsConfiguredValue()
 		{
-			Mock<IReturnsAsyncExtensionsSetupTest> sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.Setup.Method.MethodVT2(WithAnyParameters()).ReturnsAsync(42);
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT2(WithAnyParameters()).ReturnsAsync(42);
 
-			int result = await sut.Subject.MethodVT2(1, 2);
+			int result = await sut.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(42);
 		}
