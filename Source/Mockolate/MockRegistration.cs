@@ -59,7 +59,7 @@ public partial class MockRegistration
 			if (Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType()?.FormatType() ?? "<null>"))})' was invoked without prior setup.");
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
 			return new MethodSetupResult<TResult>(null, Behavior,
@@ -130,7 +130,7 @@ public partial class MockRegistration
 		TResult initialValue = GetIndexerValue(matchingSetup, defaultValueGenerator, parameters);
 		if (matchingSetup is not null)
 		{
-			TResult? value = matchingSetup.InvokeGetter(interaction, initialValue, Behavior);
+			TResult value = matchingSetup.InvokeGetter(interaction, initialValue, Behavior);
 			if (!Equals(initialValue, value))
 			{
 				SetupIndexerValue(parameters, value);
@@ -235,7 +235,7 @@ public partial class MockRegistration
 
 	private IEnumerable<(object?, MethodInfo)> GetEventHandlers(string eventName)
 	{
-		foreach ((object? target, MethodInfo? method, string? name) in _eventHandlers.Enumerate())
+		foreach ((object? target, MethodInfo method, string name) in _eventHandlers.Enumerate())
 		{
 			if (name != eventName)
 			{

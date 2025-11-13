@@ -23,7 +23,7 @@ public partial class MockRegistration
 	///     Retrieves the latest method setup that matches the specified <paramref name="methodInvocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	internal MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
+	private MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
 		=> _methodSetups.GetLatestOrDefault(setup => ((IMethodSetup)setup).Matches(methodInvocation));
 
 	/// <summary>
@@ -36,7 +36,7 @@ public partial class MockRegistration
 	///     retrievals,
 	///     so that getter and setter work in tandem.
 	/// </remarks>
-	internal PropertySetup GetPropertySetup(string propertyName, Func<object?>? defaultValueGenerator)
+	private PropertySetup GetPropertySetup(string propertyName, Func<object?>? defaultValueGenerator)
 	{
 		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
 		{
@@ -56,13 +56,13 @@ public partial class MockRegistration
 	///     Retrieves the latest indexer setup that matches the specified <paramref name="interaction" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	internal IndexerSetup? GetIndexerSetup(IndexerAccess interaction)
+	private IndexerSetup? GetIndexerSetup(IndexerAccess interaction)
 		=> _indexerSetups.GetLastestOrDefault(setup => ((IIndexerSetup)setup).Matches(interaction));
 
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters" />.
 	/// </summary>
-	internal TValue GetIndexerValue<TValue>(IIndexerSetup? setup, Func<TValue>? defaultValueGenerator,
+	private TValue GetIndexerValue<TValue>(IIndexerSetup? setup, Func<TValue>? defaultValueGenerator,
 		object?[] parameters)
 		=> _indexerSetups.GetOrAddValue(parameters, () =>
 		{
@@ -85,17 +85,25 @@ public partial class MockRegistration
 			return Behavior.DefaultValue.Generate<TValue>();
 		});
 
-	/// <inheritdoc cref="IMockSetup.RegisterIndexer(Setup.IndexerSetup)" />
+	/// <summary>
+	///     Registers the <paramref name="indexerSetup" /> in the mock.
+	/// </summary>
 	public void SetupIndexer(IndexerSetup indexerSetup) => _indexerSetups.Add(indexerSetup);
 
-	/// <inheritdoc cref="IMockSetup.SetIndexerValue{TValue}(object?[], TValue)" />
+	/// <summary>
+	///     Sets the indexer for the given <paramref name="parameters" /> to the given <paramref name="value" />.
+	/// </summary>
 	public void SetupIndexerValue<TValue>(object?[] parameters, TValue value)
 		=> _indexerSetups.UpdateValue(parameters, value);
 
-	/// <inheritdoc cref="IMockSetup.RegisterMethod(Setup.MethodSetup)" />
+	/// <summary>
+	///     Registers the <paramref name="methodSetup" /> in the mock.
+	/// </summary>
 	public void SetupMethod(MethodSetup methodSetup) => _methodSetups.Add(methodSetup);
 
-	/// <inheritdoc cref="IMockSetup.RegisterProperty(string, Setup.PropertySetup)" />
+	/// <summary>
+	///     Registers the <paramref name="propertySetup" /> in the mock.
+	/// </summary>
 	public void SetupProperty(string propertyName, PropertySetup propertySetup)
 	{
 		if (!_propertySetups.TryAdd(propertyName, propertySetup))
@@ -137,9 +145,9 @@ public partial class MockRegistration
 				return "0 methods";
 			}
 
-			StringBuilder? sb = new();
+			StringBuilder sb = new();
 			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " method:" : " methods:").AppendLine();
-			foreach (MethodSetup? methodSetup in _storage)
+			foreach (MethodSetup methodSetup in _storage)
 			{
 				sb.Append(methodSetup).AppendLine();
 			}
@@ -178,7 +186,7 @@ public partial class MockRegistration
 				return "0 properties";
 			}
 
-			StringBuilder? sb = new();
+			StringBuilder sb = new();
 			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " property:" : " properties:").AppendLine();
 			foreach (KeyValuePair<string, PropertySetup> item in _storage!)
 			{
@@ -218,9 +226,9 @@ public partial class MockRegistration
 				return "0 indexers";
 			}
 
-			StringBuilder? sb = new();
+			StringBuilder sb = new();
 			sb.Append(Count).Append(Count == 1 ? " indexer:" : " indexers:").AppendLine();
-			foreach (IndexerSetup? indexerSetup in _storage)
+			foreach (IndexerSetup indexerSetup in _storage)
 			{
 				sb.Append(indexerSetup).AppendLine();
 			}
@@ -270,18 +278,8 @@ public partial class MockRegistration
 		{
 			private ValueStorage? _nullStorage;
 			private ConcurrentDictionary<object, ValueStorage>? _storage = [];
-			private object? _value;
-			public bool HasValue { get; private set; }
 
-			public object? Value
-			{
-				get => _value;
-				set
-				{
-					_value = value;
-					HasValue = true;
-				}
-			}
+			public object? Value { get; set; }
 
 			public ValueStorage GetOrAdd(object? key, Func<ValueStorage> valueGenerator)
 			{
@@ -343,7 +341,7 @@ public partial class MockRegistration
 				return "0 events";
 			}
 
-			StringBuilder? sb = new();
+			StringBuilder sb = new();
 			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " event:" : " events:").AppendLine();
 			foreach ((object?, MethodInfo, string) item in _storage.Keys)
 			{

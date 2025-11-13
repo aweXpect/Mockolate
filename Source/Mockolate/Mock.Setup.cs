@@ -3,7 +3,7 @@ using Mockolate.Setup;
 
 namespace Mockolate;
 
-public partial class Mock<T> : IMockSetup<T>, IMockRaises<T>, IProtectedMockRaises<T>, IProtectedMockSetup<T>,
+public partial class Mock<T> : IMockSetup<T>, IProtectedMockSetup<T>,
 	IMockMethodSetup<T>, IProtectedMockMethodSetup<T>,
 	IMockMethodSetupWithToString<T>, IMockMethodSetupWithEquals<T>, IMockMethodSetupWithGetHashCode<T>,
 	IMockMethodSetupWithToStringWithEquals<T>, IMockMethodSetupWithToStringWithGetHashCode<T>,

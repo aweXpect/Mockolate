@@ -14,6 +14,7 @@ internal static partial class Sources
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Exceptions",
+			"Mockolate.Raise",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
 		]);
@@ -27,7 +28,7 @@ internal static partial class Sources
 		sb.Append("internal static class ExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
 		sb.AppendLine("""
-		              	private static Mock<T> CastToMockOrThrow<T>(this IMockVerifyVerb<T> subject)
+		              	private static Mock<T> CastToMockOrThrow<T>(this IInteractiveMock<T> subject)
 		              	{
 		              		if (subject is Mock<T> mock)
 		              		{
