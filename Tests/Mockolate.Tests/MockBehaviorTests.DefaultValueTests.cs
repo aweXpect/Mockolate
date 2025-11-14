@@ -9,6 +9,16 @@ public sealed partial class MockBehaviorTests
 	public sealed class DefaultValueTests
 	{
 		[Fact]
+		public async Task Recursive_ShouldReturnMock()
+		{
+			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			IMyRecursiveService result = mock.RecursiveService;
+
+			await That(result).IsNotNull();
+		}
+
+		[Fact]
 		public async Task WithArray_ShouldReturnEmptyArray()
 		{
 			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
@@ -227,6 +237,12 @@ public sealed partial class MockBehaviorTests
 			Task<int[]> IntArrayTask { get; }
 			ValueTask<int> IntValueTask { get; }
 			ValueTask<int[]> IntArrayValueTask { get; }
+			IMyRecursiveService RecursiveService { get; }
+		}
+
+		public interface IMyRecursiveService
+		{
+			int GetCalled(int value);
 		}
 	}
 }

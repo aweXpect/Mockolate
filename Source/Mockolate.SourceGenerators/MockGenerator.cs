@@ -23,15 +23,15 @@ public class MockGenerator : IIncrementalGenerator
 			"Mock.g.cs",
 			SourceText.From(Sources.Sources.MockClass(), Encoding.UTF8)));
 
-		IncrementalValueProvider<ImmutableArray<MockClass?>> expectationsToRegister = context.SyntaxProvider
+		IncrementalValueProvider<ImmutableArray<MockClass>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
 				static (s, _) => s.IsCreateMethodInvocation(),
 				(ctx, _) => ctx.Node.ExtractMockOrMockFactoryCreateSyntaxOrDefault(ctx.SemanticModel))
-			.Where(static m => m is not null)
+			.SelectMany(static (mocks, _) => mocks)
 			.Collect();
 
 		context.RegisterSourceOutput(expectationsToRegister,
-			(spc, source) => Execute([..source.Where(t => t != null).Distinct().Cast<MockClass>(),], spc));
+			(spc, source) => Execute(source.Distinct().ToImmutableArray(), spc));
 	}
 
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
