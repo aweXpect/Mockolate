@@ -21,81 +21,178 @@ internal static partial class Sources
 		          #nullable enable
 
 		          """);
-		sb.Append("/// <summary>").AppendLine();
-		sb.Append("///     A mock implementing <see cref=\"")
-			.Append(mockClass.ClassFullName.EscapeForXmlDoc())
-			.Append("\" />");
-		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
+		if (mockClass.Delegate is not null)
 		{
-			sb.Append(" and <see cref=\"").Append(additional.ClassFullName.EscapeForXmlDoc()).Append("\" />");
-		}
+			sb.Append("/// <summary>").AppendLine();
+			sb.Append("///     A mock implementing <see cref=\"")
+				.Append(mockClass.ClassFullName.EscapeForXmlDoc())
+				.Append("\" />");
+			foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
+			{
+				sb.Append(" and <see cref=\"").Append(additional.ClassFullName.EscapeForXmlDoc()).Append("\" />");
+			}
 
-		sb.AppendLine(".");
-		sb.Append("/// </summary>").AppendLine();
-		sb.Append("internal class MockFor").Append(name).Append(" : ").Append(mockClass.ClassFullName).Append(",").AppendLine();
-		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
-		{
-			sb.Append("\t").Append(additional.ClassFullName).Append(",").AppendLine();
-		}
-		sb.Append("\tIMockSubject<").Append(mockClass.ClassFullName).Append(">").AppendLine();
-		sb.Append("{").AppendLine();
-		sb.Append("\t/// <inheritdoc cref=\"IMockSubject{T}.Mock\" />").AppendLine();
-		sb.Append("\tMock<").Append(mockClass.ClassFullName).Append("> IMockSubject<").Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
-		sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-		sb.Append("\tprivate readonly Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
-		sb.AppendLine();
-		if (mockClass.Constructors?.Count > 0)
-		{
-			sb.Append(
-					"\tinternal static readonly System.Threading.AsyncLocal<MockRegistration> MockRegistrationsProvider = new System.Threading.AsyncLocal<MockRegistration>();")
-				.AppendLine().AppendLine();
+			sb.AppendLine(".");
+			sb.Append("/// </summary>").AppendLine();
+			sb.Append("internal class MockFor").Append(name).Append(" : IMockSubject<").Append(mockClass.ClassFullName).Append(">").AppendLine();
+			sb.Append("{").AppendLine();
+			sb.Append("\t/// <inheritdoc cref=\"IMockSubject{T}.Mock\" />").AppendLine();
+			sb.Append("\tMock<").Append(mockClass.ClassFullName).Append("> IMockSubject<")
+				.Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
+			sb.Append("\tprivate readonly Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
 			sb.Append("\t/// <inheritdoc cref=\"IHasMockRegistration.Registrations\" />").AppendLine();
 			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\tMockRegistration IHasMockRegistration.Registrations => MockRegistrations;").AppendLine();
-			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\tprivate MockRegistration MockRegistrations").AppendLine();
-			sb.Append("\t{").AppendLine();
-			sb.Append("\t\tget => _mockRegistrations ?? MockRegistrationsProvider.Value!;").AppendLine();
-			sb.Append("\t\tset => _mockRegistrations = value;").AppendLine();
-			sb.Append("\t}").AppendLine();
-			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\tprivate MockRegistration? _mockRegistrations;").AppendLine();
-		}
-		else
-		{
-			sb.Append("\t/// <inheritdoc cref=\"IHasMockRegistration.Registrations\" />").AppendLine();
-			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\tMockRegistration IHasMockRegistration.Registrations => MockRegistrations;").AppendLine();
-			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\tprivate MockRegistration MockRegistrations => _mock.Registrations;").AppendLine();
-		}
-		sb.AppendLine();
+			sb.Append("\tMockRegistration IHasMockRegistration.Registrations => _mock.Registrations;").AppendLine();
 
-		if (mockClass.IsInterface)
-		{
 			sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
 			sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior)").AppendLine();
 			sb.Append("\t{").AppendLine();
-			sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName).Append(">(this, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString).Append("\"));").AppendLine();
+			sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
+				.Append(">(Invoke, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
+				.Append("\"));").AppendLine();
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
-		}
-		else if (mockClass.Constructors?.Count > 0)
-		{
-			foreach (Method constructor in mockClass.Constructors)
+			sb.Append("\tpublic ").Append(mockClass.ClassFullName).Append(" Object => new(Invoke);").AppendLine();
+			sb.Append("\tprivate ")
+				.Append(mockClass.Delegate.ReturnType == Type.Void
+					? "void"
+					: mockClass.Delegate.ReturnType.Fullname)
+				.Append(" Invoke(")
+				.Append(string.Join(", ",
+					mockClass.Delegate.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Type.Fullname} {p.Name}")))
+				.Append(')').AppendLine();
+			sb.Append("\t{").AppendLine();
+			if (mockClass.Delegate.ReturnType != Type.Void)
 			{
-				AppendMockSubject_BaseClassConstructor(sb, mockClass, name, constructor);
+				sb.Append("\t\tvar result = _mock.Registrations.Execute<")
+					.Append(mockClass.Delegate.ReturnType.Fullname)
+					.Append(">(").Append(mockClass.Delegate.GetUniqueNameString());
+				foreach (MethodParameter p in mockClass.Delegate.Parameters)
+				{
+					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
+				}
+
+				sb.AppendLine(");");
 			}
-		}
+			else
+			{
+				sb.Append("\t\tvar result = _mock.Registrations.Execute(").Append(mockClass.Delegate.GetUniqueNameString());
+				foreach (MethodParameter p in mockClass.Delegate.Parameters)
+				{
+					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
+				}
 
-		AppendMockSubject_ImplementClass(sb, mockClass, null);
-		foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
+				sb.AppendLine(");");
+			}
+
+			foreach (MethodParameter parameter in mockClass.Delegate.Parameters)
+			{
+				if (parameter.RefKind == RefKind.Out)
+				{
+					sb.Append("\t\t").Append(parameter.Name).Append(" = result.SetOutParameter<")
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
+						.AppendLine("\");");
+				}
+				else if (parameter.RefKind == RefKind.Ref)
+				{
+					sb.Append("\t\t").Append(parameter.Name).Append(" = result.SetRefParameter<")
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
+						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
+				}
+			}
+
+			if (mockClass.Delegate.ReturnType != Type.Void)
+			{
+				sb.Append("\t\treturn result.Result;").AppendLine();
+			}
+			sb.Append("\t}").AppendLine();
+			sb.Append("}").AppendLine();
+		}
+		else
 		{
+			sb.Append("/// <summary>").AppendLine();
+			sb.Append("///     A mock implementing <see cref=\"")
+				.Append(mockClass.ClassFullName.EscapeForXmlDoc())
+				.Append("\" />");
+			foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
+			{
+				sb.Append(" and <see cref=\"").Append(additional.ClassFullName.EscapeForXmlDoc()).Append("\" />");
+			}
+
+			sb.AppendLine(".");
+			sb.Append("/// </summary>").AppendLine();
+			sb.Append("internal class MockFor").Append(name).Append(" : ").Append(mockClass.ClassFullName).Append(",")
+				.AppendLine();
+			foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
+			{
+				sb.Append("\t").Append(additional.ClassFullName).Append(",").AppendLine();
+			}
+
+			sb.Append("\tIMockSubject<").Append(mockClass.ClassFullName).Append(">").AppendLine();
+			sb.Append("{").AppendLine();
+			sb.Append("\t/// <inheritdoc cref=\"IMockSubject{T}.Mock\" />").AppendLine();
+			sb.Append("\tMock<").Append(mockClass.ClassFullName).Append("> IMockSubject<")
+				.Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
+			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
+			sb.Append("\tprivate readonly Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
 			sb.AppendLine();
-			AppendMockSubject_ImplementClass(sb, additional, mockClass);
+			if (mockClass.Constructors?.Count > 0)
+			{
+				sb.Append(
+						"\tinternal static readonly System.Threading.AsyncLocal<MockRegistration> MockRegistrationsProvider = new System.Threading.AsyncLocal<MockRegistration>();")
+					.AppendLine().AppendLine();
+				sb.Append("\t/// <inheritdoc cref=\"IHasMockRegistration.Registrations\" />").AppendLine();
+				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tMockRegistration IHasMockRegistration.Registrations => MockRegistrations;").AppendLine();
+				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tprivate MockRegistration MockRegistrations").AppendLine();
+				sb.Append("\t{").AppendLine();
+				sb.Append("\t\tget => _mockRegistrations ?? MockRegistrationsProvider.Value!;").AppendLine();
+				sb.Append("\t\tset => _mockRegistrations = value;").AppendLine();
+				sb.Append("\t}").AppendLine();
+				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tprivate MockRegistration? _mockRegistrations;").AppendLine();
+			}
+			else
+			{
+				sb.Append("\t/// <inheritdoc cref=\"IHasMockRegistration.Registrations\" />").AppendLine();
+				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tMockRegistration IHasMockRegistration.Registrations => _mock.Registrations;").AppendLine();
+				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tprivate MockRegistration MockRegistrations => _mock.Registrations;").AppendLine();
+			}
+
+			sb.AppendLine();
+
+			if (mockClass.IsInterface)
+			{
+				sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
+				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior)").AppendLine();
+				sb.Append("\t{").AppendLine();
+				sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
+					.Append(">(this, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
+					.Append("\"));").AppendLine();
+				sb.Append("\t}").AppendLine();
+				sb.AppendLine();
+			}
+			else if (mockClass.Constructors?.Count > 0)
+			{
+				foreach (Method constructor in mockClass.Constructors)
+				{
+					AppendMockSubject_BaseClassConstructor(sb, mockClass, name, constructor);
+				}
+			}
+
+			AppendMockSubject_ImplementClass(sb, mockClass, null);
+			foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
+			{
+				sb.AppendLine();
+				AppendMockSubject_ImplementClass(sb, additional, mockClass);
+			}
+
+			sb.AppendLine("}");
 		}
 
-		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
 	}

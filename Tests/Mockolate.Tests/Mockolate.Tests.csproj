@@ -8,26 +8,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="MockDelegates\**" />
 	  <Compile Remove="MockExtensionsTests.cs" />
 	  <Compile Remove="MockTests.CreateTests.cs" />
 	  <Compile Remove="MockTests.FactoryTests.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="MockDelegates\**" />
-	  <None Remove="Monitor\**" />
-	  <None Remove="Protected\**" />
-	  <None Remove="Verify\**" />
-	  <None Remove="MockIndexers\**" />
-	  <None Remove="MockMethods\**" />
-	  <None Remove="MockProperties\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Remove="MockIndexers\**" />
-	  <EmbeddedResource Remove="MockMethods\**" />
-	  <EmbeddedResource Remove="MockProperties\**" />
 	</ItemGroup>
 
 </Project>

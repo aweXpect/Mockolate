@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
 using Mockolate.SourceGenerators.Internals;
 using Type = Mockolate.SourceGenerators.Entities.Type;
@@ -183,6 +184,11 @@ internal static partial class Sources
 					.Append(string.Join(", ", incorrectDeclarations.Select(x => x.ClassFullName)))
 					.Append("\");")
 					.AppendLine();
+			}
+			else if (mock.MockClass.Delegate != null)
+			{
+				sb.Append("\t\t\t\tvar mockTarget = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
+				sb.Append("\t\t\t\t_value = mockTarget.Object;").AppendLine();
 			}
 			else if (mock.MockClass.IsInterface)
 			{

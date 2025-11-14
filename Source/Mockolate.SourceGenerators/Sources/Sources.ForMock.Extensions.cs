@@ -24,106 +24,463 @@ internal static partial class Sources
 		          #nullable enable
 
 		          """);
-		sb.Append("internal static class MockFor").Append(name).Append("Extensions").AppendLine();
-		sb.AppendLine("{");
-		sb.Append("\textension(").Append(@class.ClassFullName).AppendLine(" subject)");
-		sb.AppendLine("\t{");
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).AppendLine("> SetupMock").AppendLine();
-		sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Raise events on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IMockRaises<").Append(@class.ClassFullName).AppendLine("> RaiseOnMock").AppendLine();
-		sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
-		sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName).AppendLine("> monitor)").AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tmonitor = new MockMonitor<").Append(@class.ClassFullName).AppendLine(">(GetMockOrThrow(subject));").AppendLine();
-		sb.Append("\t\t\treturn monitor.Run();").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-
-		AppendRaisesExtensions(sb, @class);
-		AppendPropertySetupExtensions(sb, @class);
-		AppendIndexerSetupExtensions(sb, @class);
-		AppendMethodSetupExtensions(sb, @class);
-
-		if (@class.AllEvents().Any(@event
-			    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-		    @class.AllMethods().Any(method
-			    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
-		    @class.AllProperties().Any(property
-			    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+		if (@class is MockClass m && m.Delegate is {} method)
 		{
-			AppendRaisesExtensions(sb, @class, true);
-			AppendPropertySetupExtensions(sb, @class, true);
-			AppendIndexerSetupExtensions(sb, @class, true);
-			AppendMethodSetupExtensions(sb, @class, true);
+			sb.Append("internal static class MockFor").Append(name).Append("Extensions").AppendLine();
+			sb.AppendLine("{");
+			sb.Append("\textension(").Append(@class.ClassFullName).AppendLine(" subject)");
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).AppendLine("> SetupMock").AppendLine();
+			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
+			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName).AppendLine("> monitor)").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tmonitor = new MockMonitor<").Append(@class.ClassFullName).AppendLine(">(GetMockOrThrow(subject));").AppendLine();
+			sb.Append("\t\t\treturn monitor.Run();").AppendLine();
+			sb.Append("\t\t}").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+			sb.Append("\textension(IMockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Setup for the method <see cref=\"")
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+				.Append(method.Name.EscapeForXmlDoc()).Append("(")
+				.Append(string.Join(", ",
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+				.Append(")\"/>");
+			if (method.Parameters.Any())
+			{
+				sb.Append(" with the given ")
+					.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>")));
+			}
+
+			sb.Append(".").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			if (method.ReturnType != Type.Void)
+			{
+				sb.Append("\t\tpublic ReturnMethodSetup<")
+					.Append(method.ReturnType.Fullname);
+				foreach (MethodParameter parameter in method.Parameters)
+				{
+					sb.Append(", ").Append(parameter.Type.Fullname);
+				}
+
+				sb.Append("> ");
+				sb.Append(method.Name).Append("(");
+			}
+			else
+			{
+				sb.Append("\t\tpublic VoidMethodSetup");
+				if (method.Parameters.Count > 0)
+				{
+					sb.Append('<');
+					int index = 0;
+					foreach (MethodParameter parameter in method.Parameters)
+					{
+						if (index++ > 0)
+						{
+							sb.Append(", ");
+						}
+
+						sb.Append(parameter.Type.Fullname);
+					}
+
+					sb.Append('>');
+				}
+
+				sb.Append(' ').Append(method.Name).Append("(");
+			}
+
+			int i = 0;
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				if (i++ > 0)
+				{
+					sb.Append(", ");
+				}
+
+				sb.Append(parameter.RefKind switch
+					{
+						RefKind.Ref => "Match.IRefParameter<",
+						RefKind.Out => "Match.IOutParameter<",
+						_ => "Match.IParameter<",
+					}).Append(parameter.Type.Fullname)
+					.Append('>');
+				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				{
+					sb.Append('?');
+				}
+
+				sb.Append(' ').Append(parameter.Name);
+			}
+
+			sb.Append(")");
+			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+			{
+				foreach (GenericParameter gp in method.GenericParameters.Value)
+				{
+					gp.AppendWhereConstraint(sb, "\t\t\t");
+				}
+			}
+			sb.AppendLine();
+			sb.AppendLine("\t\t{");
+
+			if (method.ReturnType != Type.Void)
+			{
+				sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<")
+					.Append(method.ReturnType.Fullname);
+				foreach (MethodParameter parameter in method.Parameters)
+				{
+					sb.Append(", ").Append(parameter.Type.Fullname);
+				}
+
+				sb.Append(">");
+			}
+			else
+			{
+				sb.Append("\t\t\tvar methodSetup = new VoidMethodSetup");
+
+				if (method.Parameters.Count > 0)
+				{
+					sb.Append('<');
+					int index = 0;
+					foreach (MethodParameter parameter in method.Parameters)
+					{
+						if (index++ > 0)
+						{
+							sb.Append(", ");
+						}
+
+						sb.Append(parameter.Type.Fullname);
+					}
+
+					sb.Append('>');
+				}
+			}
+
+			sb.Append("(").Append(method.GetUniqueNameString());
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				sb.Append(", new Match.NamedParameter(\"").Append(parameter.Name).Append("\", ")
+					.Append(parameter.Name);
+				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				{
+					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+						.Append(">()");
+				}
+
+				sb.Append(")");
+			}
+
+			sb.Append(");").AppendLine();
+			sb.AppendLine("\t\t\tCastToMockOrThrow(setup).Registrations.SetupMethod(methodSetup);");
+			sb.AppendLine("\t\t\treturn methodSetup;");
+			sb.AppendLine("\t\t}");
+
+			if(method.Parameters.Count > 0)
+			{
+				sb.Append("\t\t/// <summary>").AppendLine();
+				sb.Append("\t\t///     Setup for the method <see cref=\"")
+					.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+					.Append(method.Name.EscapeForXmlDoc()).Append("(")
+					.Append(string.Join(", ",
+						method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+					.Append(")\"/>");
+				sb.Append(" with the given <paramref name=\"parameters\" />.").AppendLine();
+				sb.Append("\t\t/// </summary>").AppendLine();
+				if (method.ReturnType != Type.Void)
+				{
+					sb.Append("\t\tpublic ReturnMethodSetup<").Append(method.ReturnType.Fullname);
+					foreach (MethodParameter parameter in method.Parameters)
+					{
+						sb.Append(", ").Append(parameter.Type.Fullname);
+					}
+					sb.Append("> ").Append(method.Name).Append("(");
+				}
+				else
+				{
+					sb.Append("\t\tpublic VoidMethodSetup<")
+						.Append(string.Join(", ", method.Parameters.Select(parameter => parameter.Type.Fullname)))
+						.Append("> ").Append(method.Name).Append("(");
+				}
+
+				sb.Append("Match.IParameters parameters)");
+				if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+				{
+					foreach (GenericParameter gp in method.GenericParameters.Value)
+					{
+						gp.AppendWhereConstraint(sb, "\t\t\t");
+					}
+				}
+				sb.AppendLine();
+
+				sb.AppendLine("\t\t{");
+
+				if (method.ReturnType != Type.Void)
+				{
+					sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<")
+						.Append(method.ReturnType.Fullname);
+					foreach (MethodParameter parameter in method.Parameters)
+					{
+						sb.Append(", ").Append(parameter.Type.Fullname);
+					}
+					sb.Append(">(");
+				}
+				else
+				{
+					sb.Append("\t\t\tvar methodSetup = new VoidMethodSetup<")
+						.Append(string.Join(", ", method.Parameters.Select(parameter => parameter.Type.Fullname)))
+						.Append(">(");
+				}
+
+				sb.Append(method.GetUniqueNameString()).Append(", parameters);").AppendLine();
+				sb.AppendLine("\t\t\tCastToMockOrThrow(setup).Registrations.SetupMethod(methodSetup);");
+				sb.AppendLine("\t\t\treturn methodSetup;");
+				sb.AppendLine("\t\t}");
+			}
+
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+			sb.Append("\textension(IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"")
+				.Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
+				.Append(string.Join(", ",
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+				.Append(")\"/>").Append(method.Parameters.Count > 0 ? " with the given " : "")
+				.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".")
+				.AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(method.Name).Append("(");
+			i = 0;
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				if (i++ > 0)
+				{
+					sb.Append(", ");
+				}
+
+				sb.Append(parameter.RefKind switch
+					{
+						RefKind.Ref => "Match.IVerifyRefParameter<",
+						RefKind.Out => "Match.IVerifyOutParameter<",
+						_ => "Match.IParameter<",
+					}).Append(parameter.Type.Fullname)
+					.Append('>');
+				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				{
+					sb.Append('?');
+				}
+
+				sb.Append(' ').Append(parameter.Name);
+			}
+
+			sb.Append(")");
+			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+			{
+				foreach (GenericParameter gp in method.GenericParameters.Value)
+				{
+					gp.AppendWhereConstraint(sb, "\t\t\t");
+				}
+			}
+			sb.AppendLine();
+
+			sb.Append("\t\t\t=> CastToMockOrThrow(verify).Method(").Append(method.GetUniqueNameString());
+
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				sb.Append(", ");
+				sb.Append(parameter.Name);
+				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				{
+					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+						.Append(">()");
+				}
+			}
+
+			sb.AppendLine(");");
+
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append("\t\t/// <summary>").AppendLine();
+				sb.Append("\t\t///     Validates the invocations for the method <see cref=\"")
+					.Append(@class.ClassFullName.EscapeForXmlDoc())
+					.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
+					.Append(string.Join(", ",
+						method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+					.Append(")\"/> with the given <paramref name=\"parameters\"/>..")
+					.AppendLine();
+				sb.Append("\t\t/// </summary>").AppendLine();
+				sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(method.Name).Append("(Match.IParameters parameters)");
+				if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+				{
+					foreach (GenericParameter gp in method.GenericParameters.Value)
+					{
+						gp.AppendWhereConstraint(sb, "\t\t\t");
+					}
+				}
+				sb.AppendLine();
+
+				sb.Append("\t\t\t=> CastToMockOrThrow(verify).Method(").Append(method.GetUniqueNameString());
+				sb.AppendLine(", parameters);");
+			}
+
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+			sb.AppendLine("""
+			              	private static Mock<T> CastToMockOrThrow<T>(IInteractiveMock<T> subject)
+			              	{
+			              		if (subject is Mock<T> mock)
+			              		{
+			              			return mock;
+			              		}
+			              	
+			              		throw new MockException("The subject is no mock.");
+			              	}
+			              """);
+			sb.AppendLine();
+			sb.AppendLine("""
+			              	private static Mock<T> GetMockOrThrow<T>(T subject) where T : Delegate
+			              	{
+			              		var target = subject.Target;
+			              		if (target is IMockSubject<T> mock)
+			              		{
+			              			return mock.Mock;
+			              		}
+			              	
+			              		throw new MockException("The delegate is no mock subject.");
+			              	}
+			              """);
+			sb.AppendLine("}");
+		}
+		else
+		{
+			sb.Append("internal static class MockFor").Append(name).Append("Extensions").AppendLine();
+			sb.AppendLine("{");
+			sb.Append("\textension(").Append(@class.ClassFullName).AppendLine(" subject)");
+			sb.AppendLine("\t{");
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+				.AppendLine("\" />.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).AppendLine("> SetupMock").AppendLine();
+			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Raise events on the mock for <see cref=\"")
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic IMockRaises<").Append(@class.ClassFullName).AppendLine("> RaiseOnMock").AppendLine();
+			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
+			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t/// <summary>").AppendLine();
+			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+			sb.Append("\t\t/// </summary>").AppendLine();
+			sb.Append("\t\tpublic IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
+				.AppendLine("> monitor)").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tmonitor = new MockMonitor<").Append(@class.ClassFullName)
+				.AppendLine(">(GetMockOrThrow(subject));").AppendLine();
+			sb.Append("\t\t\treturn monitor.Run();").AppendLine();
+			sb.Append("\t\t}").AppendLine();
+			sb.AppendLine("\t}");
+			sb.AppendLine();
+
+			AppendRaisesExtensions(sb, @class);
+			AppendPropertySetupExtensions(sb, @class);
+			AppendIndexerSetupExtensions(sb, @class);
+			AppendMethodSetupExtensions(sb, @class);
+
+			if (@class.AllEvents().Any(@event
+				    => @event.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+			    @class.AllMethods().Any(method
+				    => method.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)) ||
+			    @class.AllProperties().Any(property
+				    => property.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)))
+			{
+				AppendRaisesExtensions(sb, @class, true);
+				AppendPropertySetupExtensions(sb, @class, true);
+				AppendIndexerSetupExtensions(sb, @class, true);
+				AppendMethodSetupExtensions(sb, @class, true);
+			}
+
+			var methods = @class.AllMethods().Where(m
+				=> m.ExplicitImplementation is null &&
+				   m.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)).ToList();
+			bool hasToString = methods.Any(m => m.IsToString());
+			bool hasGetHashCode = methods.Any(m => m.IsGetHashCode());
+			bool hasEquals = methods.Any(m => m.IsEquals());
+			AppendInvokedExtensions(sb, @class, hasToString, hasGetHashCode, hasEquals);
+			AppendGotExtensions(sb, @class);
+			AppendSetExtensions(sb, @class);
+			AppendGotIndexerExtensions(sb, @class);
+			AppendSetIndexerExtensions(sb, @class);
+			AppendEventExtensions(sb, @class);
+
+			if (AppendProtectedMock(sb, @class))
+			{
+				AppendInvokedExtensions(sb, @class, hasToString, hasGetHashCode, hasEquals, true);
+				AppendGotExtensions(sb, @class, true);
+				AppendSetExtensions(sb, @class, true);
+				AppendGotIndexerExtensions(sb, @class, true);
+				AppendSetIndexerExtensions(sb, @class, true);
+				AppendEventExtensions(sb, @class, true);
+			}
+
+			sb.AppendLine("""
+			              	private static Mock<T> CastToMockOrThrow<T>(IInteractiveMock<T> subject)
+			              	{
+			              		if (subject is Mock<T> mock)
+			              		{
+			              			return mock;
+			              		}
+			              	
+			              		throw new MockException("The subject is no mock.");
+			              	}
+			              """);
+			sb.AppendLine();
+			sb.AppendLine("""
+			              	private static Mock<T> GetMockOrThrow<T>(T subject)
+			              	{
+			              		if (subject is IMockSubject<T> mock)
+			              		{
+			              			return mock.Mock;
+			              		}
+
+			              		if (subject is IHasMockRegistration hasMockRegistration)
+			              		{
+			              			return new Mock<T>(subject, hasMockRegistration.Registrations);
+			              		}
+			              	
+			              		throw new MockException("The subject is no mock subject.");
+			              	}
+			              """);
+			sb.AppendLine("}");
 		}
 
-		var methods = @class.AllMethods().Where(m => m.ExplicitImplementation is null && m.Accessibility is not (Accessibility.Protected or Accessibility.ProtectedOrInternal)).ToList();
-		bool hasToString = methods.Any(m => m.IsToString());
-		bool hasGetHashCode = methods.Any(m => m.IsGetHashCode());
-		bool hasEquals = methods.Any(m => m.IsEquals());
-		AppendInvokedExtensions(sb, @class, hasToString, hasGetHashCode, hasEquals);
-		AppendGotExtensions(sb, @class);
-		AppendSetExtensions(sb, @class);
-		AppendGotIndexerExtensions(sb, @class);
-		AppendSetIndexerExtensions(sb, @class);
-		AppendEventExtensions(sb, @class);
-
-		if (AppendProtectedMock(sb, @class))
-		{
-			AppendInvokedExtensions(sb, @class, hasToString, hasGetHashCode, hasEquals, true);
-			AppendGotExtensions(sb, @class, true);
-			AppendSetExtensions(sb, @class, true);
-			AppendGotIndexerExtensions(sb, @class, true);
-			AppendSetIndexerExtensions(sb, @class, true);
-			AppendEventExtensions(sb, @class, true);
-		}
-		sb.AppendLine("""
-		              	private static Mock<T> CastToMockOrThrow<T>(IInteractiveMock<T> subject)
-		              	{
-		              		if (subject is Mock<T> mock)
-		              		{
-		              			return mock;
-		              		}
-		              	
-		              		throw new MockException("The subject is no mock.");
-		              	}
-		              """);
-		sb.AppendLine();
-		sb.AppendLine("""
-		              	private static Mock<T> GetMockOrThrow<T>(T subject)
-		              	{
-		              		if (subject is IMockSubject<T> mock)
-		              		{
-		              			return mock.Mock;
-		              		}
-		              
-		              		if (subject is IHasMockRegistration hasMockRegistration)
-		              		{
-		              			return new Mock<T>(subject, hasMockRegistration.Registrations);
-		              		}
-		              	
-		              		throw new MockException("The subject is no mock subject.");
-		              	}
-		              """);
-		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
 	}

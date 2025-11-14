@@ -45,12 +45,12 @@ public partial class HappyCaseBenchmarks
 	[Benchmark]
 	public void Simple_NSubstitute()
 	{
-		var mock = Substitute.For<IMyInterface>();
-		mock.MyFunc(Arg.Any<int>()).Returns(true);
+		var mock = Substitute.For<Func<int, bool>>();
+		mock.Invoke(Arg.Any<int>()).Returns(true);
 
-		mock.MyFunc(42);
+		var result = mock(42);
 
-		mock.Received(1).MyFunc(Arg.Any<int>());
+		mock.Received(1)(Arg.Any<int>());
 	}
 
 	/// <summary>
