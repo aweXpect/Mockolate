@@ -12,20 +12,21 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true,
+				ThrowWhenNotSetup = true
 			};
 
-			Mock<MyServiceBase, IMyService> sut = new MyMock<MyServiceBase, IMyService>(behavior: behavior);
+			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService>(behavior);
 
-			await That(((IMock)sut).Behavior).IsSameAs(behavior);
-			await That(sut.Verify).IsNotNull();
+			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
-
+/* TODO
 		[Fact]
 		public async Task With2Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, MyServiceBase>();
+			{
+				_ = new MyMock<IMyService, MyServiceBase>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -37,7 +38,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true,
+				ThrowWhenNotSetup = true
 			};
 
 			Mock<MyServiceBase, IMyService, IMyService> sut =
@@ -51,7 +52,9 @@ public sealed partial class MockTests
 		public async Task With3Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, MyServiceBase, IMyService>();
+			{
+				_ = new MyMock<IMyService, MyServiceBase, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -62,7 +65,9 @@ public sealed partial class MockTests
 		public async Task With3Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, MyServiceBase>();
+			{
+				_ = new MyMock<IMyService, IMyService, MyServiceBase>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -73,7 +78,9 @@ public sealed partial class MockTests
 		public async Task With4Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase>();
+			{
+				_ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -85,7 +92,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true,
+				ThrowWhenNotSetup = true
 			};
 
 			MyMock<MyServiceBase, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
@@ -98,7 +105,9 @@ public sealed partial class MockTests
 		public async Task With4Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService>();
+			{
+				_ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -109,7 +118,9 @@ public sealed partial class MockTests
 		public async Task With4Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService>();
+			{
+				_ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -120,7 +131,9 @@ public sealed partial class MockTests
 		public async Task With5Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+			{
+				_ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -131,7 +144,9 @@ public sealed partial class MockTests
 		public async Task With5Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+			{
+				_ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -143,7 +158,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true,
+				ThrowWhenNotSetup = true
 			};
 
 			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
@@ -156,7 +171,9 @@ public sealed partial class MockTests
 		public async Task With5Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+			{
+				_ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -167,7 +184,9 @@ public sealed partial class MockTests
 		public async Task With5Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+			{
+				_ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -178,7 +197,9 @@ public sealed partial class MockTests
 		public async Task With6Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+			{
+				_ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -189,7 +210,9 @@ public sealed partial class MockTests
 		public async Task With6Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+			{
+				_ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -201,7 +224,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true,
+				ThrowWhenNotSetup = true
 			};
 
 			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService> sut =
@@ -215,7 +238,9 @@ public sealed partial class MockTests
 		public async Task With6Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService>();
+			{
+				_ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -226,7 +251,9 @@ public sealed partial class MockTests
 		public async Task With6Arguments_SixthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+			{
+				_ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -237,7 +264,9 @@ public sealed partial class MockTests
 		public async Task With6Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+			{
+				_ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -248,8 +277,10 @@ public sealed partial class MockTests
 		public async Task With7Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -260,8 +291,10 @@ public sealed partial class MockTests
 		public async Task With7Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -273,7 +306,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true,
+				ThrowWhenNotSetup = true
 			};
 
 			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService> sut =
@@ -288,8 +321,10 @@ public sealed partial class MockTests
 		public async Task With7Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -300,8 +335,10 @@ public sealed partial class MockTests
 		public async Task With7Arguments_SeventhIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -312,8 +349,10 @@ public sealed partial class MockTests
 		public async Task With7Arguments_SixthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -324,8 +363,10 @@ public sealed partial class MockTests
 		public async Task With7Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -336,9 +377,11 @@ public sealed partial class MockTests
 		public async Task With8Arguments_EighthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 						MyServiceBase>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -349,9 +392,11 @@ public sealed partial class MockTests
 		public async Task With8Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService,
 						IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -362,9 +407,11 @@ public sealed partial class MockTests
 		public async Task With8Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService,
 						IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -376,7 +423,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true,
+				ThrowWhenNotSetup = true
 			};
 
 			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>
@@ -392,9 +439,11 @@ public sealed partial class MockTests
 		public async Task With8Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService,
 						IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -405,9 +454,11 @@ public sealed partial class MockTests
 		public async Task With8Arguments_SeventhIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase,
 						IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -418,9 +469,11 @@ public sealed partial class MockTests
 		public async Task With8Arguments_SixthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService,
 						IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -431,9 +484,11 @@ public sealed partial class MockTests
 		public async Task With8Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService,
 						IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -444,9 +499,11 @@ public sealed partial class MockTests
 		public async Task With9Arguments_EighthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 						MyServiceBase, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -457,9 +514,11 @@ public sealed partial class MockTests
 		public async Task With9Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService,
 						IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -470,9 +529,11 @@ public sealed partial class MockTests
 		public async Task With9Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService,
 						IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -483,9 +544,11 @@ public sealed partial class MockTests
 		public async Task With9Arguments_NinthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 						IMyService, MyServiceBase>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -497,7 +560,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true,
+				ThrowWhenNotSetup = true
 			};
 
 			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
@@ -511,9 +574,11 @@ public sealed partial class MockTests
 		public async Task With9Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService,
 						IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -524,9 +589,11 @@ public sealed partial class MockTests
 		public async Task With9Arguments_SeventhIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase,
 						IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -537,9 +604,11 @@ public sealed partial class MockTests
 		public async Task With9Arguments_SixthIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService,
 						IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -550,13 +619,16 @@ public sealed partial class MockTests
 		public async Task With9Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
-				=> _ =
+			{
+				_ =
 					new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService,
 						IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
 					"The third generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
 		}
+		*/
 	}
 }

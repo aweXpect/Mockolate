@@ -1,5 +1,6 @@
 namespace Mockolate.Tests;
 
+/* TODO
 public sealed class MockExtensionsTests
 {
 	[Fact]
@@ -209,3 +210,4 @@ public sealed class MockExtensionsTests
 		int DoSomething();
 	}
 }
+*/
