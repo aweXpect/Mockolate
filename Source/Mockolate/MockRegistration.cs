@@ -26,6 +26,14 @@ public partial class MockRegistration
 		Interactions = new MockInteractions();
 	}
 
+	/// <inheritdoc cref="MockRegistration" />
+	internal MockRegistration(MockBehavior behavior, string prefix, MockInteractions interactions)
+	{
+		Behavior = behavior;
+		Prefix = prefix;
+		Interactions = interactions;
+	}
+
 	/// <summary>
 	///     Gets the behavior settings used by this mock instance.
 	/// </summary>

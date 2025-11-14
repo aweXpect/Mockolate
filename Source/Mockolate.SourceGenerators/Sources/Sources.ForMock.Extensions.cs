@@ -12,6 +12,7 @@ internal static partial class Sources
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Exceptions",
+			"Mockolate.Monitor",
 			"Mockolate.Raise",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
@@ -44,6 +45,15 @@ internal static partial class Sources
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
 		sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\tpublic IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName).AppendLine("> monitor)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tmonitor = new MockMonitor<").Append(@class.ClassFullName).AppendLine(">(GetMockOrThrow(subject));").AppendLine();
+		sb.Append("\t\t\treturn monitor.Run();").AppendLine();
+		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 

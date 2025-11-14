@@ -1,9 +1,9 @@
 using System;
 
-namespace Mockolate.Legacy.Monitor;
+namespace Mockolate.Monitor;
 
 /// <summary>
-///     Extension methods for <see cref="MockMonitor{T, TMock}" />.
+///     Extension methods for <see cref="MockMonitor" />.
 /// </summary>
 public static class MockMonitorExtensions
 {
@@ -14,9 +14,9 @@ public static class MockMonitorExtensions
 	/// <remarks>
 	///     Returns an <see cref="IDisposable" /> that can be used to stop the monitoring.
 	/// </remarks>
-	public static IDisposable Monitor<T>(this Mock<T> mock, out MockMonitor<T, Mock<T>> monitor)
+	public static IDisposable Monitor<T>(this Mock<T> mock, out MockMonitor<T> monitor)
 	{
-		monitor = new MockMonitor<T, Mock<T>>(mock);
+		monitor = new MockMonitor<T>(mock);
 		return monitor.Run();
 	}
 }

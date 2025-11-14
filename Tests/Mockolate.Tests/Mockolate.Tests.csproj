@@ -9,7 +9,6 @@
 
 	<ItemGroup>
 	  <Compile Remove="MockDelegates\**" />
-	  <Compile Remove="Monitor\**" />
 	  <Compile Remove="MockExtensionsTests.cs" />
 	  <Compile Remove="MockTests.CreateTests.cs" />
 	  <Compile Remove="MockTests.FactoryTests.cs" />

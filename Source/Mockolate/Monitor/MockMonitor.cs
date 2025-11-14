@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using Mockolate.Interactions;
-using Mockolate.Legacy.Verify;
+using Mockolate.Verify;
 
-namespace Mockolate.Legacy.Monitor;
+namespace Mockolate.Monitor;
 
 /// <summary>
 ///     Provides monitoring capabilities for a mocked instance of the specified type, allowing inspection of accessed
@@ -20,9 +20,9 @@ public abstract class MockMonitor
 	private int _monitoringStart = -1;
 
 	/// <inheritdoc cref="MockMonitor" />
-	protected MockMonitor(IMock mock)
+	protected MockMonitor(MockInteractions mockInteractions)
 	{
-		_monitoredInvocations = mock.Interactions;
+		_monitoredInvocations = mockInteractions;
 		Interactions = new MockInteractions();
 	}
 
@@ -95,26 +95,24 @@ public abstract class MockMonitor
 ///     which events were subscribed to, during a test session. Monitoring is session-based; begin a session with the Run
 ///     method and dispose the returned scope to finalize monitoring.
 /// </remarks>
-public sealed class MockMonitor<T, TMock> : MockMonitor
-	where TMock : IMock
+public sealed class MockMonitor<T> : MockMonitor
 {
-	private readonly IMockVerify<T, TMock> _verify;
-
-	/// <inheritdoc cref="MockMonitor{T, TMock}" />
-	public MockMonitor(TMock mock) : base(mock)
+	/// <inheritdoc cref="MockMonitor{T}" />
+	public MockMonitor(Mock<T> mock) : base(mock.Interactions)
 	{
-		_verify = new MockVerify<T, TMock>(Interactions, mock, mock.Prefix);
+		Verify = new Mock<T>(mock.Subject,
+			new MockRegistration(mock.Registrations.Behavior, mock.Registrations.Prefix, Interactions));
 	}
 
 	/// <summary>
 	///     Verifies the interactions with the mocked subject of <typeparamref name="T" />.
 	/// </summary>
-	public IMockVerify<T, TMock> Verify
+	public IMockVerify<T> Verify
 	{
 		get
 		{
 			UpdateInteractions();
-			return _verify;
+			return field;
 		}
 	}
 }
