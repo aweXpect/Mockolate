@@ -195,7 +195,7 @@ public sealed class MethodSetupsTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForIMyInterface.SetupExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs").WhoseValue
 			.Contains($"{expectedType}<MyCode.IMyInterface> Method");
 	}
 }

@@ -216,6 +216,19 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(WithAny<string>(), 1), then invoked method Dispense(WithAny<string>(), 2), then invoked method Dispense(WithAny<string>(), 6) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
 	}
 
+	[Fact]
+	public async Task Then_WhenNoMock_ShouldThrowMockException()
+	{
+		IChocolateDispenser mock = new MyChocolateDispenser();
+		var result = new VerificationResult<IChocolateDispenser>(mock, new Interactions.MockInteractions(), [], "foo");
+
+		void Act()
+			=> result.Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The subject is no mock subject.");
+	}
+
 	[Theory]
 	[InlineData(0, false)]
 	[InlineData(1, false)]
@@ -232,6 +245,21 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				$"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) exactly twice, but it {count switch { 0 => "never did", 1 => "did once", _ => $"did {count} times", }}.");
+	}
+
+	private class MyChocolateDispenser : IChocolateDispenser
+	{
+		public int this[string type] { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+
+		public int TotalDispensed { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+
+		public event ChocolateDispensedDelegate ChocolateDispensed;
+
+		public void Dispense(string type, int amount)
+		{
+		}
+
+		bool IChocolateDispenser.Dispense(string type, int amount) => throw new NotSupportedException();
 	}
 
 	internal static void ExecuteDoSomethingOn(IChocolateDispenser mock, int amount)

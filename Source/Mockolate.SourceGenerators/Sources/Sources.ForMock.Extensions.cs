@@ -189,8 +189,9 @@ internal static partial class Sources
 			sb.AppendLine("\t\t\tCastToMockOrThrow(setup).Registrations.SetupMethod(methodSetup);");
 			sb.AppendLine("\t\t\treturn methodSetup;");
 			sb.AppendLine("\t\t}");
+			sb.AppendLine();
 
-			if(method.Parameters.Count > 0)
+			if (method.Parameters.Count > 0)
 			{
 				sb.Append("\t\t/// <summary>").AppendLine();
 				sb.Append("\t\t///     Setup for the method <see cref=\"")
@@ -314,6 +315,7 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine(");");
+			sb.AppendLine();
 
 			if (method.Parameters.Count > 0)
 			{

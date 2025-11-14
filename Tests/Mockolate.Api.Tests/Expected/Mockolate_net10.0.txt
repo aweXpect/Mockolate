@@ -279,6 +279,25 @@ namespace Mockolate.Interactions
         public override string ToString() { }
     }
 }
+namespace Mockolate.Monitor
+{
+    public abstract class MockMonitor
+    {
+        protected MockMonitor(Mockolate.Interactions.MockInteractions mockInteractions) { }
+        protected Mockolate.Interactions.MockInteractions Interactions { get; }
+        public System.IDisposable Run() { }
+        protected void UpdateInteractions() { }
+    }
+    public static class MockMonitorExtensions
+    {
+        public static System.IDisposable Monitor<T>(this Mockolate.Mock<T> mock, out Mockolate.Monitor.MockMonitor<T> monitor) { }
+    }
+    public sealed class MockMonitor<T> : Mockolate.Monitor.MockMonitor
+    {
+        public MockMonitor(Mockolate.Mock<T> mock) { }
+        public Mockolate.Verify.IMockVerify<T> Verify { get; }
+    }
+}
 namespace Mockolate.Raise
 {
     public interface IMockRaises<out T> : Mockolate.IInteractiveMock<T> { }
@@ -707,7 +726,10 @@ namespace Mockolate.Verify
     public interface IMockVerifySubscribedTo<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockVerifyUnsubscribedFromProtected<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockVerifyUnsubscribedFrom<out T> : Mockolate.IInteractiveMock<T> { }
-    public interface IMockVerify<out T> : Mockolate.IInteractiveMock<T> { }
+    public interface IMockVerify<out T> : Mockolate.IInteractiveMock<T>
+    {
+        bool ThatAllInteractionsAreVerified();
+    }
     public interface IVerificationResult
     {
         string Expectation { get; }
@@ -729,7 +751,7 @@ namespace Mockolate.Verify
         public static void Exactly<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
         public static void Never<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
         public static void Once<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void Then<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, params System.Func<TMock, Mockolate.Verify.VerificationResult<TMock>>[] orderedChecks) { }
+        public static void Then<T>(this Mockolate.Verify.VerificationResult<T> verificationResult, params System.Func<Mockolate.Verify.IMockVerify<T>, Mockolate.Verify.VerificationResult<T>>[] orderedChecks) { }
         public static void Twice<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
     }
     public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult, Mockolate.Verify.IVerificationResult<TVerify>

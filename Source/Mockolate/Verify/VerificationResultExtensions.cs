@@ -201,9 +201,7 @@ public static class VerificationResultExtensions
 		bool flag = true;
 		List<string> expectations = [];
 		IVerificationResult result = verificationResult;
-		T mock = ((IVerificationResult<T>)verificationResult).Object;
-		// TODO: Throw meaningful exception when not a mock subject!
-		IMockVerify<T> mockVerify = ((IMockSubject<T>)mock!).Mock;
+		IMockVerify<T> mockVerify = GetMockVerify(((IVerificationResult<T>)verificationResult).Object);
 		int after = -1;
 		foreach (Func<IMockVerify<T>, VerificationResult<T>>? check in orderedChecks)
 		{
@@ -222,6 +220,21 @@ public static class VerificationResultExtensions
 			string? separator = ", then ";
 			throw new MockVerificationException(
 				$"Expected that mock {string.Join(separator, expectations)} in order, but it {error}.");
+		}
+
+		static IMockVerify<T> GetMockVerify(T subject)
+		{
+			if (subject is IMockSubject<T> mockSubject)
+			{
+				return mockSubject.Mock;
+			}
+
+			if (subject is IHasMockRegistration hasMockRegistration)
+			{
+				return new Mock<T>(subject, hasMockRegistration.Registrations);
+			}
+
+			throw new MockException("The subject is no mock subject.");
 		}
 
 		bool VerifyInteractions(IInteraction[] interactions)

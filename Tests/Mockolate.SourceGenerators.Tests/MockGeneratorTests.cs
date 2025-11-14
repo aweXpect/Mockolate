@@ -112,15 +112,12 @@ public class MockGeneratorTests
 
 		await ThatAll(
 			That(result.Sources.Keys).Contains([
-				"ForIMyInt.g.cs",
-				"ForIMyInt_1.g.cs",
-				"ForIMyInt_2.g.cs",
-				"ForIMyInt.Extensions.g.cs",
-				"ForIMyInt_1.Extensions.g.cs",
-				"ForIMyInt_2.Extensions.g.cs",
-				"ForIMyInt.SetupExtensions.g.cs",
-				"ForIMyInt_1.SetupExtensions.g.cs",
-				"ForIMyInt_2.SetupExtensions.g.cs",
+				"MockForIMyInt.g.cs",
+				"MockForIMyInt_1.g.cs",
+				"MockForIMyInt_2.g.cs",
+				"MockForIMyIntExtensions.g.cs",
+				"MockForIMyInt_1Extensions.g.cs",
+				"MockForIMyInt_2Extensions.g.cs",
 			]).InAnyOrder().IgnoringCase(),
 			That(result.Diagnostics).IsEmpty()
 		);
@@ -159,11 +156,8 @@ public class MockGeneratorTests
 
 		await ThatAll(
 			That(result.Sources.Keys).Contains([
-				"ForI_IMyInt_IMyInt_IMyint.g.cs",
-				"ForI_IMyInt_IMyInt_IMyint.Extensions.g.cs",
-				"ForIMyInt.SetupExtensions.g.cs",
-				"ForIMyInt_1.SetupExtensions.g.cs",
-				"ForIMyInt_2.SetupExtensions.g.cs",
+				"MockForI_IMyInt_IMyInt_IMyint.g.cs",
+				"MockForI_IMyInt_IMyInt_IMyintExtensions.g.cs",
 			]).InAnyOrder().IgnoringCase(),
 			That(result.Diagnostics).IsEmpty()
 		);
@@ -238,9 +232,8 @@ public class MockGeneratorTests
 
 		await That(result.Diagnostics).IsEmpty();
 		await That(result.Sources).HasCount().AtLeast(5);
-		await That(result.Sources).ContainsKey("ForIMyInterface.g.cs");
-		await That(result.Sources).ContainsKey("ForIMyInterface.Extensions.g.cs");
-		await That(result.Sources).ContainsKey("ForIMyInterface.SetupExtensions.g.cs");
+		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs");
 	}
 
 	[Fact]
@@ -281,9 +274,8 @@ public class MockGeneratorTests
 
 		await That(result.Diagnostics).IsEmpty();
 		await That(result.Sources).HasCount().AtLeast(5);
-		await That(result.Sources).ContainsKey("ForIMyInterface.g.cs");
-		await That(result.Sources).ContainsKey("ForIMyInterface.Extensions.g.cs");
-		await That(result.Sources).ContainsKey("ForIMyInterface.SetupExtensions.g.cs");
+		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs");
 	}
 
 	[Fact]

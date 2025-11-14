@@ -29,20 +29,9 @@ public sealed partial class ForMockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForMyBaseClass.g.cs").WhoseValue
-			.Contains("""
-			          		public MockSubject(IMock mock)
-			          			: base()
-			          		{
-			          			_mock = mock;
-			          		}
-			          """).IgnoringNewlineStyle().And
-			.DoesNotContain("""
-			                			if (constructorParameters is null || constructorParameters.Parameters.Length == 0)
-			                			{
-			                				throw new MockException("No parameterless constructor found for 'MyBaseClass'. Please provide constructor parameters.");
-			                			}
-			                """).IgnoringNewlineStyle();
+		await That(result.Sources).ContainsKey("MockForMyBaseClass.g.cs").And
+			.ContainsKey("MockRegistration.g.cs").WhoseValue
+			.DoesNotContain("throw new MockException(\"No parameterless constructor found for 'MyBaseClass'. Please provide constructor parameters.\");");
 	}
 
 	[Fact]
@@ -69,43 +58,49 @@ public sealed partial class ForMockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForMyBaseClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("""
-			          					if (_constructorParameters.Parameters.Length == 1
-			          					    && TryCast(_constructorParameters.Parameters[0], out int c1p1))
-			          					{
-			          						MockSubject._mockProvider.Value = this;
-			          						_subject = new MockSubject(this, c1p1);
-			          					}
+			          				if (constructorParameters.Parameters.Length == 1
+			          				    && TryCast(constructorParameters.Parameters[0], mockBehavior, out int c1p1))
+			          				{
+			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
+			          					MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
+			          					_value = new MockForMyBaseClass(c1p1, mockRegistration);
+			          				}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
-			          					if (_constructorParameters.Parameters.Length == 2
-			          					    && TryCast(_constructorParameters.Parameters[0], out int c2p1)
-			          					    && TryCast(_constructorParameters.Parameters[1], out bool c2p2))
-			          					{
-			          						MockSubject._mockProvider.Value = this;
-			          						_subject = new MockSubject(this, c2p1, c2p2);
-			          					}
+			          				if (constructorParameters.Parameters.Length == 2
+			          				    && TryCast(constructorParameters.Parameters[0], mockBehavior, out int c2p1)
+			          				    && TryCast(constructorParameters.Parameters[1], mockBehavior, out bool c2p2))
+			          				{
+			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
+			          					MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
+			          					_value = new MockForMyBaseClass(c2p1, c2p2, mockRegistration);
+			          				}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public MockSubject(IMock mock, int value)
+			          				if (constructorParameters is null || constructorParameters.Parameters.Length == 0)
+			          				{
+			          					throw new MockException("No parameterless constructor found for 'MyCode.MyBaseClass'. Please provide constructor parameters.");
+			          				}
+			          """).IgnoringNewlineStyle();
+
+		await That(result.Sources).ContainsKey("MockForMyBaseClass.g.cs").WhoseValue
+			.Contains("""
+			          	public MockForMyBaseClass(int value, MockRegistration mockRegistration)
 			          			: base(value)
-			          		{
-			          			_mock = mock;
-			          		}
+			          	{
+			          		_mock = new Mock<MyCode.MyBaseClass>(this, mockRegistration);
+			          		_mockRegistrations = mockRegistration;
+			          	}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public MockSubject(IMock mock, int value, bool flag)
+			          	public MockForMyBaseClass(int value, bool flag, MockRegistration mockRegistration)
 			          			: base(value, flag)
-			          		{
-			          			_mock = mock;
-			          		}
-			          """).IgnoringNewlineStyle().And
-			.Contains("""
-			          					if (_constructorParameters is null || _constructorParameters.Parameters.Length == 0)
-			          					{
-			          						throw new MockException("No parameterless constructor found for 'MyCode.MyBaseClass'. Please provide constructor parameters.");
-			          					}
+			          	{
+			          		_mock = new Mock<MyCode.MyBaseClass>(this, mockRegistration);
+			          		_mockRegistrations = mockRegistration;
+			          	}
 			          """).IgnoringNewlineStyle();
 	}
 
@@ -132,12 +127,11 @@ public sealed partial class ForMockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForMyBaseClass.g.cs").WhoseValue
-			.Contains("public class Mock : Mock<MyCode.MyBaseClass>").And
+		await That(result.Sources).DoesNotContainKey("MockForMyBaseClass.g.cs").And
+			.ContainsKey("MockForMyBaseClassExtensions.g.cs").And
+			.ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains(
-				"throw new MockException(\"Could not find any constructor at all for the base type 'MyCode.MyBaseClass'. Therefore mocking is not supported!\");")
-			.And
-			.DoesNotContain("public partial class MockSubject");
+				"throw new MockException(\"Could not find any constructor at all for the base type 'MyCode.MyBaseClass'. Therefore mocking is not supported!\");");
 	}
 
 	[Fact]
@@ -169,7 +163,7 @@ public sealed partial class ForMockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForMyClassWithSealedEvents.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockForMyClassWithSealedEvents.g.cs").WhoseValue
 			.DoesNotContain("event System.EventHandler<long>? SomeEvent");
 	}
 
@@ -202,7 +196,7 @@ public sealed partial class ForMockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForMyClassWithSealedIndexers.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockForMyClassWithSealedIndexers.g.cs").WhoseValue
 			.DoesNotContain("override int this[int index]");
 	}
 
@@ -236,7 +230,7 @@ public sealed partial class ForMockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForMyClassWithSealedMethods.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockForMyClassWithSealedMethods.g.cs").WhoseValue
 			.DoesNotContain("override void MyMethod(int value)");
 	}
 
@@ -269,7 +263,7 @@ public sealed partial class ForMockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForMyClassWithSealedProperties.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockForMyClassWithSealedProperties.g.cs").WhoseValue
 			.DoesNotContain("override int MyProperty");
 	}
 
@@ -306,7 +300,7 @@ public sealed partial class ForMockTests
 
 			     """, typeof(List<>));
 
-		await That(result.Sources).ContainsKey("ForIMyServiceListMyData.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockForIMyServiceListMyData.g.cs").WhoseValue
 			.Contains("using Mockolate.Setup;").And
 			.DoesNotContain("using MyCode.Services;").And
 			.DoesNotContain("using MyCode.Models;");

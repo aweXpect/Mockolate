@@ -37,6 +37,10 @@ public static class Generator
 		"CS0103" /* The name 'name' does not exist in the current context */,
 		"CS7022" /* The entry point of the program is global code */,
 		"CS8802" /* Only one compilation unit can have top-level statements */,
+		"CS0102" /* The type '<invalid-global-code>' already con*/,
+		"CS8801" /* Cannot use local variable or local function*/,
+		"CS0111" /* Type '<invalid-global-code>' already defines a */,
+		"CS0721" /* 'Mock': static types cannot be us */,
 	];
 
 	public static GeneratorResult Run([StringSyntax("c#-test")] string source, params Type[] assemblyTypes)

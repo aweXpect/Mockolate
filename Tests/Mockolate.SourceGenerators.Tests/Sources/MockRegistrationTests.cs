@@ -233,13 +233,28 @@ public sealed class MockRegistrationTests
 			          			if (types.Length == 1 &&
 			          			    types[0] == typeof(MyCode.IMyInterface))
 			          			{
-			          				_value = new ForIMyInterface.Mock(constructorParameters, mockBehavior);
+			          				_value = new MockForIMyInterface(mockBehavior);
 			          			}
 			          			else if (types.Length == 2 &&
 			          			         types[0] == typeof(MyCode.MyBaseClass) &&
 			          			         types[1] == typeof(MyCode.IMyInterface))
 			          			{
-			          				_value = new ForMyBaseClass_IMyInterface.Mock(constructorParameters, mockBehavior);
+			          				if (constructorParameters is null || constructorParameters.Parameters.Length == 0)
+			          				{
+			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
+			          					MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
+			          					_value = new MockForMyBaseClass_IMyInterface(mockRegistration);
+			          				}
+			          				else if (constructorParameters.Parameters.Length == 0)
+			          				{
+			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
+			          					MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
+			          					_value = new MockForMyBaseClass_IMyInterface(mockRegistration);
+			          				}
+			          				else
+			          				{
+			          					throw new MockException($"Could not find any constructor for 'MyCode.MyBaseClass' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(", ", constructorParameters.Parameters)}).");
+			          				}
 			          			}
 			          		}
 			          """).IgnoringNewlineStyle();

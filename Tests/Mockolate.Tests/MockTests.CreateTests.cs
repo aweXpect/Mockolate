@@ -19,18 +19,18 @@ public sealed partial class MockTests
 
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
-/* TODO
+
 		[Fact]
 		public async Task With2Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, MyServiceBase>();
+				_ = Mock.Create<IMyService, MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -41,11 +41,9 @@ public sealed partial class MockTests
 				ThrowWhenNotSetup = true
 			};
 
-			Mock<MyServiceBase, IMyService, IMyService> sut =
-				new MyMock<MyServiceBase, IMyService, IMyService>(behavior: behavior);
+			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService>(behavior);
 
-			await That(((IMock)sut).Behavior).IsSameAs(behavior);
-			await That(sut.Verify).IsNotNull();
+			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
 		[Fact]
@@ -53,12 +51,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, MyServiceBase, IMyService>();
+				_ = Mock.Create<IMyService, MyServiceBase, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -66,12 +64,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, MyServiceBase>();
+				_ = Mock.Create<IMyService, IMyService, MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The third generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -79,12 +77,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase>();
+				_ = Mock.Create<IMyService, IMyService, IMyService, MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fourth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -95,10 +93,9 @@ public sealed partial class MockTests
 				ThrowWhenNotSetup = true
 			};
 
-			MyMock<MyServiceBase, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
+			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService>(behavior);
 
-			await That(((IMock)sut).Behavior).IsSameAs(behavior);
-			await That(sut.Verify).IsNotNull();
+			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
 		[Fact]
@@ -106,12 +103,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService>();
+				_ = Mock.Create<IMyService, MyServiceBase, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -119,12 +116,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService>();
+				_ = Mock.Create<IMyService, IMyService, MyServiceBase, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The third generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -132,12 +129,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+				_ = Mock.Create<IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fifth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -145,12 +142,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+				_ = Mock.Create<IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fourth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -161,10 +158,9 @@ public sealed partial class MockTests
 				ThrowWhenNotSetup = true
 			};
 
-			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService> sut = new(behavior: behavior);
+			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService>(behavior);
 
-			await That(((IMock)sut).Behavior).IsSameAs(behavior);
-			await That(sut.Verify).IsNotNull();
+			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
 		[Fact]
@@ -172,12 +168,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+				_ = Mock.Create<IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -185,12 +181,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+				_ = Mock.Create<IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The third generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -198,12 +194,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+				_ = Mock.Create<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fifth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -211,12 +207,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+				_ = Mock.Create<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fourth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -227,11 +223,9 @@ public sealed partial class MockTests
 				ThrowWhenNotSetup = true
 			};
 
-			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService> sut =
-				new(behavior: behavior);
+			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
 
-			await That(((IMock)sut).Behavior).IsSameAs(behavior);
-			await That(sut.Verify).IsNotNull();
+			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
 		[Fact]
@@ -239,12 +233,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService>();
+				_ = Mock.Create<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -252,12 +246,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+				_ = Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The sixth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -265,12 +259,12 @@ public sealed partial class MockTests
 		{
 			void Act()
 			{
-				_ = new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+				_ = Mock.Create<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The third generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -279,12 +273,12 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fifth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -293,12 +287,12 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+					Mock.Create<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fourth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -309,12 +303,9 @@ public sealed partial class MockTests
 				ThrowWhenNotSetup = true
 			};
 
-			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService> sut =
-				new(
-					behavior: behavior);
+			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
 
-			await That(((IMock)sut).Behavior).IsSameAs(behavior);
-			await That(sut.Verify).IsNotNull();
+			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
 		[Fact]
@@ -323,12 +314,12 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService>();
+					Mock.Create<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -337,12 +328,12 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The seventh generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -351,12 +342,12 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The sixth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -365,12 +356,12 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService>();
+					Mock.Create<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The third generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -379,13 +370,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 						MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The eighth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -394,13 +385,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService,
 						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fifth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -409,13 +400,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService,
 						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fourth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -426,13 +417,9 @@ public sealed partial class MockTests
 				ThrowWhenNotSetup = true
 			};
 
-			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>
-				sut =
-					new(
-						behavior: behavior);
+			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
 
-			await That(((IMock)sut).Behavior).IsSameAs(behavior);
-			await That(sut.Verify).IsNotNull();
+			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
 		[Fact]
@@ -441,13 +428,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService,
 						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -456,13 +443,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase,
 						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The seventh generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -471,13 +458,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService,
 						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The sixth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -486,13 +473,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService,
 						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The third generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -501,13 +488,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 						MyServiceBase, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The eighth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -516,13 +503,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService,
 						IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fifth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -531,13 +518,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService,
 						IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The fourth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -546,13 +533,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 						IMyService, MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The ninth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -563,11 +550,9 @@ public sealed partial class MockTests
 				ThrowWhenNotSetup = true
 			};
 
-			MyMock<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
-				IMyService> sut = new(behavior: behavior);
+			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
 
-			await That(((IMock)sut).Behavior).IsSameAs(behavior);
-			await That(sut.Verify).IsNotNull();
+			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
 		[Fact]
@@ -576,13 +561,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService,
 						IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The second generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -591,13 +576,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase,
 						IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The seventh generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -606,13 +591,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService,
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService,
 						IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The sixth generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
 		[Fact]
@@ -621,14 +606,13 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					new MyMock<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService,
+					Mock.Create<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService,
 						IMyService, IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
-					"The third generic type argument 'Mockolate.Tests.TestHelpers.MyServiceBase' is no interface.");
+					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
-		*/
 	}
 }

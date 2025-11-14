@@ -263,7 +263,7 @@ internal static partial class Sources
 			else
 			{
 				sb.Append(
-						"\t\t\t\tthrow new MockException($\"Could not find any constructor at all for the base type '")
+						"\t\t\t\tthrow new MockException(\"Could not find any constructor at all for the base type '")
 					.Append(mock.MockClass.ClassFullName)
 					.Append("'. Therefore mocking is not supported!\");")
 					.AppendLine();
