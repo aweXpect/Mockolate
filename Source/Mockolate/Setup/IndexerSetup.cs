@@ -279,8 +279,8 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1) : IndexerSetu
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Func<TValue, T1, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				TValue? newValue = returnCallback(resultValue, p1);
-				if (TryCast<T>(newValue, out T? returnValue, behavior))
+				TValue newValue = returnCallback(resultValue, p1);
+				if (TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
 				}
@@ -504,8 +504,8 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Func<TValue, T1, T2, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				TValue? newValue = returnCallback(resultValue, p1, p2);
-				if (TryCast<T>(newValue, out T? returnValue, behavior))
+				TValue newValue = returnCallback(resultValue, p1, p2);
+				if (TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
 				}
@@ -736,8 +736,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Func<TValue, T1, T2, T3, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				TValue? newValue = returnCallback(resultValue, p1, p2, p3);
-				if (TryCast<T>(newValue, out T? returnValue, behavior))
+				TValue newValue = returnCallback(resultValue, p1, p2, p3);
+				if (TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
 				}
@@ -974,7 +974,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Func<TValue, T1, T2, T3, T4, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				TValue newValue = returnCallback(resultValue, p1, p2, p3, p4);
-				if (TryCast<T>(newValue, out T? returnValue, behavior))
+				if (TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
 				}

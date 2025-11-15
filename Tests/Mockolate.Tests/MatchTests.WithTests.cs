@@ -76,14 +76,14 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task WithPredicate_ShouldSupportCovarianceInSetup()
 		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			mock.Setup.Method.DoSomething(With<MyImplementation>(_ => true))
+			IMyService mock = Mock.Create<IMyService>();
+			mock.SetupMock.Method.DoSomething(With<MyImplementation>(_ => true))
 				.Returns(3);
 			MyImplementation value1 = new();
 			MyOtherImplementation value2 = new();
 
-			int result1 = mock.Subject.DoSomething(value1);
-			int result2 = mock.Subject.DoSomething(value2);
+			int result1 = mock.DoSomething(value1);
+			int result2 = mock.DoSomething(value2);
 
 			await That(result1).IsEqualTo(3);
 			await That(result2).IsEqualTo(0);
@@ -92,18 +92,19 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task WithPredicate_ShouldSupportCovarianceInVerify()
 		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			mock.Setup.Method.DoSomething(With<MyImplementation>(_ => true))
+			IMyService mock = Mock.Create<IMyService>();
+			mock.SetupMock.Method.DoSomething(With<MyImplementation>(_ => true))
 				.Callback(d => d.DoWork())
 				.Returns(3);
 			MyImplementation value1 = new();
 
-			int result1 = mock.Subject.DoSomething(value1);
+			int result1 = mock.DoSomething(value1);
 
-			await That(mock.Verify.Invoked.DoSomething(With<MyImplementation>(p => p.Progress > 0))).Once();
-			await That(mock.Verify.Invoked.DoSomething(With<MyImplementation>(p => p.Progress > 1))).Never();
+			await That(mock.VerifyMock.Invoked.DoSomething(With<MyImplementation>(p => p.Progress > 0))).Once();
+			await That(mock.VerifyMock.Invoked.DoSomething(With<MyImplementation>(p => p.Progress > 1))).Never();
 			await That(value1.Progress).IsEqualTo(1);
-			await That(mock.Verify.Invoked.DoSomething(With<MyOtherImplementation>(_ => true))).Never();
+			await That(result1).IsEqualTo(3);
+			await That(mock.VerifyMock.Invoked.DoSomething(With<MyOtherImplementation>(_ => true))).Never();
 		}
 
 		[Theory]
@@ -136,14 +137,14 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task WithValue_ShouldSupportCovarianceInSetup()
 		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
+			IMyService mock = Mock.Create<IMyService>();
 			MyImplementation value1 = new();
 			MyOtherImplementation value2 = new();
-			mock.Setup.Method.DoSomething(With(value1))
+			mock.SetupMock.Method.DoSomething(With(value1))
 				.Returns(3);
 
-			int result1 = mock.Subject.DoSomething(value1);
-			int result2 = mock.Subject.DoSomething(value2);
+			int result1 = mock.DoSomething(value1);
+			int result2 = mock.DoSomething(value2);
 
 			await That(result1).IsEqualTo(3);
 			await That(result2).IsEqualTo(0);
@@ -152,18 +153,19 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task WithValue_ShouldSupportCovarianceInVerify()
 		{
-			Mock<IMyService> mock = Mock.Create<IMyService>();
-			mock.Setup.Method.DoSomething(With<MyImplementation>(_ => true))
+			IMyService mock = Mock.Create<IMyService>();
+			mock.SetupMock.Method.DoSomething(With<MyImplementation>(_ => true))
 				.Callback(d => d.DoWork())
 				.Returns(3);
 			MyImplementation value1 = new();
 			MyOtherImplementation value2 = new();
 
-			int result1 = mock.Subject.DoSomething(value1);
+			int result1 = mock.DoSomething(value1);
 
-			await That(mock.Verify.Invoked.DoSomething(With(value1))).Once();
+			await That(mock.VerifyMock.Invoked.DoSomething(With(value1))).Once();
 			await That(value1.Progress).IsEqualTo(1);
-			await That(mock.Verify.Invoked.DoSomething(With(value2))).Never();
+			await That(result1).IsEqualTo(3);
+			await That(mock.VerifyMock.Invoked.DoSomething(With(value2))).Never();
 		}
 
 		[Theory]

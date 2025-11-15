@@ -6,42 +6,43 @@ public sealed class ProtectedMockTests
 	public async Task CanAccessProtectedEvents()
 	{
 		int callCount = 0;
-		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
-		MyProtectedClass.MyEventHandler handler = (s, e) => callCount++;
+		MyProtectedClass mock = Mock.Create<MyProtectedClass>();
+		MyProtectedClass.MyEventHandler handler = (_, _) => callCount++;
 
-		mock.Subject.RegisterEvent(handler);
-		mock.Raise.Protected.MyEvent(this, EventArgs.Empty);
+		mock.RegisterEvent(handler);
+		mock.RaiseOnMock.Protected.MyEvent(this, EventArgs.Empty);
 
-		await That(mock.Verify.SubscribedTo.Protected.MyEvent()).Once();
-		await That(mock.Verify.UnsubscribedFrom.Protected.MyEvent()).Never();
-		mock.Subject.UnregisterEvent(handler);
-		await That(mock.Verify.UnsubscribedFrom.Protected.MyEvent()).Once();
+		await That(mock.VerifyMock.SubscribedTo.Protected.MyEvent()).Once();
+		await That(mock.VerifyMock.UnsubscribedFrom.Protected.MyEvent()).Never();
+		mock.UnregisterEvent(handler);
+		await That(mock.VerifyMock.UnsubscribedFrom.Protected.MyEvent()).Once();
+		await That(callCount).IsEqualTo(1);
 	}
 
 	[Fact]
 	public async Task CanAccessProtectedMethods()
 	{
-		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+		MyProtectedClass mock = Mock.Create<MyProtectedClass>();
 
-		mock.Setup.Protected.Method.MyProtectedMethod(WithAny<string>())
+		mock.SetupMock.Protected.Method.MyProtectedMethod(WithAny<string>())
 			.Returns(v => $"Hello, {v}!");
 
-		string result = mock.Subject.InvokeMyProtectedMethod("foo");
+		string result = mock.InvokeMyProtectedMethod("foo");
 
-		await That(mock.Verify.Invoked.Protected.MyProtectedMethod(With("foo"))).Once();
+		await That(mock.VerifyMock.Invoked.Protected.MyProtectedMethod(With("foo"))).Once();
 		await That(result).IsEqualTo("Hello, foo!");
 	}
 
 	[Fact]
 	public async Task CanAccessProtectedProperties()
 	{
-		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+		MyProtectedClass mock = Mock.Create<MyProtectedClass>();
 
-		mock.Setup.Protected.Property.MyProtectedProperty.InitializeWith(42);
+		mock.SetupMock.Protected.Property.MyProtectedProperty.InitializeWith(42);
 
-		int result = mock.Subject.GetMyProtectedProperty();
+		int result = mock.GetMyProtectedProperty();
 
-		await That(mock.Verify.Got.Protected.MyProtectedProperty()).Once();
+		await That(mock.VerifyMock.Got.Protected.MyProtectedProperty()).Once();
 		await That(result).IsEqualTo(42);
 	}
 
@@ -49,13 +50,13 @@ public sealed class ProtectedMockTests
 	public async Task CanReadProtectedIndexers()
 	{
 		int callCount = 0;
-		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+		MyProtectedClass mock = Mock.Create<MyProtectedClass>();
 
-		mock.Setup.Protected.Indexer(WithAny<int>()).InitializeWith(42).OnGet(() => callCount++);
+		mock.SetupMock.Protected.Indexer(WithAny<int>()).InitializeWith(42).OnGet(() => callCount++);
 
-		int result = mock.Subject.GetMyProtectedIndexer(3);
+		int result = mock.GetMyProtectedIndexer(3);
 
-		await That(mock.Verify.GotProtectedIndexer(With(3))).Once();
+		await That(mock.VerifyMock.GotProtectedIndexer(With(3))).Once();
 		await That(result).IsEqualTo(42);
 		await That(callCount).IsEqualTo(1);
 	}
@@ -64,14 +65,14 @@ public sealed class ProtectedMockTests
 	public async Task CanWriteProtectedIndexers()
 	{
 		int callCount = 0;
-		Mock<MyProtectedClass> mock = Mock.Create<MyProtectedClass>();
+		MyProtectedClass mock = Mock.Create<MyProtectedClass>();
 
-		mock.Setup.Protected.Indexer(WithAny<int>()).OnSet(() => callCount++);
+		mock.SetupMock.Protected.Indexer(WithAny<int>()).OnSet(() => callCount++);
 
-		mock.Subject.SetMyProtectedIndexer(3, 4);
+		mock.SetMyProtectedIndexer(3, 4);
 
-		await That(mock.Verify.SetProtectedIndexer(With(3), With(4))).Once();
-		await That(mock.Subject.GetMyProtectedIndexer(3)).IsEqualTo(4);
+		await That(mock.VerifyMock.SetProtectedIndexer(With(3), With(4))).Once();
+		await That(mock.GetMyProtectedIndexer(3)).IsEqualTo(4);
 		await That(callCount).IsEqualTo(1);
 	}
 

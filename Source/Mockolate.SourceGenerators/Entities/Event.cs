@@ -26,7 +26,8 @@ internal record Event
 
 	public static IEqualityComparer<Event> EqualityComparer { get; } = new EventEqualityComparer();
 
-	public static IEqualityComparer<Event> ContainingTypeIndependentEqualityComparer { get; } = new ContainingTypeIndependentEventEqualityComparer();
+	public static IEqualityComparer<Event> ContainingTypeIndependentEqualityComparer { get; } =
+		new ContainingTypeIndependentEventEqualityComparer();
 
 	public Method Delegate { get; }
 

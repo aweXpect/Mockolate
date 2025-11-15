@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Mockolate.SourceGenerators.Internals;
+namespace Mockolate.SourceGenerators.Sources;
 
 internal static partial class Sources
 {
@@ -94,16 +94,20 @@ internal static partial class Sources
 		{
 			sb.Append("\tprivate readonly Match.NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
+
 		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />").AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"VoidMethodSetup{")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />")
+			.AppendLine();
 		sb.Append("\tpublic VoidMethodSetup(").AppendLine();
 		sb.Append("\t\tstring name");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(',').AppendLine().Append("\t\tMatch.NamedParameter match").Append(i);
 		}
+
 		sb.Append(')').AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_name = name;").AppendLine();
@@ -111,10 +115,13 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t_match").Append(i).Append(" = match").Append(i).Append(";").AppendLine();
 		}
+
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />").AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"VoidMethodSetup{")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />")
+			.AppendLine();
 		sb.Append("\tpublic VoidMethodSetup(string name, Match.IParameters matches)").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_name = name;").AppendLine();
@@ -337,7 +344,8 @@ internal static partial class Sources
 		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
 			.Append(numberOfParameters).Append("\" /> returning <typeparamref name=\"TReturn\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
-		sb.Append("internal class ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> : MethodSetup").AppendLine();
+		sb.Append("internal class ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> : MethodSetup")
+			.AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _callbacks = [];").AppendLine();
 		sb.Append("\tprivate readonly List<Func<").Append(typeParams).Append(", TReturn>> _returnCallbacks = [];")
@@ -348,16 +356,20 @@ internal static partial class Sources
 		{
 			sb.Append("\tprivate readonly Match.NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
+
 		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />").AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />")
+			.AppendLine();
 		sb.Append("\tpublic ReturnMethodSetup(").AppendLine();
 		sb.Append("\t\tstring name");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(',').AppendLine().Append("\t\tMatch.NamedParameter match").Append(i);
 		}
+
 		sb.Append(')').AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_name = name;").AppendLine();
@@ -365,10 +377,13 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t_match").Append(i).Append(" = match").Append(i).Append(";").AppendLine();
 		}
+
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />").AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />")
+			.AppendLine();
 		sb.Append("\tpublic ReturnMethodSetup(string name, Match.IParameters matches)").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_name = name;").AppendLine();

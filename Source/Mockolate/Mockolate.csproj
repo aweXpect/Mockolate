@@ -1,11 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<ProjectReference Include="..\Mockolate.Analyzers\Mockolate.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<None Include="$(MSBuildProjectDirectory)\..\Mockolate.Analyzers\bin\$(Configuration)\netstandard2.0\Mockolate.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<ProjectReference Include="..\Mockolate.Analyzers.CodeFixers\Mockolate.Analyzers.CodeFixers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<None Include="$(MSBuildProjectDirectory)\..\Mockolate.Analyzers.CodeFixers\bin\$(Configuration)\netstandard2.0\Mockolate.Analyzers.CodeFixers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(MSBuildProjectDirectory)\..\Mockolate.SourceGenerators\bin\$(Configuration)\netstandard2.0\Mockolate.SourceGenerators.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<ProjectReference Include="..\Mockolate.Analyzers\Mockolate.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+		<None Include="$(MSBuildProjectDirectory)\..\Mockolate.Analyzers\bin\$(Configuration)\netstandard2.0\Mockolate.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+		<ProjectReference Include="..\Mockolate.Analyzers.CodeFixers\Mockolate.Analyzers.CodeFixers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+		<None Include="$(MSBuildProjectDirectory)\..\Mockolate.Analyzers.CodeFixers\bin\$(Configuration)\netstandard2.0\Mockolate.Analyzers.CodeFixers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+		<None Include="$(MSBuildProjectDirectory)\..\Mockolate.SourceGenerators\bin\$(Configuration)\netstandard2.0\Mockolate.SourceGenerators.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="Legacy\**\*.cs"/>
+		<None Include="Legacy\**\*.cs"/>
 	</ItemGroup>
 
 	<ItemGroup>

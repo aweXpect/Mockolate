@@ -9,16 +9,16 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method0()
+				sut.SetupMock.Method.Method0()
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
 
-				string result1 = sut.Subject.Method0();
-				Exception? result2 = Record.Exception(() => sut.Subject.Method0());
-				string result3 = sut.Subject.Method0();
+				string result1 = sut.Method0();
+				Exception? result2 = Record.Exception(() => sut.Method0());
+				string result3 = sut.Method0();
 
 				await That(result1).IsEqualTo("d");
 				await That(result2).HasMessage("foo");
@@ -28,9 +28,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method0()
+				sut.SetupMock.Method.Method0()
 					.Returns("d")
 					.Returns("c")
 					.Returns(() => "b");
@@ -38,7 +38,7 @@ public sealed partial class SetupMethodTests
 				string[] result = new string[10];
 				for (int i = 0; i < 10; i++)
 				{
-					result[i] = sut.Subject.Method0();
+					result[i] = sut.Method0();
 				}
 
 				await That(result).IsEqualTo(["d", "c", "b", "d", "c", "b", "d", "c", "b", "d",]);
@@ -47,11 +47,11 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method0().Returns(() => "d");
+				sut.SetupMock.Method.Method0().Returns(() => "d");
 
-				string result = sut.Subject.Method0();
+				string result = sut.Method0();
 
 				await That(result).IsEqualTo("d");
 			}
@@ -59,11 +59,11 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method0().Returns("d");
+				sut.SetupMock.Method.Method0().Returns("d");
 
-				string result = sut.Subject.Method0();
+				string result = sut.Method0();
 
 				await That(result).IsEqualTo("d");
 			}
@@ -71,9 +71,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				string result = sut.Subject.Method0();
+				string result = sut.Method0();
 
 				await That(result).IsEmpty();
 			}
@@ -81,25 +81,14 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method0().Throws(() => new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method0();
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.Setup.Method.Method0().Throws(new Exception("foo"));
+				sut.SetupMock.Method.Method0().Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method0();
+				{
+					sut.Method0();
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -107,14 +96,31 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method0().Throws<ArgumentNullException>();
+				sut.SetupMock.Method.Method0().Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method0();
+				{
+					sut.Method0();
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0().Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method0();
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 		}
 
@@ -123,16 +129,16 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>())
+				sut.SetupMock.Method.Method1(WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
 
-				string result1 = sut.Subject.Method1(1);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method1(2));
-				string result3 = sut.Subject.Method1(3);
+				string result1 = sut.Method1(1);
+				Exception? result2 = Record.Exception(() => sut.Method1(2));
+				string result3 = sut.Method1(3);
 
 				await That(result1).IsEqualTo("d");
 				await That(result2).HasMessage("foo");
@@ -142,9 +148,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>())
+				sut.SetupMock.Method.Method1(WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns(v => $"foo-{v}");
@@ -152,7 +158,7 @@ public sealed partial class SetupMethodTests
 				string[] result = new string[10];
 				for (int i = 0; i < 10; i++)
 				{
-					result[i] = sut.Subject.Method1(i);
+					result[i] = sut.Method1(i);
 				}
 
 				await That(result).IsEqualTo(["d", "c", "foo-2", "d", "c", "foo-5", "d", "c", "foo-8", "d",]);
@@ -161,11 +167,11 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>()).Returns(() => "d");
+				sut.SetupMock.Method.Method1(WithAny<int>()).Returns(() => "d");
 
-				string result = sut.Subject.Method1(3);
+				string result = sut.Method1(3);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -173,11 +179,11 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>()).Returns(x => $"foo-{x}");
+				sut.SetupMock.Method.Method1(WithAny<int>()).Returns(x => $"foo-{x}");
 
-				string result = sut.Subject.Method1(3);
+				string result = sut.Method1(3);
 
 				await That(result).IsEqualTo("foo-3");
 			}
@@ -185,11 +191,11 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>()).Returns("d");
+				sut.SetupMock.Method.Method1(WithAny<int>()).Returns("d");
 
-				string result = sut.Subject.Method1(3);
+				string result = sut.Method1(3);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -197,9 +203,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				string result = sut.Subject.Method1(3);
+				string result = sut.Method1(3);
 
 				await That(result).IsEmpty();
 			}
@@ -207,13 +213,15 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>())
+				sut.SetupMock.Method.Method1(WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method1(1);
+				{
+					sut.Method1(1);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -221,56 +229,62 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>())
+				sut.SetupMock.Method.Method1(WithAny<int>())
 					.Throws(v1 => new Exception("foo-" + v1));
 
 				void Act()
-					=> sut.Subject.Method1(42);
+				{
+					sut.Method1(42);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-42");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.Setup.Method.Method1(WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method1(1);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>())
+				sut.SetupMock.Method.Method1(WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method1(1);
+				{
+					sut.Method1(1);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method1(1);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
 			[Fact]
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>())
+				sut.SetupMock.Method.Method1(WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
-				string result = sut.Subject.Method1(1);
+				string result = sut.Method1(1);
 
 				await That(callCount).IsEqualTo(1);
 				await That(result).IsNull();
@@ -282,16 +296,16 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
 
-				string result1 = sut.Subject.Method2(1, 2);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method2(2, 3));
-				string result3 = sut.Subject.Method2(3, 4);
+				string result1 = sut.Method2(1, 2);
+				Exception? result2 = Record.Exception(() => sut.Method2(2, 3));
+				string result3 = sut.Method2(3, 4);
 
 				await That(result1).IsEqualTo("d");
 				await That(result2).HasMessage("foo");
@@ -301,9 +315,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2) => $"foo-{v1}-{v2}");
@@ -311,7 +325,7 @@ public sealed partial class SetupMethodTests
 				string[] result = new string[10];
 				for (int i = 0; i < 10; i++)
 				{
-					result[i] = sut.Subject.Method2(i, 2 * i);
+					result[i] = sut.Method2(i, 2 * i);
 				}
 
 				await That(result).IsEqualTo(["d", "c", "foo-2-4", "d", "c", "foo-5-10", "d", "c", "foo-8-16", "d",]);
@@ -320,11 +334,11 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).Returns(() => "d");
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).Returns(() => "d");
 
-				string result = sut.Subject.Method2(2, 3);
+				string result = sut.Method2(2, 3);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -332,11 +346,11 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).Returns((x, y) => $"foo-{x}-{y}");
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).Returns((x, y) => $"foo-{x}-{y}");
 
-				string result = sut.Subject.Method2(2, 3);
+				string result = sut.Method2(2, 3);
 
 				await That(result).IsEqualTo("foo-2-3");
 			}
@@ -344,11 +358,11 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>()).Returns("d");
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).Returns("d");
 
-				string result = sut.Subject.Method2(2, 3);
+				string result = sut.Method2(2, 3);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -356,9 +370,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				string result = sut.Subject.Method2(2, 3);
+				string result = sut.Method2(2, 3);
 
 				await That(result).IsEmpty();
 			}
@@ -366,13 +380,15 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method2(1, 2);
+				{
+					sut.Method2(1, 2);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -380,56 +396,62 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
 
 				void Act()
-					=> sut.Subject.Method2(1, 2);
+				{
+					sut.Method2(1, 2);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1-2");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method2(1, 2);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method2(1, 2);
+				{
+					sut.Method2(1, 2);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method2(1, 2);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
 			[Fact]
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
-				string result = sut.Subject.Method2(1, 2);
+				string result = sut.Method2(1, 2);
 
 				await That(callCount).IsEqualTo(1);
 				await That(result).IsNull();
@@ -441,16 +463,16 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
 
-				string result1 = sut.Subject.Method3(1, 2, 3);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method3(2, 3, 4));
-				string result3 = sut.Subject.Method3(3, 4, 5);
+				string result1 = sut.Method3(1, 2, 3);
+				Exception? result2 = Record.Exception(() => sut.Method3(2, 3, 4));
+				string result3 = sut.Method3(3, 4, 5);
 
 				await That(result1).IsEqualTo("d");
 				await That(result2).HasMessage("foo");
@@ -460,9 +482,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2, v3) => $"foo-{v1}-{v2}-{v3}");
@@ -470,7 +492,7 @@ public sealed partial class SetupMethodTests
 				string[] result = new string[10];
 				for (int i = 0; i < 10; i++)
 				{
-					result[i] = sut.Subject.Method3(i, 2 * i, 3 * i);
+					result[i] = sut.Method3(i, 2 * i, 3 * i);
 				}
 
 				await That(result)
@@ -480,12 +502,12 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns(() => "d");
 
-				string result = sut.Subject.Method3(1, 2, 3);
+				string result = sut.Method3(1, 2, 3);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -493,12 +515,12 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns((x, y, z) => $"foo-{x}-{y}-{z}");
 
-				string result = sut.Subject.Method3(2, 3, 4);
+				string result = sut.Method3(2, 3, 4);
 
 				await That(result).IsEqualTo("foo-2-3-4");
 			}
@@ -506,12 +528,12 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d");
 
-				string result = sut.Subject.Method3(1, 2, 3);
+				string result = sut.Method3(1, 2, 3);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -519,9 +541,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				string result = sut.Subject.Method3(2, 3, 4);
+				string result = sut.Method3(2, 3, 4);
 
 				await That(result).IsEmpty();
 			}
@@ -529,13 +551,15 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method3(1, 2, 3);
+				{
+					sut.Method3(1, 2, 3);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -543,56 +567,62 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
 
 				void Act()
-					=> sut.Subject.Method3(1, 2, 3);
+				{
+					sut.Method3(1, 2, 3);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method3(1, 2, 3);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method3(1, 2, 3);
+				{
+					sut.Method3(1, 2, 3);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method3(1, 2, 3);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
 			[Fact]
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
-				string result = sut.Subject.Method3(1, 2, 3);
+				string result = sut.Method3(1, 2, 3);
 
 				await That(callCount).IsEqualTo(1);
 				await That(result).IsNull();
@@ -604,16 +634,16 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
 
-				string result1 = sut.Subject.Method4(1, 2, 3, 4);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method4(2, 3, 4, 5));
-				string result3 = sut.Subject.Method4(3, 4, 5, 6);
+				string result1 = sut.Method4(1, 2, 3, 4);
+				Exception? result2 = Record.Exception(() => sut.Method4(2, 3, 4, 5));
+				string result3 = sut.Method4(3, 4, 5, 6);
 
 				await That(result1).IsEqualTo("d");
 				await That(result2).HasMessage("foo");
@@ -623,9 +653,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2, v3, v4) => $"foo-{v1}-{v2}-{v3}-{v4}");
@@ -633,7 +663,7 @@ public sealed partial class SetupMethodTests
 				string[] result = new string[10];
 				for (int i = 0; i < 10; i++)
 				{
-					result[i] = sut.Subject.Method4(i, 2 * i, 3 * i, 4 * i);
+					result[i] = sut.Method4(i, 2 * i, 3 * i, 4 * i);
 				}
 
 				await That(result).IsEqualTo([
@@ -644,12 +674,12 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns(() => "d");
 
-				string result = sut.Subject.Method4(1, 2, 3, 4);
+				string result = sut.Method4(1, 2, 3, 4);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -657,12 +687,12 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns((x, y, z, a) => $"foo-{x}-{y}-{z}-{a}");
 
-				string result = sut.Subject.Method4(2, 3, 4, 5);
+				string result = sut.Method4(2, 3, 4, 5);
 
 				await That(result).IsEqualTo("foo-2-3-4-5");
 			}
@@ -670,12 +700,12 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Returns("d");
 
-				string result = sut.Subject.Method4(1, 2, 3, 4);
+				string result = sut.Method4(1, 2, 3, 4);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -683,9 +713,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				string result = sut.Subject.Method4(2, 3, 4, 5);
+				string result = sut.Method4(2, 3, 4, 5);
 
 				await That(result).IsEmpty();
 			}
@@ -693,13 +723,15 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method4(1, 2, 3, 4);
+				{
+					sut.Method4(1, 2, 3, 4);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -707,56 +739,62 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
 
 				void Act()
-					=> sut.Subject.Method4(1, 2, 3, 4);
+				{
+					sut.Method4(1, 2, 3, 4);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3-4");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method4(1, 2, 3, 4);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method4(1, 2, 3, 4);
+				{
+					sut.Method4(1, 2, 3, 4);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method4(1, 2, 3, 4);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
 			[Fact]
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
-				string result = sut.Subject.Method4(1, 2, 3, 4);
+				string result = sut.Method4(1, 2, 3, 4);
 
 				await That(callCount).IsEqualTo(1);
 				await That(result).IsNull();
@@ -768,17 +806,17 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
 
-				string result1 = sut.Subject.Method5(1, 2, 3, 4, 5);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method5(2, 3, 4, 5, 6));
-				string result3 = sut.Subject.Method5(3, 4, 5, 6, 7);
+				string result1 = sut.Method5(1, 2, 3, 4, 5);
+				Exception? result2 = Record.Exception(() => sut.Method5(2, 3, 4, 5, 6));
+				string result3 = sut.Method5(3, 4, 5, 6, 7);
 
 				await That(result1).IsEqualTo("d");
 				await That(result2).HasMessage("foo");
@@ -788,9 +826,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
@@ -799,7 +837,7 @@ public sealed partial class SetupMethodTests
 				string[] result = new string[10];
 				for (int i = 0; i < 10; i++)
 				{
-					result[i] = sut.Subject.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+					result[i] = sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
 				}
 
 				await That(result).IsEqualTo([
@@ -810,13 +848,13 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Returns(() => "d");
 
-				string result = sut.Subject.Method5(1, 2, 3, 4, 5);
+				string result = sut.Method5(1, 2, 3, 4, 5);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -824,13 +862,13 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Returns((x, y, z, a, b) => $"foo-{x}-{y}-{z}-{a}-{b}");
 
-				string result = sut.Subject.Method5(2, 3, 4, 5, 6);
+				string result = sut.Method5(2, 3, 4, 5, 6);
 
 				await That(result).IsEqualTo("foo-2-3-4-5-6");
 			}
@@ -838,13 +876,13 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Returns("d");
 
-				string result = sut.Subject.Method5(1, 2, 3, 4, 5);
+				string result = sut.Method5(1, 2, 3, 4, 5);
 
 				await That(result).IsEqualTo("d");
 			}
@@ -852,9 +890,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				string result = sut.Subject.Method5(2, 3, 4, 5, 6);
+				string result = sut.Method5(2, 3, 4, 5, 6);
 
 				await That(result).IsEmpty();
 			}
@@ -862,14 +900,16 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method5(1, 2, 3, 4, 5);
+				{
+					sut.Method5(1, 2, 3, 4, 5);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -877,60 +917,66 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
 				void Act()
-					=> sut.Subject.Method5(1, 2, 3, 4, 5);
+				{
+					sut.Method5(1, 2, 3, 4, 5);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3-4-5");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
-						WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method5(1, 2, 3, 4, 5);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method5(1, 2, 3, 4, 5);
+				{
+					sut.Method5(1, 2, 3, 4, 5);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method5(1, 2, 3, 4, 5);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
 			[Fact]
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Callback(() => { callCount++; })
 					.Returns((string?)null!);
 
-				string result = sut.Subject.Method5(1, 2, 3, 4, 5);
+				string result = sut.Method5(1, 2, 3, 4, 5);
 
 				await That(callCount).IsEqualTo(1);
 				await That(result).IsNull();
@@ -942,19 +988,19 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method0()
+				sut.SetupMock.Method.Method0()
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
 
-				sut.Subject.Method0();
-				Exception? result1 = Record.Exception(() => sut.Subject.Method0());
-				sut.Subject.Method0();
-				sut.Subject.Method0();
-				Exception? result2 = Record.Exception(() => sut.Subject.Method0());
-				sut.Subject.Method0();
+				sut.Method0();
+				Exception? result1 = Record.Exception(() => sut.Method0());
+				sut.Method0();
+				sut.Method0();
+				Exception? result2 = Record.Exception(() => sut.Method0());
+				sut.Method0();
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
@@ -963,25 +1009,14 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method0().Throws(() => new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method0();
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.Setup.Method.Method0().Throws(new Exception("foo"));
+				sut.SetupMock.Method.Method0().Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method0();
+				{
+					sut.Method0();
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -989,14 +1024,31 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method0().Throws<ArgumentNullException>();
+				sut.SetupMock.Method.Method0().Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method0();
+				{
+					sut.Method0();
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0().Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method0();
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 		}
 
@@ -1005,19 +1057,19 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>())
+				sut.SetupMock.Method.Method1(WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
 
-				sut.Subject.Method1(1);
-				Exception? result1 = Record.Exception(() => sut.Subject.Method1(2));
-				sut.Subject.Method1(3);
-				sut.Subject.Method1(4);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method1(5));
-				sut.Subject.Method1(6);
+				sut.Method1(1);
+				Exception? result1 = Record.Exception(() => sut.Method1(2));
+				sut.Method1(3);
+				sut.Method1(4);
+				Exception? result2 = Record.Exception(() => sut.Method1(5));
+				sut.Method1(6);
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
@@ -1026,12 +1078,14 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>()).Throws(() => new Exception("foo"));
+				sut.SetupMock.Method.Method1(WithAny<int>()).Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method1(1);
+				{
+					sut.Method1(1);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -1039,42 +1093,48 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>()).Throws(v1 => new Exception($"foo-{v1}"));
+				sut.SetupMock.Method.Method1(WithAny<int>()).Throws(v1 => new Exception($"foo-{v1}"));
 
 				void Act()
-					=> sut.Subject.Method1(1);
+				{
+					sut.Method1(1);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.Setup.Method.Method1(WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method1(1);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method1(WithAny<int>())
+				sut.SetupMock.Method.Method1(WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method1(1);
+				{
+					sut.Method1(1);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method1(1);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 		}
 
@@ -1083,19 +1143,19 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
 
-				sut.Subject.Method2(1, 2);
-				Exception? result1 = Record.Exception(() => sut.Subject.Method2(2, 3));
-				sut.Subject.Method2(3, 4);
-				sut.Subject.Method2(4, 5);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method2(5, 6));
-				sut.Subject.Method2(6, 7);
+				sut.Method2(1, 2);
+				Exception? result1 = Record.Exception(() => sut.Method2(2, 3));
+				sut.Method2(3, 4);
+				sut.Method2(4, 5);
+				Exception? result2 = Record.Exception(() => sut.Method2(5, 6));
+				sut.Method2(6, 7);
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
@@ -1104,13 +1164,15 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method2(1, 2);
+				{
+					sut.Method2(1, 2);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -1118,43 +1180,49 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
 
 				void Act()
-					=> sut.Subject.Method2(1, 2);
+				{
+					sut.Method2(1, 2);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1-2");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method2(1, 2);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method2(1, 2);
+				{
+					sut.Method2(1, 2);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method2(1, 2);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 		}
 
@@ -1163,19 +1231,19 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
 
-				sut.Subject.Method3(1, 2, 3);
-				Exception? result1 = Record.Exception(() => sut.Subject.Method3(2, 3, 4));
-				sut.Subject.Method3(3, 4, 5);
-				sut.Subject.Method3(4, 5, 6);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method3(5, 6, 7));
-				sut.Subject.Method3(6, 7, 8);
+				sut.Method3(1, 2, 3);
+				Exception? result1 = Record.Exception(() => sut.Method3(2, 3, 4));
+				sut.Method3(3, 4, 5);
+				sut.Method3(4, 5, 6);
+				Exception? result2 = Record.Exception(() => sut.Method3(5, 6, 7));
+				sut.Method3(6, 7, 8);
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
@@ -1184,13 +1252,15 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method3(1, 2, 3);
+				{
+					sut.Method3(1, 2, 3);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -1198,43 +1268,49 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
 
 				void Act()
-					=> sut.Subject.Method3(1, 2, 3);
+				{
+					sut.Method3(1, 2, 3);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method3(1, 2, 3);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method3(1, 2, 3);
+				{
+					sut.Method3(1, 2, 3);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method3(1, 2, 3);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 		}
 
@@ -1243,19 +1319,19 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
 
-				sut.Subject.Method4(1, 2, 3, 4);
-				Exception? result1 = Record.Exception(() => sut.Subject.Method4(2, 3, 4, 5));
-				sut.Subject.Method4(3, 4, 5, 6);
-				sut.Subject.Method4(4, 5, 6, 7);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method4(5, 6, 7, 8));
-				sut.Subject.Method4(6, 7, 8, 9);
+				sut.Method4(1, 2, 3, 4);
+				Exception? result1 = Record.Exception(() => sut.Method4(2, 3, 4, 5));
+				sut.Method4(3, 4, 5, 6);
+				sut.Method4(4, 5, 6, 7);
+				Exception? result2 = Record.Exception(() => sut.Method4(5, 6, 7, 8));
+				sut.Method4(6, 7, 8, 9);
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
@@ -1264,13 +1340,15 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method4(1, 2, 3, 4);
+				{
+					sut.Method4(1, 2, 3, 4);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -1278,43 +1356,49 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
 
 				void Act()
-					=> sut.Subject.Method4(1, 2, 3, 4);
+				{
+					sut.Method4(1, 2, 3, 4);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3-4");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method4(1, 2, 3, 4);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method4(1, 2, 3, 4);
+				{
+					sut.Method4(1, 2, 3, 4);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method4(1, 2, 3, 4);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 		}
 
@@ -1323,20 +1407,20 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
 
-				sut.Subject.Method5(1, 2, 3, 4, 5);
-				Exception? result1 = Record.Exception(() => sut.Subject.Method5(2, 3, 4, 5, 6));
-				sut.Subject.Method5(3, 4, 5, 6, 7);
-				sut.Subject.Method5(4, 5, 6, 7, 8);
-				Exception? result2 = Record.Exception(() => sut.Subject.Method5(5, 6, 7, 8, 9));
-				sut.Subject.Method5(6, 7, 8, 9, 10);
+				sut.Method5(1, 2, 3, 4, 5);
+				Exception? result1 = Record.Exception(() => sut.Method5(2, 3, 4, 5, 6));
+				sut.Method5(3, 4, 5, 6, 7);
+				sut.Method5(4, 5, 6, 7, 8);
+				Exception? result2 = Record.Exception(() => sut.Method5(5, 6, 7, 8, 9));
+				sut.Method5(6, 7, 8, 9, 10);
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
@@ -1345,14 +1429,16 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
-					=> sut.Subject.Method5(1, 2, 3, 4, 5);
+				{
+					sut.Method5(1, 2, 3, 4, 5);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
@@ -1360,46 +1446,52 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
 				void Act()
-					=> sut.Subject.Method5(1, 2, 3, 4, 5);
+				{
+					sut.Method5(1, 2, 3, 4, 5);
+				}
 
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3-4-5");
 			}
 
 			[Fact]
-			public async Task Throws_ShouldThrowException()
-			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
-						WithAny<int>())
-					.Throws(new Exception("foo"));
-
-				void Act()
-					=> sut.Subject.Method5(1, 2, 3, 4, 5);
-
-				await That(Act).ThrowsException().WithMessage("foo");
-			}
-
-			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 						WithAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
-					=> sut.Subject.Method5(1, 2, 3, 4, 5);
+				{
+					sut.Method5(1, 2, 3, 4, 5);
+				}
 
 				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+						WithAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					sut.Method5(1, 2, 3, 4, 5);
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
 			}
 		}
 	}

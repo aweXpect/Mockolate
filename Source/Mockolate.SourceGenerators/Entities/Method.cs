@@ -37,7 +37,10 @@ internal record Method
 	}
 
 	public static IEqualityComparer<Method> EqualityComparer { get; } = new MethodEqualityComparer();
-	public static IEqualityComparer<Method> ContainingTypeIndependentEqualityComparer { get; } = new ContainingTypeIndependentMethodEqualityComparer();
+
+	public static IEqualityComparer<Method> ContainingTypeIndependentEqualityComparer { get; } =
+		new ContainingTypeIndependentMethodEqualityComparer();
+
 	public EquatableArray<GenericParameter>? GenericParameters { get; }
 
 	public bool UseOverride { get; }
@@ -62,24 +65,6 @@ internal record Method
 		return $"\"{ContainingType}.{Name}\"";
 	}
 
-	private sealed class MethodEqualityComparer : IEqualityComparer<Method>
-	{
-		public bool Equals(Method x, Method y) => x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType) &&
-												  x.Parameters.Count == y.Parameters.Count &&
-												  x.Parameters.SequenceEqual(y.Parameters);
-
-		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
-	}
-
-	private sealed class ContainingTypeIndependentMethodEqualityComparer : IEqualityComparer<Method>
-	{
-		public bool Equals(Method x, Method y) => x.Name.Equals(y.Name) &&
-												  x.Parameters.Count == y.Parameters.Count &&
-												  x.Parameters.SequenceEqual(y.Parameters);
-
-		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
-	}
-
 	public bool IsToString()
 		=> Name == "ToString" && Parameters.Count == 0;
 
@@ -91,7 +76,27 @@ internal record Method
 		return Name == "Equals" && Parameters.Count == 1 && IsObjectOrNullableObject(Parameters.Single());
 
 		static bool IsObjectOrNullableObject(MethodParameter parameter)
-			=> parameter.Type.Namespace == "System" &&
-			  (parameter.Type.Fullname == "object" || parameter.Type.Fullname == "object?");
+		{
+			return parameter.Type.Namespace == "System" &&
+			       (parameter.Type.Fullname == "object" || parameter.Type.Fullname == "object?");
+		}
+	}
+
+	private sealed class MethodEqualityComparer : IEqualityComparer<Method>
+	{
+		public bool Equals(Method x, Method y) => x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType) &&
+		                                          x.Parameters.Count == y.Parameters.Count &&
+		                                          x.Parameters.SequenceEqual(y.Parameters);
+
+		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
+	}
+
+	private sealed class ContainingTypeIndependentMethodEqualityComparer : IEqualityComparer<Method>
+	{
+		public bool Equals(Method x, Method y) => x.Name.Equals(y.Name) &&
+		                                          x.Parameters.Count == y.Parameters.Count &&
+		                                          x.Parameters.SequenceEqual(y.Parameters);
+
+		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
 	}
 }

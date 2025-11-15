@@ -13,8 +13,8 @@
 	<ItemGroup>
 		<PackageReference Include="BenchmarkDotNet"/>
 		<PackageReference Include="aweXpect"/>
-		<ProjectReference Include="..\..\Source\Mockolate.SourceGenerators\Mockolate.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj" />
+		<ProjectReference Include="..\..\Source\Mockolate.SourceGenerators\Mockolate.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj"/>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -35,7 +35,10 @@ internal record Property
 	}
 
 	public static IEqualityComparer<Property> EqualityComparer { get; } = new PropertyEqualityComparer();
-	public static IEqualityComparer<Property> ContainingTypeIndependentEqualityComparer { get; } = new ContainingTypeIndependentPropertyEqualityComparer();
+
+	public static IEqualityComparer<Property> ContainingTypeIndependentEqualityComparer { get; } =
+		new ContainingTypeIndependentPropertyEqualityComparer();
+
 	public bool IsIndexer { get; }
 	public bool IsAbstract { get; }
 	public EquatableArray<MethodParameter>? IndexerParameters { get; }
@@ -57,7 +60,9 @@ internal record Property
 	private sealed class PropertyEqualityComparer : IEqualityComparer<Property>
 	{
 		public bool Equals(Property x, Property y) => x.IsIndexer
-			? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count && x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value) && x.ContainingType.Equals(y.ContainingType)
+			? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count &&
+			  x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value) &&
+			  x.ContainingType.Equals(y.ContainingType)
 			: !y.IsIndexer && x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
 
 		public int GetHashCode(Property obj) => obj.Name.GetHashCode();
@@ -66,7 +71,8 @@ internal record Property
 	private sealed class ContainingTypeIndependentPropertyEqualityComparer : IEqualityComparer<Property>
 	{
 		public bool Equals(Property x, Property y) => x.IsIndexer
-			? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count && x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value)
+			? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count &&
+			  x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value)
 			: !y.IsIndexer && x.Name.Equals(y.Name);
 
 		public int GetHashCode(Property obj) => obj.Name.GetHashCode();

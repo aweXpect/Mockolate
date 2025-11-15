@@ -13,7 +13,9 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory.Create<MySealedClass>();
+			{
+				_ = factory.Create<MySealedClass>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -26,7 +28,9 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory.Create<MySealedClass, IMyService>();
+			{
+				_ = factory.Create<MySealedClass, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -39,7 +43,9 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory.Create<MySealedClass, IMyService, IMyService>();
+			{
+				_ = factory.Create<MySealedClass, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -52,7 +58,9 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService>();
+			{
+				_ = factory.Create<MySealedClass, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -65,7 +73,9 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService>();
+			{
+				_ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -78,7 +88,9 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
+			{
+				_ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -91,10 +103,12 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ =
+			{
+				_ =
 					factory
 						.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService,
 							IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -107,9 +121,11 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory
+			{
+				_ = factory
 					.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 						IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -122,9 +138,11 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory
+			{
+				_ = factory
 					.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 						IMyService, IMyService>();
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -137,7 +155,9 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(MockBehavior.Default);
 
 			void Act()
-				=> _ = factory.Create<MySealedClass>(BaseClass.WithConstructorParameters());
+			{
+				_ = factory.Create<MySealedClass>(BaseClass.WithConstructorParameters());
+			}
 
 			await That(Act).Throws<MockException>()
 				.WithMessage(
@@ -151,18 +171,18 @@ public sealed partial class MockTests
 			bool isDoSomethingCalled2 = false;
 			Mock.Factory factory = new(MockBehavior.Default);
 
-			Mock<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService> mock =
+			MyServiceBase mock =
 				factory.Create<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService>();
 
-			mock.SetupIMyService.Method.DoSomething(WithAny<int>()).Callback(() => isDoSomethingCalled1 = true);
-			mock.SetupIMyService__2.Method.DoSomething(WithAny<int>()).Callback(() => isDoSomethingCalled2 = true);
+			mock.SetupIMyServiceMock.Method.DoSomething(WithAny<int>()).Callback(() => isDoSomethingCalled1 = true);
+			mock.SetupIMyService__2Mock.Method.DoSomething(WithAny<int>()).Callback(() => isDoSomethingCalled2 = true);
 
-			mock.SubjectForIMyService.DoSomething(1);
+			((TestHelpers.IMyService)mock).DoSomething(1);
 
 			await That(isDoSomethingCalled1).IsTrue();
 			await That(isDoSomethingCalled2).IsFalse();
 
-			mock.SubjectForIMyService__2.DoSomething(1);
+			((TestHelpers.Other.IMyService)mock).DoSomething(1);
 
 			await That(isDoSomethingCalled1).IsTrue();
 			await That(isDoSomethingCalled2).IsTrue();
@@ -177,11 +197,11 @@ public sealed partial class MockTests
 			};
 			Mock.Factory factory = new(behavior);
 
-			Mock<IMyService> mock1 = factory.Create<IMyService>();
-			Mock<MyServiceBase, IMyService> mock2 = factory.Create<MyServiceBase, IMyService>();
+			IMyService mock1 = factory.Create<IMyService>();
+			MyServiceBase mock2 = factory.Create<MyServiceBase, IMyService>();
 
-			await That(((IMock)mock1).Behavior).IsSameAs(behavior);
-			await That(((IMock)mock2).Behavior).IsSameAs(behavior);
+			await That(((IHasMockRegistration)mock1).Registrations.Behavior).IsSameAs(behavior);
+			await That(((IHasMockRegistration)mock2).Registrations.Behavior).IsSameAs(behavior);
 		}
 	}
 }

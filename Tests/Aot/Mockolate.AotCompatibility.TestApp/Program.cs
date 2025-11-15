@@ -4,10 +4,10 @@ internal class Program
 {
 	private static void Main(string[] args)
 	{
-		Mock<IMyInterface> mock = Mock.Create<IMyInterface>();
-		mock.Setup.Method.MyMethod().Returns(2);
+		IMyInterface mock = Mock.Create<IMyInterface>();
+		mock.SetupMock.Method.MyMethod().Returns(2);
 
-		int result = mock.Subject.MyMethod();
+		int result = mock.MyMethod();
 
 		Console.WriteLine($"The mock returned: {result}");
 	}

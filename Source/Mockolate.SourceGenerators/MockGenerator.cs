@@ -3,7 +3,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Mockolate.SourceGenerators.Entities;
-using Mockolate.SourceGenerators.Internals;
 using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators;
@@ -18,11 +17,11 @@ public class MockGenerator : IIncrementalGenerator
 	{
 		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
 			"MockGeneratorAttribute.g.cs",
-			SourceText.From(Sources.MockGeneratorAttribute(), Encoding.UTF8)));
+			SourceText.From(Sources.Sources.MockGeneratorAttribute(), Encoding.UTF8)));
 
 		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
 			"Mock.g.cs",
-			SourceText.From(Sources.MockClass(), Encoding.UTF8)));
+			SourceText.From(Sources.Sources.MockClass(), Encoding.UTF8)));
 
 		IncrementalValueProvider<ImmutableArray<MockClass?>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
@@ -40,18 +39,26 @@ public class MockGenerator : IIncrementalGenerator
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
 		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate)
 		{
-			context.AddSource($"For{mockToGenerate.Name}.g.cs",
-				SourceText.From(Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
-			context.AddSource($"For{mockToGenerate.Name}.Extensions.g.cs",
-				SourceText.From(Sources.ForMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass),
-					Encoding.UTF8));
-		}
+			if (!IsValidMockDeclaration(mockToGenerate.MockClass))
+			{
+				continue;
+			}
 
+			context.AddSource($"MockFor{mockToGenerate.Name}.g.cs",
+				SourceText.From(Sources.Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
+			if (mockToGenerate.MockClass.AdditionalImplementations.Any())
+			{
+				context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
+					SourceText.From(
+						Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass),
+						Encoding.UTF8));
+			}
+		}
 
 		foreach ((string name, Class extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
 		{
-			context.AddSource($"For{name}.SetupExtensions.g.cs",
-				SourceText.From(Sources.ForMockSetupExtensions(name, extensionToGenerate), Encoding.UTF8));
+			context.AddSource($"MockFor{name}Extensions.g.cs",
+				SourceText.From(Sources.Sources.ForMockExtensions(name, extensionToGenerate), Encoding.UTF8));
 		}
 
 		HashSet<int> indexerSetups = new();
@@ -66,7 +73,7 @@ public class MockGenerator : IIncrementalGenerator
 		if (indexerSetups.Any())
 		{
 			context.AddSource("IndexerSetups.g.cs",
-				SourceText.From(Sources.IndexerSetups(indexerSetups), Encoding.UTF8));
+				SourceText.From(Sources.Sources.IndexerSetups(indexerSetups), Encoding.UTF8));
 		}
 
 		HashSet<(int, bool)> methodSetups = new();
@@ -81,7 +88,7 @@ public class MockGenerator : IIncrementalGenerator
 		if (methodSetups.Any())
 		{
 			context.AddSource("MethodSetups.g.cs",
-				SourceText.From(Sources.MethodSetups(methodSetups), Encoding.UTF8));
+				SourceText.From(Sources.Sources.MethodSetups(methodSetups), Encoding.UTF8));
 		}
 
 		const int dotNetFuncActionParameterLimit = 16;
@@ -89,26 +96,29 @@ public class MockGenerator : IIncrementalGenerator
 		{
 			context.AddSource("MethodSetups.ActionFunc.g.cs",
 				SourceText.From(
-					Sources.MethodSetupsActionFunc(methodSetups.Where(x => x.Item1 > dotNetFuncActionParameterLimit)
+					Sources.Sources.MethodSetupsActionFunc(methodSetups
+						.Where(x => x.Item1 > dotNetFuncActionParameterLimit)
 						.Select(x => x.Item1).Distinct()), Encoding.UTF8));
 		}
 
 		if (methodSetups.Any(x => !x.Item2))
 		{
 			context.AddSource("ReturnsAsyncExtensions.g.cs",
-				SourceText.From(Sources.ReturnsAsyncExtensions(methodSetups
+				SourceText.From(Sources.Sources.ReturnsAsyncExtensions(methodSetups
 					.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
 		}
 
 		context.AddSource("MockRegistration.g.cs",
-			SourceText.From(Sources.MockRegistration(namedMocksToGenerate), Encoding.UTF8));
+			SourceText.From(
+				Sources.Sources.MockRegistration(namedMocksToGenerate,
+					namedMocksToGenerate.Any(x => IsValidMockDeclaration(x.MockClass))), Encoding.UTF8));
 	}
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)
 	{
 		HashSet<(string, string)> classNames = new();
 		List<(string Name, Class MockClass)> result = new();
-		foreach (MockClass? mockToGenerate in mocksToGenerate.Where(x => x.Delegate is null))
+		foreach (MockClass? mockToGenerate in mocksToGenerate)
 		{
 			if (classNames.Add((mockToGenerate.Namespace, mockToGenerate.ClassName)))
 			{
@@ -166,4 +176,8 @@ public class MockGenerator : IIncrementalGenerator
 
 		return result;
 	}
+
+	private static bool IsValidMockDeclaration(MockClass mockClass)
+		=> (mockClass.IsInterface || mockClass.Constructors is { Count: > 0, }) &&
+		   mockClass.AdditionalImplementations.All(x => x.IsInterface);
 }

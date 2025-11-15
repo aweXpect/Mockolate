@@ -7,13 +7,13 @@ public class MockGeneratorAttributeTests
 	[Fact]
 	public async Task WithCustomGenerator_ShouldCreateMock()
 	{
-		Mock<IFoo> mock = MyGenerator.MyCreator<IFoo>();
-		mock.Setup.Method.Bar().Returns(42);
+		IFoo mock = MyGenerator.MyCreator<IFoo>();
+		mock.SetupMock.Method.Bar().Returns(42);
 
-		int result = mock.Subject.Bar();
+		int result = mock.Bar();
 
 		await That(result).IsEqualTo(42);
-		await That(mock.Verify.Invoked.Bar()).Once();
+		await That(mock.VerifyMock.Invoked.Bar()).Once();
 	}
 
 	public interface IFoo

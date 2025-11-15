@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Mockolate.SourceGenerators.Internals;
+namespace Mockolate.SourceGenerators.Sources;
 
 internal static partial class Sources
 {
@@ -35,7 +35,7 @@ internal static partial class Sources
 	{
 		string typeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"));
 		string parameters = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}"));
-		string discards = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => "_"));
+		string discards = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(_ => "_"));
 		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Sets up a <typeparamref name=\"TValue\"/> indexer for ");
 		for (int i = 1; i < numberOfParameters - 1; i++)
@@ -47,7 +47,8 @@ internal static partial class Sources
 			.Append(numberOfParameters).Append("\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
 		sb.Append("internal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"Match.IParameter match{i}")))
+			.Append(
+				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"Match.IParameter match{i}")))
 			.Append(") : IndexerSetup").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _getterCallbacks = [];")
@@ -217,7 +218,8 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t\twhere TException : Exception, new()").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(discards).Append(") => throw new TException());").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(discards).Append(") => throw new TException());")
+			.AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();

@@ -24,25 +24,18 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources)
-			.DoesNotContainKey("ForProgramDoSomething.SetupExtensions.g.cs").And
-			.ContainsKey("ForProgramDoSomething.Extensions.g.cs").WhoseValue
+			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public ReturnMethodSetup<int, int, int> Delegate(Match.IParameter<int>? x, Match.IParameter<int>? y)
+			          		public ReturnMethodSetup<int, int, int> Invoke(Match.IParameter<int>? x, Match.IParameter<int>? y)
 			          		{
 			          			var methodSetup = new ReturnMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", x ?? Match.Null<int>()), new Match.NamedParameter("y", y ?? Match.Null<int>()));
-			          			if (setup is IMockSetup mockSetup)
-			          			{
-			          				mockSetup.RegisterMethod(methodSetup);
-			          			}
+			          			CastToMockOrThrow(setup).Registrations.SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(Match.IParameter<int>? x, Match.IParameter<int>? y)
-			          		{
-			          			IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = (IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>>)verify;
-			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? Match.Null<int>(), y ?? Match.Null<int>());
-			          		}
+			          		public VerificationResult<MyCode.Program.DoSomething> Invoke(Match.IParameter<int>? x, Match.IParameter<int>? y)
+			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", x ?? Match.Null<int>(), y ?? Match.Null<int>());
 			          """).IgnoringNewlineStyle();
 	}
 
@@ -68,25 +61,18 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources)
-			.DoesNotContainKey("ForProgramDoSomething.SetupExtensions.g.cs").And
-			.ContainsKey("ForProgramDoSomething.Extensions.g.cs").WhoseValue
+			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public VoidMethodSetup<int, int, int> Delegate(Match.IParameter<int>? x, Match.IRefParameter<int> y, Match.IOutParameter<int> z)
+			          		public VoidMethodSetup<int, int, int> Invoke(Match.IParameter<int>? x, Match.IRefParameter<int> y, Match.IOutParameter<int> z)
 			          		{
 			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", x ?? Match.Null<int>()), new Match.NamedParameter("y", y), new Match.NamedParameter("z", z));
-			          			if (setup is IMockSetup mockSetup)
-			          			{
-			          				mockSetup.RegisterMethod(methodSetup);
-			          			}
+			          			CastToMockOrThrow(setup).Registrations.SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> Invoked(Match.IParameter<int>? x, Match.IVerifyRefParameter<int> y, Match.IVerifyOutParameter<int> z)
-			          		{
-			          			IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>> invoked = (IMockInvoked<IMockVerify<MyCode.Program.DoSomething, Mock<MyCode.Program.DoSomething>>>)verify;
-			          			return invoked.Method("MyCode.Program.DoSomething.Invoke", x ?? Match.Null<int>(), y, z);
-			          		}
+			          		public VerificationResult<MyCode.Program.DoSomething> Invoke(Match.IParameters parameters)
+			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", parameters);
 			          """).IgnoringNewlineStyle();
 	}
 
@@ -109,8 +95,9 @@ public sealed partial class ForMockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("ForFuncintbool.g.cs").WhoseValue
-			.DoesNotContain("MockSubject").IgnoringNewlineStyle().And
-			.Contains("_subject = new System.Func<int,bool>(").IgnoringNewlineStyle();
+		await That(result.Sources).ContainsKey("MockForFuncintbool.g.cs").WhoseValue
+			.Contains("_mock.Registrations.Execute<bool>(\"System.Func<int, bool>.Invoke\", arg)")
+			.IgnoringNewlineStyle().And
+			.Contains("System.Func<int,bool> Object").IgnoringNewlineStyle();
 	}
 }

@@ -16,7 +16,7 @@ public sealed class MockInteractionsTests
 		{
 			tasks[i] = Task.Run(async () =>
 			{
-				for (int i = 0; i < 20; i++)
+				for (int j = 0; j < 20; j++)
 				{
 					retrievedIds.Enqueue(sut.GetNextIndex());
 					await Task.Delay(1);
@@ -40,7 +40,7 @@ public sealed class MockInteractionsTests
 		{
 			tasks[i] = Task.Run(async () =>
 			{
-				for (int i = 0; i < 20; i++)
+				for (int j = 0; j < 20; j++)
 				{
 					int index = sut.GetNextIndex();
 					interactions.RegisterInteraction(new PropertySetterAccess(index, "MyTestProperty", index));

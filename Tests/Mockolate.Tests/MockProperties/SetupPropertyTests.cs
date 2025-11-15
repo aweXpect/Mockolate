@@ -11,7 +11,9 @@ public sealed partial class SetupPropertyTests
 		MyPropertySetup<int> setup = new();
 
 		void Act()
-			=> setup.InvokeGetter<string>();
+		{
+			setup.InvokeGetter<string>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("""
@@ -25,7 +27,9 @@ public sealed partial class SetupPropertyTests
 		MyPropertySetup<int> setup = new();
 
 		void Act()
-			=> setup.InvokeSetter("foo");
+		{
+			setup.InvokeSetter("foo");
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("""
@@ -36,13 +40,12 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
-		Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
-		IMockSetup setup = (IMockSetup)mock.Setup;
-		IMock sut = mock;
+		IPropertyService mock = Mock.Create<IPropertyService>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		int result0 = sut.Get<int>("my.other.property");
-		setup.RegisterProperty("my.property", new PropertySetup<int>().InitializeWith(42));
-		int result1 = sut.Get<int>("my.property");
+		int result0 = registration.Get<int>("my.other.property");
+		registration.SetupProperty("my.property", new PropertySetup<int>().InitializeWith(42));
+		int result1 = registration.Get<int>("my.property");
 
 		await That(result0).IsEqualTo(0);
 		await That(result1).IsEqualTo(42);
@@ -51,30 +54,32 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task Register_SamePropertyTwice_ShouldThrowMockException()
 	{
-		Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
-		IMockSetup setup = (IMockSetup)mock.Setup;
+		IPropertyService mock = Mock.Create<IPropertyService>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		setup.RegisterProperty("my.property", new PropertySetup<int>());
+		registration.SetupProperty("my.property", new PropertySetup<int>());
 
 		void Act()
-			=> setup.RegisterProperty("my.property", new PropertySetup<int>());
+		{
+			registration.SetupProperty("my.property", new PropertySetup<int>());
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("You cannot setup property 'my.property' twice.");
 
-		setup.RegisterProperty("my.other.property", new PropertySetup<int>());
+		registration.SetupProperty("my.other.property", new PropertySetup<int>());
 	}
 
 	[Fact]
 	public async Task ShouldStoreLastValue()
 	{
-		Mock<IPropertyService> mock = Mock.Create<IPropertyService>();
-		IMock sut = mock;
+		IPropertyService mock = Mock.Create<IPropertyService>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		string result0 = sut.Get<string>("my.property");
-		sut.Set("my.property", "foo");
-		string result1 = sut.Get<string>("my.property");
-		string result2 = sut.Get<string>("my.other.property");
+		string result0 = registration.Get<string>("my.property");
+		registration.Set("my.property", "foo");
+		string result1 = registration.Get<string>("my.property");
+		string result2 = registration.Get<string>("my.other.property");
 
 		await That(result0).IsEmpty();
 		await That(result1).IsEqualTo("foo");
@@ -94,13 +99,13 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task WhenMockInheritsPropertyMultipleTimes()
 	{
-		Mock<IMyPropertyService, IMyPropertyServiceBase1> mock =
+		IMyPropertyService mock =
 			Mock.Create<IMyPropertyService, IMyPropertyServiceBase1>();
-		mock.Setup.Property.Value.InitializeWith("Hello");
+		mock.SetupMock.Property.Value.InitializeWith("Hello");
 
-		string result = mock.Subject.Value;
+		string result = mock.Value;
 
-		await That(mock.Verify.Got.Value()).Once();
+		await That(mock.VerifyMock.Got.Value()).Once();
 		await That(result).IsEqualTo("Hello");
 	}
 

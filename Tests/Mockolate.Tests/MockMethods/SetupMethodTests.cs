@@ -1,21 +1,34 @@
 ﻿using System.Linq;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
+using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class SetupMethodTests
 {
 	[Fact]
+	public async Task Equals_ShouldWork()
+	{
+		object obj = new();
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.Equals(WithAny<object?>()).Returns(true);
+
+		bool result = mock.Equals(obj);
+
+		await That(result).IsEqualTo(true);
+	}
+
+	[Fact]
 	public async Task GenericMethod_SetupShouldWork()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyGenericMethod(With(0), With("foo")).Returns(42);
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyGenericMethod(With(0), With("foo")).Returns(42);
 
-		int result1 = mock.Subject.MyGenericMethod(0, "foo");
-		int result2 = mock.Subject.MyGenericMethod(0L, "foo");
+		int result1 = mock.MyGenericMethod(0, "foo");
+		int result2 = mock.MyGenericMethod(0L, "foo");
 
-		await That(mock.Verify.Invoked.MyGenericMethod(WithAny<long>(), WithAny<string>())).Once();
+		await That(mock.VerifyMock.Invoked.MyGenericMethod(WithAny<long>(), WithAny<string>())).Once();
 		await That(result1).IsEqualTo(42);
 		await That(result2).IsEqualTo(0);
 	}
@@ -23,26 +36,38 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task GenericMethods_ShouldConsiderGenericParameter()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyGenericMethod<int>().Returns(42);
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyGenericMethod<int>().Returns(42);
 
-		int matchingResult = mock.Subject.MyGenericMethod<int>();
-		int notMatchingResult = mock.Subject.MyGenericMethod<long>();
+		int matchingResult = mock.MyGenericMethod<int>();
+		int notMatchingResult = mock.MyGenericMethod<long>();
 
 		await That(matchingResult).IsEqualTo(42);
 		await That(notMatchingResult).IsEqualTo(0);
 	}
 
 	[Fact]
+	public async Task GetHashCode_ShouldWork()
+	{
+		int expectedResult = Guid.NewGuid().GetHashCode();
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.GetHashCode().Returns(expectedResult);
+
+		int result = mock.GetHashCode();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(1);
-		mock.Setup.Method.MyIntMethodWithParameters(With(0), With("foo")).Returns(2);
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(1);
+		mock.SetupMock.Method.MyIntMethodWithParameters(With(0), With("foo")).Returns(2);
 
-		int result1 = mock.Subject.MyIntMethodWithParameters(1, "foo");
-		int result2 = mock.Subject.MyIntMethodWithParameters(0, "foo");
-		int result3 = mock.Subject.MyIntMethodWithParameters(0, "bar");
+		int result1 = mock.MyIntMethodWithParameters(1, "foo");
+		int result2 = mock.MyIntMethodWithParameters(0, "foo");
+		int result3 = mock.MyIntMethodWithParameters(0, "bar");
 
 		await That(result1).IsEqualTo(1);
 		await That(result2).IsEqualTo(2);
@@ -52,13 +77,13 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task OverlappingSetups_WhenGeneralSetupIsLater_ShouldOnlyUseGeneralSetup()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyIntMethodWithParameters(With(0), With("foo")).Returns(2);
-		mock.Setup.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(1);
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyIntMethodWithParameters(With(0), With("foo")).Returns(2);
+		mock.SetupMock.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(1);
 
-		int result1 = mock.Subject.MyIntMethodWithParameters(1, "foo");
-		int result2 = mock.Subject.MyIntMethodWithParameters(0, "foo");
-		int result3 = mock.Subject.MyIntMethodWithParameters(0, "bar");
+		int result1 = mock.MyIntMethodWithParameters(1, "foo");
+		int result2 = mock.MyIntMethodWithParameters(0, "foo");
+		int result3 = mock.MyIntMethodWithParameters(0, "bar");
 
 		await That(result1).IsEqualTo(1);
 		await That(result2).IsEqualTo(1);
@@ -68,13 +93,12 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		IMockSetup setup = (IMockSetup)mock.Setup;
-		IMock sut = mock;
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		MethodSetupResult<int> result0 = sut.Execute<int>("my.method");
-		setup.RegisterMethod(new ReturnMethodSetup<int>("my.method").Returns(42));
-		MethodSetupResult<int> result1 = sut.Execute<int>("my.method");
+		MethodSetupResult<int> result0 = registration.Execute<int>("my.method");
+		registration.SetupMethod(new ReturnMethodSetup<int>("my.method").Returns(42));
+		MethodSetupResult<int> result1 = registration.Execute<int>("my.method");
 
 		await That(result0.Result).IsEqualTo(0);
 		await That(result1.Result).IsEqualTo(42);
@@ -84,13 +108,13 @@ public sealed partial class SetupMethodTests
 	public async Task ReturnMethod_Callback_ShouldExecuteWhenInvoked()
 	{
 		int callCount = 0;
-		Mock<IReturnMethodSetupWithParametersTest> sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
+		IReturnMethodSetupWithParametersTest sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(WithAnyParameters())
+		sut.SetupMock.Method.MethodWithoutOtherOverloads(WithAnyParameters())
 			.Callback(() => { callCount++; })
 			.Returns("foo");
 
-		string result = sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
+		string result = sut.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
 		await That(result).IsEqualTo("foo");
@@ -100,30 +124,30 @@ public sealed partial class SetupMethodTests
 	public async Task ReturnMethod_Verify_ShouldMatchAnyParameters()
 	{
 		int callCount = 0;
-		Mock<IReturnMethodSetupWithParametersTest> sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
+		IReturnMethodSetupWithParametersTest sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(WithAny<int>(), WithAny<int>(), WithAny<int>())
+		sut.SetupMock.Method.MethodWithoutOtherOverloads(WithAny<int>(), WithAny<int>(), WithAny<int>())
 			.Callback(() => { callCount++; })
 			.Returns("foo");
 
-		string result = sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
+		string result = sut.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
 		await That(result).IsEqualTo("foo");
-		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(WithAnyParameters())).Once();
+		await That(sut.VerifyMock.Invoked.MethodWithoutOtherOverloads(WithAnyParameters())).Once();
 	}
 
 	[Fact]
 	public async Task ReturnMethod_WhenSetupWithNull_ShouldReturnDefaultValue()
 	{
 		int callCount = 0;
-		Mock<IReturnMethodSetupWithParametersTest> sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
+		IReturnMethodSetupWithParametersTest sut = Mock.Create<IReturnMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(WithAnyParameters())
+		sut.SetupMock.Method.MethodWithoutOtherOverloads(WithAnyParameters())
 			.Callback(() => { callCount++; })
 			.Returns((string?)null!);
 
-		string result = sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
+		string result = sut.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
 		await That(result).IsNull();
@@ -133,27 +157,19 @@ public sealed partial class SetupMethodTests
 	public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
 		int isCalled = 0;
-		Mock<IMyServiceWithMethodsWithMoreThan16Parameters> mock =
+		IMyServiceWithMethodsWithMoreThan16Parameters mock =
 			Mock.Create<IMyServiceWithMethodsWithMoreThan16Parameters>();
 
-		mock.Setup.Method.ReturnMethod17(
+		mock.SetupMock.Method.ReturnMethod17(
 				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
 				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
 				With(17))
-			.Callback((
-					int p1, int p2, int p3, int p4, int p5,
-					int p6, int p7, int p8, int p9, int p10,
-					int p11, int p12, int p13, int p14, int p15,
-					int p16, int p17)
+			.Callback((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17)
 				=> isCalled++)
-			.Returns((
-					int p1, int p2, int p3, int p4, int p5,
-					int p6, int p7, int p8, int p9, int p10,
-					int p11, int p12, int p13, int p14, int p15,
-					int p16, int p17)
+			.Returns((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17)
 				=> p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17);
 
-		int result = mock.Subject.ReturnMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+		int result = mock.ReturnMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
 
 		await That(isCalled).IsEqualTo(1);
 		await That(result).IsEqualTo(153);
@@ -163,27 +179,19 @@ public sealed partial class SetupMethodTests
 	public async Task ReturnMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
 	{
 		int isCalled = 0;
-		Mock<IMyServiceWithMethodsWithMoreThan16Parameters> mock =
+		IMyServiceWithMethodsWithMoreThan16Parameters mock =
 			Mock.Create<IMyServiceWithMethodsWithMoreThan16Parameters>();
 
-		mock.Setup.Method.ReturnMethod18(
+		mock.SetupMock.Method.ReturnMethod18(
 				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
 				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
 				With(17), With(18))
-			.Callback((
-					int p1, int p2, int p3, int p4, int p5,
-					int p6, int p7, int p8, int p9, int p10,
-					int p11, int p12, int p13, int p14, int p15,
-					int p16, int p17, int p18)
+			.Callback((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18)
 				=> isCalled++)
-			.Returns((
-					int p1, int p2, int p3, int p4, int p5,
-					int p6, int p7, int p8, int p9, int p10,
-					int p11, int p12, int p13, int p14, int p15,
-					int p16, int p17, int p18)
+			.Returns((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18)
 				=> p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17 + p18);
 
-		int result = mock.Subject.ReturnMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+		int result = mock.ReturnMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
 
 		await That(isCalled).IsEqualTo(1);
 		await That(result).IsEqualTo(171);
@@ -192,23 +200,23 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task Setup_ShouldUseNewestMatchingSetup()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(10);
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(10);
 
-		await That(mock.Subject.MyIntMethodWithParameters(1, "")).IsEqualTo(10);
+		await That(mock.MyIntMethodWithParameters(1, "")).IsEqualTo(10);
 
-		mock.Setup.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(20);
+		mock.SetupMock.Method.MyIntMethodWithParameters(WithAny<int>(), WithAny<string>()).Returns(20);
 
-		await That(mock.Subject.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
+		await That(mock.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
 	}
 
 	[Fact]
 	public async Task Setup_WithOutParameter_ShouldUseCallbackToSetValue()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyMethodWithOutParameter(Out(() => 4));
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyMethodWithOutParameter(Out(() => 4));
 
-		mock.Subject.MyMethodWithOutParameter(out var value);
+		mock.MyMethodWithOutParameter(out int value);
 
 		await That(value).IsEqualTo(4);
 	}
@@ -216,10 +224,10 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task Setup_WithOutParameterWithoutCallback_ShouldUseDefaultValueSetValue()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyMethodWithOutParameter(Out<int>());
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyMethodWithOutParameter(Out<int>());
 
-		mock.Subject.MyMethodWithOutParameter(out var value);
+		mock.MyMethodWithOutParameter(out int value);
 
 		await That(value).IsEqualTo(0);
 	}
@@ -227,23 +235,35 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task Setup_WithRefParameter_WithCallback_ShouldUseCallbackToSetValue()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyMethodWithRefParameter(Ref<int>(_ => 4));
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyMethodWithRefParameter(Ref<int>(_ => 4));
 		int value = 2;
 
-		mock.Subject.MyMethodWithRefParameter(ref value);
+		mock.MyMethodWithRefParameter(ref value);
 
 		await That(value).IsEqualTo(4);
 	}
 
 	[Fact]
-	public async Task Setup_WithRefParameter_WithPredicate_ShouldUseCallbackToSetValue()
+	public async Task Setup_WithRefParameter_WithoutPredicateOrCallback_ShouldNotChangeValue()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyMethodWithRefParameter(Ref<int>(v => v > 2));
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyMethodWithRefParameter(Ref<int>());
 		int value = 2;
 
-		mock.Subject.MyMethodWithRefParameter(ref value);
+		mock.MyMethodWithRefParameter(ref value);
+
+		await That(value).IsEqualTo(2);
+	}
+
+	[Fact]
+	public async Task Setup_WithRefParameter_WithPredicate_ShouldUseCallbackToSetValue()
+	{
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyMethodWithRefParameter(Ref<int>(v => v > 2));
+		int value = 2;
+
+		mock.MyMethodWithRefParameter(ref value);
 
 		await That(value).IsEqualTo(2);
 	}
@@ -251,34 +271,22 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task Setup_WithRefParameter_WithPredicateAndCallback_ShouldUseCallbackToSetValueWhenPredicateMatches()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyMethodWithRefParameter(Ref<int>(v => v > 2, _ => 4));
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyMethodWithRefParameter(Ref<int>(v => v > 2, _ => 4));
 		int value1 = 2;
 		int value2 = 3;
 
-		mock.Subject.MyMethodWithRefParameter(ref value1);
-		mock.Subject.MyMethodWithRefParameter(ref value2);
+		mock.MyMethodWithRefParameter(ref value1);
+		mock.MyMethodWithRefParameter(ref value2);
 
 		await That(value1).IsEqualTo(2);
 		await That(value2).IsEqualTo(4);
 	}
 
 	[Fact]
-	public async Task Setup_WithRefParameter_WithoutPredicateOrCallback_ShouldNotChangeValue()
-	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.MyMethodWithRefParameter(Ref<int>());
-		int value = 2;
-
-		mock.Subject.MyMethodWithRefParameter(ref value);
-
-		await That(value).IsEqualTo(2);
-	}
-
-	[Fact]
 	public async Task ToString_OutParameter_ShouldReturnExpectedValue()
 	{
-		var sut = Out<int>();
+		IVerifyOutParameter<int> sut = Out<int>();
 		string expectedResult = "Out<int>()";
 
 		string? result = sut.ToString();
@@ -289,7 +297,7 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task ToString_OutParameter_WithCallback_ShouldReturnExpectedValue()
 	{
-		var sut = Out<int>(() => 4);
+		IOutParameter<int> sut = Out(() => 4);
 		string expectedResult = "Out<int>(() => 4)";
 
 		string? result = sut.ToString();
@@ -300,7 +308,7 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task ToString_RefParameter_ShouldReturnExpectedValue()
 	{
-		var sut = Ref<int>();
+		IVerifyRefParameter<int> sut = Ref<int>();
 		string expectedResult = "Ref<int>()";
 
 		string? result = sut.ToString();
@@ -311,7 +319,7 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task ToString_RefParameter_WithCallback_ShouldReturnExpectedValue()
 	{
-		var sut = Ref<int>(v => 4);
+		IRefParameter<int> sut = Ref<int>(v => 4);
 		string expectedResult = "Ref<int>(v => 4)";
 
 		string? result = sut.ToString();
@@ -322,7 +330,7 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task ToString_RefParameter_WithPredicate_ShouldReturnExpectedValue()
 	{
-		var sut = Ref<int>(v => v > 4);
+		IRefParameter<int> sut = Ref<int>(v => v > 4);
 		string expectedResult = "Ref<int>(v => v > 4)";
 
 		string? result = sut.ToString();
@@ -333,7 +341,7 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task ToString_RefParameter_WithPredicateAndCallback_ShouldReturnExpectedValue()
 	{
-		var sut = Ref<int>(v => v > 4, v => v * 5);
+		IRefParameter<int> sut = Ref<int>(v => v > 4, v => v * 5);
 		string expectedResult = "Ref<int>(v => v > 4, v => v * 5)";
 
 		string? result = sut.ToString();
@@ -342,15 +350,27 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task ToString_ShouldWork()
+	{
+		string expectedResult = Guid.NewGuid().ToString();
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.ToString().Returns(expectedResult);
+
+		string result = mock.ToString();
+
+		await That(result).IsEqualTo(expectedResult);
+	}
+
+	[Fact]
 	public async Task VoidMethod_Callback_ShouldExecuteWhenInvoked()
 	{
 		int callCount = 0;
-		Mock<IVoidMethodSetupWithParametersTest> sut = Mock.Create<IVoidMethodSetupWithParametersTest>();
+		IVoidMethodSetupWithParametersTest sut = Mock.Create<IVoidMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(WithAnyParameters())
+		sut.SetupMock.Method.MethodWithoutOtherOverloads(WithAnyParameters())
 			.Callback(() => { callCount++; });
 
-		sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
+		sut.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
 	}
@@ -364,19 +384,22 @@ public sealed partial class SetupMethodTests
 	[InlineData("Method5", 1, 2, 3, 4, 5)]
 	public async Task VoidMethod_GetReturnValue_ShouldThrowMockException(string methodName, params int[] parameters)
 	{
-		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+		IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+		MockRegistration registration = ((IHasMockRegistration)sut).Registrations;
 
-		sut.Setup.Method.Method0();
-		sut.Setup.Method.Method1(WithAny<int>());
-		sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>());
-		sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>());
-		sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>());
-		sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>());
+		sut.SetupMock.Method.Method0();
+		sut.SetupMock.Method.Method1(WithAny<int>());
+		sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>());
+		sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>());
+		sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>());
+		sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>());
 
 		void Act()
-			=> ((IMock)sut).Execute<int>(
+		{
+			registration.Execute<int>(
 				$"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.{methodName}",
 				parameters.Select(x => (object?)x).ToArray());
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The method setup does not support return values.");
@@ -386,27 +409,30 @@ public sealed partial class SetupMethodTests
 	public async Task VoidMethod_Verify_ShouldMatchAnyParameters()
 	{
 		int callCount = 0;
-		Mock<IVoidMethodSetupWithParametersTest> sut = Mock.Create<IVoidMethodSetupWithParametersTest>();
+		IVoidMethodSetupWithParametersTest sut = Mock.Create<IVoidMethodSetupWithParametersTest>();
 
-		sut.Setup.Method.MethodWithoutOtherOverloads(WithAny<int>(), WithAny<int>(), WithAny<int>())
+		sut.SetupMock.Method.MethodWithoutOtherOverloads(WithAny<int>(), WithAny<int>(), WithAny<int>())
 			.Callback(() => { callCount++; });
 
-		sut.Subject.MethodWithoutOtherOverloads(1, 2, 3);
+		sut.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
-		await That(sut.Verify.Invoked.MethodWithoutOtherOverloads(WithAnyParameters())).Once();
+		await That(sut.VerifyMock.Invoked.MethodWithoutOtherOverloads(WithAnyParameters())).Once();
 	}
 
 	[Fact]
 	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
 	{
-		Mock<IVoidMethodSetupTest> sut = Mock.Create<IVoidMethodSetupTest>();
+		IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+		MockRegistration registration = ((IHasMockRegistration)sut).Registrations;
 
-		sut.Setup.Method.UniqueMethodWithParameters(WithAnyParameters());
+		sut.SetupMock.Method.UniqueMethodWithParameters(WithAnyParameters());
 
 		void Act()
-			=> ((IMock)sut).Execute<int>(
+		{
+			registration.Execute<int>(
 				"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters", 1, 2);
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The method setup does not support return values.");
@@ -416,21 +442,17 @@ public sealed partial class SetupMethodTests
 	public async Task VoidMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
 		int isCalled = 0;
-		Mock<IMyServiceWithMethodsWithMoreThan16Parameters> mock =
+		IMyServiceWithMethodsWithMoreThan16Parameters mock =
 			Mock.Create<IMyServiceWithMethodsWithMoreThan16Parameters>();
 
-		mock.Setup.Method.VoidMethod17(
+		mock.SetupMock.Method.VoidMethod17(
 				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
 				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
 				With(17))
-			.Callback((
-					int p1, int p2, int p3, int p4, int p5,
-					int p6, int p7, int p8, int p9, int p10,
-					int p11, int p12, int p13, int p14, int p15,
-					int p16, int p17)
+			.Callback((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17)
 				=> isCalled++);
 
-		mock.Subject.VoidMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+		mock.VoidMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
 
 		await That(isCalled).IsEqualTo(1);
 	}
@@ -439,21 +461,17 @@ public sealed partial class SetupMethodTests
 	public async Task VoidMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
 	{
 		int isCalled = 0;
-		Mock<IMyServiceWithMethodsWithMoreThan16Parameters> mock =
+		IMyServiceWithMethodsWithMoreThan16Parameters mock =
 			Mock.Create<IMyServiceWithMethodsWithMoreThan16Parameters>();
 
-		mock.Setup.Method.VoidMethod18(
+		mock.SetupMock.Method.VoidMethod18(
 				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
 				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
 				With(17), With(18))
-			.Callback((
-					int p1, int p2, int p3, int p4, int p5,
-					int p6, int p7, int p8, int p9, int p10,
-					int p11, int p12, int p13, int p14, int p15,
-					int p16, int p17, int p18)
+			.Callback((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18)
 				=> isCalled++);
 
-		mock.Subject.VoidMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+		mock.VoidMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
 
 		await That(isCalled).IsEqualTo(1);
 	}
@@ -461,61 +479,27 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task WhenNotSetup_ShouldReturnDefaultValue()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
+		IMethodService mock = Mock.Create<IMethodService>();
 
-		int result1 = mock.Subject.MyIntMethodWithoutParameters();
-		int result2 = mock.Subject.MyIntMethodWithParameters(0, "foo");
+		int result1 = mock.MyIntMethodWithoutParameters();
+		int result2 = mock.MyIntMethodWithParameters(0, "foo");
 
 		await That(result1).IsEqualTo(0);
 		await That(result2).IsEqualTo(0);
 	}
 
 	[Fact]
-	public async Task ToString_ShouldWork()
-	{
-		var expectedResult = Guid.NewGuid().ToString();
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.ToString().Returns(expectedResult);
-
-		var result = mock.Subject.ToString();
-
-		await That(result).IsEqualTo(expectedResult);
-	}
-
-	[Fact]
-	public async Task GetHashCode_ShouldWork()
-	{
-		int expectedResult = Guid.NewGuid().GetHashCode();
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.GetHashCode().Returns(expectedResult);
-
-		var result = mock.Subject.GetHashCode();
-
-		await That(result).IsEqualTo(expectedResult);
-	}
-
-	[Fact]
-	public async Task Equals_ShouldWork()
-	{
-		var obj = new object();
-		Mock<IMethodService> mock = Mock.Create<IMethodService>();
-		mock.Setup.Method.Equals(WithAny<object?>()).Returns(true);
-
-		var result = mock.Subject.Equals(obj);
-
-		await That(result).IsEqualTo(true);
-	}
-
-	[Fact]
 	public async Task WhenNotSetup_ThrowWhenNotSetup_ShouldThrowMockNotSetupException()
 	{
-		Mock<IMethodService> mock = Mock.Create<IMethodService>(MockBehavior.Default with
+		IMethodService mock = Mock.Create<IMethodService>(MockBehavior.Default with
 		{
 			ThrowWhenNotSetup = true,
 		});
 
 		void Act()
-			=> mock.Subject.MyIntMethodWithoutParameters();
+		{
+			mock.MyIntMethodWithoutParameters();
+		}
 
 		await That(Act).Throws<MockNotSetupException>()
 			.WithMessage(
@@ -538,13 +522,13 @@ public sealed partial class SetupMethodTests
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+			IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method0()
+			sut.SetupMock.Method.Method0()
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
-			string result = sut.Subject.Method0();
+			string result = sut.Method0();
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
@@ -567,13 +551,13 @@ public sealed partial class SetupMethodTests
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+			IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method1(WithAny<int>())
+			sut.SetupMock.Method.Method1(WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
-			string result = sut.Subject.Method1(1);
+			string result = sut.Method1(1);
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
@@ -607,13 +591,13 @@ public sealed partial class SetupMethodTests
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+			IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method2(WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
-			string result = sut.Subject.Method2(1, 2);
+			string result = sut.Method2(1, 2);
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
@@ -648,13 +632,13 @@ public sealed partial class SetupMethodTests
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+			IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
-			string result = sut.Subject.Method3(1, 2, 3);
+			string result = sut.Method3(1, 2, 3);
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
@@ -691,13 +675,13 @@ public sealed partial class SetupMethodTests
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+			IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
-			string result = sut.Subject.Method4(1, 2, 3, 4);
+			string result = sut.Method4(1, 2, 3, 4);
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
@@ -735,14 +719,14 @@ public sealed partial class SetupMethodTests
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
-			Mock<IReturnMethodSetupTest> sut = Mock.Create<IReturnMethodSetupTest>();
+			IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-			sut.Setup.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
+			sut.SetupMock.Method.Method5(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>(),
 					WithAny<int>())
 				.Callback(() => { callCount++; })
 				.Returns((string?)null!);
 
-			string result = sut.Subject.Method5(1, 2, 3, 4, 5);
+			string result = sut.Method5(1, 2, 3, 4, 5);
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();

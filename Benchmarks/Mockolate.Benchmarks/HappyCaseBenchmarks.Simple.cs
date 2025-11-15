@@ -1,51 +1,54 @@
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
-using NSubstitute;
 using Mockolate.Verify;
+using Moq;
+using NSubstitute;
 using static Mockolate.Match;
+using Times = Moq.Times;
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
-///     In this benchmark we check the simple case of an interface mock, setup a single method that gets called and verified to be called once.<br />
+///     In this benchmark we check the simple case of an interface mock, setup a single method that gets called and
+///     verified to be called once.<br />
 /// </summary>
 public partial class HappyCaseBenchmarks
 {
 	/// <summary>
-	///     <see href="https://awexpect.com/Mockolate"/>
+	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
 	[Benchmark]
 	public void Simple_Mockolate()
 	{
-		var mock = Mock.Create<IMyInterface>();
-		mock.Setup.Method.MyFunc(WithAny<int>()).Returns(true);
+		IMyInterface mock = Mock.Create<IMyInterface>();
+		mock.SetupMock.Method.MyFunc(WithAny<int>()).Returns(true);
 
-		mock.Subject.MyFunc(42);
+		mock.MyFunc(42);
 
-		mock.Verify.Invoked.MyFunc(WithAny<int>()).Once();
+		mock.VerifyMock.Invoked.MyFunc(WithAny<int>()).Once();
 	}
 
 	/// <summary>
-	///     <see href="https://github.com/devlooped/moq"/>
+	///     <see href="https://github.com/devlooped/moq" />
 	/// </summary>
 	[Benchmark]
 	public void Simple_Moq()
 	{
-		var mock = new Moq.Mock<IMyInterface>();
-		mock.Setup(x => x.MyFunc(Moq.It.IsAny<int>())).Returns(true);
+		Moq.Mock<IMyInterface> mock = new();
+		mock.Setup(x => x.MyFunc(It.IsAny<int>())).Returns(true);
 
 		mock.Object.MyFunc(42);
 
-		mock.Verify(x => x.MyFunc(Moq.It.IsAny<int>()), Moq.Times.Once());
+		mock.Verify(x => x.MyFunc(It.IsAny<int>()), Times.Once());
 	}
 
 	/// <summary>
-	///     <see href="https://nsubstitute.github.io/"/>
+	///     <see href="https://nsubstitute.github.io/" />
 	/// </summary>
 	[Benchmark]
 	public void Simple_NSubstitute()
 	{
-		var mock = Substitute.For<IMyInterface>();
+		IMyInterface mock = Substitute.For<IMyInterface>();
 		mock.MyFunc(Arg.Any<int>()).Returns(true);
 
 		mock.MyFunc(42);
@@ -54,17 +57,17 @@ public partial class HappyCaseBenchmarks
 	}
 
 	/// <summary>
-	///     <see href="https://fakeiteasy.github.io/"/>
+	///     <see href="https://fakeiteasy.github.io/" />
 	/// </summary>
 	[Benchmark]
 	public void Simple_FakeItEasy()
 	{
-		var mock = A.Fake<IMyInterface>();
+		IMyInterface mock = A.Fake<IMyInterface>();
 		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).Returns(true);
 
 		mock.MyFunc(42);
 
-		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).MustHaveHappened(1, Times.Exactly);
+		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).MustHaveHappened(1, FakeItEasy.Times.Exactly);
 	}
 
 	public interface IMyInterface

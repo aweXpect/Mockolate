@@ -3,7 +3,7 @@
 public static class MyGenerator
 {
 	[MockGenerator]
-	public static Mock<T> MyCreator<T>()
+	public static T MyCreator<T>()
 		where T : class
 		=> Mock.Create<T>();
 }
