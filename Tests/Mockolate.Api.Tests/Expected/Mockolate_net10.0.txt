@@ -717,7 +717,7 @@ namespace Mockolate.Verify
     {
         Mockolate.Verify.VerificationResult<T> ToString();
     }
-    public interface IMockVerifyInvoked<T> : Mockolate.IInteractiveMock<T> { }
+    public interface IMockVerifyInvoked<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockVerifySetIndexerProtected<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockVerifySetIndexer<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockVerifySetProtected<out T> : Mockolate.IInteractiveMock<T> { }

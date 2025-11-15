@@ -49,7 +49,8 @@ public class MockGenerator : IIncrementalGenerator
 			if (mockToGenerate.MockClass.AdditionalImplementations.Any())
 			{
 				context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
-					SourceText.From(Sources.Sources.ForMockExtensions(mockToGenerate.Name, mockToGenerate.MockClass),
+					SourceText.From(
+						Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass),
 						Encoding.UTF8));
 			}
 		}
@@ -57,7 +58,7 @@ public class MockGenerator : IIncrementalGenerator
 		foreach ((string name, Class extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
 		{
 			context.AddSource($"MockFor{name}Extensions.g.cs",
-				SourceText.From(Sources.Sources.ForMockSetupExtensions(name, extensionToGenerate), Encoding.UTF8));
+				SourceText.From(Sources.Sources.ForMockExtensions(name, extensionToGenerate), Encoding.UTF8));
 		}
 
 		HashSet<int> indexerSetups = new();

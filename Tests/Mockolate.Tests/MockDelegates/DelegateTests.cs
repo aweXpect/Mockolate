@@ -1,35 +1,7 @@
 ﻿namespace Mockolate.Tests.MockDelegates;
 
-public static class CreateActionExtension
-{
-	public static Action TestMock(this Action action)
-	{
-		var target = action.Target;
-		return action;
-	}
-}
-
 public class DelegateTests
 {
-	private Action CreateAction()
-	{
-		var sut = new MyAction(MockBehavior.Default);
-		return sut.Invoke;
-	}
-
-	private class MyAction
-	{
-		private Mock<Action> _mock;
-
-		public MyAction(MockBehavior mockBehavior)
-		{
-			_mock = new Mock<Action>(Invoke, new MockRegistration(mockBehavior, "System.Action"));
-		}
-		public void Invoke()
-		{
-			
-		}
-	}
 	[Fact]
 	public async Task Action_ShouldBeTreatedAsVoidDelegate()
 	{
@@ -105,7 +77,7 @@ public class DelegateTests
 		DoSomethingWithRefAndOut mock = Mock.Create<DoSomethingWithRefAndOut>();
 		int value = 5;
 
-		mock(1, ref value, out int value2);
+		mock(1, ref value, out int _);
 
 		await That(mock.VerifyMock.Invoke(WithAny<int>(), Ref<int>(), Out<int>())).Once();
 		await That(value).IsEqualTo(5);

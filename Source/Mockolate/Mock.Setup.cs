@@ -1,8 +1,9 @@
 using Mockolate.Setup;
-// ReSharper disable RedundantExtendsListEntry
 
 namespace Mockolate;
 
+#pragma warning disable S1939 // Inheritance list should not be redundant
+// ReSharper disable RedundantExtendsListEntry
 public partial class Mock<T> : IMockSetup<T>, IProtectedMockSetup<T>,
 	IMockMethodSetup<T>, IProtectedMockMethodSetup<T>,
 	IMockMethodSetupWithToString<T>, IMockMethodSetupWithEquals<T>, IMockMethodSetupWithGetHashCode<T>,
@@ -36,3 +37,4 @@ public partial class Mock<T> : IMockSetup<T>, IProtectedMockSetup<T>,
 		return methodSetup;
 	}
 }
+#pragma warning restore S1939 // Inheritance list should not be redundant

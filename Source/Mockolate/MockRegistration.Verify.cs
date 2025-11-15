@@ -13,7 +13,8 @@ public partial class MockRegistration
 	public bool ThatAllInteractionsAreVerified() => !Interactions.HasMissingVerifications;
 
 	/// <summary>
-	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the <paramref name="subject"/>.
+	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
+	///     <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Method<T>(T subject, string methodName, params Match.IParameter[] parameters) => new(
 		subject,
@@ -29,7 +30,8 @@ public partial class MockRegistration
 		$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
 
 	/// <summary>
-	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the <paramref name="subject"/>.
+	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
+	///     <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Method<T>(T subject, string methodName, Match.IParameters parameters) => new(subject,
 		Interactions,
@@ -43,7 +45,7 @@ public partial class MockRegistration
 		$"invoked method {methodName.SubstringAfterLast('.')}({parameters})");
 
 	/// <summary>
-	///     Counts the getter accesses of property <paramref name="propertyName" /> on the <paramref name="subject"/>.
+	///     Counts the getter accesses of property <paramref name="propertyName" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Property<T>(T subject, string propertyName) => new(subject,
 		Interactions,
@@ -56,7 +58,7 @@ public partial class MockRegistration
 
 	/// <summary>
 	///     Counts the setter accesses of property <paramref name="propertyName" />
-	///     with the matching <paramref name="value" /> on the <paramref name="subject"/>.
+	///     with the matching <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Property<T>(T subject, string propertyName,
 		Match.IParameter value)
@@ -70,7 +72,8 @@ public partial class MockRegistration
 			$"set property {propertyName.SubstringAfterLast('.')} to value {value}");
 
 	/// <summary>
-	///     Counts the getter accesses of the indexer with matching <paramref name="parameters" /> on the <paramref name="subject"/>.
+	///     Counts the getter accesses of the indexer with matching <paramref name="parameters" /> on the
+	///     <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Got<T>(T subject,
 		params Match.IParameter?[] parameters)
@@ -88,7 +91,7 @@ public partial class MockRegistration
 
 	/// <summary>
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
-	///     <paramref name="value" /> on the <paramref name="subject"/>.
+	///     <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Set<T>(T subject, Match.IParameter? value,
 		params Match.IParameter?[] parameters)
@@ -104,32 +107,28 @@ public partial class MockRegistration
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"set indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))} to value {value?.ToString() ?? "null"}");
-	
+
 	/// <summary>
-	///     Counts the subscriptions to the event <paramref name="eventName" /> on the <paramref name="subject"/>.
+	///     Counts the subscriptions to the event <paramref name="eventName" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> SubscribedTo<T>(T subject, string eventName)
-	{
-		return new VerificationResult<T>(subject, Interactions,
+		=> new(subject, Interactions,
 			Interactions.Interactions
 				.OfType<EventSubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"subscribed to event {eventName.SubstringAfterLast('.')}");
-	}
-	
+
 	/// <summary>
-	///     Counts the unsubscriptions from the event <paramref name="eventName" /> on the <paramref name="subject"/>.
+	///     Counts the unsubscriptions from the event <paramref name="eventName" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName)
-	{
-		return new VerificationResult<T>(subject, Interactions,
+		=> new(subject, Interactions,
 			Interactions.Interactions
 				.OfType<EventUnsubscription>()
 				.Where(@event => @event.Name.Equals(eventName))
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"unsubscribed from event {eventName.SubstringAfterLast('.')}");
-	}
 }

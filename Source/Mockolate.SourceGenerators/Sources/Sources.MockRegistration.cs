@@ -1,5 +1,4 @@
 using System.Text;
-using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
 using Mockolate.SourceGenerators.Internals;
 using Type = Mockolate.SourceGenerators.Entities.Type;
@@ -33,11 +32,11 @@ internal static partial class Sources
 				"System",
 				"Mockolate.Exceptions",
 				"Mockolate.Generated",
-				"Mockolate.DefaultValues"
+				"Mockolate.DefaultValues",
 			]
 			:
 			[
-				"System"
+				"System",
 			]);
 
 		sb.Append("""
@@ -52,7 +51,7 @@ internal static partial class Sources
 		sb.AppendLine("\t{");
 		foreach (Type type in mocks.SelectMany(x => GetTypes(x.MockClass)).Distinct())
 		{
-			if (type.IsArray && type.ElementType != null && !type.ElementType.IsTypeParameter)
+			if (type.IsArray && type.ElementType is { IsTypeParameter: false, })
 			{
 				sb.Append("\t\tDefaultValueGenerator.Register(new TypedDefaultValueFactory<").Append(type.Fullname)
 					.Append(">(");
@@ -187,7 +186,8 @@ internal static partial class Sources
 			}
 			else if (mock.MockClass.Delegate != null)
 			{
-				sb.Append("\t\t\t\tvar mockTarget = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
+				sb.Append("\t\t\t\tvar mockTarget = new MockFor").Append(mock.Name).Append("(mockBehavior);")
+					.AppendLine();
 				sb.Append("\t\t\t\t_value = mockTarget.Object;").AppendLine();
 			}
 			else if (mock.MockClass.IsInterface)

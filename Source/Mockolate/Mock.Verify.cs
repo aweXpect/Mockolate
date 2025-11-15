@@ -4,7 +4,8 @@ namespace Mockolate;
 
 public partial class Mock<T> : IMockVerify<T>,
 	IMockVerifyInvoked<T>, IMockVerifyInvokedProtected<T>,
-	IMockVerifyInvokedWithToStringWithEqualsWithGetHashCode<T>, IMockVerifyInvokedWithEqualsWithGetHashCode<T>, IMockVerifyInvokedWithToStringWithGetHashCode<T>, IMockVerifyInvokedWithToStringWithEquals<T>,
+	IMockVerifyInvokedWithToStringWithEqualsWithGetHashCode<T>, IMockVerifyInvokedWithEqualsWithGetHashCode<T>,
+	IMockVerifyInvokedWithToStringWithGetHashCode<T>, IMockVerifyInvokedWithToStringWithEquals<T>,
 	IMockVerifyGot<T>, IMockVerifyGotProtected<T>,
 	IMockVerifySet<T>, IMockVerifySetProtected<T>,
 	IMockVerifyGotIndexer<T>, IMockVerifyGotIndexerProtected<T>,
@@ -12,6 +13,10 @@ public partial class Mock<T> : IMockVerify<T>,
 	IMockVerifySubscribedTo<T>, IMockVerifySubscribedToProtected<T>,
 	IMockVerifyUnsubscribedFrom<T>, IMockVerifyUnsubscribedFromProtected<T>
 {
+	/// <inheritdoc cref="IMockVerify{T}.ThatAllInteractionsAreVerified()" />
+	bool IMockVerify<T>.ThatAllInteractionsAreVerified()
+		=> !Interactions.HasMissingVerifications;
+
 	/// <inheritdoc cref="IMockVerifyInvokedWithToString{T}.ToString()" />
 	VerificationResult<T> IMockVerifyInvokedWithToString<T>.ToString()
 		=> Registrations.Method(Subject, Registrations.Prefix + ".ToString");
@@ -46,7 +51,7 @@ public partial class Mock<T> : IMockVerify<T>,
 	///     Counts the setter accesses of property <paramref name="propertyName" />
 	///     with the matching <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<T> Property(string propertyName,Match.IParameter value)
+	public VerificationResult<T> Property(string propertyName, Match.IParameter value)
 		=> Registrations.Property(Subject, propertyName, value);
 
 	/// <summary>
@@ -61,20 +66,16 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// </summary>
 	public VerificationResult<T> SetIndexer(Match.IParameter? value, params Match.IParameter?[] parameters)
 		=> Registrations.Set(Subject, value, parameters);
-	
+
 	/// <summary>
 	///     Counts the subscriptions to the event <paramref name="eventName" />.
 	/// </summary>
 	public VerificationResult<T> SubscribedTo(string eventName)
 		=> Registrations.SubscribedTo(Subject, eventName);
-	
+
 	/// <summary>
 	///     Counts the unsubscriptions from the event <paramref name="eventName" />.
 	/// </summary>
 	public VerificationResult<T> UnsubscribedFrom(string eventName)
 		=> Registrations.UnsubscribedFrom(Subject, eventName);
-
-	/// <inheritdoc cref="IMockVerify{T}.ThatAllInteractionsAreVerified()" />
-	bool IMockVerify<T>.ThatAllInteractionsAreVerified()
-		=> !Interactions.HasMissingVerifications;
 }

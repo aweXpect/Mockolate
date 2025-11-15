@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
@@ -17,7 +19,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeast(times);
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeast(times);
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -35,7 +39,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastOnce();
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastOnce();
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -53,7 +59,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastTwice();
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastTwice();
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -71,7 +79,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMost(times);
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMost(times);
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -89,7 +99,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostOnce();
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostOnce();
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -107,7 +119,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostTwice();
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostTwice();
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -125,7 +139,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Exactly(times);
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Exactly(times);
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -143,7 +159,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Never();
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Never();
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -161,7 +179,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Once();
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Once();
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -177,15 +197,20 @@ public class VerificationResultExtensionsTests
 		mock.Dispense("Dark", 3);
 		mock.Dispense("Dark", 4);
 
-		mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(3)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(4)));
+		mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(3))
+			.Then(m => m.Invoked.Dispense(WithAny<string>(), With(4)));
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(2)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(2))
+				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
+		}
 
 		await That(Act).Throws<MockVerificationException>()
 			.WithMessage(
 				"Expected that mock invoked method Dispense(WithAny<string>(), 2), then invoked method Dispense(WithAny<string>(), 1) in order, but it invoked method Dispense(WithAny<string>(), 1) too early.");
-		mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1)).Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)));
+		mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1))
+			.Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)));
 	}
 
 	[Fact]
@@ -204,13 +229,15 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(WithAny<string>(), 6), then invoked method Dispense(WithAny<string>(), 4) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
 
 		await That(void () => mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1))
-				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(6)), m => m.Invoked.Dispense(WithAny<string>(), With(3))))
+				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(6)),
+					m => m.Invoked.Dispense(WithAny<string>(), With(3))))
 			.Throws<MockVerificationException>()
 			.WithMessage(
 				"Expected that mock invoked method Dispense(WithAny<string>(), 1), then invoked method Dispense(WithAny<string>(), 6), then invoked method Dispense(WithAny<string>(), 3) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
 
 		await That(void () => mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1))
-				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)), m => m.Invoked.Dispense(WithAny<string>(), With(6))))
+				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)),
+					m => m.Invoked.Dispense(WithAny<string>(), With(6))))
 			.Throws<MockVerificationException>()
 			.WithMessage(
 				"Expected that mock invoked method Dispense(WithAny<string>(), 1), then invoked method Dispense(WithAny<string>(), 2), then invoked method Dispense(WithAny<string>(), 6) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
@@ -220,10 +247,12 @@ public class VerificationResultExtensionsTests
 	public async Task Then_WhenNoMock_ShouldThrowMockException()
 	{
 		IChocolateDispenser mock = new MyChocolateDispenser();
-		var result = new VerificationResult<IChocolateDispenser>(mock, new Interactions.MockInteractions(), [], "foo");
+		VerificationResult<IChocolateDispenser> result = new(mock, new MockInteractions(), [], "foo");
 
 		void Act()
-			=> result.Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
+		{
+			result.Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The subject is no mock subject.");
@@ -240,7 +269,9 @@ public class VerificationResultExtensionsTests
 		ExecuteDoSomethingOn(mock, count);
 
 		void Act()
-			=> mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Twice();
+		{
+			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Twice();
+		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
@@ -249,17 +280,37 @@ public class VerificationResultExtensionsTests
 
 	private class MyChocolateDispenser : IChocolateDispenser
 	{
-		public int this[string type] { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+		private readonly Dictionary<string, int> _inventory = new();
 
-		public int TotalDispensed { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
-
-		public event ChocolateDispensedDelegate ChocolateDispensed;
-
-		public void Dispense(string type, int amount)
+		public int this[string type]
 		{
+			get
+			{
+				if (_inventory.TryGetValue(type, out int index))
+				{
+					return index;
+				}
+
+				return 0;
+			}
+			set => _inventory[type] = this[type] + value;
 		}
 
-		bool IChocolateDispenser.Dispense(string type, int amount) => throw new NotSupportedException();
+		public int TotalDispensed { get; set; }
+
+		public event ChocolateDispensedDelegate? ChocolateDispensed;
+
+		public bool Dispense(string type, int amount)
+		{
+			if (this[type] > amount)
+			{
+				this[type] -= amount;
+				ChocolateDispensed?.Invoke(type, amount);
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	internal static void ExecuteDoSomethingOn(IChocolateDispenser mock, int amount)

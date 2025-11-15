@@ -34,7 +34,8 @@ internal static partial class Sources
 
 			sb.AppendLine(".");
 			sb.Append("/// </summary>").AppendLine();
-			sb.Append("internal class MockFor").Append(name).Append(" : IMockSubject<").Append(mockClass.ClassFullName).Append(">").AppendLine();
+			sb.Append("internal class MockFor").Append(name).Append(" : IMockSubject<").Append(mockClass.ClassFullName)
+				.Append(">").AppendLine();
 			sb.Append("{").AppendLine();
 			sb.Append("\t/// <inheritdoc cref=\"IMockSubject{T}.Mock\" />").AppendLine();
 			sb.Append("\tMock<").Append(mockClass.ClassFullName).Append("> IMockSubject<")
@@ -76,7 +77,8 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\tvar result = _mock.Registrations.Execute(").Append(mockClass.Delegate.GetUniqueNameString());
+				sb.Append("\t\tvar result = _mock.Registrations.Execute(")
+					.Append(mockClass.Delegate.GetUniqueNameString());
 				foreach (MethodParameter p in mockClass.Delegate.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -105,6 +107,7 @@ internal static partial class Sources
 			{
 				sb.Append("\t\treturn result.Result;").AppendLine();
 			}
+
 			sb.Append("\t}").AppendLine();
 			sb.Append("}").AppendLine();
 		}
@@ -196,11 +199,10 @@ internal static partial class Sources
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
 	}
-	
+
 	private static void AppendMockSubject_BaseClassConstructor(StringBuilder sb, MockClass mockClass, string name,
 		Method constructor)
 	{
-		
 		sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
 		sb.Append("\tpublic MockFor").Append(name).Append("(");
 		foreach (MethodParameter parameter in constructor.Parameters)
@@ -208,6 +210,7 @@ internal static partial class Sources
 			sb.Append(parameter.Type.Fullname).Append(' ').Append(parameter.Name);
 			sb.Append(", ");
 		}
+
 		sb.Append("MockRegistration mockRegistration)").AppendLine();
 		sb.Append("\t\t\t: base(");
 		int index = 0;
@@ -223,7 +226,8 @@ internal static partial class Sources
 
 		sb.Append(')').AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName).Append(">(this, mockRegistration);").AppendLine();
+		sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName).Append(">(this, mockRegistration);")
+			.AppendLine();
 		sb.Append("\t\t_mockRegistrations = mockRegistration;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -383,7 +387,7 @@ internal static partial class Sources
 						"\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
 					.AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
-				if (property.IsIndexer && property.IndexerParameters is not null)
+				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
 					sb.Append("\t\t\t\tvar baseResult = base[")
 						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
@@ -413,7 +417,7 @@ internal static partial class Sources
 				sb.Append("\t\t\t}").AppendLine().AppendLine();
 			}
 
-			if (property.IsIndexer && property.IndexerParameters is not null)
+			if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
 				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<")
 					.Append(property.Type.Fullname)
@@ -446,7 +450,7 @@ internal static partial class Sources
 						"\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
 					.AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
-				if (property.IsIndexer && property.IndexerParameters is not null)
+				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
 					sb.Append("\t\t\t\tbase[")
 						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
@@ -460,7 +464,7 @@ internal static partial class Sources
 				sb.Append("\t\t\t}").AppendLine().AppendLine();
 			}
 
-			if (property.IsIndexer && property.IndexerParameters is not null)
+			if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
 				sb.Append("\t\t\tMockRegistrations.SetIndexer<")
 					.Append(property.Type.Fullname)
@@ -499,7 +503,8 @@ internal static partial class Sources
 			if (method.ExplicitImplementation is null)
 			{
 				sb.Append(method.Accessibility.ToVisibilityString()).Append(' ');
-				if (!isClassInterface && method.UseOverride || method.IsEquals() || method.IsGetHashCode() || method.IsToString())
+				if ((!isClassInterface && method.UseOverride) || method.IsEquals() || method.IsGetHashCode() ||
+				    method.IsToString())
 				{
 					sb.Append("override ");
 				}

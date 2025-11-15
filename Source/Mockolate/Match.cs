@@ -17,14 +17,14 @@ public partial class Match
 	public interface IParameter
 	{
 		/// <summary>
-		///     Checks if the <paramref name="value"/> matches the expectation.
+		///     Checks if the <paramref name="value" /> matches the expectation.
 		/// </summary>
 		bool Matches(object? value);
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
-	///     Matches a method parameter of type <typeparamref name="T"/> against an expectation.
+	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
 	public interface IParameter<out T> : IParameter
 	{
@@ -39,11 +39,11 @@ public partial class Match
 		/// <summary>
 		///     Checks if the <paramref name="values" /> match the expectations.
 		/// </summary>
-		public abstract bool Matches(object?[] values);
+		abstract bool Matches(object?[] values);
 	}
 
 	/// <summary>
-	///     Matches an <see langword="out" /> parameter of type <typeparamref name="T"/> against an expectation.
+	///     Matches an <see langword="out" /> parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
 	public interface IOutParameter<out T> : IParameter
 	{
@@ -63,7 +63,7 @@ public partial class Match
 #pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
-	///     Matches an <see langword="ref" /> parameter of type <typeparamref name="T"/> against an expectation.
+	///     Matches an <see langword="ref" /> parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
 	public interface IRefParameter<T> : IParameter
 	{

@@ -15,9 +15,6 @@ public partial class Mock<T> : IHasMockRegistration
 		Interactions = mockRegistration.Interactions;
 	}
 
-	/// <inheritdoc cref="IHasMockRegistration.Registrations" />
-	public MockRegistration Registrations { get; }
-
 	/// <summary>
 	///     The mock subject.
 	/// </summary>
@@ -27,4 +24,7 @@ public partial class Mock<T> : IHasMockRegistration
 	///     The registered interactions on the mock.
 	/// </summary>
 	public MockInteractions Interactions { get; }
+
+	/// <inheritdoc cref="IHasMockRegistration.Registrations" />
+	public MockRegistration Registrations { get; }
 }
