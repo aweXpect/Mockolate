@@ -12,7 +12,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true
+				ThrowWhenNotSetup = true,
 			};
 
 			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService>(behavior);
@@ -38,7 +38,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true
+				ThrowWhenNotSetup = true,
 			};
 
 			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService>(behavior);
@@ -90,7 +90,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true
+				ThrowWhenNotSetup = true,
 			};
 
 			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService>(behavior);
@@ -155,7 +155,7 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true
+				ThrowWhenNotSetup = true,
 			};
 
 			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService>(behavior);
@@ -220,10 +220,11 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true
+				ThrowWhenNotSetup = true,
 			};
 
-			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
+			MyServiceBase sut =
+				Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
 
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
@@ -273,7 +274,8 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					Mock.Create<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService>();
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService,
+						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
@@ -287,7 +289,8 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					Mock.Create<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService>();
+					Mock.Create<IMyService, IMyService, IMyService, MyServiceBase, IMyService, IMyService,
+						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
@@ -300,10 +303,12 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true
+				ThrowWhenNotSetup = true,
 			};
 
-			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
+			MyServiceBase sut =
+				Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(
+					behavior);
 
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
@@ -314,7 +319,8 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					Mock.Create<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService>();
+					Mock.Create<IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService,
+						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
@@ -328,7 +334,8 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase>();
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+						MyServiceBase>();
 			}
 
 			await That(Act).Throws<MockException>()
@@ -342,7 +349,8 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase, IMyService>();
+					Mock.Create<IMyService, IMyService, IMyService, IMyService, IMyService, MyServiceBase,
+						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
@@ -356,7 +364,8 @@ public sealed partial class MockTests
 			void Act()
 			{
 				_ =
-					Mock.Create<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService, IMyService>();
+					Mock.Create<IMyService, IMyService, MyServiceBase, IMyService, IMyService, IMyService,
+						IMyService>();
 			}
 
 			await That(Act).Throws<MockException>()
@@ -414,10 +423,12 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true
+				ThrowWhenNotSetup = true,
 			};
 
-			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
+			MyServiceBase sut =
+				Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService>(behavior);
 
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
@@ -547,10 +558,12 @@ public sealed partial class MockTests
 		{
 			MockBehavior behavior = new()
 			{
-				ThrowWhenNotSetup = true
+				ThrowWhenNotSetup = true,
 			};
 
-			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
+			MyServiceBase sut =
+				Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
+					IMyService, IMyService>(behavior);
 
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}

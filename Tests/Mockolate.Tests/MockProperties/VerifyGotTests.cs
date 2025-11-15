@@ -33,7 +33,7 @@ public sealed class VerifyGotTests
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = throwWhenNotSetup
+			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
 
 		void Act()

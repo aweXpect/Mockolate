@@ -1,6 +1,4 @@
 using Mockolate.Exceptions;
-using Mockolate.Generated;
-using Mockolate.Tests.TestHelpers;
 using static Mockolate.BaseClass;
 
 namespace Mockolate.Tests;
@@ -11,7 +9,9 @@ public sealed partial class MockTests
 	public async Task Create_BaseClassWithMultipleConstructors()
 	{
 		void Act()
-			=> _ = Mock.Create<MyServiceBaseWithMultipleConstructors>(WithConstructorParameters(5));
+		{
+			_ = Mock.Create<MyServiceBaseWithMultipleConstructors>(WithConstructorParameters(5));
+		}
 
 		await That(Act).DoesNotThrow();
 	}
@@ -20,7 +20,9 @@ public sealed partial class MockTests
 	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MyBaseClassWithoutConstructor>();
+		{
+			_ = Mock.Create<MyBaseClassWithoutConstructor>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -28,25 +30,12 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
-	{
-		MyServiceBaseWithVirtualCallsInConstructor mock =
-			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(MockBehavior.Default with
-			{
-				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue
-			});
-
-		int value = mock.VirtualProperty;
-
-		await That(mock.VerifyMock.Invoked.VirtualMethod()).Once();
-		await That(value).IsEqualTo(1);
-	}
-
-	[Fact]
 	public async Task Create_SealedClass_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass>();
+		{
+			_ = Mock.Create<MySealedClass>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -57,7 +46,9 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With1AdditionalInterface_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass, IMyService>();
+		{
+			_ = Mock.Create<MySealedClass, IMyService>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -68,7 +59,9 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With2AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass, IMyService, IMyService>();
+		{
+			_ = Mock.Create<MySealedClass, IMyService, IMyService>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -79,7 +72,9 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With3AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService>();
+		{
+			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -90,7 +85,9 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With4AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService>();
+		{
+			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -101,7 +98,9 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With5AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
+		{
+			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -112,7 +111,9 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With6AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+		{
+			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -123,9 +124,11 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With7AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock
+		{
+			_ = Mock
 				.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 					IMyService>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -136,9 +139,11 @@ public sealed partial class MockTests
 	public async Task Create_SealedClass_With8AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock
+		{
+			_ = Mock
 				.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
 					IMyService, IMyService>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -149,7 +154,9 @@ public sealed partial class MockTests
 	public async Task Create_WithConstructorParameters_SealedClass_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass>(WithConstructorParameters());
+		{
+			_ = Mock.Create<MySealedClass>(WithConstructorParameters());
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -160,7 +167,9 @@ public sealed partial class MockTests
 	public async Task Create_WithMatchingParameters_ShouldCreateMock()
 	{
 		MyBaseClassWithConstructor Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
+		{
+			return _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
+		}
 
 		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
 	}
@@ -169,7 +178,9 @@ public sealed partial class MockTests
 	public async Task Create_WithMockBehavior_SealedClass_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MySealedClass>(MockBehavior.Default);
+		{
+			_ = Mock.Create<MySealedClass>(MockBehavior.Default);
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -180,7 +191,9 @@ public sealed partial class MockTests
 	public async Task Create_WithRequiredParameters_WithEmptyParameters_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
+		{
+			_ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -191,7 +204,9 @@ public sealed partial class MockTests
 	public async Task Create_WithRequiredParameters_WithoutParameters_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>();
+		{
+			_ = Mock.Create<MyBaseClassWithConstructor>();
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
@@ -202,11 +217,28 @@ public sealed partial class MockTests
 	public async Task Create_WithTooManyParameters_ShouldThrowMockException()
 	{
 		void Act()
-			=> _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
+		{
+			_ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
+		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
 				"Could not find any constructor for 'Mockolate.Tests.MockTests.MyBaseClassWithConstructor' that matches the 3 given parameters (foo, 1, 2).");
+	}
+
+	[Fact]
+	public async Task Create_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
+	{
+		MyServiceBaseWithVirtualCallsInConstructor mock =
+			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
+			});
+
+		int value = mock.VirtualProperty;
+
+		await That(mock.VerifyMock.Invoked.VirtualMethod()).Once();
+		await That(value).IsEqualTo(1);
 	}
 
 	[Fact]
@@ -248,12 +280,12 @@ public sealed partial class MockTests
 
 	public interface IMyService
 	{
-		public bool? IsValid { get; set; }
-		public int Counter { get; set; }
+		bool? IsValid { get; set; }
+		int Counter { get; set; }
 
-		public int Multiply(int value, int? multiplier);
+		int Multiply(int value, int? multiplier);
 
-		public void SetIsValid(bool isValid, Func<bool>? predicate);
+		void SetIsValid(bool isValid, Func<bool>? predicate);
 	}
 
 	public class MyBaseClassWithConstructor

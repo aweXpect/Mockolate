@@ -29,7 +29,9 @@ public sealed partial class MockBehaviorTests
 			});
 
 			void Act()
-				=> mock.DoSomethingAndReturn(5);
+			{
+				mock.DoSomethingAndReturn(5);
+			}
 
 			await That(Act).Throws<MockNotSetupException>()
 				.WithMessage(

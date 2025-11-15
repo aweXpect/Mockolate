@@ -31,7 +31,8 @@ public sealed partial class ForMockTests
 
 		await That(result.Sources).ContainsKey("MockForMyBaseClass.g.cs").And
 			.ContainsKey("MockRegistration.g.cs").WhoseValue
-			.DoesNotContain("throw new MockException(\"No parameterless constructor found for 'MyBaseClass'. Please provide constructor parameters.\");");
+			.DoesNotContain(
+				"throw new MockException(\"No parameterless constructor found for 'MyBaseClass'. Please provide constructor parameters.\");");
 	}
 
 	[Fact]

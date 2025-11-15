@@ -1,4 +1,3 @@
-using Mockolate.Exceptions;
 using Mockolate.Tests.Dummy;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER

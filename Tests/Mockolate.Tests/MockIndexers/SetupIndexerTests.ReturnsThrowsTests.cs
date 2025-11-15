@@ -601,7 +601,7 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(result).IsEqualTo([
-					"a", "b", "foo-2-4-6-2", "a", "b", "foo-5-25-30-20", "a", "b", "foo-8-64-72-56", "a"
+					"a", "b", "foo-2-4-6-2", "a", "b", "foo-5-25-30-20", "a", "b", "foo-8-64-72-56", "a",
 				]);
 			}
 
@@ -790,7 +790,7 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(result).IsEqualTo([
-					"a", "b", "foo-2-4-6-2-4", "a", "b", "foo-5-25-30-20-10", "a", "b", "foo-8-64-72-56-16", "a"
+					"a", "b", "foo-2-4-6-2-4", "a", "b", "foo-5-25-30-20-10", "a", "b", "foo-8-64-72-56-16", "a",
 				]);
 			}
 

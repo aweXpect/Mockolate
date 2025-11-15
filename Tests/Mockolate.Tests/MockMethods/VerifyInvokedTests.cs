@@ -77,7 +77,7 @@ public sealed class VerifyInvokedTests
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = throwWhenNotSetup
+			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
 
 		void Act()
@@ -96,7 +96,7 @@ public sealed class VerifyInvokedTests
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		});
 
 		void Act()

@@ -170,7 +170,7 @@ public sealed partial class SetupIndexerTests
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		});
 
 		void Act()

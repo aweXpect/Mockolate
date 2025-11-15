@@ -22,7 +22,7 @@ public sealed class VerifySetTests
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = throwWhenNotSetup
+			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
 
 		void Act()

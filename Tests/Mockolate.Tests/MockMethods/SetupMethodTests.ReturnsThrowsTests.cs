@@ -667,7 +667,7 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(result).IsEqualTo([
-					"d", "c", "foo-2-4-6-8", "d", "c", "foo-5-10-15-20", "d", "c", "foo-8-16-24-32", "d"
+					"d", "c", "foo-2-4-6-8", "d", "c", "foo-5-10-15-20", "d", "c", "foo-8-16-24-32", "d",
 				]);
 			}
 
@@ -841,7 +841,7 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(result).IsEqualTo([
-					"d", "c", "foo-2-4-6-8-10", "d", "c", "foo-5-10-15-20-25", "d", "c", "foo-8-16-24-32-40", "d"
+					"d", "c", "foo-2-4-6-8-10", "d", "c", "foo-5-10-15-20-25", "d", "c", "foo-8-16-24-32-40", "d",
 				]);
 			}
 

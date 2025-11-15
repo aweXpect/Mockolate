@@ -493,7 +493,7 @@ public sealed partial class SetupMethodTests
 	{
 		IMethodService mock = Mock.Create<IMethodService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = true
+			ThrowWhenNotSetup = true,
 		});
 
 		void Act()

@@ -49,6 +49,16 @@ public sealed partial class MockBehaviorTests
 		}
 
 		[Fact]
+		public async Task WithInt_ShouldReturnZero()
+		{
+			MockBehavior sut = MockBehavior.Default;
+
+			int result = sut.DefaultValue.Generate<int>();
+
+			await That(result).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task WithLazyInt_ShouldReturnLazyWithZero()
 		{
 			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
@@ -66,16 +76,6 @@ public sealed partial class MockBehaviorTests
 			Lazy<string> result = mock.LazyString;
 
 			await That(result.Value).IsEmpty();
-		}
-
-		[Fact]
-		public async Task WithInt_ShouldReturnZero()
-		{
-			MockBehavior sut = MockBehavior.Default;
-
-			int result = sut.DefaultValue.Generate<int>();
-
-			await That(result).IsEqualTo(0);
 		}
 
 		[Fact]

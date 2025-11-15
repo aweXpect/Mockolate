@@ -73,6 +73,64 @@ public sealed class MethodSetupsTests
 		await That(result.Sources).DoesNotContainKey("MethodSetups.g.cs");
 	}
 
+	[Theory]
+	[InlineData("""
+	            string ToString();
+	            bool Equals(object obj);
+	            int GetHashCode();
+	            """, "IMockMethodSetupWithToStringWithEqualsWithGetHashCode")]
+	[InlineData("""
+	            bool Equals(object obj);
+	            int GetHashCode();
+	            """, "IMockMethodSetupWithEqualsWithGetHashCode")]
+	[InlineData("""
+	            string ToString();
+	            int GetHashCode();
+	            """, "IMockMethodSetupWithToStringWithGetHashCode")]
+	[InlineData("""
+	            string ToString();
+	            bool Equals(object obj);
+	            """, "IMockMethodSetupWithToStringWithEquals")]
+	[InlineData("""
+	            string ToString();
+	            """, "IMockMethodSetupWithToString")]
+	[InlineData("""
+	            bool Equals(object obj);
+	            """, "IMockMethodSetupWithEquals")]
+	[InlineData("""
+	            bool Equals(object? obj);
+	            """, "IMockMethodSetupWithEquals")]
+	[InlineData("""
+	            int GetHashCode();
+	            """, "IMockMethodSetupWithGetHashCode")]
+	public async Task WhenImplementingObjectMethods_ShouldUseSpecialInterfaces(string methods, string expectedType)
+	{
+		GeneratorResult result = Generator
+			.Run($$"""
+			       using System;
+			       using Mockolate;
+
+			       namespace MyCode
+			       {
+			           public class Program
+			           {
+			               public static void Main(string[] args)
+			               {
+			       			_ = Mock.Create<IMyInterface>();
+			               }
+			           }
+
+			           public interface IMyInterface
+			           {
+			               {{methods}}
+			           }
+			       }
+			       """);
+
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs").WhoseValue
+			.Contains($"{expectedType}<MyCode.IMyInterface> Method");
+	}
+
 	[Fact]
 	public async Task WithComplexMethodReturningAValue_ShouldOnlyGenerateNecessaryExtensions()
 	{
@@ -139,63 +197,5 @@ public sealed class MethodSetupsTests
 			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
 			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5>").And
 			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5, T6, T7>");
-	}
-
-	[Theory]
-	[InlineData("""
-		string ToString();
-		bool Equals(object obj);
-		int GetHashCode();
-		""", "IMockMethodSetupWithToStringWithEqualsWithGetHashCode")]
-	[InlineData("""
-		bool Equals(object obj);
-		int GetHashCode();
-		""", "IMockMethodSetupWithEqualsWithGetHashCode")]
-	[InlineData("""
-		string ToString();
-		int GetHashCode();
-		""", "IMockMethodSetupWithToStringWithGetHashCode")]
-	[InlineData("""
-		string ToString();
-		bool Equals(object obj);
-		""", "IMockMethodSetupWithToStringWithEquals")]
-	[InlineData("""
-		string ToString();
-		""", "IMockMethodSetupWithToString")]
-	[InlineData("""
-		bool Equals(object obj);
-		""", "IMockMethodSetupWithEquals")]
-	[InlineData("""
-		bool Equals(object? obj);
-		""", "IMockMethodSetupWithEquals")]
-	[InlineData("""
-		int GetHashCode();
-		""", "IMockMethodSetupWithGetHashCode")]
-	public async Task WhenImplementingObjectMethods_ShouldUseSpecialInterfaces(string methods, string expectedType)
-	{
-		GeneratorResult result = Generator
-			.Run($$"""
-			     using System;
-			     using Mockolate;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			_ = Mock.Create<IMyInterface>();
-			             }
-			         }
-
-			         public interface IMyInterface
-			         {
-			             {{methods}}
-			         }
-			     }
-			     """);
-
-		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs").WhoseValue
-			.Contains($"{expectedType}<MyCode.IMyInterface> Method");
 	}
 }

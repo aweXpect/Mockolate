@@ -80,7 +80,9 @@ public sealed class MockMonitorTests
 		MockMonitor<IMyService> monitor = new(mock);
 
 		void Act()
-			=> monitor.Run();
+		{
+			monitor.Run();
+		}
 
 		IDisposable outerRun = monitor.Run();
 
