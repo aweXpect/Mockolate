@@ -415,6 +415,12 @@ internal static partial class Sources
 
 		              		partial void Generate<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups, params Type[] types);
 
+		              		public object? Get(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Type type)
+		              		{
+		              			Generate<object>(constructorParameters, mockBehavior, Array.Empty<Action<IMockSetup<object>>>(), type);
+		              			return _value;
+		              		}
+
 		              		public T? Get<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups)
 		              			where T : class
 		              		{

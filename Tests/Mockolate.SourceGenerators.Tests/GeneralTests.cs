@@ -208,4 +208,47 @@ public class GeneralTests
 			.Contains("public void MyMethod(int v1)").And
 			.Contains("void MyCode.IMyInterface2.MyMethod(int v1)");
 	}
+
+	[Fact]
+	public async Task InterfaceProperty_ShouldRecursivelyCreateMocks()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			var x = Mockolate.Mock.Create<IMyInterface1>();
+			             }
+			         }
+
+			         public interface IMyInterface1
+			         {
+			             IMyInterface2 MyProperty { get; }
+			         }
+			     
+			         public interface IMyInterface2
+			         {
+			             IMyInterface3 MyMethod(int v1);
+			         }
+			     
+			         public interface IMyInterface3
+			         {
+			             IMyInterface1 MyInnerMethod(int v1);
+			         }
+			     }
+
+			     """, typeof(IList<>));
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources)
+			.ContainsKey("MockForIMyInterface1.g.cs").And
+			.ContainsKey("MockForIMyInterface2.g.cs").And
+			.ContainsKey("MockForIMyInterface3.g.cs");
+	}
 }
