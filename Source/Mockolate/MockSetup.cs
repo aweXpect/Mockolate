@@ -1,10 +1,15 @@
+using Mockolate.Interactions;
 using Mockolate.Setup;
 
 namespace Mockolate;
 
 #pragma warning disable S1939 // Inheritance list should not be redundant
 // ReSharper disable RedundantExtendsListEntry
-public partial class Mock<T> : IMockSetup<T>, IProtectedMockSetup<T>,
+
+/// <summary>
+///     A partial mock for setting up type <typeparamref name="T" />.
+/// </summary>
+public class MockSetup<T> : IHasMockRegistration, IMockSetup<T>, IProtectedMockSetup<T>,
 	IMockMethodSetup<T>, IProtectedMockMethodSetup<T>,
 	IMockMethodSetupWithToString<T>, IMockMethodSetupWithEquals<T>, IMockMethodSetupWithGetHashCode<T>,
 	IMockMethodSetupWithToStringWithEquals<T>, IMockMethodSetupWithToStringWithGetHashCode<T>,
@@ -12,6 +17,21 @@ public partial class Mock<T> : IMockSetup<T>, IProtectedMockSetup<T>,
 	IMockMethodSetupWithToStringWithEqualsWithGetHashCode<T>,
 	IMockPropertySetup<T>, IProtectedMockPropertySetup<T>
 {
+	/// <inheritdoc cref="Mock{T}" />
+	public MockSetup(MockRegistration mockRegistration)
+	{
+		Registrations = mockRegistration;
+		Interactions = mockRegistration.Interactions;
+	}
+
+	/// <summary>
+	///     The registered interactions on the mock.
+	/// </summary>
+	public MockInteractions Interactions { get; }
+
+	/// <inheritdoc cref="IHasMockRegistration.Registrations" />
+	public MockRegistration Registrations { get; }
+
 	/// <inheritdoc cref="IMockMethodSetupWithEquals{T}.Equals(Match.IParameter{object?})" />
 	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(Match.IParameter<object?> obj)
 	{

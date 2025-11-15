@@ -13,6 +13,7 @@ public static class Generator
 	[
 		"CS8019" /* Unnecessary using directive. */,
 		"CS8321" /* The local function is declared but never used */,
+		"CS1061" /* 'type' does not contain a definition for 'name' and no accessible extension method 'name' accepting a first argument of type 'type' could be found (are you missing a using directive or an assembly reference?). */,
 		// TODO: Remove the following errors when tests work with extension syntax
 		"CS0106" /* The modifier 'public' is not valid for this item */,
 		"CS0116" /* A namespace cannot directly contain members such as fields or methods */,
@@ -23,9 +24,9 @@ public static class Generator
 		"CS1001" /* Identifier expected */,
 		"CS1002" /* ; expected */,
 		"CS1026" /* ) expected */,
-		"CS1519" /* Invalid token '(' in class, record, … */,
+		"CS1519" /* Invalid token '(' in class, record, ï¿½ */,
 		"CS0501" /*  */,
-		"CS8124" /* Tuple must contain at least two elem… */,
+		"CS8124" /* Tuple must contain at least two elemï¿½ */,
 		"CS1003" /* Syntax error, ',' expected */,
 		"CS0119" /* 'identifier' is a type, which is not valid in the given context */,
 		"CS0128" /* A local variable named 'variable' is already defined in this scope */,
@@ -41,6 +42,7 @@ public static class Generator
 		"CS8801" /* Cannot use local variable or local function*/,
 		"CS0111" /* Type '<invalid-global-code>' already defines a */,
 		"CS0721" /* 'Mock': static types cannot be us */,
+		"CS0759" /* No defining declaration found for implementing declaration of partial method. */,
 	];
 
 	public static GeneratorResult Run([StringSyntax("c#-test")] string source, params Type[] assemblyTypes)

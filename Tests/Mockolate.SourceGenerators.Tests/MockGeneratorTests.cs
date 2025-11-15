@@ -232,6 +232,38 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WhenUsingSetups_ShouldGenerateMocksAndExtensions()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyInterface>(setup => setup.Method.MyMethod().Returns(42));
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             int MyMethod();
+			         }
+			     }
+			     """, typeof(DateTime), typeof(Task));
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).HasCount().AtLeast(5);
+		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs");
+	}
+
+	[Fact]
 	public async Task WithClassAsAdditionalImplementation_ShouldNotThrow()
 	{
 		GeneratorResult result = Generator

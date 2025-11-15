@@ -8,6 +8,45 @@ public sealed partial class MockTests
 	public sealed class CreateTests
 	{
 		[Fact]
+		public async Task With2Arguments_WithSetups_ShouldApplySetups()
+		{
+			IMyService mock = Mock.Create<IMyService, IMyService>(
+				setup => setup.Method.Multiply(With(1), WithAny<int?>()).Returns(2),
+				setup => setup.Method.Multiply(With(2), WithAny<int?>()).Returns(4),
+				setup => setup.Method.Multiply(With(3), WithAny<int?>()).Returns(8));
+
+			int result1 = mock.Multiply(1, null);
+			int result2 = mock.Multiply(2, null);
+			int result3 = mock.Multiply(3, null);
+
+			await That(result1).IsEqualTo(2);
+			await That(result2).IsEqualTo(4);
+			await That(result3).IsEqualTo(8);
+		}
+
+		[Fact]
+		public async Task With2Arguments_WithConstructorParametersAndSetups_ShouldApplySetups()
+		{
+			MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor, IMyService>(BaseClass.WithConstructorParameters("foo"),
+				setup => setup.Method.VirtualMethod().Returns("bar"));
+
+			string result = mock.VirtualMethod();
+
+			await That(result).IsEqualTo("bar");
+		}
+
+		[Fact]
+		public async Task With2Arguments_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
+		{
+			MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor, IMyService>(BaseClass.WithConstructorParameters("foo"), MockBehavior.Default,
+				setup => setup.Method.VirtualMethod().Returns("bar"));
+
+			string result = mock.VirtualMethod();
+
+			await That(result).IsEqualTo("bar");
+		}
+		
+		[Fact]
 		public async Task With2Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = new()

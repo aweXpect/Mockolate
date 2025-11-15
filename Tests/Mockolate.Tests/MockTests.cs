@@ -1,5 +1,4 @@
 using Mockolate.Exceptions;
-using static Mockolate.BaseClass;
 
 namespace Mockolate.Tests;
 
@@ -10,7 +9,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MyServiceBaseWithMultipleConstructors>(WithConstructorParameters(5));
+			_ = Mock.Create<MyServiceBaseWithMultipleConstructors>(BaseClass.WithConstructorParameters(5));
 		}
 
 		await That(Act).DoesNotThrow();
@@ -155,7 +154,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MySealedClass>(WithConstructorParameters());
+			_ = Mock.Create<MySealedClass>(BaseClass.WithConstructorParameters());
 		}
 
 		await That(Act).Throws<MockException>()
@@ -168,7 +167,7 @@ public sealed partial class MockTests
 	{
 		MyBaseClassWithConstructor Act()
 		{
-			return _ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo"));
+			return _ = Mock.Create<MyBaseClassWithConstructor>(BaseClass.WithConstructorParameters("foo"));
 		}
 
 		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
@@ -192,7 +191,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters());
+			_ = Mock.Create<MyBaseClassWithConstructor>(BaseClass.WithConstructorParameters());
 		}
 
 		await That(Act).Throws<MockException>()
@@ -218,7 +217,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MyBaseClassWithConstructor>(WithConstructorParameters("foo", 1, 2));
+			_ = Mock.Create<MyBaseClassWithConstructor>(BaseClass.WithConstructorParameters("foo", 1, 2));
 		}
 
 		await That(Act).Throws<MockException>()
@@ -227,7 +226,7 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
-	public async Task Create_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
+	public async Task Create_BaseClassWithVirtualCallsInConstructor_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
 	{
 		MyServiceBaseWithVirtualCallsInConstructor mock =
 			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(MockBehavior.Default with
@@ -239,6 +238,56 @@ public sealed partial class MockTests
 
 		await That(mock.VerifyMock.Invoked.VirtualMethod()).Once();
 		await That(value).IsEqualTo(1);
+	}
+	[Fact]
+	public async Task Create_BaseClassWithVirtualCallsInConstructor_AllowExplicitSetup()
+	{
+		MyServiceBaseWithVirtualCallsInConstructor mock =
+			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(setup => setup.Method.VirtualMethod().Returns([5, 6,]));
+
+		int value = mock.VirtualProperty;
+
+		await That(mock.VerifyMock.Invoked.VirtualMethod()).Once();
+		await That(value).IsEqualTo(5);
+	}
+
+	[Fact]
+	public async Task Create_WithSetups_ShouldApplySetups()
+	{
+		IMyService mock = Mock.Create<IMyService>(
+			setup => setup.Method.Multiply(With(1), WithAny<int?>()).Returns(2),
+			setup => setup.Method.Multiply(With(2), WithAny<int?>()).Returns(4),
+			setup => setup.Method.Multiply(With(3), WithAny<int?>()).Returns(8));
+
+		int result1 = mock.Multiply(1, null);
+		int result2 = mock.Multiply(2, null);
+		int result3 = mock.Multiply(3, null);
+
+		await That(result1).IsEqualTo(2);
+		await That(result2).IsEqualTo(4);
+		await That(result3).IsEqualTo(8);
+	}
+
+	[Fact]
+	public async Task Create_WithConstructorParametersAndSetups_ShouldApplySetups()
+	{
+		MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor>(BaseClass.WithConstructorParameters("foo"),
+			setup => setup.Method.VirtualMethod().Returns("bar"));
+
+		string result = mock.VirtualMethod();
+
+		await That(result).IsEqualTo("bar");
+	}
+
+	[Fact]
+	public async Task Create_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
+	{
+		MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor>(BaseClass.WithConstructorParameters("foo"), MockBehavior.Default,
+			setup => setup.Method.VirtualMethod().Returns("bar"));
+
+		string result = mock.VirtualMethod();
+
+		await That(result).IsEqualTo("bar");
 	}
 
 	[Fact]
