@@ -38,7 +38,7 @@ internal static class MockGeneratorHelpers
 		InvocationExpressionSyntax invocationSyntax = (InvocationExpressionSyntax)syntaxNode;
 		MemberAccessExpressionSyntax memberAccessExpressionSyntax =
 			(MemberAccessExpressionSyntax)invocationSyntax.Expression;
-		GenericNameSyntax genericNameSyntax = (GenericNameSyntax)memberAccessExpressionSyntax!.Name;
+		GenericNameSyntax genericNameSyntax = (GenericNameSyntax)memberAccessExpressionSyntax.Name;
 		if (semanticModel.GetSymbolInfo(syntaxNode).IsCreateInvocationOnMockOrMockFactory())
 		{
 			ITypeSymbol[] genericTypes = genericNameSyntax.TypeArgumentList.Arguments
@@ -58,8 +58,13 @@ internal static class MockGeneratorHelpers
 
 		return null;
 	}
-
-	private static bool IsMockable(ITypeSymbol typeSymbol) => typeSymbol.TypeKind != TypeKind.TypeParameter &&
-	                                                          (!typeSymbol.IsSealed ||
-	                                                           typeSymbol.TypeKind == TypeKind.Delegate);
+	
+	private static bool IsMockable(ITypeSymbol typeSymbol)
+		=> typeSymbol is
+		   {
+			   IsRecord: false, 
+			   ContainingNamespace: not null,
+			   TypeKind: TypeKind.Interface or TypeKind.Class or TypeKind.Delegate,
+		   } &&
+		   (!typeSymbol.IsSealed || typeSymbol.TypeKind == TypeKind.Delegate);
 }

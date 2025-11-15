@@ -118,7 +118,7 @@ public class MockGenerator : IIncrementalGenerator
 	{
 		HashSet<(string, string)> classNames = new();
 		List<(string Name, Class MockClass)> result = new();
-		foreach (MockClass? mockToGenerate in mocksToGenerate)
+		foreach (MockClass mockToGenerate in mocksToGenerate)
 		{
 			if (classNames.Add((mockToGenerate.Namespace, mockToGenerate.ClassName)))
 			{
@@ -132,7 +132,7 @@ public class MockGenerator : IIncrementalGenerator
 				result.Add((actualName, mockToGenerate));
 			}
 
-			foreach (Class? item in mockToGenerate.AdditionalImplementations)
+			foreach (Class item in mockToGenerate.AdditionalImplementations.Where(x => x.IsInterface))
 			{
 				if (classNames.Add((item.Namespace, item.ClassName)))
 				{

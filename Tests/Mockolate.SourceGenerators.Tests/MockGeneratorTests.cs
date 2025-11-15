@@ -279,7 +279,7 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface1, MyService, IMyInterface2, MyOtherService>();
+			                 _ = Mock.Create<IMyInterface1, MyService, IMyInterface2, MyOtherService>();
 			             }
 			         }
 
@@ -295,9 +295,7 @@ public class MockGeneratorTests
 				"Mock.g.cs",
 				"MockGeneratorAttribute.g.cs",
 				"MockForIMyInterface1Extensions.g.cs",
-				"MockForMyServiceExtensions.g.cs",
 				"MockForIMyInterface2Extensions.g.cs",
-				"MockForMyOtherServiceExtensions.g.cs",
 				"MockRegistration.g.cs",
 			]).InAnyOrder(),
 			That(result.Diagnostics).IsEmpty()
