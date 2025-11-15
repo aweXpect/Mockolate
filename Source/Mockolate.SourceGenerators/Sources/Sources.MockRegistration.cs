@@ -233,7 +233,7 @@ internal static partial class Sources
 							.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
 						sb.Append("\t\t\t\t\tMockFor").Append(mock.Name)
 							.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
-						sb.Append("\t\t\t\t\tif(setups.Length > 0)").AppendLine();
+						sb.Append("\t\t\t\t\tif (setups.Length > 0)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append("> setupTarget = new MockSetup<").Append(mock.MockClass.ClassFullName)
@@ -280,7 +280,7 @@ internal static partial class Sources
 							.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
 						sb.Append("\t\t\t\t\tMockFor").Append(mock.Name)
 							.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
-						sb.Append("\t\t\t\t\tif(setups.Length > 0)").AppendLine();
+						sb.Append("\t\t\t\t\tif (setups.Length > 0)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append("> setupTarget = new MockSetup<").Append(mock.MockClass.ClassFullName)

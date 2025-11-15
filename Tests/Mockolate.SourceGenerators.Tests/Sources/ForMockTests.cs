@@ -66,7 +66,7 @@ public sealed partial class ForMockTests
 			          				{
 			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
 			          					MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
-			          					if(setups.Length > 0)
+			          					if (setups.Length > 0)
 			          					{
 			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
 			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
@@ -84,7 +84,7 @@ public sealed partial class ForMockTests
 			          				{
 			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
 			          					MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
-			          					if(setups.Length > 0)
+			          					if (setups.Length > 0)
 			          					{
 			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
 			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
