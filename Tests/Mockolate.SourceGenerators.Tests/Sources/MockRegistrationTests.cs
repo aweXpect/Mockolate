@@ -228,12 +228,20 @@ public sealed class MockRegistrationTests
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("""
-			          		partial void Generate(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, params Type[] types)
+			          		partial void Generate<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups, params Type[] types)
 			          		{
 			          			if (types.Length == 1 &&
 			          			    types[0] == typeof(MyCode.IMyInterface))
 			          			{
 			          				_value = new MockForIMyInterface(mockBehavior);
+			          				if (setups.Length > 0)
+			          				{
+			          					IMockSetup<MyCode.IMyInterface> setupTarget = ((IMockSubject<MyCode.IMyInterface>)_value).Mock;
+			          					foreach (Action<IMockSetup<MyCode.IMyInterface>> setup in setups)
+			          					{
+			          						setup.Invoke(setupTarget);
+			          					}
+			          				}
 			          			}
 			          			else if (types.Length == 2 &&
 			          			         types[0] == typeof(MyCode.MyBaseClass) &&
@@ -243,12 +251,28 @@ public sealed class MockRegistrationTests
 			          				{
 			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
 			          					MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
+			          					if(setups.Length > 0)
+			          					{
+			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
+			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
+			          						{
+			          							setup.Invoke(setupTarget);
+			          						}
+			          					}
 			          					_value = new MockForMyBaseClass_IMyInterface(mockRegistration);
 			          				}
 			          				else if (constructorParameters.Parameters.Length == 0)
 			          				{
 			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
 			          					MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
+			          					if(setups.Length > 0)
+			          					{
+			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
+			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
+			          						{
+			          							setup.Invoke(setupTarget);
+			          						}
+			          					}
 			          					_value = new MockForMyBaseClass_IMyInterface(mockRegistration);
 			          				}
 			          				else

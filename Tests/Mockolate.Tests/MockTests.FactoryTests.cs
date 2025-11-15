@@ -150,7 +150,7 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
-		public async Task Create_WithConstructorParameters_SealedClass_ShouldThrowMockException()
+		public async Task Create_SealedClass_WithConstructorParameters_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
 
@@ -202,6 +202,30 @@ public sealed partial class MockTests
 
 			await That(((IHasMockRegistration)mock1).Registrations.Behavior).IsSameAs(behavior);
 			await That(((IHasMockRegistration)mock2).Registrations.Behavior).IsSameAs(behavior);
+		}
+
+		[Fact]
+		public async Task WithSetups_ShouldApplySetups()
+		{
+			MockBehavior behavior = MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
+			};
+			Mock.Factory factory = new(behavior);
+
+			IMyService mock1 = factory.Create<IMyService>(
+				setup => setup.Method.Multiply(WithAny<int>(), WithAny<int?>()).Returns(42));
+			MyServiceBase mock2 = factory.Create<MyServiceBase, IMyService>(BaseClass.WithConstructorParameters(),
+				setup => setup.Method.DoSomething(WithAny<int>(), With(true)).Returns(5),
+				setup => setup.Method.DoSomething(WithAny<int>(), With(false)).Returns(6));
+
+			int result = mock1.Multiply(2, null);
+			int result21 = mock2.DoSomething(1, true);
+			int result22 = mock2.DoSomething(1, false);
+
+			await That(result).IsEqualTo(42);
+			await That(result21).IsEqualTo(5);
+			await That(result22).IsEqualTo(6);
 		}
 	}
 }

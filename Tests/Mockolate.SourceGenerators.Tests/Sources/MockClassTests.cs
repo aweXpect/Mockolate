@@ -13,12 +13,15 @@ public sealed class MockClassTests
 		GeneratorResult result = Generator.Run("");
 
 		await That(result.Sources).ContainsKey("Mock.g.cs").WhoseValue
-			.Contains(expectedComment).And
-			.Contains("public static T Create<T>(BaseClass.ConstructorParameters? constructorParameters = null)")
-			.And
-			.Contains("public static T Create<T>(MockBehavior mockBehavior)").And
-			.Contains(
-				"public static T Create<T>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior)");
+			.Contains(expectedComment)
+			.And.Contains(
+				"public static T Create<T>(params Action<IMockSetup<T>>[] setups)")
+			.And.Contains(
+				"public static T Create<T>(BaseClass.ConstructorParameters constructorParameters, params Action<IMockSetup<T>>[] setups)")
+			.And.Contains(
+				"public static T Create<T>(MockBehavior mockBehavior, params Action<IMockSetup<T>>[] setups)")
+			.And.Contains(
+				"public static T Create<T>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior, params Action<IMockSetup<T>>[] setups)");
 		string source = result.Sources["Mock.g.cs"];
 		for (int i = 1; i <= maxAdditionalInterfaces; i++)
 		{
@@ -26,11 +29,13 @@ public sealed class MockClassTests
 			string types = string.Join(", ", Enumerable.Range(2, i).Select(x => $"T{x}"));
 			await That(source)
 				.Contains(
-					$"public static T Create<T, {types}>(BaseClass.ConstructorParameters? constructorParameters = null)")
-				.And
-				.Contains($"public static T Create<T, {types}>(MockBehavior mockBehavior)").And
-				.Contains(
-					$"public static T Create<T, {types}>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior)");
+					$"public static T Create<T, {types}>(params Action<IMockSetup<T>>[] setups)")
+				.And.Contains(
+					$"public static T Create<T, {types}>(MockBehavior mockBehavior, params Action<IMockSetup<T>>[] setups)")
+				.And.Contains(
+					$"public static T Create<T, {types}>(BaseClass.ConstructorParameters constructorParameters, params Action<IMockSetup<T>>[] setups)")
+				.And.Contains(
+					$"public static T Create<T, {types}>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior, params Action<IMockSetup<T>>[] setups)");
 		}
 	}
 }

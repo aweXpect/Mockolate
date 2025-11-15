@@ -15,11 +15,22 @@ internal static class MockGeneratorHelpers
 			},
 		};
 
-	private static bool IsCreateInvocationOnMockOrMockFactory(this ISymbol? symbol)
-		=> symbol?.GetAttributes().Any(a =>
+	private static bool IsCreateInvocationOnMockOrMockFactory(this SymbolInfo symbolInfo)
+	{
+		var symbol = symbolInfo.Symbol;
+		if (symbol != null)
+		{
+			return symbol.GetAttributes().Any(a =>
+				a.AttributeClass?.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
+				a.AttributeClass.ContainingNamespace.Name == "Mockolate" &&
+				a.AttributeClass.Name == "MockGeneratorAttribute");
+		}
+		
+		return symbolInfo.CandidateSymbols.Any(s => s.GetAttributes().Any(a =>
 			a.AttributeClass?.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
 			a.AttributeClass.ContainingNamespace.Name == "Mockolate" &&
-			a.AttributeClass.Name == "MockGeneratorAttribute") == true;
+			a.AttributeClass.Name == "MockGeneratorAttribute"));
+	}
 
 	internal static MockClass? ExtractMockOrMockFactoryCreateSyntaxOrDefault(
 		this SyntaxNode syntaxNode, SemanticModel semanticModel)
@@ -28,7 +39,7 @@ internal static class MockGeneratorHelpers
 		MemberAccessExpressionSyntax memberAccessExpressionSyntax =
 			(MemberAccessExpressionSyntax)invocationSyntax.Expression;
 		GenericNameSyntax genericNameSyntax = (GenericNameSyntax)memberAccessExpressionSyntax!.Name;
-		if (semanticModel.GetSymbolInfo(syntaxNode).Symbol.IsCreateInvocationOnMockOrMockFactory())
+		if (semanticModel.GetSymbolInfo(syntaxNode).IsCreateInvocationOnMockOrMockFactory())
 		{
 			ITypeSymbol[] genericTypes = genericNameSyntax.TypeArgumentList.Arguments
 				.Select(t => semanticModel.GetTypeInfo(t).Type)
