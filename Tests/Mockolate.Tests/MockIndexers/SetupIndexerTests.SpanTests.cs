@@ -15,7 +15,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(With<Memory<int>>(v => v.Length == 2)).Returns(4);
 
-			int result = _ = mock[new Memory<int>([1, 2, 3,])];
+			int result = mock[new Memory<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(3);
 		}
@@ -29,7 +29,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(With<Memory<int>>(v => v.Length == 3)).Returns(42);
 
-			int result = _ = mock[new Memory<int>([1, 2, 3,])];
+			int result = mock[new Memory<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(42);
 		}
@@ -43,7 +43,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(Any<Memory<int>>()).Returns(42);
 
-			int result = _ = mock[new Memory<int>([1, 2, 3,])];
+			int result = mock[new Memory<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(42);
 		}
@@ -57,7 +57,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(WithReadOnlySpan<int>(v => v.Length == 2)).Returns(4);
 
-			int result = _ = mock[new ReadOnlySpan<int>([1, 2, 3,])];
+			int result = mock[new ReadOnlySpan<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(3);
 		}
@@ -71,7 +71,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(WithReadOnlySpan<int>(v => v.Length == 3 && v[0] == 1)).Returns(42);
 
-			int result = _ = mock[new ReadOnlySpan<int>([1, 2, 3,])];
+			int result = mock[new ReadOnlySpan<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(42);
 		}
@@ -85,7 +85,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(AnyReadOnlySpan<int>()).Returns(42);
 
-			int result = _ = mock[new ReadOnlySpan<int>([1, 2, 3,])];
+			int result = mock[new ReadOnlySpan<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(42);
 		}
@@ -99,7 +99,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(WithSpan<int>(v => v.Length == 2)).Returns(4);
 
-			int result = _ = mock[new Span<int>([1, 2, 3,])];
+			int result = mock[new Span<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(3);
 		}
@@ -113,7 +113,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(WithSpan<int>(v => v.Length == 3 && v[0] == 1)).Returns(42);
 
-			int result = _ = mock[new Span<int>([1, 2, 3,])];
+			int result = mock[new Span<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(42);
 		}
@@ -127,7 +127,7 @@ public sealed partial class SetupIndexerTests
 			});
 			mock.SetupMock.Indexer(AnySpan<int>()).Returns(42);
 
-			int result = _ = mock[new Span<int>([1, 2, 3,])];
+			int result = mock[new Span<int>([1, 2, 3,])];
 
 			await That(result).IsEqualTo(42);
 		}

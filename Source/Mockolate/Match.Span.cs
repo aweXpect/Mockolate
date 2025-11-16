@@ -20,15 +20,9 @@ public partial class Match
 	public static IVerifySpanParameter<T> WithSpan<T>(Func<T[], bool> predicate)
 		=> new SpanParameterMatch<T>(predicate);
 
-	private sealed class SpanParameterMatch<T> : TypedMatch<SpanWrapper<T>>, IVerifySpanParameter<T>
+	private sealed class SpanParameterMatch<T>(Func<T[], bool>? predicate)
+		: TypedMatch<SpanWrapper<T>>, IVerifySpanParameter<T>
 	{
-		private Func<T[], bool>? predicate;
-
-		public SpanParameterMatch(Func<T[], bool>? predicate)
-		{
-			this.predicate = predicate;
-		}
-
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Span<{typeof(T).FormatType()}>()";
 		protected override bool Matches(SpanWrapper<T> value)

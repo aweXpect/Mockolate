@@ -13,7 +13,7 @@ public class ReadOnlySpanWrapper<T>
 	/// </summary>
 	public T[] ReadOnlySpanValues { get; }
 
-	/// <inheritdoc cref="SpanWrapper{T}" />
+	/// <inheritdoc cref="ReadOnlySpanWrapper{T}" />
 	public ReadOnlySpanWrapper(ReadOnlySpan<T> span)
 	{
 		ReadOnlySpanValues = span.ToArray();
