@@ -46,7 +46,7 @@ internal static class MockGeneratorHelpers
 				.Where(t => t is not null)
 				.Cast<ITypeSymbol>()
 				.ToArray();
-			if (genericTypes.Length > 0 && IsMockable(genericTypes[0], true) &&
+			if (genericTypes.Length > 0 && IsMockable(genericTypes[0]) &&
 			    // Ignore types from the global namespace, as they are not generated correctly.
 			    genericTypes.All(x => !x.ContainingNamespace.IsGlobalNamespace))
 			{
@@ -74,7 +74,7 @@ internal static class MockGeneratorHelpers
 				         .Select(p => p.Type))
 			{
 				if (propertyType.TypeKind == TypeKind.Interface &&
-				    IsMockable(propertyType, false) &&
+				    IsMockable(propertyType) &&
 				    processedTypes.Add(propertyType))
 				{
 					yield return new MockClass([propertyType,]);
@@ -88,7 +88,7 @@ internal static class MockGeneratorHelpers
 				         .Select(m => m.ReturnType))
 			{
 				if (methodType.TypeKind == TypeKind.Interface &&
-				    IsMockable(methodType, false) &&
+				    IsMockable(methodType) &&
 				    processedTypes.Add(methodType))
 				{
 					yield return new MockClass([methodType,]);
@@ -98,28 +98,16 @@ internal static class MockGeneratorHelpers
 		}
 	}
 
-	private static bool IsMockable(ITypeSymbol typeSymbol, bool includeSystemNamespace)
+	private static bool IsMockable(ITypeSymbol typeSymbol)
 		=> typeSymbol is
 		   {
 			   IsRecord: false,
+			   IsReadOnly: false, 
 			   ContainingNamespace: not null,
 			   TypeKind: TypeKind.Interface or TypeKind.Class or TypeKind.Delegate,
-		   } &&
-		   (includeSystemNamespace || !IsSystemNamespace(typeSymbol.ContainingNamespace)) &&
+		   } and INamedTypeSymbol namedTypeSymbol &&
+		   // Ignore open generic types
+		   (!namedTypeSymbol.IsGenericType || namedTypeSymbol.TypeArguments.All(a => a.TypeKind != TypeKind.TypeParameter)) &&
 		   (!typeSymbol.IsSealed || typeSymbol.TypeKind == TypeKind.Delegate);
 
-	private static bool IsSystemNamespace(INamespaceSymbol? namespaceSymbol)
-	{
-		if (namespaceSymbol is null || namespaceSymbol.IsGlobalNamespace)
-		{
-			return false;
-		}
-
-		if (namespaceSymbol is { Name: "System", ContainingNamespace.IsGlobalNamespace: true, })
-		{
-			return true;
-		}
-
-		return IsSystemNamespace(namespaceSymbol.ContainingNamespace);
-	}
 }

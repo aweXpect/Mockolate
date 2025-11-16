@@ -50,6 +50,49 @@ public class GeneralTests
 	}
 
 	[Fact]
+	public async Task InterfaceProperty_ShouldRecursivelyCreateMocks()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			var x = Mockolate.Mock.Create<IMyInterface1>();
+			             }
+			         }
+
+			         public interface IMyInterface1
+			         {
+			             IMyInterface2 MyProperty { get; }
+			         }
+
+			         public interface IMyInterface2
+			         {
+			             IMyInterface3 MyMethod(int v1);
+			         }
+
+			         public interface IMyInterface3
+			         {
+			             IMyInterface1 MyInnerMethod(int v1);
+			         }
+			     }
+
+			     """, typeof(IList<>));
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources)
+			.ContainsKey("MockForIMyInterface1.g.cs").And
+			.ContainsKey("MockForIMyInterface2.g.cs").And
+			.ContainsKey("MockForIMyInterface3.g.cs");
+	}
+
+	[Fact]
 	public async Task MockOfHttpMessageHandler_ShouldContainGetEnumeratorFromIEnumerableAndIEnumerableOfT()
 	{
 		GeneratorResult result = Generator
@@ -136,6 +179,86 @@ public class GeneralTests
 	}
 
 	[Fact]
+	public async Task ObsoleteAttributes_ShouldBeRepeatedInMock()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Collections.Generic;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			var x = Mockolate.Mock.Create<MyBaseClass>();
+			             }
+			         }
+
+			         public class MyBaseClass
+			         {
+			              [Obsolete()]
+			              public MyBaseClass()
+			              {
+			                 SomeProperty = 1;
+			              }
+			              
+			              [Obsolete("This constructor is obsolete")]
+			              public MyBaseClass(int value)
+			              {
+			                 SomeProperty = value;
+			              }
+			              
+			              [Obsolete("This event is obsolete")]
+			              public virtual event EventHandler<int> SomeEvent;
+			              
+			              [Obsolete("This property is obsolete")]
+			              public virtual int SomeProperty { get; }
+			              
+			              [Obsolete("This method is obsolete")]
+			              public virtual int SomeMethod()
+			              {
+			                SomeEvent?.Invoke(this, SomeProperty);
+			                return 3;
+			              }
+			              
+			              [Obsolete("This indexer is obsolete")]
+			              public virtual int this[int index] => 4;
+			         }
+			     }
+
+			     """, typeof(ObsoleteAttribute));
+
+		await That(result.Sources)
+			.ContainsKey("MockForMyBaseClass.g.cs").WhoseValue
+			.Contains("""
+			          	[System.Obsolete()]
+			          	public MockForMyBaseClass(MockRegistration mockRegistration)
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	[System.Obsolete("This constructor is obsolete")]
+			          	public MockForMyBaseClass(int value, MockRegistration mockRegistration)
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	[System.Obsolete("This event is obsolete")]
+			          	public override event System.EventHandler<int>? SomeEvent
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	[System.Obsolete("This property is obsolete")]
+			          	public override int SomeProperty
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	[System.Obsolete("This indexer is obsolete")]
+			          	public override int this[int index]
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	[System.Obsolete("This method is obsolete")]
+			          	public override int SomeMethod()
+			          """).IgnoringNewlineStyle();
+	}
+
+	[Fact]
 	public async Task SameMethodInMultipleInterfaces_ShouldUseExplicitImplementation()
 	{
 		GeneratorResult result = Generator
@@ -207,48 +330,5 @@ public class GeneralTests
 		await That(result.Sources).ContainsKey("MockForIMyInterface1.g.cs").WhoseValue
 			.Contains("public void MyMethod(int v1)").And
 			.Contains("void MyCode.IMyInterface2.MyMethod(int v1)");
-	}
-
-	[Fact]
-	public async Task InterfaceProperty_ShouldRecursivelyCreateMocks()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System.Collections.Generic;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			var x = Mockolate.Mock.Create<IMyInterface1>();
-			             }
-			         }
-
-			         public interface IMyInterface1
-			         {
-			             IMyInterface2 MyProperty { get; }
-			         }
-			     
-			         public interface IMyInterface2
-			         {
-			             IMyInterface3 MyMethod(int v1);
-			         }
-			     
-			         public interface IMyInterface3
-			         {
-			             IMyInterface1 MyInnerMethod(int v1);
-			         }
-			     }
-
-			     """, typeof(IList<>));
-
-		await That(result.Diagnostics).IsEmpty();
-
-		await That(result.Sources)
-			.ContainsKey("MockForIMyInterface1.g.cs").And
-			.ContainsKey("MockForIMyInterface2.g.cs").And
-			.ContainsKey("MockForIMyInterface3.g.cs");
 	}
 }

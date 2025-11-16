@@ -12,6 +12,7 @@ internal record Event
 		Type = new Type(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString();
 		Delegate = new Method(delegateInvokeMethod, null);
+		Obsolete = eventSymbol.GetAttributes().GetObsoleteAttribute();
 
 		if (alreadyDefinedEvents is not null)
 		{
@@ -23,6 +24,8 @@ internal record Event
 			alreadyDefinedEvents.Add(this);
 		}
 	}
+
+	public ObsoleteAttribute? Obsolete { get; }
 
 	public static IEqualityComparer<Event> EqualityComparer { get; } = new EventEqualityComparer();
 

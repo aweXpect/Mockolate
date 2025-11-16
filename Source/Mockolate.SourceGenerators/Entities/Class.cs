@@ -21,7 +21,6 @@ internal record Class
 		INamedTypeSymbol? containingType = type.ContainingType;
 		if (containingType is not null)
 		{
-			ContainingType = new Type(containingType);
 			while (containingType is not null)
 			{
 				ClassName = containingType.Name + "." + ClassName;
@@ -78,8 +77,6 @@ internal record Class
 				.ToArray());
 	}
 
-	public Type? ContainingType { get; }
-
 	public EquatableArray<Method> Methods { get; }
 	public EquatableArray<Class> InheritedTypes { get; }
 	public EquatableArray<Property> Properties { get; }
@@ -99,7 +96,7 @@ internal record Class
 			if (namedType.IsGenericType)
 			{
 				return namedType.Name + "<" + string.Join(",",
-					namedType.TypeArguments.Select(t => GetTypeName(t))) + ">";
+					namedType.TypeArguments.Select(GetTypeName)) + ">";
 			}
 
 			return namedType.SpecialType switch
@@ -138,7 +135,7 @@ internal record Class
 			if (namedType.IsGenericType)
 			{
 				return GetPrefix(namedType) + namedType.Name + "<" + string.Join(",",
-					namedType.TypeArguments.Select(t => GetTypeFullName(t))) + ">";
+					namedType.TypeArguments.Select(t => t.TypeKind == TypeKind.TypeParameter ? t.Name : GetTypeFullName(t))) + ">";
 			}
 
 			return namedType.SpecialType switch
