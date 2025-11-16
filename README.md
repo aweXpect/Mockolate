@@ -117,10 +117,10 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 - `ThrowWhenNotSetup` (bool):
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
 	- If `false`, the mock will return a default value (see `DefaultValue`).
-- `BaseClassBehavior` (enum):
+- `CallBaseClass` (enum):
 	- Controls how the mock interacts with base class members. Options:
-		- `IgnoreBaseClass`: Do not call base class implementation (default).
-		- `CallBaseClass`: Call base class implementation.
+		- `false`: Do not call base class implementation (default).
+		- `true`: Call base class implementation.
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
 

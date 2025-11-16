@@ -27,6 +27,9 @@ public abstract class IndexerSetup : IIndexerSetup
 
 	internal void InvokeSetter<TValue>(IndexerSetterAccess setterAccess, TValue value, MockBehavior behavior)
 		=> ExecuteSetterCallback(setterAccess, value, behavior);
+	
+	bool? IIndexerSetup.CallBaseClass()
+		=> GetCallBaseClass();
 
 	/// <summary>
 	///     Execute a potentially registered getter callback.
@@ -93,6 +96,11 @@ public abstract class IndexerSetup : IIndexerSetup
 	}
 
 	/// <summary>
+	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	protected abstract bool? GetCallBaseClass();
+
+	/// <summary>
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
@@ -110,6 +118,23 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1) : IndexerSetu
 	private readonly List<Action<TValue, T1>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, TValue>? _initialization;
+	private bool _callBaseClass;
+
+	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public IndexerSetup<TValue, T1> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
+	}
 
 	/// <summary>
 	///     Initializes the indexer with the given <paramref name="value" />.
@@ -334,6 +359,23 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 	private readonly List<Action<TValue, T1, T2>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, TValue>? _initialization;
+	private bool _callBaseClass;
+
+	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public IndexerSetup<TValue, T1, T2> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
+	}
 
 	/// <summary>
 	///     Initializes the indexer with the given <paramref name="value" />.
@@ -565,6 +607,23 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private readonly List<Action<TValue, T1, T2, T3>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, TValue>? _initialization;
+	private bool _callBaseClass;
+
+	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public IndexerSetup<TValue, T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
+	}
 
 	/// <summary>
 	///     Initializes the indexer with the given <paramref name="value" />.
@@ -801,6 +860,23 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private readonly List<Action<TValue, T1, T2, T3, T4>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
+	private bool _callBaseClass;
+
+	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public IndexerSetup<TValue, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
+	}
 
 	/// <summary>
 	///     Initializes the indexer with the given <paramref name="value" />.

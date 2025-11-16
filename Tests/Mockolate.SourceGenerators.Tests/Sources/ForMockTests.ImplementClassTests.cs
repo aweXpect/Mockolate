@@ -308,7 +308,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				var baseResult = base[index];
 				          				return MockRegistrations.GetIndexer<int>(() => baseResult, index);
@@ -318,7 +318,7 @@ public sealed partial class ForMockTests
 				          		}
 				          		set
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				base[index] = value;
 				          			}
@@ -333,7 +333,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				var baseResult = base[index, isReadOnly];
 				          				return MockRegistrations.GetIndexer<int>(() => baseResult, index, isReadOnly);
@@ -349,7 +349,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				base[index, isWriteOnly] = value;
 				          			}
@@ -688,7 +688,7 @@ public sealed partial class ForMockTests
 				          	public override void MyMethod1(int index)
 				          	{
 				          		MethodSetupResult? methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", index);
-				          		if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          		if (MockRegistrations.Behavior.CallBaseClass)
 				          		{
 				          			base.MyMethod1(index);
 				          		}
@@ -699,7 +699,7 @@ public sealed partial class ForMockTests
 				          	protected override bool MyMethod2(int index, bool isReadOnly)
 				          	{
 				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
-				          		if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          		if (MockRegistrations.Behavior.CallBaseClass)
 				          		{
 				          			var baseResult = base.MyMethod2(index, isReadOnly);
 				          			if (methodExecution?.HasSetup != true)
@@ -1035,7 +1035,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		protected get
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				var baseResult = base.SomeProperty1;
 				          				return MockRegistrations.GetProperty<int>("MyCode.MyService.SomeProperty1", () => baseResult);
@@ -1045,7 +1045,7 @@ public sealed partial class ForMockTests
 				          		}
 				          		set
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				base.SomeProperty1 = value;
 				          			}
@@ -1060,7 +1060,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				var baseResult = base.SomeProperty2;
 				          				return MockRegistrations.GetProperty<int>("MyCode.MyService.SomeProperty2", () => baseResult);
@@ -1070,7 +1070,7 @@ public sealed partial class ForMockTests
 				          		}
 				          		protected set
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				base.SomeProperty2 = value;
 				          			}
@@ -1085,7 +1085,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				var baseResult = base.SomeReadOnlyProperty;
 				          				return MockRegistrations.GetProperty<bool?>("MyCode.MyService.SomeReadOnlyProperty", () => baseResult);
@@ -1101,7 +1101,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)
+				          			if (MockRegistrations.Behavior.CallBaseClass)
 				          			{
 				          				base.SomeWriteOnlyProperty = value;
 				          			}

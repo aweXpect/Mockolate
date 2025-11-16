@@ -164,7 +164,7 @@ public sealed partial class SetupMethodTests
 				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
 				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
 				With(17))
-			.Callback((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17)
+			.Callback((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
 				=> isCalled++)
 			.Returns((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17)
 				=> p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17);
@@ -186,7 +186,7 @@ public sealed partial class SetupMethodTests
 				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
 				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
 				With(17), With(18))
-			.Callback((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18)
+			.Callback((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
 				=> isCalled++)
 			.Returns((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18)
 				=> p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17 + p18);
@@ -319,7 +319,7 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task ToString_RefParameter_WithCallback_ShouldReturnExpectedValue()
 	{
-		IRefParameter<int> sut = Ref<int>(v => 4);
+		IRefParameter<int> sut = Ref<int>(_ => 4);
 		string expectedResult = "Ref<int>(v => 4)";
 
 		string? result = sut.ToString();
@@ -449,7 +449,7 @@ public sealed partial class SetupMethodTests
 				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
 				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
 				With(17))
-			.Callback((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17)
+			.Callback((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
 				=> isCalled++);
 
 		mock.VoidMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
@@ -468,7 +468,7 @@ public sealed partial class SetupMethodTests
 				With(1), With(2), With(3), With(4), With(5), With(6), With(7), With(8),
 				With(9), With(10), With(11), With(12), With(13), With(14), With(15), With(16),
 				With(17), With(18))
-			.Callback((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18)
+			.Callback((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
 				=> isCalled++);
 
 		mock.VoidMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);

@@ -13,7 +13,20 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 {
 	private readonly List<Action> _callbacks = [];
 	private readonly List<Func<TReturn>> _returnCallbacks = [];
+	private bool? _callBaseClass;
 	private int _currentReturnCallbackIndex = -1;
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public ReturnMethodSetup<TReturn> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
+	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -103,6 +116,10 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	protected override bool IsMatch(MethodInvocation invocation)
 		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
 
+	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 		=> behavior.DefaultValue.Generate<T>();
@@ -125,6 +142,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Func<T1, TReturn>> _returnCallbacks = [];
+	private bool? _callBaseClass;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
@@ -139,6 +157,18 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup
 	{
 		_name = name;
 		_matches = matches;
+	}
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public ReturnMethodSetup<TReturn, T1> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
 	}
 
 	/// <summary>
@@ -272,6 +302,10 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup
 			   ? _matches.Matches(invocation.Parameters)
 			   : Matches([_match1!,], invocation.Parameters));
 
+	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
@@ -315,6 +349,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Func<T1, T2, TReturn>> _returnCallbacks = [];
+	private bool? _callBaseClass;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
@@ -330,6 +365,18 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 	{
 		_name = name;
 		_matches = matches;
+	}
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public ReturnMethodSetup<TReturn, T1, T2> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
 	}
 
 	/// <summary>
@@ -470,6 +517,10 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup
 			   ? _matches.Matches(invocation.Parameters)
 			   : Matches([_match1!, _match2!,], invocation.Parameters));
 
+	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
@@ -514,6 +565,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Func<T1, T2, T3, TReturn>> _returnCallbacks = [];
+	private bool? _callBaseClass;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
@@ -534,6 +586,18 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 	{
 		_name = name;
 		_matches = matches;
+	}
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public ReturnMethodSetup<TReturn, T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
 	}
 
 	/// <summary>
@@ -681,6 +745,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup
 			   ? _matches.Matches(invocation.Parameters)
 			   : Matches([_match1!, _match2!, _match3!,], invocation.Parameters));
 
+	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
 	{
@@ -727,6 +795,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Func<T1, T2, T3, T4, TReturn>> _returnCallbacks = [];
+	private bool? _callBaseClass;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
@@ -749,6 +818,18 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 	{
 		_name = name;
 		_matches = matches;
+	}
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public ReturnMethodSetup<TReturn, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
 	}
 
 	/// <summary>
@@ -902,6 +983,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup
 		   (_matches is not null
 			   ? _matches.Matches(invocation.Parameters)
 			   : Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters));
+
+	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)

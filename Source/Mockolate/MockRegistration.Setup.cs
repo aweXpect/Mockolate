@@ -44,9 +44,18 @@ public partial class MockRegistration
 			{
 				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
 			}
+			
+			if (!Behavior.CallBaseClass)
+			{
+				defaultValueGenerator = null;
+			}
 
 			matchingSetup = new PropertySetup.Default(defaultValueGenerator?.Invoke());
 			_propertySetups.TryAdd(propertyName, matchingSetup);
+		}
+		else if (defaultValueGenerator is not null && (matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass))
+		{
+			defaultValueGenerator();
 		}
 
 		return matchingSetup;
@@ -68,10 +77,15 @@ public partial class MockRegistration
 		{
 			if (setup?.TryGetInitialValue(Behavior, parameters, out TValue? value) == true)
 			{
+				if (setup.CallBaseClass() ?? Behavior.CallBaseClass)
+				{
+					defaultValueGenerator?.Invoke();
+				}
+				
 				return value;
 			}
 
-			if (defaultValueGenerator is not null)
+			if (Behavior.CallBaseClass && defaultValueGenerator is not null)
 			{
 				return defaultValueGenerator();
 			}

@@ -21,6 +21,11 @@ public abstract class MethodSetup : IMethodSetup
 	/// <inheritdoc cref="IMethodSetup.Matches(MethodInvocation)" />
 	bool IMethodSetup.Matches(MethodInvocation methodInvocation)
 		=> IsMatch(methodInvocation);
+	
+	/// <inheritdoc cref="IMethodSetup.CallBaseClass()" />
+	bool? IMethodSetup.CallBaseClass()
+		=> GetCallBaseClass();
+
 
 	internal TResult Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior)
 	{
@@ -35,6 +40,11 @@ public abstract class MethodSetup : IMethodSetup
 			ExecuteCallback(methodInvocation, behavior);
 		}
 	}
+
+	/// <summary>
+	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	protected abstract bool? GetCallBaseClass();
 
 	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type

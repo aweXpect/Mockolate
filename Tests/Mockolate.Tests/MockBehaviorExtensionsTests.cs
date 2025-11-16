@@ -9,7 +9,7 @@ public sealed class MockBehaviorExtensionsTests
 
 		MockBehavior result = sut.CallingBaseClass();
 
-		await That(result.BaseClassBehavior).IsEqualTo(BaseClassBehavior.CallBaseClass);
+		await That(result.CallBaseClass).IsTrue();
 	}
 
 	[Fact]
@@ -19,6 +19,6 @@ public sealed class MockBehaviorExtensionsTests
 
 		MockBehavior result = sut.IgnoringBaseClass();
 
-		await That(result.BaseClassBehavior).IsEqualTo(BaseClassBehavior.IgnoreBaseClass);
+		await That(result.CallBaseClass).IsFalse();
 	}
 }

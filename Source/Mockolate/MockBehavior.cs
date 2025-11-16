@@ -22,9 +22,12 @@ public record MockBehavior
 	public bool ThrowWhenNotSetup { get; init; }
 
 	/// <summary>
-	///     Specifies whether the mock should call the base class implementation for methods or properties.
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
 	/// </summary>
-	public BaseClassBehavior BaseClassBehavior { get; init; }
+	/// <remarks>
+	///     Defaults to <see langword="false" />.
+	/// </remarks>
+	public bool CallBaseClass { get; init; }
 
 	/// <summary>
 	///     The generator for default values when not specified by a setup.

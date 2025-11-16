@@ -11,7 +11,7 @@ public sealed partial class MockBehaviorTests
 		IMyService mock = Mock.Create<IMyService>();
 		MockBehavior sut = ((IHasMockRegistration)mock).Registrations.Behavior;
 
-		await That(sut.BaseClassBehavior).IsEqualTo(BaseClassBehavior.IgnoreBaseClass);
+		await That(sut.CallBaseClass).IsFalse();
 		await That(sut.ThrowWhenNotSetup).IsFalse();
 		await That(sut.DefaultValue).Is<DefaultValueGenerator>();
 	}
@@ -21,12 +21,12 @@ public sealed partial class MockBehaviorTests
 	{
 		MockBehavior sut = MockBehavior.Default with
 		{
-			BaseClassBehavior = BaseClassBehavior.CallBaseClass,
+			CallBaseClass = true,
 			ThrowWhenNotSetup = true,
 			DefaultValue = new MyDefaultValueGenerator(),
 		};
 
-		await That(sut.BaseClassBehavior).IsEqualTo(BaseClassBehavior.CallBaseClass);
+		await That(sut.CallBaseClass).IsTrue();
 		await That(sut.ThrowWhenNotSetup).IsTrue();
 		await That(sut.DefaultValue.Generate<string>()).IsEqualTo("foo");
 		await That(sut.DefaultValue.Generate<int>()).IsEqualTo(0);
