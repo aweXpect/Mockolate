@@ -14,9 +14,8 @@ namespace Mockolate
     }
     public enum BaseClassBehavior
     {
-        DoNotCallBaseClass = 0,
-        OnlyCallBaseClass = 1,
-        UseBaseClassAsDefaultValue = 2,
+        IgnoreBaseClass = 0,
+        CallBaseClass = 1,
     }
     public interface IHasMockRegistration
     {
@@ -85,6 +84,11 @@ namespace Mockolate
         public Mockolate.DefaultValues.IDefaultValueGenerator DefaultValue { get; init; }
         public bool ThrowWhenNotSetup { get; init; }
         public static Mockolate.MockBehavior Default { get; }
+    }
+    public static class MockBehaviorExtensions
+    {
+        public static Mockolate.MockBehavior CallingBaseClass(this Mockolate.MockBehavior mockBehavior) { }
+        public static Mockolate.MockBehavior IgnoringBaseClass(this Mockolate.MockBehavior mockBehavior) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MockRegistration
