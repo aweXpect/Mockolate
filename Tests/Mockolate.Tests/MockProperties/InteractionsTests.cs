@@ -11,7 +11,7 @@ public sealed class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.Get<int>("foo.bar");
+		registration.GetProperty<int>("foo.bar");
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "baz.bar");
 
@@ -23,7 +23,7 @@ public sealed class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.Get<int>("foo.bar");
+		registration.GetProperty<int>("foo.bar");
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar");
 
@@ -47,7 +47,7 @@ public sealed class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.Set("foo.bar", 4);
+		registration.SetProperty("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", Any<int>());
 
@@ -59,7 +59,7 @@ public sealed class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.Set("foo.bar", 4);
+		registration.SetProperty("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", Any<string>());
 
@@ -71,7 +71,7 @@ public sealed class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.Set("foo.bar", 4);
+		registration.SetProperty("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "baz.bar", Any<int>());
 

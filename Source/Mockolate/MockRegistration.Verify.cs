@@ -8,11 +8,6 @@ namespace Mockolate;
 public partial class MockRegistration
 {
 	/// <summary>
-	///     Gets a value indicating whether all expected interactions have been verified.
-	/// </summary>
-	public bool ThatAllInteractionsAreVerified() => !Interactions.HasMissingVerifications;
-
-	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
 	///     <paramref name="subject" />.
 	/// </summary>

@@ -96,7 +96,7 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources).ContainsKey("MockForFuncintbool.g.cs").WhoseValue
-			.Contains("_mock.Registrations.Execute<bool>(\"System.Func<int, bool>.Invoke\", arg)")
+			.Contains("_mock.Registrations.InvokeMethod<bool>(\"System.Func<int, bool>.Invoke\", arg)")
 			.IgnoringNewlineStyle().And
 			.Contains("System.Func<int,bool> Object").IgnoringNewlineStyle();
 	}

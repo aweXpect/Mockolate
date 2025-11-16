@@ -11,7 +11,7 @@ public sealed class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.Execute("foo.bar", 4);
+		registration.InvokeMethod("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", Any<int>());
 
@@ -23,7 +23,7 @@ public sealed class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.Execute("foo.bar", 4);
+		registration.InvokeMethod("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", Any<string>());
 
@@ -35,7 +35,7 @@ public sealed class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.Execute("foo.bar", 4);
+		registration.InvokeMethod("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "baz.bar", Any<int>());
 
