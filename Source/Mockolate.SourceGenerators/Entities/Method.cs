@@ -61,7 +61,7 @@ internal record Method
 			string name = Name.Substring(0, Name.IndexOf('<'));
 			string parameters = string.Join(", ",
 				GenericParameters.Value.Select(genericParameter => $"{{typeof({genericParameter.Name})}}"));
-			return $"\"{ContainingType}.{name}<{parameters}>\"";
+			return $"$\"{ContainingType}.{name}<{parameters}>\"";
 		}
 
 		return $"\"{ContainingType}.{Name}\"";
