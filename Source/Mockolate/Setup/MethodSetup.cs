@@ -78,7 +78,7 @@ public abstract class MethodSetup : IMethodSetup
 	protected static bool HasRefParameter<T>(Match.NamedParameter[] namedParameters, string parameterName,
 		[NotNullWhen(true)] out Match.IRefParameter<T>? parameter)
 	{
-		foreach (Match.NamedParameter? namedParameter in namedParameters)
+		foreach (Match.NamedParameter namedParameter in namedParameters)
 		{
 			if (namedParameter.Name.Equals(parameterName, StringComparison.Ordinal) &&
 			    namedParameter.Parameter is Match.IRefParameter<T> refParameter)
@@ -99,7 +99,7 @@ public abstract class MethodSetup : IMethodSetup
 	protected static bool HasOutParameter<T>(Match.NamedParameter[] namedParameters, string parameterName,
 		[NotNullWhen(true)] out Match.IOutParameter<T>? parameter)
 	{
-		foreach (Match.NamedParameter? namedParameter in namedParameters)
+		foreach (Match.NamedParameter namedParameter in namedParameters)
 		{
 			if (namedParameter.Name.Equals(parameterName, StringComparison.Ordinal) &&
 			    namedParameter.Parameter is Match.IOutParameter<T> outParameter)

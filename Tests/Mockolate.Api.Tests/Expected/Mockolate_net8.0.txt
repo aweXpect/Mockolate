@@ -97,16 +97,16 @@ namespace Mockolate
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public TResult GetIndexer<TResult>(System.Func<TResult>? defaultValueGenerator, params object?[] parameters) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult>? defaultValueGenerator = null) { }
-        public Mockolate.Verify.VerificationResult<T> Got<T>(T subject, params Mockolate.Match.IParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Match.NamedParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Match.IParameter? value, params Mockolate.Match.NamedParameter?[] parameters) { }
         public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params object?[]? parameters) { }
         public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, params object?[]? parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, params Mockolate.Match.IParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, Mockolate.Match.IParameters parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, params Mockolate.Match.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName, Mockolate.Match.IParameter value) { }
         public void Raise(string eventName, params object?[] parameters) { }
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
-        public Mockolate.Verify.VerificationResult<T> Set<T>(T subject, Mockolate.Match.IParameter? value, params Mockolate.Match.IParameter?[] parameters) { }
         public void SetIndexer<TResult>(TResult value, params object?[] parameters) { }
         public void SetProperty(string propertyName, object? value) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
@@ -126,12 +126,12 @@ namespace Mockolate
     {
         public Mock(T subject, Mockolate.MockRegistration mockRegistration) { }
         public T Subject { get; }
-        public Mockolate.Verify.VerificationResult<T> GotIndexer(params Mockolate.Match.IParameter?[] parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Method(string methodName, params Mockolate.Match.IParameter[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> GotIndexer(params Mockolate.Match.NamedParameter?[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method(string methodName, Mockolate.Match.IParameters parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Method(string methodName, params Mockolate.Match.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Property(string propertyName) { }
         public Mockolate.Verify.VerificationResult<T> Property(string propertyName, Mockolate.Match.IParameter value) { }
-        public Mockolate.Verify.VerificationResult<T> SetIndexer(Mockolate.Match.IParameter? value, params Mockolate.Match.IParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> SetIndexer(Mockolate.Match.IParameter? value, params Mockolate.Match.NamedParameter?[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo(string eventName) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom(string eventName) { }
     }

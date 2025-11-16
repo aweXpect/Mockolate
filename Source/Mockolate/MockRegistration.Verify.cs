@@ -11,7 +11,7 @@ public partial class MockRegistration
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
 	///     <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Method<T>(T subject, string methodName, params Match.IParameter[] parameters) => new(
+	public VerificationResult<T> Method<T>(T subject, string methodName, params Match.NamedParameter[] parameters) => new(
 		subject,
 		Interactions,
 		Interactions.Interactions
@@ -19,10 +19,10 @@ public partial class MockRegistration
 			.Where(method =>
 				method.Name.Equals(methodName) &&
 				method.Parameters.Length == parameters.Length &&
-				!parameters.Where((parameter, i) => !parameter.Matches(method.Parameters[i])).Any())
+				!parameters.Where((parameter, i) => !parameter.Parameter.Matches(method.Parameters[i])).Any())
 			.Cast<IInteraction>()
 			.ToArray(),
-		$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.ToString()))})");
+		$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.Parameter.ToString()))})");
 
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
@@ -70,8 +70,8 @@ public partial class MockRegistration
 	///     Counts the getter accesses of the indexer with matching <paramref name="parameters" /> on the
 	///     <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Got<T>(T subject,
-		params Match.IParameter?[] parameters)
+	public VerificationResult<T> Indexer<T>(T subject,
+		params Match.NamedParameter?[] parameters)
 		=> new(subject,
 			Interactions,
 			Interactions.Interactions
@@ -79,29 +79,29 @@ public partial class MockRegistration
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  !parameters.Where((parameter, i) => parameter is null
 					                  ? indexer.Parameters[i] is not null
-					                  : !parameter.Matches(indexer.Parameters[i])).Any())
+					                  : !parameter.Parameter.Matches(indexer.Parameters[i])).Any())
 				.Cast<IInteraction>()
 				.ToArray(),
-			$"got indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))}");
+			$"got indexer {string.Join(", ", parameters.Select(x => x?.Parameter.ToString() ?? "null"))}");
 
 	/// <summary>
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Set<T>(T subject, Match.IParameter? value,
-		params Match.IParameter?[] parameters)
+	public VerificationResult<T> Indexer<T>(T subject, Match.IParameter? value,
+		params Match.NamedParameter?[] parameters)
 		=> new(subject,
 			Interactions,
 			Interactions.Interactions
 				.OfType<IndexerSetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
-				                  (value is null ? indexer.Value is null : value.Matches(indexer.Value)) &&
+				                  (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
 				                  !parameters.Where((parameter, i) => parameter is null
 					                  ? indexer.Parameters[i] is not null
-					                  : !parameter.Matches(indexer.Parameters[i])).Any())
+					                  : !parameter.Parameter.Matches(indexer.Parameters[i])).Any())
 				.Cast<IInteraction>()
 				.ToArray(),
-			$"set indexer {string.Join(", ", parameters.Select(x => x?.ToString() ?? "null"))} to value {value?.ToString() ?? "null"}");
+			$"set indexer {string.Join(", ", parameters.Select(x => x?.Parameter.ToString() ?? "null"))} to value {value?.ToString() ?? "null"}");
 
 	/// <summary>
 	///     Counts the subscriptions to the event <paramref name="eventName" /> on the <paramref name="subject" />.

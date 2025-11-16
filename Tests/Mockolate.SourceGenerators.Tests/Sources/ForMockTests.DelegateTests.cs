@@ -35,7 +35,7 @@ public sealed partial class ForMockTests
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		public VerificationResult<MyCode.Program.DoSomething> Invoke(Match.IParameter<int>? x, Match.IParameter<int>? y)
-			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", x ?? Match.Null<int>(), y ?? Match.Null<int>());
+			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", x ?? Match.Null<int>()), new Match.NamedParameter("y", y ?? Match.Null<int>()));
 			          """).IgnoringNewlineStyle();
 	}
 
