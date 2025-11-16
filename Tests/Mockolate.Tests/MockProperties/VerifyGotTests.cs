@@ -12,7 +12,7 @@ public sealed class VerifyGotTests
 		_ = sut.Counter;
 
 		await That(sut.VerifyMock.Got.Counter()).Once();
-		await That(sut.VerifyMock.Set.Counter(WithAny<int>())).Never();
+		await That(sut.VerifyMock.Set.Counter(Any<int>())).Never();
 	}
 
 	[Fact]

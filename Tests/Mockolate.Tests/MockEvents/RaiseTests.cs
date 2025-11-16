@@ -97,7 +97,7 @@ public sealed partial class RaiseTests
 	}
 
 	[Fact]
-	public async Task WhenUsingRaise_WithAnyParameters_ShouldInvokeEvent()
+	public async Task WhenUsingRaise_AnyParameters_ShouldInvokeEvent()
 	{
 		int callCount = 0;
 		IRaiseEvent mock = Mock.Create<IRaiseEvent>();

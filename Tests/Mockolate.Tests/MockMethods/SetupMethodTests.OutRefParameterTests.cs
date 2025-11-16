@@ -125,13 +125,13 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue = 0;
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method1WithOutParameter(AnyParameters())
 					.Callback(v =>
 					{
 						callCount++;
@@ -168,13 +168,13 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue = 0;
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method1WithRefParameter(AnyParameters())
 					.Callback(v =>
 					{
 						callCount++;
@@ -222,8 +222,8 @@ public sealed partial class SetupMethodTests
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 			}
 
-			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string>(name, WithAnyParameters())
+			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
+				: ReturnMethodSetup<Task, string>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -317,14 +317,14 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method2WithOutParameter(AnyParameters())
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -369,14 +369,14 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method2WithRefParameter(AnyParameters())
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -430,8 +430,8 @@ public sealed partial class SetupMethodTests
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 			}
 
-			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long>(name, WithAnyParameters())
+			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
+				: ReturnMethodSetup<Task, string, long>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -547,7 +547,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -555,7 +555,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method3WithOutParameter(AnyParameters())
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -609,7 +609,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -617,7 +617,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method3WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -676,8 +676,8 @@ public sealed partial class SetupMethodTests
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 			}
 
-			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int>(name, WithAnyParameters())
+			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
+				: ReturnMethodSetup<Task, string, long, int>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -816,7 +816,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -825,7 +825,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method4WithOutParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -887,7 +887,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -896,7 +896,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method4WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -960,8 +960,8 @@ public sealed partial class SetupMethodTests
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 			}
 
-			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int, int>(name, WithAnyParameters())
+			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
+				: ReturnMethodSetup<Task, string, long, int, int>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1123,7 +1123,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1133,7 +1133,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method5WithOutParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -1204,7 +1204,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1214,7 +1214,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method5WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -1283,8 +1283,8 @@ public sealed partial class SetupMethodTests
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
 			}
 
-			private class MyReturnMethodSetupWithAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int, int, int>(name, WithAnyParameters())
+			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
+				: ReturnMethodSetup<Task, string, long, int, int, int>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1351,13 +1351,13 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue = 0;
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method1WithOutParameter(AnyParameters())
 					.Callback(v =>
 					{
 						callCount++;
@@ -1394,13 +1394,13 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue = 0;
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method1WithRefParameter(AnyParameters())
 					.Callback(v =>
 					{
 						callCount++;
@@ -1446,7 +1446,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string>(name, WithAnyParameters())
+				: VoidMethodSetup<string>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1484,14 +1484,14 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method2WithOutParameter(AnyParameters())
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -1536,14 +1536,14 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method2WithRefParameter(AnyParameters())
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -1595,7 +1595,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long>(name, WithAnyParameters())
+				: VoidMethodSetup<string, long>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1637,7 +1637,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1645,7 +1645,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method3WithOutParameter(AnyParameters())
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -1699,7 +1699,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1707,7 +1707,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method3WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -1764,7 +1764,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int>(name, WithAnyParameters())
+				: VoidMethodSetup<string, long, int>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -1811,7 +1811,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1820,7 +1820,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method4WithOutParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -1882,7 +1882,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1891,7 +1891,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method4WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -1953,7 +1953,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int, int>(name, WithAnyParameters())
+				: VoidMethodSetup<string, long, int, int>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);
@@ -2005,7 +2005,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_WithAnyParameters_ShouldSetToDefaultValue()
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -2015,7 +2015,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5WithOutParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method5WithOutParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -2086,7 +2086,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_WithAnyParameters_ShouldRemainUnchanged()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -2096,7 +2096,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5WithRefParameter(WithAnyParameters())
+				sut.SetupMock.Method.Method5WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -2163,7 +2163,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int, int, int>(name, WithAnyParameters())
+				: VoidMethodSetup<string, long, int, int, int>(name, AnyParameters())
 			{
 				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
 					=> SetOutParameter<TValue>(parameterName, behavior);

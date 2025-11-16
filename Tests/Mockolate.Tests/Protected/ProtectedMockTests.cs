@@ -24,7 +24,7 @@ public sealed class ProtectedMockTests
 	{
 		MyProtectedClass mock = Mock.Create<MyProtectedClass>();
 
-		mock.SetupMock.Protected.Method.MyProtectedMethod(WithAny<string>())
+		mock.SetupMock.Protected.Method.MyProtectedMethod(Any<string>())
 			.Returns(v => $"Hello, {v}!");
 
 		string result = mock.InvokeMyProtectedMethod("foo");
@@ -52,7 +52,7 @@ public sealed class ProtectedMockTests
 		int callCount = 0;
 		MyProtectedClass mock = Mock.Create<MyProtectedClass>();
 
-		mock.SetupMock.Protected.Indexer(WithAny<int>()).InitializeWith(42).OnGet(() => callCount++);
+		mock.SetupMock.Protected.Indexer(Any<int>()).InitializeWith(42).OnGet(() => callCount++);
 
 		int result = mock.GetMyProtectedIndexer(3);
 
@@ -67,7 +67,7 @@ public sealed class ProtectedMockTests
 		int callCount = 0;
 		MyProtectedClass mock = Mock.Create<MyProtectedClass>();
 
-		mock.SetupMock.Protected.Indexer(WithAny<int>()).OnSet(() => callCount++);
+		mock.SetupMock.Protected.Indexer(Any<int>()).OnSet(() => callCount++);
 
 		mock.SetMyProtectedIndexer(3, 4);
 

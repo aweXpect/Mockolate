@@ -242,7 +242,7 @@ public sealed partial class MockBehaviorTests
 			{
 				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
 			});
-			mock.SetupMock.Indexer(WithAny<int>()).Returns(15);
+			mock.SetupMock.Indexer(Any<int>()).Returns(15);
 
 			int result = mock[1];
 			mock[1] = 42;

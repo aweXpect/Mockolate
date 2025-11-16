@@ -34,7 +34,7 @@ Framework 4.8.
    // Setup: Initial stock of 10 for Dark chocolate
    mock.Setup.Indexer("Dark").InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   mock.Setup.Method.Dispense(With("Dark"), WithAny<int>())
+   mock.Setup.Method.Dispense(With("Dark"), Any<int>())
        .Returns((type, amount) =>
        {
            var current = mock.Subject[type];
@@ -57,7 +57,7 @@ Framework 4.8.
    bool gotChoc3 = mock.Subject.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   mock.Verify.Invoked.Dispense(With("Dark"), WithAny<int>()).Exactly(3);
+   mock.Verify.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
@@ -148,7 +148,7 @@ Use `mock.Setup.Method.MethodName(…)` to set up methods. You can specify argum
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-mock.Setup.Method.Dispense(With("Dark"), WithAny<int>())
+mock.Setup.Method.Dispense(With("Dark"), Any<int>())
     .Returns((type, amount) =>
     {
         var current = mock.Subject[type];
@@ -162,11 +162,11 @@ mock.Setup.Method.Dispense(With("Dark"), WithAny<int>())
     });
 
 // Setup method with callback
-mock.Setup.Method.Dispense(With("White"), WithAny<int>())
+mock.Setup.Method.Dispense(With("White"), Any<int>())
     .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
-mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
+mock.Setup.Method.Dispense(With("Green"), Any<int>())
     .Throws<InvalidChocolateException>();
 ```
 
@@ -184,7 +184,7 @@ mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
 
 ```csharp
-mock.Setup.Method.DispenseAsync(WithAny<string>(), WithAny<int>())
+mock.Setup.Method.DispenseAsync(Any<string>(), Any<int>())
     .ReturnsAsync(true);
 ```
 
@@ -192,7 +192,7 @@ mock.Setup.Method.DispenseAsync(WithAny<string>(), WithAny<int>())
 
 Mockolate provides flexible argument matching for method setups and verifications:
 
-- `Match.WithAny<T>()`: Matches any value of type `T`.
+- `Match.Any<T>()`: Matches any value of type `T`.
 - `Match.With<T>(predicate)`: Matches values based on a predicate.
 - `Match.With<T>(value)`: Matches a specific value.
 - `Match.Null<T>()`: Matches null.
@@ -238,7 +238,7 @@ mock.Setup.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.WriteLi
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-mock.Setup.Indexer(WithAny<string>())
+mock.Setup.Indexer(Any<string>())
     .InitializeWith(type => 20)
     .OnGet(type => Console.WriteLine($"Stock for {type} was read"));
 
@@ -318,17 +318,17 @@ You can verify that methods were invoked with specific arguments and how many ti
 mock.Verify.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-mock.Verify.Invoked.Dispense(With("White"), WithAny<int>()).Never();
+mock.Verify.Invoked.Dispense(With("White"), Any<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-mock.Verify.Invoked.Dispense(WithAnyParameters()()).Exactly(2);
+mock.Verify.Invoked.Dispense(AnyParameters()()).Exactly(2);
 ```
 
 #### Argument Matchers
 
 You can use argument matchers from the `With` class to verify calls with flexible conditions:
 
-- `Match.WithAny<T>()`: matches any value of type `T`
+- `Match.Any<T>()`: matches any value of type `T`
 - `Match.Null<T>()`: matches `null`
 - `Match.With<T>(predicate)`: matches values satisfying a predicate
 - `Match.With(value)`: matches a specific value
@@ -338,8 +338,8 @@ You can use argument matchers from the `With` class to verify calls with flexibl
 **Example:**
 
 ```csharp
-mock.Verify.Invoked.Dispense(With<string>(t => t.StartsWith("D")), WithAny<int>()).Once();
-mock.Verify.Invoked.Dispense(With("Milk"), WithAny<int>()).AtLeastOnce();
+mock.Verify.Invoked.Dispense(With<string>(t => t.StartsWith("D")), Any<int>()).Once();
+mock.Verify.Invoked.Dispense(With("Milk"), Any<int>()).AtLeastOnce();
 ```
 
 ### Properties

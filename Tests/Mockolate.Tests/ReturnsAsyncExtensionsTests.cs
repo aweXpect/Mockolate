@@ -8,7 +8,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_1Parameter_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method1(WithAny<int>()).ReturnsAsync(() => 42);
+			sut.SetupMock.Method.Method1(Any<int>()).ReturnsAsync(() => 42);
 
 			int result = await sut.Method1(1);
 
@@ -19,7 +19,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_1Parameter_CallbackWithValue_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method1(WithAny<int>()).ReturnsAsync(v1 => v1 + 10);
+			sut.SetupMock.Method.Method1(Any<int>()).ReturnsAsync(v1 => v1 + 10);
 
 			int result = await sut.Method1(2);
 
@@ -30,7 +30,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_1Parameter_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method1(WithAny<int>()).ReturnsAsync(42);
+			sut.SetupMock.Method.Method1(Any<int>()).ReturnsAsync(42);
 
 			int result = await sut.Method1(1);
 
@@ -41,7 +41,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_2Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
+			sut.SetupMock.Method.Method2(Any<int>(), Any<int>()).ReturnsAsync(() => 42);
 
 			int result = await sut.Method2(1, 2);
 
@@ -52,7 +52,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_2Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
+			sut.SetupMock.Method.Method2(Any<int>(), Any<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
 
 			int result = await sut.Method2(1, 2);
 
@@ -63,7 +63,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_2Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method2(WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
+			sut.SetupMock.Method.Method2(Any<int>(), Any<int>()).ReturnsAsync(42);
 
 			int result = await sut.Method2(1, 2);
 
@@ -74,7 +74,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_3Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
+			sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>()).ReturnsAsync(() => 42);
 
 			int result = await sut.Method3(1, 2, 3);
 
@@ -85,7 +85,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_3Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
 				.ReturnsAsync((v1, v2, v3) => v1 + v2 + v3 + 10);
 
 			int result = await sut.Method3(1, 2, 3);
@@ -97,7 +97,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_3Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
+			sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>()).ReturnsAsync(42);
 
 			int result = await sut.Method3(1, 2, 3);
 
@@ -108,7 +108,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_4Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
 				.ReturnsAsync(() => 42);
 
 			int result = await sut.Method4(1, 2, 3, 4);
@@ -120,7 +120,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_4Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
 				.ReturnsAsync((v1, v2, v3, v4) => v1 + v2 + v3 + v4 + 10);
 
 			int result = await sut.Method4(1, 2, 3, 4);
@@ -132,7 +132,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_4Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
 				.ReturnsAsync(42);
 
 			int result = await sut.Method4(1, 2, 3, 4);
@@ -166,7 +166,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_WithParameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method2(WithAnyParameters()).ReturnsAsync(() => 42);
+			sut.SetupMock.Method.Method2(AnyParameters()).ReturnsAsync(() => 42);
 
 			int result = await sut.Method2(1, 2);
 
@@ -177,7 +177,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_WithParameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.Method2(WithAnyParameters()).ReturnsAsync(42);
+			sut.SetupMock.Method.Method2(AnyParameters()).ReturnsAsync(42);
 
 			int result = await sut.Method2(1, 2);
 
@@ -192,7 +192,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_1Parameter_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT1(WithAny<int>()).ReturnsAsync(() => 42);
+			sut.SetupMock.Method.MethodVT1(Any<int>()).ReturnsAsync(() => 42);
 
 			int result = await sut.MethodVT1(1);
 
@@ -203,7 +203,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_1Parameter_CallbackWithValue_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT1(WithAny<int>()).ReturnsAsync(v1 => v1 + 10);
+			sut.SetupMock.Method.MethodVT1(Any<int>()).ReturnsAsync(v1 => v1 + 10);
 
 			int result = await sut.MethodVT1(2);
 
@@ -214,7 +214,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_1Parameter_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT1(WithAny<int>()).ReturnsAsync(42);
+			sut.SetupMock.Method.MethodVT1(Any<int>()).ReturnsAsync(42);
 
 			int result = await sut.MethodVT1(1);
 
@@ -225,7 +225,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_2Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
+			sut.SetupMock.Method.MethodVT2(Any<int>(), Any<int>()).ReturnsAsync(() => 42);
 
 			int result = await sut.MethodVT2(1, 2);
 
@@ -236,7 +236,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_2Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
+			sut.SetupMock.Method.MethodVT2(Any<int>(), Any<int>()).ReturnsAsync((v1, v2) => v1 + v2 + 10);
 
 			int result = await sut.MethodVT2(1, 2);
 
@@ -247,7 +247,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_2Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT2(WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
+			sut.SetupMock.Method.MethodVT2(Any<int>(), Any<int>()).ReturnsAsync(42);
 
 			int result = await sut.MethodVT2(1, 2);
 
@@ -258,7 +258,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_3Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(() => 42);
+			sut.SetupMock.Method.MethodVT3(Any<int>(), Any<int>(), Any<int>()).ReturnsAsync(() => 42);
 
 			int result = await sut.MethodVT3(1, 2, 3);
 
@@ -269,7 +269,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_3Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.MethodVT3(Any<int>(), Any<int>(), Any<int>())
 				.ReturnsAsync((v1, v2, v3) => v1 + v2 + v3 + 10);
 
 			int result = await sut.MethodVT3(1, 2, 3);
@@ -281,7 +281,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_3Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT3(WithAny<int>(), WithAny<int>(), WithAny<int>()).ReturnsAsync(42);
+			sut.SetupMock.Method.MethodVT3(Any<int>(), Any<int>(), Any<int>()).ReturnsAsync(42);
 
 			int result = await sut.MethodVT3(1, 2, 3);
 
@@ -292,7 +292,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_4Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.MethodVT4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
 				.ReturnsAsync(() => 42);
 
 			int result = await sut.MethodVT4(1, 2, 3, 4);
@@ -304,7 +304,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_4Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.MethodVT4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
 				.ReturnsAsync((v1, v2, v3, v4) => v1 + v2 + v3 + v4 + 10);
 
 			int result = await sut.MethodVT4(1, 2, 3, 4);
@@ -316,7 +316,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_4Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT4(WithAny<int>(), WithAny<int>(), WithAny<int>(), WithAny<int>())
+			sut.SetupMock.Method.MethodVT4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
 				.ReturnsAsync(42);
 
 			int result = await sut.MethodVT4(1, 2, 3, 4);
@@ -350,7 +350,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_WithParameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT2(WithAnyParameters()).ReturnsAsync(() => 42);
+			sut.SetupMock.Method.MethodVT2(AnyParameters()).ReturnsAsync(() => 42);
 
 			int result = await sut.MethodVT2(1, 2);
 
@@ -361,7 +361,7 @@ public sealed class ReturnsAsyncExtensionsTests
 		public async Task ReturnsAsync_WithParameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
-			sut.SetupMock.Method.MethodVT2(WithAnyParameters()).ReturnsAsync(42);
+			sut.SetupMock.Method.MethodVT2(AnyParameters()).ReturnsAsync(42);
 
 			int result = await sut.MethodVT2(1, 2);
 

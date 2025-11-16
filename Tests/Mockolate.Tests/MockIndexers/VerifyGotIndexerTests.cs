@@ -10,7 +10,7 @@ public sealed class VerifyGotIndexerTests
 		IMyService mock = Mock.Create<IMyService>();
 		_ = mock[null, null, null, null];
 
-		await That(mock.VerifyMock.GotIndexer(WithAny<int?>(), null, Null<int?>(), WithAny<int?>())).Once();
+		await That(mock.VerifyMock.GotIndexer(Any<int?>(), null, Null<int?>(), Any<int?>())).Once();
 	}
 
 	[Fact]
@@ -19,9 +19,9 @@ public sealed class VerifyGotIndexerTests
 		IMyService mock = Mock.Create<IMyService>();
 		_ = mock[1, 2];
 
-		await That(mock.VerifyMock.GotIndexer(WithAny<int>())).Never();
-		await That(mock.VerifyMock.GotIndexer(WithAny<int>(), WithAny<int>())).Once();
-		await That(mock.VerifyMock.GotIndexer(WithAny<int>(), WithAny<int>(), WithAny<int>())).Never();
+		await That(mock.VerifyMock.GotIndexer(Any<int>())).Never();
+		await That(mock.VerifyMock.GotIndexer(Any<int>(), Any<int>())).Once();
+		await That(mock.VerifyMock.GotIndexer(Any<int>(), Any<int>(), Any<int>())).Never();
 	}
 
 	[Fact]

@@ -103,7 +103,7 @@ public partial class Match
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
-	private abstract class TypedParameter<T> : IParameter<T>
+	private abstract class TypedMatch<T> : IParameter<T>
 	{
 		/// <summary>
 		///     Checks if the <paramref name="value" /> is a matching parameter.

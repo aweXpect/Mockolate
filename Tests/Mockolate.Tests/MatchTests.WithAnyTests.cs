@@ -2,7 +2,7 @@ namespace Mockolate.Tests;
 
 public sealed partial class MatchTests
 {
-	public sealed class WithAnyTests
+	public sealed class AnyTests
 	{
 		[Theory]
 		[InlineData(null)]
@@ -10,7 +10,7 @@ public sealed partial class MatchTests
 		[InlineData("foo")]
 		public async Task ShouldAlwaysMatch(string? value)
 		{
-			IParameter<string> sut = WithAny<string>();
+			IParameter<string> sut = Any<string>();
 
 			bool result = sut.Matches(value);
 
@@ -20,8 +20,8 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = WithAny<string>();
-			string expectedValue = "WithAny<string>()";
+			IParameter<string> sut = Any<string>();
+			string expectedValue = "Any<string>()";
 
 			string? result = sut.ToString();
 
