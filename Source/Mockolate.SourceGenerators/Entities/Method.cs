@@ -21,6 +21,7 @@ internal record Method
 				.Select(x => new GenericParameter((ITypeParameterSymbol)x)).ToArray());
 			Name += $"<{string.Join(", ", GenericParameters.Value.Select(x => x.Name))}>";
 		}
+		Obsolete = methodSymbol.GetAttributes().GetObsoleteAttribute();
 
 		if (alreadyDefinedMethods is not null)
 		{
@@ -51,6 +52,7 @@ internal record Method
 	public string ContainingType { get; }
 	public EquatableArray<MethodParameter> Parameters { get; }
 	public string? ExplicitImplementation { get; }
+	public ObsoleteAttribute? Obsolete { get; }
 
 	internal string GetUniqueNameString()
 	{
@@ -59,7 +61,7 @@ internal record Method
 			string name = Name.Substring(0, Name.IndexOf('<'));
 			string parameters = string.Join(", ",
 				GenericParameters.Value.Select(genericParameter => $"{{typeof({genericParameter.Name})}}"));
-			return $"$\"{ContainingType}.{name}<{parameters}>\"";
+			return $"\"{ContainingType}.{name}<{parameters}>\"";
 		}
 
 		return $"\"{ContainingType}.{Name}\"";

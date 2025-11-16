@@ -578,7 +578,8 @@ internal static partial class Sources
 			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(Match.IDefaultEventParameters parameters)")
 				.AppendLine();
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\tMock<").Append(@class.ClassFullName).Append("> mock = CastToMockOrThrow(mockRaises);");
+			sb.Append("\t\t\tMock<").Append(@class.ClassFullName).Append("> mock = CastToMockOrThrow(mockRaises);")
+				.AppendLine();
 			sb.Append("\t\t\tMockBehavior mockBehavior = mock.Registrations.Behavior;").AppendLine();
 			sb.Append("\t\t\tmock.Registrations.Raise(").Append(@event.GetUniqueNameString()).Append(", ")
 				.Append(string.Join(", ",

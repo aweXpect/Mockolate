@@ -19,6 +19,8 @@ internal record Property
 			IndexerParameters = new EquatableArray<MethodParameter>(
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
+		
+		Obsolete = propertySymbol.GetAttributes().GetObsoleteAttribute();
 
 		if (alreadyDefinedProperties is not null)
 		{
@@ -49,6 +51,8 @@ internal record Property
 	public Method? Getter { get; }
 
 	public bool UseOverride { get; }
+
+	public ObsoleteAttribute? Obsolete { get; }
 
 	public Accessibility Accessibility { get; }
 	public string Name { get; }
