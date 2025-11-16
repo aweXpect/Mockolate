@@ -91,12 +91,6 @@ public partial class MockRegistration
 	public void SetupIndexer(IndexerSetup indexerSetup) => _indexerSetups.Add(indexerSetup);
 
 	/// <summary>
-	///     Sets the indexer for the given <paramref name="parameters" /> to the given <paramref name="value" />.
-	/// </summary>
-	public void SetupIndexerValue<TValue>(object?[] parameters, TValue value)
-		=> _indexerSetups.UpdateValue(parameters, value);
-
-	/// <summary>
 	///     Registers the <paramref name="methodSetup" /> in the mock.
 	/// </summary>
 	public void SetupMethod(MethodSetup methodSetup) => _methodSetups.Add(methodSetup);

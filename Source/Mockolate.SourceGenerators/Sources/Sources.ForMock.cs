@@ -65,7 +65,7 @@ internal static partial class Sources
 			sb.Append("\t{").AppendLine();
 			if (mockClass.Delegate.ReturnType != Type.Void)
 			{
-				sb.Append("\t\tvar result = _mock.Registrations.Execute<")
+				sb.Append("\t\tvar result = _mock.Registrations.InvokeMethod<")
 					.Append(mockClass.Delegate.ReturnType.Fullname)
 					.Append(">(").Append(mockClass.Delegate.GetUniqueNameString());
 				foreach (MethodParameter p in mockClass.Delegate.Parameters)
@@ -77,7 +77,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\tvar result = _mock.Registrations.Execute(")
+				sb.Append("\t\tvar result = _mock.Registrations.InvokeMethod(")
 					.Append(mockClass.Delegate.GetUniqueNameString());
 				foreach (MethodParameter p in mockClass.Delegate.Parameters)
 				{
@@ -417,7 +417,7 @@ internal static partial class Sources
 							"\t\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)")
 						.AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\treturn MockRegistrations.Get<").Append(property.Type.Fullname).Append(">(")
+					sb.Append("\t\t\t\t\treturn MockRegistrations.GetProperty<").Append(property.Type.Fullname).Append(">(")
 						.Append(property.GetUniqueNameString()).AppendLine(", () => baseResult);");
 					sb.Append("\t\t\t\t}").AppendLine();
 				}
@@ -439,7 +439,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\treturn MockRegistrations.Get<")
+				sb.Append("\t\t\treturn MockRegistrations.GetProperty<")
 					.Append(property.Type.Fullname)
 					.Append(">(").Append(property.GetUniqueNameString()).Append(");").AppendLine();
 			}
@@ -491,7 +491,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\tMockRegistrations.Set(").Append(property.GetUniqueNameString())
+				sb.Append("\t\t\tMockRegistrations.SetProperty(").Append(property.GetUniqueNameString())
 					.AppendLine(", value);");
 			}
 
@@ -564,12 +564,12 @@ internal static partial class Sources
 		if (method.ReturnType != Type.Void)
 		{
 			sb.Append("\t\tMethodSetupResult<").Append(method.ReturnType.Fullname)
-				.Append(">? methodExecution = MockRegistrations.Execute<")
+				.Append(">? methodExecution = MockRegistrations.InvokeMethod<")
 				.Append(method.ReturnType.Fullname).Append(">(").Append(method.GetUniqueNameString());
 		}
 		else
 		{
-			sb.Append("\t\tMethodSetupResult? methodExecution = MockRegistrations.Execute(")
+			sb.Append("\t\tMethodSetupResult? methodExecution = MockRegistrations.InvokeMethod(")
 				.Append(method.GetUniqueNameString());
 		}
 		foreach (MethodParameter p in method.Parameters)

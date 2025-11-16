@@ -54,7 +54,7 @@ public partial class MockRegistration
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>
-	public MethodSetupResult<TResult> Execute<TResult>(string methodName, params object?[]? parameters)
+	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null,];
 		MethodInvocation methodInvocation =
@@ -82,7 +82,7 @@ public partial class MockRegistration
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> returning
 	///     <see langword="void" />.
 	/// </summary>
-	public MethodSetupResult Execute(string methodName, params object?[]? parameters)
+	public MethodSetupResult InvokeMethod(string methodName, params object?[]? parameters)
 	{
 		parameters ??= [null,];
 		MethodInvocation methodInvocation =
@@ -103,7 +103,7 @@ public partial class MockRegistration
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName" />.
 	/// </summary>
-	public TResult Get<TResult>(string propertyName, Func<TResult>? defaultValueGenerator = null)
+	public TResult GetProperty<TResult>(string propertyName, Func<TResult>? defaultValueGenerator = null)
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
@@ -117,7 +117,7 @@ public partial class MockRegistration
 	///     Accesses the setter of the property with <paramref name="propertyName" /> and the matching
 	///     <paramref name="value" />.
 	/// </summary>
-	public void Set(string propertyName, object? value)
+	public void SetProperty(string propertyName, object? value)
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(Interactions.GetNextIndex(),
@@ -141,7 +141,7 @@ public partial class MockRegistration
 			TResult value = matchingSetup.InvokeGetter(interaction, initialValue, Behavior);
 			if (!Equals(initialValue, value))
 			{
-				SetupIndexerValue(parameters, value);
+				_indexerSetups.UpdateValue(parameters, value);
 			}
 
 			return value;
@@ -158,7 +158,7 @@ public partial class MockRegistration
 		IndexerSetterAccess interaction = new(Interactions.GetNextIndex(), parameters, value);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
-		SetupIndexerValue(parameters, value);
+		_indexerSetups.UpdateValue(parameters, value);
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
 		matchingSetup?.InvokeSetter(interaction, value, Behavior);
 	}
@@ -168,7 +168,7 @@ public partial class MockRegistration
 	/// </summary>
 	public void Raise(string eventName, params object?[] parameters)
 	{
-		foreach ((object? target, MethodInfo? method) in GetEventHandlers(eventName))
+		foreach ((object? target, MethodInfo method) in GetEventHandlers(eventName))
 		{
 			method.Invoke(target, parameters);
 		}
@@ -210,7 +210,7 @@ public partial class MockRegistration
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public override string ToString()
 	{
-		StringBuilder? sb = new();
+		StringBuilder sb = new();
 		if (_methodSetups.Count > 0)
 		{
 			sb.Append(_methodSetups.Count).Append(_methodSetups.Count == 1 ? " method, " : " methods, ");

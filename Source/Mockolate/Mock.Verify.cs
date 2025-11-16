@@ -23,7 +23,7 @@ public partial class Mock<T> : IMockVerify<T>,
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithEquals{T}.Equals(Match.IParameter{object})" />
 	VerificationResult<T> IMockVerifyInvokedWithEquals<T>.Equals(Match.IParameter<object>? obj)
-		=> Registrations.Method(Subject, Registrations.Prefix + ".Equals", obj ?? Match.Null<object>());
+		=> Registrations.Method(Subject, Registrations.Prefix + ".Equals", new Match.NamedParameter("obj", obj ?? Match.Null<object>()));
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithGetHashCode{T}.GetHashCode()" />
 	VerificationResult<T> IMockVerifyInvokedWithGetHashCode<T>.GetHashCode()
@@ -32,7 +32,7 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
-	public VerificationResult<T> Method(string methodName, params Match.IParameter[] parameters)
+	public VerificationResult<T> Method(string methodName, params Match.NamedParameter[] parameters)
 		=> Registrations.Method(Subject, methodName, parameters);
 
 	/// <summary>
@@ -57,15 +57,15 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// <summary>
 	///     Counts the getter accesses of the indexer with matching <paramref name="parameters" />.
 	/// </summary>
-	public VerificationResult<T> GotIndexer(params Match.IParameter?[] parameters)
-		=> Registrations.Got(Subject, parameters);
+	public VerificationResult<T> GotIndexer(params Match.NamedParameter?[] parameters)
+		=> Registrations.Indexer(Subject, parameters);
 
 	/// <summary>
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<T> SetIndexer(Match.IParameter? value, params Match.IParameter?[] parameters)
-		=> Registrations.Set(Subject, value, parameters);
+	public VerificationResult<T> SetIndexer(Match.IParameter? value, params Match.NamedParameter?[] parameters)
+		=> Registrations.Indexer(Subject, value, parameters);
 
 	/// <summary>
 	///     Counts the subscriptions to the event <paramref name="eventName" />.

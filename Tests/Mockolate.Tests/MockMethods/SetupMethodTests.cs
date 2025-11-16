@@ -96,9 +96,9 @@ public sealed partial class SetupMethodTests
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		MethodSetupResult<int> result0 = registration.Execute<int>("my.method");
+		MethodSetupResult<int> result0 = registration.InvokeMethod<int>("my.method");
 		registration.SetupMethod(new ReturnMethodSetup<int>("my.method").Returns(42));
-		MethodSetupResult<int> result1 = registration.Execute<int>("my.method");
+		MethodSetupResult<int> result1 = registration.InvokeMethod<int>("my.method");
 
 		await That(result0.Result).IsEqualTo(0);
 		await That(result1.Result).IsEqualTo(42);
@@ -396,7 +396,7 @@ public sealed partial class SetupMethodTests
 
 		void Act()
 		{
-			registration.Execute<int>(
+			registration.InvokeMethod<int>(
 				$"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.{methodName}",
 				parameters.Select(x => (object?)x).ToArray());
 		}
@@ -430,7 +430,7 @@ public sealed partial class SetupMethodTests
 
 		void Act()
 		{
-			registration.Execute<int>(
+			registration.InvokeMethod<int>(
 				"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters", 1, 2);
 		}
 

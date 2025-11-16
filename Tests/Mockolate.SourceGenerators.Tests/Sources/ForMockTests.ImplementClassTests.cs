@@ -548,7 +548,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod1(int)" />
 				          	public bool MyMethod1(int index)
 				          	{
-				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.Execute<bool>("MyCode.IMyService.MyMethod1", index);
+				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod1", index);
 				          		if (methodExecution is null)
 				          		{
 				          			return MockRegistrations.Behavior.DefaultValue.Generate<bool>();
@@ -561,7 +561,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, bool)" />
 				          	public void MyMethod2(int index, bool isReadOnly)
 				          	{
-				          		MethodSetupResult? methodExecution = MockRegistrations.Execute("MyCode.IMyService.MyMethod2", index, isReadOnly);
+				          		MethodSetupResult? methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod2", index, isReadOnly);
 				          	}
 				          """).IgnoringNewlineStyle();
 		}
@@ -609,7 +609,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyDirectMethod(int)" />
 				          	public int MyDirectMethod(int value)
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.Execute<int>("MyCode.IMyService.MyDirectMethod", value);
+				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyService.MyDirectMethod", value);
 				          		if (methodExecution is null)
 				          		{
 				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
@@ -622,7 +622,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseMethod1(int)" />
 				          	public int MyBaseMethod1(int value)
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.Execute<int>("MyCode.IMyServiceBase1.MyBaseMethod1", value);
+				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase1.MyBaseMethod1", value);
 				          		if (methodExecution is null)
 				          		{
 				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
@@ -635,7 +635,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseMethod2(int)" />
 				          	public int MyBaseMethod2(int value)
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.Execute<int>("MyCode.IMyServiceBase2.MyBaseMethod2", value);
+				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase2.MyBaseMethod2", value);
 				          		if (methodExecution is null)
 				          		{
 				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
@@ -648,7 +648,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseMethod3(int)" />
 				          	public int MyBaseMethod3(int value)
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.Execute<int>("MyCode.IMyServiceBase3.MyBaseMethod3", value);
+				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase3.MyBaseMethod3", value);
 				          		if (methodExecution is null)
 				          		{
 				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
@@ -693,7 +693,7 @@ public sealed partial class ForMockTests
 				.Contains("""
 				          	public override void MyMethod1(int index)
 				          	{
-				          		MethodSetupResult? methodExecution = MockRegistrations.Execute("MyCode.MyService.MyMethod1", index);
+				          		MethodSetupResult? methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", index);
 				          		if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
 				          		{
 				          			base.MyMethod1(index);
@@ -704,7 +704,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.MyService.MyMethod2(int, bool)" />
 				          	protected override bool MyMethod2(int index, bool isReadOnly)
 				          	{
-				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.Execute<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
+				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
 				          		if (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)
 				          		{
 				          			var baseResult = base.MyMethod2(index, isReadOnly);
@@ -727,7 +727,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyOtherService.SomeOtherMethod()" />
 				          	int MyCode.IMyOtherService.SomeOtherMethod()
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.Execute<int>("MyCode.IMyOtherService.SomeOtherMethod");
+				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyOtherService.SomeOtherMethod");
 				          		if (methodExecution is null)
 				          		{
 				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
@@ -767,7 +767,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod1(ref int)" />
 				          	public void MyMethod1(ref int index)
 				          	{
-				          		MethodSetupResult? methodExecution = MockRegistrations.Execute("MyCode.IMyService.MyMethod1", index);
+				          		MethodSetupResult? methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod1", index);
 				          		if (methodExecution is null)
 				          		{
 				          			index = MockRegistrations.Behavior.DefaultValue.Generate<int>();
@@ -783,7 +783,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, out bool)" />
 				          	public bool MyMethod2(int index, out bool isReadOnly)
 				          	{
-				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.Execute<bool>("MyCode.IMyService.MyMethod2", index, null);
+				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod2", index, null);
 				          		if (methodExecution is null)
 				          		{
 				          			isReadOnly = MockRegistrations.Behavior.DefaultValue.Generate<bool>();
@@ -874,11 +874,11 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.Get<int>("MyCode.IMyService.SomeProperty");
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyService.SomeProperty");
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.Set("MyCode.IMyService.SomeProperty", value);
+				          			MockRegistrations.SetProperty("MyCode.IMyService.SomeProperty", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -888,7 +888,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.Get<bool?>("MyCode.IMyService.SomeReadOnlyProperty");
+				          			return MockRegistrations.GetProperty<bool?>("MyCode.IMyService.SomeReadOnlyProperty");
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -898,7 +898,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			MockRegistrations.Set("MyCode.IMyService.SomeWriteOnlyProperty", value);
+				          			MockRegistrations.SetProperty("MyCode.IMyService.SomeWriteOnlyProperty", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
@@ -949,11 +949,11 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.Get<int>("MyCode.IMyService.MyDirectProperty");
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyService.MyDirectProperty");
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.Set("MyCode.IMyService.MyDirectProperty", value);
+				          			MockRegistrations.SetProperty("MyCode.IMyService.MyDirectProperty", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -963,11 +963,11 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.Get<int>("MyCode.IMyServiceBase1.MyBaseProperty1");
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyServiceBase1.MyBaseProperty1");
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.Set("MyCode.IMyServiceBase1.MyBaseProperty1", value);
+				          			MockRegistrations.SetProperty("MyCode.IMyServiceBase1.MyBaseProperty1", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -977,11 +977,11 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.Get<int>("MyCode.IMyServiceBase2.MyBaseProperty2");
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyServiceBase2.MyBaseProperty2");
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.Set("MyCode.IMyServiceBase2.MyBaseProperty2", value);
+				          			MockRegistrations.SetProperty("MyCode.IMyServiceBase2.MyBaseProperty2", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -991,11 +991,11 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.Get<int>("MyCode.IMyServiceBase3.MyBaseProperty3");
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyServiceBase3.MyBaseProperty3");
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.Set("MyCode.IMyServiceBase3.MyBaseProperty3", value);
+				          			MockRegistrations.SetProperty("MyCode.IMyServiceBase3.MyBaseProperty3", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
@@ -1046,11 +1046,11 @@ public sealed partial class ForMockTests
 				          				var baseResult = base.SomeProperty1;
 				          				if (MockRegistrations.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)
 				          				{
-				          					return MockRegistrations.Get<int>("MyCode.MyService.SomeProperty1", () => baseResult);
+				          					return MockRegistrations.GetProperty<int>("MyCode.MyService.SomeProperty1", () => baseResult);
 				          				}
 				          			}
 
-				          			return MockRegistrations.Get<int>("MyCode.MyService.SomeProperty1");
+				          			return MockRegistrations.GetProperty<int>("MyCode.MyService.SomeProperty1");
 				          		}
 				          		set
 				          		{
@@ -1059,7 +1059,7 @@ public sealed partial class ForMockTests
 				          				base.SomeProperty1 = value;
 				          			}
 
-				          			MockRegistrations.Set("MyCode.MyService.SomeProperty1", value);
+				          			MockRegistrations.SetProperty("MyCode.MyService.SomeProperty1", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -1074,11 +1074,11 @@ public sealed partial class ForMockTests
 				          				var baseResult = base.SomeProperty2;
 				          				if (MockRegistrations.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)
 				          				{
-				          					return MockRegistrations.Get<int>("MyCode.MyService.SomeProperty2", () => baseResult);
+				          					return MockRegistrations.GetProperty<int>("MyCode.MyService.SomeProperty2", () => baseResult);
 				          				}
 				          			}
 
-				          			return MockRegistrations.Get<int>("MyCode.MyService.SomeProperty2");
+				          			return MockRegistrations.GetProperty<int>("MyCode.MyService.SomeProperty2");
 				          		}
 				          		protected set
 				          		{
@@ -1087,7 +1087,7 @@ public sealed partial class ForMockTests
 				          				base.SomeProperty2 = value;
 				          			}
 
-				          			MockRegistrations.Set("MyCode.MyService.SomeProperty2", value);
+				          			MockRegistrations.SetProperty("MyCode.MyService.SomeProperty2", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -1102,11 +1102,11 @@ public sealed partial class ForMockTests
 				          				var baseResult = base.SomeReadOnlyProperty;
 				          				if (MockRegistrations.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)
 				          				{
-				          					return MockRegistrations.Get<bool?>("MyCode.MyService.SomeReadOnlyProperty", () => baseResult);
+				          					return MockRegistrations.GetProperty<bool?>("MyCode.MyService.SomeReadOnlyProperty", () => baseResult);
 				          				}
 				          			}
 
-				          			return MockRegistrations.Get<bool?>("MyCode.MyService.SomeReadOnlyProperty");
+				          			return MockRegistrations.GetProperty<bool?>("MyCode.MyService.SomeReadOnlyProperty");
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -1121,7 +1121,7 @@ public sealed partial class ForMockTests
 				          				base.SomeWriteOnlyProperty = value;
 				          			}
 
-				          			MockRegistrations.Set("MyCode.MyService.SomeWriteOnlyProperty", value);
+				          			MockRegistrations.SetProperty("MyCode.MyService.SomeWriteOnlyProperty", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -1132,11 +1132,11 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.Get<int>("MyCode.IMyOtherService.SomeAdditionalProperty");
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyOtherService.SomeAdditionalProperty");
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.Set("MyCode.IMyOtherService.SomeAdditionalProperty", value);
+				          			MockRegistrations.SetProperty("MyCode.IMyOtherService.SomeAdditionalProperty", value);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
