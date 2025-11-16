@@ -25,19 +25,19 @@ Framework 4.8.
    using static Mockolate.Match;
 
    // Create a mock for IChocolateDispenser
-   var mock = Mock.Create<IChocolateDispenser>();
+   var sut = Mock.Create<IChocolateDispenser>();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   mock.Setup.Indexer("Dark").InitializeWith(10);
+   sut.SetupMock.Indexer(With("Dark")).InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   mock.Setup.Method.Dispense(With("Dark"), Any<int>())
+   sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
        .Returns((type, amount) =>
        {
-           var current = mock.Subject[type];
+           var current = sut[type];
            if (current >= amount)
            {
-               mock.Subject[type] = current - amount;
-               mock.Raise.ChocolateDispensed(type, amount);
+               sut[type] = current - amount;
+               sut.RaiseOnMock.ChocolateDispensed(type, amount);
                return true;
            }
            return false;
@@ -45,15 +45,15 @@ Framework 4.8.
    
    // Track dispensed amount via event
    int dispensedAmount = 0;
-   mock.Subject.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
+   sut.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
    
    // Act: Try to dispense chocolates
-   bool gotChoc1 = mock.Subject.Dispense("Dark", 4); // true
-   bool gotChoc2 = mock.Subject.Dispense("Dark", 5); // true
-   bool gotChoc3 = mock.Subject.Dispense("Dark", 6); // false
+   bool gotChoc1 = sut.Dispense("Dark", 4); // true
+   bool gotChoc2 = sut.Dispense("Dark", 5); // true
+   bool gotChoc3 = sut.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   mock.Verify.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
+   sut.VerifyMock.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");

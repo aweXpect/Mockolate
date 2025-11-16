@@ -9,10 +9,10 @@ method signature matches the event delegate.
 
 ```csharp
 // Arrange: subscribe a handler to the event
-mock.Subject.ChocolateDispensed += (type, amount) => { /* handler code */ };
+sut.ChocolateDispensed += (type, amount) => { /* handler code */ };
 
 // Act: raise the event
-mock.Raise.ChocolateDispensed("Dark", 5);
+sut.RaiseOnMock.ChocolateDispensed("Dark", 5);
 ```
 
 - Use the `Raise` property to trigger events declared on the mocked interface or class.
@@ -23,10 +23,10 @@ mock.Raise.ChocolateDispensed("Dark", 5);
 
 ```csharp
 int dispensedAmount = 0;
-mock.Subject.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
+sut.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
 
-mock.Raise.ChocolateDispensed("Dark", 3);
-mock.Raise.ChocolateDispensed("Milk", 2);
+sut.RaiseOnMock.ChocolateDispensed("Dark", 3);
+sut.RaiseOnMock.ChocolateDispensed("Milk", 2);
 
 // dispensedAmount == 5
 ```
