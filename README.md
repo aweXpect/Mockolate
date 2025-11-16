@@ -119,9 +119,8 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- If `false`, the mock will return a default value (see `DefaultValue`).
 - `BaseClassBehavior` (enum):
 	- Controls how the mock interacts with base class members. Options:
-		- `DoNotCallBaseClass`: Do not call base class implementation (default).
-		- `OnlyCallBaseClass`: Only call base class implementation.
-		- `UseBaseClassAsDefaultValue`: Use base class as a fallback for default values.
+		- `IgnoreBaseClass`: Do not call base class implementation (default).
+		- `CallBaseClass`: Call base class implementation.
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
 

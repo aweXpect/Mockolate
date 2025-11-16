@@ -8,15 +8,10 @@ public enum BaseClassBehavior
 	/// <summary>
 	///     (Default) Does not call the base class implementation.
 	/// </summary>
-	DoNotCallBaseClass,
-
-	/// <summary>
-	///     Calls the base class implementation, but ignores its values.
-	/// </summary>
-	OnlyCallBaseClass,
+	IgnoreBaseClass,
 
 	/// <summary>
 	///     Calls the base class implementation, and uses its return values as default values.
 	/// </summary>
-	UseBaseClassAsDefaultValue,
+	CallBaseClass,
 }

@@ -387,7 +387,7 @@ internal static partial class Sources
 			if (!isClassInterface && !property.IsAbstract)
 			{
 				sb.Append(
-						"\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
+						"\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)")
 					.AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
@@ -396,10 +396,7 @@ internal static partial class Sources
 						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
 						.AppendLine("];");
 					sb.Append(
-							"\t\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)")
-						.AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\treturn MockRegistrations.GetIndexer<").Append(property.Type.Fullname)
+							"\t\t\t\treturn MockRegistrations.GetIndexer<").Append(property.Type.Fullname)
 						.Append(">(() => baseResult, ")
 						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
 						{
@@ -408,18 +405,13 @@ internal static partial class Sources
 							(_, _) => p.Name,
 						})))
 						.AppendLine(");");
-					sb.Append("\t\t\t\t}").AppendLine();
 				}
 				else
 				{
 					sb.Append("\t\t\t\tvar baseResult = base.").Append(property.Name).Append(";").AppendLine();
 					sb.Append(
-							"\t\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)")
-						.AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\treturn MockRegistrations.GetProperty<").Append(property.Type.Fullname).Append(">(")
+							"\t\t\t\treturn MockRegistrations.GetProperty<").Append(property.Type.Fullname).Append(">(")
 						.Append(property.GetUniqueNameString()).AppendLine(", () => baseResult);");
-					sb.Append("\t\t\t\t}").AppendLine();
 				}
 
 				sb.Append("\t\t\t}").AppendLine().AppendLine();
@@ -460,7 +452,7 @@ internal static partial class Sources
 			if (!isClassInterface && !property.IsAbstract)
 			{
 				sb.Append(
-						"\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
+						"\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)")
 					.AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
@@ -633,7 +625,7 @@ internal static partial class Sources
 		else if (method.ReturnType != Type.Void)
 		{
 			sb.Append(
-					"\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
+					"\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)")
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tvar baseResult = base.").Append(method.Name).Append('(')
@@ -644,7 +636,7 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append(
-							"\t\t\tif (methodExecution is not null && (methodExecution.HasSetup == true || MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue))")
+							"\t\t\tif (methodExecution is not null && methodExecution.HasSetup == true)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
@@ -654,7 +646,7 @@ internal static partial class Sources
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.Append(
-							"\t\t\tif (methodExecution is not null && (methodExecution.HasSetup == true || MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.UseBaseClassAsDefaultValue))")
+							"\t\t\tif (methodExecution is not null && methodExecution.HasSetup == true)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
@@ -665,7 +657,7 @@ internal static partial class Sources
 			}
 
 			sb.Append(
-					"\t\t\tif (methodExecution?.HasSetup != true && MockRegistrations.Behavior.BaseClassBehavior == BaseClassBehavior.UseBaseClassAsDefaultValue)")
+					"\t\t\tif (methodExecution?.HasSetup != true)")
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\treturn baseResult;").AppendLine();
@@ -722,7 +714,7 @@ internal static partial class Sources
 		else
 		{
 			sb.Append(
-					"\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.DoNotCallBaseClass)")
+					"\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)")
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tbase.").Append(method.Name).Append('(')

@@ -9,10 +9,7 @@ public sealed partial class VerifySetIndexerTests
 		[Fact]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
-			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default with
-			{
-				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
-			});
+			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
 
 			mock[new Memory<int>([1, 2, 3,])] = 3;
 
@@ -24,10 +21,7 @@ public sealed partial class VerifySetIndexerTests
 		[Fact]
 		public async Task Memory_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default with
-			{
-				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
-			});
+			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
 
 			mock[new Memory<int>()] = 3;
 			mock[new Span<int>([1, 2, 3,])] = 3;
@@ -39,10 +33,7 @@ public sealed partial class VerifySetIndexerTests
 		[Fact]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
-			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default with
-			{
-				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
-			});
+			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
 
 			mock[new ReadOnlySpan<int>([1, 2, 3,])] = 3;
 
@@ -54,10 +45,7 @@ public sealed partial class VerifySetIndexerTests
 		[Fact]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default with
-			{
-				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
-			});
+			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
 
 			mock[new ReadOnlySpan<int>()] = 3;
 			mock[new Span<int>([1, 2, 3,])] = 3;
@@ -69,10 +57,7 @@ public sealed partial class VerifySetIndexerTests
 		[Fact]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
-			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default with
-			{
-				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
-			});
+			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
 
 			mock[new Span<int>([1, 2, 3,])] = 3;
 
@@ -84,10 +69,7 @@ public sealed partial class VerifySetIndexerTests
 		[Fact]
 		public async Task Span_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default with
-			{
-				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
-			});
+			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
 
 			mock[new Span<int>()] = 3;
 			mock[new ReadOnlySpan<int>([1, 2, 3,])] = 3;
