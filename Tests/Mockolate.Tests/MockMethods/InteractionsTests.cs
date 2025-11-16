@@ -13,7 +13,7 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.Execute("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", Any<int>());
 
 		await That(result).Once();
 	}
@@ -25,7 +25,7 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.Execute("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", WithAny<string>());
+		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", Any<string>());
 
 		await That(result).Never();
 	}
@@ -37,7 +37,7 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.Execute("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "baz.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "baz.bar", Any<int>());
 
 		await That(result).Never();
 	}
@@ -48,10 +48,10 @@ public sealed class InteractionsTests
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", WithAny<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Method(mock, "foo.bar", Any<int>());
 
 		await That(result).Never();
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(WithAny<int>())");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(Any<int>())");
 	}
 
 	[Fact]

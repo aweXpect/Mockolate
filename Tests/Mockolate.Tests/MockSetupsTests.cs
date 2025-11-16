@@ -40,7 +40,7 @@ public sealed class MockSetupsTests
 
 		for (int i = 0; i < indexerCount; i++)
 		{
-			sut.Registrations.SetupIndexer(new IndexerSetup<string, int>(WithAny<int>()));
+			sut.Registrations.SetupIndexer(new IndexerSetup<string, int>(Any<int>()));
 		}
 
 		string result = sut.Registrations.ToString();

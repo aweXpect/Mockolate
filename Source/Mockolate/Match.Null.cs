@@ -9,9 +9,9 @@ public partial class Match
 	///     Matches any parameter that is <see langword="null" />.
 	/// </summary>
 	public static IParameter<T> Null<T>()
-		=> new NullParameter<T>();
+		=> new NullParameterMatch<T>();
 
-	private sealed class NullParameter<T> : TypedParameter<T>
+	private sealed class NullParameterMatch<T> : TypedMatch<T>
 	{
 		protected override bool Matches(T value) => value is null;
 

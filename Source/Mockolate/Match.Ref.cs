@@ -13,7 +13,7 @@ public partial class Match
 	/// </summary>
 	public static IRefParameter<T> Ref<T>(Func<T, T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
-		=> new RefParameter<T>(_ => true, setter, null, doNotPopulateThisValue);
+		=> new RefParameterMatch<T>(_ => true, setter, null, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches a <see langword="ref" /> parameter of type <typeparamref name="T" /> that satisfies the
@@ -24,7 +24,7 @@ public partial class Match
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
-		=> new RefParameter<T>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
+		=> new RefParameterMatch<T>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
 
 	/// <summary>
 	///     Matches a <see langword="ref" /> parameter of type <typeparamref name="T" /> that satisfies the
@@ -33,18 +33,18 @@ public partial class Match
 	public static IRefParameter<T> Ref<T>(Func<T, bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
-		=> new RefParameter<T>(predicate, null, doNotPopulateThisValue, null);
+		=> new RefParameterMatch<T>(predicate, null, doNotPopulateThisValue, null);
 
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
 	public static IVerifyRefParameter<T> Ref<T>()
-		=> new InvokedRefParameter<T>();
+		=> new InvokedRefParameterMatch<T>();
 
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
-	private sealed class RefParameter<T>(
+	private sealed class RefParameterMatch<T>(
 		Func<T, bool> predicate,
 		Func<T, T>? setter,
 		string? predicateExpression,
@@ -78,7 +78,7 @@ public partial class Match
 	/// <summary>
 	///     Matches a method <see langword="out" /> parameter against an expectation.
 	/// </summary>
-	private sealed class InvokedRefParameter<T> : IVerifyRefParameter<T>
+	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>
 	{
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;

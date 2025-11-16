@@ -8,7 +8,7 @@ public sealed partial class SetupIndexerTests
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(WithAny<int>()).InitializeWith("foo");
+		mock.SetupMock.Indexer(Any<int>()).InitializeWith("foo");
 		mock.SetupMock.Indexer(With(2)).InitializeWith("bar");
 
 		string result1 = mock[1];
@@ -25,7 +25,7 @@ public sealed partial class SetupIndexerTests
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
 		mock.SetupMock.Indexer(With(2)).InitializeWith("bar");
-		mock.SetupMock.Indexer(WithAny<int>()).InitializeWith("foo");
+		mock.SetupMock.Indexer(Any<int>()).InitializeWith("foo");
 
 		string result1 = mock[1];
 		string result2 = mock[2];
@@ -140,7 +140,7 @@ public sealed partial class SetupIndexerTests
 	public async Task WhenTypeOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(WithAny<int>()).Returns("foo");
+		mock.SetupMock.Indexer(Any<int>()).Returns("foo");
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
 		string result1 = registration.GetIndexer<string>(null, 1);

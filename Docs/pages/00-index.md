@@ -30,7 +30,7 @@ Framework 4.8.
    // Setup: Initial stock of 10 for Dark chocolate
    mock.Setup.Indexer("Dark").InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   mock.Setup.Method.Dispense(With("Dark"), WithAny<int>())
+   mock.Setup.Method.Dispense(With("Dark"), Any<int>())
        .Returns((type, amount) =>
        {
            var current = mock.Subject[type];
@@ -53,7 +53,7 @@ Framework 4.8.
    bool gotChoc3 = mock.Subject.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   mock.Verify.Invoked.Dispense(With("Dark"), WithAny<int>()).Exactly(3);
+   mock.Verify.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");

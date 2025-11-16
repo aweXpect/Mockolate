@@ -15,11 +15,11 @@ public class ExampleTests
 	{
 		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
 
-		mock.SetupMock.Method.MyMethod(WithAny<int>()).Returns(5);
+		mock.SetupMock.Method.MyMethod(Any<int>()).Returns(5);
 
 		int result = mock.MyMethod(3);
 
-		VerificationResult<MyClass> check = mock.VerifyMock.Invoked.MyMethod(WithAny<int>());
+		VerificationResult<MyClass> check = mock.VerifyMock.Invoked.MyMethod(Any<int>());
 		await That(result).IsEqualTo(5);
 		check.Once();
 	}
@@ -33,7 +33,7 @@ public class ExampleTests
 	{
 		HttpMessageHandler httpMessageHandler = Mock.Create<HttpMessageHandler>();
 		httpMessageHandler.SetupMock.Protected.Method
-			.SendAsync(WithAny<HttpRequestMessage>(), WithAny<CancellationToken>())
+			.SendAsync(Any<HttpRequestMessage>(), Any<CancellationToken>())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 
 		HttpClient httpClient = new(httpMessageHandler);
@@ -49,11 +49,11 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
 		mock.SetupMock.Method
-			.AddUser(WithAny<string>())
+			.AddUser(Any<string>())
 			.Returns(new User(id, "Alice"));
 		User result = mock.AddUser("Bob");
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		mock.VerifyMock.Invoked.AddUser(WithAny<string>()).Once();
+		mock.VerifyMock.Invoked.AddUser(Any<string>()).Once();
 	}
 
 	[Fact]
@@ -62,7 +62,7 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
 		mock.SetupIOrderRepositoryMock.Method
-			.AddOrder(WithAny<string>())
+			.AddOrder(Any<string>())
 			.Returns(new Order(id, "Order1"));
 
 		Order result = ((IOrderRepository)mock).AddOrder("foo");
@@ -79,7 +79,7 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
 		mock.SetupIOrderRepositoryMock.Method
-			.AddOrder(WithAny<string>())
+			.AddOrder(Any<string>())
 			.Returns(new Order(id, "Order1"));
 
 		Order result = ((IOrderRepository)mock).AddOrder("foo");
@@ -96,7 +96,7 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
 		((IOrderRepository)mock).SetupMock.Method
-			.AddOrder(WithAny<string>())
+			.AddOrder(Any<string>())
 			.Returns(new Order(id, "Order1"));
 
 		Order result = ((IOrderRepository)mock).AddOrder("foo");
@@ -108,13 +108,13 @@ public class ExampleTests
 	}
 
 	[Fact]
-	public async Task WithAny_ShouldAlwaysMatch()
+	public async Task Any_ShouldAlwaysMatch()
 	{
 		Guid id = Guid.NewGuid();
 		MyClass mock =
 			Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
 		mock.SetupIExampleRepositoryMock.Method.AddUser(
-				WithAny<string>())
+				Any<string>())
 			.Returns(new User(id, "Alice"));
 
 		User result = ((IExampleRepository)mock).AddUser("Bob");
@@ -175,7 +175,7 @@ public class ExampleTests
 		IExampleRepository mock = Mock.Create<IExampleRepository>();
 
 		mock.SetupMock.Method.TryDelete(
-				WithAny<Guid>(),
+				Any<Guid>(),
 				Out<User?>(() => new User(id, "Alice")))
 			.Returns(returnValue);
 

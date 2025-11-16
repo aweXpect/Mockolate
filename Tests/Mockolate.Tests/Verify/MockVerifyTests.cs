@@ -32,7 +32,7 @@ public class MockVerifyTests
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Dark", 2);
 
-		await That(sut.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>())).AtLeastOnce();
+		await That(sut.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>())).AtLeastOnce();
 		await That(sut.VerifyMock.ThatAllInteractionsAreVerified()).IsTrue();
 	}
 }

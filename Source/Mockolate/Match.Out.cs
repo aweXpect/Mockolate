@@ -11,7 +11,7 @@ public partial class Match
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
 	public static IVerifyOutParameter<T> Out<T>()
-		=> new InvokedOutParameter<T>();
+		=> new InvokedOutParameterMatch<T>();
 
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
@@ -19,12 +19,12 @@ public partial class Match
 	/// </summary>
 	public static IOutParameter<T> Out<T>(Func<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
-		=> new OutParameter<T>(setter, doNotPopulateThisValue);
+		=> new OutParameterMatch<T>(setter, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
-	private sealed class OutParameter<T>(Func<T> setter, string setterExpression) : IOutParameter<T>
+	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : IOutParameter<T>
 	{
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;
@@ -39,7 +39,7 @@ public partial class Match
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
-	private sealed class InvokedOutParameter<T> : IVerifyOutParameter<T>
+	private sealed class InvokedOutParameterMatch<T> : IVerifyOutParameter<T>
 	{
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;

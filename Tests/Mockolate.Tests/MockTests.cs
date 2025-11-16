@@ -255,9 +255,9 @@ public sealed partial class MockTests
 	public async Task Create_WithSetups_ShouldApplySetups()
 	{
 		IMyService mock = Mock.Create<IMyService>(
-			setup => setup.Method.Multiply(With(1), WithAny<int?>()).Returns(2),
-			setup => setup.Method.Multiply(With(2), WithAny<int?>()).Returns(4),
-			setup => setup.Method.Multiply(With(3), WithAny<int?>()).Returns(8));
+			setup => setup.Method.Multiply(With(1), Any<int?>()).Returns(2),
+			setup => setup.Method.Multiply(With(2), Any<int?>()).Returns(4),
+			setup => setup.Method.Multiply(With(3), Any<int?>()).Returns(8));
 
 		int result1 = mock.Multiply(1, null);
 		int result2 = mock.Multiply(2, null);

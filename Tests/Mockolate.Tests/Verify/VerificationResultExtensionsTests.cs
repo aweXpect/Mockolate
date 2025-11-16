@@ -20,12 +20,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeast(times);
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).AtLeast(times);
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) at least 3 times, but it did twice.");
+				"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at least 3 times, but it did twice.");
 	}
 
 	[Theory]
@@ -40,12 +40,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastOnce();
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).AtLeastOnce();
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) at least once, but it never did.");
+				"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at least once, but it never did.");
 	}
 
 	[Theory]
@@ -60,12 +60,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtLeastTwice();
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).AtLeastTwice();
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) at least twice, but it {count switch { 0 => "never did", _ => "did once", }}.");
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at least twice, but it {count switch { 0 => "never did", _ => "did once", }}.");
 	}
 
 	[Theory]
@@ -80,12 +80,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMost(times);
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).AtMost(times);
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) at most once, but it did twice.");
+				"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at most once, but it did twice.");
 	}
 
 	[Theory]
@@ -100,12 +100,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostOnce();
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).AtMostOnce();
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) at most once, but it did {(count == 2 ? "twice" : $"{count} times")}.");
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at most once, but it did {(count == 2 ? "twice" : $"{count} times")}.");
 	}
 
 	[Theory]
@@ -120,12 +120,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).AtMostTwice();
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).AtMostTwice();
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) at most twice, but it did {count} times.");
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at most twice, but it did {count} times.");
 	}
 
 	[Theory]
@@ -140,12 +140,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Exactly(times);
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Exactly(times);
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) exactly {(times == 1 ? "once" : $"{times} times")}, but it did twice.");
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) exactly {(times == 1 ? "once" : $"{times} times")}, but it did twice.");
 	}
 
 	[Theory]
@@ -160,12 +160,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Never();
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Never();
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock never invoked method Dispense(WithAny<string>(), WithAny<int>()), but it did {count switch { 1 => "once", 2 => "twice", _ => $"{count} times", }}.");
+				$"Expected that mock never invoked method Dispense(Any<string>(), Any<int>()), but it did {count switch { 1 => "once", 2 => "twice", _ => $"{count} times", }}.");
 	}
 
 	[Theory]
@@ -180,12 +180,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Once();
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Once();
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) exactly once, but it {count switch { 0 => "never did", 2 => "did twice", _ => $"did {count} times", }}.");
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) exactly once, but it {count switch { 0 => "never did", 2 => "did twice", _ => $"did {count} times", }}.");
 	}
 
 	[Fact]
@@ -197,20 +197,20 @@ public class VerificationResultExtensionsTests
 		mock.Dispense("Dark", 3);
 		mock.Dispense("Dark", 4);
 
-		mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(3))
-			.Then(m => m.Invoked.Dispense(WithAny<string>(), With(4)));
+		mock.VerifyMock.Invoked.Dispense(Any<string>(), With(3))
+			.Then(m => m.Invoked.Dispense(Any<string>(), With(4)));
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(2))
-				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), With(2))
+				.Then(m => m.Invoked.Dispense(Any<string>(), With(1)));
 		}
 
 		await That(Act).Throws<MockVerificationException>()
 			.WithMessage(
-				"Expected that mock invoked method Dispense(WithAny<string>(), 2), then invoked method Dispense(WithAny<string>(), 1) in order, but it invoked method Dispense(WithAny<string>(), 1) too early.");
-		mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1))
-			.Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)));
+				"Expected that mock invoked method Dispense(Any<string>(), 2), then invoked method Dispense(Any<string>(), 1) in order, but it invoked method Dispense(Any<string>(), 1) too early.");
+		mock.VerifyMock.Invoked.Dispense(Any<string>(), With(1))
+			.Then(m => m.Invoked.Dispense(Any<string>(), With(2)));
 	}
 
 	[Fact]
@@ -222,25 +222,25 @@ public class VerificationResultExtensionsTests
 		mock.Dispense("Dark", 3);
 		mock.Dispense("Dark", 4);
 
-		await That(void () => mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(6))
-				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(4))))
+		await That(void () => mock.VerifyMock.Invoked.Dispense(Any<string>(), With(6))
+				.Then(m => m.Invoked.Dispense(Any<string>(), With(4))))
 			.Throws<MockVerificationException>()
 			.WithMessage(
-				"Expected that mock invoked method Dispense(WithAny<string>(), 6), then invoked method Dispense(WithAny<string>(), 4) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
+				"Expected that mock invoked method Dispense(Any<string>(), 6), then invoked method Dispense(Any<string>(), 4) in order, but it invoked method Dispense(Any<string>(), 6) not at all.");
 
-		await That(void () => mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1))
-				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(6)),
-					m => m.Invoked.Dispense(WithAny<string>(), With(3))))
+		await That(void () => mock.VerifyMock.Invoked.Dispense(Any<string>(), With(1))
+				.Then(m => m.Invoked.Dispense(Any<string>(), With(6)),
+					m => m.Invoked.Dispense(Any<string>(), With(3))))
 			.Throws<MockVerificationException>()
 			.WithMessage(
-				"Expected that mock invoked method Dispense(WithAny<string>(), 1), then invoked method Dispense(WithAny<string>(), 6), then invoked method Dispense(WithAny<string>(), 3) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
+				"Expected that mock invoked method Dispense(Any<string>(), 1), then invoked method Dispense(Any<string>(), 6), then invoked method Dispense(Any<string>(), 3) in order, but it invoked method Dispense(Any<string>(), 6) not at all.");
 
-		await That(void () => mock.VerifyMock.Invoked.Dispense(WithAny<string>(), With(1))
-				.Then(m => m.Invoked.Dispense(WithAny<string>(), With(2)),
-					m => m.Invoked.Dispense(WithAny<string>(), With(6))))
+		await That(void () => mock.VerifyMock.Invoked.Dispense(Any<string>(), With(1))
+				.Then(m => m.Invoked.Dispense(Any<string>(), With(2)),
+					m => m.Invoked.Dispense(Any<string>(), With(6))))
 			.Throws<MockVerificationException>()
 			.WithMessage(
-				"Expected that mock invoked method Dispense(WithAny<string>(), 1), then invoked method Dispense(WithAny<string>(), 2), then invoked method Dispense(WithAny<string>(), 6) in order, but it invoked method Dispense(WithAny<string>(), 6) not at all.");
+				"Expected that mock invoked method Dispense(Any<string>(), 1), then invoked method Dispense(Any<string>(), 2), then invoked method Dispense(Any<string>(), 6) in order, but it invoked method Dispense(Any<string>(), 6) not at all.");
 	}
 
 	[Fact]
@@ -251,7 +251,7 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			result.Then(m => m.Invoked.Dispense(WithAny<string>(), With(1)));
+			result.Then(m => m.Invoked.Dispense(Any<string>(), With(1)));
 		}
 
 		await That(Act).Throws<MockException>()
@@ -270,12 +270,12 @@ public class VerificationResultExtensionsTests
 
 		void Act()
 		{
-			mock.VerifyMock.Invoked.Dispense(WithAny<string>(), WithAny<int>()).Twice();
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Twice();
 		}
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock invoked method Dispense(WithAny<string>(), WithAny<int>()) exactly twice, but it {count switch { 0 => "never did", 1 => "did once", _ => $"did {count} times", }}.");
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) exactly twice, but it {count switch { 0 => "never did", 1 => "did once", _ => $"did {count} times", }}.");
 	}
 
 	private class MyChocolateDispenser : IChocolateDispenser

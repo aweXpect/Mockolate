@@ -14,7 +14,7 @@ public partial class Match
 	public static IParameter<T> With<T>(T value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
-		=> new ParameterEquals<T>(value, doNotPopulateThisValue);
+		=> new ParameterEqualsMatch<T>(value, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches a parameter that is equal to <paramref name="value" /> according to the <paramref name="comparer" />.
@@ -24,7 +24,7 @@ public partial class Match
 		string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression(nameof(comparer))]
 		string doNotPopulateThisValue2 = "")
-		=> new ParameterEquals<T>(value, doNotPopulateThisValue1, comparer, doNotPopulateThisValue2);
+		=> new ParameterEqualsMatch<T>(value, doNotPopulateThisValue1, comparer, doNotPopulateThisValue2);
 
 	/// <summary>
 	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
@@ -32,16 +32,16 @@ public partial class Match
 	public static IParameter<T> With<T>(Func<T, bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
-		=> new PredicateParameter<T>(predicate, doNotPopulateThisValue);
+		=> new PredicateParameterMatch<T>(predicate, doNotPopulateThisValue);
 
-	private sealed class ParameterEquals<T> : TypedParameter<T>
+	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>
 	{
 		private readonly IEqualityComparer<T>? _comparer;
 		private readonly string? _comparerExpression;
 		private readonly T _value;
 		private readonly string _valueExpression;
 
-		public ParameterEquals(T value, string valueExpression, IEqualityComparer<T>? comparer = null,
+		public ParameterEqualsMatch(T value, string valueExpression, IEqualityComparer<T>? comparer = null,
 			string? comparerExpression = null)
 		{
 			_value = value;
@@ -72,7 +72,7 @@ public partial class Match
 		}
 	}
 
-	private sealed class PredicateParameter<T>(Func<T, bool> predicate, string predicateExpression) : TypedParameter<T>
+	private sealed class PredicateParameterMatch<T>(Func<T, bool> predicate, string predicateExpression) : TypedMatch<T>
 	{
 		protected override bool Matches(T value) => predicate(value);
 		public override string ToString() => $"With<{typeof(T).FormatType()}>({predicateExpression})";

@@ -9,7 +9,7 @@ Use `mock.Setup.Method.MethodName(…)` to set up methods. You can specify argum
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-mock.Setup.Method.Dispense(With("Dark"), WithAny<int>())
+mock.Setup.Method.Dispense(With("Dark"), Any<int>())
     .Returns((type, amount) =>
     {
         var current = mock.Subject[type];
@@ -23,11 +23,11 @@ mock.Setup.Method.Dispense(With("Dark"), WithAny<int>())
     });
 
 // Setup method with callback
-mock.Setup.Method.Dispense(With("White"), WithAny<int>())
+mock.Setup.Method.Dispense(With("White"), Any<int>())
     .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
-mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
+mock.Setup.Method.Dispense(With("Green"), Any<int>())
     .Throws<InvalidChocolateException>();
 ```
 
@@ -45,7 +45,7 @@ mock.Setup.Method.Dispense(With("Green"), WithAny<int>())
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
 
 ```csharp
-mock.Setup.Method.DispenseAsync(WithAny<string>(), WithAny<int>())
+mock.Setup.Method.DispenseAsync(Any<string>(), Any<int>())
     .ReturnsAsync(true);
 ```
 
@@ -53,7 +53,7 @@ mock.Setup.Method.DispenseAsync(WithAny<string>(), WithAny<int>())
 
 Mockolate provides flexible argument matching for method setups and verifications:
 
-- `Match.WithAny<T>()`: Matches any value of type `T`.
+- `Match.Any<T>()`: Matches any value of type `T`.
 - `Match.With<T>(predicate)`: Matches values based on a predicate.
 - `Match.With<T>(value)`: Matches a specific value.
 - `Match.Null<T>()`: Matches null.
@@ -99,7 +99,7 @@ mock.Setup.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.WriteLi
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-mock.Setup.Indexer(WithAny<string>())
+mock.Setup.Indexer(Any<string>())
     .InitializeWith(type => 20)
     .OnGet(type => Console.WriteLine($"Stock for {type} was read"));
 

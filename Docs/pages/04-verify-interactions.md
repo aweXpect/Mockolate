@@ -25,17 +25,17 @@ You can verify that methods were invoked with specific arguments and how many ti
 mock.Verify.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-mock.Verify.Invoked.Dispense(With("White"), WithAny<int>()).Never();
+mock.Verify.Invoked.Dispense(With("White"), Any<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-mock.Verify.Invoked.Dispense(WithAnyParameters()).Exactly(2);
+mock.Verify.Invoked.Dispense(AnyParameters()).Exactly(2);
 ```
 
 ### Argument Matchers
 
 You can use argument matchers from the `Match` class to verify calls with flexible conditions:
 
-- `Match.WithAny<T>()`: matches any value of type `T`
+- `Match.Any<T>()`: matches any value of type `T`
 - `Match.Null<T>()`: matches `null`
 - `Match.With<T>(predicate)`: matches values satisfying a predicate
 - `Match.With(value)`: matches a specific value
@@ -45,8 +45,8 @@ You can use argument matchers from the `Match` class to verify calls with flexib
 **Example:**
 
 ```csharp
-mock.Verify.Invoked.Dispense(With<string>(t => t.StartsWith("D")), WithAny<int>()).Once();
-mock.Verify.Invoked.Dispense(With("Milk"), WithAny<int>()).AtLeastOnce();
+mock.Verify.Invoked.Dispense(With<string>(t => t.StartsWith("D")), Any<int>()).Once();
+mock.Verify.Invoked.Dispense(With("Milk"), Any<int>()).AtLeastOnce();
 ```
 
 ## Properties
