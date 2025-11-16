@@ -93,14 +93,18 @@ internal static partial class Sources
 					sb.Append(", ");
 				}
 
-				sb.Append(parameter.RefKind switch
+				sb.Append((parameter.RefKind, parameter.IsSpan, parameter.IsReadOnlySpan) switch
 					{
-						RefKind.Ref => "Match.IVerifyRefParameter<",
-						RefKind.Out => "Match.IVerifyOutParameter<",
+						(RefKind.Ref, _, _) => "Match.IVerifyRefParameter<",
+						(RefKind.Out, _, _) => "Match.IVerifyOutParameter<",
+						(_, true, false) => "Match.IVerifySpanParameter<",
+						(_, false, true) => "Match.IVerifyReadOnlySpanParameter<",
 						_ => "Match.IParameter<",
-					}).Append(parameter.Type.Fullname)
+					}).Append(parameter.IsSpan || parameter.IsReadOnlySpan
+						? parameter.SpanType!.Fullname
+						: parameter.Type.Fullname)
 					.Append('>');
-				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				if (IsNullable(parameter))
 				{
 					sb.Append('?');
 				}
@@ -125,7 +129,7 @@ internal static partial class Sources
 			{
 				sb.Append(", ");
 				sb.Append(parameter.Name);
-				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				if (IsNullable(parameter))
 				{
 					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
 						.Append(">()");
@@ -354,7 +358,12 @@ internal static partial class Sources
 				.Append(method.ReturnType.Fullname);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
-				sb.Append(", ").Append(parameter.Type.Fullname);
+				sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
+				{
+					(true, false) => $"SpanWrapper<{parameter.SpanType!.Fullname}>",
+					(false, true) => $"ReadOnlySpanWrapper<{parameter.SpanType!.Fullname}>",
+					_ => parameter.Type.Fullname,
+				});
 			}
 
 			sb.Append("> ");
@@ -374,7 +383,12 @@ internal static partial class Sources
 						sb.Append(", ");
 					}
 
-					sb.Append(parameter.Type.Fullname);
+					sb.Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
+					{
+						(true, false) => $"SpanWrapper<{parameter.SpanType!.Fullname}>",
+						(false, true) => $"ReadOnlySpanWrapper<{parameter.SpanType!.Fullname}>",
+						_ => parameter.Type.Fullname,
+					});
 				}
 
 				sb.Append('>');
@@ -397,14 +411,18 @@ internal static partial class Sources
 					sb.Append(", ");
 				}
 
-				sb.Append(parameter.RefKind switch
+				sb.Append((parameter.RefKind, parameter.IsSpan, parameter.IsReadOnlySpan) switch
 					{
-						RefKind.Ref => "Match.IRefParameter<",
-						RefKind.Out => "Match.IOutParameter<",
+						(RefKind.Ref, _, _) => "Match.IRefParameter<",
+						(RefKind.Out, _, _) => "Match.IOutParameter<",
+						(_, true, false) => "Match.ISpanParameter<",
+						(_, false, true) => "Match.IReadOnlySpanParameter<",
 						_ => "Match.IParameter<",
-					}).Append(parameter.Type.Fullname)
+					}).Append(parameter.IsSpan || parameter.IsReadOnlySpan
+						? parameter.SpanType!.Fullname
+						: parameter.Type.Fullname)
 					.Append('>');
-				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				if (IsNullable(parameter))
 				{
 					sb.Append('?');
 				}
@@ -432,7 +450,12 @@ internal static partial class Sources
 				.Append(method.ReturnType.Fullname);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
-				sb.Append(", ").Append(parameter.Type.Fullname);
+				sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
+				{
+					(true, false) => $"SpanWrapper<{parameter.SpanType!.Fullname}>",
+					(false, true) => $"ReadOnlySpanWrapper<{parameter.SpanType!.Fullname}>",
+					(_, _) => parameter.Type.Fullname,
+				});
 			}
 
 			sb.Append(">");
@@ -452,7 +475,12 @@ internal static partial class Sources
 						sb.Append(", ");
 					}
 
-					sb.Append(parameter.Type.Fullname);
+					sb.Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
+					{
+						(true, false) => $"SpanWrapper<{parameter.SpanType!.Fullname}>",
+						(false, true) => $"ReadOnlySpanWrapper<{parameter.SpanType!.Fullname}>",
+						(_, _) => parameter.Type.Fullname,
+					});
 				}
 
 				sb.Append('>');
@@ -473,7 +501,7 @@ internal static partial class Sources
 			{
 				sb.Append(", new Match.NamedParameter(\"").Append(parameter.Name).Append("\", ")
 					.Append(parameter.Name);
-				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				if (IsNullable(parameter))
 				{
 					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
 						.Append(">()");
@@ -680,21 +708,37 @@ internal static partial class Sources
 				sb.Append("\t\tpublic IndexerSetup<").Append(indexer.Type.Fullname);
 				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
-					sb.Append(", ").Append(parameter.Type.Fullname);
+					sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
+					{
+						(true, false) => $"SpanWrapper<{parameter.SpanType!.Fullname}>",
+						(false, true) => $"ReadOnlySpanWrapper<{parameter.SpanType!.Fullname}>",
+						_ => parameter.Type.Fullname,
+					});
 				}
 
 				sb.Append("> Indexer").Append("(").Append(string.Join(", ",
 					indexer.IndexerParameters.Value.Select((p, i)
-						=> $"Match.IParameter<{p.Type.Fullname}> parameter{i + 1}"))).Append(")").AppendLine();
+						=> (p.IsSpan, p.IsReadOnlySpan) switch
+						{
+							(true, false) => $"Match.ISpanParameter<{p.SpanType!.Fullname}>",
+							(false, true) => $"Match.IReadOnlySpanParameter<{p.SpanType!.Fullname}>",
+							(_, _) => $"Match.IParameter<{p.Type.Fullname}>",
+						} + (IsNullable(p) ? "?" : "") + $" parameter{i + 1}"))).Append(")").AppendLine();
 				sb.Append("\t\t{").AppendLine();
 				sb.Append("\t\t\tvar indexerSetup = new IndexerSetup<").Append(indexer.Type.Fullname);
 				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
-					sb.Append(", ").Append(parameter.Type.Fullname);
+					sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
+					{
+						(true, false) => $"SpanWrapper<{parameter.SpanType!.Fullname}>",
+						(false, true) => $"ReadOnlySpanWrapper<{parameter.SpanType!.Fullname}>",
+						(_, _) => parameter.Type.Fullname,
+					});
 				}
 
 				sb.Append(">(").Append(string.Join(", ",
-						Enumerable.Range(1, indexer.IndexerParameters.Value.Count).Select(p => $"parameter{p}")))
+						indexer.IndexerParameters.Value.Select((p, i) => $"parameter{i + 1}{
+							(IsNullable(p) ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}")))
 					.Append(");").AppendLine();
 				sb.Append("\t\t\tCastToMockRegistrationOrThrow(setup).SetupIndexer(indexerSetup);").AppendLine();
 				sb.Append("\t\t\treturn indexerSetup;").AppendLine();
@@ -896,14 +940,18 @@ internal static partial class Sources
 					sb.Append(", ");
 				}
 
-				sb.Append(parameter.RefKind switch
+				sb.Append((parameter.RefKind, parameter.IsSpan, parameter.IsReadOnlySpan) switch
 					{
-						RefKind.Ref => "Match.IVerifyRefParameter<",
-						RefKind.Out => "Match.IVerifyOutParameter<",
+						(RefKind.Ref, _, _) => "Match.IVerifyRefParameter<",
+						(RefKind.Out, _, _) => "Match.IVerifyOutParameter<",
+						(_, true, false) => "Match.IVerifySpanParameter<",
+						(_, false, true) => "Match.IVerifyReadOnlySpanParameter<",
 						_ => "Match.IParameter<",
-					}).Append(parameter.Type.Fullname)
+					}).Append(parameter.IsSpan || parameter.IsReadOnlySpan
+						? parameter.SpanType!.Fullname
+						: parameter.Type.Fullname)
 					.Append('>');
-				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				if (IsNullable(parameter))
 				{
 					sb.Append('?');
 				}
@@ -928,7 +976,7 @@ internal static partial class Sources
 			{
 				sb.Append(", ");
 				sb.Append(parameter.Name);
-				if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
+				if (IsNullable(parameter))
 				{
 					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
 						.Append(">()");
@@ -1118,11 +1166,17 @@ internal static partial class Sources
 			sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> Got")
 				.Append(isProtected ? "Protected" : "").Append("Indexer")
 				.Append("(").Append(string.Join(", ",
-					indexerParameters.Value.Select((p, i) => $"Match.IParameter<{p.Type.Fullname}>? parameter{i + 1}")))
-				.Append(")").AppendLine();
+					indexerParameters.Value.Select((p, i)
+						=> (p.IsSpan, p.IsReadOnlySpan) switch
+						{
+							(true, false) => $"Match.ISpanParameter<{p.SpanType!.Fullname}>",
+							(false, true) => $"Match.IReadOnlySpanParameter<{p.SpanType!.Fullname}>",
+							(_, _) => $"Match.IParameter<{p.Type.Fullname}>",
+						} + (IsNullable(p) ? "?" : "") + $" parameter{i + 1}"))).Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).GotIndexer(")
-				.Append(string.Join(", ", indexerParameters.Value.Select((_, i) => $"parameter{i + 1}"))).Append(");")
+				.Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"parameter{i + 1}{
+					(IsNullable(p) ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}"))).Append(");")
 				.AppendLine();
 			sb.AppendLine("\t\t}");
 		}
@@ -1271,11 +1325,17 @@ internal static partial class Sources
 				.Append("(")
 				.Append(string.Join(", ",
 					indexer.IndexerParameters.Value.Select((p, i)
-						=> $"Match.IParameter<{p.Type.Fullname}>? parameter{i + 1}"))).Append(", Match.IParameter<")
+						=> (p.IsSpan, p.IsReadOnlySpan) switch
+						{
+							(true, false) => $"Match.ISpanParameter<{p.SpanType!.Fullname}>",
+							(false, true) => $"Match.IReadOnlySpanParameter<{p.SpanType!.Fullname}>",
+							(_, _) => $"Match.IParameter<{p.Type.Fullname}>",
+						} + (IsNullable(p) ? "?" : "") + $" parameter{i + 1}"))).Append(", Match.IParameter<")
 				.Append(indexer.Type.Fullname).Append(">? value)").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).SetIndexer(value, ")
-				.Append(string.Join(", ", indexer.IndexerParameters.Value.Select((_, i) => $"parameter{i + 1}")))
+				.Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"parameter{i + 1}{
+					(IsNullable(p) ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}")))
 				.Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
@@ -1424,5 +1484,9 @@ internal static partial class Sources
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 	}
+
+	private static bool IsNullable(MethodParameter parameter)
+		=> parameter.RefKind is not RefKind.Ref and not RefKind.Out &&
+		   parameter is { IsSpan: false, IsReadOnlySpan: false, };
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

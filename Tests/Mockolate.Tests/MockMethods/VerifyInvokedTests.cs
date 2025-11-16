@@ -3,7 +3,7 @@ using static Mockolate.Tests.MockMethods.SetupMethodTests;
 
 namespace Mockolate.Tests.MockMethods;
 
-public sealed class VerifyInvokedTests
+public sealed partial class VerifyInvokedTests
 {
 	[Fact]
 	public async Task Equals_ShouldWork()

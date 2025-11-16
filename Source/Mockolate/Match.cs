@@ -1,3 +1,7 @@
+using System;
+using Mockolate.Setup;
+using static Mockolate.Match;
+
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
@@ -30,6 +34,50 @@ public partial class Match
 	{
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
+
+#if NET8_0_OR_GREATER
+#pragma warning disable S2326 // Unused type parameters should be removed
+	/// <summary>
+	///     Matches a method parameter of type <see cref="System.Span{T}"/> of <typeparamref name="T" /> against an expectation.
+	/// </summary>
+	public interface ISpanParameter<T> : IParameter<SpanWrapper<T>>
+	{
+	}
+#pragma warning restore S2326 // Unused type parameters should be removed
+#endif
+
+#if NET8_0_OR_GREATER
+#pragma warning disable S2326 // Unused type parameters should be removed
+	/// <summary>
+	///     Matches a method parameter of type <see cref="System.Span{T}"/> of <typeparamref name="T" /> against an expectation.
+	/// </summary>
+	public interface IVerifySpanParameter<T> : ISpanParameter<T>
+	{
+	}
+#pragma warning restore S2326 // Unused type parameters should be removed
+#endif
+
+#if NET8_0_OR_GREATER
+#pragma warning disable S2326 // Unused type parameters should be removed
+	/// <summary>
+	///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}"/> of <typeparamref name="T" /> against an expectation.
+	/// </summary>
+	public interface IReadOnlySpanParameter<T> : IParameter<ReadOnlySpanWrapper<T>>
+	{
+	}
+#pragma warning restore S2326 // Unused type parameters should be removed
+#endif
+
+#if NET8_0_OR_GREATER
+#pragma warning disable S2326 // Unused type parameters should be removed
+	/// <summary>
+	///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}"/> of <typeparamref name="T" /> against an expectation.
+	/// </summary>
+	public interface IVerifyReadOnlySpanParameter<T> : IReadOnlySpanParameter<T>
+	{
+	}
+#pragma warning restore S2326 // Unused type parameters should be removed
+#endif
 
 	/// <summary>
 	///     Matches the method parameters against an expectation.
