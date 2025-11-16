@@ -28,16 +28,16 @@ Framework 4.8.
    var mock = Mock.Create<IChocolateDispenser>();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   mock.Setup.Indexer("Dark").InitializeWith(10);
+   mock.SetupMock.Indexer(With("Dark")).InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   mock.Setup.Method.Dispense(With("Dark"), Any<int>())
+   mock.SetupMock.Method.Dispense(With("Dark"), Any<int>())
        .Returns((type, amount) =>
        {
-           var current = mock.Subject[type];
+           var current = mock[type];
            if (current >= amount)
            {
-               mock.Subject[type] = current - amount;
-               mock.Raise.ChocolateDispensed(type, amount);
+               mock[type] = current - amount;
+               mock.RaiseOnMock.ChocolateDispensed(type, amount);
                return true;
            }
            return false;
@@ -45,15 +45,15 @@ Framework 4.8.
    
    // Track dispensed amount via event
    int dispensedAmount = 0;
-   mock.Subject.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
+   mock.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
    
    // Act: Try to dispense chocolates
-   bool gotChoc1 = mock.Subject.Dispense("Dark", 4); // true
-   bool gotChoc2 = mock.Subject.Dispense("Dark", 5); // true
-   bool gotChoc3 = mock.Subject.Dispense("Dark", 6); // false
+   bool gotChoc1 = mock.Dispense("Dark", 4); // true
+   bool gotChoc2 = mock.Dispense("Dark", 5); // true
+   bool gotChoc3 = mock.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   mock.Verify.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
+   mock.VerifyMock.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
