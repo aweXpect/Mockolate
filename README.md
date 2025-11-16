@@ -29,19 +29,19 @@ Framework 4.8.
    using static Mockolate.Match;
 
    // Create a mock for IChocolateDispenser
-   var mock = Mock.Create<IChocolateDispenser>();
+   var sut = Mock.Create<IChocolateDispenser>();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   mock.SetupMock.Indexer(With("Dark")).InitializeWith(10);
+   sut.SetupMock.Indexer(With("Dark")).InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   mock.SetupMock.Method.Dispense(With("Dark"), Any<int>())
+   sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
        .Returns((type, amount) =>
        {
-           var current = mock[type];
+           var current = sut[type];
            if (current >= amount)
            {
-               mock[type] = current - amount;
-               mock.RaiseOnMock.ChocolateDispensed(type, amount);
+               sut[type] = current - amount;
+               sut.RaiseOnMock.ChocolateDispensed(type, amount);
                return true;
            }
            return false;
@@ -49,15 +49,15 @@ Framework 4.8.
    
    // Track dispensed amount via event
    int dispensedAmount = 0;
-   mock.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
+   sut.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
    
    // Act: Try to dispense chocolates
-   bool gotChoc1 = mock.Dispense("Dark", 4); // true
-   bool gotChoc2 = mock.Dispense("Dark", 5); // true
-   bool gotChoc3 = mock.Dispense("Dark", 6); // false
+   bool gotChoc1 = sut.Dispense("Dark", 4); // true
+   bool gotChoc2 = sut.Dispense("Dark", 5); // true
+   bool gotChoc3 = sut.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   mock.VerifyMock.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
+   sut.VerifyMock.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
@@ -79,7 +79,7 @@ You can create mocks for interfaces and classes. For classes without a default c
 
 ```csharp
 // Create a mock for an interface
-var mock = Mock.Create<IChocolateDispenser>();
+var sut = Mock.Create<IChocolateDispenser>();
 
 // Create a mock for a class
 var classMock = Mock.Create<MyChocolateDispenser>();
@@ -90,7 +90,7 @@ var classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
 );
 
 // Specify up to 8 additional interfaces for the mock:
-var mock3 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
+var sut2 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**
@@ -133,8 +133,8 @@ Use `Mock.Factory` to create multiple mocks with a shared behavior:
 var behavior = new MockBehavior { ThrowWhenNotSetup = true };
 var factory = new Mock.Factory(behavior);
 
-var mock1 = factory.Create<IChocolateDispenser>();
-var mock2 = factory.Create<ILemonadeDispenser>();
+var sut1 = factory.Create<IChocolateDispenser>();
+var sut2 = factory.Create<ILemonadeDispenser>();
 ```
 
 ## Setup
@@ -148,25 +148,25 @@ Use `mock.SetupMock.Method.MethodName(…)` to set up methods. You can specify a
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-mock.SetupMock.Method.Dispense(With("Dark"), Any<int>())
+sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
     .Returns((type, amount) =>
     {
-        var current = mock[type];
+        var current = sut[type];
         if (current >= amount)
         {
-            mock[type] = current - amount;
-            mock.RaiseOnMock.ChocolateDispensed(type, amount);
+            sut[type] = current - amount;
+            sut.RaiseOnMock.ChocolateDispensed(type, amount);
             return true;
         }
         return false;
     });
 
 // Setup method with callback
-mock.SetupMock.Method.Dispense(With("White"), Any<int>())
+sut.SetupMock.Method.Dispense(With("White"), Any<int>())
     .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
-mock.SetupMock.Method.Dispense(With("Green"), Any<int>())
+sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
     .Throws<InvalidChocolateException>();
 ```
 
@@ -184,7 +184,7 @@ mock.SetupMock.Method.Dispense(With("Green"), Any<int>())
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
 
 ```csharp
-mock.SetupMock.Method.DispenseAsync(Any<string>(), Any<int>())
+sut.SetupMock.Method.DispenseAsync(Any<string>(), Any<int>())
     .ReturnsAsync(true);
 ```
 
@@ -209,7 +209,7 @@ You can initialize properties so they work like normal properties (setter change
 value):
 
 ```csharp
-mock.SetupMock.Property.TotalDispensed.InitializeWith(42);
+sut.SetupMock.Property.TotalDispensed.InitializeWith(42);
 ```
 
 **Returns / Throws**
@@ -217,7 +217,7 @@ mock.SetupMock.Property.TotalDispensed.InitializeWith(42);
 Alternatively, set up properties with `Returns` and `Throws` (supports sequences):
 
 ```csharp
-mock.SetupMock.Property.TotalDispensed
+sut.SetupMock.Property.TotalDispensed
     .Returns(1)
     .Returns(2)
     .Throws(new Exception("Error"))
@@ -229,8 +229,8 @@ mock.SetupMock.Property.TotalDispensed
 Register callbacks on the setter or getter:
 
 ```csharp
-mock.SetupMock.Property.TotalDispensed.OnGet(() => Console.WriteLine("TotalDispensed was read!"));
-mock.SetupMock.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.WriteLine($"Changed from {oldValue} to {newValue}!") );
+sut.SetupMock.Property.TotalDispensed.OnGet(() => Console.WriteLine("TotalDispensed was read!"));
+sut.SetupMock.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.WriteLine($"Changed from {oldValue} to {newValue}!") );
 ```
 
 ### Indexer Setup
@@ -238,11 +238,11 @@ mock.SetupMock.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.Wri
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-mock.SetupMock.Indexer(Any<string>())
+sut.SetupMock.Indexer(Any<string>())
     .InitializeWith(type => 20)
     .OnGet(type => Console.WriteLine($"Stock for {type} was read"));
 
-mock.SetupMock.Indexer(With("Dark"))
+sut.SetupMock.Indexer(With("Dark"))
     .InitializeWith(10)
     .OnSet((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
 ```
@@ -266,10 +266,10 @@ method signature matches the event delegate.
 
 ```csharp
 // Arrange: subscribe a handler to the event
-mock.ChocolateDispensed += (type, amount) => { /* handler code */ };
+sut.ChocolateDispensed += (type, amount) => { /* handler code */ };
 
 // Act: raise the event
-mock.RaiseOnMock.ChocolateDispensed("Dark", 5);
+sut.RaiseOnMock.ChocolateDispensed("Dark", 5);
 ```
 
 - Use the `Raise` property to trigger events declared on the mocked interface or class.
@@ -280,10 +280,10 @@ mock.RaiseOnMock.ChocolateDispensed("Dark", 5);
 
 ```csharp
 int dispensedAmount = 0;
-mock.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
+sut.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
 
-mock.RaiseOnMock.ChocolateDispensed("Dark", 3);
-mock.RaiseOnMock.ChocolateDispensed("Milk", 2);
+sut.RaiseOnMock.ChocolateDispensed("Dark", 3);
+sut.RaiseOnMock.ChocolateDispensed("Milk", 2);
 
 // dispensedAmount == 5
 ```
@@ -315,13 +315,13 @@ You can verify that methods were invoked with specific arguments and how many ti
 
 ```csharp
 // Verify that Dispense("Dark", 5) was invoked at least once
-mock.VerifyMock.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-mock.VerifyMock.Invoked.Dispense(With("White"), Any<int>()).Never();
+sut.VerifyMock.Invoked.Dispense(With("White"), Any<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-mock.VerifyMock.Invoked.Dispense(AnyParameters()()).Exactly(2);
+sut.VerifyMock.Invoked.Dispense(AnyParameters()()).Exactly(2);
 ```
 
 #### Argument Matchers
@@ -338,8 +338,8 @@ You can use argument matchers from the `With` class to verify calls with flexibl
 **Example:**
 
 ```csharp
-mock.VerifyMock.Invoked.Dispense(With<string>(t => t.StartsWith("D")), Any<int>()).Once();
-mock.VerifyMock.Invoked.Dispense(With("Milk"), Any<int>()).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(With<string>(t => t.StartsWith("D")), Any<int>()).Once();
+sut.VerifyMock.Invoked.Dispense(With("Milk"), Any<int>()).AtLeastOnce();
 ```
 
 ### Properties
@@ -348,10 +348,10 @@ You can verify access to property getter and setter:
 
 ```csharp
 // Verify that the property 'TotalDispensed' was read at least once
-mock.VerifyMock.Got.TotalDispensed().AtLeastOnce();
+sut.VerifyMock.Got.TotalDispensed().AtLeastOnce();
 
 // Verify that the property 'TotalDispensed' was set to 42 exactly once
-mock.VerifyMock.Set.TotalDispensed(With(42)).Once();
+sut.VerifyMock.Set.TotalDispensed(With(42)).Once();
 ```
 
 **Note:**  
@@ -363,10 +363,10 @@ You can verify access to indexer getter and setter:
 
 ```csharp
 // Verify that the indexer was read with key "Dark" exactly once
-mock.VerifyMock.GotIndexer(With("Dark")).Once();
+sut.VerifyMock.GotIndexer(With("Dark")).Once();
 
 // Verify that the indexer was set with key "Milk" to value 7 at least once
-mock.VerifyMock.SetIndexer(With("Milk"), 7).AtLeastOnce();
+sut.VerifyMock.SetIndexer(With("Milk"), 7).AtLeastOnce();
 ```
 
 **Note:**  
@@ -378,10 +378,10 @@ You can verify event subscriptions and unsubscriptions:
 
 ```csharp
 // Verify that the event 'ChocolateDispensed' was subscribed to at least once
-mock.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
+sut.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 
 // Verify that the event 'ChocolateDispensed' was unsubscribed from exactly once
-mock.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
+sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
 
 ### Call Ordering
@@ -389,7 +389,7 @@ mock.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
-mock.VerifyMock.Invoked.Dispense(With("Dark"), With(2)).Then(
+sut.VerifyMock.Invoked.Dispense(With("Dark"), With(2)).Then(
     m => m.Invoked.Dispense(With("Dark"), With(3))
 );
 ```
@@ -397,7 +397,7 @@ mock.VerifyMock.Invoked.Dispense(With("Dark"), With(2)).Then(
 You can chain multiple calls for strict order verification:
 
 ```csharp
-mock.VerifyMock.Invoked.Dispense(With("Dark"), With(1)).Then(
+sut.VerifyMock.Invoked.Dispense(With("Dark"), With(1)).Then(
     m => m.Invoked.Dispense(With("Milk"), With(2)),
     m => m.Invoked.Dispense(With("White"), With(3)));
 ```
@@ -410,7 +410,7 @@ You can check if all interactions with the mock have been verified using `ThatAl
 
 ```csharp
 // Returns true if all interactions have been verified before
-bool allVerified = mock.VerifyMock.ThatAllInteractionsAreVerified();
+bool allVerified = sut.VerifyMock.ThatAllInteractionsAreVerified();
 ```
 
 This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.

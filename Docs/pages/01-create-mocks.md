@@ -5,7 +5,7 @@ You can create mocks for interfaces and classes. For classes without a default c
 
 ```csharp
 // Create a mock for an interface
-var mock = Mock.Create<IChocolateDispenser>();
+var sut = Mock.Create<IChocolateDispenser>();
 
 // Create a mock for a class
 var classMock = Mock.Create<MyChocolateDispenser>();
@@ -16,7 +16,7 @@ var classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
 );
 
 // Specify up to 8 additional interfaces for the mock:
-var mock3 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
+var sut2 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**
@@ -59,6 +59,6 @@ Use `Mock.Factory` to create multiple mocks with a shared behavior:
 var behavior = new MockBehavior { ThrowWhenNotSetup = true };
 var factory = new Mock.Factory(behavior);
 
-var mock1 = factory.Create<IChocolateDispenser>();
-var mock2 = factory.Create<ILemonadeDispenser>();
+var sut1 = factory.Create<IChocolateDispenser>();
+var sut2 = factory.Create<ILemonadeDispenser>();
 ```

@@ -22,13 +22,13 @@ You can verify that methods were invoked with specific arguments and how many ti
 
 ```csharp
 // Verify that Dispense("Dark", 5) was invoked at least once
-mock.VerifyMock.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-mock.VerifyMock.Invoked.Dispense(With("White"), Any<int>()).Never();
+sut.VerifyMock.Invoked.Dispense(With("White"), Any<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-mock.VerifyMock.Invoked.Dispense(AnyParameters()).Exactly(2);
+sut.VerifyMock.Invoked.Dispense(AnyParameters()).Exactly(2);
 ```
 
 ### Argument Matchers
@@ -45,8 +45,8 @@ You can use argument matchers from the `Match` class to verify calls with flexib
 **Example:**
 
 ```csharp
-mock.VerifyMock.Invoked.Dispense(With<string>(t => t.StartsWith("D")), Any<int>()).Once();
-mock.VerifyMock.Invoked.Dispense(With("Milk"), Any<int>()).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(With<string>(t => t.StartsWith("D")), Any<int>()).Once();
+sut.VerifyMock.Invoked.Dispense(With("Milk"), Any<int>()).AtLeastOnce();
 ```
 
 ## Properties
@@ -55,10 +55,10 @@ You can verify access to property getter and setter:
 
 ```csharp
 // Verify that the property 'TotalDispensed' was read at least once
-mock.VerifyMock.Got.TotalDispensed().AtLeastOnce();
+sut.VerifyMock.Got.TotalDispensed().AtLeastOnce();
 
 // Verify that the property 'TotalDispensed' was set to 42 exactly once
-mock.VerifyMock.Set.TotalDispensed(With(42)).Once();
+sut.VerifyMock.Set.TotalDispensed(With(42)).Once();
 ```
 
 **Note:**  
@@ -70,10 +70,10 @@ You can verify access to indexer getter and setter:
 
 ```csharp
 // Verify that the indexer was read with key "Dark" exactly once
-mock.VerifyMock.GotIndexer(With("Dark")).Once();
+sut.VerifyMock.GotIndexer(With("Dark")).Once();
 
 // Verify that the indexer was set with key "Milk" to value 7 at least once
-mock.VerifyMock.SetIndexer(With("Milk"), 7).AtLeastOnce();
+sut.VerifyMock.SetIndexer(With("Milk"), 7).AtLeastOnce();
 ```
 
 **Note:**  
@@ -85,10 +85,10 @@ You can verify event subscriptions and unsubscriptions:
 
 ```csharp
 // Verify that the event 'ChocolateDispensed' was subscribed to at least once
-mock.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
+sut.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 
 // Verify that the event 'ChocolateDispensed' was unsubscribed from exactly once
-mock.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
+sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
 
 ## Call Ordering
@@ -96,7 +96,7 @@ mock.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
-mock.VerifyMock.Invoked.Dispense(With("Dark"), With(2)).Then(
+sut.VerifyMock.Invoked.Dispense(With("Dark"), With(2)).Then(
     m => m.Invoked.Dispense(With("Dark"), With(3))
 );
 ```
@@ -104,7 +104,7 @@ mock.VerifyMock.Invoked.Dispense(With("Dark"), With(2)).Then(
 You can chain multiple calls for strict order verification:
 
 ```csharp
-mock.VerifyMock.Invoked.Dispense(With("Dark"), With(1)).Then(
+sut.VerifyMock.Invoked.Dispense(With("Dark"), With(1)).Then(
     m => m.Invoked.Dispense(With("Milk"), With(2)),
     m => m.Invoked.Dispense(With("White"), With(3)));
 ```
@@ -117,7 +117,7 @@ You can check if all interactions with the mock have been verified using `ThatAl
 
 ```csharp
 // Returns true if all interactions have been verified before
-bool allVerified = mock.VerifyMock.ThatAllInteractionsAreVerified();
+bool allVerified = sut.VerifyMock.ThatAllInteractionsAreVerified();
 ```
 
 This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.
