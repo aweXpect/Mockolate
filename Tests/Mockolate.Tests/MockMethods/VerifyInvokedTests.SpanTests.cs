@@ -1,0 +1,112 @@
+﻿#if NET8_0_OR_GREATER
+
+namespace Mockolate.Tests.MockMethods;
+
+public sealed partial class VerifyInvokedTests
+{
+	public sealed class SpanTests
+	{
+		[Fact]
+		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
+		{
+			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
+			});
+
+			mock.MyMethod(new Memory<int>([1, 2, 3,]));
+
+			await That(mock.VerifyMock.Invoked.MyMethod(With<Memory<int>>(v => v.Length == 2))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(With<Memory<int>>(v => v.Length == 3))).Once();
+			await That(mock.VerifyMock.Invoked.MyMethod(With<Memory<int>>(v => v.Length == 4))).Never();
+		}
+
+		[Fact]
+		public async Task Memory_WithoutPredicate_ShouldApplyAllCalls()
+		{
+			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
+			});
+
+			mock.MyMethod(new Memory<int>());
+			mock.MyMethod(new Span<int>([1, 2, 3,]));
+			mock.MyMethod(new Memory<int>([1, 2,]));
+
+			await That(mock.VerifyMock.Invoked.MyMethod(Any<Memory<int>>())).Twice();
+		}
+
+		[Fact]
+		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
+		{
+			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
+			});
+
+			mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
+
+			await That(mock.VerifyMock.Invoked.MyMethod(WithReadOnlySpan<int>(v => v.Length == 2))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(WithReadOnlySpan<int>(v => v.Length == 3))).Once();
+			await That(mock.VerifyMock.Invoked.MyMethod(WithReadOnlySpan<int>(v => v.Length == 4))).Never();
+		}
+
+		[Fact]
+		public async Task ReadOnlySpan_WithoutPredicate_ShouldApplyAllCalls()
+		{
+			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
+			});
+
+			mock.MyMethod(new ReadOnlySpan<int>());
+			mock.MyMethod(new Span<int>([1, 2, 3,]));
+			mock.MyMethod(new ReadOnlySpan<int>([1, 2,]));
+
+			await That(mock.VerifyMock.Invoked.MyMethod(AnyReadOnlySpan<int>())).Twice();
+		}
+
+		[Fact]
+		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
+		{
+			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
+			});
+
+			mock.MyMethod(new Span<int>([1, 2, 3,]));
+
+			await That(mock.VerifyMock.Invoked.MyMethod(WithSpan<int>(v => v.Length == 2))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(WithSpan<int>(v => v.Length == 3))).Once();
+			await That(mock.VerifyMock.Invoked.MyMethod(WithSpan<int>(v => v.Length == 4))).Never();
+		}
+
+		[Fact]
+		public async Task Span_WithoutPredicate_ShouldApplyAllCalls()
+		{
+			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default with
+			{
+				BaseClassBehavior = BaseClassBehavior.UseBaseClassAsDefaultValue,
+			});
+
+			mock.MyMethod(new Span<int>());
+			mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
+			mock.MyMethod(new Span<int>([1, 2,]));
+
+			await That(mock.VerifyMock.Invoked.MyMethod(AnySpan<int>())).Twice();
+		}
+
+		internal class SpanMock
+		{
+			public virtual int MyMethod(Memory<int> value)
+				=> value.Length;
+
+			public virtual int MyMethod(ReadOnlySpan<int> value)
+				=> value.Length;
+
+			public virtual int MyMethod(Span<int> value)
+				=> value.Length;
+		}
+	}
+}
+#endif

@@ -2,7 +2,7 @@
 
 namespace Mockolate.Tests.MockIndexers;
 
-public sealed class VerifySetIndexerTests
+public sealed partial class VerifySetIndexerTests
 {
 	[Fact]
 	public async Task WhenNullParametersAndValue_AndMatches_ShouldReturn()

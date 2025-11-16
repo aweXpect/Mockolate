@@ -398,7 +398,12 @@ internal static partial class Sources
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\treturn MockRegistrations.GetIndexer<").Append(property.Type.Fullname)
 						.Append(">(() => baseResult, ")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
+						{
+							(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+							(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+							(_, _) => p.Name,
+						})))
 						.AppendLine(");");
 					sb.Append("\t\t\t\t}").AppendLine();
 				}
@@ -421,7 +426,12 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<")
 					.Append(property.Type.Fullname)
-					.Append(">(null, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+					.Append(">(null, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
+					{
+						(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+						(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+						(_, _) => p.Name,
+					})))
 					.AppendLine(");");
 			}
 			else
@@ -468,7 +478,12 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\tMockRegistrations.SetIndexer<")
 					.Append(property.Type.Fullname)
-					.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+					.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
+					{
+						(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+						(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+						(_, _) => p.Name,
+					})))
 					.AppendLine(");");
 			}
 			else
@@ -547,24 +562,24 @@ internal static partial class Sources
 			sb.Append("\t\tMethodSetupResult<").Append(method.ReturnType.Fullname)
 				.Append(">? methodExecution = MockRegistrations.Execute<")
 				.Append(method.ReturnType.Fullname).Append(">(").Append(method.GetUniqueNameString());
-			foreach (MethodParameter p in method.Parameters)
-			{
-				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
-			}
-
-			sb.AppendLine(");");
 		}
 		else
 		{
 			sb.Append("\t\tMethodSetupResult? methodExecution = MockRegistrations.Execute(")
 				.Append(method.GetUniqueNameString());
-			foreach (MethodParameter p in method.Parameters)
-			{
-				sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
-			}
-
-			sb.AppendLine(");");
 		}
+		foreach (MethodParameter p in method.Parameters)
+		{
+			sb.Append(", ").Append((p.RefKind, p.IsSpan, p.IsReadOnlySpan) switch
+			{
+				(RefKind.Out, _, _) => "null",
+				(_, true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+				(_, false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+				(_, _, _) => p.Name,
+			});
+		}
+
+		sb.AppendLine(");");
 
 		if (isClassInterface || method.IsAbstract)
 		{
