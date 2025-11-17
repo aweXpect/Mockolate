@@ -11,18 +11,19 @@ public partial class MockRegistration
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
 	///     <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Method<T>(T subject, string methodName, params Match.NamedParameter[] parameters) => new(
-		subject,
-		Interactions,
-		Interactions.Interactions
-			.OfType<MethodInvocation>()
-			.Where(method =>
-				method.Name.Equals(methodName) &&
-				method.Parameters.Length == parameters.Length &&
-				!parameters.Where((parameter, i) => !parameter.Parameter.Matches(method.Parameters[i])).Any())
-			.Cast<IInteraction>()
-			.ToArray(),
-		$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.Parameter.ToString()))})");
+	public VerificationResult<T> Method<T>(T subject, string methodName, params Match.NamedParameter[] parameters)
+		=> new(
+			subject,
+			Interactions,
+			Interactions.Interactions
+				.OfType<MethodInvocation>()
+				.Where(method =>
+					method.Name.Equals(methodName) &&
+					method.Parameters.Length == parameters.Length &&
+					!parameters.Where((parameter, i) => !parameter.Parameter.Matches(method.Parameters[i])).Any())
+				.Cast<IInteraction>()
+				.ToArray(),
+			$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.Parameter.ToString()))})");
 
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the

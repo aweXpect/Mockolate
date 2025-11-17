@@ -44,7 +44,7 @@ public partial class MockRegistration
 			{
 				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
 			}
-			
+
 			if (!Behavior.CallBaseClass)
 			{
 				defaultValueGenerator = null;

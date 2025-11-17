@@ -1,5 +1,3 @@
-using Mockolate.Interactions;
-
 namespace Mockolate;
 
 /// <summary>

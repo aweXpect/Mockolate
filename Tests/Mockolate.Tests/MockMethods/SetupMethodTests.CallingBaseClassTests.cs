@@ -7,20 +7,8 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyReturnMethodWithoutParameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
-		{
-			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyReturnMethodWithoutParameters().CallingBaseClass(callBaseClass);
-
-			mock.MyReturnMethodWithoutParameters();
-
-			await That(mock.MyReturnMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
-		}
-
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
-		public async Task MyReturnMethodWith1Parameter_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyReturnMethodWith1Parameter_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
 			mock.SetupMock.Method.MyReturnMethodWith1Parameter(Any<int>()).CallingBaseClass(callBaseClass);
@@ -33,7 +21,8 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyReturnMethodWith2Parameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyReturnMethodWith2Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
 			mock.SetupMock.Method.MyReturnMethodWith2Parameters(Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
@@ -46,10 +35,12 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyReturnMethodWith3Parameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyReturnMethodWith3Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyReturnMethodWith3Parameters(Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyReturnMethodWith3Parameters(Any<int>(), Any<int>(), Any<int>())
+				.CallingBaseClass(callBaseClass);
 
 			mock.MyReturnMethodWith3Parameters(1, 2, 3);
 
@@ -59,10 +50,12 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyReturnMethodWith4Parameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyReturnMethodWith4Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyReturnMethodWith4Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyReturnMethodWith4Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				.CallingBaseClass(callBaseClass);
 
 			mock.MyReturnMethodWith4Parameters(1, 2, 3, 4);
 
@@ -72,33 +65,38 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyReturnMethodWith5Parameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyReturnMethodWith5Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyReturnMethodWith5Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method
+				.MyReturnMethodWith5Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				.CallingBaseClass(callBaseClass);
 
 			mock.MyReturnMethodWith5Parameters(1, 2, 3, 4, 5);
 
 			await That(mock.MyReturnMethodWith5ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
-		
+
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyVoidMethodWithoutParameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyReturnMethodWithoutParameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyVoidMethodWithoutParameters().CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyReturnMethodWithoutParameters().CallingBaseClass(callBaseClass);
 
-			mock.MyVoidMethodWithoutParameters();
+			mock.MyReturnMethodWithoutParameters();
 
-			await That(mock.MyVoidMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(mock.MyReturnMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyVoidMethodWith1Parameter_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyVoidMethodWith1Parameter_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
 			mock.SetupMock.Method.MyVoidMethodWith1Parameter(Any<int>()).CallingBaseClass(callBaseClass);
@@ -111,7 +109,8 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyVoidMethodWith2Parameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyVoidMethodWith2Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
 			mock.SetupMock.Method.MyVoidMethodWith2Parameters(Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
@@ -124,10 +123,12 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyVoidMethodWith3Parameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyVoidMethodWith3Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyVoidMethodWith3Parameters(Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyVoidMethodWith3Parameters(Any<int>(), Any<int>(), Any<int>())
+				.CallingBaseClass(callBaseClass);
 
 			mock.MyVoidMethodWith3Parameters(1, 2, 3);
 
@@ -137,10 +138,12 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyVoidMethodWith4Parameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyVoidMethodWith4Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyVoidMethodWith4Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyVoidMethodWith4Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				.CallingBaseClass(callBaseClass);
 
 			mock.MyVoidMethodWith4Parameters(1, 2, 3, 4);
 
@@ -150,14 +153,31 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 0)]
 		[InlineData(true, 1)]
-		public async Task MyVoidMethodWith5Parameters_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		public async Task MyVoidMethodWith5Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyVoidMethodWith5Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method
+				.MyVoidMethodWith5Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				.CallingBaseClass(callBaseClass);
 
 			mock.MyVoidMethodWith5Parameters(1, 2, 3, 4, 5);
 
 			await That(mock.MyVoidMethodWith5ParametersCallCount).IsEqualTo(expectedCallCount);
+		}
+
+		[Theory]
+		[InlineData(false, 0)]
+		[InlineData(true, 1)]
+		public async Task MyVoidMethodWithoutParameters_ShouldCallBaseWhenRequested(bool callBaseClass,
+			int expectedCallCount)
+		{
+			MyMethodService mock = Mock.Create<MyMethodService>();
+			mock.SetupMock.Method.MyVoidMethodWithoutParameters().CallingBaseClass(callBaseClass);
+
+			mock.MyVoidMethodWithoutParameters();
+
+			await That(mock.MyVoidMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		public class MyMethodService
@@ -174,7 +194,7 @@ public sealed partial class SetupMethodTests
 			public int MyReturnMethodWith3ParametersCallCount { get; private set; }
 			public int MyReturnMethodWith4ParametersCallCount { get; private set; }
 			public int MyReturnMethodWith5ParametersCallCount { get; private set; }
-			
+
 			public virtual void MyVoidMethodWithoutParameters()
 				=> MyVoidMethodWithoutParametersCallCount++;
 
@@ -192,8 +212,8 @@ public sealed partial class SetupMethodTests
 
 			public virtual void MyVoidMethodWith5Parameters(int p1, int p2, int p3, int p4, int p5)
 				=> MyVoidMethodWith5ParametersCallCount++;
-			
-			
+
+
 			public virtual int MyReturnMethodWithoutParameters()
 				=> MyReturnMethodWithoutParametersCallCount++;
 

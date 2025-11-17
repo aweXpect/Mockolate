@@ -13,7 +13,8 @@ public interface IMethodSetup
 	bool Matches(MethodInvocation methodInvocation);
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Gets the flag indicating if the base class implementation should be called, and its return values
+	///     used as default values.
 	/// </summary>
 	bool? CallBaseClass();
 

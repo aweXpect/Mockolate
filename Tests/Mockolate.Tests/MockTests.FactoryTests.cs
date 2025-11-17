@@ -210,8 +210,8 @@ public sealed partial class MockTests
 			MockBehavior behavior = MockBehavior.Default.CallingBaseClass();
 			Mock.Factory factory = new(behavior);
 
-			IMyService mock1 = factory.Create<IMyService>(
-				setup => setup.Method.Multiply(Any<int>(), Any<int?>()).Returns(42));
+			IMyService mock1 =
+				factory.Create<IMyService>(setup => setup.Method.Multiply(Any<int>(), Any<int?>()).Returns(42));
 			MyServiceBase mock2 = factory.Create<MyServiceBase, IMyService>(BaseClass.WithConstructorParameters(),
 				setup => setup.Method.DoSomething(Any<int>(), With(true)).Returns(5),
 				setup => setup.Method.DoSomething(Any<int>(), With(false)).Returns(6));

@@ -9,10 +9,11 @@ namespace Mockolate.Setup;
 public interface IIndexerSetup
 {
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Gets the flag indicating if the base class implementation should be called, and its return values
+	///     used as default values.
 	/// </summary>
 	bool? CallBaseClass();
-	
+
 	/// <summary>
 	///     Checks if the <paramref name="indexerAccess" /> matches the setup.
 	/// </summary>

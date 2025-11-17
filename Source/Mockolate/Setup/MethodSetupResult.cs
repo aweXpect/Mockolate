@@ -12,7 +12,8 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 		=> setup is not null;
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Gets the flag indicating if the base class implementation should be called, and its return values
+	///     used as default values.
 	/// </summary>
 	public bool CallBaseClass
 		=> setup?.CallBaseClass() ?? behavior.CallBaseClass;

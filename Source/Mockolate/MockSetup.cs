@@ -5,7 +5,6 @@ namespace Mockolate;
 
 #pragma warning disable S1939 // Inheritance list should not be redundant
 // ReSharper disable RedundantExtendsListEntry
-
 /// <summary>
 ///     A partial mock for setting up type <typeparamref name="T" />.
 /// </summary>

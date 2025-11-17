@@ -567,6 +567,16 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith2Parameters
 	{
 		[Fact]
+		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long> setup = new("Foo", AnyParameters());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(AnyParameters())");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long> setup = new("Foo", new NamedParameter("p1", Any<string>()),
@@ -575,16 +585,6 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("int Foo(Any<string>() p1, Any<long>() p2)");
-		}
-
-		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
-		{
-			ReturnMethodSetup<int, string, long> setup = new("Foo", AnyParameters());
-
-			string result = setup.ToString();
-
-			await That(result).IsEqualTo("int Foo(AnyParameters())");
 		}
 
 		[Fact]
@@ -607,6 +607,16 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith3Parameters
 	{
 		[Fact]
+		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int> setup = new("Foo", AnyParameters());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(AnyParameters())");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int> setup = new("Foo",
@@ -616,16 +626,6 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("int Foo(Any<string>() p1, Any<long>() p2, Any<int>() p3)");
-		}
-
-		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
-		{
-			ReturnMethodSetup<int, string, long, int> setup = new("Foo", AnyParameters());
-
-			string result = setup.ToString();
-
-			await That(result).IsEqualTo("int Foo(AnyParameters())");
 		}
 
 		[Fact]
@@ -648,6 +648,16 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith4Parameters
 	{
 		[Fact]
+		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo", AnyParameters());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(AnyParameters())");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo",
@@ -659,16 +669,6 @@ public sealed partial class SetupMethodTests
 			await That(result)
 				.IsEqualTo(
 					"int Foo(Any<string>() p1, Any<long>() p2, Any<int>() p3, Any<int>() p4)");
-		}
-
-		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
-		{
-			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo", AnyParameters());
-
-			string result = setup.ToString();
-
-			await That(result).IsEqualTo("int Foo(AnyParameters())");
 		}
 
 		[Fact]
@@ -691,6 +691,16 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith5Parameters
 	{
 		[Fact]
+		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo", AnyParameters());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(AnyParameters())");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo",
@@ -703,16 +713,6 @@ public sealed partial class SetupMethodTests
 			await That(result)
 				.IsEqualTo(
 					"int Foo(Any<string>() p1, Any<long>() p2, Any<int>() p3, Any<int>() p4, Any<int>() p5)");
-		}
-
-		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
-		{
-			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo", AnyParameters());
-
-			string result = setup.ToString();
-
-			await That(result).IsEqualTo("int Foo(AnyParameters())");
 		}
 
 		[Fact]
@@ -762,6 +762,16 @@ public sealed partial class SetupMethodTests
 	public class VoidMethodWith2Parameters
 	{
 		[Fact]
+		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string, long> setup = new("Foo", AnyParameters());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(AnyParameters())");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long> setup = new("Foo", new NamedParameter("p1", Any<string>()),
@@ -771,20 +781,20 @@ public sealed partial class SetupMethodTests
 
 			await That(result).IsEqualTo("void Foo(Any<string>() p1, Any<long>() p2)");
 		}
+	}
 
+	public class VoidMethodWith3Parameters
+	{
 		[Fact]
 		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long> setup = new("Foo", AnyParameters());
+			VoidMethodSetup<string, long, int> setup = new("Foo", AnyParameters());
 
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("void Foo(AnyParameters())");
 		}
-	}
 
-	public class VoidMethodWith3Parameters
-	{
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
@@ -795,20 +805,20 @@ public sealed partial class SetupMethodTests
 
 			await That(result).IsEqualTo("void Foo(Any<string>() p1, Any<long>() p2, Any<int>() p3)");
 		}
+	}
 
+	public class VoidMethodWith4Parameters
+	{
 		[Fact]
 		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int> setup = new("Foo", AnyParameters());
+			VoidMethodSetup<string, long, int, int> setup = new("Foo", AnyParameters());
 
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("void Foo(AnyParameters())");
 		}
-	}
 
-	public class VoidMethodWith4Parameters
-	{
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
@@ -822,20 +832,20 @@ public sealed partial class SetupMethodTests
 				.IsEqualTo(
 					"void Foo(Any<string>() p1, Any<long>() p2, Any<int>() p3, Any<int>() p4)");
 		}
+	}
 
+	public class VoidMethodWith5Parameters
+	{
 		[Fact]
 		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int> setup = new("Foo", AnyParameters());
+			VoidMethodSetup<string, long, int, int, int> setup = new("Foo", AnyParameters());
 
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("void Foo(AnyParameters())");
 		}
-	}
 
-	public class VoidMethodWith5Parameters
-	{
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
@@ -849,16 +859,6 @@ public sealed partial class SetupMethodTests
 			await That(result)
 				.IsEqualTo(
 					"void Foo(Any<string>() p1, Any<long>() p2, Any<int>() p3, Any<int>() p4, Any<int>() p5)");
-		}
-
-		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
-		{
-			VoidMethodSetup<string, long, int, int, int> setup = new("Foo", AnyParameters());
-
-			string result = setup.ToString();
-
-			await That(result).IsEqualTo("void Foo(AnyParameters())");
 		}
 	}
 

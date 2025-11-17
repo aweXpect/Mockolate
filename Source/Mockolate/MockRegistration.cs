@@ -136,7 +136,8 @@ public partial class MockRegistration
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
-		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue, _indexerSetups.UpdateValue);
+		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
+			_indexerSetups.UpdateValue);
 	}
 
 	/// <summary>

@@ -19,12 +19,13 @@ public abstract class PropertySetup
 
 	internal TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior)
 		=> InvokeGetter<TResult>(behavior);
-	
+
 	internal bool? CallBaseClass()
 		=> GetCallBaseClass();
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Gets the flag indicating if the base class implementation should be called, and its return values
+	///     used as default values.
 	/// </summary>
 	protected abstract bool? GetCallBaseClass();
 
@@ -71,9 +72,9 @@ public class PropertySetup<T> : PropertySetup
 	private readonly List<Action<T>> _getterCallbacks = [];
 	private readonly List<Func<T, T>> _returnCallbacks = [];
 	private readonly List<Action<T, T>> _setterCallbacks = [];
+	private bool? _callBaseClass;
 	private int _currentReturnCallbackIndex = -1;
 	private T _value = default!;
-	private bool? _callBaseClass;
 
 	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 	protected override void InvokeSetter(object? value, MockBehavior behavior)

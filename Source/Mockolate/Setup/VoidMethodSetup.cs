@@ -13,8 +13,8 @@ public class VoidMethodSetup(string name) : MethodSetup
 {
 	private readonly List<Action> _callbacks = [];
 	private readonly List<Action> _returnCallbacks = [];
-	private int _currentReturnCallbackIndex = -1;
 	private bool? _callBaseClass;
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -121,20 +121,8 @@ public class VoidMethodSetup<T1> : MethodSetup
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Action<T1>> _returnCallbacks = [];
-	private int _currentReturnCallbackIndex = -1;
 	private bool? _callBaseClass;
-
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public VoidMethodSetup<T1> CallingBaseClass(bool callBaseClass = true)
-	{
-		_callBaseClass = callBaseClass;
-		return this;
-	}
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1}" />
 	public VoidMethodSetup(string name, Match.NamedParameter match1)
@@ -148,6 +136,18 @@ public class VoidMethodSetup<T1> : MethodSetup
 	{
 		_name = name;
 		_matches = matches;
+	}
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public VoidMethodSetup<T1> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
 	}
 
 	/// <summary>
@@ -288,20 +288,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Action<T1, T2>> _returnCallbacks = [];
-	private int _currentReturnCallbackIndex = -1;
 	private bool? _callBaseClass;
-
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public VoidMethodSetup<T1, T2> CallingBaseClass(bool callBaseClass = true)
-	{
-		_callBaseClass = callBaseClass;
-		return this;
-	}
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
 	public VoidMethodSetup(string name, Match.NamedParameter match1, Match.NamedParameter match2)
@@ -316,6 +304,18 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 	{
 		_name = name;
 		_matches = matches;
+	}
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public VoidMethodSetup<T1, T2> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
 	}
 
 	/// <summary>
@@ -458,20 +458,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Action<T1, T2, T3>> _returnCallbacks = [];
-	private int _currentReturnCallbackIndex = -1;
 	private bool? _callBaseClass;
-
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public VoidMethodSetup<T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
-	{
-		_callBaseClass = callBaseClass;
-		return this;
-	}
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
 	public VoidMethodSetup(
@@ -491,6 +479,18 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 	{
 		_name = name;
 		_matches = matches;
+	}
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public VoidMethodSetup<T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
 	}
 
 	/// <summary>
@@ -635,20 +635,8 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
-	private int _currentReturnCallbackIndex = -1;
 	private bool? _callBaseClass;
-
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public VoidMethodSetup<T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
-	{
-		_callBaseClass = callBaseClass;
-		return this;
-	}
+	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
 	public VoidMethodSetup(
@@ -670,6 +658,18 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 	{
 		_name = name;
 		_matches = matches;
+	}
+
+	/// <summary>
+	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	/// </summary>
+	/// <remarks>
+	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	/// </remarks>
+	public VoidMethodSetup<T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
+	{
+		_callBaseClass = callBaseClass;
+		return this;
 	}
 
 	/// <summary>
