@@ -6,26 +6,15 @@ namespace Mockolate;
 public static class MockBehaviorExtensions
 {
 	/// <summary>
-	///     Calls the base class implementation, and uses its return values as default values.
+	///     Specifies if the base class implementation should be called, and
+	///     its return values used as default values.
 	/// </summary>
 	/// <remarks>
-	///     Sets the <see cref="MockBehavior.CallBaseClass" /> to <see langword="true" />.
+	///     Sets the <see cref="MockBehavior.CallBaseClass" /> to <paramref name="callBaseClass"/>.
 	/// </remarks>
-	public static MockBehavior CallingBaseClass(this MockBehavior mockBehavior)
+	public static MockBehavior CallingBaseClass(this MockBehavior mockBehavior, bool callBaseClass = true)
 		=> mockBehavior with
 		{
-			CallBaseClass = true,
-		};
-
-	/// <summary>
-	///     Does not call the base class implementation.
-	/// </summary>
-	/// <remarks>
-	///     Sets the <see cref="MockBehavior.CallBaseClass" /> to <see langword="false" />.
-	/// </remarks>
-	public static MockBehavior IgnoringBaseClass(this MockBehavior mockBehavior)
-		=> mockBehavior with
-		{
-			CallBaseClass = false,
+			CallBaseClass = callBaseClass,
 		};
 }

@@ -15,9 +15,10 @@ public sealed class MockBehaviorExtensionsTests
 	[Fact]
 	public async Task IgnoringBaseClass_ShouldSetIgnoreBaseClass()
 	{
-		MockBehavior sut = MockBehavior.Default.CallingBaseClass();
+		bool initializedValue = true;
+		MockBehavior sut = MockBehavior.Default.CallingBaseClass(initializedValue);
 
-		MockBehavior result = sut.IgnoringBaseClass();
+		MockBehavior result = sut.CallingBaseClass(false);
 
 		await That(result.CallBaseClass).IsFalse();
 	}

@@ -82,8 +82,7 @@ namespace Mockolate
     }
     public static class MockBehaviorExtensions
     {
-        public static Mockolate.MockBehavior CallingBaseClass(this Mockolate.MockBehavior mockBehavior) { }
-        public static Mockolate.MockBehavior IgnoringBaseClass(this Mockolate.MockBehavior mockBehavior) { }
+        public static Mockolate.MockBehavior CallingBaseClass(this Mockolate.MockBehavior mockBehavior, bool callBaseClass = true) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MockRegistration
