@@ -1,4 +1,5 @@
 ﻿using Mockolate.Exceptions;
+using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockIndexers;
 
@@ -143,11 +144,11 @@ public sealed partial class SetupIndexerTests
 		mock.SetupMock.Indexer(Any<int>()).Returns("foo");
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		string result1 = registration.GetIndexer<string>(null, 1);
-		int result2 = registration.GetIndexer<int>(null, 1);
+		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(1);
+		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(1);
 
-		await That(result1).IsEqualTo("foo");
-		await That(result2).IsEqualTo(0);
+		await That(result1.GetResult()).IsEqualTo("foo");
+		await That(result2.GetResult()).IsEqualTo(0);
 	}
 
 	[Fact]
@@ -170,7 +171,7 @@ public sealed partial class SetupIndexerTests
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>(MockBehavior.Default with
 		{
-			ThrowWhenNotSetup = true,
+			ThrowWhenNotSetup = true
 		});
 
 		void Act()

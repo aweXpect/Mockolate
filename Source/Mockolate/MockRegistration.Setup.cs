@@ -71,33 +71,9 @@ public partial class MockRegistration
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters" />.
 	/// </summary>
-	private TValue GetIndexerValue<TValue>(IIndexerSetup? setup, Func<TValue>? defaultValueGenerator,
+	private TValue GetIndexerValue<TValue>(IIndexerSetup? setup, Func<TValue> defaultValueGenerator,
 		object?[] parameters)
-		=> _indexerSetups.GetOrAddValue(parameters, () =>
-		{
-			if (setup?.TryGetInitialValue(Behavior, parameters, out TValue? value) == true)
-			{
-				if (setup.CallBaseClass() ?? Behavior.CallBaseClass)
-				{
-					defaultValueGenerator?.Invoke();
-				}
-				
-				return value;
-			}
-
-			if (Behavior.CallBaseClass && defaultValueGenerator is not null)
-			{
-				return defaultValueGenerator();
-			}
-
-			if (Behavior.ThrowWhenNotSetup)
-			{
-				throw new MockNotSetupException(
-					$"The indexer [{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}] was accessed without prior setup.");
-			}
-
-			return Behavior.DefaultValue.Generate<TValue>();
-		});
+		=> _indexerSetups.GetOrAddValue(parameters, defaultValueGenerator);
 
 	/// <summary>
 	///     Registers the <paramref name="indexerSetup" /> in the mock.

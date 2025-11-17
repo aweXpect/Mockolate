@@ -130,25 +130,13 @@ public partial class MockRegistration
 	/// <summary>
 	///     Gets the value from the indexer with the given parameters.
 	/// </summary>
-	public TResult GetIndexer<TResult>(Func<TResult>? defaultValueGenerator, params object?[] parameters)
+	public IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters)
 	{
 		IndexerGetterAccess interaction = new(Interactions.GetNextIndex(), parameters);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
-		TResult initialValue = GetIndexerValue(matchingSetup, defaultValueGenerator, parameters);
-		if (matchingSetup is not null)
-		{
-			TResult value = matchingSetup.InvokeGetter(interaction, initialValue, Behavior);
-			if (!Equals(initialValue, value))
-			{
-				_indexerSetups.UpdateValue(parameters, value);
-			}
-
-			return value;
-		}
-
-		return initialValue;
+		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue, _indexerSetups.UpdateValue);
 	}
 
 	/// <summary>

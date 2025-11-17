@@ -58,7 +58,7 @@ internal static partial class Sources
 		sb.Append("\tprivate readonly List<Func<TValue, ").Append(typeParams)
 			.Append(", TValue>> _returnCallbacks = [];")
 			.AppendLine();
-		sb.Append("\tprivate bool _callBaseClass;").AppendLine();
+		sb.Append("\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.Append("\tprivate Func<").Append(typeParams).Append(", TValue>? _initialization;").AppendLine();
 		sb.AppendLine();

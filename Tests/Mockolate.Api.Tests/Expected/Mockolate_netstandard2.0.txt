@@ -85,7 +85,7 @@ namespace Mockolate
         public Mockolate.Interactions.MockInteractions Interactions { get; }
         public string Prefix { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
-        public TResult GetIndexer<TResult>(System.Func<TResult>? defaultValueGenerator, params object?[] parameters) { }
+        public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult>? defaultValueGenerator = null) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Match.NamedParameter?[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Match.IParameter? value, params Mockolate.Match.NamedParameter?[] parameters) { }
@@ -335,6 +335,18 @@ namespace Mockolate.Setup
         protected abstract bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value);
         protected static bool Matches(Mockolate.Match.IParameter[] parameters, object?[] values) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
+    }
+    public class IndexerSetupResult
+    {
+        public IndexerSetupResult(Mockolate.Setup.IIndexerSetup? setup, Mockolate.MockBehavior behavior) { }
+        public bool CallBaseClass { get; }
+        public bool HasSetup { get; }
+    }
+    public class IndexerSetupResult<TResult> : Mockolate.Setup.IndexerSetupResult
+    {
+        public IndexerSetupResult(Mockolate.Setup.IIndexerSetup? setup, Mockolate.Interactions.IndexerGetterAccess indexerAccess, Mockolate.MockBehavior behavior, System.Func<Mockolate.Setup.IIndexerSetup?, System.Func<TResult>, object?[], TResult> getIndexerValue, System.Action<object?[], TResult> setIndexerValue) { }
+        public TResult GetResult() { }
+        public TResult GetResult(TResult baseValue) { }
     }
     public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup
     {

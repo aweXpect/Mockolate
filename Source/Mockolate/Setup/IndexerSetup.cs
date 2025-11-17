@@ -118,7 +118,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1) : IndexerSetu
 	private readonly List<Action<TValue, T1>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, TValue>? _initialization;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
@@ -359,7 +359,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 	private readonly List<Action<TValue, T1, T2>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, TValue>? _initialization;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
@@ -607,7 +607,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private readonly List<Action<TValue, T1, T2, T3>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, TValue>? _initialization;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
@@ -860,7 +860,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private readonly List<Action<TValue, T1, T2, T3, T4>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()

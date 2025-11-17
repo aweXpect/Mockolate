@@ -73,7 +73,7 @@ public class PropertySetup<T> : PropertySetup
 	private readonly List<Action<T, T>> _setterCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
 	private T _value = default!;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 	protected override void InvokeSetter(object? value, MockBehavior behavior)

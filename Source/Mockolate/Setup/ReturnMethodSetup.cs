@@ -91,21 +91,23 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
 		where TResult : default
 	{
-		if (_returnCallbacks.Count > 0)
+		if (_returnCallbacks.Count == 0)
 		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-			Func<TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+			return behavior.DefaultValue.Generate<TResult>();
+		}
 
-			TReturn returnValue = returnCallback();
-			if (returnValue is null)
-			{
-				return default!;
-			}
+		int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
+		Func<TReturn> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 
-			if (returnValue is TResult result)
-			{
-				return result;
-			}
+		TReturn returnValue = returnCallback();
+		if (returnValue is null)
+		{
+			return default!;
+		}
+
+		if (returnValue is TResult result)
+		{
+			return result;
 		}
 
 		throw new MockException(

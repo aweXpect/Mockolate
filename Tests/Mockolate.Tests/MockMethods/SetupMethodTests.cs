@@ -320,7 +320,7 @@ public sealed partial class SetupMethodTests
 	public async Task ToString_RefParameter_WithCallback_ShouldReturnExpectedValue()
 	{
 		IRefParameter<int> sut = Ref<int>(_ => 4);
-		string expectedResult = "Ref<int>(v => 4)";
+		string expectedResult = "Ref<int>(_ => 4)";
 
 		string? result = sut.ToString();
 

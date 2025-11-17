@@ -14,7 +14,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 	private readonly List<Action> _callbacks = [];
 	private readonly List<Action> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -122,7 +122,7 @@ public class VoidMethodSetup<T1> : MethodSetup
 	private readonly string _name;
 	private readonly List<Action<T1>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -289,7 +289,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 	private readonly string _name;
 	private readonly List<Action<T1, T2>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -459,7 +459,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 	private readonly string _name;
 	private readonly List<Action<T1, T2, T3>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -636,7 +636,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 	private readonly string _name;
 	private readonly List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
 	private int _currentReturnCallbackIndex = -1;
-	private bool _callBaseClass;
+	private bool? _callBaseClass;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.

@@ -2,7 +2,7 @@
 
 public sealed partial class SetupMethodTests
 {
-	public sealed class CallBaseClassTests
+	public sealed class CallingBaseClassTests
 	{
 		[Theory]
 		[InlineData(false, 0)]
