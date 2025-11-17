@@ -9,16 +9,17 @@ public sealed class MockBehaviorExtensionsTests
 
 		MockBehavior result = sut.CallingBaseClass();
 
-		await That(result.BaseClassBehavior).IsEqualTo(BaseClassBehavior.CallBaseClass);
+		await That(result.CallBaseClass).IsTrue();
 	}
 
 	[Fact]
 	public async Task IgnoringBaseClass_ShouldSetIgnoreBaseClass()
 	{
-		MockBehavior sut = MockBehavior.Default.CallingBaseClass();
+		bool initializedValue = true;
+		MockBehavior sut = MockBehavior.Default.CallingBaseClass(initializedValue);
 
-		MockBehavior result = sut.IgnoringBaseClass();
+		MockBehavior result = sut.CallingBaseClass(false);
 
-		await That(result.BaseClassBehavior).IsEqualTo(BaseClassBehavior.IgnoreBaseClass);
+		await That(result.CallBaseClass).IsFalse();
 	}
 }

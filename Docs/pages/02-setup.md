@@ -38,6 +38,7 @@ sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
   parameters.
 - Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each
   call).
+- Use `.CallingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
 **Async Methods**
@@ -114,4 +115,5 @@ sut.SetupMock.Indexer(With("Dark"))
 - `.OnGet(…)` and `.OnSet(…)` support callbacks with or without parameters.
 - `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each
   call.
+- Use `.CallingBaseClass(…)` to override the base class behavior for a specific indexer (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.

@@ -9,13 +9,14 @@ namespace Mockolate;
 public partial class Match
 {
 	/// <summary>
-	///     Matches any parameter of type <see cref="System.ReadOnlySpan{T}"/> of <typeparamref name="T" />.
+	///     Matches any parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" />.
 	/// </summary>
 	public static IVerifyReadOnlySpanParameter<T> AnyReadOnlySpan<T>()
 		=> new ReadOnlySpanParameterMatch<T>(null);
 
 	/// <summary>
-	///     Matches any parameter of type <see cref="System.ReadOnlySpan{T}"/> of <typeparamref name="T" /> that matches the <paramref name="predicate"/>.
+	///     Matches any parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" /> that matches the
+	///     <paramref name="predicate" />.
 	/// </summary>
 	public static IVerifyReadOnlySpanParameter<T> WithReadOnlySpan<T>(Func<T[], bool> predicate)
 		=> new ReadOnlySpanParameterMatch<T>(predicate);
@@ -25,6 +26,7 @@ public partial class Match
 	{
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"ReadOnlySpan<{typeof(T).FormatType()}>()";
+
 		protected override bool Matches(ReadOnlySpanWrapper<T> value)
 			=> predicate?.Invoke(value.ReadOnlySpanValues) ?? true;
 	}

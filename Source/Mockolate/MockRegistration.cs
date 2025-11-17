@@ -117,43 +117,33 @@ public partial class MockRegistration
 	///     Accesses the setter of the property with <paramref name="propertyName" /> and the matching
 	///     <paramref name="value" />.
 	/// </summary>
-	public void SetProperty(string propertyName, object? value)
+	public bool SetProperty(string propertyName, object? value)
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(Interactions.GetNextIndex(),
 				propertyName, value));
 		PropertySetup matchingSetup = GetPropertySetup(propertyName, null);
 		matchingSetup.InvokeSetter(interaction, value, Behavior);
+		return matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass;
 	}
 
 	/// <summary>
 	///     Gets the value from the indexer with the given parameters.
 	/// </summary>
-	public TResult GetIndexer<TResult>(Func<TResult>? defaultValueGenerator, params object?[] parameters)
+	public IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters)
 	{
 		IndexerGetterAccess interaction = new(Interactions.GetNextIndex(), parameters);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
-		TResult initialValue = GetIndexerValue(matchingSetup, defaultValueGenerator, parameters);
-		if (matchingSetup is not null)
-		{
-			TResult value = matchingSetup.InvokeGetter(interaction, initialValue, Behavior);
-			if (!Equals(initialValue, value))
-			{
-				_indexerSetups.UpdateValue(parameters, value);
-			}
-
-			return value;
-		}
-
-		return initialValue;
+		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
+			_indexerSetups.UpdateValue);
 	}
 
 	/// <summary>
 	///     Sets the value of the indexer with the given parameters.
 	/// </summary>
-	public void SetIndexer<TResult>(TResult value, params object?[] parameters)
+	public bool SetIndexer<TResult>(TResult value, params object?[] parameters)
 	{
 		IndexerSetterAccess interaction = new(Interactions.GetNextIndex(), parameters, value);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
@@ -161,6 +151,7 @@ public partial class MockRegistration
 		_indexerSetups.UpdateValue(parameters, value);
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
 		matchingSetup?.InvokeSetter(interaction, value, Behavior);
+		return (matchingSetup as IIndexerSetup)?.CallBaseClass() ?? Behavior.CallBaseClass;
 	}
 
 	/// <summary>

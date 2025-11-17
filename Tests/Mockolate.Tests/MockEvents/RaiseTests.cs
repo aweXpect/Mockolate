@@ -80,23 +80,6 @@ public sealed partial class RaiseTests
 	}
 
 	[Fact]
-	public async Task WhenUsingRaise_ShouldInvokeEvent()
-	{
-		int callCount = 0;
-		IRaiseEvent mock = Mock.Create<IRaiseEvent>();
-		EventHandler handler = (_, _) => { callCount++; };
-
-		mock.SomeEvent += handler;
-		mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
-		mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
-		mock.SomeEvent -= handler;
-		mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
-		mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
-
-		await That(callCount).IsEqualTo(2);
-	}
-
-	[Fact]
 	public async Task WhenUsingRaise_AnyParameters_ShouldInvokeEvent()
 	{
 		int callCount = 0;
@@ -109,6 +92,23 @@ public sealed partial class RaiseTests
 		mock.SomeEvent -= handler;
 		mock.RaiseOnMock.SomeEvent(WithDefaultParameters());
 		mock.RaiseOnMock.SomeEvent(WithDefaultParameters());
+
+		await That(callCount).IsEqualTo(2);
+	}
+
+	[Fact]
+	public async Task WhenUsingRaise_ShouldInvokeEvent()
+	{
+		int callCount = 0;
+		IRaiseEvent mock = Mock.Create<IRaiseEvent>();
+		EventHandler handler = (_, _) => { callCount++; };
+
+		mock.SomeEvent += handler;
+		mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
+		mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
+		mock.SomeEvent -= handler;
+		mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
+		mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
 
 		await That(callCount).IsEqualTo(2);
 	}

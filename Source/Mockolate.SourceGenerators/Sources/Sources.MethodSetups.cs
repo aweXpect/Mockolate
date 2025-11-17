@@ -95,7 +95,8 @@ internal static partial class Sources
 			sb.Append("\tprivate readonly Match.NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
 
-		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
+		sb.Append("\tprivate bool? _callBaseClass;").AppendLine();
+		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"VoidMethodSetup{")
@@ -126,6 +127,21 @@ internal static partial class Sources
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_name = name;").AppendLine();
 		sb.Append("\t\t_matches = matches;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Flag indicating if the base class implementation should be called, and its return values used as default values.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append("\t///     If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.")
+			.AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tpublic VoidMethodSetup<").Append(typeParams).Append("> CallingBaseClass(bool callBaseClass = true)").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_callBaseClass = callBaseClass;").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -278,6 +294,11 @@ internal static partial class Sources
 			.Append("], invocation.Parameters));").AppendLine();
 		sb.AppendLine();
 
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetCallBaseClass()\" />").AppendLine();
+		sb.Append("\tprotected override bool? GetCallBaseClass()").AppendLine();
+		sb.Append("\t\t=> _callBaseClass;").AppendLine();
+		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
 		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)")
 			.AppendLine();
@@ -357,6 +378,7 @@ internal static partial class Sources
 			sb.Append("\tprivate readonly Match.NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
 
+		sb.Append("\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 
@@ -388,6 +410,22 @@ internal static partial class Sources
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_name = name;").AppendLine();
 		sb.Append("\t\t_matches = matches;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Flag indicating if the base class implementation should be called, and its return values used as default values.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append("\t///     If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.")
+			.AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tpublic ReturnMethodSetup<TReturn, ").Append(typeParams).Append("> CallingBaseClass(bool callBaseClass = true)")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_callBaseClass = callBaseClass;").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -594,6 +632,11 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t: Matches([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
 			.Append("], invocation.Parameters));").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetCallBaseClass()\" />").AppendLine();
+		sb.Append("\tprotected override bool? GetCallBaseClass()").AppendLine();
+		sb.Append("\t\t=> _callBaseClass;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();

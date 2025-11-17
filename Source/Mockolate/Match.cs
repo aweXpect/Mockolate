@@ -1,6 +1,4 @@
-using System;
 using Mockolate.Setup;
-using static Mockolate.Match;
 
 namespace Mockolate;
 
@@ -38,7 +36,8 @@ public partial class Match
 #if NET8_0_OR_GREATER
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
-	///     Matches a method parameter of type <see cref="System.Span{T}"/> of <typeparamref name="T" /> against an expectation.
+	///     Matches a method parameter of type <see cref="System.Span{T}" /> of <typeparamref name="T" /> against an
+	///     expectation.
 	/// </summary>
 	public interface ISpanParameter<T> : IParameter<SpanWrapper<T>>
 	{
@@ -49,7 +48,8 @@ public partial class Match
 #if NET8_0_OR_GREATER
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
-	///     Matches a method parameter of type <see cref="System.Span{T}"/> of <typeparamref name="T" /> against an expectation.
+	///     Matches a method parameter of type <see cref="System.Span{T}" /> of <typeparamref name="T" /> against an
+	///     expectation.
 	/// </summary>
 	public interface IVerifySpanParameter<T> : ISpanParameter<T>
 	{
@@ -60,7 +60,8 @@ public partial class Match
 #if NET8_0_OR_GREATER
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
-	///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}"/> of <typeparamref name="T" /> against an expectation.
+	///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" /> against an
+	///     expectation.
 	/// </summary>
 	public interface IReadOnlySpanParameter<T> : IParameter<ReadOnlySpanWrapper<T>>
 	{
@@ -71,7 +72,8 @@ public partial class Match
 #if NET8_0_OR_GREATER
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
-	///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}"/> of <typeparamref name="T" /> against an expectation.
+	///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" /> against an
+	///     expectation.
 	/// </summary>
 	public interface IVerifyReadOnlySpanParameter<T> : IReadOnlySpanParameter<T>
 	{
@@ -87,7 +89,7 @@ public partial class Match
 		/// <summary>
 		///     Checks if the <paramref name="values" /> match the expectations.
 		/// </summary>
-		abstract bool Matches(object?[] values);
+		bool Matches(object?[] values);
 	}
 
 	/// <summary>

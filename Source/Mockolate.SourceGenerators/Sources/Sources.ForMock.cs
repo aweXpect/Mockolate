@@ -386,18 +386,10 @@ internal static partial class Sources
 			sb.AppendLine("\t\t{");
 			if (!isClassInterface && !property.IsAbstract)
 			{
-				sb.Append(
-						"\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)")
-					.AppendLine();
-				sb.Append("\t\t\t{").AppendLine();
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
-					sb.Append("\t\t\t\tvar baseResult = base[")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
-						.AppendLine("];");
-					sb.Append(
-							"\t\t\t\treturn MockRegistrations.GetIndexer<").Append(property.Type.Fullname)
-						.Append(">(() => baseResult, ")
+					sb.Append("\t\t\tvar indexerResult = MockRegistrations.GetIndexer<").Append(property.Type.Fullname)
+						.Append(">(")
 						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
 						{
 							(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
@@ -405,29 +397,35 @@ internal static partial class Sources
 							(_, _) => p.Name,
 						})))
 						.AppendLine(");");
+					sb.Append(
+							"\t\t\tif (indexerResult.CallBaseClass)")
+						.AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\tvar baseResult = base[")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.Append("];").AppendLine();
+					sb.Append("\t\t\t\treturn indexerResult.GetResult(baseResult);").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+					sb.Append("\t\t\treturn indexerResult.GetResult();").AppendLine();
 				}
 				else
 				{
-					sb.Append("\t\t\t\tvar baseResult = base.").Append(property.Name).Append(";").AppendLine();
 					sb.Append(
-							"\t\t\t\treturn MockRegistrations.GetProperty<").Append(property.Type.Fullname).Append(">(")
-						.Append(property.GetUniqueNameString()).AppendLine(", () => baseResult);");
+							"\t\t\treturn MockRegistrations.GetProperty<").Append(property.Type.Fullname).Append(">(")
+						.Append(property.GetUniqueNameString()).Append(", () => base.").Append(property.Name).Append(");").AppendLine();
 				}
-
-				sb.Append("\t\t\t}").AppendLine().AppendLine();
 			}
-
-			if (property is { IsIndexer: true, IndexerParameters: not null, })
+			else if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
 				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<")
 					.Append(property.Type.Fullname)
-					.Append(">(null, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
+					.Append(">(").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
 					{
 						(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
 						(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
 						(_, _) => p.Name,
 					})))
-					.AppendLine(");");
+					.AppendLine(").GetResult();");
 			}
 			else
 			{
@@ -449,42 +447,58 @@ internal static partial class Sources
 
 			sb.AppendLine("set");
 			sb.AppendLine("\t\t{");
-			if (!isClassInterface && !property.IsAbstract)
-			{
-				sb.Append(
-						"\t\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)")
-					.AppendLine();
-				sb.Append("\t\t\t{").AppendLine();
-				if (property is { IsIndexer: true, IndexerParameters: not null, })
-				{
-					sb.Append("\t\t\t\tbase[")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
-						.AppendLine("] = value;");
-				}
-				else
-				{
-					sb.Append("\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
-				}
-
-				sb.Append("\t\t\t}").AppendLine().AppendLine();
-			}
 
 			if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
-				sb.Append("\t\t\tMockRegistrations.SetIndexer<")
-					.Append(property.Type.Fullname)
-					.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
-					{
-						(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-						(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-						(_, _) => p.Name,
-					})))
-					.AppendLine(");");
+				if (!isClassInterface && !property.IsAbstract)
+				{
+					sb.Append(
+							"\t\t\tif (MockRegistrations.SetIndexer<")
+						.Append(property.Type.Fullname)
+						.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p
+							=> (p.IsSpan, p.IsReadOnlySpan) switch
+							{
+								(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+								(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+								(_, _) => p.Name,
+							})))
+						.Append("))").AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\tbase[")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.AppendLine("] = value;");
+					sb.Append("\t\t\t}").AppendLine();
+				}
+				else
+				{
+					sb.Append("\t\t\tMockRegistrations.SetIndexer<")
+						.Append(property.Type.Fullname)
+						.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p
+							=> (p.IsSpan, p.IsReadOnlySpan) switch
+							{
+								(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+								(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+								(_, _) => p.Name,
+							})))
+						.AppendLine(");");
+				}
 			}
 			else
 			{
-				sb.Append("\t\t\tMockRegistrations.SetProperty(").Append(property.GetUniqueNameString())
-					.AppendLine(", value);");
+				if (!isClassInterface && !property.IsAbstract)
+				{
+					sb.Append(
+							"\t\t\tif (MockRegistrations.SetProperty(").Append(property.GetUniqueNameString())
+					.Append(", value))").AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+				}
+				else
+				{
+					sb.Append("\t\t\tMockRegistrations.SetProperty(").Append(property.GetUniqueNameString())
+						.AppendLine(", value);");
+				}
 			}
 
 			sb.AppendLine("\t\t}");
@@ -499,7 +513,7 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.')
 			.Append(method.Name.EscapeForXmlDoc())
 			.Append('(').Append(string.Join(", ",
-				method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+				method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)).EscapeForXmlDoc())
 			.AppendLine(")\" />");
 		sb.Append(method.Obsolete, "\t");
 		if (explicitInterfaceImplementation)
@@ -625,7 +639,7 @@ internal static partial class Sources
 		else if (method.ReturnType != Type.Void)
 		{
 			sb.Append(
-					"\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)")
+					"\t\tif (methodExecution.CallBaseClass)")
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tvar baseResult = base.").Append(method.Name).Append('(')
@@ -714,7 +728,7 @@ internal static partial class Sources
 		else
 		{
 			sb.Append(
-					"\t\tif (MockRegistrations.Behavior.BaseClassBehavior != BaseClassBehavior.IgnoreBaseClass)")
+					"\t\tif (methodExecution.CallBaseClass)")
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tbase.").Append(method.Name).Append('(')

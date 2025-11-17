@@ -104,27 +104,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_ShouldSet()
-			{
-				int receivedValue = 0;
-				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.SetupMock.Method.Method1WithOutParameter(Out(() => 3))
-					.Callback(v =>
-					{
-						callCount++;
-						receivedValue = v;
-					});
-
-				sut.Method1WithOutParameter(out int value);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value).IsEqualTo(3);
-				await That(receivedValue).IsEqualTo(0);
-			}
-
-			[Fact]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue = 0;
@@ -146,25 +125,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_ShouldSet()
+			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue = 0;
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1WithRefParameter(Ref<int>(v => 3))
+				sut.SetupMock.Method.Method1WithOutParameter(Out(() => 3))
 					.Callback(v =>
 					{
 						callCount++;
 						receivedValue = v;
 					});
 
-				int value = 2;
-				sut.Method1WithRefParameter(ref value);
+				sut.Method1WithOutParameter(out int value);
 
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(3);
-				await That(receivedValue).IsEqualTo(2);
+				await That(receivedValue).IsEqualTo(0);
 			}
 
 			[Fact]
@@ -186,6 +164,28 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(2);
+				await That(receivedValue).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task RefParameter_ShouldSet()
+			{
+				int receivedValue = 0;
+				int callCount = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1WithRefParameter(Ref<int>(v => 3))
+					.Callback(v =>
+					{
+						callCount++;
+						receivedValue = v;
+					});
+
+				int value = 2;
+				sut.Method1WithRefParameter(ref value);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value).IsEqualTo(3);
 				await That(receivedValue).IsEqualTo(2);
 			}
 
@@ -292,31 +292,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_ShouldSet()
-			{
-				int receivedValue1 = 0;
-				int receivedValue2 = 0;
-				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.SetupMock.Method.Method2WithOutParameter(Out(() => 2), Out(() => 4))
-					.Callback((v1, v2) =>
-					{
-						callCount++;
-						receivedValue1 = v1;
-						receivedValue2 = v2;
-					});
-
-				sut.Method2WithOutParameter(out int value1, out int value2);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(2);
-				await That(receivedValue1).IsEqualTo(0);
-				await That(value2).IsEqualTo(4);
-				await That(receivedValue2).IsEqualTo(0);
-			}
-
-			[Fact]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -342,14 +317,14 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_ShouldSet()
+			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10))
+				sut.SetupMock.Method.Method2WithOutParameter(Out(() => 2), Out(() => 4))
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -357,15 +332,13 @@ public sealed partial class SetupMethodTests
 						receivedValue2 = v2;
 					});
 
-				int value1 = 2;
-				int value2 = 4;
-				sut.Method2WithRefParameter(ref value1, ref value2);
+				sut.Method2WithOutParameter(out int value1, out int value2);
 
 				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(20);
-				await That(receivedValue1).IsEqualTo(2);
-				await That(value2).IsEqualTo(40);
-				await That(receivedValue2).IsEqualTo(4);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(0);
 			}
 
 			[Fact]
@@ -392,6 +365,33 @@ public sealed partial class SetupMethodTests
 				await That(value1).IsEqualTo(2);
 				await That(receivedValue1).IsEqualTo(2);
 				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+			}
+
+			[Fact]
+			public async Task RefParameter_ShouldSet()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int callCount = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10))
+					.Callback((v1, v2) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				sut.Method2WithRefParameter(ref value1, ref value2);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(20);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(40);
 				await That(receivedValue2).IsEqualTo(4);
 			}
 
@@ -518,6 +518,35 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int callCount = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3WithOutParameter(AnyParameters())
+					.Callback((v1, v2, v3) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+					});
+
+				sut.Method3WithOutParameter(out int value1, out int value2, out int value3);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -547,7 +576,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -555,7 +584,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3WithOutParameter(AnyParameters())
+				sut.SetupMock.Method.Method3WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -564,15 +593,18 @@ public sealed partial class SetupMethodTests
 						receivedValue3 = v3;
 					});
 
-				sut.Method3WithOutParameter(out int value1, out int value2, out int value3);
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				sut.Method3WithRefParameter(ref value1, ref value2, ref value3);
 
 				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(0);
-				await That(receivedValue1).IsEqualTo(0);
-				await That(value2).IsEqualTo(0);
-				await That(receivedValue2).IsEqualTo(0);
-				await That(value3).IsEqualTo(0);
-				await That(receivedValue3).IsEqualTo(0);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -605,38 +637,6 @@ public sealed partial class SetupMethodTests
 				await That(value2).IsEqualTo(40);
 				await That(receivedValue2).IsEqualTo(4);
 				await That(value3).IsEqualTo(60);
-				await That(receivedValue3).IsEqualTo(6);
-			}
-
-			[Fact]
-			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
-			{
-				int receivedValue1 = 0;
-				int receivedValue2 = 0;
-				int receivedValue3 = 0;
-				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.SetupMock.Method.Method3WithRefParameter(AnyParameters())
-					.Callback((v1, v2, v3) =>
-					{
-						callCount++;
-						receivedValue1 = v1;
-						receivedValue2 = v2;
-						receivedValue3 = v3;
-					});
-
-				int value1 = 2;
-				int value2 = 4;
-				int value3 = 6;
-				sut.Method3WithRefParameter(ref value1, ref value2, ref value3);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(2);
-				await That(receivedValue1).IsEqualTo(2);
-				await That(value2).IsEqualTo(4);
-				await That(receivedValue2).IsEqualTo(4);
-				await That(value3).IsEqualTo(6);
 				await That(receivedValue3).IsEqualTo(6);
 			}
 
@@ -782,6 +782,39 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int callCount = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4WithOutParameter(AnyParameters())
+					.Callback((v1, v2, v3, v4) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+					});
+
+				sut.Method4WithOutParameter(out int value1, out int value2, out int value3, out int value4);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+				await That(value4).IsEqualTo(0);
+				await That(receivedValue4).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -816,7 +849,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -825,7 +858,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4WithOutParameter(AnyParameters())
+				sut.SetupMock.Method.Method4WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -835,17 +868,21 @@ public sealed partial class SetupMethodTests
 						receivedValue4 = v4;
 					});
 
-				sut.Method4WithOutParameter(out int value1, out int value2, out int value3, out int value4);
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				int value4 = 8;
+				sut.Method4WithRefParameter(ref value1, ref value2, ref value3, ref value4);
 
 				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(0);
-				await That(receivedValue1).IsEqualTo(0);
-				await That(value2).IsEqualTo(0);
-				await That(receivedValue2).IsEqualTo(0);
-				await That(value3).IsEqualTo(0);
-				await That(receivedValue3).IsEqualTo(0);
-				await That(value4).IsEqualTo(0);
-				await That(receivedValue4).IsEqualTo(0);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(value4).IsEqualTo(8);
+				await That(receivedValue4).IsEqualTo(8);
 			}
 
 			[Fact]
@@ -883,43 +920,6 @@ public sealed partial class SetupMethodTests
 				await That(value3).IsEqualTo(60);
 				await That(receivedValue3).IsEqualTo(6);
 				await That(value4).IsEqualTo(80);
-				await That(receivedValue4).IsEqualTo(8);
-			}
-
-			[Fact]
-			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
-			{
-				int receivedValue1 = 0;
-				int receivedValue2 = 0;
-				int receivedValue3 = 0;
-				int receivedValue4 = 0;
-				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.SetupMock.Method.Method4WithRefParameter(AnyParameters())
-					.Callback((v1, v2, v3, v4) =>
-					{
-						callCount++;
-						receivedValue1 = v1;
-						receivedValue2 = v2;
-						receivedValue3 = v3;
-						receivedValue4 = v4;
-					});
-
-				int value1 = 2;
-				int value2 = 4;
-				int value3 = 6;
-				int value4 = 8;
-				sut.Method4WithRefParameter(ref value1, ref value2, ref value3, ref value4);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(2);
-				await That(receivedValue1).IsEqualTo(2);
-				await That(value2).IsEqualTo(4);
-				await That(receivedValue2).IsEqualTo(4);
-				await That(value3).IsEqualTo(6);
-				await That(receivedValue3).IsEqualTo(6);
-				await That(value4).IsEqualTo(8);
 				await That(receivedValue4).IsEqualTo(8);
 			}
 
@@ -1084,6 +1084,44 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int receivedValue5 = 0;
+				int callCount = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5WithOutParameter(AnyParameters())
+					.Callback((v1, v2, v3, v4, v5) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+						receivedValue5 = v5;
+					});
+
+				sut.Method5WithOutParameter(out int value1, out int value2, out int value3, out int value4,
+					out int value5);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+				await That(value4).IsEqualTo(0);
+				await That(receivedValue4).IsEqualTo(0);
+				await That(value5).IsEqualTo(0);
+				await That(receivedValue5).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1123,7 +1161,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1133,7 +1171,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5WithOutParameter(AnyParameters())
+				sut.SetupMock.Method.Method5WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -1144,20 +1182,24 @@ public sealed partial class SetupMethodTests
 						receivedValue5 = v5;
 					});
 
-				sut.Method5WithOutParameter(out int value1, out int value2, out int value3, out int value4,
-					out int value5);
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				int value4 = 8;
+				int value5 = 10;
+				sut.Method5WithRefParameter(ref value1, ref value2, ref value3, ref value4, ref value5);
 
 				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(0);
-				await That(receivedValue1).IsEqualTo(0);
-				await That(value2).IsEqualTo(0);
-				await That(receivedValue2).IsEqualTo(0);
-				await That(value3).IsEqualTo(0);
-				await That(receivedValue3).IsEqualTo(0);
-				await That(value4).IsEqualTo(0);
-				await That(receivedValue4).IsEqualTo(0);
-				await That(value5).IsEqualTo(0);
-				await That(receivedValue5).IsEqualTo(0);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(value4).IsEqualTo(8);
+				await That(receivedValue4).IsEqualTo(8);
+				await That(value5).IsEqualTo(10);
+				await That(receivedValue5).IsEqualTo(10);
 			}
 
 			[Fact]
@@ -1200,48 +1242,6 @@ public sealed partial class SetupMethodTests
 				await That(value4).IsEqualTo(80);
 				await That(receivedValue4).IsEqualTo(8);
 				await That(value5).IsEqualTo(100);
-				await That(receivedValue5).IsEqualTo(10);
-			}
-
-			[Fact]
-			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
-			{
-				int receivedValue1 = 0;
-				int receivedValue2 = 0;
-				int receivedValue3 = 0;
-				int receivedValue4 = 0;
-				int receivedValue5 = 0;
-				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.SetupMock.Method.Method5WithRefParameter(AnyParameters())
-					.Callback((v1, v2, v3, v4, v5) =>
-					{
-						callCount++;
-						receivedValue1 = v1;
-						receivedValue2 = v2;
-						receivedValue3 = v3;
-						receivedValue4 = v4;
-						receivedValue5 = v5;
-					});
-
-				int value1 = 2;
-				int value2 = 4;
-				int value3 = 6;
-				int value4 = 8;
-				int value5 = 10;
-				sut.Method5WithRefParameter(ref value1, ref value2, ref value3, ref value4, ref value5);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(2);
-				await That(receivedValue1).IsEqualTo(2);
-				await That(value2).IsEqualTo(4);
-				await That(receivedValue2).IsEqualTo(4);
-				await That(value3).IsEqualTo(6);
-				await That(receivedValue3).IsEqualTo(6);
-				await That(value4).IsEqualTo(8);
-				await That(receivedValue4).IsEqualTo(8);
-				await That(value5).IsEqualTo(10);
 				await That(receivedValue5).IsEqualTo(10);
 			}
 
@@ -1330,27 +1330,6 @@ public sealed partial class SetupMethodTests
 		public class VoidMethodWith1Parameters
 		{
 			[Fact]
-			public async Task OutParameter_ShouldSet()
-			{
-				int receivedValue = 0;
-				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.SetupMock.Method.Method1WithOutParameter(Out(() => 3))
-					.Callback(v =>
-					{
-						callCount++;
-						receivedValue = v;
-					});
-
-				sut.Method1WithOutParameter(out int value);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value).IsEqualTo(3);
-				await That(receivedValue).IsEqualTo(0);
-			}
-
-			[Fact]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue = 0;
@@ -1372,25 +1351,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_ShouldSet()
+			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue = 0;
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1WithRefParameter(Ref<int>(v => 3))
+				sut.SetupMock.Method.Method1WithOutParameter(Out(() => 3))
 					.Callback(v =>
 					{
 						callCount++;
 						receivedValue = v;
 					});
 
-				int value = 2;
-				sut.Method1WithRefParameter(ref value);
+				sut.Method1WithOutParameter(out int value);
 
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(3);
-				await That(receivedValue).IsEqualTo(2);
+				await That(receivedValue).IsEqualTo(0);
 			}
 
 			[Fact]
@@ -1412,6 +1390,28 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(2);
+				await That(receivedValue).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task RefParameter_ShouldSet()
+			{
+				int receivedValue = 0;
+				int callCount = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1WithRefParameter(Ref<int>(v => 3))
+					.Callback(v =>
+					{
+						callCount++;
+						receivedValue = v;
+					});
+
+				int value = 2;
+				sut.Method1WithRefParameter(ref value);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value).IsEqualTo(3);
 				await That(receivedValue).IsEqualTo(2);
 			}
 
@@ -1459,31 +1459,6 @@ public sealed partial class SetupMethodTests
 		public class VoidMethodWith2Parameters
 		{
 			[Fact]
-			public async Task OutParameter_ShouldSet()
-			{
-				int receivedValue1 = 0;
-				int receivedValue2 = 0;
-				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.SetupMock.Method.Method2WithOutParameter(Out(() => 2), Out(() => 4))
-					.Callback((v1, v2) =>
-					{
-						callCount++;
-						receivedValue1 = v1;
-						receivedValue2 = v2;
-					});
-
-				sut.Method2WithOutParameter(out int value1, out int value2);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(2);
-				await That(receivedValue1).IsEqualTo(0);
-				await That(value2).IsEqualTo(4);
-				await That(receivedValue2).IsEqualTo(0);
-			}
-
-			[Fact]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -1509,14 +1484,14 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task RefParameter_ShouldSet()
+			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10))
+				sut.SetupMock.Method.Method2WithOutParameter(Out(() => 2), Out(() => 4))
 					.Callback((v1, v2) =>
 					{
 						callCount++;
@@ -1524,15 +1499,13 @@ public sealed partial class SetupMethodTests
 						receivedValue2 = v2;
 					});
 
-				int value1 = 2;
-				int value2 = 4;
-				sut.Method2WithRefParameter(ref value1, ref value2);
+				sut.Method2WithOutParameter(out int value1, out int value2);
 
 				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(20);
-				await That(receivedValue1).IsEqualTo(2);
-				await That(value2).IsEqualTo(40);
-				await That(receivedValue2).IsEqualTo(4);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(0);
 			}
 
 			[Fact]
@@ -1559,6 +1532,33 @@ public sealed partial class SetupMethodTests
 				await That(value1).IsEqualTo(2);
 				await That(receivedValue1).IsEqualTo(2);
 				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+			}
+
+			[Fact]
+			public async Task RefParameter_ShouldSet()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int callCount = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2WithRefParameter(Ref<int>(v => v * 10), Ref<int>(v => v * 10))
+					.Callback((v1, v2) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+					});
+
+				int value1 = 2;
+				int value2 = 4;
+				sut.Method2WithRefParameter(ref value1, ref value2);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(20);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(40);
 				await That(receivedValue2).IsEqualTo(4);
 			}
 
@@ -1608,6 +1608,35 @@ public sealed partial class SetupMethodTests
 		public class VoidMethodWith3Parameters
 		{
 			[Fact]
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int callCount = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3WithOutParameter(AnyParameters())
+					.Callback((v1, v2, v3) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+					});
+
+				sut.Method3WithOutParameter(out int value1, out int value2, out int value3);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1637,7 +1666,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1645,7 +1674,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3WithOutParameter(AnyParameters())
+				sut.SetupMock.Method.Method3WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3) =>
 					{
 						callCount++;
@@ -1654,15 +1683,18 @@ public sealed partial class SetupMethodTests
 						receivedValue3 = v3;
 					});
 
-				sut.Method3WithOutParameter(out int value1, out int value2, out int value3);
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				sut.Method3WithRefParameter(ref value1, ref value2, ref value3);
 
 				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(0);
-				await That(receivedValue1).IsEqualTo(0);
-				await That(value2).IsEqualTo(0);
-				await That(receivedValue2).IsEqualTo(0);
-				await That(value3).IsEqualTo(0);
-				await That(receivedValue3).IsEqualTo(0);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -1695,38 +1727,6 @@ public sealed partial class SetupMethodTests
 				await That(value2).IsEqualTo(40);
 				await That(receivedValue2).IsEqualTo(4);
 				await That(value3).IsEqualTo(60);
-				await That(receivedValue3).IsEqualTo(6);
-			}
-
-			[Fact]
-			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
-			{
-				int receivedValue1 = 0;
-				int receivedValue2 = 0;
-				int receivedValue3 = 0;
-				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.SetupMock.Method.Method3WithRefParameter(AnyParameters())
-					.Callback((v1, v2, v3) =>
-					{
-						callCount++;
-						receivedValue1 = v1;
-						receivedValue2 = v2;
-						receivedValue3 = v3;
-					});
-
-				int value1 = 2;
-				int value2 = 4;
-				int value3 = 6;
-				sut.Method3WithRefParameter(ref value1, ref value2, ref value3);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(2);
-				await That(receivedValue1).IsEqualTo(2);
-				await That(value2).IsEqualTo(4);
-				await That(receivedValue2).IsEqualTo(4);
-				await That(value3).IsEqualTo(6);
 				await That(receivedValue3).IsEqualTo(6);
 			}
 
@@ -1777,6 +1777,39 @@ public sealed partial class SetupMethodTests
 		public class VoidMethodWith4Parameters
 		{
 			[Fact]
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int callCount = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4WithOutParameter(AnyParameters())
+					.Callback((v1, v2, v3, v4) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+					});
+
+				sut.Method4WithOutParameter(out int value1, out int value2, out int value3, out int value4);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+				await That(value4).IsEqualTo(0);
+				await That(receivedValue4).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1811,7 +1844,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -1820,7 +1853,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4WithOutParameter(AnyParameters())
+				sut.SetupMock.Method.Method4WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -1830,17 +1863,21 @@ public sealed partial class SetupMethodTests
 						receivedValue4 = v4;
 					});
 
-				sut.Method4WithOutParameter(out int value1, out int value2, out int value3, out int value4);
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				int value4 = 8;
+				sut.Method4WithRefParameter(ref value1, ref value2, ref value3, ref value4);
 
 				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(0);
-				await That(receivedValue1).IsEqualTo(0);
-				await That(value2).IsEqualTo(0);
-				await That(receivedValue2).IsEqualTo(0);
-				await That(value3).IsEqualTo(0);
-				await That(receivedValue3).IsEqualTo(0);
-				await That(value4).IsEqualTo(0);
-				await That(receivedValue4).IsEqualTo(0);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(value4).IsEqualTo(8);
+				await That(receivedValue4).IsEqualTo(8);
 			}
 
 			[Fact]
@@ -1878,43 +1915,6 @@ public sealed partial class SetupMethodTests
 				await That(value3).IsEqualTo(60);
 				await That(receivedValue3).IsEqualTo(6);
 				await That(value4).IsEqualTo(80);
-				await That(receivedValue4).IsEqualTo(8);
-			}
-
-			[Fact]
-			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
-			{
-				int receivedValue1 = 0;
-				int receivedValue2 = 0;
-				int receivedValue3 = 0;
-				int receivedValue4 = 0;
-				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.SetupMock.Method.Method4WithRefParameter(AnyParameters())
-					.Callback((v1, v2, v3, v4) =>
-					{
-						callCount++;
-						receivedValue1 = v1;
-						receivedValue2 = v2;
-						receivedValue3 = v3;
-						receivedValue4 = v4;
-					});
-
-				int value1 = 2;
-				int value2 = 4;
-				int value3 = 6;
-				int value4 = 8;
-				sut.Method4WithRefParameter(ref value1, ref value2, ref value3, ref value4);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(2);
-				await That(receivedValue1).IsEqualTo(2);
-				await That(value2).IsEqualTo(4);
-				await That(receivedValue2).IsEqualTo(4);
-				await That(value3).IsEqualTo(6);
-				await That(receivedValue3).IsEqualTo(6);
-				await That(value4).IsEqualTo(8);
 				await That(receivedValue4).IsEqualTo(8);
 			}
 
@@ -1966,6 +1966,44 @@ public sealed partial class SetupMethodTests
 		public class VoidMethodWith5Parameters
 		{
 			[Fact]
+			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int receivedValue5 = 0;
+				int callCount = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5WithOutParameter(AnyParameters())
+					.Callback((v1, v2, v3, v4, v5) =>
+					{
+						callCount++;
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+						receivedValue5 = v5;
+					});
+
+				sut.Method5WithOutParameter(out int value1, out int value2, out int value3, out int value4,
+					out int value5);
+
+				await That(callCount).IsEqualTo(1);
+				await That(value1).IsEqualTo(0);
+				await That(receivedValue1).IsEqualTo(0);
+				await That(value2).IsEqualTo(0);
+				await That(receivedValue2).IsEqualTo(0);
+				await That(value3).IsEqualTo(0);
+				await That(receivedValue3).IsEqualTo(0);
+				await That(value4).IsEqualTo(0);
+				await That(receivedValue4).IsEqualTo(0);
+				await That(value5).IsEqualTo(0);
+				await That(receivedValue5).IsEqualTo(0);
+			}
+
+			[Fact]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -2005,7 +2043,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
+			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
@@ -2015,7 +2053,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5WithOutParameter(AnyParameters())
+				sut.SetupMock.Method.Method5WithRefParameter(AnyParameters())
 					.Callback((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -2026,20 +2064,24 @@ public sealed partial class SetupMethodTests
 						receivedValue5 = v5;
 					});
 
-				sut.Method5WithOutParameter(out int value1, out int value2, out int value3, out int value4,
-					out int value5);
+				int value1 = 2;
+				int value2 = 4;
+				int value3 = 6;
+				int value4 = 8;
+				int value5 = 10;
+				sut.Method5WithRefParameter(ref value1, ref value2, ref value3, ref value4, ref value5);
 
 				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(0);
-				await That(receivedValue1).IsEqualTo(0);
-				await That(value2).IsEqualTo(0);
-				await That(receivedValue2).IsEqualTo(0);
-				await That(value3).IsEqualTo(0);
-				await That(receivedValue3).IsEqualTo(0);
-				await That(value4).IsEqualTo(0);
-				await That(receivedValue4).IsEqualTo(0);
-				await That(value5).IsEqualTo(0);
-				await That(receivedValue5).IsEqualTo(0);
+				await That(value1).IsEqualTo(2);
+				await That(receivedValue1).IsEqualTo(2);
+				await That(value2).IsEqualTo(4);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(value3).IsEqualTo(6);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(value4).IsEqualTo(8);
+				await That(receivedValue4).IsEqualTo(8);
+				await That(value5).IsEqualTo(10);
+				await That(receivedValue5).IsEqualTo(10);
 			}
 
 			[Fact]
@@ -2082,48 +2124,6 @@ public sealed partial class SetupMethodTests
 				await That(value4).IsEqualTo(80);
 				await That(receivedValue4).IsEqualTo(8);
 				await That(value5).IsEqualTo(100);
-				await That(receivedValue5).IsEqualTo(10);
-			}
-
-			[Fact]
-			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
-			{
-				int receivedValue1 = 0;
-				int receivedValue2 = 0;
-				int receivedValue3 = 0;
-				int receivedValue4 = 0;
-				int receivedValue5 = 0;
-				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.SetupMock.Method.Method5WithRefParameter(AnyParameters())
-					.Callback((v1, v2, v3, v4, v5) =>
-					{
-						callCount++;
-						receivedValue1 = v1;
-						receivedValue2 = v2;
-						receivedValue3 = v3;
-						receivedValue4 = v4;
-						receivedValue5 = v5;
-					});
-
-				int value1 = 2;
-				int value2 = 4;
-				int value3 = 6;
-				int value4 = 8;
-				int value5 = 10;
-				sut.Method5WithRefParameter(ref value1, ref value2, ref value3, ref value4, ref value5);
-
-				await That(callCount).IsEqualTo(1);
-				await That(value1).IsEqualTo(2);
-				await That(receivedValue1).IsEqualTo(2);
-				await That(value2).IsEqualTo(4);
-				await That(receivedValue2).IsEqualTo(4);
-				await That(value3).IsEqualTo(6);
-				await That(receivedValue3).IsEqualTo(6);
-				await That(value4).IsEqualTo(8);
-				await That(receivedValue4).IsEqualTo(8);
-				await That(value5).IsEqualTo(10);
 				await That(receivedValue5).IsEqualTo(10);
 			}
 

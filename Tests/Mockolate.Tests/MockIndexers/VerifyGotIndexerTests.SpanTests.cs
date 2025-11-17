@@ -82,8 +82,10 @@ public sealed partial class VerifyGotIndexerTests
 		{
 			public virtual int this[Memory<int> v]
 				=> v.Length;
+
 			public virtual int this[ReadOnlySpan<int> v]
 				=> v.Length;
+
 			public virtual int this[Span<int> v]
 				=> v.Length;
 		}

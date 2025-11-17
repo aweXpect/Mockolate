@@ -8,7 +8,15 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 	/// <summary>
 	///     Flag indicating if the method setup result has an underlying setup.
 	/// </summary>
-	public bool HasSetup => setup is not null;
+	public bool HasSetup
+		=> setup is not null;
+
+	/// <summary>
+	///     Gets the flag indicating if the base class implementation should be called, and its return values
+	///     used as default values.
+	/// </summary>
+	public bool CallBaseClass
+		=> setup?.CallBaseClass() ?? behavior.CallBaseClass;
 
 	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type

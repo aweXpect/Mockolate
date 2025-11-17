@@ -58,8 +58,23 @@ internal static partial class Sources
 		sb.Append("\tprivate readonly List<Func<TValue, ").Append(typeParams)
 			.Append(", TValue>> _returnCallbacks = [];")
 			.AppendLine();
-		sb.Append("\tint _currentReturnCallbackIndex = -1;").AppendLine();
+		sb.Append("\tprivate bool? _callBaseClass;").AppendLine();
+		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.Append("\tprivate Func<").Append(typeParams).Append(", TValue>? _initialization;").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Flag indicating if the base class implementation should be called, and its return values used as default values.").AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append("\t///     If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.").AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tpublic IndexerSetup<TValue, ").Append(typeParams).Append("> CallingBaseClass(bool callBaseClass = true)")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_callBaseClass = callBaseClass;").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
@@ -314,6 +329,11 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\treturn value;").AppendLine();
 		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"PropertySetup.GetCallBaseClass()\" />").AppendLine();
+		sb.Append("\tprotected override bool? GetCallBaseClass()").AppendLine();
+		sb.Append("\t\t=> _callBaseClass;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append(
