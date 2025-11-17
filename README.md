@@ -115,12 +115,11 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 #### `MockBehavior` options
 
 - `ThrowWhenNotSetup` (bool):
+	- If `false` (default), the mock will return a default value (see `DefaultValue`).
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
-	- If `false`, the mock will return a default value (see `DefaultValue`).
-- `CallBaseClass` (enum):
-	- Controls how the mock interacts with base class members. Options:
-		- `false`: Do not call base class implementation (default).
-		- `true`: Call base class implementation.
+- `CallBaseClass` (bool):
+	- If `false` (default), the mock will not call any base class implementations.
+	- If `true`, the mock will call the base class implementation and use its return values as default values, if no explicit setup is defined.
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
 
@@ -176,6 +175,7 @@ sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
   parameters.
 - Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each
   call).
+- Use `.CallingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
 **Async Methods**
@@ -252,6 +252,7 @@ sut.SetupMock.Indexer(With("Dark"))
 - `.OnGet(…)` and `.OnSet(…)` support callbacks with or without parameters.
 - `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each
   call.
+- Use `.CallingBaseClass(…)` to override the base class behavior for a specific indexers (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
 ## Mock events
