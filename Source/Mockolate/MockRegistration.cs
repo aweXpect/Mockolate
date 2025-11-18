@@ -61,7 +61,7 @@ public partial class MockRegistration
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
 
-		MethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
+		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
 			if (Behavior.ThrowWhenNotSetup)
@@ -89,7 +89,7 @@ public partial class MockRegistration
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
 
-		MethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
+		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
@@ -108,7 +108,7 @@ public partial class MockRegistration
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
 				propertyName));
-		PropertySetup matchingSetup = GetPropertySetup(propertyName,
+		IPropertySetup matchingSetup = GetPropertySetup(propertyName,
 			defaultValueGenerator is null ? null : () => defaultValueGenerator());
 		return matchingSetup.InvokeGetter<TResult>(interaction, Behavior);
 	}
@@ -122,7 +122,7 @@ public partial class MockRegistration
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(Interactions.GetNextIndex(),
 				propertyName, value));
-		PropertySetup matchingSetup = GetPropertySetup(propertyName, null);
+		IPropertySetup matchingSetup = GetPropertySetup(propertyName, null);
 		matchingSetup.InvokeSetter(interaction, value, Behavior);
 		return matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass;
 	}

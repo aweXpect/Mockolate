@@ -63,22 +63,22 @@ public sealed class ReturnsAsyncExtensionsTests
 
 		await That(result.Sources).ContainsKey("ReturnsAsyncExtensions.g.cs").WhoseValue
 			.Contains(
-				"public static ReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this ReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
+				"public static IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
 			.And
 			.Contains(
-				"public static ReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this ReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<TReturn> callback)")
+				"public static IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<TReturn> callback)")
 			.And
 			.Contains(
-				"public static ReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this ReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, TReturn> callback)")
+				"public static IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, TReturn> callback)")
 			.And
 			.Contains(
-				"public static ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
+				"public static IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
 			.And
 			.Contains(
-				"public static ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<TReturn> callback)")
+				"public static IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<TReturn> callback)")
 			.And
 			.Contains(
-				"public static ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this ReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, TReturn> callback)");
+				"public static IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, TReturn> callback)");
 	}
 
 	[Fact]

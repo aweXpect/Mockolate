@@ -26,7 +26,7 @@ public sealed partial class ForMockTests
 		await That(result.Sources)
 			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public ReturnMethodSetup<int, int, int> Invoke(Match.IParameter<int>? x, Match.IParameter<int>? y)
+			          		public IReturnMethodSetup<int, int, int> Invoke(Match.IParameter<int>? x, Match.IParameter<int>? y)
 			          		{
 			          			var methodSetup = new ReturnMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", x ?? Match.Null<int>()), new Match.NamedParameter("y", y ?? Match.Null<int>()));
 			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
@@ -63,7 +63,7 @@ public sealed partial class ForMockTests
 		await That(result.Sources)
 			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public VoidMethodSetup<int, int, int> Invoke(Match.IParameter<int>? x, Match.IRefParameter<int> y, Match.IOutParameter<int> z)
+			          		public IVoidMethodSetup<int, int, int> Invoke(Match.IParameter<int>? x, Match.IRefParameter<int> y, Match.IOutParameter<int> z)
 			          		{
 			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", x ?? Match.Null<int>()), new Match.NamedParameter("y", y), new Match.NamedParameter("z", z));
 			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);

@@ -23,8 +23,8 @@ public partial class MockRegistration
 	///     Retrieves the latest method setup that matches the specified <paramref name="methodInvocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	private MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
-		=> _methodSetups.GetLatestOrDefault(setup => ((IMethodSetup)setup).Matches(methodInvocation));
+	private IMethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
+		=> _methodSetups.GetLatestOrDefault(setup => setup.Matches(methodInvocation));
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
@@ -36,9 +36,9 @@ public partial class MockRegistration
 	///     retrievals,
 	///     so that getter and setter work in tandem.
 	/// </remarks>
-	private PropertySetup GetPropertySetup(string propertyName, Func<object?>? defaultValueGenerator)
+	private IPropertySetup GetPropertySetup(string propertyName, Func<object?>? defaultValueGenerator)
 	{
-		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
+		if (!_propertySetups.TryGetValue(propertyName, out IPropertySetup? matchingSetup))
 		{
 			if (Behavior.ThrowWhenNotSetup)
 			{
@@ -83,12 +83,12 @@ public partial class MockRegistration
 	/// <summary>
 	///     Registers the <paramref name="methodSetup" /> in the mock.
 	/// </summary>
-	public void SetupMethod(MethodSetup methodSetup) => _methodSetups.Add(methodSetup);
+	public void SetupMethod(IMethodSetup methodSetup) => _methodSetups.Add(methodSetup);
 
 	/// <summary>
 	///     Registers the <paramref name="propertySetup" /> in the mock.
 	/// </summary>
-	public void SetupProperty(string propertyName, PropertySetup propertySetup)
+	public void SetupProperty(string propertyName, IPropertySetup propertySetup)
 	{
 		if (!_propertySetups.TryAdd(propertyName, propertySetup))
 		{
@@ -99,18 +99,18 @@ public partial class MockRegistration
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class MethodSetups
 	{
-		private ConcurrentStack<MethodSetup>? _storage;
+		private ConcurrentStack<IMethodSetup>? _storage;
 
 		public int Count
 			=> _storage?.Count ?? 0;
 
-		public void Add(MethodSetup setup)
+		public void Add(IMethodSetup setup)
 		{
-			_storage ??= new ConcurrentStack<MethodSetup>();
+			_storage ??= new ConcurrentStack<IMethodSetup>();
 			_storage.Push(setup);
 		}
 
-		public MethodSetup? GetLatestOrDefault(Func<MethodSetup, bool> predicate)
+		public IMethodSetup? GetLatestOrDefault(Func<IMethodSetup, bool> predicate)
 		{
 			if (_storage is null)
 			{
@@ -131,7 +131,7 @@ public partial class MockRegistration
 
 			StringBuilder sb = new();
 			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " method:" : " methods:").AppendLine();
-			foreach (MethodSetup methodSetup in _storage)
+			foreach (IMethodSetup methodSetup in _storage)
 			{
 				sb.Append(methodSetup).AppendLine();
 			}
@@ -144,20 +144,20 @@ public partial class MockRegistration
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class PropertySetups
 	{
-		private ConcurrentDictionary<string, PropertySetup>? _storage;
+		private ConcurrentDictionary<string, IPropertySetup>? _storage;
 
 		public int Count
 			=> _storage?.Count ?? 0;
 
-		public bool TryAdd(string propertyName, PropertySetup setup)
+		public bool TryAdd(string propertyName, IPropertySetup setup)
 		{
-			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
+			_storage ??= new ConcurrentDictionary<string, IPropertySetup>();
 			return _storage.TryAdd(propertyName, setup);
 		}
 
-		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out PropertySetup? setup)
+		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out IPropertySetup? setup)
 		{
-			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
+			_storage ??= new ConcurrentDictionary<string, IPropertySetup>();
 			return _storage.TryGetValue(propertyName, out setup);
 		}
 
@@ -172,7 +172,7 @@ public partial class MockRegistration
 
 			StringBuilder sb = new();
 			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " property:" : " properties:").AppendLine();
-			foreach (KeyValuePair<string, PropertySetup> item in _storage!)
+			foreach (KeyValuePair<string, IPropertySetup> item in _storage!)
 			{
 				sb.Append(item.Value).Append(' ').Append(item.Key).AppendLine();
 			}

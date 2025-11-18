@@ -27,7 +27,7 @@ public sealed partial class SetupIndexerTests
 		public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 		{
 			IIndexerService mock = Mock.Create<IIndexerService>();
-			IndexerSetup<string, int> setup = mock.SetupMock.Indexer(Any<int>())
+			IIndexerSetup<string, int> setup = mock.SetupMock.Indexer(Any<int>())
 				.InitializeWith("foo");
 
 			void Act()
@@ -75,7 +75,7 @@ public sealed partial class SetupIndexerTests
 		public async Task InitializeWith_Twice_ShouldThrowMockException()
 		{
 			IIndexerService mock = Mock.Create<IIndexerService>();
-			IndexerSetup<string, int> setup = mock.SetupMock.Indexer(Any<int>())
+			IIndexerSetup<string, int> setup = mock.SetupMock.Indexer(Any<int>())
 				.InitializeWith("foo");
 
 			void Act()
@@ -111,7 +111,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				IndexerSetup<string, int, int> setup = mock.SetupMock.Indexer(Any<int>(), Any<int>())
+				IIndexerSetup<string, int, int> setup = mock.SetupMock.Indexer(Any<int>(), Any<int>())
 					.InitializeWith("foo");
 
 				void Act()
@@ -145,7 +145,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				IndexerSetup<string, int, int> setup = mock.SetupMock.Indexer(Any<int>(), Any<int>())
+				IIndexerSetup<string, int, int> setup = mock.SetupMock.Indexer(Any<int>(), Any<int>())
 					.InitializeWith("foo");
 
 				void Act()
@@ -185,7 +185,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				IndexerSetup<string, int, int, int> setup = mock.SetupMock
+				IIndexerSetup<string, int, int, int> setup = mock.SetupMock
 					.Indexer(Any<int>(), Any<int>(), Any<int>())
 					.InitializeWith("foo");
 
@@ -223,7 +223,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				IndexerSetup<string, int, int, int> setup = mock.SetupMock
+				IIndexerSetup<string, int, int, int> setup = mock.SetupMock
 					.Indexer(Any<int>(), Any<int>(), Any<int>())
 					.InitializeWith("foo");
 
@@ -266,7 +266,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				IndexerSetup<string, int, int, int, int> setup = mock.SetupMock
+				IIndexerSetup<string, int, int, int, int> setup = mock.SetupMock
 					.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
 					.InitializeWith("foo");
 
@@ -306,7 +306,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				IndexerSetup<string, int, int, int, int> setup = mock.SetupMock
+				IIndexerSetup<string, int, int, int, int> setup = mock.SetupMock
 					.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
 					.InitializeWith("foo");
 
@@ -351,7 +351,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				IndexerSetup<string, int, int, int, int, int> setup = mock.SetupMock.Indexer(Any<int>(),
+				IIndexerSetup<string, int, int, int, int, int> setup = mock.SetupMock.Indexer(Any<int>(),
 						Any<int>(), Any<int>(), Any<int>(),
 						Any<int>())
 					.InitializeWith("foo");
@@ -394,7 +394,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				IndexerSetup<string, int, int, int, int, int> setup = mock.SetupMock.Indexer(Any<int>(),
+				IIndexerSetup<string, int, int, int, int, int> setup = mock.SetupMock.Indexer(Any<int>(),
 						Any<int>(), Any<int>(), Any<int>(),
 						Any<int>())
 					.InitializeWith("foo");

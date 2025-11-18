@@ -33,8 +33,8 @@ internal static partial class Sources
 					"\t///     Registers the <see langword=\"async\" /> <paramref name=\"returnValue\" /> for this method.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
-			sb.Append("\tpublic static ReturnMethodSetup<Task<TReturn>, ").Append(types)
-				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this ReturnMethodSetup<Task<TReturn>, ")
+			sb.Append("\tpublic static IReturnMethodSetup<Task<TReturn>, ").Append(types)
+				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this IReturnMethodSetup<Task<TReturn>, ")
 				.Append(types).Append("> setup, TReturn returnValue)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(Task.FromResult(returnValue));").AppendLine();
 			sb.AppendLine();
@@ -43,8 +43,8 @@ internal static partial class Sources
 					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
-			sb.Append("\tpublic static ReturnMethodSetup<Task<TReturn>, ").Append(types)
-				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this ReturnMethodSetup<Task<TReturn>, ")
+			sb.Append("\tpublic static IReturnMethodSetup<Task<TReturn>, ").Append(types)
+				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this IReturnMethodSetup<Task<TReturn>, ")
 				.Append(types).Append("> setup, Func<TReturn> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(() => Task.FromResult(callback()));").AppendLine();
 			sb.AppendLine();
@@ -53,8 +53,8 @@ internal static partial class Sources
 					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
-			sb.Append("\tpublic static ReturnMethodSetup<Task<TReturn>, ").Append(types)
-				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this ReturnMethodSetup<Task<TReturn>, ")
+			sb.Append("\tpublic static IReturnMethodSetup<Task<TReturn>, ").Append(types)
+				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this IReturnMethodSetup<Task<TReturn>, ")
 				.Append(types).Append("> setup, Func<").Append(types).Append(", TReturn> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns((").Append(variables).Append(") => Task.FromResult(callback(")
 				.Append(variables).Append(")));").AppendLine();
@@ -72,9 +72,9 @@ internal static partial class Sources
 					"\t///     Registers the <see langword=\"async\" /> <paramref name=\"returnValue\" /> for this method.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
-			sb.Append("\tpublic static ReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
+			sb.Append("\tpublic static IReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
-				.Append(">(this ReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
+				.Append(">(this IReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
 				.Append("> setup, TReturn returnValue)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(ValueTask.FromResult(returnValue));").AppendLine();
 			sb.AppendLine();
@@ -83,9 +83,9 @@ internal static partial class Sources
 					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
-			sb.Append("\tpublic static ReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
+			sb.Append("\tpublic static IReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
-				.Append(">(this ReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
+				.Append(">(this IReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
 				.Append("> setup, Func<TReturn> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(() => ValueTask.FromResult(callback()));").AppendLine();
 			sb.AppendLine();
@@ -94,9 +94,9 @@ internal static partial class Sources
 					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
-			sb.Append("\tpublic static ReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
+			sb.Append("\tpublic static IReturnMethodSetup<ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
-				.Append(">(this ReturnMethodSetup<ValueTask<TReturn>, ").Append(types).Append("> setup, Func<")
+				.Append(">(this IReturnMethodSetup<ValueTask<TReturn>, ").Append(types).Append("> setup, Func<")
 				.Append(types).Append(", TReturn> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns((").Append(variables).Append(") => ValueTask.FromResult(callback(")
 				.Append(variables).Append(")));").AppendLine();
