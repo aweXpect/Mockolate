@@ -44,7 +44,8 @@ public sealed partial class SetupPropertyTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
 		int result0 = registration.GetProperty<int>("my.other.property");
-		registration.SetupProperty("my.property", new PropertySetup<int>().InitializeWith(42));
+		IPropertySetup<int> setup = new PropertySetup<int>();
+		registration.SetupProperty("my.property", (IPropertySetup)setup.InitializeWith(42));
 		int result1 = registration.GetProperty<int>("my.property");
 
 		await That(result0).IsEqualTo(0);

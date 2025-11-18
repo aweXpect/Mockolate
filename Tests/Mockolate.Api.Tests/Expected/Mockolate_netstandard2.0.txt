@@ -100,7 +100,7 @@ namespace Mockolate
         public bool SetProperty(string propertyName, object? value) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
         public void SetupMethod(Mockolate.Setup.MethodSetup methodSetup) { }
-        public void SetupProperty(string propertyName, Mockolate.Setup.PropertySetup propertySetup) { }
+        public void SetupProperty(string propertyName, Mockolate.Setup.IPropertySetup propertySetup) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
         public override string ToString() { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName) { }
@@ -289,6 +289,20 @@ namespace Mockolate.Raise
 }
 namespace Mockolate.Setup
 {
+    public class Callback
+    {
+        public Callback() { }
+        protected bool CheckInvocations(int invocationCount) { }
+        protected bool CheckMatching(int matchingCount) { }
+        public void For(System.Func<int, bool> predicate) { }
+        public void When(System.Func<int, bool> predicate) { }
+    }
+    public class Callback<TDelegate> : Mockolate.Setup.Callback
+        where TDelegate : System.Delegate
+    {
+        public Callback(TDelegate @delegate) { }
+        public void Invoke(System.Action<int, TDelegate> callback) { }
+    }
     public interface IIndexerSetup
     {
         bool? CallBaseClass();
@@ -323,6 +337,38 @@ namespace Mockolate.Setup
     public interface IMockMethodSetup<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockPropertySetup<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockSetup<out T> : Mockolate.IInteractiveMock<T> { }
+    public interface IPropertySetup
+    {
+        bool? CallBaseClass();
+        void InitializeWith(object? baseValue);
+        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction invocation, Mockolate.MockBehavior behavior);
+        void InvokeSetter(Mockolate.Interactions.IInteraction invocation, object? value, Mockolate.MockBehavior behavior);
+    }
+    public interface IPropertySetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetupWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
+    {
+        Mockolate.Setup.IPropertySetupWhenBuilder<T> When(System.Func<int, bool> predicate);
+    }
+    public interface IPropertySetupWhenBuilder<T> : Mockolate.Setup.IPropertySetup<T>
+    {
+        Mockolate.Setup.IPropertySetup<T> For(int times);
+    }
+    public interface IPropertySetup<T>
+    {
+        Mockolate.Setup.IPropertySetup<T> CallingBaseClass(bool callBaseClass = true);
+        Mockolate.Setup.IPropertySetup<T> InitializeWith(T value);
+        Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action callback);
+        Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action<T> callback);
+        Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action callback);
+        Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<T, T> callback);
+        Mockolate.Setup.IPropertySetup<T> Returns(System.Func<T> callback);
+        Mockolate.Setup.IPropertySetup<T> Returns(System.Func<T, T> callback);
+        Mockolate.Setup.IPropertySetup<T> Returns(T returnValue);
+        Mockolate.Setup.IPropertySetup<T> Throws(System.Exception exception);
+        Mockolate.Setup.IPropertySetup<T> Throws(System.Func<System.Exception> callback);
+        Mockolate.Setup.IPropertySetup<T> Throws(System.Func<T, System.Exception> callback);
+        Mockolate.Setup.IPropertySetup<T> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
     public interface IProtectedMockMethodSetup<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IProtectedMockPropertySetup<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IProtectedMockSetup<out T> : Mockolate.IInteractiveMock<T> { }
@@ -490,7 +536,7 @@ namespace Mockolate.Setup
         public MethodSetupResult(Mockolate.Setup.IMethodSetup? setup, Mockolate.MockBehavior behavior, TResult result) { }
         public TResult Result { get; }
     }
-    public abstract class PropertySetup
+    public abstract class PropertySetup : Mockolate.Setup.IPropertySetup
     {
         protected PropertySetup() { }
         protected abstract bool? GetCallBaseClass();
@@ -498,28 +544,32 @@ namespace Mockolate.Setup
         protected abstract TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior);
         protected abstract void InvokeSetter(object? value, Mockolate.MockBehavior behavior);
     }
-    public class PropertySetup<T> : Mockolate.Setup.PropertySetup
+    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetupWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
         public PropertySetup() { }
-        public Mockolate.Setup.PropertySetup<T> CallingBaseClass(bool callBaseClass = true) { }
+        public Mockolate.Setup.IPropertySetup<T> CallingBaseClass(bool callBaseClass = true) { }
+        public Mockolate.Setup.IPropertySetup<T> For(int times) { }
         protected override bool? GetCallBaseClass() { }
         protected override void InitializeValue(object? baseValue) { }
-        public Mockolate.Setup.PropertySetup<T> InitializeWith(T value) { }
+        public Mockolate.Setup.IPropertySetup<T> InitializeWith(T value) { }
         protected override TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior) { }
         protected override void InvokeSetter(object? value, Mockolate.MockBehavior behavior) { }
-        public Mockolate.Setup.PropertySetup<T> OnGet(System.Action callback) { }
-        public Mockolate.Setup.PropertySetup<T> OnGet(System.Action<T> callback) { }
-        public Mockolate.Setup.PropertySetup<T> OnSet(System.Action callback) { }
-        public Mockolate.Setup.PropertySetup<T> OnSet(System.Action<T, T> callback) { }
-        public Mockolate.Setup.PropertySetup<T> Returns(System.Func<T> callback) { }
-        public Mockolate.Setup.PropertySetup<T> Returns(System.Func<T, T> callback) { }
-        public Mockolate.Setup.PropertySetup<T> Returns(T returnValue) { }
-        public Mockolate.Setup.PropertySetup<T> Throws(System.Exception exception) { }
-        public Mockolate.Setup.PropertySetup<T> Throws(System.Func<System.Exception> callback) { }
-        public Mockolate.Setup.PropertySetup<T> Throws(System.Func<T, System.Exception> callback) { }
-        public Mockolate.Setup.PropertySetup<T> Throws<TException>()
+        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action callback) { }
+        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action<T> callback) { }
+        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action<int, T> callback) { }
+        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action callback) { }
+        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<T, T> callback) { }
+        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<int, T, T> callback) { }
+        public Mockolate.Setup.IPropertySetup<T> Returns(System.Func<T> callback) { }
+        public Mockolate.Setup.IPropertySetup<T> Returns(System.Func<T, T> callback) { }
+        public Mockolate.Setup.IPropertySetup<T> Returns(T returnValue) { }
+        public Mockolate.Setup.IPropertySetup<T> Throws(System.Exception exception) { }
+        public Mockolate.Setup.IPropertySetup<T> Throws(System.Func<System.Exception> callback) { }
+        public Mockolate.Setup.IPropertySetup<T> Throws(System.Func<T, System.Exception> callback) { }
+        public Mockolate.Setup.IPropertySetup<T> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        public Mockolate.Setup.IPropertySetupWhenBuilder<T> When(System.Func<int, bool> predicate) { }
     }
     public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup
     {
