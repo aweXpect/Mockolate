@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class SetupMethodTests
@@ -36,6 +38,41 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Callback(i => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Callback(i => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
+			}
+
+			[Fact]
 			public async Task MultipleCallbacks_ShouldAllGetInvoked()
 			{
 				int callCount1 = 0;
@@ -52,6 +89,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Callback(i => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -128,7 +182,7 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method1(Any<int>())
-					.Callback(v => { callCount++; });
+					.Callback(_ => { callCount++; });
 
 				sut.Method0();
 				sut.Method1(2, false);
@@ -143,11 +197,46 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method1(With<int>(v => v != 1))
-					.Callback(v => { callCount++; });
+					.Callback(_ => { callCount++; });
 
 				sut.Method1(1);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Callback((i, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Callback((i, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -167,6 +256,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(3);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Callback((i, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -196,7 +302,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2(With<int>(v => isMatch1), With<int>(v => isMatch2))
+				sut.SetupMock.Method.Method2(With<int>(_ => isMatch1), With<int>(_ => isMatch2))
 					.Callback(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -252,8 +358,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2(With<int>(v => isMatch1), With<int>(v => isMatch2))
-					.Callback((v1, v2) => { callCount++; });
+				sut.SetupMock.Method.Method2(With<int>(_ => isMatch1), With<int>(_ => isMatch2))
+					.Callback((_, _) => { callCount++; });
 
 				sut.Method2(1, 2);
 
@@ -267,12 +373,47 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
-					.Callback((v1, v2) => { callCount++; });
+					.Callback((_, _) => { callCount++; });
 
 				sut.Method1(1);
 				sut.Method2(1, 2, false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Callback((i, _, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Callback((i, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -292,6 +433,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(6);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Callback((i, _, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -323,8 +481,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3))
+				sut.SetupMock.Method.Method3(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3))
 					.Callback(() => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -385,9 +543,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3))
-					.Callback((v1, v2, v3) => { callCount++; });
+				sut.SetupMock.Method.Method3(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3))
+					.Callback((_, _, _) => { callCount++; });
 
 				sut.Method3(1, 2, 3);
 
@@ -401,12 +559,47 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
-					.Callback((v1, v2, v3) => { callCount++; });
+					.Callback((_, _, _) => { callCount++; });
 
 				sut.Method2(1, 2);
 				sut.Method3(1, 2, 3, false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -426,6 +619,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(18);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -458,8 +668,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3), With<int>(v => isMatch4))
+				sut.SetupMock.Method.Method4(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3), With<int>(_ => isMatch4))
 					.Callback(() => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
@@ -524,9 +734,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3), With<int>(v => isMatch4))
-					.Callback((v1, v2, v3, v4) => { callCount++; });
+				sut.SetupMock.Method.Method4(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3), With<int>(_ => isMatch4))
+					.Callback((_, _, _, _) => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
 
@@ -540,12 +750,47 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
-					.Callback((v1, v2, v3, v4) => { callCount++; });
+					.Callback((_, _, _, _) => { callCount++; });
 
 				sut.Method3(1, 2, 3);
 				sut.Method4(1, 2, 3, false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -565,6 +810,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(72);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -599,9 +861,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3), With<int>(v => isMatch4),
-						With<int>(v => isMatch5))
+				sut.SetupMock.Method.Method5(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3), With<int>(_ => isMatch4),
+						With<int>(_ => isMatch5))
 					.Callback(() => { callCount++; });
 
 				sut.Method5(1, 2, 3, 4, 5);
@@ -672,10 +934,10 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3), With<int>(v => isMatch4),
-						With<int>(v => isMatch5))
-					.Callback((v1, v2, v3, v4, v5) => { callCount++; });
+				sut.SetupMock.Method.Method5(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3), With<int>(_ => isMatch4),
+						With<int>(_ => isMatch5))
+					.Callback((_, _, _, _, _) => { callCount++; });
 
 				sut.Method5(1, 2, 3, 4, 5);
 
@@ -690,12 +952,47 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(),
 						Any<int>())
-					.Callback((v1, v2, v3, v4, v5) => { callCount++; });
+					.Callback((_, _, _, _, _) => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
 				sut.Method5(1, 2, 3, 4, 5, false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -716,6 +1013,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(360);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -749,6 +1063,41 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Callback(i => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Callback(i => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
+			}
+
+			[Fact]
 			public async Task MultipleCallbacks_ShouldAllGetInvoked()
 			{
 				int callCount1 = 0;
@@ -764,6 +1113,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Callback(i => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -839,7 +1205,7 @@ public sealed partial class SetupMethodTests
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
 				sut.SetupMock.Method.Method1(Any<int>())
-					.Callback(v => { callCount++; });
+					.Callback(_ => { callCount++; });
 
 				sut.Method0();
 				sut.Method1(2, false);
@@ -854,11 +1220,46 @@ public sealed partial class SetupMethodTests
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
 				sut.SetupMock.Method.Method1(With<int>(v => v != 1))
-					.Callback(v => { callCount++; });
+					.Callback(_ => { callCount++; });
 
 				sut.Method1(1);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Callback((i, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Callback((i, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -877,6 +1278,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(3);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Callback((i, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -905,7 +1323,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2(With<int>(v => isMatch1), With<int>(v => isMatch2))
+				sut.SetupMock.Method.Method2(With<int>(_ => isMatch1), With<int>(_ => isMatch2))
 					.Callback(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -961,8 +1379,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2(With<int>(v => isMatch1), With<int>(v => isMatch2))
-					.Callback((v1, v2) => { callCount++; });
+				sut.SetupMock.Method.Method2(With<int>(_ => isMatch1), With<int>(_ => isMatch2))
+					.Callback((_, _) => { callCount++; });
 
 				sut.Method2(1, 2);
 
@@ -976,12 +1394,47 @@ public sealed partial class SetupMethodTests
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
 				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
-					.Callback((v1, v2) => { callCount++; });
+					.Callback((_, _) => { callCount++; });
 
 				sut.Method1(1);
 				sut.Method2(1, 2, false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Callback((i, _, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Callback((i, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1000,6 +1453,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(6);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Callback((i, _, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -1030,8 +1500,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3))
+				sut.SetupMock.Method.Method3(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3))
 					.Callback(() => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -1092,9 +1562,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3))
-					.Callback((v1, v2, v3) => { callCount++; });
+				sut.SetupMock.Method.Method3(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3))
+					.Callback((_, _, _) => { callCount++; });
 
 				sut.Method3(1, 2, 3);
 
@@ -1108,12 +1578,47 @@ public sealed partial class SetupMethodTests
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
 				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
-					.Callback((v1, v2, v3) => { callCount++; });
+					.Callback((_, _, _) => { callCount++; });
 
 				sut.Method2(1, 2);
 				sut.Method3(1, 2, 3, false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1132,6 +1637,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(18);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -1163,8 +1685,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3), With<int>(v => isMatch4))
+				sut.SetupMock.Method.Method4(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3), With<int>(_ => isMatch4))
 					.Callback(() => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
@@ -1229,9 +1751,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3), With<int>(v => isMatch4))
-					.Callback((v1, v2, v3, v4) => { callCount++; });
+				sut.SetupMock.Method.Method4(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3), With<int>(_ => isMatch4))
+					.Callback((_, _, _, _) => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
 
@@ -1245,12 +1767,47 @@ public sealed partial class SetupMethodTests
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
 				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
-					.Callback((v1, v2, v3, v4) => { callCount++; });
+					.Callback((_, _, _, _) => { callCount++; });
 
 				sut.Method3(1, 2, 3);
 				sut.Method4(1, 2, 3, false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1269,6 +1826,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(72);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 
@@ -1302,9 +1876,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3), With<int>(v => isMatch4),
-						With<int>(v => isMatch5))
+				sut.SetupMock.Method.Method5(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3), With<int>(_ => isMatch4),
+						With<int>(_ => isMatch5))
 					.Callback(() => { callCount++; });
 
 				sut.Method5(1, 2, 3, 4, 5);
@@ -1375,10 +1949,10 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5(With<int>(v => isMatch1), With<int>(v => isMatch2),
-						With<int>(v => isMatch3), With<int>(v => isMatch4),
-						With<int>(v => isMatch5))
-					.Callback((v1, v2, v3, v4, v5) => { callCount++; });
+				sut.SetupMock.Method.Method5(With<int>(_ => isMatch1), With<int>(_ => isMatch2),
+						With<int>(_ => isMatch3), With<int>(_ => isMatch4),
+						With<int>(_ => isMatch5))
+					.Callback((_, _, _, _, _) => { callCount++; });
 
 				sut.Method5(1, 2, 3, 4, 5);
 
@@ -1393,12 +1967,47 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(),
 						Any<int>())
-					.Callback((v1, v2, v3, v4, v5) => { callCount++; });
+					.Callback((_, _, _, _, _) => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
 				sut.Method5(1, 2, 3, 4, 5, false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _, _) => { invocations.Add(i); })
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.For(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1418,6 +2027,23 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(360);
+			}
+
+			[Fact]
+			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Callback((i, _, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x is > 3 and < 9);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 		}
 	}

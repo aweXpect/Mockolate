@@ -132,12 +132,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1)
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, TValue>? _initialization;
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1> CallingBaseClass(bool callBaseClass = true)
 	{
 		_callBaseClass = callBaseClass;
@@ -435,12 +430,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2> CallingBaseClass(bool callBaseClass = true)
 	{
 		_callBaseClass = callBaseClass;
@@ -737,12 +727,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
 	{
 		_callBaseClass = callBaseClass;
@@ -1044,12 +1029,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
 	{
 		_callBaseClass = callBaseClass;

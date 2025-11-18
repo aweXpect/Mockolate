@@ -357,7 +357,7 @@ internal static partial class Sources
 		sb.Append("\t\t/// </summary>").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\tpublic ReturnMethodSetup<")
+			sb.Append("\t\tpublic IReturnMethodSetup<")
 				.Append(method.ReturnType.Fullname);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
@@ -374,7 +374,7 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\tpublic VoidMethodSetup");
+			sb.Append("\t\tpublic IVoidMethodSetup");
 			if (method.Parameters.Count > 0)
 			{
 				sb.Append('<');

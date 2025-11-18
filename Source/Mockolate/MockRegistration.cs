@@ -61,7 +61,7 @@ public partial class MockRegistration
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
 
-		MethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
+		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
 			if (Behavior.ThrowWhenNotSetup)
@@ -89,7 +89,7 @@ public partial class MockRegistration
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
 
-		MethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
+		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(

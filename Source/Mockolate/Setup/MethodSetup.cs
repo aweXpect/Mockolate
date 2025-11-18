@@ -31,19 +31,16 @@ public abstract class MethodSetup : IMethodSetup
 		=> GetCallBaseClass();
 
 
-	internal TResult Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior)
+	/// <inheritdoc cref="IMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior)" />
+	TResult IMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior)
 	{
 		ExecuteCallback(methodInvocation, behavior);
 		return GetReturnValue<TResult>(methodInvocation, behavior);
 	}
 
-	internal void Invoke(IInteraction invocation, MockBehavior behavior)
-	{
-		if (invocation is MethodInvocation methodInvocation)
-		{
-			ExecuteCallback(methodInvocation, behavior);
-		}
-	}
+	/// <inheritdoc cref="IMethodSetup.Invoke(MethodInvocation, MockBehavior)" />
+	void IMethodSetup.Invoke(MethodInvocation methodInvocation, MockBehavior behavior)
+		=> ExecuteCallback(methodInvocation, behavior);
 
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default

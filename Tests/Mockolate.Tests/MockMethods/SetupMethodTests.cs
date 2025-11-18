@@ -97,7 +97,9 @@ public sealed partial class SetupMethodTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
 		MethodSetupResult<int> result0 = registration.InvokeMethod<int>("my.method");
-		registration.SetupMethod(new ReturnMethodSetup<int>("my.method").Returns(42));
+		ReturnMethodSetup<int> setup = new("my.method");
+		setup.Returns(42);
+		registration.SetupMethod(setup);
 		MethodSetupResult<int> result1 = registration.InvokeMethod<int>("my.method");
 
 		await That(result0.Result).IsEqualTo(0);
