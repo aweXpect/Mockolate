@@ -6,8 +6,6 @@ using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 
-// ReSharper disable RedundantExtendsListEntry
-
 namespace Mockolate.Setup;
 
 /// <summary>
@@ -90,7 +88,7 @@ public abstract class PropertySetup : IPropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
-public class PropertySetup<T> : PropertySetup, IPropertySetup<T>, IPropertySetupCallbackBuilder<T>
+public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>
 {
 	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
 	private readonly List<Func<T, T>> _returnCallbacks = [];
