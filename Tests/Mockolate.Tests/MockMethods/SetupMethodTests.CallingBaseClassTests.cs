@@ -180,6 +180,17 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyVoidMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
+		[Fact]
+		public async Task SetupCallingBaseClassWithoutReturn_ShouldReturnBaseValue()
+		{
+			MyMethodService mock = Mock.Create<MyMethodService>();
+			mock.SetupMock.Method.MyMethodReturning2().CallingBaseClass();
+
+			int result = mock.MyMethodReturning2();
+
+			await That(result).IsEqualTo(2);
+		}
+
 		public class MyMethodService
 		{
 			public int MyVoidMethodWithoutParametersCallCount { get; private set; }
@@ -231,6 +242,8 @@ public sealed partial class SetupMethodTests
 
 			public virtual int MyReturnMethodWith5Parameters(int p1, int p2, int p3, int p4, int p5)
 				=> MyReturnMethodWith5ParametersCallCount++;
+
+			public virtual int MyMethodReturning2() => 2;
 		}
 	}
 }

@@ -146,6 +146,18 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith5KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
+		[Fact]
+		public async Task SetupCallingBaseClassWithoutReturn_ShouldReturnBaseValue()
+		{
+			MyIndexerService mock = Mock.Create<MyIndexerService>();
+			mock.SetupMock.Indexer(Any<string>())
+				.CallingBaseClass();
+
+			int result = mock["returning 2"];
+
+			await That(result).IsEqualTo(2);
+		}
+
 		public class MyIndexerService
 		{
 			public int MyIndexerWith1KeyGetterCallCount { get; private set; }
@@ -187,6 +199,11 @@ public sealed partial class SetupIndexerTests
 			{
 				get => MyIndexerWith5KeysGetterCallCount++;
 				set => MyIndexerWith5KeysSetterCallCount += value;
+			}
+			
+			public virtual int this[string keyReturning2]
+			{
+				get => 2;
 			}
 		}
 	}

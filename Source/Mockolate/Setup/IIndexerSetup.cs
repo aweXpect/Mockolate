@@ -15,6 +15,11 @@ public interface IIndexerSetup
 	bool? CallBaseClass();
 
 	/// <summary>
+	///     Gets a value indicating whether this setup has return calls configured.
+	/// </summary>
+	bool HasReturnCalls();
+
+	/// <summary>
 	///     Checks if the <paramref name="indexerAccess" /> matches the setup.
 	/// </summary>
 	bool Matches(IndexerAccess indexerAccess);

@@ -299,6 +299,11 @@ internal static partial class Sources
 		sb.Append("\t\t=> _callBaseClass;").AppendLine();
 		sb.AppendLine();
 
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.HasReturnCalls()\" />").AppendLine();
+		sb.Append("\tprotected override bool HasReturnCalls()").AppendLine();
+		sb.Append("\t\t=> _returnCallbacks.Count > 0;").AppendLine();
+		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
 		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)")
 			.AppendLine();
@@ -637,6 +642,11 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetCallBaseClass()\" />").AppendLine();
 		sb.Append("\tprotected override bool? GetCallBaseClass()").AppendLine();
 		sb.Append("\t\t=> _callBaseClass;").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.HasReturnCalls()\" />").AppendLine();
+		sb.Append("\tprotected override bool HasReturnCalls()").AppendLine();
+		sb.Append("\t\t=> _returnCallbacks.Count > 0;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();

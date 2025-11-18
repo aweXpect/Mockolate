@@ -331,9 +331,14 @@ internal static partial class Sources
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"PropertySetup.GetCallBaseClass()\" />").AppendLine();
+		sb.Append("\t/// <inheritdoc cref=\"IndexerSetup.GetCallBaseClass()\" />").AppendLine();
 		sb.Append("\tprotected override bool? GetCallBaseClass()").AppendLine();
 		sb.Append("\t\t=> _callBaseClass;").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"IndexerSetup.HasReturnCalls()\" />").AppendLine();
+		sb.Append("\tprotected override bool HasReturnCalls()").AppendLine();
+		sb.Append("\t\t=> _returnCallbacks.Count > 0;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append(

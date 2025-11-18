@@ -19,6 +19,11 @@ public interface IMethodSetup
 	bool? CallBaseClass();
 
 	/// <summary>
+	///     Gets a value indicating whether this setup has return calls configured.
+	/// </summary>
+	bool HasReturnCalls();
+
+	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type
 	///     <typeparamref name="T" />.
 	/// </summary>

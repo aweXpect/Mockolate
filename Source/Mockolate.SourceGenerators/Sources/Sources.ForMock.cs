@@ -650,7 +650,7 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append(
-							"\t\t\tif (methodExecution is not null && methodExecution.HasSetup == true)")
+							"\t\t\tif (methodExecution is not null && methodExecution.HasSetupResult == true)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
@@ -660,7 +660,7 @@ internal static partial class Sources
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.Append(
-							"\t\t\tif (methodExecution is not null && methodExecution.HasSetup == true)")
+							"\t\t\tif (methodExecution is not null && methodExecution.HasSetupResult == true)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
@@ -671,7 +671,7 @@ internal static partial class Sources
 			}
 
 			sb.Append(
-					"\t\t\tif (methodExecution?.HasSetup != true)")
+					"\t\t\tif (methodExecution?.HasSetupResult != true)")
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\treturn baseResult;").AppendLine();

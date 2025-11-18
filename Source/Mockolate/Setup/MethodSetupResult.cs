@@ -8,8 +8,8 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 	/// <summary>
 	///     Flag indicating if the method setup result has an underlying setup.
 	/// </summary>
-	public bool HasSetup
-		=> setup is not null;
+	public bool HasSetupResult
+		=> setup is not null && setup.HasReturnCalls();
 
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values

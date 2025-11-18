@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -23,6 +22,14 @@ public abstract class PropertySetup
 	internal bool? CallBaseClass()
 		=> GetCallBaseClass();
 
+	internal void InitializeWith(object? baseValue)
+		=> InitializeValue(baseValue);
+
+	/// <summary>
+	/// Initializes the property with the <paramref name="baseValue" />.
+	/// </summary>
+	protected abstract void InitializeValue(object? baseValue);
+
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values
 	///     used as default values.
@@ -42,6 +49,17 @@ public abstract class PropertySetup
 	internal class Default(object? initialValue) : PropertySetup
 	{
 		private object? _value = initialValue;
+		private bool _isInitialized;
+
+		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
+		protected override void InitializeValue(object? baseValue)
+		{
+			if (!_isInitialized)
+			{
+				_isInitialized = true;
+				_value = baseValue;
+			}
+		}
 
 		/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
 		protected override bool? GetCallBaseClass()
@@ -49,7 +67,10 @@ public abstract class PropertySetup
 
 		/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 		protected override void InvokeSetter(object? value, MockBehavior behavior)
-			=> _value = value;
+		{
+			_isInitialized = true;
+			_value = value;
+		}
 
 		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior)" />
 		protected override TResult InvokeGetter<TResult>(MockBehavior behavior)
@@ -75,6 +96,7 @@ public class PropertySetup<T> : PropertySetup
 	private bool? _callBaseClass;
 	private int _currentReturnCallbackIndex = -1;
 	private T _value = default!;
+	private bool _isInitialized;
 
 	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 	protected override void InvokeSetter(object? value, MockBehavior behavior)
@@ -93,7 +115,7 @@ public class PropertySetup<T> : PropertySetup
 	protected override TResult InvokeGetter<TResult>(MockBehavior behavior)
 	{
 		_getterCallbacks.ForEach(callback => callback.Invoke(_value));
-		if (_returnCallbacks.Any())
+		if (_returnCallbacks.Count > 0)
 		{
 			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 			Func<T, T> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
@@ -107,6 +129,25 @@ public class PropertySetup<T> : PropertySetup
 		}
 
 		return result;
+	}
+	
+	/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
+	protected override void InitializeValue(object? baseValue)
+	{
+		if (_isInitialized)
+		{
+			return;
+		}
+
+		_isInitialized = baseValue is T or null;
+		if (baseValue is T typedValue)
+		{
+			_value = typedValue;
+		}
+		else
+		{
+			_value = default!;
+		}
 	}
 
 	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
