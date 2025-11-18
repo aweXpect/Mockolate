@@ -431,6 +431,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	IReturnMethodSetup<TReturn, T1, T2, T3> For(int times);
 }
 
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
@@ -528,6 +529,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// </remarks>
 	IReturnMethodSetup<TReturn, T1, T2, T3, T4> For(int times);
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.

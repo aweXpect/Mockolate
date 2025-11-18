@@ -190,6 +190,17 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1)
 	}
 
 	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<int, T1> callback)
+	{
+		Callback<Action<int, T1>>? currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action callback)
@@ -217,6 +228,17 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1)
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<TValue, T1> callback)
 	{
 		Callback<Action<int, TValue, T1>>? currentCallback = new((_, v, p1) => callback(v, p1));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
+	/// </summary>
+	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<int, TValue, T1> callback)
+	{
+		Callback<Action<int, TValue, T1>>? currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -325,28 +347,6 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1)
 	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
-
-	/// <summary>
-	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
-	/// </summary>
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<int, T1> callback)
-	{
-		Callback<Action<int, T1>>? currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <summary>
-	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
-	/// </summary>
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<int, TValue, T1> callback)
-	{
-		Callback<Action<int, TValue, T1>>? currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,

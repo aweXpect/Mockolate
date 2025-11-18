@@ -434,6 +434,7 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 	IIndexerSetup<TValue, T1, T2, T3> For(int times);
 }
 
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3"/> and <typeparamref name="T4" />.
 /// </summary>
@@ -565,3 +566,4 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 	/// </remarks>
 	IIndexerSetup<TValue, T1, T2, T3, T4> For(int times);
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
