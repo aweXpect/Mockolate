@@ -55,7 +55,7 @@ public partial class MockRegistration
 		}
 		else if (defaultValueGenerator is not null && (matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass))
 		{
-			defaultValueGenerator();
+			matchingSetup.InitializeWith(defaultValueGenerator());
 		}
 
 		return matchingSetup;

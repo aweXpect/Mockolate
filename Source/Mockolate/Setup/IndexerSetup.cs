@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -13,6 +12,10 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class IndexerSetup : IIndexerSetup
 {
+	/// <inheritdoc cref="IIndexerSetup.HasReturnCalls()" />
+	bool IIndexerSetup.HasReturnCalls()
+		=> HasReturnCalls();
+
 	/// <inheritdoc cref="IIndexerSetup.Matches(IndexerAccess)" />
 	bool IIndexerSetup.Matches(IndexerAccess indexerAccess)
 		=> IsMatch(indexerAccess.Parameters);
@@ -103,6 +106,11 @@ public abstract class IndexerSetup : IIndexerSetup
 	protected abstract bool? GetCallBaseClass();
 
 	/// <summary>
+	///     Gets a value indicating whether this setup has return calls configured.
+	/// </summary>
+	protected abstract bool HasReturnCalls();
+
+	/// <summary>
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
@@ -122,9 +130,13 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1) : IndexerSetu
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, TValue>? _initialization;
 
-	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
+	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -302,7 +314,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1) : IndexerSetu
 		    TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior))
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke(p1));
-			if (_returnCallbacks.Any())
+			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Func<TValue, T1, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
@@ -363,9 +375,13 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, TValue>? _initialization;
 
-	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
+	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -544,7 +560,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 		    TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior))
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke(p1, p2));
-			if (_returnCallbacks.Any())
+			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Func<TValue, T1, T2, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
@@ -611,9 +627,13 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, TValue>? _initialization;
 
-	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
+	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -793,7 +813,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		    TryCast(indexerGetterAccess.Parameters[2], out T3 p3, behavior))
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke(p1, p2, p3));
-			if (_returnCallbacks.Any())
+			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Func<TValue, T1, T2, T3, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
@@ -864,9 +884,13 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
 
-	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
+	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.

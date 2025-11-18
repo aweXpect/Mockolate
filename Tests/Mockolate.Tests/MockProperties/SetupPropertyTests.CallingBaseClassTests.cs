@@ -30,6 +30,17 @@ public sealed partial class SetupPropertyTests
 			await That(mock.MyPropertySetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
+		[Fact]
+		public async Task SetupCallingBaseClassWithoutReturn_ShouldReturnBaseValue()
+		{
+			MyPropertyService mock = Mock.Create<MyPropertyService>();
+			mock.SetupMock.Property.MyPropertyReturning2.CallingBaseClass();
+			
+			int result = mock.MyPropertyReturning2;
+
+			await That(result).IsEqualTo(2);
+		}
+
 		public class MyPropertyService
 		{
 			public int MyPropertyGetterCallCount { get; private set; }
@@ -40,6 +51,8 @@ public sealed partial class SetupPropertyTests
 				get => MyPropertyGetterCallCount++;
 				set => MyPropertySetterCallCount += value;
 			}
+
+			public virtual int MyPropertyReturning2 => 2;
 		}
 	}
 }

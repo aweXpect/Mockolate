@@ -81,7 +81,7 @@ public class VoidMethodSetup(string name) : MethodSetup
 		if (_returnCallbacks.Count > 0)
 		{
 			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-			Action? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+			Action returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 			returnCallback();
 		}
 	}
@@ -98,6 +98,10 @@ public class VoidMethodSetup(string name) : MethodSetup
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
@@ -223,7 +227,7 @@ public class VoidMethodSetup<T1> : MethodSetup
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Action<T1>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				Action<T1> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				returnCallback(p1);
 			}
 		}
@@ -237,13 +241,16 @@ public class VoidMethodSetup<T1> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
 		=> invocation.Name.Equals(_name) &&
-		   (_matches is not null
-			   ? _matches.Matches(invocation.Parameters)
-			   : Matches([_match1!,], invocation.Parameters));
+		   (_matches?.Matches(invocation.Parameters)
+		    ?? Matches([_match1!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
@@ -392,7 +399,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Action<T1, T2>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				Action<T1, T2> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				returnCallback(p1, p2);
 			}
 		}
@@ -406,13 +413,16 @@ public class VoidMethodSetup<T1, T2> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
 		=> invocation.Name.Equals(_name) &&
-		   (_matches is not null
-			   ? _matches.Matches(invocation.Parameters)
-			   : Matches([_match1!, _match2!,], invocation.Parameters));
+		   (_matches?.Matches(invocation.Parameters)
+		    ?? Matches([_match1!, _match2!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
@@ -568,7 +578,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Action<T1, T2, T3>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				Action<T1, T2, T3> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				returnCallback(p1, p2, p3);
 			}
 		}
@@ -582,13 +592,16 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
 		=> invocation.Name.Equals(_name) &&
-		   (_matches is not null
-			   ? _matches.Matches(invocation.Parameters)
-			   : Matches([_match1!, _match2!, _match3!,], invocation.Parameters));
+		   (_matches?.Matches(invocation.Parameters)
+		    ?? Matches([_match1!, _match2!, _match3!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
@@ -748,7 +761,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Action<T1, T2, T3, T4>? returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				Action<T1, T2, T3, T4> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
 				returnCallback(p1, p2, p3, p4);
 			}
 		}
@@ -762,13 +775,16 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup
 	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
 	protected override bool IsMatch(MethodInvocation invocation)
 		=> invocation.Name.Equals(_name) &&
-		   (_matches is not null
-			   ? _matches.Matches(invocation.Parameters)
-			   : Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters));
+		   (_matches?.Matches(invocation.Parameters)
+		    ?? Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
+
+	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)

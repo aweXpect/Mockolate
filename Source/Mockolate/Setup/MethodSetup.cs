@@ -10,6 +10,10 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class MethodSetup : IMethodSetup
 {
+	/// <inheritdoc cref="IMethodSetup.HasReturnCalls()" />
+	bool IMethodSetup.HasReturnCalls()
+		=> HasReturnCalls();
+
 	/// <inheritdoc cref="IMethodSetup.SetOutParameter{T}(string, MockBehavior)" />
 	T IMethodSetup.SetOutParameter<T>(string parameterName, MockBehavior behavior)
 		=> SetOutParameter<T>(parameterName, behavior);
@@ -46,6 +50,11 @@ public abstract class MethodSetup : IMethodSetup
 	///     values.
 	/// </summary>
 	protected abstract bool? GetCallBaseClass();
+
+	/// <summary>
+	///     Gets a value indicating whether this setup has return calls configured.
+	/// </summary>
+	protected abstract bool HasReturnCalls();
 
 	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type

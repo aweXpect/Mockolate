@@ -11,12 +11,6 @@ namespace Mockolate.Setup;
 public class IndexerSetupResult(IIndexerSetup? setup, MockBehavior behavior)
 {
 	/// <summary>
-	///     Flag indicating if the method setup result has an underlying setup.
-	/// </summary>
-	public bool HasSetup
-		=> setup is not null;
-
-	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default
 	///     values.
 	/// </summary>

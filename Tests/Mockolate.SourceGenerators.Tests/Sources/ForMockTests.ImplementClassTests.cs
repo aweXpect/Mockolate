@@ -698,7 +698,7 @@ public sealed partial class ForMockTests
 				          		if (methodExecution.CallBaseClass)
 				          		{
 				          			var baseResult = base.MyMethod2(index, isReadOnly);
-				          			if (methodExecution?.HasSetup != true)
+				          			if (methodExecution?.HasSetupResult != true)
 				          			{
 				          				return baseResult;
 				          			}
