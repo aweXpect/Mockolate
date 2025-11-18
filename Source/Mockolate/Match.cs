@@ -1,4 +1,9 @@
+using System;
+using System.Collections.Generic;
+#if NET8_0_OR_GREATER
 using Mockolate.Setup;
+// ReSharper disable UnusedTypeParameter
+#endif
 
 namespace Mockolate;
 
@@ -22,14 +27,23 @@ public partial class Match
 		///     Checks if the <paramref name="value" /> matches the expectation.
 		/// </summary>
 		bool Matches(object? value);
+
+		/// <summary>
+		///     Invokes the callbacks registered for this parameter match.
+		/// </summary>
+		void InvokeCallbacks(object? value);
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
-	public interface IParameter<out T> : IParameter
+	public interface IParameter<out T>
 	{
+		/// <summary>
+		///     Registers a <paramref name="callback" /> to execute for matching parameters.
+		/// </summary>
+		IParameter<T> Do(Action<T> callback);
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
 
@@ -95,19 +109,24 @@ public partial class Match
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
-	public interface IOutParameter<out T> : IParameter
+	public interface IOutParameter<out T>
 	{
 		/// <summary>
 		///     Retrieves the value to which the <see langword="out" /> parameter should be set.
 		/// </summary>
 		T GetValue(MockBehavior mockBehavior);
+
+		/// <summary>
+		///     Registers a <paramref name="callback" /> to execute for matching parameters.
+		/// </summary>
+		IOutParameter<T> Do(Action<T> callback);
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
-	public interface IVerifyOutParameter<out T> : IOutParameter<T>
+	public interface IVerifyOutParameter<out T>
 	{
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
@@ -115,19 +134,24 @@ public partial class Match
 	/// <summary>
 	///     Matches an <see langword="ref" /> parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
-	public interface IRefParameter<T> : IParameter
+	public interface IRefParameter<T>
 	{
 		/// <summary>
 		///     Retrieves the value to which the <see langword="out" /> parameter should be set.
 		/// </summary>
 		T GetValue(T value);
+
+		/// <summary>
+		///     Registers a <paramref name="callback" /> to execute for matching parameters.
+		/// </summary>
+		IRefParameter<T> Do(Action<T> callback);
 	}
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter.
 	/// </summary>
-	public interface IVerifyRefParameter<T> : IRefParameter<T>
+	public interface IVerifyRefParameter<T>
 	{
 	}
 #pragma warning restore S2326 // Unused type parameters should be removed
@@ -153,8 +177,10 @@ public partial class Match
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
-	private abstract class TypedMatch<T> : IParameter<T>
+	private abstract class TypedMatch<T> : IParameter<T>, IParameter
 	{
+		private List<Action<T>>? _callbacks;
+
 		/// <summary>
 		///     Checks if the <paramref name="value" /> is a matching parameter.
 		/// </summary>
@@ -172,10 +198,43 @@ public partial class Match
 			return value is null && Matches(default!);
 		}
 
+		public void InvokeCallbacks(object? value)
+		{
+			if (TryCast(value, out T typedValue) && _callbacks is not null)
+			{
+				_callbacks.ForEach(a => a.Invoke(typedValue));
+			}
+		}
+
+		public IParameter<T> Do(Action<T> callback)
+		{
+			_callbacks ??= [];
+			_callbacks.Add(callback);
+			return this;
+		}
+
 		/// <summary>
 		///     Verifies the expectation for the <paramref name="value" />.
 		/// </summary>
 		protected abstract bool Matches(T value);
+	}
+
+	private static bool TryCast<T>(object? value, out T typedValue)
+	{
+		if (value is T castValue)
+		{
+			typedValue = castValue;
+			return true;
+		}
+
+		if (value is null)
+		{
+			typedValue = default!;
+			return true;
+		}
+
+		typedValue = default!;
+		return false;
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

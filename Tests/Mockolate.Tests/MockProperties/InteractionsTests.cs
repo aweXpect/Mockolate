@@ -49,7 +49,7 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.SetProperty("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", Any<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", (IParameter)Any<int>());
 
 		await That(result).Once();
 	}
@@ -61,7 +61,7 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.SetProperty("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", Any<string>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", (IParameter)Any<string>());
 
 		await That(result).Never();
 	}
@@ -73,7 +73,7 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.SetProperty("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "baz.bar", Any<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "baz.bar", (IParameter)Any<int>());
 
 		await That(result).Never();
 	}
@@ -84,7 +84,7 @@ public sealed class InteractionsTests
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", Any<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", (IParameter)Any<int>());
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value Any<int>()");

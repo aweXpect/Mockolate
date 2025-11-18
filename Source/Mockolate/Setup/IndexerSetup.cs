@@ -96,6 +96,11 @@ public abstract class IndexerSetup : IIndexerSetup
 			}
 		}
 
+		for (int i = 0; i < parameters.Length; i++)
+		{
+			parameters[i].InvokeCallbacks(values[i]);
+		}
+
 		return true;
 	}
 
@@ -121,7 +126,7 @@ public abstract class IndexerSetup : IIndexerSetup
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
-public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1)
+public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1>
 {
 	private readonly List<Callback<Action<int, T1>>> _getterCallbacks = [];
@@ -411,7 +416,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter<T1> match1)
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
 /// </summary>
-public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IParameter<T2> match2)
+public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParameter match2)
 	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2>>> _getterCallbacks = [];
@@ -421,14 +426,6 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 	private Callback? _currentCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, TValue>? _initialization;
-
-	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
-
-	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2> CallingBaseClass(bool callBaseClass = true)
@@ -638,6 +635,14 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 		return this;
 	}
 
+	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
+	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
+
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
 		MockBehavior behavior)
@@ -706,9 +711,9 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter<T1> match1, Match.IPa
 ///     <typeparamref name="T3" />.
 /// </summary>
 public class IndexerSetup<TValue, T1, T2, T3>(
-	Match.IParameter<T1> match1,
-	Match.IParameter<T2> match2,
-	Match.IParameter<T3> match3)
+	Match.IParameter match1,
+	Match.IParameter match2,
+	Match.IParameter match3)
 	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _getterCallbacks = [];
@@ -718,14 +723,6 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private Callback? _currentCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, TValue>? _initialization;
-
-	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
-
-	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
@@ -935,6 +932,14 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return this;
 	}
 
+	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
+	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
+
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
 		MockBehavior behavior)
@@ -1007,10 +1012,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public class IndexerSetup<TValue, T1, T2, T3, T4>(
-	Match.IParameter<T1> match1,
-	Match.IParameter<T2> match2,
-	Match.IParameter<T3> match3,
-	Match.IParameter<T4> match4)
+	Match.IParameter match1,
+	Match.IParameter match2,
+	Match.IParameter match3,
+	Match.IParameter match4)
 	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _getterCallbacks = [];
@@ -1020,14 +1025,6 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private Callback? _currentCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
-
-	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
-
-	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
@@ -1124,7 +1121,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<TValue, T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3, T4>>? currentCallback = new((_, v, p1, p2, p3, p4) => callback(v, p1, p2, p3, p4));
+		Callback<Action<int, TValue, T1, T2, T3, T4>>? currentCallback =
+			new((_, v, p1, p2, p3, p4) => callback(v, p1, p2, p3, p4));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -1236,6 +1234,14 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		_currentCallback?.For(x => x < times);
 		return this;
 	}
+
+	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
+	protected override bool? GetCallBaseClass()
+		=> _callBaseClass;
+
+	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
+	protected override bool HasReturnCalls()
+		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,

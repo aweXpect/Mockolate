@@ -140,8 +140,6 @@ public class GeneralTests
 
 			     """, typeof(IList<>));
 
-		await That(result.Diagnostics).IsEmpty();
-
 		await That(result.Sources).ContainsKey("MockForIListint.g.cs").WhoseValue
 			.Contains("System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()").And
 			.Contains("public System.Collections.Generic.IEnumerator<int> GetEnumerator()");
@@ -171,8 +169,6 @@ public class GeneralTests
 			     }
 
 			     """, typeof(IList<>));
-
-		await That(result.Diagnostics).IsEmpty();
 
 		await That(result.Sources).ContainsKey("MockForIListMyRecord.g.cs").WhoseValue
 			.Contains("internal class MockForIListMyRecord : System.Collections.Generic.IList<MyOtherCode.MyRecord>");

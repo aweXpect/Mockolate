@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Mockolate.Exceptions;
 using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
@@ -88,6 +89,36 @@ public sealed partial class SetupMethodTests
 		await That(result1).IsEqualTo(1);
 		await That(result2).IsEqualTo(1);
 		await That(result3).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task Parameter_Do_ShouldExecuteCallback()
+	{
+		List<int> capturedValues = [];
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyIntMethodWithParameters(Any<int>().Do(v => capturedValues.Add(v)),
+			Any<string>());
+
+		mock.MyIntMethodWithParameters(1, "foo");
+		mock.MyIntMethodWithParameters(2, "foobar");
+		mock.MyIntMethodWithParameters(3, "bar");
+
+		await That(capturedValues).IsEqualTo([1, 2, 3,]);
+	}
+
+	[Fact]
+	public async Task Parameter_Do_ShouldOnlyExecuteCallbackWhenAllParametersMatch()
+	{
+		List<int> capturedValues = [];
+		IMethodService mock = Mock.Create<IMethodService>();
+		mock.SetupMock.Method.MyIntMethodWithParameters(Any<int>().Do(v => capturedValues.Add(v)),
+			With<string>(s => s.Length == 3));
+
+		mock.MyIntMethodWithParameters(1, "foo");
+		mock.MyIntMethodWithParameters(2, "foobar");
+		mock.MyIntMethodWithParameters(3, "bar");
+
+		await That(capturedValues).IsEqualTo([1, 3,]);
 	}
 
 	[Fact]
@@ -227,7 +258,7 @@ public sealed partial class SetupMethodTests
 	public async Task Setup_WithOutParameterWithoutCallback_ShouldUseDefaultValueSetValue()
 	{
 		IMethodService mock = Mock.Create<IMethodService>();
-		mock.SetupMock.Method.MyMethodWithOutParameter(Out<int>());
+		mock.SetupMock.Method.MyMethodWithOutParameter(AnyOut<int>());
 
 		mock.MyMethodWithOutParameter(out int value);
 
@@ -250,7 +281,7 @@ public sealed partial class SetupMethodTests
 	public async Task Setup_WithRefParameter_WithoutPredicateOrCallback_ShouldNotChangeValue()
 	{
 		IMethodService mock = Mock.Create<IMethodService>();
-		mock.SetupMock.Method.MyMethodWithRefParameter(Ref<int>());
+		mock.SetupMock.Method.MyMethodWithRefParameter(AnyRef<int>());
 		int value = 2;
 
 		mock.MyMethodWithRefParameter(ref value);
@@ -542,7 +573,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string> setup = new("Foo", new NamedParameter("bar", Any<string>()));
+			ReturnMethodSetup<int, string> setup = new("Foo", new NamedParameter("bar", (IParameter)Any<string>()));
 
 			string result = setup.ToString();
 
@@ -581,8 +612,9 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long> setup = new("Foo", new NamedParameter("p1", Any<string>()),
-				new NamedParameter("p2", Any<long>()));
+			ReturnMethodSetup<int, string, long> setup = new("Foo",
+				new NamedParameter("p1", (IParameter)Any<string>()),
+				new NamedParameter("p2", (IParameter)Any<long>()));
 
 			string result = setup.ToString();
 
@@ -622,8 +654,9 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int> setup = new("Foo",
-				new NamedParameter("p1", Any<string>()), new NamedParameter("p2", Any<long>()),
-				new NamedParameter("p3", Any<int>()));
+				new NamedParameter("p1", (IParameter)Any<string>()),
+				new NamedParameter("p2", (IParameter)Any<long>()),
+				new NamedParameter("p3", (IParameter)Any<int>()));
 
 			string result = setup.ToString();
 
@@ -663,8 +696,10 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo",
-				new NamedParameter("p1", Any<string>()), new NamedParameter("p2", Any<long>()),
-				new NamedParameter("p3", Any<int>()), new NamedParameter("p4", Any<int>()));
+				new NamedParameter("p1", (IParameter)Any<string>()),
+				new NamedParameter("p2", (IParameter)Any<long>()),
+				new NamedParameter("p3", (IParameter)Any<int>()),
+				new NamedParameter("p4", (IParameter)Any<int>()));
 
 			string result = setup.ToString();
 
@@ -706,9 +741,11 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo",
-				new NamedParameter("p1", Any<string>()), new NamedParameter("p2", Any<long>()),
-				new NamedParameter("p3", Any<int>()), new NamedParameter("p4", Any<int>()),
-				new NamedParameter("p5", Any<int>()));
+				new NamedParameter("p1", (IParameter)Any<string>()),
+				new NamedParameter("p2", (IParameter)Any<long>()),
+				new NamedParameter("p3", (IParameter)Any<int>()),
+				new NamedParameter("p4", (IParameter)Any<int>()),
+				new NamedParameter("p5", (IParameter)Any<int>()));
 
 			string result = setup.ToString();
 
@@ -753,7 +790,8 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string> setup = new("Foo", new NamedParameter("bar", Any<string>()));
+			VoidMethodSetup<string> setup = new("Foo",
+				new NamedParameter("bar", (IParameter)Any<string>()));
 
 			string result = setup.ToString();
 
@@ -776,8 +814,9 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long> setup = new("Foo", new NamedParameter("p1", Any<string>()),
-				new NamedParameter("p2", Any<long>()));
+			VoidMethodSetup<string, long> setup = new("Foo",
+				new NamedParameter("p1", (IParameter)Any<string>()),
+				new NamedParameter("p2", (IParameter)Any<long>()));
 
 			string result = setup.ToString();
 
@@ -800,8 +839,10 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int> setup = new("Foo", new NamedParameter("p1", Any<string>()),
-				new NamedParameter("p2", Any<long>()), new NamedParameter("p3", Any<int>()));
+			VoidMethodSetup<string, long, int> setup = new("Foo",
+				new NamedParameter("p1", (IParameter)Any<string>()),
+				new NamedParameter("p2", (IParameter)Any<long>()),
+				new NamedParameter("p3", (IParameter)Any<int>()));
 
 			string result = setup.ToString();
 
@@ -825,8 +866,10 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int> setup = new("Foo",
-				new NamedParameter("p1", Any<string>()), new NamedParameter("p2", Any<long>()),
-				new NamedParameter("p3", Any<int>()), new NamedParameter("p4", Any<int>()));
+				new NamedParameter("p1", (IParameter)Any<string>()),
+				new NamedParameter("p2", (IParameter)Any<long>()),
+				new NamedParameter("p3", (IParameter)Any<int>()),
+				new NamedParameter("p4", (IParameter)Any<int>()));
 
 			string result = setup.ToString();
 
@@ -852,9 +895,11 @@ public sealed partial class SetupMethodTests
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int, int> setup = new("Foo",
-				new NamedParameter("p1", Any<string>()), new NamedParameter("p2", Any<long>()),
-				new NamedParameter("p3", Any<int>()), new NamedParameter("p4", Any<int>()),
-				new NamedParameter("p5", Any<int>()));
+				new NamedParameter("p1", (IParameter)Any<string>()),
+				new NamedParameter("p2", (IParameter)Any<long>()),
+				new NamedParameter("p3", (IParameter)Any<int>()),
+				new NamedParameter("p4", (IParameter)Any<int>()),
+				new NamedParameter("p5", (IParameter)Any<int>()));
 
 			string result = setup.ToString();
 

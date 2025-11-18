@@ -50,6 +50,7 @@ public partial class Match
 			_comparerExpression = comparerExpression;
 		}
 
+		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(T value)
 		{
 			if (_comparer is not null)

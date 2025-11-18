@@ -153,6 +153,11 @@ public abstract class MethodSetup : IMethodSetup
 			}
 		}
 
+		for (int i = 0; i < namedParameters.Length; i++)
+		{
+			namedParameters[i].Parameter.InvokeCallbacks(values[i]);
+		}
+
 		return true;
 	}
 

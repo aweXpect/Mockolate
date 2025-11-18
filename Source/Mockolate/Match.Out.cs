@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 
@@ -14,6 +15,12 @@ public partial class Match
 		=> new InvokedOutParameterMatch<T>();
 
 	/// <summary>
+	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
+	/// </summary>
+	public static IOutParameter<T> AnyOut<T>()
+		=> new AnyOutParameterMatch<T>();
+
+	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
@@ -24,32 +31,79 @@ public partial class Match
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
-	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : IOutParameter<T>
+	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : TypedOutMatch<T>
 	{
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		public bool Matches(object? value) => true;
-
 		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
-		public T GetValue(MockBehavior mockBehavior) => setter();
+		public override T GetValue(MockBehavior mockBehavior) => setter();
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Out<{typeof(T).FormatType()}>({setterExpression})";
 	}
 
 	/// <summary>
+	///     Matches an <see langword="out" /> parameter against an expectation.
+	/// </summary>
+	private sealed class AnyOutParameterMatch<T> : TypedOutMatch<T>
+	{
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString() => $"AnyOut<{typeof(T).FormatType()}>()";
+	}
+
+	/// <summary>
 	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
-	private sealed class InvokedOutParameterMatch<T> : IVerifyOutParameter<T>
+	private sealed class InvokedOutParameterMatch<T> : IVerifyOutParameter<T>, IParameter
 	{
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;
 
-		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
-		public T GetValue(MockBehavior mockBehavior)
-			=> mockBehavior.DefaultValue.Generate<T>();
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		public void InvokeCallbacks(object? value)
+		{
+			// Do nothing
+		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Out<{typeof(T).FormatType()}>()";
+	}
+	
+	/// <summary>
+	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
+	/// </summary>
+	private abstract class TypedOutMatch<T> : IOutParameter<T>, IParameter
+	{
+		private List<Action<T>>? _callbacks;
+
+		/// <summary>
+		///     Checks if the <paramref name="value" /> is a matching parameter.
+		/// </summary>
+		/// <returns>
+		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
+		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
+		/// </returns>
+		public bool Matches(object? value)
+			=> value is T or null;
+
+		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
+		public virtual T GetValue(MockBehavior mockBehavior)
+			=> mockBehavior.DefaultValue.Generate<T>();
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		public void InvokeCallbacks(object? value)
+		{
+			if (TryCast(value, out T typedValue) && _callbacks is not null)
+			{
+				_callbacks.ForEach(a => a.Invoke(typedValue));
+			}
+		}
+
+		/// <inheritdoc cref="IOutParameter{T}.Do(Action{T})" />
+		public IOutParameter<T> Do(Action<T> callback)
+		{
+			_callbacks ??= [];
+			_callbacks.Add(callback);
+			return this;
+		}
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.
