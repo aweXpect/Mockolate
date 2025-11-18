@@ -9,10 +9,10 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
-			List<int> callCount = [];
+			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnGet((i, _) => { callCount.Add(i); })
+				.OnGet((i, _) => { invocations.Add(i); })
 				.For(4);
 
 			for (int i = 0; i < 20; i++)
@@ -20,16 +20,16 @@ public sealed partial class SetupPropertyTests
 				_ = sut.MyProperty;
 			}
 
-			await That(callCount).IsEqualTo([0, 1, 2, 3,]);
+			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
 		}
 
 		[Fact]
 		public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
-			List<int> callCount = [];
+			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnGet((i, _) => { callCount.Add(i); })
+				.OnGet((i, _) => { invocations.Add(i); })
 				.When(x => x > 2)
 				.For(4);
 
@@ -38,7 +38,7 @@ public sealed partial class SetupPropertyTests
 				_ = sut.MyProperty;
 			}
 
-			await That(callCount).IsEqualTo([3, 4, 5, 6,]);
+			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 		}
 
 		[Fact]
@@ -93,10 +93,10 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 		{
-			List<int> callCount = [];
+			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnGet((i, _) => { callCount.Add(i); })
+				.OnGet((i, _) => { invocations.Add(i); })
 				.When(x => x is > 3 and < 9);
 
 			for (int i = 0; i < 20; i++)
@@ -104,7 +104,7 @@ public sealed partial class SetupPropertyTests
 				_ = sut.MyProperty;
 			}
 
-			await That(callCount).IsEqualTo([4, 5, 6, 7, 8,]);
+			await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 		}
 
 		[Fact]

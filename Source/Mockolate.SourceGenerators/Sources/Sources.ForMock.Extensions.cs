@@ -647,7 +647,7 @@ internal static partial class Sources
 					.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
 					.Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
-				sb.Append("\t\tpublic PropertySetup<").Append(property.Type.Fullname).Append("> ")
+				sb.Append("\t\tpublic IPropertySetup<").Append(property.Type.Fullname).Append("> ")
 					.Append(property.IndexerParameters is not null
 						? property.Name.Replace("[]",
 							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"Match.IParameter<{p.Type.Fullname}> {p.Name}"))}]")
@@ -709,7 +709,7 @@ internal static partial class Sources
 					.Append("\" />.")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
-				sb.Append("\t\tpublic IndexerSetup<").Append(indexer.Type.Fullname);
+				sb.Append("\t\tpublic IIndexerSetup<").Append(indexer.Type.Fullname);
 				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
 					sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch

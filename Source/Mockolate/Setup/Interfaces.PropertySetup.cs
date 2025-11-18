@@ -4,7 +4,7 @@ using Mockolate.Interactions;
 namespace Mockolate.Setup;
 
 /// <summary>
-///     Interface for setting up a property.
+///     Interface for hiding some implementation details of <see cref="PropertySetup" />.
 /// </summary>
 public interface IPropertySetup
 {
@@ -70,6 +70,14 @@ public interface IPropertySetup<T>
 	IPropertySetupCallbackBuilder<T> OnGet(Action<T> callback);
 
 	/// <summary>
+	///     Registers a callback to be invoked whenever the property's getter is accessed.
+	/// </summary>
+	/// <remarks>
+	///     Use this method to perform custom logic or side effects whenever the property's value is read.
+	/// </remarks>
+	IPropertySetupCallbackBuilder<T> OnGet(Action<int, T> callback);
+
+	/// <summary>
 	///     Registers a callback to be invoked whenever the property's value is set. The callback receives the new value being
 	///     set.
 	/// </summary>
@@ -86,6 +94,15 @@ public interface IPropertySetup<T>
 	///     Use this method to perform custom logic or side effects whenever the property's value changes.
 	/// </remarks>
 	IPropertySetupCallbackBuilder<T> OnSet(Action<T, T> callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's value is set. The callback receives the new value being
+	///     set.
+	/// </summary>
+	/// <remarks>
+	///     Use this method to perform custom logic or side effects whenever the property's value changes.
+	/// </remarks>
+	IPropertySetupCallbackBuilder<T> OnSet(Action<int, T, T> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
