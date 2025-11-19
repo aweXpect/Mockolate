@@ -140,8 +140,6 @@ public sealed partial class SetupMethodTests
 					});
 
 				sut.Method1WithOutParameter(out int value);
-
-				
 				sut.VerifyMock.Invoked.Method1WithOutParameter(Out<int>()).Once();
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(3);
