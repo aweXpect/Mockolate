@@ -10,7 +10,7 @@ public static class MockBehaviorExtensions
 	///     its return values used as default values.
 	/// </summary>
 	/// <remarks>
-	///     Sets the <see cref="MockBehavior.CallBaseClass" /> to <paramref name="callBaseClass"/>.
+	///     Sets the <see cref="MockBehavior.CallBaseClass" /> to <paramref name="callBaseClass" />.
 	/// </remarks>
 	public static MockBehavior CallingBaseClass(this MockBehavior mockBehavior, bool callBaseClass = true)
 		=> mockBehavior with

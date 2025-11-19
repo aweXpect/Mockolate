@@ -102,6 +102,7 @@ internal static partial class Sources
 						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
 				}
 			}
+
 			sb.Append("\t\tresult.TriggerCallbacks(")
 				.Append(string.Join(", ", mockClass.Delegate.Parameters.Select(p => p.Name)))
 				.Append(");").AppendLine();
@@ -392,12 +393,13 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\tvar indexerResult = MockRegistrations.GetIndexer<").Append(property.Type.Fullname)
 						.Append(">(")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
-						{
-							(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-							(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-							(_, _) => p.Name,
-						})))
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p
+							=> (p.IsSpan, p.IsReadOnlySpan) switch
+							{
+								(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+								(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+								(_, _) => p.Name,
+							})))
 						.AppendLine(");");
 					sb.Append(
 							"\t\t\tif (indexerResult.CallBaseClass)")
@@ -414,19 +416,21 @@ internal static partial class Sources
 				{
 					sb.Append(
 							"\t\t\treturn MockRegistrations.GetProperty<").Append(property.Type.Fullname).Append(">(")
-						.Append(property.GetUniqueNameString()).Append(", () => base.").Append(property.Name).Append(");").AppendLine();
+						.Append(property.GetUniqueNameString()).Append(", () => base.").Append(property.Name)
+						.Append(");").AppendLine();
 				}
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
 				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<")
 					.Append(property.Type.Fullname)
-					.Append(">(").Append(string.Join(", ", property.IndexerParameters.Value.Select(p => (p.IsSpan, p.IsReadOnlySpan) switch
-					{
-						(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-						(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-						(_, _) => p.Name,
-					})))
+					.Append(">(").Append(string.Join(", ", property.IndexerParameters.Value.Select(p
+						=> (p.IsSpan, p.IsReadOnlySpan) switch
+						{
+							(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+							(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
+							(_, _) => p.Name,
+						})))
 					.AppendLine(").GetResult();");
 			}
 			else
@@ -491,7 +495,7 @@ internal static partial class Sources
 				{
 					sb.Append(
 							"\t\t\tif (MockRegistrations.SetProperty(").Append(property.GetUniqueNameString())
-					.Append(", value))").AppendLine();
+						.Append(", value))").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
@@ -580,6 +584,7 @@ internal static partial class Sources
 			sb.Append("\t\tMethodSetupResult methodExecution = MockRegistrations.InvokeMethod(")
 				.Append(method.GetUniqueNameString());
 		}
+
 		foreach (MethodParameter p in method.Parameters)
 		{
 			sb.Append(", ").Append((p.RefKind, p.IsSpan, p.IsReadOnlySpan) switch
@@ -611,7 +616,8 @@ internal static partial class Sources
 			}
 
 			sb.Append("\t\tmethodExecution.TriggerCallbacks(")
-				.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+				.Append(
+					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
 				.Append(");").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{
@@ -657,7 +663,8 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tmethodExecution.TriggerCallbacks(")
-				.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+				.Append(
+					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
 				.Append(");").AppendLine();
 			sb.Append("\t\t\t\treturn baseResult;").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
@@ -686,7 +693,8 @@ internal static partial class Sources
 
 			sb.AppendLine();
 			sb.Append("\t\tmethodExecution.TriggerCallbacks(")
-				.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+				.Append(
+					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
 				.Append(");").AppendLine();
 			sb.Append("\t\treturn methodExecution.Result;").AppendLine();
 		}
@@ -715,8 +723,10 @@ internal static partial class Sources
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name).Append(");").AppendLine();
 				}
+
 				sb.Append("\t\tmethodExecution.TriggerCallbacks(")
-					.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+					.Append(string.Join(", ",
+						method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
 					.Append(");").AppendLine();
 			}
 		}

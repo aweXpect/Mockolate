@@ -19,7 +19,7 @@ internal record Property
 			IndexerParameters = new EquatableArray<MethodParameter>(
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
-		
+
 		Obsolete = propertySymbol.GetAttributes().GetObsoleteAttribute();
 
 		if (alreadyDefinedProperties is not null)

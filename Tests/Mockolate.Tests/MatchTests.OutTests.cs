@@ -5,10 +5,10 @@ public sealed partial class MatchTests
 	public sealed class OutTests
 	{
 		[Fact]
-		public async Task ToString_ShouldReturnExpectedValue()
+		public async Task ToString_AnyOut_ShouldReturnExpectedValue()
 		{
-			IOutParameter<int> sut = Out(() => 3);
-			string expectedValue = "Out<int>(() => 3)";
+			IOutParameter<int> sut = AnyOut<int>();
+			string expectedValue = "AnyOut<int>()";
 
 			string? result = sut.ToString();
 
@@ -16,10 +16,10 @@ public sealed partial class MatchTests
 		}
 
 		[Fact]
-		public async Task ToString_AnyOut_ShouldReturnExpectedValue()
+		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IOutParameter<int> sut = AnyOut<int>();
-			string expectedValue = "AnyOut<int>()";
+			IOutParameter<int> sut = Out(() => 3);
+			string expectedValue = "Out<int>(() => 3)";
 
 			string? result = sut.ToString();
 

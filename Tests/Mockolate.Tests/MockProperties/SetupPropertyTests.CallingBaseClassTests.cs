@@ -35,7 +35,7 @@ public sealed partial class SetupPropertyTests
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();
 			mock.SetupMock.Property.MyPropertyReturning2.CallingBaseClass();
-			
+
 			int result = mock.MyPropertyReturning2;
 
 			await That(result).IsEqualTo(2);

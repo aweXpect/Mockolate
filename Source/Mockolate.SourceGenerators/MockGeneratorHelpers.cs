@@ -102,12 +102,12 @@ internal static class MockGeneratorHelpers
 		=> typeSymbol is
 		   {
 			   IsRecord: false,
-			   IsReadOnly: false, 
+			   IsReadOnly: false,
 			   ContainingNamespace: not null,
 			   TypeKind: TypeKind.Interface or TypeKind.Class or TypeKind.Delegate,
 		   } and INamedTypeSymbol namedTypeSymbol &&
 		   // Ignore open generic types
-		   (!namedTypeSymbol.IsGenericType || namedTypeSymbol.TypeArguments.All(a => a.TypeKind != TypeKind.TypeParameter)) &&
+		   (!namedTypeSymbol.IsGenericType ||
+		    namedTypeSymbol.TypeArguments.All(a => a.TypeKind != TypeKind.TypeParameter)) &&
 		   (!typeSymbol.IsSealed || typeSymbol.TypeKind == TypeKind.Delegate);
-
 }

@@ -45,7 +45,8 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
 - `CallBaseClass` (bool):
 	- If `false` (default), the mock will not call any base class implementations.
-	- If `true`, the mock will call the base class implementation and use its return values as default values, if no explicit setup is defined.
+	- If `true`, the mock will call the base class implementation and use its return values as default values, if no
+	  explicit setup is defined.
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
 

@@ -1186,8 +1186,9 @@ internal static partial class Sources
 						} + (IsNullable(p) ? "?" : "") + $" parameter{i + 1}"))).Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).GotIndexer(")
-				.Append(string.Join(", ", indexerParameters.Value.Select((p, i) => $"new Match.NamedParameter(\"{p.Name}\", (Match.IParameter)(parameter{i + 1}{
-					(IsNullable(p) ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}))"))).Append(");")
+				.Append(string.Join(", ", indexerParameters.Value.Select((p, i)
+					=> $"new Match.NamedParameter(\"{p.Name}\", (Match.IParameter)(parameter{i + 1}{
+						(IsNullable(p) ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}))"))).Append(");")
 				.AppendLine();
 			sb.AppendLine("\t\t}");
 		}
@@ -1345,8 +1346,9 @@ internal static partial class Sources
 				.Append(indexer.Type.Fullname).Append(">? value)").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).SetIndexer((Match.IParameter?)value, ")
-				.Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i) => $"new Match.NamedParameter(\"{p.Name}\", (Match.IParameter)(parameter{i + 1}{
-					(IsNullable(p) ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}))")))
+				.Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i)
+					=> $"new Match.NamedParameter(\"{p.Name}\", (Match.IParameter)(parameter{i + 1}{
+						(IsNullable(p) ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}))")))
 				.Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}

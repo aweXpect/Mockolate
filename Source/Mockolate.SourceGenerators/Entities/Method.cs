@@ -21,6 +21,7 @@ internal record Method
 				.Select(x => new GenericParameter((ITypeParameterSymbol)x)).ToArray());
 			Name += $"<{string.Join(", ", GenericParameters.Value.Select(x => x.Name))}>";
 		}
+
 		Obsolete = methodSymbol.GetAttributes().GetObsoleteAttribute();
 
 		if (alreadyDefinedMethods is not null)

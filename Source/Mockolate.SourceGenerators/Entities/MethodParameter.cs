@@ -10,16 +10,16 @@ internal readonly record struct MethodParameter
 		Name = parameterSymbol.Name;
 		RefKind = parameterSymbol.RefKind;
 		if (parameterSymbol.Type.ContainingNamespace?.Name == "System" &&
-			parameterSymbol.Type.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true)
+		    parameterSymbol.Type.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true)
 		{
 			IsSpan = parameterSymbol.Type.Name == "Span";
 			IsReadOnlySpan = parameterSymbol.Type.Name == "ReadOnlySpan";
 			if (IsSpan || IsReadOnlySpan)
 			{
-				var namedTypeSymbol = (INamedTypeSymbol)parameterSymbol.Type;
+				INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)parameterSymbol.Type;
 				if (namedTypeSymbol.TypeArguments.Length == 1)
 				{
-					var elementType = namedTypeSymbol.TypeArguments[0];
+					ITypeSymbol elementType = namedTypeSymbol.TypeArguments[0];
 					SpanType = new Type(elementType);
 				}
 				else

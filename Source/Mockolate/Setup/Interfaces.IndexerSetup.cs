@@ -271,7 +271,8 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 }
 
 /// <summary>
-///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
+///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
 /// </summary>
 public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2> : IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>
 {
@@ -285,7 +286,8 @@ public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2> : IIndexer
 }
 
 /// <summary>
-///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
+///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
 /// </summary>
 public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2> : IIndexerSetup<TValue, T1, T2>
 {
@@ -294,14 +296,16 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2> : IInd
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to <see langword="true" />
+	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
 	///     ).
 	/// </remarks>
 	IIndexerSetup<TValue, T1, T2> For(int times);
 }
 
 /// <summary>
-///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" /> and <typeparamref name="T3" />.
+///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" /> and
+///     <typeparamref name="T3" />.
 /// </summary>
 public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 {
@@ -405,9 +409,11 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 }
 
 /// <summary>
-///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" /> and <typeparamref name="T3" />.
+///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
-public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3> : IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>
+public interface
+	IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3> : IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns true.
@@ -419,7 +425,8 @@ public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3> : 
 }
 
 /// <summary>
-///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" /> and <typeparamref name="T3" />.
+///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
 public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3> : IIndexerSetup<TValue, T1, T2, T3>
 {
@@ -428,7 +435,8 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to <see langword="true" />
+	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
 	///     ).
 	/// </remarks>
 	IIndexerSetup<TValue, T1, T2, T3> For(int times);
@@ -436,7 +444,8 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
-///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3"/> and <typeparamref name="T4" />.
+///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />,
+///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 {
@@ -540,9 +549,13 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 }
 
 /// <summary>
-///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3"/> and <typeparamref name="T4" />.
+///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
-public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>
+public interface
+	IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : IIndexerSetupCallbackWhenBuilder<TValue, T1,
+	T2,
+	T3, T4>
 {
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns true.
@@ -554,15 +567,19 @@ public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3, ou
 }
 
 /// <summary>
-///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3"/> and <typeparamref name="T4" />.
+///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
-public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4> : IIndexerSetup<TValue, T1, T2, T3, T4>
+public interface
+	IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4> : IIndexerSetup<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
-	///     The number of times is only counted for actual executions (<see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
 	/// </remarks>
 	IIndexerSetup<TValue, T1, T2, T3, T4> For(int times);
 }

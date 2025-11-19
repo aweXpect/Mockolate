@@ -171,7 +171,7 @@ internal static partial class Sources
 			                	}
 			                """);
 			sb.AppendLine();
-			
+
 			sb.AppendLine("\t/// <summary>");
 			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
 				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
@@ -358,7 +358,7 @@ internal static partial class Sources
 			                				?? throw new MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
 			                		}
 			                """);
-			
+
 			sb.AppendLine();
 			sb.AppendLine("\t\t/// <summary>");
 			sb.Append("\t\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")

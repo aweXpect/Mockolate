@@ -82,7 +82,7 @@ public partial class Match
 				(false, false) => $"Ref<{typeof(T).FormatType()}>()",
 			};
 	}
-	
+
 	/// <summary>
 	///     Matches any method <see langword="ref" /> parameter.
 	/// </summary>
@@ -114,7 +114,7 @@ public partial class Match
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Ref<{typeof(T).FormatType()}>()";
 	}
-	
+
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
@@ -139,10 +139,6 @@ public partial class Match
 			return value is null && Matches(default!);
 		}
 
-		/// <inheritdoc cref="IRefParameter{T}.GetValue(T)" />
-		public virtual T GetValue(T value)
-			=> value;
-
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 		{
@@ -151,6 +147,10 @@ public partial class Match
 				_callbacks.ForEach(a => a.Invoke(typedValue));
 			}
 		}
+
+		/// <inheritdoc cref="IRefParameter{T}.GetValue(T)" />
+		public virtual T GetValue(T value)
+			=> value;
 
 		/// <inheritdoc cref="IRefParameter{T}.Do(Action{T})" />
 		public IRefParameter<T> Do(Action<T> callback)

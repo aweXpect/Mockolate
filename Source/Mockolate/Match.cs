@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 #if NET8_0_OR_GREATER
 using Mockolate.Setup;
+
 // ReSharper disable UnusedTypeParameter
 #endif
 
@@ -16,6 +17,24 @@ public partial class Match
 	private Match()
 	{
 		// Prevent instantiation.
+	}
+
+	private static bool TryCast<T>(object? value, out T typedValue)
+	{
+		if (value is T castValue)
+		{
+			typedValue = castValue;
+			return true;
+		}
+
+		if (value is null)
+		{
+			typedValue = default!;
+			return true;
+		}
+
+		typedValue = default!;
+		return false;
 	}
 
 	/// <summary>
@@ -173,7 +192,7 @@ public partial class Match
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"{Parameter} {Name}";
 	}
-	
+
 	/// <summary>
 	///     Provides monitoring capabilities for parameters of the specified type from a mocked method or indexer,
 	///     allowing inspection of actual matched values.
@@ -229,24 +248,6 @@ public partial class Match
 		///     Verifies the expectation for the <paramref name="value" />.
 		/// </summary>
 		protected abstract bool Matches(T value);
-	}
-
-	private static bool TryCast<T>(object? value, out T typedValue)
-	{
-		if (value is T castValue)
-		{
-			typedValue = castValue;
-			return true;
-		}
-
-		if (value is null)
-		{
-			typedValue = default!;
-			return true;
-		}
-
-		typedValue = default!;
-		return false;
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

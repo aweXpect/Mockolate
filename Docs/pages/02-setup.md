@@ -24,14 +24,14 @@ sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
 
 // Setup method with callback
 sut.SetupMock.Method.Dispense(With("White"), Any<int>())
-    .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
+    .Do((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
 sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
     .Throws<InvalidChocolateException>();
 ```
 
-- Use `.Callback(…)` to run code when the method is called. Supports parameterless or parameter callbacks.
+- Use `.Do(…)` to run code when the method is called. Supports parameterless or parameter callbacks.
 - Use `.Returns(…)` to specify the value to return. You can provide a direct value, a callback, or a callback with
   parameters.
 - Use `.Throws(…)` to specify an exception to throw. Supports direct exceptions, exception factories, or factories with
@@ -63,9 +63,12 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 #### Parameter Interaction
 
-With `Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side effects or checks directly when the method or indexer is called. With `.Monitor(out monitor)`, you can track the actual values passed during test execution and analyze them afterwards.
+With `Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side
+effects or checks directly when the method or indexer is called. With `.Monitor(out monitor)`, you can track the actual
+values passed during test execution and analyze them afterwards.
 
 **Example: Do for method parameter**
+
 ```csharp
 int lastAmount = 0;
 sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Do(amount => lastAmount = amount));
@@ -74,6 +77,7 @@ sut.Dispense("Dark", 42);
 ```
 
 **Example: Monitor for method parameter**
+
 ```csharp
 Mockolate.ParameterMonitor<int> monitor;
 sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Monitor(out monitor));
@@ -140,4 +144,5 @@ sut.SetupMock.Indexer(With("Dark"))
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
 **Note**:
-  You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for methods.
+You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for
+methods.

@@ -61,7 +61,8 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.SetProperty("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", (IParameter)Any<string>());
+		VerificationResult<IChocolateDispenser> result =
+			registration.Property(mock, "foo.bar", (IParameter)Any<string>());
 
 		await That(result).Never();
 	}

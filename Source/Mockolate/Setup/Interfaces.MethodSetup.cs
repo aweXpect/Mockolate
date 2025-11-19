@@ -76,12 +76,12 @@ public interface IReturnMethodSetup<in TReturn>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn> Callback(Action callback);
+	IReturnMethodSetupCallbackBuilder<TReturn> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn> Callback(Action<int> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn> Do(Action<int> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -157,17 +157,17 @@ public interface IReturnMethodSetup<in TReturn, out T1>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Callback(Action callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Callback(Action<T1> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Callback(Action<int, T1> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -255,17 +255,17 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Callback(Action callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Callback(Action<T1, T2> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Callback(Action<int, T1, T2> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<int, T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -354,17 +354,17 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Callback(Action callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Callback(Action<T1, T2, T3> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Callback(Action<int, T1, T2, T3> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -453,17 +453,17 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Callback(Action callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Callback(Action<T1, T2, T3, T4> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Callback(Action<int, T1, T2, T3, T4> callback);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -552,12 +552,12 @@ public interface IVoidMethodSetup
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder Callback(Action callback);
+	IVoidMethodSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder Callback(Action<int> callback);
+	IVoidMethodSetupCallbackBuilder Do(Action<int> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -627,17 +627,17 @@ public interface IVoidMethodSetup<out T1>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1> Callback(Action callback);
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1> Callback(Action<T1> callback);
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action<T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1> Callback(Action<int, T1> callback);
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -712,17 +712,17 @@ public interface IVoidMethodSetup<out T1, out T2>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2> Callback(Action callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2> Callback(Action<T1, T2> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2> Callback(Action<int, T1, T2> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -797,17 +797,17 @@ public interface IVoidMethodSetup<out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Callback(Action callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Callback(Action<T1, T2, T3> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Callback(Action<int, T1, T2, T3> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -883,17 +883,17 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Callback(Action callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Callback(Action<T1, T2, T3, T4> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Callback(Action<int, T1, T2, T3, T4> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.

@@ -29,10 +29,11 @@ public class UseVerificationAnalyzer : DiagnosticAnalyzer
 		{
 			ITypeSymbol? returnType = invocationOperation.Type;
 			if (returnType is INamedTypeSymbol namedReturnType &&
-				namedReturnType.ContainingNamespace?.ContainingNamespace?.ContainingNamespace?.IsGlobalNamespace == true &&
-				namedReturnType.ContainingNamespace.ContainingNamespace.Name == "Mockolate" &&
-				namedReturnType.ContainingNamespace.Name == "Verify" &&
-				namedReturnType.Name == "VerificationResult")
+			    namedReturnType.ContainingNamespace?.ContainingNamespace?.ContainingNamespace?.IsGlobalNamespace ==
+			    true &&
+			    namedReturnType.ContainingNamespace.ContainingNamespace.Name == "Mockolate" &&
+			    namedReturnType.ContainingNamespace.Name == "Verify" &&
+			    namedReturnType.Name == "VerificationResult")
 			{
 				CheckIsUsed(context, invocationOperation);
 			}
