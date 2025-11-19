@@ -1,4 +1,6 @@
-using Mockolate.Tests.Dummy;
+using System;
+using System.Threading.Tasks;
+using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
 using System.Net;

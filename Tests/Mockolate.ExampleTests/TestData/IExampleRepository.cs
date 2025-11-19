@@ -1,4 +1,6 @@
-namespace Mockolate.Tests.Dummy;
+using System;
+
+namespace Mockolate.ExampleTests.TestData;
 
 public abstract class MyClass
 {
