@@ -94,7 +94,7 @@ public sealed partial class MatchTests
 		{
 			IMyService mock = Mock.Create<IMyService>();
 			mock.SetupMock.Method.DoSomething(With<MyImplementation>(_ => true))
-				.Callback(d => d.DoWork())
+				.Do(d => d.DoWork())
 				.Returns(3);
 			MyImplementation value1 = new();
 
@@ -155,7 +155,7 @@ public sealed partial class MatchTests
 		{
 			IMyService mock = Mock.Create<IMyService>();
 			mock.SetupMock.Method.DoSomething(With<MyImplementation>(_ => true))
-				.Callback(d => d.DoWork())
+				.Do(d => d.DoWork())
 				.Returns(3);
 			MyImplementation value1 = new();
 			MyOtherImplementation value2 = new();

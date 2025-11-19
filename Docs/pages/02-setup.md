@@ -24,14 +24,14 @@ sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
 
 // Setup method with callback
 sut.SetupMock.Method.Dispense(With("White"), Any<int>())
-    .Callback((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
+    .Do((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
 sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
     .Throws<InvalidChocolateException>();
 ```
 
-- Use `.Callback(…)` to run code when the method is called. Supports parameterless or parameter callbacks.
+- Use `.Do(…)` to run code when the method is called. Supports parameterless or parameter callbacks.
 - Use `.Returns(…)` to specify the value to return. You can provide a direct value, a callback, or a callback with
   parameters.
 - Use `.Throws(…)` to specify an exception to throw. Supports direct exceptions, exception factories, or factories with

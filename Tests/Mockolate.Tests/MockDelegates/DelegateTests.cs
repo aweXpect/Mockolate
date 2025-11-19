@@ -7,7 +7,7 @@ public class DelegateTests
 	{
 		bool isCalled = false;
 		Action mock = Mock.Create<Action>();
-		mock.SetupMock.Invoke().Callback(() => isCalled = true);
+		mock.SetupMock.Invoke().Do(() => isCalled = true);
 
 		mock.Invoke();
 
@@ -20,7 +20,7 @@ public class DelegateTests
 	{
 		bool isCalled = false;
 		Func<int> mock = Mock.Create<Func<int>>();
-		mock.SetupMock.Invoke().Callback(() => isCalled = true).Returns(3);
+		mock.SetupMock.Invoke().Do(() => isCalled = true).Returns(3);
 
 		int result = mock();
 

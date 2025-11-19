@@ -32,9 +32,9 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder Callback(Action callback)
+	public IVoidMethodSetupCallbackBuilder Do(Action callback)
 	{
-		Callback<Action<int>>? currentCallback = new(_ => callback());
+		Callback<Action<int>> currentCallback = new(_ => callback());
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -43,9 +43,9 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder Callback(Action<int> callback)
+	public IVoidMethodSetupCallbackBuilder Do(Action<int> callback)
 	{
-		Callback<Action<int>>? currentCallback = new(callback);
+		Callback<Action<int>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -193,9 +193,9 @@ public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1> Callback(Action callback)
+	public IVoidMethodSetupCallbackBuilder<T1> Do(Action callback)
 	{
-		Callback<Action<int, T1>>? currentCallback = new((_, _) => callback());
+		Callback<Action<int, T1>> currentCallback = new((_, _) => callback());
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -204,9 +204,9 @@ public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1> Callback(Action<T1> callback)
+	public IVoidMethodSetupCallbackBuilder<T1> Do(Action<T1> callback)
 	{
-		Callback<Action<int, T1>>? currentCallback = new((_, p1) => callback(p1));
+		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback(p1));
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -215,9 +215,9 @@ public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1> Callback(Action<int, T1> callback)
+	public IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback)
 	{
-		Callback<Action<int, T1>>? currentCallback = new(callback);
+		Callback<Action<int, T1>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -399,9 +399,9 @@ public class VoidMethodSetup<T1, T2> : MethodSetup, IVoidMethodSetupCallbackBuil
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2> Callback(Action callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2>>? currentCallback = new((_, _, _) => callback());
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => callback());
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -410,9 +410,9 @@ public class VoidMethodSetup<T1, T2> : MethodSetup, IVoidMethodSetupCallbackBuil
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2> Callback(Action<T1, T2> callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<T1, T2> callback)
 	{
-		Callback<Action<int, T1, T2>>? currentCallback = new((_, p1, p2) => callback(p1, p2));
+		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => callback(p1, p2));
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -421,9 +421,9 @@ public class VoidMethodSetup<T1, T2> : MethodSetup, IVoidMethodSetupCallbackBuil
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2> Callback(Action<int, T1, T2> callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback)
 	{
-		Callback<Action<int, T1, T2>>? currentCallback = new(callback);
+		Callback<Action<int, T1, T2>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -612,9 +612,9 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallback
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Callback(Action callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3>>? currentCallback = new((_, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => callback());
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -623,9 +623,9 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallback
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Callback(Action<T1, T2, T3> callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<T1, T2, T3> callback)
 	{
-		Callback<Action<int, T1, T2, T3>>? currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -634,9 +634,9 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallback
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Callback(Action<int, T1, T2, T3> callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<int, T1, T2, T3> callback)
 	{
-		Callback<Action<int, T1, T2, T3>>? currentCallback = new(callback);
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -829,9 +829,9 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IVoidMethodSetupCall
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Callback(Action callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>>? currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => callback());
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -840,9 +840,9 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IVoidMethodSetupCall
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Callback(Action<T1, T2, T3, T4> callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>>? currentCallback = new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -851,9 +851,9 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IVoidMethodSetupCall
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Callback(Action<int, T1, T2, T3, T4> callback)
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>>? currentCallback = new(callback);
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;

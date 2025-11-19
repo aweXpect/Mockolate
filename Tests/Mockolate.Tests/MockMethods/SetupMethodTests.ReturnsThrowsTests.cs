@@ -281,7 +281,7 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method1(Any<int>())
-					.Callback(() => { callCount++; })
+					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
 				string result = sut.Method1(1);
@@ -448,7 +448,7 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
-					.Callback(() => { callCount++; })
+					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
 				string result = sut.Method2(1, 2);
@@ -619,7 +619,7 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
-					.Callback(() => { callCount++; })
+					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
 				string result = sut.Method3(1, 2, 3);
@@ -791,7 +791,7 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
 				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
-					.Callback(() => { callCount++; })
+					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
 				string result = sut.Method4(1, 2, 3, 4);
@@ -973,7 +973,7 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(),
 						Any<int>())
-					.Callback(() => { callCount++; })
+					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
 				string result = sut.Method5(1, 2, 3, 4, 5);
