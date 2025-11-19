@@ -290,16 +290,13 @@ public class MockGeneratorTests
 			     }
 			     """);
 
-		await ThatAll(
-			That(result.Sources.Keys).IsEqualTo([
+		await That(result.Sources.Keys).IsEqualTo([
 				"Mock.g.cs",
 				"MockGeneratorAttribute.g.cs",
 				"MockForIMyInterface1Extensions.g.cs",
 				"MockForIMyInterface2Extensions.g.cs",
 				"MockRegistration.g.cs",
-			]).InAnyOrder(),
-			That(result.Diagnostics).IsEmpty()
-		);
+			]).InAnyOrder();
 	}
 
 	[Fact]

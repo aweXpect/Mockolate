@@ -98,6 +98,9 @@ namespace Mockolate
         public Mockolate.DefaultValues.IDefaultValueGenerator DefaultValue { get; init; }
         public bool ThrowWhenNotSetup { get; init; }
         public static Mockolate.MockBehavior Default { get; }
+        public Mockolate.MockBehavior Initialize<T>(params System.Action<Mockolate.Setup.IMockSetup<T>>[] setups) { }
+        public Mockolate.MockBehavior Initialize<T>(params System.Action<int, Mockolate.Setup.IMockSetup<T>>[] setups) { }
+        public bool TryInitialize<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Action<Mockolate.Setup.IMockSetup<T>>[]? setups) { }
     }
     public static class MockBehaviorExtensions
     {

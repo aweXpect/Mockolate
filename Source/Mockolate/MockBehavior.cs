@@ -1,4 +1,10 @@
+using System;
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
 using Mockolate.DefaultValues;
+using Mockolate.Setup;
 
 namespace Mockolate;
 
@@ -7,6 +13,8 @@ namespace Mockolate;
 /// </summary>
 public record MockBehavior
 {
+	private ConcurrentStack<IInitializer>? _initializers;
+
 	/// <summary>
 	///     The default mock behavior settings.
 	/// </summary>
@@ -39,4 +47,70 @@ public record MockBehavior
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
 		= new DefaultValueGenerator();
+
+	/// <summary>
+	///     Initialize all mocks of type <typeparamref name="T" /> with the given <paramref name="setups" />.
+	/// </summary>
+	public MockBehavior Initialize<T>(params Action<IMockSetup<T>>[] setups)
+	{
+		_initializers ??= [];
+		_initializers.Push(new SimpleInitializer<T>(setups));
+		return this;
+	}
+
+	/// <summary>
+	///     Initialize all mocks of type <typeparamref name="T" /> with the given <paramref name="setups" />.
+	/// </summary>
+	/// <remarks>
+	///     Provides a unique counter for each generated mock as first parameter.
+	/// </remarks>
+	public MockBehavior Initialize<T>(params Action<int, IMockSetup<T>>[] setups)
+	{
+		_initializers ??= [];
+		_initializers.Push(new CounterInitializer<T>(setups));
+		return this;
+	}
+
+	/// <summary>
+	///     Tries to get the initialization setups for a mock of type <typeparamref name="T" />.
+	/// </summary>
+	/// <remarks>
+	///     Returns <see langword="false" />, when no matching initialization is found.
+	/// </remarks>
+	public bool TryInitialize<T>([NotNullWhen(true)] out Action<IMockSetup<T>>[]? setups)
+	{
+		if (_initializers?
+			    .FirstOrDefault(i => i is IInitializer<T>) is not IInitializer<T> initializer)
+		{
+			setups = null;
+			return false;
+		}
+
+		setups = initializer.GetSetups();
+		return true;
+	}
+
+	private interface IInitializer;
+
+	private interface IInitializer<T> : IInitializer
+	{
+		Action<IMockSetup<T>>[] GetSetups();
+	}
+
+	private sealed class SimpleInitializer<T>(Action<IMockSetup<T>>[] setups) : IInitializer<T>
+	{
+		public Action<IMockSetup<T>>[] GetSetups()
+			=> setups;
+	}
+
+	private sealed class CounterInitializer<T>(Action<int, IMockSetup<T>>[] setups) : IInitializer<T>
+	{
+		private int _counter;
+
+		public Action<IMockSetup<T>>[] GetSetups()
+		{
+			int index = Interlocked.Increment(ref _counter);
+			return setups.Select(a => new Action<IMockSetup<T>>(s => a(index, s))).ToArray();
+		}
+	}
 }

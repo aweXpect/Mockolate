@@ -230,6 +230,20 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		partial void Generate<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups, params Type[] types)
 			          		{
+			          			if (mockBehavior.TryInitialize<T>(out Action<IMockSetup<T>>[]? additionalSetups))
+			          			{
+			          				if (setups.Length > 0)
+			          				{
+			          					Action<IMockSetup<T>>[] concatenatedSetups = new Action<IMockSetup<T>>[additionalSetups.Length + setups.Length];
+			          					additionalSetups.CopyTo(concatenatedSetups, 0);
+			          					setups.CopyTo(concatenatedSetups, additionalSetups.Length);
+			          					setups = concatenatedSetups;
+			          				}
+			          				else
+			          				{
+			          					setups = additionalSetups;
+			          				}
+			          			}
 			          			if (types.Length == 1 &&
 			          			    types[0] == typeof(MyCode.IMyInterface))
 			          			{
