@@ -12,7 +12,7 @@ internal static class Helpers
 		{
 			return sb;
 		}
-		
+
 		sb.Append(prefix).Append("[System.Obsolete(");
 		if (obsolete.Text is not null)
 		{
@@ -22,6 +22,7 @@ internal static class Helpers
 		sb.Append(")]").AppendLine();
 		return sb;
 	}
+
 	public static ObsoleteAttribute? GetObsoleteAttribute(this ImmutableArray<AttributeData> attributes)
 	{
 		AttributeData? obsoleteAttribute = attributes

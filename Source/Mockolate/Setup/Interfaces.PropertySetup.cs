@@ -147,23 +147,25 @@ public interface IPropertySetup<T>
 public interface IPropertySetupCallbackBuilder<T> : IPropertySetupWhenBuilder<T>
 {
 	/// <summary>
-	///      Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Limits the callback to only execute for property accesses where the predicate returns true.
 	/// </summary>
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
 	IPropertySetupWhenBuilder<T> When(Func<int, bool> predicate);
 }
+
 /// <summary>
 ///     Interface for setting up a property with fluent syntax.
 /// </summary>
 public interface IPropertySetupWhenBuilder<T> : IPropertySetup<T>
 {
 	/// <summary>
-	///      Limits the callback to only execute for the given number of <paramref name="times"/>.
+	///     Limits the callback to only execute for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
-	///     The number of times is only counted for actual executions (<see cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})"/> evaluates to <see langword="true" />).
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
 	IPropertySetup<T> For(int times);
 }

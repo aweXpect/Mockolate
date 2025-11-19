@@ -63,9 +63,12 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 #### Parameter Interaction
 
-With `Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side effects or checks directly when the method or indexer is called. With `.Monitor(out monitor)`, you can track the actual values passed during test execution and analyze them afterwards.
+With `Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side
+effects or checks directly when the method or indexer is called. With `.Monitor(out monitor)`, you can track the actual
+values passed during test execution and analyze them afterwards.
 
 **Example: Do for method parameter**
+
 ```csharp
 int lastAmount = 0;
 sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Do(amount => lastAmount = amount));
@@ -74,6 +77,7 @@ sut.Dispense("Dark", 42);
 ```
 
 **Example: Monitor for method parameter**
+
 ```csharp
 Mockolate.ParameterMonitor<int> monitor;
 sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Monitor(out monitor));
@@ -140,4 +144,5 @@ sut.SetupMock.Indexer(With("Dark"))
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
 **Note**:
-  You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for methods.
+You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for
+methods.

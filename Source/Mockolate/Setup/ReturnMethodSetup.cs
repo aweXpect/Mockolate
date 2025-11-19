@@ -658,7 +658,8 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup, IReturnMethodSetu
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup, IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>
+public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _callbacks = [];
 	private readonly Match.NamedParameter? _match1;
@@ -920,7 +921,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup, IReturnMethod
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <typeparamref name="TReturn" />.
 /// </summary>
-public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup, IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>
+public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _callbacks = [];
 	private readonly Match.NamedParameter? _match1;

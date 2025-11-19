@@ -135,7 +135,8 @@ internal record Class
 			if (namedType.IsGenericType)
 			{
 				return GetPrefix(namedType) + namedType.Name + "<" + string.Join(",",
-					namedType.TypeArguments.Select(t => t.TypeKind == TypeKind.TypeParameter ? t.Name : GetTypeFullName(t))) + ">";
+					namedType.TypeArguments.Select(t
+						=> t.TypeKind == TypeKind.TypeParameter ? t.Name : GetTypeFullName(t))) + ">";
 			}
 
 			return namedType.SpecialType switch

@@ -200,11 +200,9 @@ public sealed partial class SetupIndexerTests
 				get => MyIndexerWith5KeysGetterCallCount++;
 				set => MyIndexerWith5KeysSetterCallCount += value;
 			}
-			
+
 			public virtual int this[string keyReturning2]
-			{
-				get => 2;
-			}
+				=> 2;
 		}
 	}
 }

@@ -119,7 +119,8 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
 - `CallBaseClass` (bool):
 	- If `false` (default), the mock will not call any base class implementations.
-	- If `true`, the mock will call the base class implementation and use its return values as default values, if no explicit setup is defined.
+	- If `true`, the mock will call the base class implementation and use its return values as default values, if no
+	  explicit setup is defined.
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
 
@@ -200,9 +201,12 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 #### Parameter Interaction
 
-With `Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side effects or checks directly when the method or indexer is called. With `.Monitor(out monitor)`, you can track the actual values passed during test execution and analyze them afterwards.
+With `Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side
+effects or checks directly when the method or indexer is called. With `.Monitor(out monitor)`, you can track the actual
+values passed during test execution and analyze them afterwards.
 
 **Example: Do for method parameter**
+
 ```csharp
 int lastAmount = 0;
 sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Do(amount => lastAmount = amount));
@@ -211,6 +215,7 @@ sut.Dispense("Dark", 42);
 ```
 
 **Example: Monitor for method parameter**
+
 ```csharp
 Mockolate.ParameterMonitor<int> monitor;
 sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Monitor(out monitor));
@@ -277,7 +282,8 @@ sut.SetupMock.Indexer(With("Dark"))
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
 **Note**:
-You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for methods.
+You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for
+methods.
 
 ## Mock events
 

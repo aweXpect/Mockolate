@@ -134,6 +134,7 @@ internal static partial class Sources
 					.Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
 			}
 		}
+
 		sb.Append("\t\tDefaultValueGenerator.Register(new RecursiveMockValueFactory());").AppendLine();
 
 		sb.AppendLine("\t}");

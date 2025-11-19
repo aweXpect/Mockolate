@@ -66,13 +66,25 @@ public partial class Match
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Out<{typeof(T).FormatType()}>()";
 	}
-	
+
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
 	private abstract class TypedOutMatch<T> : IOutParameter<T>, IParameter
 	{
 		private List<Action<T>>? _callbacks;
+
+		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
+		public virtual T GetValue(MockBehavior mockBehavior)
+			=> mockBehavior.DefaultValue.Generate<T>();
+
+		/// <inheritdoc cref="IOutParameter{T}.Do(Action{T})" />
+		public IOutParameter<T> Do(Action<T> callback)
+		{
+			_callbacks ??= [];
+			_callbacks.Add(callback);
+			return this;
+		}
 
 		/// <summary>
 		///     Checks if the <paramref name="value" /> is a matching parameter.
@@ -84,10 +96,6 @@ public partial class Match
 		public bool Matches(object? value)
 			=> value is T or null;
 
-		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
-		public virtual T GetValue(MockBehavior mockBehavior)
-			=> mockBehavior.DefaultValue.Generate<T>();
-
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 		{
@@ -95,14 +103,6 @@ public partial class Match
 			{
 				_callbacks.ForEach(a => a.Invoke(typedValue));
 			}
-		}
-
-		/// <inheritdoc cref="IOutParameter{T}.Do(Action{T})" />
-		public IOutParameter<T> Do(Action<T> callback)
-		{
-			_callbacks ??= [];
-			_callbacks.Add(callback);
-			return this;
 		}
 	}
 }
