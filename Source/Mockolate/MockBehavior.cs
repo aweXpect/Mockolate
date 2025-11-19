@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -13,7 +13,7 @@ namespace Mockolate;
 /// </summary>
 public record MockBehavior
 {
-	private readonly List<IInitializer> _initializers = [];
+	private ConcurrentStack<IInitializer>? _initializers;
 
 	/// <summary>
 	///     The default mock behavior settings.
@@ -53,7 +53,8 @@ public record MockBehavior
 	/// </summary>
 	public MockBehavior Initialize<T>(params Action<IMockSetup<T>>[] setups)
 	{
-		_initializers.Add(new SimpleInitializer<T>(setups));
+		_initializers ??= [];
+		_initializers.Push(new SimpleInitializer<T>(setups));
 		return this;
 	}
 
@@ -61,11 +62,12 @@ public record MockBehavior
 	///     Initialize all mocks of type <typeparamref name="T" /> with the given <paramref name="setups" />.
 	/// </summary>
 	/// <remarks>
-	///     Provides an unique counter for each generated mock as first parameter.
+	///     Provides a unique counter for each generated mock as first parameter.
 	/// </remarks>
 	public MockBehavior Initialize<T>(params Action<int, IMockSetup<T>>[] setups)
 	{
-		_initializers.Add(new CounterInitializer<T>(setups));
+		_initializers ??= [];
+		_initializers.Push(new CounterInitializer<T>(setups));
 		return this;
 	}
 
@@ -77,9 +79,8 @@ public record MockBehavior
 	/// </remarks>
 	public bool TryInitialize<T>([NotNullWhen(true)] out Action<IMockSetup<T>>[]? setups)
 	{
-		IInitializer<T>? initializer =
-			_initializers.LastOrDefault(initializer => initializer is IInitializer<T>) as IInitializer<T>;
-		if (initializer is null)
+		if (_initializers?
+			    .FirstOrDefault(i => i is IInitializer<T>) is not IInitializer<T> initializer)
 		{
 			setups = null;
 			return false;
