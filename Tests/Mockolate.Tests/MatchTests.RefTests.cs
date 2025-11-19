@@ -5,6 +5,17 @@ public sealed partial class MatchTests
 	public sealed class RefTests
 	{
 		[Fact]
+		public async Task ToString_AnyRef_ShouldReturnExpectedValue()
+		{
+			IRefParameter<int> sut = AnyRef<int>();
+			string expectedValue = "AnyRef<int>()";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IRefParameter<int?> sut = Ref<int?>(v => v * 3);
@@ -44,7 +55,7 @@ public sealed partial class MatchTests
 		{
 			IRefParameter<int?> sut = Ref<int?>(_ => true, _ => null);
 
-			bool result = sut.Matches(value);
+			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsFalse();
 		}
@@ -56,7 +67,7 @@ public sealed partial class MatchTests
 		{
 			IRefParameter<string> sut = Ref<string>(_ => predicateValue, _ => "");
 
-			bool result = sut.Matches("foo");
+			bool result = ((IParameter)sut).Matches("foo");
 
 			await That(result).IsEqualTo(predicateValue);
 		}
@@ -80,7 +91,7 @@ public sealed partial class MatchTests
 		{
 			IVerifyRefParameter<int?> sut = Ref<int?>();
 
-			bool result = sut.Matches(value);
+			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsTrue();
 		}

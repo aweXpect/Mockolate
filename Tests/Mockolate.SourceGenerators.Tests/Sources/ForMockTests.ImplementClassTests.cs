@@ -538,12 +538,8 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod1(int)" />
 				          	public bool MyMethod1(int index)
 				          	{
-				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod1", index);
-				          		if (methodExecution is null)
-				          		{
-				          			return MockRegistrations.Behavior.DefaultValue.Generate<bool>();
-				          		}
-
+				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod1", index);
+				          		methodExecution.TriggerCallbacks(index);
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -551,7 +547,8 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, bool)" />
 				          	public void MyMethod2(int index, bool isReadOnly)
 				          	{
-				          		MethodSetupResult? methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod2", index, isReadOnly);
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod2", index, isReadOnly);
+				          		methodExecution.TriggerCallbacks(index, isReadOnly);
 				          	}
 				          """).IgnoringNewlineStyle();
 		}
@@ -599,12 +596,8 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyDirectMethod(int)" />
 				          	public int MyDirectMethod(int value)
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyService.MyDirectMethod", value);
-				          		if (methodExecution is null)
-				          		{
-				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
-				          		}
-
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyService.MyDirectMethod", value);
+				          		methodExecution.TriggerCallbacks(value);
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -612,12 +605,8 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseMethod1(int)" />
 				          	public int MyBaseMethod1(int value)
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase1.MyBaseMethod1", value);
-				          		if (methodExecution is null)
-				          		{
-				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
-				          		}
-
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase1.MyBaseMethod1", value);
+				          		methodExecution.TriggerCallbacks(value);
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -625,12 +614,8 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseMethod2(int)" />
 				          	public int MyBaseMethod2(int value)
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase2.MyBaseMethod2", value);
-				          		if (methodExecution is null)
-				          		{
-				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
-				          		}
-
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase2.MyBaseMethod2", value);
+				          		methodExecution.TriggerCallbacks(value);
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -638,19 +623,15 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseMethod3(int)" />
 				          	public int MyBaseMethod3(int value)
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase3.MyBaseMethod3", value);
-				          		if (methodExecution is null)
-				          		{
-				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
-				          		}
-
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase3.MyBaseMethod3", value);
+				          		methodExecution.TriggerCallbacks(value);
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle();
 		}
 
 		[Fact]
-		public async Task Methods_ShouldImplementVirtualMethodsOfClassesAndAllExplicitelyFromAdditionalInterfaces()
+		public async Task Methods_ShouldImplementVirtualMethodsOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 		{
 			GeneratorResult result = Generator
 				.Run("""
@@ -683,32 +664,30 @@ public sealed partial class ForMockTests
 				.Contains("""
 				          	public override void MyMethod1(int index)
 				          	{
-				          		MethodSetupResult? methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", index);
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", index);
 				          		if (methodExecution.CallBaseClass)
 				          		{
 				          			base.MyMethod1(index);
 				          		}
+				          		methodExecution.TriggerCallbacks(index);
 				          	}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          	/// <inheritdoc cref="MyCode.MyService.MyMethod2(int, bool)" />
 				          	protected override bool MyMethod2(int index, bool isReadOnly)
 				          	{
-				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
+				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", index, isReadOnly);
 				          		if (methodExecution.CallBaseClass)
 				          		{
 				          			var baseResult = base.MyMethod2(index, isReadOnly);
-				          			if (methodExecution?.HasSetupResult != true)
+				          			if (!methodExecution.HasSetupResult)
 				          			{
+				          				methodExecution.TriggerCallbacks(index, isReadOnly);
 				          				return baseResult;
 				          			}
 				          		}
 
-				          		if (methodExecution is null)
-				          		{
-				          			return MockRegistrations.Behavior.DefaultValue.Generate<bool>();
-				          		}
-
+				          		methodExecution.TriggerCallbacks(index, isReadOnly);
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -717,12 +696,8 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyOtherService.SomeOtherMethod()" />
 				          	int MyCode.IMyOtherService.SomeOtherMethod()
 				          	{
-				          		MethodSetupResult<int>? methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyOtherService.SomeOtherMethod");
-				          		if (methodExecution is null)
-				          		{
-				          			return MockRegistrations.Behavior.DefaultValue.Generate<int>();
-				          		}
-
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyOtherService.SomeOtherMethod");
+				          		methodExecution.TriggerCallbacks();
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle();
@@ -757,37 +732,18 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod1(ref int)" />
 				          	public void MyMethod1(ref int index)
 				          	{
-				          		MethodSetupResult? methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod1", index);
-				          		if (methodExecution is null)
-				          		{
-				          			index = MockRegistrations.Behavior.DefaultValue.Generate<int>();
-				          		}
-				          		else
-				          		{
-				          			index = methodExecution.SetRefParameter<int>("index", index);
-				          		}
-
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod1", index);
+				          		index = methodExecution.SetRefParameter<int>("index", index);
+				          		methodExecution.TriggerCallbacks(index);
 				          	}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, out bool)" />
 				          	public bool MyMethod2(int index, out bool isReadOnly)
 				          	{
-				          		MethodSetupResult<bool>? methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod2", index, null);
-				          		if (methodExecution is null)
-				          		{
-				          			isReadOnly = MockRegistrations.Behavior.DefaultValue.Generate<bool>();
-				          		}
-				          		else
-				          		{
-				          			isReadOnly = methodExecution.SetOutParameter<bool>("isReadOnly");
-				          		}
-
-				          		if (methodExecution is null)
-				          		{
-				          			return MockRegistrations.Behavior.DefaultValue.Generate<bool>();
-				          		}
-
+				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod2", index, null);
+				          		isReadOnly = methodExecution.SetOutParameter<bool>("isReadOnly");
+				          		methodExecution.TriggerCallbacks(index, isReadOnly);
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle();

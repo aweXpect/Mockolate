@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 
@@ -42,19 +43,26 @@ public partial class Match
 		=> new InvokedRefParameterMatch<T>();
 
 	/// <summary>
+	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" />.
+	/// </summary>
+	public static IRefParameter<T> AnyRef<T>()
+		=> new AnyRefParameterMatch<T>();
+
+	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
 	private sealed class RefParameterMatch<T>(
 		Func<T, bool> predicate,
 		Func<T, T>? setter,
 		string? predicateExpression,
-		string? setterExpression) : IRefParameter<T>
+		string? setterExpression) : TypedRefMatch<T>
 	{
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		public bool Matches(object? value) => value is T typedValue && predicate(typedValue);
+		/// <inheritdoc cref="TypedRefMatch{T}.Matches(T)" />
+		protected override bool Matches(T value)
+			=> predicate(value);
 
 		/// <inheritdoc cref="IRefParameter{T}.GetValue(T)" />
-		public T GetValue(T value)
+		public override T GetValue(T value)
 		{
 			if (setter is null)
 			{
@@ -74,20 +82,88 @@ public partial class Match
 				(false, false) => $"Ref<{typeof(T).FormatType()}>()",
 			};
 	}
+	
+	/// <summary>
+	///     Matches any method <see langword="ref" /> parameter.
+	/// </summary>
+	private sealed class AnyRefParameterMatch<T> : TypedRefMatch<T>
+	{
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"AnyRef<{typeof(T).FormatType()}>()";
+
+		/// <inheritdoc cref="TypedRefMatch{T}.Matches(T)" />
+		protected override bool Matches(T value)
+			=> true;
+	}
 
 	/// <summary>
 	///     Matches a method <see langword="out" /> parameter against an expectation.
 	/// </summary>
-	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>
+	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>, IParameter
 	{
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;
 
-		/// <inheritdoc cref="IRefParameter{T}.GetValue(T)" />
-		public T GetValue(T value) => value;
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		public void InvokeCallbacks(object? value)
+		{
+			// Do nothing
+		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Ref<{typeof(T).FormatType()}>()";
+	}
+	
+	/// <summary>
+	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
+	/// </summary>
+	private abstract class TypedRefMatch<T> : IRefParameter<T>, IParameter
+	{
+		private List<Action<T>>? _callbacks;
+
+		/// <summary>
+		///     Checks if the <paramref name="value" /> is a matching parameter.
+		/// </summary>
+		/// <returns>
+		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
+		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
+		/// </returns>
+		public bool Matches(object? value)
+		{
+			if (value is T typedValue)
+			{
+				return Matches(typedValue);
+			}
+
+			return value is null && Matches(default!);
+		}
+
+		/// <inheritdoc cref="IRefParameter{T}.GetValue(T)" />
+		public virtual T GetValue(T value)
+			=> value;
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		public void InvokeCallbacks(object? value)
+		{
+			if (TryCast(value, out T typedValue) && _callbacks is not null)
+			{
+				_callbacks.ForEach(a => a.Invoke(typedValue));
+			}
+		}
+
+		/// <inheritdoc cref="IRefParameter{T}.Do(Action{T})" />
+		public IRefParameter<T> Do(Action<T> callback)
+		{
+			_callbacks ??= [];
+			_callbacks.Add(callback);
+			return this;
+		}
+
+		/// <summary>
+		///     Verifies the expectation for the <paramref name="value" />.
+		/// </summary>
+		protected abstract bool Matches(T value);
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

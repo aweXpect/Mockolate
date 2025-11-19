@@ -1,4 +1,5 @@
-﻿using Mockolate.Exceptions;
+﻿using System.Collections.Generic;
+using Mockolate.Exceptions;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockIndexers;
@@ -35,6 +36,32 @@ public sealed partial class SetupIndexerTests
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEqualTo("foo");
 		await That(result3).IsEqualTo("foo");
+	}
+
+	[Fact]
+	public async Task Parameter_Do_ShouldExecuteCallback()
+	{
+		List<string> capturedValues = [];
+		IIndexerService mock = Mock.Create<IIndexerService>();
+		mock.SetupMock.Indexer(Any<string>().Do(v => capturedValues.Add(v)), With(1), With(2)).InitializeWith(42);
+
+		_ = mock["foo", 1, 2];
+		_ = mock["bar", 1, 2];
+
+		await That(capturedValues).IsEqualTo(["foo", "bar",]);
+	}
+
+	[Fact]
+	public async Task Parameter_Do_ShouldOnlyExecuteCallbackWhenAllParametersMatch()
+	{
+		List<string> capturedValues = [];
+		IIndexerService mock = Mock.Create<IIndexerService>();
+		mock.SetupMock.Indexer(Any<string>().Do(v => capturedValues.Add(v)), With(1), With(2)).InitializeWith(42);
+
+		_ = mock["foo", 1, 2];
+		_ = mock["bar", 2, 2];
+
+		await That(capturedValues).IsEqualTo(["foo",]);
 	}
 
 	[Fact]

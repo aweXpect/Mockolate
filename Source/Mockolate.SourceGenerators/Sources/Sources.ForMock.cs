@@ -93,7 +93,7 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t").Append(parameter.Name).Append(" = result.SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-						.AppendLine("\");");
+						.Append("\");").AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
@@ -102,7 +102,9 @@ internal static partial class Sources
 						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
 				}
 			}
-
+			sb.Append("\t\tresult.TriggerCallbacks(")
+				.Append(string.Join(", ", mockClass.Delegate.Parameters.Select(p => p.Name)))
+				.Append(");").AppendLine();
 			if (mockClass.Delegate.ReturnType != Type.Void)
 			{
 				sb.Append("\t\treturn result.Result;").AppendLine();
@@ -570,12 +572,12 @@ internal static partial class Sources
 		if (method.ReturnType != Type.Void)
 		{
 			sb.Append("\t\tMethodSetupResult<").Append(method.ReturnType.Fullname)
-				.Append(">? methodExecution = MockRegistrations.InvokeMethod<")
+				.Append("> methodExecution = MockRegistrations.InvokeMethod<")
 				.Append(method.ReturnType.Fullname).Append(">(").Append(method.GetUniqueNameString());
 		}
 		else
 		{
-			sb.Append("\t\tMethodSetupResult? methodExecution = MockRegistrations.InvokeMethod(")
+			sb.Append("\t\tMethodSetupResult methodExecution = MockRegistrations.InvokeMethod(")
 				.Append(method.GetUniqueNameString());
 		}
 		foreach (MethodParameter p in method.Parameters)
@@ -597,42 +599,22 @@ internal static partial class Sources
 			{
 				if (parameter.RefKind == RefKind.Out)
 				{
-					sb.Append("\t\tif (methodExecution is null)").AppendLine();
-					sb.Append("\t\t{").AppendLine();
-					sb.Append("\t\t\t").Append(parameter.Name)
-						.Append(" = MockRegistrations.Behavior.DefaultValue.Generate<")
-						.Append(parameter.Type.Fullname).Append(">();").AppendLine();
-					sb.Append("\t\t}").AppendLine();
-					sb.Append("\t\telse").AppendLine();
-					sb.Append("\t\t{").AppendLine();
-					sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
-					sb.Append("\t\t}").AppendLine().AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
-					sb.Append("\t\tif (methodExecution is null)").AppendLine();
-					sb.Append("\t\t{").AppendLine();
-					sb.Append("\t\t\t").Append(parameter.Name)
-						.Append(" = MockRegistrations.Behavior.DefaultValue.Generate<")
-						.Append(parameter.Type.Fullname).Append(">();").AppendLine();
-					sb.Append("\t\t}").AppendLine();
-					sb.Append("\t\telse").AppendLine();
-					sb.Append("\t\t{").AppendLine();
-					sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name).Append(");").AppendLine();
-					sb.Append("\t\t}").AppendLine().AppendLine();
 				}
 			}
 
+			sb.Append("\t\tmethodExecution.TriggerCallbacks(")
+				.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+				.Append(");").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{
-				sb.Append("\t\tif (methodExecution is null)").AppendLine();
-				sb.Append("\t\t{").AppendLine();
-				sb.Append("\t\t\treturn MockRegistrations.Behavior.DefaultValue.Generate<")
-					.Append(method.ReturnType.Fullname).Append(">();").AppendLine();
-				sb.Append("\t\t}").AppendLine().AppendLine();
 				sb.Append("\t\treturn methodExecution.Result;").AppendLine();
 			}
 		}
@@ -650,7 +632,7 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append(
-							"\t\t\tif (methodExecution is not null && methodExecution.HasSetupResult == true)")
+							"\t\t\tif (methodExecution.HasSetupResult == true)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
@@ -660,7 +642,7 @@ internal static partial class Sources
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.Append(
-							"\t\t\tif (methodExecution is not null && methodExecution.HasSetupResult == true)")
+							"\t\t\tif (methodExecution.HasSetupResult == true)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
@@ -671,9 +653,12 @@ internal static partial class Sources
 			}
 
 			sb.Append(
-					"\t\t\tif (methodExecution?.HasSetupResult != true)")
+					"\t\t\tif (!methodExecution.HasSetupResult)")
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tmethodExecution.TriggerCallbacks(")
+				.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+				.Append(");").AppendLine();
 			sb.Append("\t\t\t\treturn baseResult;").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
@@ -685,32 +670,14 @@ internal static partial class Sources
 				{
 					if (parameter.RefKind == RefKind.Out)
 					{
-						sb.Append("\t\t\tif (methodExecution is null)").AppendLine();
-						sb.Append("\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t").Append(parameter.Name)
-							.Append(" = MockRegistrations.Behavior.DefaultValue.Generate<")
-							.Append(parameter.Type.Fullname).Append(">();").AppendLine();
-						sb.Append("\t\t\t}").AppendLine();
-						sb.Append("\t\t\telse").AppendLine();
-						sb.Append("\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+						sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
 							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
-						sb.Append("\t\t\t}").AppendLine().AppendLine();
 					}
 					else if (parameter.RefKind == RefKind.Ref)
 					{
-						sb.Append("\t\t\tif (methodExecution is null)").AppendLine();
-						sb.Append("\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t").Append(parameter.Name)
-							.Append(" = MockRegistrations.Behavior.DefaultValue.Generate<")
-							.Append(parameter.Type.Fullname).Append(">();").AppendLine();
-						sb.Append("\t\t\t}").AppendLine();
-						sb.Append("\t\t\telse").AppendLine();
-						sb.Append("\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+						sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
 							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 							.Append(parameter.Name).Append(");").AppendLine();
-						sb.Append("\t\t\t}").AppendLine().AppendLine();
 					}
 				}
 
@@ -718,11 +685,9 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine();
-			sb.Append("\t\tif (methodExecution is null)").AppendLine();
-			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\treturn MockRegistrations.Behavior.DefaultValue.Generate<")
-				.Append(method.ReturnType.Fullname).Append(">();").AppendLine();
-			sb.Append("\t\t}").AppendLine().AppendLine();
+			sb.Append("\t\tmethodExecution.TriggerCallbacks(")
+				.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+				.Append(");").AppendLine();
 			sb.Append("\t\treturn methodExecution.Result;").AppendLine();
 		}
 		else
@@ -740,34 +705,19 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.AppendLine();
-					sb.Append("\t\tif (methodExecution is null)").AppendLine();
-					sb.Append("\t\t{").AppendLine();
-					sb.Append("\t\t\t").Append(parameter.Name)
-						.Append(" = MockRegistrations.Behavior.DefaultValue.Generate<")
-						.Append(parameter.Type.Fullname).Append(">();").AppendLine();
-					sb.Append("\t\t}").AppendLine();
-					sb.Append("\t\telse").AppendLine();
-					sb.Append("\t\t{").AppendLine();
-					sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
-					sb.Append("\t\t}").AppendLine().AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.AppendLine();
-					sb.Append("\t\tif (methodExecution is null)").AppendLine();
-					sb.Append("\t\t{").AppendLine();
-					sb.Append("\t\t\t").Append(parameter.Name)
-						.Append(" = MockRegistrations.Behavior.DefaultValue.Generate<")
-						.Append(parameter.Type.Fullname).Append(">();").AppendLine();
-					sb.Append("\t\t}").AppendLine();
-					sb.Append("\t\telse").AppendLine();
-					sb.Append("\t\t{").AppendLine();
-					sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name).Append(");").AppendLine();
-					sb.Append("\t\t}").AppendLine();
 				}
+				sb.Append("\t\tmethodExecution.TriggerCallbacks(")
+					.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+					.Append(");").AppendLine();
 			}
 		}
 

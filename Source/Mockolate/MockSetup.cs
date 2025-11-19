@@ -35,7 +35,7 @@ public class MockSetup<T> : IHasMockRegistration, IMockSetup<T>, IProtectedMockS
 	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(Match.IParameter<object?> obj)
 	{
 		ReturnMethodSetup<bool, object?> methodSetup =
-			new(Registrations.Prefix + ".Equals", new Match.NamedParameter("obj", obj));
+			new(Registrations.Prefix + ".Equals", new Match.NamedParameter("obj", (Match.IParameter)obj));
 		Registrations.SetupMethod(methodSetup);
 		return methodSetup;
 	}

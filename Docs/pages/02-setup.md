@@ -50,9 +50,9 @@ sut.SetupMock.Method.DispenseAsync(Any<string>(), Any<int>())
     .ReturnsAsync(true);
 ```
 
-### Argument Matching
+#### Parameter Matching
 
-Mockolate provides flexible argument matching for method setups and verifications:
+Mockolate provides flexible parameter matching for method setups and verifications:
 
 - `Match.Any<T>()`: Matches any value of type `T`.
 - `Match.With<T>(predicate)`: Matches values based on a predicate.
@@ -60,6 +60,27 @@ Mockolate provides flexible argument matching for method setups and verification
 - `Match.Null<T>()`: Matches null.
 - `Match.Out<T>(…)`/`Match.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and
   predicates.
+
+#### Parameter Interaction
+
+With `Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side effects or checks directly when the method or indexer is called. With `.Monitor(out monitor)`, you can track the actual values passed during test execution and analyze them afterwards.
+
+**Example: Do for method parameter**
+```csharp
+int lastAmount = 0;
+sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Do(amount => lastAmount = amount));
+sut.Dispense("Dark", 42);
+// lastAmount == 42
+```
+
+**Example: Monitor for method parameter**
+```csharp
+Mockolate.ParameterMonitor<int> monitor;
+sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Monitor(out monitor));
+sut.Dispense("Dark", 5);
+sut.Dispense("Dark", 7);
+// monitor.Values == [5, 7]
+```
 
 ## Property Setup
 
@@ -117,3 +138,6 @@ sut.SetupMock.Indexer(With("Dark"))
   call.
 - Use `.CallingBaseClass(…)` to override the base class behavior for a specific indexer (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
+
+**Note**:
+  You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for methods.

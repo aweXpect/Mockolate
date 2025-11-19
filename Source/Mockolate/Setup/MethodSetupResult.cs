@@ -49,6 +49,12 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 
 		return value;
 	}
+
+	/// <summary>
+	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
+	/// </summary>
+	public void TriggerCallbacks(params object?[]? parameters)
+		=> setup?.TriggerCallbacks(parameters ?? [null,]);
 }
 
 /// <summary>

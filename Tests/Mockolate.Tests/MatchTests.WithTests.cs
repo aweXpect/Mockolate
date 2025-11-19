@@ -44,7 +44,7 @@ public sealed partial class MatchTests
 		{
 			IParameter<int?> sut = With<int?>(v => v is null);
 
-			bool result = sut.Matches(value);
+			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsEqualTo(expectedResult);
 		}
@@ -56,7 +56,7 @@ public sealed partial class MatchTests
 		{
 			IParameter<int?> sut = With<int?>(_ => true);
 
-			bool result = sut.Matches(value);
+			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsFalse();
 		}
@@ -68,7 +68,7 @@ public sealed partial class MatchTests
 		{
 			IParameter<string> sut = With<string>(_ => predicateValue);
 
-			bool result = sut.Matches("foo");
+			bool result = ((IParameter)sut).Matches("foo");
 
 			await That(result).IsEqualTo(predicateValue);
 		}
@@ -115,7 +115,7 @@ public sealed partial class MatchTests
 		{
 			IParameter<string?> sut = Null<string?>();
 
-			bool result = sut.Matches(value);
+			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsEqualTo(expectMatch);
 		}
@@ -129,7 +129,7 @@ public sealed partial class MatchTests
 		{
 			IParameter<int> sut = With(5);
 
-			bool result = sut.Matches(value);
+			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsEqualTo(expectMatch);
 		}
@@ -176,7 +176,7 @@ public sealed partial class MatchTests
 		{
 			IParameter<int> sut = With(5, new AllEqualComparer());
 
-			bool result = sut.Matches(value);
+			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsTrue();
 		}

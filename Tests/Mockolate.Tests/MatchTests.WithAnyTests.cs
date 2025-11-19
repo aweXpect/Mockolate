@@ -12,7 +12,7 @@ public sealed partial class MatchTests
 		{
 			IParameter<string> sut = Any<string>();
 
-			bool result = sut.Matches(value);
+			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsTrue();
 		}

@@ -641,7 +641,7 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"IsMatch(object?[])\" />").AppendLine();
 		sb.Append("\tprotected override bool IsMatch(object?[] parameters)").AppendLine();
 		sb.Append("\t\t=> Matches([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"match{i}")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(Match.IParameter)match{i}")))
 			.Append("], parameters);").AppendLine();
 		sb.AppendLine();
 

@@ -1,6 +1,7 @@
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockMethods;
 
@@ -140,6 +141,7 @@ public sealed partial class SetupMethodTests
 
 				sut.Method1WithOutParameter(out int value);
 
+				sut.VerifyMock.Invoked.Method1WithOutParameter(Out<int>()).Once();
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(3);
 				await That(receivedValue).IsEqualTo(0);
@@ -210,7 +212,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyReturnMethodSetup<T1>(string name)
-				: ReturnMethodSetup<int, T1>(name, new NamedParameter("p1", With<T1>(_ => false)))
+				: ReturnMethodSetup<int, T1>(name, new NamedParameter("p1", (IParameter)With<T1>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -417,8 +419,8 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2>(string name)
 				: ReturnMethodSetup<int, T1, T2>(name,
-					new NamedParameter("p1", With<T1>(_ => false)),
-					new NamedParameter("p2", With<T2>(_ => false)))
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)With<T2>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -662,9 +664,9 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3>(name,
-					new NamedParameter("p1", With<T1>(_ => false)),
-					new NamedParameter("p2", With<T2>(_ => false)),
-					new NamedParameter("p3", With<T3>(_ => false)))
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)With<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)With<T3>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -945,10 +947,10 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3, T4>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3, T4>(name,
-					new NamedParameter("p1", With<T1>(_ => false)),
-					new NamedParameter("p2", With<T2>(_ => false)),
-					new NamedParameter("p3", With<T3>(_ => false)),
-					new NamedParameter("p4", With<T4>(_ => false)))
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)With<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)With<T3>(_ => false)),
+					new NamedParameter("p4", (IParameter)With<T4>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1267,11 +1269,11 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3, T4, T5>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3, T4, T5>(name,
-					new NamedParameter("p1", With<T1>(_ => false)),
-					new NamedParameter("p2", With<T2>(_ => false)),
-					new NamedParameter("p3", With<T3>(_ => false)),
-					new NamedParameter("p4", With<T4>(_ => false)),
-					new NamedParameter("p5", With<T5>(_ => false)))
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)With<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)With<T3>(_ => false)),
+					new NamedParameter("p4", (IParameter)With<T4>(_ => false)),
+					new NamedParameter("p5", (IParameter)With<T5>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1436,7 +1438,8 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyVoidMethodSetup<T1>(string name)
-				: VoidMethodSetup<T1>(name, new NamedParameter("p1", With<T1>(_ => false)))
+				: VoidMethodSetup<T1>(name,
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1584,8 +1587,8 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2>(string name)
 				: VoidMethodSetup<T1, T2>(name,
-					new NamedParameter("p1", With<T1>(_ => false)),
-					new NamedParameter("p2", With<T2>(_ => false)))
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)With<T2>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1752,9 +1755,9 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3>(string name)
 				: VoidMethodSetup<T1, T2, T3>(name,
-					new NamedParameter("p1", With<T1>(_ => false)),
-					new NamedParameter("p2", With<T2>(_ => false)),
-					new NamedParameter("p3", With<T3>(_ => false)))
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)With<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)With<T3>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -1940,10 +1943,10 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3, T4>(string name)
 				: VoidMethodSetup<T1, T2, T3, T4>(name,
-					new NamedParameter("p1", With<T1>(_ => false)),
-					new NamedParameter("p2", With<T2>(_ => false)),
-					new NamedParameter("p3", With<T3>(_ => false)),
-					new NamedParameter("p4", With<T4>(_ => false)))
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)With<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)With<T3>(_ => false)),
+					new NamedParameter("p4", (IParameter)With<T4>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
@@ -2149,11 +2152,11 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3, T4, T5>(string name)
 				: VoidMethodSetup<T1, T2, T3, T4, T5>(name,
-					new NamedParameter("p1", With<T1>(_ => false)),
-					new NamedParameter("p2", With<T2>(_ => false)),
-					new NamedParameter("p3", With<T3>(_ => false)),
-					new NamedParameter("p4", With<T4>(_ => false)),
-					new NamedParameter("p5", With<T5>(_ => false)))
+					new NamedParameter("p1", (IParameter)With<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)With<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)With<T3>(_ => false)),
+					new NamedParameter("p4", (IParameter)With<T4>(_ => false)),
+					new NamedParameter("p5", (IParameter)With<T5>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
