@@ -147,7 +147,24 @@ internal static partial class Sources
 			sb.AppendLine("\t{");
 			sb.AppendLine(
 				"\t\tpartial void Generate<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups, params Type[] types)");
-			sb.AppendLine("\t\t{");
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tif (mockBehavior.TryInitialize<T>(out Action<IMockSetup<T>>[]? additionalSetups))")
+				.AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append(
+					"\t\t\t\t\tAction<IMockSetup<T>>[] concatenatedSetups = new Action<IMockSetup<T>>[additionalSetups.Length + setups.Length];")
+				.AppendLine();
+			sb.Append("\t\t\t\t\tadditionalSetups.CopyTo(concatenatedSetups, 0);").AppendLine();
+			sb.Append("\t\t\t\t\tsetups.CopyTo(concatenatedSetups, additionalSetups.Length);").AppendLine();
+			sb.Append("\t\t\t\t\tsetups = concatenatedSetups;").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
+			sb.Append("\t\t\t\telse").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\tsetups = additionalSetups;").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
 			int index = 0;
 			foreach ((string Name, MockClass MockClass) mock in mocks)
 			{
