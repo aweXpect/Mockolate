@@ -49,6 +49,7 @@ public abstract class MockMonitor
 		}
 
 		_monitoringStart = _monitoredInvocations.Count;
+		_monitoredInvocations.OnClearing += OnClearing;
 		return new MonitorScope(() => Stop());
 	}
 
@@ -62,7 +63,14 @@ public abstract class MockMonitor
 			}
 		}
 
+		_monitoredInvocations.OnClearing -= OnClearing;
 		_monitoringStart = -1;
+	}
+
+	private void OnClearing(object? sender, EventArgs e)
+	{
+		UpdateInteractions();
+		_monitoringStart = 0;
 	}
 
 	/// <summary>

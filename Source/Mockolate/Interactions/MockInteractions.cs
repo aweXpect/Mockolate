@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,18 +24,18 @@ public class MockInteractions : IMockInteractions
 		=> _interactions.Count;
 
 	/// <summary>
+	///     The registered interactions of the mock.
+	/// </summary>
+	public IEnumerable<IInteraction> Interactions
+		=> _interactions.Values.OrderBy(x => x.Index);
+
+	/// <summary>
 	///     Gets a value indicating whether there are any missing verifications for the current context.
 	/// </summary>
 	internal bool HasMissingVerifications
 		=> _missingVerification is null
 			? !_interactions.IsEmpty
 			: _missingVerification.Count > 0;
-
-	/// <summary>
-	///     The registered interactions of the mock.
-	/// </summary>
-	public IEnumerable<IInteraction> Interactions
-		=> _interactions.Values.OrderBy(x => x.Index);
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
@@ -43,18 +44,24 @@ public class MockInteractions : IMockInteractions
 		return interaction;
 	}
 
-	/// <summary>
-	///     Gets the next index for an interaction.
-	/// </summary>
-	public int GetNextIndex()
+	internal event EventHandler? OnClearing;
+
+	internal int GetNextIndex()
 		=> Interlocked.Increment(ref _index);
 
 	internal void Verified(IEnumerable<IInteraction> interactions)
 	{
 		_missingVerification ??= _interactions.Values.OrderBy(x => x.Index).ToList();
-		foreach (IInteraction? interaction in interactions)
+		foreach (IInteraction interaction in interactions)
 		{
 			_missingVerification.Remove(interaction);
 		}
+	}
+
+	internal void Clear()
+	{
+		OnClearing?.Invoke(this, EventArgs.Empty);
+		_interactions.Clear();
+		_index = -1;
 	}
 }
