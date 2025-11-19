@@ -49,7 +49,7 @@ internal static partial class Sources
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
 				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
+			sb.Append("\t\tpublic System.IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
 				.AppendLine("> monitor)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tmonitor = new MockMonitor<").Append(@class.ClassFullName)
@@ -240,7 +240,7 @@ internal static partial class Sources
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
 				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
+			sb.Append("\t\tpublic System.IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
 				.AppendLine("> monitor)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tmonitor = new MockMonitor<").Append(@class.ClassFullName)

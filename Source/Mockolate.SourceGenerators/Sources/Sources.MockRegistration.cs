@@ -38,6 +38,7 @@ internal static partial class Sources
 			:
 			[
 				"System",
+				"Mockolate.DefaultValues",
 			]);
 
 		sb.Append("""
