@@ -455,7 +455,7 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(object?[])\" />").AppendLine();
 		sb.Append("\tprotected override void TriggerParameterCallbacks(object?[] parameters)").AppendLine();
 		sb.Append("\t\t=> TriggerCallbacks([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameters);").AppendLine();
 		sb.AppendLine();
 
@@ -987,7 +987,7 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(object?[])\" />").AppendLine();
 		sb.Append("\tprotected override void TriggerParameterCallbacks(object?[] parameters)").AppendLine();
 		sb.Append("\t\t=> TriggerCallbacks([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameters);").AppendLine();
 		sb.AppendLine();
 

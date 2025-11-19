@@ -169,7 +169,7 @@ public abstract class MethodSetup : IMethodSetup
 	///     Triggers the parameter callbacks for each value in the specified array according to
 	///     the corresponding named parameter.
 	/// </summary>
-	protected static void TriggerCallbacks(Match.NamedParameter[] namedParameters, object?[] values)
+	protected static void TriggerCallbacks(Match.NamedParameter?[] namedParameters, object?[] values)
 	{
 		if (namedParameters.Length != values.Length)
 		{
@@ -178,7 +178,7 @@ public abstract class MethodSetup : IMethodSetup
 
 		for (int i = 0; i < namedParameters.Length; i++)
 		{
-			namedParameters[i].Parameter.InvokeCallbacks(values[i]);
+			namedParameters[i]?.Parameter.InvokeCallbacks(values[i]);
 		}
 	}
 
