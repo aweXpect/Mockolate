@@ -196,7 +196,7 @@ internal static partial class Sources
 			              """);
 			sb.AppendLine();
 			sb.AppendLine("""
-			              	private static Mock<T> GetMockOrThrow<T>(T subject) where T : Delegate
+			              	private static Mock<T> GetMockOrThrow<T>(T subject) where T : System.Delegate
 			              	{
 			              		var target = subject.Target;
 			              		if (target is IMockSubject<T> mock)
