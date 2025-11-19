@@ -97,13 +97,13 @@ public record MockBehavior
 		Action<IMockSetup<T>>[] GetSetups();
 	}
 
-	private class SimpleInitializer<T>(Action<IMockSetup<T>>[] setups) : IInitializer<T>
+	private sealed class SimpleInitializer<T>(Action<IMockSetup<T>>[] setups) : IInitializer<T>
 	{
 		public Action<IMockSetup<T>>[] GetSetups()
 			=> setups;
 	}
 
-	private class CounterInitializer<T>(Action<int, IMockSetup<T>>[] setups) : IInitializer<T>
+	private sealed class CounterInitializer<T>(Action<int, IMockSetup<T>>[] setups) : IInitializer<T>
 	{
 		private int _counter;
 
