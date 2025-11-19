@@ -452,6 +452,13 @@ internal static partial class Sources
 			.Append("], invocation.Parameters));").AppendLine();
 		sb.AppendLine();
 
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(object?[])\" />").AppendLine();
+		sb.Append("\tprotected override void TriggerParameterCallbacks(object?[] parameters)").AppendLine();
+		sb.Append("\t\t=> TriggerCallbacks([")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
+			.Append("], parameters);").AppendLine();
+		sb.AppendLine();
+
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetCallBaseClass()\" />").AppendLine();
 		sb.Append("\tprotected override bool? GetCallBaseClass()").AppendLine();
 		sb.Append("\t\t=> _callBaseClass;").AppendLine();
@@ -975,6 +982,13 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t: Matches([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
 			.Append("], invocation.Parameters));").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(object?[])\" />").AppendLine();
+		sb.Append("\tprotected override void TriggerParameterCallbacks(object?[] parameters)").AppendLine();
+		sb.Append("\t\t=> TriggerCallbacks([")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
+			.Append("], parameters);").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetCallBaseClass()\" />").AppendLine();

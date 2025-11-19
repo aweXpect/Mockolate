@@ -173,6 +173,18 @@ public partial class Match
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"{Parameter} {Name}";
 	}
+	
+	/// <summary>
+	///     Provides monitoring capabilities for parameters of the specified type from a mocked method or indexer,
+	///     allowing inspection of actual matched values.
+	/// </summary>
+	public interface IParameterMonitor<out T>
+	{
+		/// <summary>
+		///     Verifies the interactions with the mocked subject of <typeparamref name="T" />.
+		/// </summary>
+		IReadOnlyList<T> Values { get; }
+	}
 
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.

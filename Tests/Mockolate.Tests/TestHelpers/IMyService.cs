@@ -17,6 +17,9 @@ internal interface IMyService
 	bool IsValid(int id);
 
 	string DoSomethingAndReturn(int value);
+	
+	void MyMethodWithOutParam(out int value);
+	void MyMethodWithRefParam(ref int value);
 
 	event EventHandler? MyEvent;
 

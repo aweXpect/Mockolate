@@ -142,6 +142,12 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup, IReturnMetho
 	protected override bool IsMatch(MethodInvocation invocation)
 		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
 
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
+	protected override void TriggerParameterCallbacks(object?[] parameters)
+	{
+		// No parameters to trigger
+	}
+
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
@@ -356,6 +362,10 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup, IReturnMethodSetupCal
 		=> invocation.Name.Equals(_name) &&
 		   (_matches?.Matches(invocation.Parameters)
 		    ?? Matches([_match1!,], invocation.Parameters));
+
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
+	protected override void TriggerParameterCallbacks(object?[] parameters)
+		=> TriggerCallbacks([_match1!,], parameters);
 
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
@@ -600,6 +610,10 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup, IReturnMethodSetu
 		=> invocation.Name.Equals(_name) &&
 		   (_matches?.Matches(invocation.Parameters)
 		    ?? Matches([_match1!, _match2!,], invocation.Parameters));
+
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
+	protected override void TriggerParameterCallbacks(object?[] parameters)
+		=> TriggerCallbacks([_match1!, _match2!,], parameters);
 
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
@@ -857,6 +871,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup, IReturnMethod
 		=> invocation.Name.Equals(_name) &&
 		   (_matches?.Matches(invocation.Parameters)
 		    ?? Matches([_match1!, _match2!, _match3!,], invocation.Parameters));
+
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
+	protected override void TriggerParameterCallbacks(object?[] parameters)
+		=> TriggerCallbacks([_match1!, _match2!, _match3!,], parameters);
 
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
@@ -1125,6 +1143,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup, IReturnMe
 		=> invocation.Name.Equals(_name) &&
 		   (_matches?.Matches(invocation.Parameters)
 		    ?? Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters));
+
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
+	protected override void TriggerParameterCallbacks(object?[] parameters)
+		=> TriggerCallbacks([_match1!, _match2!, _match3!, _match4!,], parameters);
 
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()

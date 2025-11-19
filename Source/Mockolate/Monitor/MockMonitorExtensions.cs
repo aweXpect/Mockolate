@@ -19,15 +19,4 @@ public static class MockMonitorExtensions
 		monitor = new MockMonitor<T>(mock);
 		return monitor.Run();
 	}
-
-	/// <summary>
-	///     Create a <paramref name="monitor" /> to collect the matched values of the <paramref name="parameter" />.
-	/// </summary>
-	public static Match.IParameter<T> Monitor<T>(this Match.IParameter<T> parameter, out ParameterMonitor<T> monitor)
-	{
-		ParameterMonitor<T> parameterMonitor = new();
-		parameter.Do(v => parameterMonitor.AddValue(v));
-		monitor = parameterMonitor;
-		return parameter;
-	}
 }

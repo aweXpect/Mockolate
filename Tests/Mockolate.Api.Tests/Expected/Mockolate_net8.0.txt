@@ -57,6 +57,10 @@ namespace Mockolate
         {
             Mockolate.Match.IParameter<T> Do(System.Action<T> callback);
         }
+        public interface IParameterMonitor<out T>
+        {
+            System.Collections.Generic.IReadOnlyList<T> Values { get; }
+        }
         public interface IParameters
         {
             bool Matches(object?[] values);
@@ -79,6 +83,12 @@ namespace Mockolate
             public Mockolate.Match.IParameter Parameter { get; init; }
             public override string ToString() { }
         }
+    }
+    public static class MatchExtensions
+    {
+        public static Mockolate.Match.IOutParameter<T> Monitor<T>(this Mockolate.Match.IOutParameter<T> parameter, out Mockolate.Match.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Match.IParameter<T> Monitor<T>(this Mockolate.Match.IParameter<T> parameter, out Mockolate.Match.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Match.IRefParameter<T> Monitor<T>(this Mockolate.Match.IRefParameter<T> parameter, out Mockolate.Match.IParameterMonitor<T> monitor) { }
     }
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
     {
@@ -305,18 +315,12 @@ namespace Mockolate.Monitor
     }
     public static class MockMonitorExtensions
     {
-        public static Mockolate.Match.IParameter<T> Monitor<T>(this Mockolate.Match.IParameter<T> parameter, out Mockolate.Monitor.ParameterMonitor<T> monitor) { }
         public static System.IDisposable Monitor<T>(this Mockolate.Mock<T> mock, out Mockolate.Monitor.MockMonitor<T> monitor) { }
     }
     public sealed class MockMonitor<T> : Mockolate.Monitor.MockMonitor
     {
         public MockMonitor(Mockolate.Mock<T> mock) { }
         public Mockolate.Verify.IMockVerify<T> Verify { get; }
-    }
-    public sealed class ParameterMonitor<T>
-    {
-        public ParameterMonitor() { }
-        public System.Collections.Generic.IReadOnlyList<T> Values { get; }
     }
 }
 namespace Mockolate.Raise
@@ -480,6 +484,7 @@ namespace Mockolate.Setup
         bool Matches(Mockolate.Interactions.MethodInvocation methodInvocation);
         T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
         T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
+        void TriggerCallbacks(object?[] parameters);
     }
     public interface IMockMethodSetupWithEqualsWithGetHashCode<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetupWithEquals<T>, Mockolate.Setup.IMockMethodSetupWithGetHashCode<T>, Mockolate.Setup.IMockMethodSetup<T> { }
     public interface IMockMethodSetupWithEquals<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetup<T>
@@ -913,10 +918,13 @@ namespace Mockolate.Setup
         protected abstract bool IsMatch(Mockolate.Interactions.MethodInvocation invocation);
         protected abstract T SetOutParameter<T>(string parameterName, Mockolate.MockBehavior behavior);
         protected abstract T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
+        public void TriggerCallbacks(object?[] parameters) { }
+        protected abstract void TriggerParameterCallbacks(object?[] parameters);
         protected static string FormatType(System.Type type) { }
         protected static bool HasOutParameter<T>(Mockolate.Match.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Match.IOutParameter<T>? parameter) { }
         protected static bool HasRefParameter<T>(Mockolate.Match.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Match.IRefParameter<T>? parameter) { }
         protected static bool Matches(Mockolate.Match.NamedParameter[] namedParameters, object?[] values) { }
+        protected static void TriggerCallbacks(Mockolate.Match.NamedParameter[] namedParameters, object?[] values) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
     public class MethodSetupResult
@@ -926,6 +934,7 @@ namespace Mockolate.Setup
         public bool HasSetupResult { get; }
         public T SetOutParameter<T>(string parameterName) { }
         public T SetRefParameter<T>(string parameterName, T value) { }
+        public void TriggerCallbacks(params object?[]? parameters) { }
     }
     public class MethodSetupResult<TResult> : Mockolate.Setup.MethodSetupResult
     {
@@ -993,6 +1002,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetup<TReturn> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn> When(System.Func<int, bool> predicate) { }
     }
     public class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
@@ -1020,6 +1030,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetup<TReturn, T1> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> When(System.Func<int, bool> predicate) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
@@ -1047,6 +1058,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> When(System.Func<int, bool> predicate) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
@@ -1074,6 +1086,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> When(System.Func<int, bool> predicate) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
@@ -1101,6 +1114,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> When(System.Func<int, bool> predicate) { }
     }
     public class SpanWrapper<T>
@@ -1128,6 +1142,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetup Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder When(System.Func<int, bool> predicate) { }
     }
     public class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
@@ -1153,6 +1168,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetup<T1> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1> When(System.Func<int, bool> predicate) { }
     }
     public class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
@@ -1178,6 +1194,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetup<T1, T2> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2> When(System.Func<int, bool> predicate) { }
     }
     public class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
@@ -1203,6 +1220,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetup<T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> When(System.Func<int, bool> predicate) { }
     }
     public class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
@@ -1228,6 +1246,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+        protected override void TriggerParameterCallbacks(object?[] parameters) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> When(System.Func<int, bool> predicate) { }
     }
 }

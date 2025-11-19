@@ -42,6 +42,10 @@ public abstract class MethodSetup : IMethodSetup
 	void IMethodSetup.Invoke(MethodInvocation methodInvocation, MockBehavior behavior)
 		=> ExecuteCallback(methodInvocation, behavior);
 
+	/// <inheritdoc cref="IMethodSetup.TriggerCallbacks(object?[])" />
+	public void TriggerCallbacks(object?[] parameters)
+		=> TriggerParameterCallbacks(parameters);
+
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default
 	///     values.
@@ -87,6 +91,11 @@ public abstract class MethodSetup : IMethodSetup
 	///     Checks if the <paramref name="invocation" /> matches the setup.
 	/// </summary>
 	protected abstract bool IsMatch(MethodInvocation invocation);
+
+	/// <summary>
+	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
+	/// </summary>
+	protected abstract void TriggerParameterCallbacks(object?[] parameters);
 
 	/// <summary>
 	///     Determines whether the specified collection of named parameters contains a reference parameter of the given name
@@ -153,12 +162,24 @@ public abstract class MethodSetup : IMethodSetup
 			}
 		}
 
+		return true;
+	}
+
+	/// <summary>
+	///     Triggers the parameter callbacks for each value in the specified array according to
+	///     the corresponding named parameter.
+	/// </summary>
+	protected static void TriggerCallbacks(Match.NamedParameter[] namedParameters, object?[] values)
+	{
+		if (namedParameters.Length != values.Length)
+		{
+			return;
+		}
+
 		for (int i = 0; i < namedParameters.Length; i++)
 		{
 			namedParameters[i].Parameter.InvokeCallbacks(values[i]);
 		}
-
-		return true;
 	}
 
 	/// <summary>

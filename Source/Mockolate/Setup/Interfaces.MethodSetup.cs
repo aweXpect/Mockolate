@@ -53,6 +53,11 @@ public interface IMethodSetup
 	///     Invokes the <paramref name="methodInvocation" /> returning <see langword="void" />.
 	/// </summary>
 	void Invoke(MethodInvocation methodInvocation, MockBehavior behavior);
+
+	/// <summary>
+	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
+	/// </summary>
+	void TriggerCallbacks(object?[] parameters);
 }
 
 /// <summary>

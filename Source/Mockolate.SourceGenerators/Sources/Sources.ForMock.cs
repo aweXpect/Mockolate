@@ -93,7 +93,7 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t").Append(parameter.Name).Append(" = result.SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-						.AppendLine("\");");
+						.Append("\");").AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
@@ -102,7 +102,9 @@ internal static partial class Sources
 						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
 				}
 			}
-
+			sb.Append("\t\tresult.TriggerCallbacks(")
+				.Append(string.Join(", ", mockClass.Delegate.Parameters.Select(p => p.Name)))
+				.Append(");").AppendLine();
 			if (mockClass.Delegate.ReturnType != Type.Void)
 			{
 				sb.Append("\t\treturn result.Result;").AppendLine();
@@ -607,7 +609,7 @@ internal static partial class Sources
 					sb.Append("\t\t{").AppendLine();
 					sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
-					sb.Append("\t\t}").AppendLine().AppendLine();
+					sb.Append("\t\t}").AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
@@ -622,10 +624,13 @@ internal static partial class Sources
 					sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name).Append(");").AppendLine();
-					sb.Append("\t\t}").AppendLine().AppendLine();
+					sb.Append("\t\t}").AppendLine();
 				}
 			}
 
+			sb.Append("\t\tmethodExecution?.TriggerCallbacks(")
+				.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+				.Append(");").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{
 				sb.Append("\t\tif (methodExecution is null)").AppendLine();
@@ -670,6 +675,9 @@ internal static partial class Sources
 				}
 			}
 
+			sb.Append("\t\t\tmethodExecution?.TriggerCallbacks(")
+				.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+				.Append(");").AppendLine();
 			sb.Append(
 					"\t\t\tif (methodExecution?.HasSetupResult != true)")
 				.AppendLine();
@@ -767,6 +775,9 @@ internal static partial class Sources
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t}").AppendLine();
+					sb.Append("\t\tmethodExecution?.TriggerCallbacks(")
+						.Append(string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+						.Append(");").AppendLine();
 				}
 			}
 		}
