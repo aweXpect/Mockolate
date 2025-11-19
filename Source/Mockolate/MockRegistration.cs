@@ -51,6 +51,12 @@ public partial class MockRegistration
 	public MockInteractions Interactions { get; }
 
 	/// <summary>
+	///     Clears all interactions recorded by the mock object.
+	/// </summary>
+	public void ClearAllInteractions()
+		=> Interactions.Clear();
+
+	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>

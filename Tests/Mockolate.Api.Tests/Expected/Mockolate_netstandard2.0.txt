@@ -93,6 +93,11 @@ namespace Mockolate
     {
         public static Mockolate.MockBehavior CallingBaseClass(this Mockolate.MockBehavior mockBehavior, bool callBaseClass = true) { }
     }
+    public static class MockExtensions
+    {
+        public static void ClearAllInteractions<T>(this Mockolate.Setup.IMockSetup<T> mock)
+            where T :  class { }
+    }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MockRegistration
     {
@@ -102,6 +107,7 @@ namespace Mockolate
         public Mockolate.Interactions.MockInteractions Interactions { get; }
         public string Prefix { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
+        public void ClearAllInteractions() { }
         public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult>? defaultValueGenerator = null) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Match.NamedParameter?[] parameters) { }
@@ -261,7 +267,6 @@ namespace Mockolate.Interactions
         public MockInteractions() { }
         public int Count { get; }
         public System.Collections.Generic.IEnumerable<Mockolate.Interactions.IInteraction> Interactions { get; }
-        public int GetNextIndex() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class PropertyGetterAccess : Mockolate.Interactions.IInteraction
