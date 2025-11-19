@@ -3,12 +3,12 @@ using System.Threading;
 
 namespace Mockolate.Tests;
 
-public sealed class MockInteractionsTests
+public sealed class MockRegistrationTests
 {
 	[Fact]
 	public async Task RegisterInteraction_ShouldBeThreadSafe()
 	{
-		MockRegistration registration = new(MockBehavior.Default, "");
+		MockRegistration sut = new(MockBehavior.Default, "");
 		Task[] tasks = new Task[50];
 		for (int i = 0; i < 50; i++)
 		{
@@ -16,7 +16,7 @@ public sealed class MockInteractionsTests
 			{
 				for (int j = 0; j < 20; j++)
 				{
-					registration.GetProperty<string>("foo");
+					sut.GetProperty<string>("foo");
 					await Task.Delay(1);
 				}
 			}, CancellationToken.None);
@@ -24,8 +24,8 @@ public sealed class MockInteractionsTests
 
 		await Task.WhenAll(tasks);
 
-		await That(registration.Interactions.Count).IsEqualTo(1000);
-		await That(registration.Interactions.Interactions).IsInAscendingOrder(x => x.Index);
-		await That(registration.Interactions.Interactions.Select(i => i.Index)).AreAllUnique();
+		await That(sut.Interactions.Count).IsEqualTo(1000);
+		await That(sut.Interactions.Interactions).IsInAscendingOrder(x => x.Index);
+		await That(sut.Interactions.Interactions.Select(i => i.Index)).AreAllUnique();
 	}
 }
