@@ -15,18 +15,18 @@ public partial class Match
 		=> new InvokedOutParameterMatch<T>();
 
 	/// <summary>
-	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
-	/// </summary>
-	public static IOutParameter<T> AnyOut<T>()
-		=> new AnyOutParameterMatch<T>();
-
-	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
 	public static IOutParameter<T> Out<T>(Func<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new OutParameterMatch<T>(setter, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
+	/// </summary>
+	public static IOutParameter<T> AnyOut<T>()
+		=> new AnyOutParameterMatch<T>();
 
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter against an expectation.
