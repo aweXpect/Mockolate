@@ -357,8 +357,99 @@ public class GeneralTests
 			         string SomeProperty { get; set; }
 			         [Localizable(false)]
 			         string MyMethod(string message);
+			         [CustomAttribute(
+			             true,
+			             (byte)42,
+			             'X',
+			             3.14,
+			             2.71f,
+			             100,
+			             999L,
+			             (sbyte)-10,
+			             (short)500,
+			             "test",
+			             123u,
+			             456ul,
+			             (ushort)789,
+			             typeof(string),
+			             MyEnum.Value2,
+			             new int[] { 1, 2, 3 },
+			             BoolParam = false,
+			             ByteParam = (byte)99,
+			             CharParam = 'Y',
+			             DoubleParam = 1.23,
+			             FloatParam = 4.56f,
+			             IntParam = 200,
+			             LongParam = 888L,
+			             SByteParam = (sbyte)-5,
+			             ShortParam = (short)300,
+			             StringParam = "named",
+			             UIntParam = 111u,
+			             ULongParam = 222ul,
+			             UShortParam = (ushort)333,
+			             ObjectParam = 42,
+			             TypeParam = typeof(int),
+			             EnumParam = MyFlagEnum.Value1 | MyFlagEnum.Value2,
+			             ArrayParam = new string[] { "a", "b" }
+			         )]
+			         event EventHandler<int> MyEvent;
 			     }
-			     """, typeof(AllowNullAttribute), typeof(IDataParameter), typeof(LocalizableAttribute));
+			     
+			     public enum MyEnum
+			     {
+			         Value1 = 1,
+			         Value2 = 2
+			     }
+			     
+			     [Flags]
+			     public enum MyFlagEnum
+			     {
+			         Value1 = 1,
+			         Value2 = 2
+			     }
+
+			     [AttributeUsage(AttributeTargets.All)]
+			     public class CustomAttribute : Attribute
+			     {
+			         public CustomAttribute(
+			             bool boolArg,
+			             byte byteArg,
+			             char charArg,
+			             double doubleArg,
+			             float floatArg,
+			             int intArg,
+			             long longArg,
+			             sbyte sbyteArg,
+			             short shortArg,
+			             string stringArg,
+			             uint uintArg,
+			             ulong ulongArg,
+			             ushort ushortArg,
+			             Type typeArg,
+			             MyEnum enumArg,
+			             int[] arrayArg)
+			         {
+			         }
+
+			         public bool BoolParam { get; set; }
+			         public byte ByteParam { get; set; }
+			         public char CharParam { get; set; }
+			         public double DoubleParam { get; set; }
+			         public float FloatParam { get; set; }
+			         public int IntParam { get; set; }
+			         public long LongParam { get; set; }
+			         public sbyte SByteParam { get; set; }
+			         public short ShortParam { get; set; }
+			         public string StringParam { get; set; }
+			         public uint UIntParam { get; set; }
+			         public ulong ULongParam { get; set; }
+			         public ushort UShortParam { get; set; }
+			         public object ObjectParam { get; set; }
+			         public Type TypeParam { get; set; }
+			         public MyFlagEnum EnumParam { get; set; }
+			         public string[] ArrayParam { get; set; }
+			     }
+			     """, typeof(AllowNullAttribute), typeof(IDataParameter), typeof(LocalizableAttribute), typeof(AttributeUsageAttribute));
 
 		await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
 			.Contains("""
@@ -384,6 +475,15 @@ public class GeneralTests
 			          		MethodSetupResult<string> methodExecution = MockRegistrations.InvokeMethod<string>("MyCode.IMyService.MyMethod", message);
 			          		methodExecution.TriggerCallbacks(message);
 			          		return methodExecution.Result;
+			          	}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	/// <inheritdoc cref="MyCode.IMyService.MyEvent" />
+			          	[MyCode.Custom(true, (byte)42, 'X', 3.14, 2.71F, 100, 999L, (sbyte)-10, (short)500, "test", 123u, 456uL, (ushort)789, typeof(string), (MyCode.MyEnum)2, new int[]{1, 2, 3}, BoolParam = false, ByteParam = (byte)99, CharParam = 'Y', DoubleParam = 1.23, FloatParam = 4.56F, IntParam = 200, LongParam = 888L, SByteParam = (sbyte)-5, ShortParam = (short)300, StringParam = "named", UIntParam = 111u, ULongParam = 222uL, UShortParam = (ushort)333, ObjectParam = 42, TypeParam = typeof(int), EnumParam = (MyCode.MyFlagEnum)3, ArrayParam = new string[]{"a", "b"})]
+			          	public event System.EventHandler<int>? MyEvent
+			          	{
+			          		add => MockRegistrations.AddEvent("MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          		remove => MockRegistrations.RemoveEvent("MyCode.IMyService.MyEvent", value?.Target, value?.Method);
 			          	}
 			          """).IgnoringNewlineStyle();
 	}

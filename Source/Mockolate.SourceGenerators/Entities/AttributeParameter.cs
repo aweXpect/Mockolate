@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.CodeAnalysis;
 
 namespace Mockolate.SourceGenerators.Entities;
@@ -6,22 +7,46 @@ internal record AttributeParameter
 {
 	public AttributeParameter(TypedConstant value)
 	{
-		string? valueString = value.Value?.ToString();
-		if (valueString is not null &&
-		    value.Type?.SpecialType == SpecialType.System_String)
+		if (value.Kind == TypedConstantKind.Array)
 		{
-			Value = $"\"{valueString.Replace("\"", "\\\"")}\"";
+			Value = $"new {value.Type}{{{string.Join(", ", value.Values.Select(SerializeConstantValue))}}}";
 		}
-		else if (valueString is not null &&
-		    value.Type?.SpecialType == SpecialType.System_Boolean)
+		else if (value.Kind == TypedConstantKind.Type)
 		{
-			Value = valueString.ToLower();
+			Value = $"typeof({value.Value})";
+		}
+		else if (value.Kind == TypedConstantKind.Enum)
+		{
+			Value = $"({value.Type}){value.Value}";
 		}
 		else
 		{
-			Value = valueString ?? "null";
+			Value = SerializeConstantValue(value);
 		}
 	}
 
 	public string? Value { get; }
+
+	private static string SerializeConstantValue(TypedConstant value)
+	{
+		if (value.Value is null)
+			return "null";
+		return value.Type?.SpecialType switch
+		{
+			SpecialType.System_Char => $"'{value.Value}'",
+			SpecialType.System_String => $"\"{value.Value.ToString().Replace("\"", "\\\"")}\"",
+			SpecialType.System_Boolean => value.Value.ToString().ToLower(),
+			SpecialType.System_Double => ((double)value.Value).ToString(CultureInfo.InvariantCulture),
+			SpecialType.System_Single => $"{((float)value.Value).ToString(CultureInfo.InvariantCulture)}F",
+			SpecialType.System_Byte => $"(byte){value.Value}",
+			SpecialType.System_SByte => $"(sbyte){value.Value}",
+			SpecialType.System_Int16 => $"(short){value.Value}",
+			SpecialType.System_UInt16 => $"(ushort){value.Value}",
+			SpecialType.System_Int64 => $"{value.Value}L",
+			SpecialType.System_UInt64 => $"{value.Value}uL",
+			SpecialType.System_UInt32 => $"{value.Value}u",
+			SpecialType.System_TypedReference => $"typeof({value.Value})",
+			_ => value.Value.ToString()
+		};
+	}
 }
