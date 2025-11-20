@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
@@ -331,11 +332,12 @@ public class GeneralTests
 	}
 
 	[Fact]
-	public async Task WithAllowNullAttribute_ShouldAddAttributeToGeneratedCode()
+	public async Task WithAttributes_ShouldAddAttributesToGeneratedCode()
 	{
 		GeneratorResult result = Generator
 			.Run("""
 			     using System;
+			     using System.ComponentModel;
 			     using System.Diagnostics.CodeAnalysis;
 			     using System.Data;
 			     using Mockolate;
@@ -353,8 +355,10 @@ public class GeneralTests
 			     {
 			         [AllowNull]
 			         string SomeProperty { get; set; }
+			         [Localizable(false)]
+			         string MyMethod(string message);
 			     }
-			     """, typeof(AllowNullAttribute), typeof(IDataParameter));
+			     """, typeof(AllowNullAttribute), typeof(IDataParameter), typeof(LocalizableAttribute));
 
 		await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
 			.Contains("""
@@ -370,6 +374,16 @@ public class GeneralTests
 			          		{
 			          			MockRegistrations.SetProperty("MyCode.IMyService.SomeProperty", value);
 			          		}
+			          	}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	/// <inheritdoc cref="MyCode.IMyService.MyMethod(string)" />
+			          	[System.ComponentModel.Localizable(false)]
+			          	public string MyMethod(string message)
+			          	{
+			          		MethodSetupResult<string> methodExecution = MockRegistrations.InvokeMethod<string>("MyCode.IMyService.MyMethod", message);
+			          		methodExecution.TriggerCallbacks(message);
+			          		return methodExecution.Result;
 			          	}
 			          """).IgnoringNewlineStyle();
 	}

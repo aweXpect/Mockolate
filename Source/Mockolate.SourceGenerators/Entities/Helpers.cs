@@ -17,10 +17,10 @@ internal static class Helpers
 		foreach (Attribute? attribute in attributes)
 		{
 			sb.Append(prefix).Append('[').Append(attribute.Name);
-			if (attribute.Arguments != null)
+			if (attribute.Parameters != null)
 			{
 				sb.Append('(');
-				sb.Append(string.Join(", ", attribute.Arguments.Value.Select(argument => argument.Value)));
+				sb.Append(string.Join(", ", attribute.Parameters.Value.Select(parameter => parameter.Value)));
 				sb.Append(')');
 			}
 
