@@ -6,18 +6,17 @@ internal record AttributeArgument
 {
 	public AttributeArgument(TypedConstant value)
 	{
-		if (value.Value is null)
+		string? valueString = value.Value?.ToString();
+		if (valueString is not null &&
+		    value.Type?.SpecialType == SpecialType.System_String)
 		{
-			Value = "null";
-		}
-		else if (value.Type?.SpecialType == SpecialType.System_String)
-		{
-			Value = $"\"{value.Value.ToString()?.Replace("\"", "\\\"")}\"";
+			Value = $"\"{valueString.Replace("\"", "\\\"")}\"";
 		}
 		else
 		{
-			Value = value.Value.ToString();
+			Value = valueString ?? "null";
 		}
 	}
+
 	public string? Value { get; }
 }
