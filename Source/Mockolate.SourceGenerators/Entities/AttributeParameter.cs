@@ -2,15 +2,20 @@ using Microsoft.CodeAnalysis;
 
 namespace Mockolate.SourceGenerators.Entities;
 
-internal record AttributeArgument
+internal record AttributeParameter
 {
-	public AttributeArgument(TypedConstant value)
+	public AttributeParameter(TypedConstant value)
 	{
 		string? valueString = value.Value?.ToString();
 		if (valueString is not null &&
 		    value.Type?.SpecialType == SpecialType.System_String)
 		{
 			Value = $"\"{valueString.Replace("\"", "\\\"")}\"";
+		}
+		else if (valueString is not null &&
+		    value.Type?.SpecialType == SpecialType.System_Boolean)
+		{
+			Value = valueString.ToLower();
 		}
 		else
 		{
