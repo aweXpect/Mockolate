@@ -45,7 +45,6 @@ internal record AttributeParameter
 			SpecialType.System_Int64 => $"{value.Value}L",
 			SpecialType.System_UInt64 => $"{value.Value}uL",
 			SpecialType.System_UInt32 => $"{value.Value}u",
-			SpecialType.System_TypedReference => $"typeof({value.Value})",
 			_ => value.Value.ToString()
 		};
 	}
