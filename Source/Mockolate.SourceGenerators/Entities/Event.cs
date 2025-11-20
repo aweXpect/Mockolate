@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
@@ -12,7 +13,7 @@ internal record Event
 		Type = new Type(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString();
 		Delegate = new Method(delegateInvokeMethod, null);
-		Obsolete = eventSymbol.GetAttributes().GetObsoleteAttribute();
+		Attributes = eventSymbol.GetAttributes().ToAttributeArray();
 
 		if (alreadyDefinedEvents is not null)
 		{
@@ -25,7 +26,7 @@ internal record Event
 		}
 	}
 
-	public ObsoleteAttribute? Obsolete { get; }
+	public EquatableArray<Attribute>? Attributes { get; }
 
 	public static IEqualityComparer<Event> EqualityComparer { get; } = new EventEqualityComparer();
 
@@ -47,13 +48,22 @@ internal record Event
 
 	private sealed class EventEqualityComparer : IEqualityComparer<Event>
 	{
-		public bool Equals(Event x, Event y) => x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
+		public bool Equals(Event? x, Event? y)
+			=> (x is null && y is null) ||
+			   (x is not null && y is not null &&
+			    x.Name.Equals(y.Name) &&
+			    x.ContainingType.Equals(y.ContainingType));
+
 		public int GetHashCode(Event obj) => obj.Name.GetHashCode();
 	}
 
 	private sealed class ContainingTypeIndependentEventEqualityComparer : IEqualityComparer<Event>
 	{
-		public bool Equals(Event x, Event y) => x.Name.Equals(y.Name);
+		public bool Equals(Event? x, Event? y)
+			=> (x is null && y is null) ||
+			   (x is not null && y is not null &&
+			    x.Name.Equals(y.Name));
+
 		public int GetHashCode(Event obj) => obj.Name.GetHashCode();
 	}
 }

@@ -22,7 +22,7 @@ internal record Method
 			Name += $"<{string.Join(", ", GenericParameters.Value.Select(x => x.Name))}>";
 		}
 
-		Obsolete = methodSymbol.GetAttributes().GetObsoleteAttribute();
+		Attributes = methodSymbol.GetAttributes().ToAttributeArray();
 
 		if (alreadyDefinedMethods is not null)
 		{
@@ -53,7 +53,7 @@ internal record Method
 	public string ContainingType { get; }
 	public EquatableArray<MethodParameter> Parameters { get; }
 	public string? ExplicitImplementation { get; }
-	public ObsoleteAttribute? Obsolete { get; }
+	public EquatableArray<Attribute>? Attributes { get; }
 
 	internal string GetUniqueNameString()
 	{
@@ -87,18 +87,24 @@ internal record Method
 
 	private sealed class MethodEqualityComparer : IEqualityComparer<Method>
 	{
-		public bool Equals(Method x, Method y) => x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType) &&
-		                                          x.Parameters.Count == y.Parameters.Count &&
-		                                          x.Parameters.SequenceEqual(y.Parameters);
+		public bool Equals(Method? x, Method? y)
+			=> (x is null && y is null) ||
+			   (x is not null && y is not null &&
+			    x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType) &&
+			    x.Parameters.Count == y.Parameters.Count &&
+			    x.Parameters.SequenceEqual(y.Parameters));
 
 		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
 	}
 
 	private sealed class ContainingTypeIndependentMethodEqualityComparer : IEqualityComparer<Method>
 	{
-		public bool Equals(Method x, Method y) => x.Name.Equals(y.Name) &&
-		                                          x.Parameters.Count == y.Parameters.Count &&
-		                                          x.Parameters.SequenceEqual(y.Parameters);
+		public bool Equals(Method? x, Method? y)
+			=> (x is null && y is null) ||
+			   (x is not null && y is not null &&
+			    x.Name.Equals(y.Name) &&
+			    x.Parameters.Count == y.Parameters.Count &&
+			    x.Parameters.SequenceEqual(y.Parameters));
 
 		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
 	}

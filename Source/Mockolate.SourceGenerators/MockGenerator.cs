@@ -118,7 +118,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)
 	{
-		HashSet<(string, string)> classNames = new();
+		HashSet<(string?, string)> classNames = new();
 		List<(string Name, Class MockClass)> result = new();
 		foreach (MockClass mockToGenerate in mocksToGenerate)
 		{

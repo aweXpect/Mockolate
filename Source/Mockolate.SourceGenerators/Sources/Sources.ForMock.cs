@@ -18,7 +18,7 @@ internal static partial class Sources
 		sb.Append("""
 		          namespace Mockolate.Generated;
 
-		          #nullable enable
+		          #nullable enable annotations
 
 		          """);
 		if (mockClass.Delegate is not null)
@@ -199,7 +199,7 @@ internal static partial class Sources
 			sb.AppendLine("}");
 		}
 
-		sb.AppendLine("#nullable disable");
+		sb.AppendLine("#nullable disable annotations");
 		return sb.ToString();
 	}
 
@@ -207,7 +207,7 @@ internal static partial class Sources
 		Method constructor)
 	{
 		sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
-		sb.Append(constructor.Obsolete, "\t");
+		sb.Append(constructor.Attributes, "\t");
 		sb.Append("\tpublic MockFor").Append(name).Append("(");
 		foreach (MethodParameter parameter in constructor.Parameters)
 		{
@@ -298,7 +298,7 @@ internal static partial class Sources
 		sb.Append("\t/// <inheritdoc cref=\"").Append(@event.ContainingType.EscapeForXmlDoc()).Append('.')
 			.Append(@event.Name.EscapeForXmlDoc())
 			.AppendLine("\" />");
-		sb.Append(@event.Obsolete, "\t");
+		sb.Append(@event.Attributes, "\t");
 		if (explicitInterfaceImplementation)
 		{
 			sb.Append("\tevent ").Append(@event.Type.Fullname.TrimEnd('?'))
@@ -343,7 +343,7 @@ internal static partial class Sources
 						.EscapeForXmlDoc()
 					: property.Name.EscapeForXmlDoc())
 			.AppendLine("\" />");
-		sb.Append(property.Obsolete, "\t");
+		sb.Append(property.Attributes, "\t");
 		if (explicitInterfaceImplementation)
 		{
 			sb.Append("\t").Append(property.Type.Fullname)
@@ -521,7 +521,7 @@ internal static partial class Sources
 			.Append('(').Append(string.Join(", ",
 				method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)).EscapeForXmlDoc())
 			.AppendLine(")\" />");
-		sb.Append(method.Obsolete, "\t");
+		sb.Append(method.Attributes, "\t");
 		if (explicitInterfaceImplementation)
 		{
 			sb.Append("\t");

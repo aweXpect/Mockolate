@@ -1,45 +1,50 @@
 using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
 internal static class Helpers
 {
-	public static StringBuilder Append(this StringBuilder sb, ObsoleteAttribute? obsolete, string prefix = "")
+	public static StringBuilder Append(this StringBuilder sb, EquatableArray<Attribute>? attributes, string prefix = "")
 	{
-		if (obsolete is null)
+		if (attributes is null)
 		{
 			return sb;
 		}
 
-		sb.Append(prefix).Append("[System.Obsolete(");
-		if (obsolete.Text is not null)
+		foreach (Attribute? attribute in attributes)
 		{
-			sb.Append("\"").Append(obsolete.Text.Replace("\"", "\\\"")).Append("\"");
+			sb.Append(prefix).Append('[').Append(attribute.Name);
+			if (attribute.Arguments != null)
+			{
+				sb.Append('(');
+				sb.Append(string.Join(", ", attribute.Arguments.Value.Select(argument => argument.Value)));
+				sb.Append(')');
+			}
+
+			sb.Append("]").AppendLine();
 		}
 
-		sb.Append(")]").AppendLine();
 		return sb;
 	}
 
-	public static ObsoleteAttribute? GetObsoleteAttribute(this ImmutableArray<AttributeData> attributes)
+	public static EquatableArray<Attribute>? ToAttributeArray(this ImmutableArray<AttributeData> attributes)
 	{
-		AttributeData? obsoleteAttribute = attributes
-			.FirstOrDefault(attribute => attribute.AttributeClass is
-			{
-				ContainingNamespace: { Name: "System", ContainingNamespace.IsGlobalNamespace: true, },
-				Name: "ObsoleteAttribute",
-			});
-		if (obsoleteAttribute is not null)
+		Attribute[] consideredAttributes = attributes
+			.Where(x => x.AttributeClass != null && !IsNullableAttribute(x.AttributeClass))
+			.Select(attr => new Attribute(attr))
+			.ToArray();
+		if (consideredAttributes.Length > 0)
 		{
-			return new ObsoleteAttribute(
-				obsoleteAttribute.ConstructorArguments.Length > 0 &&
-				obsoleteAttribute.ConstructorArguments[0].Type?.SpecialType == SpecialType.System_String
-					? obsoleteAttribute.ConstructorArguments[0].Value as string
-					: null);
+			return new EquatableArray<Attribute>(consideredAttributes);
 		}
 
 		return null;
 	}
+
+	private static bool IsNullableAttribute(INamedTypeSymbol attribute)
+		=> attribute.Name is "NullableContextAttribute" or "NullableAttribute" &&
+		   attribute.ContainingNamespace.ToDisplayString() == "System.Runtime.CompilerServices";
 }

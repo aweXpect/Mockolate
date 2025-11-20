@@ -160,7 +160,7 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
-		public async Task Events_ShouldImplementVirtualEventsOfClassesAndAllExplicitelyFromAdditionalInterfaces()
+		public async Task Events_ShouldImplementVirtualEventsOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 		{
 			GeneratorResult result = Generator
 				.Run("""
@@ -271,7 +271,7 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
-		public async Task Indexers_ShouldImplementVirtualIndexersOfClassesAndAllExplicitelyFromAdditionalInterfaces()
+		public async Task Indexers_ShouldImplementVirtualIndexersOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 		{
 			GeneratorResult result = Generator
 				.Run("""
@@ -949,7 +949,7 @@ public sealed partial class ForMockTests
 
 		[Fact]
 		public async Task
-			Properties_ShouldImplementVirtualPropertiesOfClassesAndAllExplicitelyFromAdditionalInterfaces()
+			Properties_ShouldImplementVirtualPropertiesOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 		{
 			GeneratorResult result = Generator
 				.Run("""

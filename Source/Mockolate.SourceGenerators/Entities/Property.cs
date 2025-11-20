@@ -20,7 +20,7 @@ internal record Property
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
 
-		Obsolete = propertySymbol.GetAttributes().GetObsoleteAttribute();
+		Attributes = propertySymbol.GetAttributes().ToAttributeArray();
 
 		if (alreadyDefinedProperties is not null)
 		{
@@ -52,7 +52,7 @@ internal record Property
 
 	public bool UseOverride { get; }
 
-	public ObsoleteAttribute? Obsolete { get; }
+	public EquatableArray<Attribute>? Attributes { get; }
 
 	public Accessibility Accessibility { get; }
 	public string Name { get; }
@@ -63,21 +63,27 @@ internal record Property
 
 	private sealed class PropertyEqualityComparer : IEqualityComparer<Property>
 	{
-		public bool Equals(Property x, Property y) => x.IsIndexer
-			? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count &&
-			  x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value) &&
-			  x.ContainingType.Equals(y.ContainingType)
-			: !y.IsIndexer && x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType);
+		public bool Equals(Property? x, Property? y)
+			=> (x is null && y is null) ||
+			   (x is not null && y is not null &&
+			    (x.IsIndexer
+				    ? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count &&
+				      x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value) &&
+				      x.ContainingType.Equals(y.ContainingType)
+				    : !y.IsIndexer && x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType)));
 
 		public int GetHashCode(Property obj) => obj.Name.GetHashCode();
 	}
 
 	private sealed class ContainingTypeIndependentPropertyEqualityComparer : IEqualityComparer<Property>
 	{
-		public bool Equals(Property x, Property y) => x.IsIndexer
-			? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count &&
-			  x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value)
-			: !y.IsIndexer && x.Name.Equals(y.Name);
+		public bool Equals(Property? x, Property? y)
+			=> (x is null && y is null) ||
+			   (x is not null && y is not null &&
+			    (x.IsIndexer
+				    ? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count &&
+				      x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value)
+				    : !y.IsIndexer && x.Name.Equals(y.Name)));
 
 		public int GetHashCode(Property obj) => obj.Name.GetHashCode();
 	}
