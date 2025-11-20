@@ -356,7 +356,7 @@ public class GeneralTests
 			         [AllowNull]
 			         string SomeProperty { get; set; }
 			         [Localizable(false)]
-			         string MyMethod(string message):
+			         string MyMethod(string message);
 			     }
 			     """, typeof(AllowNullAttribute), typeof(IDataParameter), typeof(LocalizableAttribute));
 
