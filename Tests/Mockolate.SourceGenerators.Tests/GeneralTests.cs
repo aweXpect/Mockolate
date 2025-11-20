@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading;
 
@@ -113,11 +115,11 @@ public class GeneralTests
 			     }
 			     """, typeof(HttpMessageHandler));
 
-		await That(result.Diagnostics).IsEmpty();
-
 		await That(result.Sources).ContainsKey("MockForHttpMessageHandler.g.cs").WhoseValue
 			.Contains("protected override void Dispose(bool disposing)").And
 			.DoesNotContain("void Dispose()");
+
+		await That(result.Diagnostics).IsEmpty();
 	}
 
 	[Fact]
@@ -229,7 +231,7 @@ public class GeneralTests
 		await That(result.Sources)
 			.ContainsKey("MockForMyBaseClass.g.cs").WhoseValue
 			.Contains("""
-			          	[System.Obsolete()]
+			          	[System.Obsolete]
 			          	public MockForMyBaseClass(MockRegistration mockRegistration)
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
@@ -326,5 +328,49 @@ public class GeneralTests
 		await That(result.Sources).ContainsKey("MockForIMyInterface1.g.cs").WhoseValue
 			.Contains("public void MyMethod(int v1)").And
 			.Contains("void MyCode.IMyInterface2.MyMethod(int v1)");
+	}
+
+	[Fact]
+	public async Task WithAllowNullAttribute_ShouldAddAttributeToGeneratedCode()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Diagnostics.CodeAnalysis;
+			     using System.Data;
+			     using Mockolate;
+
+			     namespace MyCode;
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<IMyService>();
+			         }
+			     }
+
+			     public interface IMyService
+			     {
+			         [AllowNull]
+			         string SomeProperty { get; set; }
+			     }
+			     """, typeof(AllowNullAttribute), typeof(IDataParameter));
+
+		await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+			.Contains("""
+			          	/// <inheritdoc cref="MyCode.IMyService.SomeProperty" />
+			          	[System.Diagnostics.CodeAnalysis.AllowNull]
+			          	public string SomeProperty
+			          	{
+			          		get
+			          		{
+			          			return MockRegistrations.GetProperty<string>("MyCode.IMyService.SomeProperty");
+			          		}
+			          		set
+			          		{
+			          			MockRegistrations.SetProperty("MyCode.IMyService.SomeProperty", value);
+			          		}
+			          	}
+			          """).IgnoringNewlineStyle();
 	}
 }

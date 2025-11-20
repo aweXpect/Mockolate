@@ -84,7 +84,7 @@ internal record Class
 	public EquatableArray<Event> Events { get; }
 
 	public bool IsInterface { get; }
-	public string Namespace { get; }
+	public string? Namespace { get; }
 	public string DisplayString { get; }
 	public string ClassName { get; }
 	public string ClassFullName { get; }
