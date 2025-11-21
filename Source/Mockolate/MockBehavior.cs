@@ -53,9 +53,12 @@ public record MockBehavior
 	/// </summary>
 	public MockBehavior Initialize<T>(params Action<IMockSetup<T>>[] setups)
 	{
-		_initializers ??= [];
-		_initializers.Push(new SimpleInitializer<T>(setups));
-		return this;
+		MockBehavior behavior = this with
+		{
+			_initializers = new ConcurrentStack<IInitializer>(_initializers ?? []),
+		};
+		behavior._initializers.Push(new SimpleInitializer<T>(setups));
+		return behavior;
 	}
 
 	/// <summary>
@@ -66,9 +69,12 @@ public record MockBehavior
 	/// </remarks>
 	public MockBehavior Initialize<T>(params Action<int, IMockSetup<T>>[] setups)
 	{
-		_initializers ??= [];
-		_initializers.Push(new CounterInitializer<T>(setups));
-		return this;
+		MockBehavior behavior = this with
+		{
+			_initializers = new ConcurrentStack<IInitializer>(_initializers ?? []),
+		};
+		behavior._initializers.Push(new CounterInitializer<T>(setups));
+		return behavior;
 	}
 
 	/// <summary>
@@ -92,7 +98,7 @@ public record MockBehavior
 
 	private interface IInitializer;
 
-	private interface IInitializer<T> : IInitializer
+	private interface IInitializer<in T> : IInitializer
 	{
 		Action<IMockSetup<T>>[] GetSetups();
 	}
