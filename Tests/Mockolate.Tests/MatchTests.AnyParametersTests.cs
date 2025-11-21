@@ -7,10 +7,10 @@ public sealed partial class MatchTests
 {
 	public sealed class AnyParametersTests
 	{
-		[Theory]
-		[InlineData(null, null)]
-		[InlineData("", 1)]
-		[InlineData("foo", null)]
+		[Test]
+		[Arguments(null, null)]
+		[Arguments("", 1)]
+		[Arguments("foo", null)]
 		public async Task ShouldAlwaysMatch(params object?[] values)
 		{
 			IParameters sut = Match.AnyParameters();
@@ -20,7 +20,7 @@ public sealed partial class MatchTests
 			await That(result).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameters sut = Match.AnyParameters();

@@ -12,7 +12,7 @@ public sealed partial class SetupMethodTests
 	{
 		public class ReturnMethodWith0Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
 			{
 				int callCount = 0;
@@ -32,7 +32,7 @@ public sealed partial class SetupMethodTests
 				await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup setup = new("foo");
@@ -42,7 +42,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsNullOrEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup setup = new("foo");
@@ -67,7 +67,7 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith1Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int> setup = new("foo");
@@ -85,7 +85,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
 			{
 				int callCount = 0;
@@ -105,7 +105,7 @@ public sealed partial class SetupMethodTests
 				await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue = 0;
@@ -126,7 +126,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue = 0;
@@ -148,7 +148,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue = 0;
@@ -170,7 +170,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue).IsEqualTo(2);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue = 0;
@@ -192,7 +192,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue).IsEqualTo(2);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int> setup = new("foo");
@@ -202,7 +202,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsNullOrEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int> setup = new("foo");
@@ -228,7 +228,7 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith2Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
@@ -250,7 +250,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
@@ -272,7 +272,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
 			{
 				int callCount = 0;
@@ -296,7 +296,7 @@ public sealed partial class SetupMethodTests
 				await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -321,7 +321,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue2).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -346,7 +346,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue2).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
@@ -373,7 +373,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue2).IsEqualTo(4);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -400,7 +400,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue2).IsEqualTo(4);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
@@ -410,7 +410,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsNullOrEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
@@ -438,7 +438,7 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith3Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
@@ -461,7 +461,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
@@ -484,7 +484,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
@@ -507,7 +507,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
 			{
 				int callCount = 0;
@@ -532,7 +532,7 @@ public sealed partial class SetupMethodTests
 				await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -561,7 +561,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue3).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -590,7 +590,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue3).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
@@ -622,7 +622,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue3).IsEqualTo(6);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -655,7 +655,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue3).IsEqualTo(6);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
@@ -665,7 +665,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsNullOrEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
@@ -694,7 +694,7 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith4Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
@@ -718,7 +718,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
@@ -742,7 +742,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
@@ -766,7 +766,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType4_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
@@ -790,7 +790,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
 			{
 				int callCount = 0;
@@ -816,7 +816,7 @@ public sealed partial class SetupMethodTests
 				await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -849,7 +849,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue4).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -883,7 +883,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue4).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
@@ -920,7 +920,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue4).IsEqualTo(8);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -958,7 +958,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue4).IsEqualTo(8);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
@@ -968,7 +968,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsNullOrEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
@@ -998,7 +998,7 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith5Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1023,7 +1023,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1048,7 +1048,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1073,7 +1073,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType4_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1098,7 +1098,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidInputType5_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1123,7 +1123,7 @@ public sealed partial class SetupMethodTests
 					             """);
 			}
 
-			[Fact]
+			[Test]
 			public async Task GetReturnValue_InvalidType_ShouldThrowMockException()
 			{
 				int callCount = 0;
@@ -1150,7 +1150,7 @@ public sealed partial class SetupMethodTests
 				await That(callCount).IsEqualTo(0).Because("The callback should only be executed on success!");
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -1188,7 +1188,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue5).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1227,7 +1227,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue5).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
@@ -1269,7 +1269,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue5).IsEqualTo(10);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1312,7 +1312,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue5).IsEqualTo(10);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1322,7 +1322,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsNullOrEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -1353,7 +1353,7 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith0Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup setup = new("foo");
@@ -1363,7 +1363,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup setup = new("foo");
@@ -1386,7 +1386,7 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith1Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue = 0;
@@ -1407,7 +1407,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue = 0;
@@ -1428,7 +1428,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue = 0;
@@ -1450,7 +1450,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue).IsEqualTo(2);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue = 0;
@@ -1472,7 +1472,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue).IsEqualTo(2);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int> setup = new("foo");
@@ -1482,7 +1482,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int> setup = new("foo");
@@ -1516,7 +1516,7 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith2Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -1541,7 +1541,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue2).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1566,7 +1566,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue2).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
@@ -1593,7 +1593,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue2).IsEqualTo(4);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1620,7 +1620,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue2).IsEqualTo(4);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int, int> setup = new("foo");
@@ -1630,7 +1630,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int, int> setup = new("foo");
@@ -1665,7 +1665,7 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith3Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -1694,7 +1694,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue3).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1723,7 +1723,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue3).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
@@ -1755,7 +1755,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue3).IsEqualTo(6);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1788,7 +1788,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue3).IsEqualTo(6);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int, int, int> setup = new("foo");
@@ -1798,7 +1798,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int, int, int> setup = new("foo");
@@ -1834,7 +1834,7 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith4Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -1867,7 +1867,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue4).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1901,7 +1901,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue4).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
@@ -1938,7 +1938,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue4).IsEqualTo(8);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -1976,7 +1976,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue4).IsEqualTo(8);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int, int, int, int> setup = new("foo");
@@ -1986,7 +1986,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int, int, int, int> setup = new("foo");
@@ -2023,7 +2023,7 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith5Parameters
 		{
-			[Fact]
+			[Test]
 			public async Task OutParameter_AnyParameters_ShouldSetToDefaultValue()
 			{
 				int receivedValue1 = 0;
@@ -2061,7 +2061,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue5).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task OutParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -2100,7 +2100,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue5).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_AnyParameters_ShouldRemainUnchanged()
 			{
 				int receivedValue1 = 0;
@@ -2142,7 +2142,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue5).IsEqualTo(10);
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefParameter_ShouldSet()
 			{
 				int receivedValue1 = 0;
@@ -2185,7 +2185,7 @@ public sealed partial class SetupMethodTests
 				await That(receivedValue5).IsEqualTo(10);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetOutParameter_ShouldReturnDefaultValue()
 			{
 				MyVoidMethodSetup<int, int, int, int, int> setup = new("foo");
@@ -2195,7 +2195,7 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task SetRefParameter_ShouldReturnValue()
 			{
 				MyVoidMethodSetup<int, int, int, int, int> setup = new("foo");

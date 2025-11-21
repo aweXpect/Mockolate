@@ -6,9 +6,9 @@ public sealed partial class ItTests
 {
 	public sealed class IsNullTests
 	{
-		[Theory]
-		[InlineData(null, 1)]
-		[InlineData(1, 0)]
+		[Test]
+		[Arguments(null, 1)]
+		[Arguments(1, 0)]
 		public async Task Null_ShouldMatchWhenNull(int? value, int expectedCount)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
@@ -19,7 +19,7 @@ public sealed partial class ItTests
 			await That(mock.VerifyMock.Invoked.DoSomething(null, It.Is(true))).Exactly(expectedCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.IsNull<string>();
@@ -30,10 +30,10 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Theory]
-		[InlineData(null, true)]
-		[InlineData("", false)]
-		[InlineData("foo", false)]
+		[Test]
+		[Arguments(null, true)]
+		[Arguments("", false)]
+		[Arguments("foo", false)]
 		public async Task WithValue_Nullable_ShouldMatchWhenEqual(string? value, bool expectMatch)
 		{
 			IParameter<string?> sut = It.IsNull<string?>();

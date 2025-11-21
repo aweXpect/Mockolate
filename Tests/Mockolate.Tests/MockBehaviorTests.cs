@@ -4,7 +4,7 @@ namespace Mockolate.Tests;
 
 public sealed partial class MockBehaviorTests
 {
-	[Fact]
+	[Test]
 	public async Task Default_ShouldInitializeCorrectly()
 	{
 		IMyService mock = Mock.Create<IMyService>();
@@ -15,7 +15,7 @@ public sealed partial class MockBehaviorTests
 		await That(sut.DefaultValue).IsNotNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldSupportCustomDefaultValueGenerator()
 	{
 		MockBehavior sut = new(new MyDefaultValueGenerator());
@@ -26,7 +26,7 @@ public sealed partial class MockBehaviorTests
 		await That(sut.DefaultValue.Generate(0)).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldSupportWithSyntax()
 	{
 		MockBehavior sut = MockBehavior.Default with

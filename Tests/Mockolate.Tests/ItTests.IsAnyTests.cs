@@ -6,10 +6,10 @@ public sealed partial class ItTests
 {
 	public sealed class IsAnyTests
 	{
-		[Theory]
-		[InlineData(null)]
-		[InlineData("")]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(null)]
+		[Arguments("")]
+		[Arguments("foo")]
 		public async Task ShouldAlwaysMatch(string? value)
 		{
 			IParameter<string> sut = It.IsAny<string>();
@@ -19,7 +19,7 @@ public sealed partial class ItTests
 			await That(result).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.IsAny<string>();

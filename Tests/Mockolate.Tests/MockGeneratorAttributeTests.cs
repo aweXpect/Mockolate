@@ -4,7 +4,7 @@ namespace Mockolate.Tests;
 
 public class MockGeneratorAttributeTests
 {
-	[Fact]
+	[Test]
 	public async Task WithCustomGenerator_ShouldCreateMock()
 	{
 		IFoo mock = MyGenerator.MyCreator<IFoo>();

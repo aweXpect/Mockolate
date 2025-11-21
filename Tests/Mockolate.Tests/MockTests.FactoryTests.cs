@@ -7,7 +7,7 @@ public sealed partial class MockTests
 {
 	public sealed class FactoryTests
 	{
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -24,7 +24,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_With1AdditionalInterface_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -41,7 +41,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_With2AdditionalInterfaces_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -58,7 +58,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_With3AdditionalInterfaces_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -75,7 +75,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_With4AdditionalInterfaces_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -92,7 +92,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_With5AdditionalInterfaces_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -109,7 +109,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_With6AdditionalInterfaces_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -128,7 +128,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_With7AdditionalInterfaces_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -146,7 +146,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_With8AdditionalInterfaces_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -164,7 +164,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_SealedClass_WithConstructorParameters_ShouldThrowMockException()
 		{
 			Mock.Factory factory = new(MockBehavior.Default);
@@ -181,7 +181,7 @@ public sealed partial class MockTests
 					"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Create_WithSameNamedInterfaces_ShouldAppendIndex()
 		{
 			bool isDoSomethingCalled1 = false;
@@ -205,7 +205,7 @@ public sealed partial class MockTests
 			await That(isDoSomethingCalled2).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldUseDefinedBehavior()
 		{
 			MockBehavior behavior = MockBehavior.Default with
@@ -221,7 +221,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)mock2).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithSetups_ShouldApplySetups()
 		{
 			MockBehavior behavior = MockBehavior.Default.SkippingBaseClass();

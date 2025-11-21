@@ -9,7 +9,7 @@ namespace Mockolate.Tests.MockIndexers;
 
 public sealed partial class SetupIndexerTests
 {
-	[Fact]
+	[Test]
 	public async Task Matches_WhenParameterCountDoesNotMatch_ShouldNotInvokeParameterCallbacks()
 	{
 		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
@@ -25,7 +25,7 @@ public sealed partial class SetupIndexerTests
 		await That(monitor.Values).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Matches_WhenParameterCountMatches_ShouldInvokeParameterCallbacks()
 	{
 		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
@@ -40,7 +40,7 @@ public sealed partial class SetupIndexerTests
 		await That(monitor.Values).IsEqualTo([4,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task MultipleValues_ShouldAllStoreValues()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -63,7 +63,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2B).IsEqualTo("y");
 	}
 
-	[Fact]
+	[Test]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -79,7 +79,7 @@ public sealed partial class SetupIndexerTests
 		await That(result3).IsEqualTo("foo");
 	}
 
-	[Fact]
+	[Test]
 	public async Task OverlappingSetups_WhenGeneralSetupIsLater_ShouldOnlyUseGeneralSetup()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -95,7 +95,7 @@ public sealed partial class SetupIndexerTests
 		await That(result3).IsEqualTo("foo");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Parameter_Do_ShouldExecuteCallback()
 	{
 		List<string> capturedValues = [];
@@ -109,7 +109,7 @@ public sealed partial class SetupIndexerTests
 		await That(capturedValues).IsEqualTo(["foo", "bar",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Parameter_Do_ShouldOnlyExecuteCallbackWhenAllParametersMatch()
 	{
 		List<string> capturedValues = [];
@@ -123,7 +123,7 @@ public sealed partial class SetupIndexerTests
 		await That(capturedValues).IsEqualTo(["foo",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SetOnDifferentLevel_ShouldNotBeUsed()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -136,7 +136,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldSupportNullAsParameter()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -149,7 +149,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldUseInitializedValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -162,7 +162,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThreeLevels_ShouldUseInitializedValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -175,7 +175,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThreeLevels_WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -198,7 +198,7 @@ public sealed partial class SetupIndexerTests
 		await That(result4).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task TwoLevels_ShouldUseInitializedValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -211,7 +211,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task TwoLevels_WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -226,7 +226,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenNameOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -240,7 +240,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2.GetResult(() => "")).IsEqualTo("");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenTypeOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -254,7 +254,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2.GetResult(() => 0)).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
@@ -269,7 +269,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithoutSetup_ThrowWhenNotSetup_ShouldThrowMockNotSetupException()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>(MockBehavior.Default with

@@ -40,12 +40,13 @@ partial class Build
 					.CombineWith(
 						UnitTestProjects,
 						(settings, project) => settings
-							.SetProjectFile(project)
 							.CombineWith(
 								project.GetTargetFrameworks()?.Except(excludedFrameworks),
 								(frameworkSettings, framework) => frameworkSettings
 									.SetFramework(framework)
-									.AddLoggers($"trx;LogFileName={project.Name}_{framework}.trx")
+									.AddProcessAdditionalArguments(
+										$"--project \"{project.Path}\"")
+									.AddLoggers($"console;verbosity=normal;trx;LogFileName={project.Name}_{framework}.trx")
 							)
 					), completeOnFailure: true
 			);

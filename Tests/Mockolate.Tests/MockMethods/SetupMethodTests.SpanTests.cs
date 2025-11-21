@@ -6,7 +6,7 @@ public sealed partial class SetupMethodTests
 {
 	public sealed class SpanTests
 	{
-		[Fact]
+		[Test]
 		public async Task Memory_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -17,7 +17,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -28,7 +28,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Memory_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -39,7 +39,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_ReturnValueSetup_ShouldReturnExpectedSpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -51,7 +51,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(expectedData);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -62,7 +62,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -73,7 +73,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -84,7 +84,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WithParameter_ShouldMatchAndReturn()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -99,7 +99,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(outputData);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_MultipleReturnValues_ShouldCycleThroughValues()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -118,7 +118,7 @@ public sealed partial class SetupMethodTests
 			await That(thirdResult).IsEqualTo(firstData);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_ReturnValueSetup_ShouldReturnExpectedSpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -130,7 +130,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(expectedData);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -141,7 +141,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -152,7 +152,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WithCallback_ShouldExecuteCallback()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -169,7 +169,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(returnData);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();

@@ -8,7 +8,7 @@
 		<None Include="$(MSBuildProjectDirectory)\..\Mockolate.SourceGenerators\bin\$(Configuration)\netstandard2.0\Mockolate.SourceGenerators.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<PackageReference Include="IsExternalInit">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

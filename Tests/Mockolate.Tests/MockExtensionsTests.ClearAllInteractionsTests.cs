@@ -7,7 +7,7 @@ public sealed partial class MockExtensionsTests
 {
 	public sealed class ClearAllInteractionsTests
 	{
-		[Fact]
+		[Test]
 		public async Task Monitor_WhenRunning_ShouldClearAllInteractions()
 		{
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -34,7 +34,7 @@ public sealed partial class MockExtensionsTests
 			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Monitor_WhenRunning_ShouldContinueAfterClearAllInteractions()
 		{
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -61,7 +61,7 @@ public sealed partial class MockExtensionsTests
 			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Monitor_WhenStopped_ShouldIgnoreClearAllInteractions()
 		{
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -88,7 +88,7 @@ public sealed partial class MockExtensionsTests
 			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldClearRecordedInteractions()
 		{
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();

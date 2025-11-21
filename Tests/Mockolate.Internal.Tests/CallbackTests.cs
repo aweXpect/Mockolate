@@ -7,7 +7,7 @@ public class CallbackTests
 {
 	public sealed class InvokeForCallbacksTests
 	{
-		[Fact]
+		[Test]
 		public async Task ShouldIncludeIndexWhenMatching()
 		{
 			bool wasInvoked = false;
@@ -25,9 +25,9 @@ public class CallbackTests
 			await That(values).IsEqualTo([2, 3,]);
 		}
 
-		[Theory]
-		[InlineData(2, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2)]
-		[InlineData(2, 1, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2)]
+		[Test]
+		[Arguments(2, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2)]
+		[Arguments(2, 1, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2)]
 		public async Task ShouldIncrementIndexOnceWhenCallbackIsExhausted(
 			int only, int when, params int[] expectResult)
 		{
@@ -47,9 +47,9 @@ public class CallbackTests
 			await That(indexValues).IsEqualTo(expectResult);
 		}
 
-		[Theory]
-		[InlineData(2, 2, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2)]
-		[InlineData(2, 3, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3)]
+		[Test]
+		[Arguments(2, 2, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2)]
+		[Arguments(2, 3, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3)]
 		public async Task ShouldIncrementIndexWheneverForIsExhausted(
 			int @for, int only, params int[] expectResult)
 		{
@@ -69,7 +69,7 @@ public class CallbackTests
 			await That(indexValues).IsEqualTo(expectResult);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldLimitExecutionWhenRunningInParallel()
 		{
 			bool wasInvoked = false;
@@ -87,7 +87,7 @@ public class CallbackTests
 			await That(values).IsEqualTo([0, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenCheck_ShouldOnlyBeCalledWhenOnlyLimitIsNotReached()
 		{
 			bool wasInvoked = false;
@@ -113,12 +113,12 @@ public class CallbackTests
 			await That(invocationCount).IsEqualTo(8);
 		}
 
-		[Theory]
-		[InlineData(1, false)]
-		[InlineData(2, false)]
-		[InlineData(3, true)]
-		[InlineData(4, true)]
-		[InlineData(5, false)]
+		[Test]
+		[Arguments(1, false)]
+		[Arguments(2, false)]
+		[Arguments(3, true)]
+		[Arguments(4, true)]
+		[Arguments(5, false)]
 		public async Task WithForAndWhen_ShouldMatchInExpectedIterations(
 			int iterations, bool expectResult)
 		{
@@ -140,7 +140,7 @@ public class CallbackTests
 
 	public sealed class InvokeForVoidThrowsTests
 	{
-		[Fact]
+		[Test]
 		public async Task ShouldIncludeIndexWhenMatching()
 		{
 			List<int> values = [];
@@ -157,7 +157,7 @@ public class CallbackTests
 			await That(values).IsEqualTo([2, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenCheck_ShouldOnlyBeCalledWhenOnlyLimitIsNotReached()
 		{
 			int[] expectResult = [0, 1, 2, 3, 4, 5, 6, 7,];
@@ -182,12 +182,12 @@ public class CallbackTests
 			await That(invocationCount).IsEqualTo(8);
 		}
 
-		[Theory]
-		[InlineData(1, false)]
-		[InlineData(2, false)]
-		[InlineData(3, true)]
-		[InlineData(4, true)]
-		[InlineData(5, false)]
+		[Test]
+		[Arguments(1, false)]
+		[Arguments(2, false)]
+		[Arguments(3, true)]
+		[Arguments(4, true)]
+		[Arguments(5, false)]
 		public async Task WithForAndWhen_ShouldMatchInExpectedIterations(
 			int iterations, bool expectResult)
 		{
@@ -208,7 +208,7 @@ public class CallbackTests
 
 	public sealed class InvokeForReturnThrowsTests
 	{
-		[Fact]
+		[Test]
 		public async Task ShouldIncludeIndexWhenMatching()
 		{
 			List<int> values = [];
@@ -229,7 +229,7 @@ public class CallbackTests
 			await That(values).IsEqualTo([2, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenCheck_ShouldOnlyBeCalledWhenOnlyLimitIsNotReached()
 		{
 			int[] expectResult = [0, 1, 2, 3, 4, 5, 6, 7,];
@@ -258,12 +258,12 @@ public class CallbackTests
 			await That(invocationCount).IsEqualTo(8);
 		}
 
-		[Theory]
-		[InlineData(1, false)]
-		[InlineData(2, false)]
-		[InlineData(3, true)]
-		[InlineData(4, true)]
-		[InlineData(5, false)]
+		[Test]
+		[Arguments(1, false)]
+		[Arguments(2, false)]
+		[Arguments(3, true)]
+		[Arguments(4, true)]
+		[Arguments(5, false)]
 		public async Task WithForAndWhen_ShouldMatchInExpectedIterations(
 			int iterations, bool expectResult)
 		{

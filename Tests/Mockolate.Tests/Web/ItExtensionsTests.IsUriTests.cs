@@ -11,7 +11,7 @@ public sealed partial class ItExtensionsTests
 {
 	public sealed partial class IsUriTests
 	{
-		[Fact]
+		[Test]
 		public async Task ShouldSupportMonitoring()
 		{
 			int callbackCount = 0;
@@ -33,17 +33,17 @@ public sealed partial class ItExtensionsTests
 			await That(callbackCount).IsEqualTo(3);
 		}
 
-		[Theory]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=123&y=4", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "http://www.aweXpect.com/foo/bar?x=123&y=4", false)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/baz?x=123&y=4", false)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=124&y=4", false)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=123", false)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "*www.aweXpect.com*", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "*/foo/bar*", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "*x=123*", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "*y=4*", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https*", true)]
+		[Test]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=123&y=4", true)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "http://www.aweXpect.com/foo/bar?x=123&y=4", false)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/baz?x=123&y=4", false)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=124&y=4", false)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=123", false)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "*www.aweXpect.com*", true)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "*/foo/bar*", true)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "*x=123*", true)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "*y=4*", true)]
+		[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=4", "https*", true)]
 		public async Task ShouldVerifyFullUriWithWildcardMatch(string uri, string pattern, bool expectMatch)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -56,9 +56,9 @@ public sealed partial class ItExtensionsTests
 			await That(result.StatusCode).IsEqualTo(expectMatch ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
 
-		[Theory]
-		[InlineData("*aweXpect.com")]
-		[InlineData("*aweXpect.com/")]
+		[Test]
+		[Arguments("*aweXpect.com")]
+		[Arguments("*aweXpect.com/")]
 		public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -73,7 +73,7 @@ public sealed partial class ItExtensionsTests
 				.IsEqualTo(HttpStatusCode.OK);
 		}
 
-		[Fact]
+		[Test]
 		public async Task TrailingSlash_WhenNotPresent_ShouldNotBeAdded()
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -88,10 +88,10 @@ public sealed partial class ItExtensionsTests
 				.IsEqualTo(HttpStatusCode.NotImplemented);
 		}
 
-		[Theory]
-		[InlineData("https://www.aweXpect.com")]
-		[InlineData(443)]
-		[InlineData(null)]
+		[Test]
+		[Arguments("https://www.aweXpect.com")]
+		[Arguments(443)]
+		[Arguments(null)]
 		public async Task WhenTypeDoesNotMatch_ShouldReturnFalse(object? value)
 		{
 			ItExtensions.IUriParameter sut = It.IsUri();

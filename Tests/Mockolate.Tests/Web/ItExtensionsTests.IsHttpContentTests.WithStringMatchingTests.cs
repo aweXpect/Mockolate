@@ -12,10 +12,10 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithStringMatchingTests
 		{
-			[Theory]
-			[InlineData("foo", "f[aeiou]*", true)]
-			[InlineData("foo", "F[aeiou]*", true)]
-			[InlineData("foo", ".a.", false)]
+			[Test]
+			[Arguments("foo", "f[aeiou]*", true)]
+			[Arguments("foo", "F[aeiou]*", true)]
+			[Arguments("foo", ".a.", false)]
 			public async Task AsRegex_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 			{
@@ -32,10 +32,10 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("foo", "f[aeiou]*", true)]
-			[InlineData("foo", "F[aeiou]*", false)]
-			[InlineData("foo", ".a.", false)]
+			[Test]
+			[Arguments("foo", "f[aeiou]*", true)]
+			[Arguments("foo", "F[aeiou]*", false)]
+			[Arguments("foo", ".a.", false)]
 			public async Task AsRegex_ShouldCheckForMatchingWildcard(string body, string pattern, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -51,7 +51,7 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Fact]
+			[Test]
 			public async Task AsRegex_ShouldUseProvidedOptions()
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -67,7 +67,7 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
-			[Fact]
+			[Test]
 			public async Task AsRegex_ShouldUseTimeout()
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -88,13 +88,13 @@ public sealed partial class ItExtensionsTests
 					.WithParamName("matchTimeout");
 			}
 
-			[Theory]
-			[InlineData("foo", "f?", false)]
-			[InlineData("foo", "f??", true)]
-			[InlineData("foo", "f*", true)]
-			[InlineData("foo", "*", true)]
-			[InlineData("foo", "F*", true)]
-			[InlineData("foo", "*a*", false)]
+			[Test]
+			[Arguments("foo", "f?", false)]
+			[Arguments("foo", "f??", true)]
+			[Arguments("foo", "f*", true)]
+			[Arguments("foo", "*", true)]
+			[Arguments("foo", "F*", true)]
+			[Arguments("foo", "*a*", false)]
 			public async Task IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 			{
@@ -111,13 +111,13 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("foo", "f?", false)]
-			[InlineData("foo", "f??", true)]
-			[InlineData("foo", "f*", true)]
-			[InlineData("foo", "*", true)]
-			[InlineData("foo", "F*", false)]
-			[InlineData("foo", "*a*", false)]
+			[Test]
+			[Arguments("foo", "f?", false)]
+			[Arguments("foo", "f??", true)]
+			[Arguments("foo", "f*", true)]
+			[Arguments("foo", "*", true)]
+			[Arguments("foo", "F*", false)]
+			[Arguments("foo", "*a*", false)]
 			public async Task ShouldCheckForMatchingWildcard(string body, string pattern, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();

@@ -6,7 +6,7 @@ public sealed partial class ItTests
 {
 	public sealed class SatisfiesTests
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Satisfies<string>(x => x.Length == 3);
@@ -17,9 +17,9 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Theory]
-		[InlineData(null, true)]
-		[InlineData(1, false)]
+		[Test]
+		[Arguments(null, true)]
+		[Arguments(1, false)]
 		public async Task CheckForNull_ShouldMatchForExpectedResult(int? value, bool expectedResult)
 		{
 			IParameter<int?> sut = It.Satisfies<int?>(v => v is null);
@@ -29,9 +29,9 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedResult);
 		}
 
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(42L)]
+		[Arguments("foo")]
 		public async Task DifferentType_ShouldNotMatch(object? value)
 		{
 			IParameter<int?> sut = It.Satisfies<int?>(_ => true);
@@ -41,9 +41,9 @@ public sealed partial class ItTests
 			await That(result).IsFalse();
 		}
 
-		[Theory]
-		[InlineData(true)]
-		[InlineData(false)]
+		[Test]
+		[Arguments(true)]
+		[Arguments(false)]
 		public async Task ShouldMatchForExpectedResult(bool predicateValue)
 		{
 			IParameter<string> sut = It.Satisfies<string>(_ => predicateValue);
@@ -53,7 +53,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(predicateValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldSupportCovarianceInSetup()
 		{
 			IMyService mock = Mock.Create<IMyService>();
@@ -69,7 +69,7 @@ public sealed partial class ItTests
 			await That(result2).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldSupportCovarianceInVerify()
 		{
 			IMyService mock = Mock.Create<IMyService>();

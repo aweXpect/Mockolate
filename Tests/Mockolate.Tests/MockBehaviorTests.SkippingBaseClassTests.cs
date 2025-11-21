@@ -4,7 +4,7 @@ public sealed partial class MockBehaviorTests
 {
 	public sealed class SkippingBaseClassTests
 	{
-		[Fact]
+		[Test]
 		public async Task DefaultBehavior_ForRefAndOutParameter_WhenMethodNotSetup_ShouldUseDefaultValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -19,7 +19,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task DefaultBehavior_ForRefAndOutParameter_WhenMethodSetup_ShouldUseSetupValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -36,7 +36,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task DefaultBehavior_WhenIndexerNotSetup_ShouldInitializeIndexerValuesFromBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -54,7 +54,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualIndexerSetterCallCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task DefaultBehavior_WhenIndexerSetup_ShouldUseSetupValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -71,7 +71,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualIndexerSetterCallCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task DefaultBehavior_WhenMethodNotSetup_ShouldReturnBaseValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -83,7 +83,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualMethodCallCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task DefaultBehavior_WhenMethodSetup_ShouldReturnSetupValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -96,7 +96,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualMethodCallCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task DefaultBehavior_WhenPropertyNotSetup_ShouldInitializePropertyWithValueFromBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -113,7 +113,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualPropertySetterCallCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task DefaultBehavior_WhenPropertySetup_ShouldUseSetupValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -131,7 +131,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualPropertySetterCallCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task
 			SkippingBaseClass_ForRefAndOutParameter_WhenMethodNotSetup_ShouldSetToPreviousOrDefaultValues()
 		{
@@ -147,7 +147,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task SkippingBaseClass_ShouldNotCallIndexersOfBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -163,7 +163,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualIndexerSetterCallCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task SkippingBaseClass_ShouldNotCallMethodOfBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
@@ -174,7 +174,7 @@ public sealed partial class MockBehaviorTests
 			await That(mock.VirtualMethodCallCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task SkippingBaseClass_ShouldNotCallPropertiesOfBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =

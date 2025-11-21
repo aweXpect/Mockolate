@@ -12,18 +12,24 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithFormDataTests
 		{
-			[Theory]
-			[InlineData(true, "x", "123", "y", "234", "z", "345", "z", "567")]
-			[InlineData(true, "z", "567", "x", "123", "z", "345", "y", "234")]
-			[InlineData(true, "x", "123", "y", "234", "z", "345", "z", "567", "z", "567")]
-			[InlineData(false, "z", "567", "x", "123", "x", "345", "y", "234")]
-			[InlineData(false, "x", "123", "y", "234", "z", "345", "z", "567", "z", "789")]
-			[InlineData(false, "y", "234", "z", "345", "z", "567")]
-			[InlineData(false, "x", "123", "z", "345")]
-			[InlineData(false, "x", "123", "y", "234")]
-			[InlineData(false, "x", "123", "y", "234", "z", "345")]
+			public static IEnumerable<(bool, string[])> ExactlyDataSource()
+				=>
+				[
+					(true, ["x", "123", "y", "234", "z", "345", "z", "567",]),
+					(true, ["z", "567", "x", "123", "z", "345", "y", "234",]),
+					(true, ["x", "123", "y", "234", "z", "345", "z", "567", "z", "567",]),
+					(false, ["z", "567", "x", "123", "x", "345", "y", "234",]),
+					(false, ["x", "123", "y", "234", "z", "345", "z", "567", "z", "789",]),
+					(false, ["y", "234", "z", "345", "z", "567",]),
+					(false, ["x", "123", "z", "345",]),
+					(false, ["x", "123", "y", "234",]),
+					(false, ["x", "123", "y", "234", "z", "345",]),
+				];
+
+			[Test]
+			[MethodDataSource(nameof(ExactlyDataSource))]
 			public async Task Exactly_ShouldOnlyMatchWhenAllParametersAreChecked(
-				bool expectSuccess, params string[] rawValues)
+				bool expectSuccess, string[] rawValues)
 			{
 				List<(string, HttpFormDataValue)> values = new();
 				for (int i = 0; i < rawValues.Length; i += 2)
@@ -53,8 +59,8 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("x<>", "1<2> 3 ")]
+			[Test]
+			[Arguments("x<>", "1<2> 3 ")]
 			public async Task ShouldEncodeValues(string key, string value)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -77,9 +83,9 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
-			[Theory]
-			[InlineData("x", "123", "z", "345")]
-			[InlineData("z", "345", "x", "123")]
+			[Test]
+			[Arguments("x", "123", "z", "345")]
+			[Arguments("z", "345", "x", "123")]
 			public async Task WithFormData_ShouldMatchParametersInAnyOrder(params string[] rawValues)
 			{
 				List<(string, HttpFormDataValue)> values = new();
@@ -112,19 +118,19 @@ public sealed partial class ItExtensionsTests
 					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
 
 				await That(httpClient.VerifyMock.Invoked
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values)))
+						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values)))
 					.Once();
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
-			[Theory]
-			[InlineData("x", "123", true)]
-			[InlineData("y", "234", true)]
-			[InlineData("x", "", false)]
-			[InlineData("y", "", false)]
-			[InlineData("x", "234", false)]
-			[InlineData("y", "123", false)]
-			[InlineData("foo", "", true)]
+			[Test]
+			[Arguments("x", "123", true)]
+			[Arguments("y", "234", true)]
+			[Arguments("x", "", false)]
+			[Arguments("y", "", false)]
+			[Arguments("x", "234", false)]
+			[Arguments("y", "123", false)]
+			[Arguments("foo", "", true)]
 			public async Task WithFormDataParameter_ShouldVerifyParameters(string key, string value, bool expectMatch)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -154,18 +160,18 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectMatch ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("?x=123&y=234", true)]
-			[InlineData("?y=234&x=123&", true)]
-			[InlineData("x=123", true)]
-			[InlineData("y=234", true)]
-			[InlineData("x", false)]
-			[InlineData("y", false)]
-			[InlineData("x=234", false)]
-			[InlineData("y=123", false)]
-			[InlineData("x=123&y=432", false)]
-			[InlineData("y=432&x=123", false)]
-			[InlineData("foo", true)]
+			[Test]
+			[Arguments("?x=123&y=234", true)]
+			[Arguments("?y=234&x=123&", true)]
+			[Arguments("x=123", true)]
+			[Arguments("y=234", true)]
+			[Arguments("x", false)]
+			[Arguments("y", false)]
+			[Arguments("x=234", false)]
+			[Arguments("y=123", false)]
+			[Arguments("x=123&y=432", false)]
+			[Arguments("y=432&x=123", false)]
+			[Arguments("foo", true)]
 			public async Task WithFormDataString_ShouldVerifyParameters(string values, bool expectMatch)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();

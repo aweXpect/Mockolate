@@ -4,7 +4,7 @@ namespace Mockolate.Tests.MockProperties;
 
 public sealed class VerifySetTests
 {
-	[Fact]
+	[Test]
 	public async Task ShouldIncreaseInvocationCountOfGetter()
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
@@ -15,9 +15,9 @@ public sealed class VerifySetTests
 		await That(sut.VerifyMock.Set.Counter(It.IsAny<int>())).Once();
 	}
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
 	public async Task ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
@@ -36,7 +36,7 @@ public sealed class VerifySetTests
 			             """);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldUpdateValueForNextGet()
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
@@ -49,7 +49,7 @@ public sealed class VerifySetTests
 		await That(result2).IsEqualTo(5);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithNull_ShouldUpdateValueForNextGet()
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
