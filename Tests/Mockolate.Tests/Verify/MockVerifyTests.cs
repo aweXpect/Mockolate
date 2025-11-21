@@ -4,7 +4,7 @@ namespace Mockolate.Tests.Verify;
 
 public class MockVerifyTests
 {
-	[Fact]
+	[Test]
 	public async Task AllInteractionsVerified_WithoutInteractions_ShouldReturnTrue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -12,7 +12,7 @@ public class MockVerifyTests
 		await That(sut.VerifyMock.ThatAllInteractionsAreVerified()).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task AllInteractionsVerified_WithUnverifiedInteractions_ShouldReturnFalse()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -24,7 +24,7 @@ public class MockVerifyTests
 		await That(sut.VerifyMock.ThatAllInteractionsAreVerified()).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task AllInteractionsVerified_WithVerifiedInteractions_ShouldReturnTrue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();

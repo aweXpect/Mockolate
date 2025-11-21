@@ -8,11 +8,11 @@ namespace Mockolate.Tests.Verify;
 
 public class VerificationResultExtensionsTests
 {
-	[Theory]
-	[InlineData(0, 0, true)]
-	[InlineData(2, 3, false)]
-	[InlineData(2, 2, true)]
-	[InlineData(2, 1, true)]
+	[Test]
+	[Arguments(0, 0, true)]
+	[Arguments(2, 3, false)]
+	[Arguments(2, 2, true)]
+	[Arguments(2, 1, true)]
 	public async Task AtLeast_ShouldReturnExpectedResult(int count, int times, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -28,11 +28,11 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at least 3 times, but it did twice.");
 	}
 
-	[Theory]
-	[InlineData(0, false)]
-	[InlineData(1, true)]
-	[InlineData(2, true)]
-	[InlineData(3, true)]
+	[Test]
+	[Arguments(0, false)]
+	[Arguments(1, true)]
+	[Arguments(2, true)]
+	[Arguments(3, true)]
 	public async Task AtLeastOnce_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -48,11 +48,11 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at least once, but it never did.");
 	}
 
-	[Theory]
-	[InlineData(0, false)]
-	[InlineData(1, false)]
-	[InlineData(2, true)]
-	[InlineData(3, true)]
+	[Test]
+	[Arguments(0, false)]
+	[Arguments(1, false)]
+	[Arguments(2, true)]
+	[Arguments(3, true)]
 	public async Task AtLeastTwice_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -68,11 +68,11 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at least twice, but it {count switch { 0 => "never did", _ => "did once", }}.");
 	}
 
-	[Theory]
-	[InlineData(0, 0, true)]
-	[InlineData(2, 1, false)]
-	[InlineData(2, 2, true)]
-	[InlineData(2, 3, true)]
+	[Test]
+	[Arguments(0, 0, true)]
+	[Arguments(2, 1, false)]
+	[Arguments(2, 2, true)]
+	[Arguments(2, 3, true)]
 	public async Task AtMost_ShouldReturnExpectedResult(int count, int times, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -88,11 +88,11 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at most once, but it did twice.");
 	}
 
-	[Theory]
-	[InlineData(0, true)]
-	[InlineData(1, true)]
-	[InlineData(2, false)]
-	[InlineData(3, false)]
+	[Test]
+	[Arguments(0, true)]
+	[Arguments(1, true)]
+	[Arguments(2, false)]
+	[Arguments(3, false)]
 	public async Task AtMostOnce_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -108,11 +108,11 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at most once, but it did {(count == 2 ? "twice" : $"{count} times")}.");
 	}
 
-	[Theory]
-	[InlineData(0, true)]
-	[InlineData(1, true)]
-	[InlineData(2, true)]
-	[InlineData(3, false)]
+	[Test]
+	[Arguments(0, true)]
+	[Arguments(1, true)]
+	[Arguments(2, true)]
+	[Arguments(3, false)]
 	public async Task AtMostTwice_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -128,11 +128,11 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at most twice, but it did {count} times.");
 	}
 
-	[Theory]
-	[InlineData(0, 0, true)]
-	[InlineData(2, 3, false)]
-	[InlineData(2, 2, true)]
-	[InlineData(2, 1, false)]
+	[Test]
+	[Arguments(0, 0, true)]
+	[Arguments(2, 3, false)]
+	[Arguments(2, 2, true)]
+	[Arguments(2, 1, false)]
 	public async Task Exactly_ShouldReturnExpectedResult(int count, int times, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -148,11 +148,11 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) exactly {(times == 1 ? "once" : $"{times} times")}, but it did twice.");
 	}
 
-	[Theory]
-	[InlineData(0, true)]
-	[InlineData(1, false)]
-	[InlineData(2, false)]
-	[InlineData(3, false)]
+	[Test]
+	[Arguments(0, true)]
+	[Arguments(1, false)]
+	[Arguments(2, false)]
+	[Arguments(3, false)]
 	public async Task Never_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -168,11 +168,11 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock never invoked method Dispense(Any<string>(), Any<int>()), but it did {count switch { 1 => "once", 2 => "twice", _ => $"{count} times", }}.");
 	}
 
-	[Theory]
-	[InlineData(0, false)]
-	[InlineData(1, true)]
-	[InlineData(2, false)]
-	[InlineData(3, false)]
+	[Test]
+	[Arguments(0, false)]
+	[Arguments(1, true)]
+	[Arguments(2, false)]
+	[Arguments(3, false)]
 	public async Task Once_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -188,7 +188,7 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) exactly once, but it {count switch { 0 => "never did", 2 => "did twice", _ => $"did {count} times", }}.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Then_ShouldVerifyInOrder()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -213,7 +213,7 @@ public class VerificationResultExtensionsTests
 			.Then(m => m.Invoked.Dispense(Any<string>(), With(2)));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Then_WhenNoMatch_ShouldFail()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -243,7 +243,7 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(Any<string>(), 1), then invoked method Dispense(Any<string>(), 2), then invoked method Dispense(Any<string>(), 6) in order, but it invoked method Dispense(Any<string>(), 6) not at all.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Then_WhenNoMock_ShouldThrowMockException()
 	{
 		IChocolateDispenser mock = new MyChocolateDispenser();
@@ -258,11 +258,11 @@ public class VerificationResultExtensionsTests
 			.WithMessage("The subject is no mock subject.");
 	}
 
-	[Theory]
-	[InlineData(0, false)]
-	[InlineData(1, false)]
-	[InlineData(2, true)]
-	[InlineData(3, false)]
+	[Test]
+	[Arguments(0, false)]
+	[Arguments(1, false)]
+	[Arguments(2, true)]
+	[Arguments(3, false)]
 	public async Task Twice_ShouldReturnExpectedResult(int count, bool expectSuccess)
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();

@@ -4,9 +4,9 @@ public sealed partial class SetupIndexerTests
 {
 	public sealed class CallingBaseClassTests
 	{
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith1Key_Getter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -18,9 +18,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith1KeyGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith1Key_Setter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -32,9 +32,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith1KeySetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith2Keys_Getter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -46,9 +46,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith2KeysGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith2Keys_Setter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -60,9 +60,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith2KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith3Keys_Getter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -74,9 +74,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith3KeysGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith3Keys_Setter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -88,9 +88,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith3KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith4Keys_Getter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -102,9 +102,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith4KeysGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith4Keys_Setter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -116,9 +116,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith4KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith5Keys_Getter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -131,9 +131,9 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith5KeysGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task IndexerWith5Keys_Setter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -146,7 +146,7 @@ public sealed partial class SetupIndexerTests
 			await That(mock.MyIndexerWith5KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task SetupCallingBaseClassWithoutReturn_ShouldReturnBaseValue()
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();

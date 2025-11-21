@@ -6,7 +6,7 @@ public sealed partial class SetupIndexerTests
 {
 	public sealed class SpanTests
 	{
-		[Fact]
+		[Test]
 		public async Task Memory_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -17,7 +17,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -28,7 +28,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Memory_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -39,7 +39,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -50,7 +50,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -61,7 +61,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -72,7 +72,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -83,7 +83,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -94,7 +94,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());

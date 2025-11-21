@@ -2,7 +2,7 @@ namespace Mockolate.Tests;
 
 public sealed class MockBehaviorExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task CallingBaseClass_ShouldSetCallBaseClass()
 	{
 		MockBehavior sut = MockBehavior.Default;
@@ -12,7 +12,7 @@ public sealed class MockBehaviorExtensionsTests
 		await That(result.CallBaseClass).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IgnoringBaseClass_ShouldSetIgnoreBaseClass()
 	{
 		bool initializedValue = true;

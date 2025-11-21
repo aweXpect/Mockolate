@@ -4,7 +4,7 @@ namespace Mockolate.Tests;
 
 public sealed class MatchExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task OutParameterMonitor_MultipleMonitors_ShouldAllMonitorValues()
 	{
 		int idx = 1;
@@ -21,7 +21,7 @@ public sealed class MatchExtensionsTests
 		await That(monitor2.Values).IsEqualTo([1, 2, 3,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task OutParameterMonitor_ShouldMonitorReceivedValues()
 	{
 		int idx = 1;
@@ -35,7 +35,7 @@ public sealed class MatchExtensionsTests
 		await That(monitor.Values).IsEqualTo([1, 2,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ParameterMonitor_MultipleMonitors_ShouldAllMonitorValues()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -54,7 +54,7 @@ public sealed class MatchExtensionsTests
 		await That(monitorB2.Values).IsEqualTo([5, 6,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ParameterMonitor_ShouldMonitorReceivedValues()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -66,7 +66,7 @@ public sealed class MatchExtensionsTests
 		await That(monitor.Values).IsEqualTo(["Dark", "White",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ParameterMonitor_WithFilter_ShouldMonitorMatchingValues()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -84,7 +84,7 @@ public sealed class MatchExtensionsTests
 		await That(monitor.Values).IsEqualTo([5, 6, 7, 8,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task RefParameterMonitor_MultipleMonitors_ShouldAllMonitorValues()
 	{
 		IMyService mock = Mock.Create<IMyService>();
@@ -101,7 +101,7 @@ public sealed class MatchExtensionsTests
 		await That(monitor2.Values).IsEqualTo([6, 14,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task RefParameterMonitor_ShouldMonitorReceivedValues()
 	{
 		IMyService mock = Mock.Create<IMyService>();
@@ -116,7 +116,7 @@ public sealed class MatchExtensionsTests
 		await That(monitor.Values).IsEqualTo([6, 14,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task RefParameterMonitor_WithFilter_ShouldMonitorMatchingValues()
 	{
 		IMyService mock = Mock.Create<IMyService>();

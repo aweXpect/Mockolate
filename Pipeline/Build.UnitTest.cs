@@ -44,7 +44,7 @@ partial class Build
 								project.GetTargetFrameworks()?.Except(excludedFrameworks),
 								(frameworkSettings, framework) => frameworkSettings
 									.SetFramework(framework)
-									.AddLoggers($"trx;LogFileName={project.Name}_{framework}.trx")
+									.AddLoggers($"console;verbosity=normal;trx;LogFileName={project.Name}_{framework}.trx")
 							)
 					), completeOnFailure: true
 			);

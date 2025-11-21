@@ -4,7 +4,7 @@ public sealed partial class SetupPropertyTests
 {
 	public sealed class InitializeWithTests
 	{
-		[Fact]
+		[Test]
 		public async Task WhenRead_ShouldReturnInitializedValue()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -15,7 +15,7 @@ public sealed partial class SetupPropertyTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSet_ShouldUpdateValue_ShouldReturnInitializedValue()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();

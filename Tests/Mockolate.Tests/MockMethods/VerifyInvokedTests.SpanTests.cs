@@ -6,7 +6,7 @@ public sealed partial class VerifyInvokedTests
 {
 	public sealed class SpanTests
 	{
-		[Fact]
+		[Test]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -18,7 +18,7 @@ public sealed partial class VerifyInvokedTests
 			await That(mock.VerifyMock.Invoked.MyMethod(With<Memory<int>>(v => v.Length == 4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Memory_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -30,7 +30,7 @@ public sealed partial class VerifyInvokedTests
 			await That(mock.VerifyMock.Invoked.MyMethod(Any<Memory<int>>())).Twice();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -42,7 +42,7 @@ public sealed partial class VerifyInvokedTests
 			await That(mock.VerifyMock.Invoked.MyMethod(WithReadOnlySpan<int>(v => v.Length == 4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -54,7 +54,7 @@ public sealed partial class VerifyInvokedTests
 			await That(mock.VerifyMock.Invoked.MyMethod(AnyReadOnlySpan<int>())).Twice();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -66,7 +66,7 @@ public sealed partial class VerifyInvokedTests
 			await That(mock.VerifyMock.Invoked.MyMethod(WithSpan<int>(v => v.Length == 4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());

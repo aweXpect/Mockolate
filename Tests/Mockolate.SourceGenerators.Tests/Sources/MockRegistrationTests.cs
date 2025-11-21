@@ -5,7 +5,7 @@ namespace Mockolate.SourceGenerators.Tests.Sources;
 
 public sealed class MockRegistrationTests
 {
-	[Fact]
+	[Test]
 	public async Task DefaultValueGenerator_ShouldRegisterArrays()
 	{
 		GeneratorResult result = Generator
@@ -39,7 +39,7 @@ public sealed class MockRegistrationTests
 			.DoesNotContain("T[]");
 	}
 
-	[Fact]
+	[Test]
 	public async Task DefaultValueGenerator_ShouldRegisterIEnumerables()
 	{
 		GeneratorResult result = Generator
@@ -77,7 +77,7 @@ public sealed class MockRegistrationTests
 			.DoesNotContain("IEnumerable<T>");
 	}
 
-	[Fact]
+	[Test]
 	public async Task DefaultValueGenerator_ShouldRegisterTasks()
 	{
 		GeneratorResult result = Generator
@@ -115,7 +115,7 @@ public sealed class MockRegistrationTests
 			.DoesNotContain("Task<T>");
 	}
 
-	[Fact]
+	[Test]
 	public async Task DefaultValueGenerator_ShouldRegisterValueTasks()
 	{
 		GeneratorResult result = Generator
@@ -153,7 +153,7 @@ public sealed class MockRegistrationTests
 			.DoesNotContain("ValueTask<T>");
 	}
 
-	[Fact]
+	[Test]
 	public async Task DefaultValueGenerator_ShouldRegisterValueTuples()
 	{
 		GeneratorResult result = Generator
@@ -190,7 +190,7 @@ public sealed class MockRegistrationTests
 			.DoesNotContain("(int, T1, T2)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldRegisterAllTypesInTheMockGenerator()
 	{
 		GeneratorResult result = Generator

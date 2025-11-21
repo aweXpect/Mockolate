@@ -4,7 +4,7 @@ namespace Mockolate.SourceGenerators.Tests.Sources;
 
 public sealed partial class ForMockTests
 {
-	[Fact]
+	[Test]
 	public async Task ForTypesWithAdditionalConstructorsWithParameters_ShouldWorkForAllNonPrivateConstructors()
 	{
 		GeneratorResult result = Generator
@@ -35,7 +35,7 @@ public sealed partial class ForMockTests
 				"throw new MockException(\"No parameterless constructor found for 'MyBaseClass'. Please provide constructor parameters.\");");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithConstructorWithParameters_ShouldWorkForAllNonPrivateConstructors()
 	{
 		GeneratorResult result = Generator
@@ -121,7 +121,7 @@ public sealed partial class ForMockTests
 			          """).IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithoutPublicOrProtectedConstructor_ShouldOnlyGenerateMockThatThrowsException()
 	{
 		GeneratorResult result = Generator
@@ -151,7 +151,7 @@ public sealed partial class ForMockTests
 				"throw new MockException(\"Could not find any constructor at all for the base type 'MyCode.MyBaseClass'. Therefore mocking is not supported!\");");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithSealedOverrideEvent_ShouldNotOverrideEvent()
 	{
 		GeneratorResult result = Generator
@@ -184,7 +184,7 @@ public sealed partial class ForMockTests
 			.DoesNotContain("event System.EventHandler<long>? SomeEvent");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithSealedOverrideIndexer_ShouldNotOverrideIndexer()
 	{
 		GeneratorResult result = Generator
@@ -217,7 +217,7 @@ public sealed partial class ForMockTests
 			.DoesNotContain("override int this[int index]");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithSealedOverrideMethod_ShouldNotOverrideMethod()
 	{
 		GeneratorResult result = Generator
@@ -251,7 +251,7 @@ public sealed partial class ForMockTests
 			.DoesNotContain("override void MyMethod(int value)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithSealedOverrideProperty_ShouldNotOverrideProperty()
 	{
 		GeneratorResult result = Generator
@@ -284,7 +284,7 @@ public sealed partial class ForMockTests
 			.DoesNotContain("override int MyProperty");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldNotIncludeNamespacesFromMockTypes()
 	{
 		GeneratorResult result = Generator
