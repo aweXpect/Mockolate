@@ -4,9 +4,9 @@ public sealed partial class SetupPropertyTests
 {
 	public sealed class CallingBaseClassTests
 	{
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyProperty_Getter_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();
@@ -17,9 +17,9 @@ public sealed partial class SetupPropertyTests
 			await That(mock.MyPropertyGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyProperty_Setter_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();
@@ -30,7 +30,7 @@ public sealed partial class SetupPropertyTests
 			await That(mock.MyPropertySetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task SetupCallingBaseClassWithoutReturn_ShouldReturnBaseValue()
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();

@@ -4,7 +4,7 @@ public sealed class ReturnsAsyncExtensionsTests
 {
 	public sealed class TaskTests
 	{
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_1Parameter_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -15,7 +15,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_1Parameter_CallbackWithValue_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -26,7 +26,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(12);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_1Parameter_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -37,7 +37,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_2Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -48,7 +48,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_2Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -59,7 +59,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(13);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_2Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -70,7 +70,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_3Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -81,7 +81,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_3Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -93,7 +93,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(16);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_3Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -104,7 +104,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_4Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -116,7 +116,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_4Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -128,7 +128,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(20);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_4Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -140,7 +140,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_NoParameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -151,7 +151,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_NoParameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -162,7 +162,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_WithParameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -173,7 +173,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_WithParameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -188,7 +188,7 @@ public sealed class ReturnsAsyncExtensionsTests
 #if NET8_0_OR_GREATER
 	public sealed class ValueTaskTests
 	{
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_1Parameter_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -199,7 +199,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_1Parameter_CallbackWithValue_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -210,7 +210,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(12);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_1Parameter_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -221,7 +221,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_2Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -232,7 +232,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_2Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -243,7 +243,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(13);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_2Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -254,7 +254,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_3Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -265,7 +265,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_3Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -277,7 +277,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(16);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_3Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -288,7 +288,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_4Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -300,7 +300,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_4Parameters_CallbackWithValues_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -312,7 +312,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(20);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_4Parameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -324,7 +324,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_NoParameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -335,7 +335,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_NoParameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -346,7 +346,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_WithParameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -357,7 +357,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			await That(result).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReturnsAsync_WithParameters_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();

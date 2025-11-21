@@ -7,7 +7,7 @@ public sealed class MockExtensionsTests
 {
 	public sealed class ClearAllInteractionsTests
 	{
-		[Fact]
+		[Test]
 		public async Task Monitor_ShouldWorkAcrossClearAllInteractions()
 		{
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -34,7 +34,7 @@ public sealed class MockExtensionsTests
 			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldClearRecordedInteractions()
 		{
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();

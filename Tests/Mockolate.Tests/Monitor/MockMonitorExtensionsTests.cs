@@ -5,7 +5,7 @@ namespace Mockolate.Tests.Monitor;
 
 public sealed class MockMonitorExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
 	{
 		IMyService sut = Mock.Create<IMyService>();
@@ -32,7 +32,7 @@ public sealed class MockMonitorExtensionsTests
 		await That(monitor.Verify.Invoked.IsValid(It.Is(8))).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenMonitoringIsNotDisposed_ShouldStillVerify()
 	{
 		IMyService sut = Mock.Create<IMyService>();
