@@ -2,10 +2,16 @@
 
 namespace Mockolate.Analyzers;
 
-internal static class Rules
+/// <summary>
+///     The rules for mockolate analyzers.
+/// </summary>
+public static class Rules
 {
 	private const string UsageCategory = "Usage";
 
+	/// <summary>
+	///     Verifications must be used.
+	/// </summary>
 	public static readonly DiagnosticDescriptor UseVerificationRule =
 		CreateDescriptor("Mockolate0001", UsageCategory, DiagnosticSeverity.Error);
 
