@@ -85,8 +85,6 @@ public class MockabilityAnalyzerTests
 				.WithArguments("MyNamespace.MyEnum", "type is an enum")
 		);
 
-	// Note: Static classes cannot be used as type parameters, so the compiler prevents this case
-
 	[Fact]
 	public async Task WhenMockingGlobalNamespaceType_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
