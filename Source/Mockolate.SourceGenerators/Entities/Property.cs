@@ -19,6 +19,28 @@ internal record Property
 			IndexerParameters = new EquatableArray<MethodParameter>(
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
+		
+		// Check if return type is Span or ReadOnlySpan
+		if (propertySymbol.Type.ContainingNamespace?.Name == "System" &&
+		    propertySymbol.Type.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true)
+		{
+			ReturnsSpan = propertySymbol.Type.Name == "Span";
+			ReturnsReadOnlySpan = propertySymbol.Type.Name == "ReadOnlySpan";
+			if (ReturnsSpan || ReturnsReadOnlySpan)
+			{
+				INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)propertySymbol.Type;
+				if (namedTypeSymbol.TypeArguments.Length == 1)
+				{
+					ITypeSymbol elementType = namedTypeSymbol.TypeArguments[0];
+					SpanElementType = new Type(elementType);
+				}
+				else
+				{
+					ReturnsSpan = false;
+					ReturnsReadOnlySpan = false;
+				}
+			}
+		}
 
 		Attributes = propertySymbol.GetAttributes().ToAttributeArray();
 
@@ -57,6 +79,9 @@ internal record Property
 	public Accessibility Accessibility { get; }
 	public string Name { get; }
 	public string? ExplicitImplementation { get; }
+	public bool ReturnsSpan { get; }
+	public bool ReturnsReadOnlySpan { get; }
+	public Type? SpanElementType { get; }
 
 	internal string GetUniqueNameString()
 		=> $"\"{ContainingType}.{Name}\"";

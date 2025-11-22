@@ -18,5 +18,17 @@ public class SpanWrapper<T>
 	///     Gets the array of values contained in the span.
 	/// </summary>
 	public T[] SpanValues { get; }
+
+	/// <summary>
+	///     Implicitly converts a <see cref="SpanWrapper{T}" /> to a <see cref="Span{T}" />.
+	/// </summary>
+	public static implicit operator Span<T>(SpanWrapper<T> wrapper)
+		=> new(wrapper.SpanValues);
+
+	/// <summary>
+	///     Implicitly converts a <see cref="Span{T}" /> to a <see cref="SpanWrapper{T}" />.
+	/// </summary>
+	public static implicit operator SpanWrapper<T>(Span<T> span)
+		=> new(span);
 }
 #endif
