@@ -94,5 +94,32 @@ namespace Mockolate.Analyzers {
                 return ResourceManager.GetString("Mockolate0001Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Types that are sealed, structs, records, enums, or in the global namespace cannot be mocked..
+        /// </summary>
+        internal static string Mockolate0002Description {
+            get {
+                return ResourceManager.GetString("Mockolate0002Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type '{0}' cannot be mocked: {1}.
+        /// </summary>
+        internal static string Mockolate0002MessageFormat {
+            get {
+                return ResourceManager.GetString("Mockolate0002MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mock arguments must be mockable.
+        /// </summary>
+        internal static string Mockolate0002Title {
+            get {
+                return ResourceManager.GetString("Mockolate0002Title", resourceCulture);
+            }
+        }
     }
 }

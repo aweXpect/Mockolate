@@ -15,6 +15,12 @@ public static class Rules
 	public static readonly DiagnosticDescriptor UseVerificationRule =
 		CreateDescriptor("Mockolate0001", UsageCategory, DiagnosticSeverity.Error);
 
+	/// <summary>
+	///     Mock arguments must be mockable.
+	/// </summary>
+	public static readonly DiagnosticDescriptor MockabilityRule =
+		CreateDescriptor("Mockolate0002", UsageCategory, DiagnosticSeverity.Error);
+
 	private static DiagnosticDescriptor CreateDescriptor(string diagnosticId, string category,
 		DiagnosticSeverity severity) => new(
 		diagnosticId,
