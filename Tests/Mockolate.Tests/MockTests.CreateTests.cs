@@ -38,11 +38,14 @@ public sealed partial class MockTests
 		{
 			MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor, IMyService>(
 				BaseClass.WithConstructorParameters("foo"),
-				setup => setup.Method.VirtualMethod().Returns("bar"));
+				setup => setup.Method.VirtualMethod().Do(_ => setup.Method.VirtualMethod().Returns("foo"))
+					.Returns("bar"));
 
-			string result = mock.VirtualMethod();
+			string result1 = mock.VirtualMethod();
+			string result2 = mock.VirtualMethod();
 
-			await That(result).IsEqualTo("bar");
+			await That(result1).IsEqualTo("bar");
+			await That(result2).IsEqualTo("foo");
 		}
 
 		[Fact]

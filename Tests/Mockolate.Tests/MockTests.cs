@@ -1,4 +1,5 @@
 using Mockolate.Exceptions;
+using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
 
@@ -283,6 +284,20 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task Create_WithSetups_ShouldAllowChangingTheSetupSubjectInCallback()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(setup => setup.Method
+			.Dispense(Any<string>(), Any<int>())
+			.Do((s, i) => setup.Subject[s] -= i));
+
+		mock["Dark"] = 10;
+		mock.Dispense("Dark", 3);
+		int remaining = mock["Dark"];
+
+		await That(remaining).IsEqualTo(7);
+	}
+
+	[Fact]
 	public async Task Create_WithSetups_ShouldApplySetups()
 	{
 		IMyService mock = Mock.Create<IMyService>(
@@ -340,10 +355,12 @@ public sealed partial class MockTests
 
 	public class MyServiceBaseWithMultipleConstructors
 	{
+		// ReSharper disable once UnusedParameter.Local
 		public MyServiceBaseWithMultipleConstructors(int initialValue)
 		{
 		}
 
+		// ReSharper disable once UnusedParameter.Local
 		public MyServiceBaseWithMultipleConstructors(DateTime initialValue)
 		{
 		}
@@ -366,6 +383,7 @@ public sealed partial class MockTests
 			Text = text;
 		}
 
+		// ReSharper disable once UnassignedGetOnlyAutoProperty
 		public int Number { get; }
 		public string Text { get; }
 		public virtual string VirtualMethod() => Text;
@@ -377,6 +395,7 @@ public sealed partial class MockTests
 		{
 		}
 
+		// ReSharper disable once UnassignedGetOnlyAutoProperty
 		public int Number { get; }
 	}
 

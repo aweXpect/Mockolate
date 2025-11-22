@@ -6,13 +6,7 @@ namespace Mockolate;
 public partial class Mock<T> : MockSetup<T>
 {
 	/// <inheritdoc cref="Mock{T}" />
-	public Mock(T subject, MockRegistration mockRegistration) : base(mockRegistration)
+	public Mock(T subject, MockRegistration mockRegistration) : base(subject, mockRegistration)
 	{
-		Subject = subject;
 	}
-
-	/// <summary>
-	///     The mock subject.
-	/// </summary>
-	public T Subject { get; }
 }

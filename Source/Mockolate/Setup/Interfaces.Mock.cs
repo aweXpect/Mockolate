@@ -4,7 +4,13 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up the mock for <typeparamref name="T" />.
 /// </summary>
-public interface IMockSetup<out T> : IInteractiveMock<T>;
+public interface IMockSetup<out T> : IInteractiveMock<T>
+{
+	/// <summary>
+	///     The underlying mock subject.
+	/// </summary>
+	T Subject { get; }
+}
 
 /// <summary>
 ///     Sets up methods on the mock for <typeparamref name="T" />.
