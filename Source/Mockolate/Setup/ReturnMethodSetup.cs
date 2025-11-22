@@ -272,6 +272,28 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup, IReturnMethodSetupCal
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock> callback)
+	{
+		Callback<Action<int, T1>> currentCallback = new((_, _) => callback((TMock)Registration!.Subject!));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock, int> callback)
+	{
+		Callback<Action<int, T1>> currentCallback = new((i, _) => callback((TMock)Registration!.Subject!, i));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock, int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new((i, p1) => callback((TMock)Registration!.Subject!, i, p1));

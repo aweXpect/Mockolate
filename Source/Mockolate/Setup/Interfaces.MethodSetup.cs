@@ -741,6 +741,22 @@ public interface IVoidMethodSetup<out T1>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
+	IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
+	/// </remarks>
+	IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, int> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter.
+	/// </remarks>
 	IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, T1> callback);
 
 	/// <summary>

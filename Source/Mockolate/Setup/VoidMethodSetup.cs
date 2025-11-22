@@ -248,6 +248,34 @@ public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter.
+	/// </remarks>
+	public IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock> callback)
+	{
+		Callback<Action<int, T1>> currentCallback = new((_, _) => callback((TMock)Registration!.Subject!));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
+	/// </remarks>
+	public IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, int> callback)
+	{
+		Callback<Action<int, T1>> currentCallback = new((i, _) => callback((TMock)Registration!.Subject!, i));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
 	public IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback((TMock)Registration!.Subject!, p1));
