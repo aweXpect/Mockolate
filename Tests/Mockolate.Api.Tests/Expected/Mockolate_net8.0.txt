@@ -143,14 +143,16 @@ namespace Mockolate
     }
     public class MockSetup<T> : Mockolate.IHasMockRegistration, Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetupWithEqualsWithGetHashCode<T>, Mockolate.Setup.IMockMethodSetupWithEquals<T>, Mockolate.Setup.IMockMethodSetupWithGetHashCode<T>, Mockolate.Setup.IMockMethodSetupWithToStringWithEqualsWithGetHashCode<T>, Mockolate.Setup.IMockMethodSetupWithToStringWithEquals<T>, Mockolate.Setup.IMockMethodSetupWithToStringWithGetHashCode<T>, Mockolate.Setup.IMockMethodSetupWithToString<T>, Mockolate.Setup.IMockMethodSetup<T>, Mockolate.Setup.IMockPropertySetup<T>, Mockolate.Setup.IMockSetup<T>, Mockolate.Setup.IProtectedMockMethodSetup<T>, Mockolate.Setup.IProtectedMockPropertySetup<T>, Mockolate.Setup.IProtectedMockSetup<T>
     {
+        [System.Obsolete("This constructor should not be used by user code. Create a `Mock<T>` instead.")]
         public MockSetup(Mockolate.MockRegistration mockRegistration) { }
+        protected MockSetup(T subject, Mockolate.MockRegistration mockRegistration) { }
         public Mockolate.Interactions.MockInteractions Interactions { get; }
         public Mockolate.MockRegistration Registrations { get; }
+        public T Subject { get; }
     }
     public class Mock<T> : Mockolate.MockSetup<T>, Mockolate.IInteractiveMock<T>, Mockolate.Raise.IMockRaises<T>, Mockolate.Raise.IProtectedMockRaises<T>, Mockolate.Verify.IMockVerifyGotIndexerProtected<T>, Mockolate.Verify.IMockVerifyGotIndexer<T>, Mockolate.Verify.IMockVerifyGotProtected<T>, Mockolate.Verify.IMockVerifyGot<T>, Mockolate.Verify.IMockVerifyInvokedProtected<T>, Mockolate.Verify.IMockVerifyInvokedWithEqualsWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithEqualsWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToString<T>, Mockolate.Verify.IMockVerifyInvoked<T>, Mockolate.Verify.IMockVerifySetIndexerProtected<T>, Mockolate.Verify.IMockVerifySetIndexer<T>, Mockolate.Verify.IMockVerifySetProtected<T>, Mockolate.Verify.IMockVerifySet<T>, Mockolate.Verify.IMockVerifySubscribedToProtected<T>, Mockolate.Verify.IMockVerifySubscribedTo<T>, Mockolate.Verify.IMockVerifyUnsubscribedFromProtected<T>, Mockolate.Verify.IMockVerifyUnsubscribedFrom<T>, Mockolate.Verify.IMockVerify<T>
     {
         public Mock(T subject, Mockolate.MockRegistration mockRegistration) { }
-        public T Subject { get; }
         public Mockolate.Verify.VerificationResult<T> GotIndexer(params Mockolate.Match.NamedParameter?[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method(string methodName, Mockolate.Match.IParameters parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method(string methodName, params Mockolate.Match.NamedParameter[] parameters) { }
@@ -514,7 +516,10 @@ namespace Mockolate.Setup
     }
     public interface IMockMethodSetup<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockPropertySetup<out T> : Mockolate.IInteractiveMock<T> { }
-    public interface IMockSetup<out T> : Mockolate.IInteractiveMock<T> { }
+    public interface IMockSetup<out T> : Mockolate.IInteractiveMock<T>
+    {
+        T Subject { get; }
+    }
     public interface IPropertySetup
     {
         bool? CallBaseClass();

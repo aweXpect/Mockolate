@@ -68,7 +68,9 @@ public sealed partial class ForMockTests
 			          					MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
 			          					if (setups.Length > 0)
 			          					{
+			          						#pragma warning disable CS0618
 			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
+			          						#pragma warning restore CS0618
 			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
 			          						{
 			          							setup.Invoke(setupTarget);
@@ -86,7 +88,9 @@ public sealed partial class ForMockTests
 			          					MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
 			          					if (setups.Length > 0)
 			          					{
+			          						#pragma warning disable CS0618
 			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
+			          						#pragma warning restore CS0618
 			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
 			          						{
 			          							setup.Invoke(setupTarget);

@@ -278,9 +278,11 @@ internal static partial class Sources
 							.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
 						sb.Append("\t\t\t\t\tif (setups.Length > 0)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\t#pragma warning disable CS0618").AppendLine();
 						sb.Append("\t\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append("> setupTarget = new MockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append(">(mockRegistration);").AppendLine();
+						sb.Append("\t\t\t\t\t\t#pragma warning restore CS0618").AppendLine();
 						sb.Append("\t\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append(">> setup in setups)").AppendLine();
 						sb.Append("\t\t\t\t\t\t{").AppendLine();
@@ -325,9 +327,11 @@ internal static partial class Sources
 							.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
 						sb.Append("\t\t\t\t\tif (setups.Length > 0)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\t#pragma warning disable CS0618").AppendLine();
 						sb.Append("\t\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append("> setupTarget = new MockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append(">(mockRegistration);").AppendLine();
+						sb.Append("\t\t\t\t\t\t#pragma warning restore CS0618").AppendLine();
 						sb.Append("\t\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append(">> setup in setups)").AppendLine();
 						sb.Append("\t\t\t\t\t\t{").AppendLine();

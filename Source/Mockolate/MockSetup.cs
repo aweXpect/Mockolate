@@ -1,3 +1,5 @@
+using System;
+using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
 
@@ -16,9 +18,26 @@ public class MockSetup<T> : IHasMockRegistration, IMockSetup<T>, IProtectedMockS
 	IMockMethodSetupWithToStringWithEqualsWithGetHashCode<T>,
 	IMockPropertySetup<T>, IProtectedMockPropertySetup<T>
 {
-	/// <inheritdoc cref="Mock{T}" />
+	/// <summary>
+	///     This constructor should not be used by user code. It is only intended for use within the mock registration logic
+	///     to create an intermediate setup instance when the subject is not yet available.
+	/// </summary>
+	/// <remarks>
+	///     Create a <see cref="Mock{T}" /> instead.
+	/// </remarks>
+#pragma warning disable S1133 // Deprecated code should be removed
+	[Obsolete("This constructor should not be used by user code. Create a `Mock<T>` instead.")]
+#pragma warning restore S1133 // Deprecated code should be removed
 	public MockSetup(MockRegistration mockRegistration)
 	{
+		Registrations = mockRegistration;
+		Interactions = mockRegistration.Interactions;
+	}
+
+	/// <inheritdoc cref="MockSetup{T}" />
+	protected MockSetup(T subject, MockRegistration mockRegistration)
+	{
+		Subject = subject;
 		Registrations = mockRegistration;
 		Interactions = mockRegistration.Interactions;
 	}
@@ -55,5 +74,12 @@ public class MockSetup<T> : IHasMockRegistration, IMockSetup<T>, IProtectedMockS
 		Registrations.SetupMethod(methodSetup);
 		return methodSetup;
 	}
+
+	/// <summary>
+	///     The mock subject.
+	/// </summary>
+	public T Subject
+		=> field
+		   ?? throw new MockException("Subject is not yet available. You can only access the subject in callbacks!");
 }
 #pragma warning restore S1939 // Inheritance list should not be redundant
