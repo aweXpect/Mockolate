@@ -51,6 +51,13 @@ public partial class MockRegistration
 	public MockInteractions Interactions { get; }
 
 	/// <summary>
+	///     Gets or sets the mock subject that this registration is associated with.
+	/// </summary>
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public object? Subject { get; set; }
+
+	/// <summary>
 	///     Clears all interactions recorded by the mock object.
 	/// </summary>
 	public void ClearAllInteractions()

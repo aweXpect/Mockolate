@@ -84,9 +84,33 @@ public interface IReturnMethodSetup<in TReturn>
 	IReturnMethodSetupCallbackBuilder<TReturn> Do(Action<int> callback);
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter.
+	/// </remarks>
+	IReturnMethodSetupCallbackBuilder<TReturn> Do<TMock>(Action<TMock> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
+	/// </remarks>
+	IReturnMethodSetupCallbackBuilder<TReturn> Do<TMock>(Action<TMock, int> callback);
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	IReturnMethodSetup<TReturn> Returns(Func<TReturn> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter.
+	/// </remarks>
+	IReturnMethodSetup<TReturn> Returns<TMock>(Func<TMock, TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
@@ -170,9 +194,33 @@ public interface IReturnMethodSetup<in TReturn, out T1>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter.
+	/// </remarks>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock, T1> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
+	/// </remarks>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock, int, T1> callback);
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	IReturnMethodSetup<TReturn, T1> Returns(Func<T1, TReturn> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the mock subject as its first parameter.
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1> Returns<TMock>(Func<TMock, T1, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
