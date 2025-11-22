@@ -12,7 +12,7 @@ internal class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
 	public bool IsMatch(Type type)
 		=> type == typeof(T);
 
-	/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator)" />
-	public object? Create(Type type, IDefaultValueGenerator defaultValueGenerator)
+	/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
+	public object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
 		=> value;
 }

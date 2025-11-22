@@ -4,7 +4,7 @@ using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockMethods;
 
-public sealed class InteractionsTests
+public sealed partial class InteractionsTests
 {
 	[Fact]
 	public async Task Method_WhenNameAndValueMatches_ShouldReturnOnce()
