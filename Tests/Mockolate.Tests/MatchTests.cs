@@ -7,6 +7,54 @@ namespace Mockolate.Tests;
 public sealed partial class MatchTests
 {
 	[Fact]
+	public async Task InvokeCallbacks_WithCorrectType_ShouldInvokeCallback()
+	{
+		int isCalled = 0;
+		IParameter<int> sut = With<int>(_ => true)
+			.Do(v => isCalled += v);
+
+		((IParameter)sut).InvokeCallbacks(5);
+
+		await That(isCalled).IsEqualTo(5);
+	}
+
+	[Fact]
+	public async Task InvokeCallbacks_WithDifferentType_ShouldNotInvokeCallback()
+	{
+		int isCalled = 0;
+		IParameter<int> sut = With<int>(_ => true)
+			.Do(v => isCalled += v);
+
+		((IParameter)sut).InvokeCallbacks("5");
+
+		await That(isCalled).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task InvokeCallbacks_WithNull_WhenTypeIsNotNullable_ShouldNotInvokeCallback()
+	{
+		int isCalled = 0;
+		IParameter<int> sut = With<int>(_ => true)
+			.Do(_ => isCalled++);
+
+		((IParameter)sut).InvokeCallbacks(null);
+
+		await That(isCalled).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task InvokeCallbacks_WithNull_WhenTypeIsNullable_ShouldInvokeCallback()
+	{
+		int isCalled = 0;
+		IParameter<int?> sut = With<int?>(_ => true)
+			.Do(_ => isCalled++);
+
+		((IParameter)sut).InvokeCallbacks(null);
+
+		await That(isCalled).IsEqualTo(1);
+	}
+
+	[Fact]
 	public async Task ShouldOnlyHaveOneParameterlessPrivateConstructor()
 	{
 		ConstructorInfo[] constructors = typeof(Match)

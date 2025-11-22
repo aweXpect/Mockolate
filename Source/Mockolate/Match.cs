@@ -27,7 +27,7 @@ public partial class Match
 			return true;
 		}
 
-		if (value is null)
+		if (value is null && default(T) is null)
 		{
 			typedValue = default!;
 			return true;
@@ -72,9 +72,7 @@ public partial class Match
 	///     Matches a method parameter of type <see cref="System.Span{T}" /> of <typeparamref name="T" /> against an
 	///     expectation.
 	/// </summary>
-	public interface ISpanParameter<T> : IParameter<SpanWrapper<T>>
-	{
-	}
+	public interface ISpanParameter<T> : IParameter<SpanWrapper<T>>;
 #pragma warning restore S2326 // Unused type parameters should be removed
 #endif
 
@@ -84,9 +82,7 @@ public partial class Match
 	///     Matches a method parameter of type <see cref="System.Span{T}" /> of <typeparamref name="T" /> against an
 	///     expectation.
 	/// </summary>
-	public interface IVerifySpanParameter<T> : ISpanParameter<T>
-	{
-	}
+	public interface IVerifySpanParameter<T> : ISpanParameter<T>;
 #pragma warning restore S2326 // Unused type parameters should be removed
 #endif
 
@@ -96,9 +92,7 @@ public partial class Match
 	///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" /> against an
 	///     expectation.
 	/// </summary>
-	public interface IReadOnlySpanParameter<T> : IParameter<ReadOnlySpanWrapper<T>>
-	{
-	}
+	public interface IReadOnlySpanParameter<T> : IParameter<ReadOnlySpanWrapper<T>>;
 #pragma warning restore S2326 // Unused type parameters should be removed
 #endif
 
@@ -108,9 +102,7 @@ public partial class Match
 	///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" /> against an
 	///     expectation.
 	/// </summary>
-	public interface IVerifyReadOnlySpanParameter<T> : IReadOnlySpanParameter<T>
-	{
-	}
+	public interface IVerifyReadOnlySpanParameter<T> : IReadOnlySpanParameter<T>;
 #pragma warning restore S2326 // Unused type parameters should be removed
 #endif
 
@@ -145,9 +137,7 @@ public partial class Match
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
-	public interface IVerifyOutParameter<out T>
-	{
-	}
+	public interface IVerifyOutParameter<out T>;
 #pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
@@ -170,17 +160,13 @@ public partial class Match
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter.
 	/// </summary>
-	public interface IVerifyRefParameter<T>
-	{
-	}
+	public interface IVerifyRefParameter<T>;
 #pragma warning restore S2326 // Unused type parameters should be removed
 
 	/// <summary>
 	///     Use default event parameters when raising events.
 	/// </summary>
-	public interface IDefaultEventParameters
-	{
-	}
+	public interface IDefaultEventParameters;
 
 	/// <summary>
 	///     A named <see cref="Parameter" />.

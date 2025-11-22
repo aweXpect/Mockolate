@@ -78,8 +78,7 @@ public partial class Match
 			{
 				(true, true) => $"Ref<{typeof(T).FormatType()}>({predicateExpression}, {setterExpression})",
 				(true, false) => $"Ref<{typeof(T).FormatType()}>({predicateExpression})",
-				(false, true) => $"Ref<{typeof(T).FormatType()}>({setterExpression})",
-				(false, false) => $"Ref<{typeof(T).FormatType()}>()",
+				(false, _) => $"Ref<{typeof(T).FormatType()}>({setterExpression})",
 			};
 	}
 
