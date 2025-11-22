@@ -25,7 +25,9 @@ public class MockSetup<T> : IHasMockRegistration, IMockSetup<T>, IProtectedMockS
 	/// <remarks>
 	///     Create a <see cref="Mock{T}" /> instead.
 	/// </remarks>
+#pragma warning disable S1133 // Deprecated code should be removed
 	[Obsolete("This constructor should not be used by user code. Create a `Mock<T>` instead.")]
+#pragma warning restore S1133 // Deprecated code should be removed
 	public MockSetup(MockRegistration mockRegistration)
 	{
 		Registrations = mockRegistration;
