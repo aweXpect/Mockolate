@@ -10,6 +10,11 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class MethodSetup : IMethodSetup
 {
+	/// <summary>
+	///     Gets or sets the mock registration associated with this setup.
+	/// </summary>
+	internal MockRegistration? Registration { get; set; }
+
 	/// <inheritdoc cref="IMethodSetup.HasReturnCalls()" />
 	bool IMethodSetup.HasReturnCalls()
 		=> HasReturnCalls();

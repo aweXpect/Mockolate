@@ -47,11 +47,42 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup, IReturnMetho
 	}
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn> Do<TMock>(Action<TMock> callback)
+	{
+		Callback<Action<int>> currentCallback = new(_ => callback((TMock)Registration!.Subject!));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn> Do<TMock>(Action<TMock, int> callback)
+	{
+		Callback<Action<int>> currentCallback = new(i => callback((TMock)Registration!.Subject!, i));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public IReturnMethodSetup<TReturn> Returns(Func<TReturn> callback)
 	{
 		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	public IReturnMethodSetup<TReturn> Returns<TMock>(Func<TMock, TReturn> callback)
+	{
+		_returnCallbacks.Add(() => callback((TMock)Registration!.Subject!));
 		return this;
 	}
 
@@ -237,11 +268,42 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup, IReturnMethodSetupCal
 	}
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock, T1> callback)
+	{
+		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback((TMock)Registration!.Subject!, p1));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock, int, T1> callback)
+	{
+		Callback<Action<int, T1>> currentCallback = new((i, p1) => callback((TMock)Registration!.Subject!, i, p1));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public IReturnMethodSetup<TReturn, T1> Returns(Func<T1, TReturn> callback)
 	{
 		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	public IReturnMethodSetup<TReturn, T1> Returns<TMock>(Func<TMock, T1, TReturn> callback)
+	{
+		_returnCallbacks.Add(p1 => callback((TMock)Registration!.Subject!, p1));
 		return this;
 	}
 
@@ -478,11 +540,42 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup, IReturnMethodSetu
 	}
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do<TMock>(Action<TMock, T1, T2> callback)
+	{
+		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => callback((TMock)Registration!.Subject!, p1, p2));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do<TMock>(Action<TMock, int, T1, T2> callback)
+	{
+		Callback<Action<int, T1, T2>> currentCallback = new((i, p1, p2) => callback((TMock)Registration!.Subject!, i, p1, p2));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public IReturnMethodSetup<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback)
 	{
 		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	public IReturnMethodSetup<TReturn, T1, T2> Returns<TMock>(Func<TMock, T1, T2, TReturn> callback)
+	{
+		_returnCallbacks.Add((p1, p2) => callback((TMock)Registration!.Subject!, p1, p2));
 		return this;
 	}
 
@@ -733,11 +826,42 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	}
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do<TMock>(Action<TMock, T1, T2, T3> callback)
+	{
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => callback((TMock)Registration!.Subject!, p1, p2, p3));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do<TMock>(Action<TMock, int, T1, T2, T3> callback)
+	{
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((i, p1, p2, p3) => callback((TMock)Registration!.Subject!, i, p1, p2, p3));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public IReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback)
 	{
 		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	public IReturnMethodSetup<TReturn, T1, T2, T3> Returns<TMock>(Func<TMock, T1, T2, T3, TReturn> callback)
+	{
+		_returnCallbacks.Add((p1, p2, p3) => callback((TMock)Registration!.Subject!, p1, p2, p3));
 		return this;
 	}
 
@@ -999,11 +1123,42 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do<TMock>(Action<TMock, T1, T2, T3, T4> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => callback((TMock)Registration!.Subject!, p1, p2, p3, p4));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do<TMock>(Action<TMock, int, T1, T2, T3, T4> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((i, p1, p2, p3, p4) => callback((TMock)Registration!.Subject!, i, p1, p2, p3, p4));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback)
 	{
 		_returnCallbacks.Add(callback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns<TMock>(Func<TMock, T1, T2, T3, T4, TReturn> callback)
+	{
+		_returnCallbacks.Add((p1, p2, p3, p4) => callback((TMock)Registration!.Subject!, p1, p2, p3, p4));
 		return this;
 	}
 

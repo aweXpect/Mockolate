@@ -83,7 +83,14 @@ public partial class MockRegistration
 	/// <summary>
 	///     Registers the <paramref name="methodSetup" /> in the mock.
 	/// </summary>
-	public void SetupMethod(IMethodSetup methodSetup) => _methodSetups.Add(methodSetup);
+	public void SetupMethod(IMethodSetup methodSetup)
+	{
+		if (methodSetup is MethodSetup setup)
+		{
+			setup.Registration = this;
+		}
+		_methodSetups.Add(methodSetup);
+	}
 
 	/// <summary>
 	///     Registers the <paramref name="propertySetup" /> in the mock.

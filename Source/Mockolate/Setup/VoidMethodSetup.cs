@@ -52,6 +52,28 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	}
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder Do<TMock>(Action<TMock> callback)
+	{
+		Callback<Action<int>> currentCallback = new(_ => callback((TMock)Registration!.Subject!));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder Do<TMock>(Action<TMock, int> callback)
+	{
+		Callback<Action<int>> currentCallback = new(i => callback((TMock)Registration!.Subject!, i));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
 	/// </summary>
 	public IVoidMethodSetup DoesNotThrow()
@@ -218,6 +240,28 @@ public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<
 	public IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, T1> callback)
+	{
+		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback((TMock)Registration!.Subject!, p1));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, int, T1> callback)
+	{
+		Callback<Action<int, T1>> currentCallback = new((i, p1) => callback((TMock)Registration!.Subject!, i, p1));
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -424,6 +468,28 @@ public class VoidMethodSetup<T1, T2> : MethodSetup, IVoidMethodSetupCallbackBuil
 	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder<T1, T2> Do<TMock>(Action<TMock, T1, T2> callback)
+	{
+		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => callback((TMock)Registration!.Subject!, p1, p2));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder<T1, T2> Do<TMock>(Action<TMock, int, T1, T2> callback)
+	{
+		Callback<Action<int, T1, T2>> currentCallback = new((i, p1, p2) => callback((TMock)Registration!.Subject!, i, p1, p2));
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
@@ -643,6 +709,28 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallback
 	}
 
 	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do<TMock>(Action<TMock, T1, T2, T3> callback)
+	{
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => callback((TMock)Registration!.Subject!, p1, p2, p3));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do<TMock>(Action<TMock, int, T1, T2, T3> callback)
+	{
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((i, p1, p2, p3) => callback((TMock)Registration!.Subject!, i, p1, p2, p3));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
 	/// </summary>
 	public IVoidMethodSetup<T1, T2, T3> DoesNotThrow()
@@ -854,6 +942,28 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IVoidMethodSetupCall
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do<TMock>(Action<TMock, T1, T2, T3, T4> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => callback((TMock)Registration!.Subject!, p1, p2, p3, p4));
+		_currentCallback = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do<TMock>(Action<TMock, int, T1, T2, T3, T4> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((i, p1, p2, p3, p4) => callback((TMock)Registration!.Subject!, i, p1, p2, p3, p4));
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
