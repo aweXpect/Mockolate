@@ -15,10 +15,8 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 	private static readonly ConcurrentQueue<IDefaultValueFactory> _factories = new([
 		new TypedDefaultValueFactory<string>(""),
 		CancellableTaskFactory.ForTask(),
-		new GenericTaskFactory(),
 #if !NETSTANDARD2_0
 		CancellableTaskFactory.ForValueTask(),
-		new GenericValueTaskFactory(),
 #endif
 		new TypedDefaultValueFactory<CancellationToken>(CancellationToken.None),
 		new TypedDefaultValueFactory<IEnumerable>(Array.Empty<object?>()),

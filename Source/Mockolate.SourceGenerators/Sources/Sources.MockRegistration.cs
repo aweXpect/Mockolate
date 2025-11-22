@@ -30,6 +30,8 @@ internal static partial class Sources
 			?
 			[
 				"System",
+				"System.Linq",
+				"System.Threading",
 				"Mockolate.Exceptions",
 				"Mockolate.Generated",
 				"Mockolate.DefaultValues",
@@ -38,6 +40,8 @@ internal static partial class Sources
 			:
 			[
 				"System",
+				"System.Linq",
+				"System.Threading",
 				"Mockolate.DefaultValues",
 			]);
 
@@ -98,14 +102,18 @@ internal static partial class Sources
 			                                                                  1 && !type.GenericTypeParameters.Value
 				                                                                  .Single().IsTypeParameter)
 			{
-				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname)
-					.Append(">(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname)
-					.Append(">(defaultValueGenerator.Generate<")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname)
-					.Append(
-						">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
+				string innerType = type.GenericTypeParameters.Value.Single().Fullname;
+				sb.Append("\t\tDefaultValueGenerator.Register(new CancellableCallbackDefaultValueFactory<").Append(type.Fullname)
+					.Append(">(");
+				sb.Append("(defaultValueGenerator, parameters) => ");
+				sb.Append("{");
+				// Check for cancelled token
+				sb.Append(" if (parameters != null && parameters.Any(p => p is System.Threading.CancellationToken token && token.IsCancellationRequested)) ");
+				sb.Append("{ return System.Threading.Tasks.Task.FromCanceled<").Append(innerType).Append(">(new System.Threading.CancellationToken(true)); } ");
+				// Default case
+				sb.Append("return System.Threading.Tasks.Task.FromResult<").Append(innerType).Append(">(defaultValueGenerator.Generate<").Append(innerType).Append(">()); }");
+				sb.Append(", type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(")
+					.Append(innerType).Append(")));").AppendLine();
 			}
 			else if (type.Fullname.StartsWith("System.Lazy<") && type.Fullname.EndsWith(">")
 			                                                  && type.GenericTypeParameters?.Count ==
@@ -125,14 +133,30 @@ internal static partial class Sources
 			         && type.GenericTypeParameters?.Count == 1 &&
 			         !type.GenericTypeParameters.Value.Single().IsTypeParameter)
 			{
+				string innerType = type.GenericTypeParameters.Value.Single().Fullname;
+				sb.AppendLine("#if !NETSTANDARD2_0 && !NET48");
+				sb.Append("\t\tDefaultValueGenerator.Register(new CancellableCallbackDefaultValueFactory<").Append(type.Fullname)
+					.Append(">(");
+				sb.Append("(defaultValueGenerator, parameters) => ");
+				sb.Append("{");
+				// Check for cancelled token
+				sb.Append(" if (parameters != null && parameters.Any(p => p is System.Threading.CancellationToken token && token.IsCancellationRequested)) ");
+				sb.Append("{ return System.Threading.Tasks.ValueTask.FromCanceled<").Append(innerType).Append(">(new System.Threading.CancellationToken(true)); } ");
+				// Default case
+				sb.Append("return new System.Threading.Tasks.ValueTask<").Append(innerType).Append(">(defaultValueGenerator.Generate<").Append(innerType).Append(">()); }");
+				sb.Append(", type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(")
+					.Append(innerType).Append(")));").AppendLine();
+				sb.AppendLine("#else");
+				// Fallback for older frameworks
 				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname)
 					.Append(">(defaultValueGenerator => new System.Threading.Tasks.ValueTask<")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname)
+					.Append(innerType)
 					.Append(">(defaultValueGenerator.Generate<")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname)
+					.Append(innerType)
 					.Append(
 						">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
+					.Append(innerType).Append(")));").AppendLine();
+				sb.AppendLine("#endif");
 			}
 		}
 
@@ -384,6 +408,19 @@ internal static partial class Sources
 		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])\" />");
 		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[]? parameters)");
 		sb.AppendLine("\t\t\t=> callback(defaultValueGenerator);");
+		sb.AppendLine("\t}");
+
+		sb.AppendLine();
+		sb.AppendLine(
+			"\tpublic class CancellableCallbackDefaultValueFactory<T>(Func<IDefaultValueGenerator, object?[]?, T> callbackWithParams, Func<Type, bool>? isMatch = null) : IDefaultValueFactory");
+		sb.AppendLine("\t{");
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.IsMatch(Type)\" />");
+		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
+		sb.AppendLine("\t\t\t=> isMatch?.Invoke(type) ?? type == typeof(T);");
+		sb.AppendLine();
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])\" />");
+		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[]? parameters)");
+		sb.AppendLine("\t\t\t=> callbackWithParams(defaultValueGenerator, parameters);");
 		sb.AppendLine("\t}");
 
 		sb.AppendLine();
