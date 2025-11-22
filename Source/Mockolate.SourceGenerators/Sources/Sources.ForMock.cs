@@ -48,11 +48,9 @@ internal static partial class Sources
 			sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
 			sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior)").AppendLine();
 			sb.Append("\t{").AppendLine();
-			sb.Append("\t\tvar registration = new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
-				.Append("\");").AppendLine();
 			sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
-				.Append(">(Invoke, registration);").AppendLine();
-			sb.Append("\t\tregistration.Subject = Invoke;").AppendLine();
+				.Append(">(Invoke, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
+				.Append("\"));").AppendLine();
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
 			sb.Append("\tpublic ").Append(mockClass.ClassFullName).Append(" Object => new(Invoke);").AppendLine();
@@ -177,11 +175,9 @@ internal static partial class Sources
 				sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
 				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior)").AppendLine();
 				sb.Append("\t{").AppendLine();
-				sb.Append("\t\tvar registration = new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
-					.Append("\");").AppendLine();
 				sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
-					.Append(">(this, registration);").AppendLine();
-				sb.Append("\t\tregistration.Subject = this;").AppendLine();
+					.Append(">(this, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
+					.Append("\"));").AppendLine();
 				sb.Append("\t}").AppendLine();
 				sb.AppendLine();
 			}

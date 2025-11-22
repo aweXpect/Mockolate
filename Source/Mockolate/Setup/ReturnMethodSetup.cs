@@ -78,15 +78,6 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup, IReturnMetho
 	}
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	public IReturnMethodSetup<TReturn> Returns<TMock>(Func<TMock, TReturn> callback)
-	{
-		_returnCallbacks.Add(() => callback((TMock)Registration!.Subject!));
-		return this;
-	}
-
-	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
 	public IReturnMethodSetup<TReturn> Returns(TReturn returnValue)
@@ -301,12 +292,6 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup, IReturnMethodSetupCal
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	public IReturnMethodSetup<TReturn, T1> Returns<TMock>(Func<TMock, T1, TReturn> callback)
-	{
-		_returnCallbacks.Add(p1 => callback((TMock)Registration!.Subject!, p1));
-		return this;
-	}
-
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
@@ -567,15 +552,6 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup, IReturnMethodSetu
 	public IReturnMethodSetup<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback)
 	{
 		_returnCallbacks.Add(callback);
-		return this;
-	}
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	public IReturnMethodSetup<TReturn, T1, T2> Returns<TMock>(Func<TMock, T1, T2, TReturn> callback)
-	{
-		_returnCallbacks.Add((p1, p2) => callback((TMock)Registration!.Subject!, p1, p2));
 		return this;
 	}
 
@@ -859,12 +835,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	public IReturnMethodSetup<TReturn, T1, T2, T3> Returns<TMock>(Func<TMock, T1, T2, T3, TReturn> callback)
-	{
-		_returnCallbacks.Add((p1, p2, p3) => callback((TMock)Registration!.Subject!, p1, p2, p3));
-		return this;
-	}
-
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
@@ -1150,15 +1120,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback)
 	{
 		_returnCallbacks.Add(callback);
-		return this;
-	}
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns<TMock>(Func<TMock, T1, T2, T3, T4, TReturn> callback)
-	{
-		_returnCallbacks.Add((p1, p2, p3, p4) => callback((TMock)Registration!.Subject!, p1, p2, p3, p4));
 		return this;
 	}
 

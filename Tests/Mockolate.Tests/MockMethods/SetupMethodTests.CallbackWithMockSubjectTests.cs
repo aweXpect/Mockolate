@@ -41,19 +41,6 @@ public sealed partial class SetupMethodTests
 				await That(receivedMock).IsSameAs(sut);
 				await That(receivedCount).IsEqualTo(0);
 			}
-
-			[Fact]
-			public async Task ReturnsWithMockSubject_ShouldReceiveMockSubject()
-			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.SetupMock.Method.Method0()
-					.Returns<IReturnMethodSetupTest>(mock => mock == sut ? "correct" : "wrong");
-
-				string result = sut.Method0();
-
-				await That(result).IsEqualTo("correct");
-			}
 		}
 
 		public class ReturnMethodWith1Parameters
@@ -99,19 +86,6 @@ public sealed partial class SetupMethodTests
 				await That(receivedMock).IsSameAs(sut);
 				await That(receivedCount).IsEqualTo(0);
 				await That(receivedValue).IsEqualTo(42);
-			}
-
-			[Fact]
-			public async Task ReturnsWithMockSubject_ShouldReceiveMockSubjectAndParameter()
-			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.SetupMock.Method.Method1(Any<int>())
-					.Returns<IReturnMethodSetupTest>((mock, v) => mock == sut && v == 42 ? "correct" : "wrong");
-
-				string result = sut.Method1(42);
-
-				await That(result).IsEqualTo("correct");
 			}
 		}
 

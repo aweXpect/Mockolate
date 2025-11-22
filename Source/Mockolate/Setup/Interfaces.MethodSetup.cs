@@ -105,14 +105,6 @@ public interface IReturnMethodSetup<in TReturn>
 	IReturnMethodSetup<TReturn> Returns(Func<TReturn> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	/// <remarks>
-	///     The callback receives the mock subject as its first parameter.
-	/// </remarks>
-	IReturnMethodSetup<TReturn> Returns<TMock>(Func<TMock, TReturn> callback);
-
-	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
 	IReturnMethodSetup<TReturn> Returns(TReturn returnValue);
@@ -213,14 +205,6 @@ public interface IReturnMethodSetup<in TReturn, out T1>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	IReturnMethodSetup<TReturn, T1> Returns(Func<T1, TReturn> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	/// <remarks>
-	///     The callback receives the mock subject as its first parameter.
-	/// </remarks>
-	IReturnMethodSetup<TReturn, T1> Returns<TMock>(Func<TMock, T1, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -335,14 +319,6 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	IReturnMethodSetup<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	/// <remarks>
-	///     The callback receives the mock subject as its first parameter.
-	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2> Returns<TMock>(Func<TMock, T1, T2, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -462,14 +438,6 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	/// <remarks>
-	///     The callback receives the mock subject as its first parameter.
-	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Returns<TMock>(Func<TMock, T1, T2, T3, TReturn> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
 	IReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<TReturn> callback);
 
 	/// <summary>
@@ -581,14 +549,6 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	/// <remarks>
-	///     The callback receives the mock subject as its first parameter.
-	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns<TMock>(Func<TMock, T1, T2, T3, T4, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
