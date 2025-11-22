@@ -198,17 +198,19 @@ namespace Mockolate.DefaultValues
     {
         public DefaultValueGenerator() { }
         public T Generate<T>() { }
-        protected virtual bool TryGenerate(System.Type type, out object? value) { }
+        public T Generate<T>(params object?[] parameters) { }
+        protected virtual bool TryGenerate(System.Type type, object?[] parameters, out object? value) { }
         public static void Register(Mockolate.DefaultValues.IDefaultValueFactory defaultValueFactory) { }
     }
     public interface IDefaultValueFactory
     {
-        object? Create(System.Type type, Mockolate.DefaultValues.IDefaultValueGenerator defaultValueGenerator);
+        object? Create(System.Type type, Mockolate.DefaultValues.IDefaultValueGenerator defaultValueGenerator, object?[] parameters);
         bool IsMatch(System.Type type);
     }
     public interface IDefaultValueGenerator
     {
         T Generate<T>();
+        T Generate<T>(params object?[] parameters);
     }
 }
 namespace Mockolate.Exceptions

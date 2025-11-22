@@ -43,5 +43,8 @@ public sealed partial class MockBehaviorTests
 
 			return default!;
 		}
+
+		public T Generate<T>(params object?[]? parameters)
+			=> Generate<T>();
 	}
 }
