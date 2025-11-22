@@ -44,6 +44,19 @@ public sealed partial class MockTests
 
 	[Fact]
 	public async Task
+		Create_BaseClassWithVirtualCallsInConstructor_DirectSubjectAccessInCreateSetups_ShouldThrowMockException()
+	{
+		void Act()
+		{
+			_ = Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(setup => setup.Subject.VirtualProperty = 10);
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("Subject is not yet available. You can only access the subject in callbacks!");
+	}
+
+	[Fact]
+	public async Task
 		Create_BaseClassWithVirtualCallsInConstructor_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
 	{
 		MyServiceBaseWithVirtualCallsInConstructor mock =

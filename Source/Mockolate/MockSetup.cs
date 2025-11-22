@@ -1,4 +1,5 @@
 using System;
+using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
 
@@ -27,7 +28,6 @@ public class MockSetup<T> : IHasMockRegistration, IMockSetup<T>, IProtectedMockS
 	[Obsolete("This constructor should not be used by user code. Create a `Mock<T>` instead.")]
 	public MockSetup(MockRegistration mockRegistration)
 	{
-		Subject = default!;
 		Registrations = mockRegistration;
 		Interactions = mockRegistration.Interactions;
 	}
@@ -76,6 +76,8 @@ public class MockSetup<T> : IHasMockRegistration, IMockSetup<T>, IProtectedMockS
 	/// <summary>
 	///     The mock subject.
 	/// </summary>
-	public T Subject { get; }
+	public T Subject
+		=> field
+		   ?? throw new MockException("Subject is not yet available. You can only access the subject in callbacks!");
 }
 #pragma warning restore S1939 // Inheritance list should not be redundant
