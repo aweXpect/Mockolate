@@ -106,11 +106,29 @@ public sealed class MockRegistrationTests
 			     """, typeof(Task));
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
-			.Contains(
-				"DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.Task<int>>(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<int>(defaultValueGenerator.Generate<int>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int)));")
+			.Contains("""
+			          		DefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<System.Threading.Tasks.Task<int>>((defaultValueGenerator, parameters) => 
+			          		{
+			          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+			          			if (cancellationToken.IsCancellationRequested)
+			          			{
+			          				return System.Threading.Tasks.Task.FromCanceled<int>(cancellationToken);
+			          			}
+			          			return System.Threading.Tasks.Task.FromResult<int>(defaultValueGenerator.Generate<int>());
+			          		}, type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int)));
+			          """).IgnoringNewlineStyle()
 			.And
-			.Contains(
-				"DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.Task<int[]>>(defaultValueGenerator => System.Threading.Tasks.Task.FromResult<int[]>(defaultValueGenerator.Generate<int[]>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int[])));")
+			.Contains("""
+			          		DefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<System.Threading.Tasks.Task<int[]>>((defaultValueGenerator, parameters) => 
+			          		{
+			          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+			          			if (cancellationToken.IsCancellationRequested)
+			          			{
+			          				return System.Threading.Tasks.Task.FromCanceled<int[]>(cancellationToken);
+			          			}
+			          			return System.Threading.Tasks.Task.FromResult<int[]>(defaultValueGenerator.Generate<int[]>());
+			          		}, type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int[])));
+			          """).IgnoringNewlineStyle()
 			.And
 			.DoesNotContain("Task<T>");
 	}
@@ -144,11 +162,33 @@ public sealed class MockRegistrationTests
 			     """, typeof(ValueTask));
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
-			.Contains(
-				"DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int>>(defaultValueGenerator => new System.Threading.Tasks.ValueTask<int>(defaultValueGenerator.Generate<int>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int)));")
+			.Contains("""
+			          		DefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int>>((defaultValueGenerator, parameters) => 
+			          		{
+			          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+			          			#if NET8_0_OR_GREATER
+			          			if (cancellationToken.IsCancellationRequested)
+			          			{
+			          				return System.Threading.Tasks.ValueTask.FromCanceled<int>(cancellationToken);
+			          			}
+			          			#endif
+			          			return new System.Threading.Tasks.ValueTask<int>(defaultValueGenerator.Generate<int>());
+			          		}, type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int)));
+			          """).IgnoringNewlineStyle()
 			.And
-			.Contains(
-				"DefaultValueGenerator.Register(new CallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int[]>>(defaultValueGenerator => new System.Threading.Tasks.ValueTask<int[]>(defaultValueGenerator.Generate<int[]>()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int[])));")
+			.Contains("""
+			          		DefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int[]>>((defaultValueGenerator, parameters) => 
+			          		{
+			          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+			          			#if NET8_0_OR_GREATER
+			          			if (cancellationToken.IsCancellationRequested)
+			          			{
+			          				return System.Threading.Tasks.ValueTask.FromCanceled<int[]>(cancellationToken);
+			          			}
+			          			#endif
+			          			return new System.Threading.Tasks.ValueTask<int[]>(defaultValueGenerator.Generate<int[]>());
+			          		}, type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int[])));
+			          """).IgnoringNewlineStyle()
 			.And
 			.DoesNotContain("ValueTask<T>");
 	}

@@ -15,5 +15,5 @@ public interface IDefaultValueFactory
 	/// <summary>
 	///     Creates a new instance of the specified type.
 	/// </summary>
-	object? Create(Type type, IDefaultValueGenerator defaultValueGenerator);
+	object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters);
 }

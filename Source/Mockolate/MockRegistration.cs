@@ -77,7 +77,7 @@ public partial class MockRegistration
 			}
 
 			return new MethodSetupResult<TResult>(null, Behavior,
-				Behavior.DefaultValue.Generate<TResult>());
+				Behavior.DefaultValue.Generate<TResult>(parameters));
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
