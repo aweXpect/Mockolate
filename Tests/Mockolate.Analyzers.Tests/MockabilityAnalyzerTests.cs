@@ -246,4 +246,37 @@ public class MockabilityAnalyzerTests
 		);
 
 	// Note: Static classes cannot be used as type parameters, so the compiler prevents this case
+
+	[Fact]
+	public async Task WhenMockingGlobalNamespaceType_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			using System;
+
+			public interface IGlobalInterface
+			{
+			    void DoSomething();
+			}
+
+			public static class Mock
+			{
+				[MockGenerator]
+				public static T Create<T>() => default!;
+			}
+
+			[AttributeUsage(AttributeTargets.Method)]
+			public class MockGeneratorAttribute : Attribute { }
+
+			public class MyClass
+			{
+			    public void MyTest()
+			    {
+			        Mock.Create<{|#0:IGlobalInterface|}>();
+			    }
+			}
+			""",
+			Verifier.Diagnostic(Rules.MockabilityRule)
+				.WithLocation(0)
+				.WithArguments("IGlobalInterface", "type is declared in the global namespace")
+		);
 }

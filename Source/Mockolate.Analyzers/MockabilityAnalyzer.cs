@@ -177,17 +177,17 @@ public class MockabilityAnalyzer : DiagnosticAnalyzer
 			return false;
 		}
 
+		// Check if type is a record (before checking sealed, since records are sealed)
+		if (typeSymbol.IsRecord)
+		{
+			reason = "type is a record";
+			return false;
+		}
+
 		// Check if type is sealed (unless it's a delegate)
 		if (typeSymbol.IsSealed && typeSymbol.TypeKind != TypeKind.Delegate)
 		{
 			reason = "type is sealed";
-			return false;
-		}
-
-		// Check if type is a record
-		if (typeSymbol.IsRecord)
-		{
-			reason = "type is a record";
 			return false;
 		}
 
