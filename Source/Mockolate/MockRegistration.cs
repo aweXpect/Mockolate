@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -70,6 +73,13 @@ public partial class MockRegistration
 		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
+			// Check for cancelled CancellationToken when there's no setup
+			if (HasCancelledToken(parameters))
+			{
+				TResult result = HandleCancelledToken<TResult>();
+				return new MethodSetupResult<TResult>(null, Behavior, result);
+			}
+
 			if (Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
@@ -96,10 +106,19 @@ public partial class MockRegistration
 				methodName, parameters));
 
 		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		if (matchingSetup is null)
 		{
-			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+			// Check for cancelled CancellationToken when there's no setup - throw for void methods
+			if (HasCancelledToken(parameters))
+			{
+				throw new OperationCanceledException();
+			}
+
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+			}
 		}
 
 		matchingSetup?.Invoke(methodInvocation, Behavior);
@@ -249,5 +268,82 @@ public partial class MockRegistration
 
 			yield return (target, method);
 		}
+	}
+
+	private static bool HasCancelledToken(object?[]? parameters)
+	{
+		if (parameters is null)
+		{
+			return false;
+		}
+
+		foreach (object? parameter in parameters)
+		{
+			if (parameter is CancellationToken token && token.IsCancellationRequested)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static TResult HandleCancelledToken<TResult>()
+	{
+		CancellationToken cancelledToken = new(true);
+		
+		// Handle Task
+		if (typeof(TResult) == typeof(Task))
+		{
+			return (TResult)(object)Task.FromCanceled(cancelledToken);
+		}
+		
+		// Try to handle as Task<T> or ValueTask<T> generically
+		object? result = TryCreateCancelledTaskOrValueTask(typeof(TResult), cancelledToken);
+		if (result is TResult typedResult)
+		{
+			return typedResult;
+		}
+
+		// For synchronous methods, throw OperationCanceledException
+		throw new OperationCanceledException();
+	}
+
+#if !NETSTANDARD2_0
+	[UnconditionalSuppressMessage("AOT", "IL3050", Justification = "This code path is only executed when a CancellationToken is cancelled, and the reflection is necessary to create the appropriate cancelled task.")]
+	[UnconditionalSuppressMessage("Trimming", "IL2060", Justification = "This code path is only executed when a CancellationToken is cancelled, and the reflection is necessary to create the appropriate cancelled task.")]
+#endif
+	private static object? TryCreateCancelledTaskOrValueTask(Type resultType, CancellationToken cancelledToken)
+	{
+		// Handle Task<T>
+		if (resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(Task<>))
+		{
+			Type taskResultType = resultType.GetGenericArguments()[0];
+			MethodInfo? fromCanceledMethod = typeof(Task)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.FirstOrDefault(m => m.Name == nameof(Task.FromCanceled) && m.IsGenericMethodDefinition)?
+				.MakeGenericMethod(taskResultType);
+			return fromCanceledMethod?.Invoke(null, [cancelledToken]);
+		}
+#if !NETSTANDARD2_0
+		// Handle ValueTask
+		if (resultType == typeof(ValueTask))
+		{
+			return ValueTask.FromCanceled(cancelledToken);
+		}
+		
+		// Handle ValueTask<T>
+		if (resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(ValueTask<>))
+		{
+			Type valueTaskResultType = resultType.GetGenericArguments()[0];
+			MethodInfo? fromCanceledMethod = typeof(ValueTask)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.FirstOrDefault(m => m.Name == nameof(ValueTask.FromCanceled) && m.IsGenericMethodDefinition)?
+				.MakeGenericMethod(valueTaskResultType);
+			return fromCanceledMethod?.Invoke(null, [cancelledToken]);
+		}
+#endif
+		
+		return null;
 	}
 }
