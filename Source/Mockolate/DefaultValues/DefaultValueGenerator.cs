@@ -14,15 +14,28 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 {
 	private static readonly ConcurrentQueue<IDefaultValueFactory> _factories = new([
 		new TypedDefaultValueFactory<string>(""),
-		new TypedDefaultValueFactory<Task>(Task.CompletedTask),
+		CancellableTaskFactory.ForTask(),
+		new GenericTaskFactory(),
+#if !NETSTANDARD2_0
+		CancellableTaskFactory.ForValueTask(),
+		new GenericValueTaskFactory(),
+#endif
 		new TypedDefaultValueFactory<CancellationToken>(CancellationToken.None),
 		new TypedDefaultValueFactory<IEnumerable>(Array.Empty<object?>()),
 	]);
 
-	/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}" />
+	/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}()" />
 	public T Generate<T>()
 	{
-		if (TryGenerate(typeof(T), out object? value) &&
+		return Generate<T>(null);
+	}
+
+	/// <summary>
+	///     Generates a default value of the specified type, with optional parameters for context.
+	/// </summary>
+	public T Generate<T>(params object?[]? parameters)
+	{
+		if (TryGenerate(typeof(T), parameters, out object? value) &&
 		    value is T typedValue)
 		{
 			return typedValue;
@@ -40,12 +53,12 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 	/// <summary>
 	///     Tries to generate a default value for the specified type.
 	/// </summary>
-	protected virtual bool TryGenerate(Type type, out object? value)
+	protected virtual bool TryGenerate(Type type, object?[]? parameters, out object? value)
 	{
 		IDefaultValueFactory? matchingFactory = _factories.FirstOrDefault(f => f.IsMatch(type));
 		if (matchingFactory is not null)
 		{
-			value = matchingFactory.Create(type, this);
+			value = matchingFactory.Create(type, this, parameters);
 			return true;
 		}
 

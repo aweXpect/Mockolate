@@ -368,8 +368,8 @@ internal static partial class Sources
 		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
 		sb.AppendLine("\t\t\t=> type == typeof(T);");
 		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator)\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator)");
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])\" />");
+		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[]? parameters)");
 		sb.AppendLine("\t\t\t=> value;");
 		sb.AppendLine("\t}");
 
@@ -381,8 +381,8 @@ internal static partial class Sources
 		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
 		sb.AppendLine("\t\t\t=> isMatch?.Invoke(type) ?? type == typeof(T);");
 		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator)\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator)");
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])\" />");
+		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[]? parameters)");
 		sb.AppendLine("\t\t\t=> callback(defaultValueGenerator);");
 		sb.AppendLine("\t}");
 
@@ -394,8 +394,8 @@ internal static partial class Sources
 		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
 		sb.AppendLine("\t\t\t=> true;");
 		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator)\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator)");
+		sb.AppendLine("\t\t/// <inheritdoc cref=\"IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])\" />");
+		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[]? parameters)");
 		sb.AppendLine("\t\t{");
 		sb.AppendLine("\t\t\treturn new MockGenerator().Get(null, MockBehavior.Default, type);");
 		sb.AppendLine("\t\t}");

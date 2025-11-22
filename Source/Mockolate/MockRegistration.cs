@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -73,11 +72,16 @@ public partial class MockRegistration
 		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
-			// Check for cancelled CancellationToken when there's no setup
-			if (HasCancelledToken(parameters))
+			// Check for cancelled CancellationToken when there's no setup - throw for synchronous methods
+			if (HasCancelledToken(parameters) && typeof(TResult) != typeof(Task) && 
+			    !(typeof(TResult).IsGenericType && typeof(TResult).GetGenericTypeDefinition() == typeof(Task<>))
+#if !NETSTANDARD2_0
+			    && typeof(TResult) != typeof(ValueTask) &&
+			    !(typeof(TResult).IsGenericType && typeof(TResult).GetGenericTypeDefinition() == typeof(ValueTask<>))
+#endif
+			    )
 			{
-				TResult result = HandleCancelledToken<TResult>();
-				return new MethodSetupResult<TResult>(null, Behavior, result);
+				throw new OperationCanceledException();
 			}
 
 			if (Behavior.ThrowWhenNotSetup)
@@ -87,7 +91,7 @@ public partial class MockRegistration
 			}
 
 			return new MethodSetupResult<TResult>(null, Behavior,
-				Behavior.DefaultValue.Generate<TResult>());
+				Behavior.DefaultValue.Generate<TResult>(parameters));
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
@@ -286,64 +290,5 @@ public partial class MockRegistration
 		}
 
 		return false;
-	}
-
-	private static TResult HandleCancelledToken<TResult>()
-	{
-		CancellationToken cancelledToken = new(true);
-		
-		// Handle Task
-		if (typeof(TResult) == typeof(Task))
-		{
-			return (TResult)(object)Task.FromCanceled(cancelledToken);
-		}
-		
-		// Try to handle as Task<T> or ValueTask<T> generically
-		object? result = TryCreateCancelledTaskOrValueTask(typeof(TResult), cancelledToken);
-		if (result is TResult typedResult)
-		{
-			return typedResult;
-		}
-
-		// For synchronous methods, throw OperationCanceledException
-		throw new OperationCanceledException();
-	}
-
-#if !NETSTANDARD2_0
-	[UnconditionalSuppressMessage("AOT", "IL3050", Justification = "This code path is only executed when a CancellationToken is cancelled, and the reflection is necessary to create the appropriate cancelled task.")]
-	[UnconditionalSuppressMessage("Trimming", "IL2060", Justification = "This code path is only executed when a CancellationToken is cancelled, and the reflection is necessary to create the appropriate cancelled task.")]
-#endif
-	private static object? TryCreateCancelledTaskOrValueTask(Type resultType, CancellationToken cancelledToken)
-	{
-		// Handle Task<T>
-		if (resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(Task<>))
-		{
-			Type taskResultType = resultType.GetGenericArguments()[0];
-			MethodInfo? fromCanceledMethod = typeof(Task)
-				.GetMethods(BindingFlags.Public | BindingFlags.Static)
-				.FirstOrDefault(m => m.Name == nameof(Task.FromCanceled) && m.IsGenericMethodDefinition)?
-				.MakeGenericMethod(taskResultType);
-			return fromCanceledMethod?.Invoke(null, [cancelledToken]);
-		}
-#if !NETSTANDARD2_0
-		// Handle ValueTask
-		if (resultType == typeof(ValueTask))
-		{
-			return ValueTask.FromCanceled(cancelledToken);
-		}
-		
-		// Handle ValueTask<T>
-		if (resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(ValueTask<>))
-		{
-			Type valueTaskResultType = resultType.GetGenericArguments()[0];
-			MethodInfo? fromCanceledMethod = typeof(ValueTask)
-				.GetMethods(BindingFlags.Public | BindingFlags.Static)
-				.FirstOrDefault(m => m.Name == nameof(ValueTask.FromCanceled) && m.IsGenericMethodDefinition)?
-				.MakeGenericMethod(valueTaskResultType);
-			return fromCanceledMethod?.Invoke(null, [cancelledToken]);
-		}
-#endif
-		
-		return null;
 	}
 }

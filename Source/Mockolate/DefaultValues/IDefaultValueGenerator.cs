@@ -9,4 +9,9 @@ public interface IDefaultValueGenerator
 	///     Generates a default value of the specified type.
 	/// </summary>
 	T Generate<T>();
+
+	/// <summary>
+	///     Generates a default value of the specified type, with optional parameters for context.
+	/// </summary>
+	T Generate<T>(params object?[]? parameters);
 }
