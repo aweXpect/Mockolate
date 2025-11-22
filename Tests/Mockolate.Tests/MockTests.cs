@@ -59,7 +59,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -72,7 +74,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass, IMyService>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -85,7 +89,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -98,7 +104,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -111,7 +119,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -124,7 +134,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -137,7 +149,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -150,9 +164,10 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock
-				.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
-					IMyService>();
+#pragma warning disable Mockolate0002
+			_ = Mock.Create<MySealedClass,
+				IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -165,9 +180,10 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock
-				.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
-					IMyService, IMyService>();
+#pragma warning disable Mockolate0002
+			_ = Mock.Create<MySealedClass,
+				IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -180,7 +196,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass>(BaseClass.WithConstructorParameters());
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
@@ -228,7 +246,9 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
+#pragma warning disable Mockolate0002
 			_ = Mock.Create<MySealedClass>(MockBehavior.Default);
+#pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()

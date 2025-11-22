@@ -14,7 +14,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0002
 				_ = factory.Create<MySealedClass>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -29,7 +31,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0002
 				_ = factory.Create<MySealedClass, IMyService>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -44,7 +48,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0002
 				_ = factory.Create<MySealedClass, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -59,7 +65,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0002
 				_ = factory.Create<MySealedClass, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -74,7 +82,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0002
 				_ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -89,7 +99,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0002
 				_ = factory.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -104,10 +116,11 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0002
 				_ =
-					factory
-						.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService,
-							IMyService>();
+					factory.Create<MySealedClass,
+						IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -122,9 +135,10 @@ public sealed partial class MockTests
 
 			void Act()
 			{
-				_ = factory
-					.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
-						IMyService>();
+#pragma warning disable Mockolate0002
+				_ = factory.Create<MySealedClass,
+					IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -139,9 +153,10 @@ public sealed partial class MockTests
 
 			void Act()
 			{
-				_ = factory
-					.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
-						IMyService, IMyService>();
+#pragma warning disable Mockolate0002
+				_ = factory.Create<MySealedClass,
+					IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
@@ -156,7 +171,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0002
 				_ = factory.Create<MySealedClass>(BaseClass.WithConstructorParameters());
+#pragma warning restore Mockolate0002
 			}
 
 			await That(Act).Throws<MockException>()
