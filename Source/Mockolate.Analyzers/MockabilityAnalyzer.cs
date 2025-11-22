@@ -38,19 +38,21 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return;
 		}
 
-		ITypeSymbol? typeArg = GetInvocationTypeArguments(invocation);
-		if (typeArg is not null)
+		ITypeSymbol? typeArgumentSymbol = GetInvocationTypeArguments(invocation);
+		if (typeArgumentSymbol is not null)
 		{
-			if (typeArg is ITypeParameterSymbol || IsOpenGeneric(typeArg))
+			if (typeArgumentSymbol is ITypeParameterSymbol || IsOpenGeneric(typeArgumentSymbol))
 			{
 				return;
 			}
 
-			if (!IsMockable(typeArg, out string? reason))
+			if (!IsMockable(typeArgumentSymbol, out string? reason))
 			{
-				Location? location = GetTypeArgumentLocationFromInvocation(invocation.Syntax, typeArg);
-				context.ReportDiagnostic(Diagnostic.Create(Rules.MockabilityRule,
-					location ?? invocation.Syntax.GetLocation(), typeArg.ToDisplayString(), reason));
+				context.ReportDiagnostic(Diagnostic.Create(
+					Rules.MockabilityRule,
+					GetTypeArgumentLocation(invocation.Syntax, typeArgumentSymbol) ?? invocation.Syntax.GetLocation(),
+					typeArgumentSymbol.ToDisplayString(),
+					reason));
 			}
 		}
 	}
@@ -132,21 +134,22 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		return true;
 	}
 
-	private static Location? GetTypeArgumentLocationFromInvocation(SyntaxNode syntax, ITypeSymbol typeSymbol)
+	private static Location? GetTypeArgumentLocation(SyntaxNode syntax, ITypeSymbol typeSymbol)
 	{
-		if (syntax is InvocationExpressionSyntax invocationSyntax &&
-		    invocationSyntax.Expression is MemberAccessExpressionSyntax memberAccess &&
-		    memberAccess.Name is GenericNameSyntax gns)
+		if (syntax is InvocationExpressionSyntax
+		    {
+			    Expression: MemberAccessExpressionSyntax
+			    {
+				    Name: GenericNameSyntax genericNameSyntax,
+			    },
+		    })
 		{
-			foreach (TypeSyntax ts in gns.TypeArgumentList.Arguments)
-			{
-				if (string.Equals(ts.ToString(),
-					    typeSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-					    StringComparison.Ordinal))
-				{
-					return ts.GetLocation();
-				}
-			}
+			return genericNameSyntax.TypeArgumentList.Arguments
+				.Where(typeSyntax => string.Equals(typeSyntax.ToString(),
+					typeSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+					StringComparison.Ordinal))
+				.Select(typeSyntax => typeSyntax.GetLocation())
+				.FirstOrDefault();
 		}
 
 		return null;
