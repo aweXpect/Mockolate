@@ -49,8 +49,6 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(expectedData);
 		}
 
-
-
 		internal abstract class SpanReturnIndexerMock
 		{
 			public abstract Span<int> this[int key] { get; }
