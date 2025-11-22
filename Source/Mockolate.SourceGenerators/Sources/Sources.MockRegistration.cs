@@ -350,7 +350,8 @@ internal static partial class Sources
 				"\t\tpartial void GenerateWrapped<T>(T instance, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups)");
 			sb.Append("\t\t{").AppendLine();
 			index = 0;
-			foreach ((string Name, MockClass MockClass) mock in mocks)
+			// Only generate for mocks without additional implementations (single type mocks)
+			foreach ((string Name, MockClass MockClass) mock in mocks.Where(m => m.MockClass.AdditionalImplementations.Count == 0))
 			{
 				if (index++ > 0)
 				{
@@ -388,7 +389,8 @@ internal static partial class Sources
 				}
 				else if (mock.MockClass.IsInterface)
 				{
-					sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
+					// For interfaces, use the constructor that accepts MockRegistration with the wrapped instance
+					sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockRegistration);").AppendLine();
 					sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)

@@ -180,6 +180,13 @@ internal static partial class Sources
 					.Append("\"));").AppendLine();
 				sb.Append("\t}").AppendLine();
 				sb.AppendLine();
+				sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
+				sb.Append("\tpublic MockFor").Append(name).Append("(MockRegistration mockRegistration)").AppendLine();
+				sb.Append("\t{").AppendLine();
+				sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
+					.Append(">(this, mockRegistration);").AppendLine();
+				sb.Append("\t}").AppendLine();
+				sb.AppendLine();
 			}
 			else if (mockClass.Constructors?.Count > 0)
 			{
