@@ -4,10 +4,10 @@ public sealed partial class MatchTests
 {
 	public sealed class AnyTests
 	{
-		[Theory]
-		[InlineData(null)]
-		[InlineData("")]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(null)]
+		[Arguments("")]
+		[Arguments("foo")]
 		public async Task ShouldAlwaysMatch(string? value)
 		{
 			IParameter<string> sut = Any<string>();
@@ -17,7 +17,7 @@ public sealed partial class MatchTests
 			await That(result).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = Any<string>();

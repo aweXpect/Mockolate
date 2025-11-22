@@ -5,7 +5,7 @@ namespace Mockolate.Tests.Verify;
 
 public class VerificationResultTests
 {
-	[Fact]
+	[Test]
 	public async Task VerificationResult_Got_ShouldHaveExpectedValue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -16,7 +16,7 @@ public class VerificationResultTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property TotalDispensed");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_GotIndexer_ShouldHaveExpectedValue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -27,7 +27,7 @@ public class VerificationResultTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer Any<string>()");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_Invoked_ShouldHaveExpectedValue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -39,7 +39,7 @@ public class VerificationResultTests
 			.IsEqualTo("invoked method Dispense(Any<string>(), Any<int>())");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_Set_ShouldHaveExpectedValue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -51,7 +51,7 @@ public class VerificationResultTests
 			.IsEqualTo("set property TotalDispensed to value 5");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_SetIndexer_ShouldHaveExpectedValue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -63,7 +63,7 @@ public class VerificationResultTests
 			.IsEqualTo("set indexer Any<string>() to value 5");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_SubscribedTo_ShouldHaveExpectedValue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -74,7 +74,7 @@ public class VerificationResultTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event ChocolateDispensed");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_UnsubscribedFrom_ShouldHaveExpectedValue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();

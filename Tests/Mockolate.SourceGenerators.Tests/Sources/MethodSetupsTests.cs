@@ -4,7 +4,7 @@ namespace Mockolate.SourceGenerators.Tests.Sources;
 
 public sealed class MethodSetupsTests
 {
-	[Fact]
+	[Test]
 	public async Task GenerateMethodSetupsForMethodsWithMoreParameters()
 	{
 		GeneratorResult result = Generator
@@ -42,7 +42,7 @@ public sealed class MethodSetupsTests
 				"internal class VoidMethodSetup<T1, T2, T3, T4, T5> : MethodSetup");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenAllMethodsHaveUpTo4Parameters_ShouldNotGenerateMethodSetups()
 	{
 		GeneratorResult result = Generator
@@ -73,34 +73,34 @@ public sealed class MethodSetupsTests
 		await That(result.Sources).DoesNotContainKey("MethodSetups.g.cs");
 	}
 
-	[Theory]
-	[InlineData("""
+	[Test]
+	[Arguments("""
 	            string ToString();
 	            bool Equals(object obj);
 	            int GetHashCode();
 	            """, "IMockMethodSetupWithToStringWithEqualsWithGetHashCode")]
-	[InlineData("""
+	[Arguments("""
 	            bool Equals(object obj);
 	            int GetHashCode();
 	            """, "IMockMethodSetupWithEqualsWithGetHashCode")]
-	[InlineData("""
+	[Arguments("""
 	            string ToString();
 	            int GetHashCode();
 	            """, "IMockMethodSetupWithToStringWithGetHashCode")]
-	[InlineData("""
+	[Arguments("""
 	            string ToString();
 	            bool Equals(object obj);
 	            """, "IMockMethodSetupWithToStringWithEquals")]
-	[InlineData("""
+	[Arguments("""
 	            string ToString();
 	            """, "IMockMethodSetupWithToString")]
-	[InlineData("""
+	[Arguments("""
 	            bool Equals(object obj);
 	            """, "IMockMethodSetupWithEquals")]
-	[InlineData("""
+	[Arguments("""
 	            bool Equals(object? obj);
 	            """, "IMockMethodSetupWithEquals")]
-	[InlineData("""
+	[Arguments("""
 	            int GetHashCode();
 	            """, "IMockMethodSetupWithGetHashCode")]
 	public async Task WhenImplementingObjectMethods_ShouldUseSpecialInterfaces(string methods, string expectedType)
@@ -131,7 +131,7 @@ public sealed class MethodSetupsTests
 			.Contains($"{expectedType}<MyCode.IMyInterface> Method");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithComplexMethodReturningAValue_ShouldOnlyGenerateNecessaryExtensions()
 	{
 		GeneratorResult result = Generator
@@ -165,7 +165,7 @@ public sealed class MethodSetupsTests
 			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6, T7>");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithComplexMethodReturningVoid_ShouldOnlyGenerateNecessaryExtensions()
 	{
 		GeneratorResult result = Generator

@@ -4,7 +4,7 @@ public sealed partial class MatchTests
 {
 	public sealed class NullTests
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = Null<string>();
@@ -15,9 +15,9 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Theory]
-		[InlineData(null, 1)]
-		[InlineData(1, 0)]
+		[Test]
+		[Arguments(null, 1)]
+		[Arguments(1, 0)]
 		public async Task WithNull_ShouldMatchWhenNull(int? value, int expectedCount)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();

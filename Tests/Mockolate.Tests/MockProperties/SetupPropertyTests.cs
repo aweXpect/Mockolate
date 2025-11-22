@@ -5,7 +5,7 @@ namespace Mockolate.Tests.MockProperties;
 
 public sealed partial class SetupPropertyTests
 {
-	[Fact]
+	[Test]
 	public async Task InvokeGetter_InvalidType_ShouldThrowMockException()
 	{
 		MyPropertySetup<int> setup = new();
@@ -21,7 +21,7 @@ public sealed partial class SetupPropertyTests
 			             """);
 	}
 
-	[Fact]
+	[Test]
 	public async Task InvokeSetter_InvalidType_ShouldThrowMockException()
 	{
 		MyPropertySetup<int> setup = new();
@@ -37,7 +37,7 @@ public sealed partial class SetupPropertyTests
 			             """);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		IPropertyService mock = Mock.Create<IPropertyService>();
@@ -52,7 +52,7 @@ public sealed partial class SetupPropertyTests
 		await That(result1).IsEqualTo(42);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Register_SamePropertyTwice_ShouldThrowMockException()
 	{
 		IPropertyService mock = Mock.Create<IPropertyService>();
@@ -71,7 +71,7 @@ public sealed partial class SetupPropertyTests
 		registration.SetupProperty("my.other.property", new PropertySetup<int>());
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldStoreLastValue()
 	{
 		IPropertyService mock = Mock.Create<IPropertyService>();
@@ -87,7 +87,7 @@ public sealed partial class SetupPropertyTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldReturnType()
 	{
 		PropertySetup<int> setup = new();
@@ -97,7 +97,7 @@ public sealed partial class SetupPropertyTests
 		await That(result).IsEqualTo("int");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenMockInheritsPropertyMultipleTimes()
 	{
 		IMyPropertyService mock =

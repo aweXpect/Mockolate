@@ -4,7 +4,7 @@ public sealed partial class MatchTests
 {
 	public sealed class WithTests
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_WithPredicate_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = With<string>(x => x.Length == 3);
@@ -15,7 +15,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_WithValue_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = With("foo");
@@ -26,7 +26,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_WithValueWithComparer_ShouldReturnExpectedValue()
 		{
 			IParameter<int> sut = With(4, new AllEqualComparer());
@@ -37,9 +37,9 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Theory]
-		[InlineData(null, true)]
-		[InlineData(1, false)]
+		[Test]
+		[Arguments(null, true)]
+		[Arguments(1, false)]
 		public async Task WithMatching_CheckForNull_ShouldMatchForExpectedResult(int? value, bool expectedResult)
 		{
 			IParameter<int?> sut = With<int?>(v => v is null);
@@ -49,9 +49,9 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedResult);
 		}
 
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(42L)]
+		[Arguments("foo")]
 		public async Task WithMatching_DifferentType_ShouldNotMatch(object? value)
 		{
 			IParameter<int?> sut = With<int?>(_ => true);
@@ -61,9 +61,9 @@ public sealed partial class MatchTests
 			await That(result).IsFalse();
 		}
 
-		[Theory]
-		[InlineData(true)]
-		[InlineData(false)]
+		[Test]
+		[Arguments(true)]
+		[Arguments(false)]
 		public async Task WithMatching_ShouldMatchForExpectedResult(bool predicateValue)
 		{
 			IParameter<string> sut = With<string>(_ => predicateValue);
@@ -73,7 +73,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(predicateValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithPredicate_ShouldSupportCovarianceInSetup()
 		{
 			IMyService mock = Mock.Create<IMyService>();
@@ -89,7 +89,7 @@ public sealed partial class MatchTests
 			await That(result2).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithPredicate_ShouldSupportCovarianceInVerify()
 		{
 			IMyService mock = Mock.Create<IMyService>();
@@ -107,10 +107,10 @@ public sealed partial class MatchTests
 			await That(mock.VerifyMock.Invoked.DoSomething(With<MyOtherImplementation>(_ => true))).Never();
 		}
 
-		[Theory]
-		[InlineData(null, true)]
-		[InlineData("", false)]
-		[InlineData("foo", false)]
+		[Test]
+		[Arguments(null, true)]
+		[Arguments("", false)]
+		[Arguments("foo", false)]
 		public async Task WithValue_Nullable_ShouldMatchWhenEqual(string? value, bool expectMatch)
 		{
 			IParameter<string?> sut = Null<string?>();
@@ -120,11 +120,11 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectMatch);
 		}
 
-		[Theory]
-		[InlineData(1, false)]
-		[InlineData(5, true)]
-		[InlineData(-5, false)]
-		[InlineData(42, false)]
+		[Test]
+		[Arguments(1, false)]
+		[Arguments(5, true)]
+		[Arguments(-5, false)]
+		[Arguments(42, false)]
 		public async Task WithValue_ShouldMatchWhenEqual(int value, bool expectMatch)
 		{
 			IParameter<int> sut = With(5);
@@ -134,7 +134,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectMatch);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithValue_ShouldSupportCovarianceInSetup()
 		{
 			IMyService mock = Mock.Create<IMyService>();
@@ -150,7 +150,7 @@ public sealed partial class MatchTests
 			await That(result2).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithValue_ShouldSupportCovarianceInVerify()
 		{
 			IMyService mock = Mock.Create<IMyService>();
@@ -168,10 +168,10 @@ public sealed partial class MatchTests
 			await That(mock.VerifyMock.Invoked.DoSomething(With(value2))).Never();
 		}
 
-		[Theory]
-		[InlineData(1)]
-		[InlineData(5)]
-		[InlineData(-42)]
+		[Test]
+		[Arguments(1)]
+		[Arguments(5)]
+		[Arguments(-42)]
 		public async Task WithValue_WithComparer_ShouldUseComparer(int value)
 		{
 			IParameter<int> sut = With(5, new AllEqualComparer());

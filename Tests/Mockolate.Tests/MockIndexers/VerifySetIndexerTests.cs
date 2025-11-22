@@ -4,7 +4,7 @@ namespace Mockolate.Tests.MockIndexers;
 
 public sealed partial class VerifySetIndexerTests
 {
-	[Fact]
+	[Test]
 	public async Task WhenNullParametersAndValue_AndMatches_ShouldReturn()
 	{
 		IMyService mock = Mock.Create<IMyService>();
@@ -13,7 +13,7 @@ public sealed partial class VerifySetIndexerTests
 		await That(mock.VerifyMock.SetIndexer(Any<int?>(), null, Null<int?>(), Any<int?>(), null)).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenParameterLengthDoesNotMatch_ShouldReturnNever()
 	{
 		IMyService mock = Mock.Create<IMyService>();
@@ -24,7 +24,7 @@ public sealed partial class VerifySetIndexerTests
 		await That(mock.VerifyMock.SetIndexer(Any<int>(), Any<int>(), Any<int>(), With("foo"))).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenParametersDoNotMatch_ShouldReturnNever()
 	{
 		IMyService mock = Mock.Create<IMyService>();

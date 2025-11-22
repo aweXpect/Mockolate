@@ -6,7 +6,7 @@ public sealed partial class SetupIndexerTests
 {
 	public sealed class OnGetTests
 	{
-		[Fact]
+		[Test]
 		public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
 			List<int> invocations = [];
@@ -23,7 +23,7 @@ public sealed partial class SetupIndexerTests
 			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
 			List<int> invocations = [];
@@ -41,7 +41,7 @@ public sealed partial class SetupIndexerTests
 			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldExecuteAllGetterCallbacks()
 		{
 			int callCount1 = 0;
@@ -61,7 +61,7 @@ public sealed partial class SetupIndexerTests
 			await That(callCount3).IsEqualTo(2);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldExecuteGetterCallbacks()
 		{
 			int callCount = 0;
@@ -79,7 +79,7 @@ public sealed partial class SetupIndexerTests
 			await That(callCount).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldExecuteGetterCallbacksWithValue()
 		{
 			int callCount = 0;
@@ -96,7 +96,7 @@ public sealed partial class SetupIndexerTests
 			await That(callCount).IsEqualTo(6);
 		}
 
-		[Fact]
+		[Test]
 		public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 		{
 			List<int> invocations = [];
@@ -113,7 +113,7 @@ public sealed partial class SetupIndexerTests
 			await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenLengthDoesNotMatch_ShouldIgnore()
 		{
 			int callCount = 0;
@@ -130,7 +130,7 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With2Levels
 		{
-			[Fact]
+			[Test]
 			public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
 			{
 				int callCount = 0;
@@ -145,7 +145,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(1);
 			}
 
-			[Fact]
+			[Test]
 			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -162,7 +162,7 @@ public sealed partial class SetupIndexerTests
 				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -180,7 +180,7 @@ public sealed partial class SetupIndexerTests
 				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteAllGetterCallbacks()
 			{
 				int callCount1 = 0;
@@ -200,7 +200,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount3).IsEqualTo(2);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteGetterCallbacks()
 			{
 				int callCount = 0;
@@ -218,7 +218,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(3);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteGetterCallbacksWithValue()
 			{
 				int callCount = 0;
@@ -236,7 +236,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(8);
 			}
 
-			[Fact]
+			[Test]
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
@@ -256,7 +256,7 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With3Levels
 		{
-			[Fact]
+			[Test]
 			public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
 			{
 				int callCount = 0;
@@ -272,7 +272,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(1);
 			}
 
-			[Fact]
+			[Test]
 			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -289,7 +289,7 @@ public sealed partial class SetupIndexerTests
 				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -307,7 +307,7 @@ public sealed partial class SetupIndexerTests
 				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteAllGetterCallbacks()
 			{
 				int callCount1 = 0;
@@ -327,7 +327,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount3).IsEqualTo(2);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteGetterCallbacks()
 			{
 				int callCount = 0;
@@ -347,7 +347,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(3);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteGetterCallbacksWithValue()
 			{
 				int callCount = 0;
@@ -367,7 +367,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(14);
 			}
 
-			[Fact]
+			[Test]
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
@@ -387,7 +387,7 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With4Levels
 		{
-			[Fact]
+			[Test]
 			public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
 			{
 				int callCount = 0;
@@ -403,7 +403,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(1);
 			}
 
-			[Fact]
+			[Test]
 			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -420,7 +420,7 @@ public sealed partial class SetupIndexerTests
 				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -438,7 +438,7 @@ public sealed partial class SetupIndexerTests
 				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteAllGetterCallbacks()
 			{
 				int callCount1 = 0;
@@ -458,7 +458,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount3).IsEqualTo(2);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteGetterCallbacks()
 			{
 				int callCount = 0;
@@ -479,7 +479,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(3);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteGetterCallbacksWithValue()
 			{
 				int callCount = 0;
@@ -499,7 +499,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(28);
 			}
 
-			[Fact]
+			[Test]
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
@@ -519,7 +519,7 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With5Levels
 		{
-			[Fact]
+			[Test]
 			public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
 			{
 				int callCount = 0;
@@ -536,7 +536,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(1);
 			}
 
-			[Fact]
+			[Test]
 			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -553,7 +553,7 @@ public sealed partial class SetupIndexerTests
 				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -571,7 +571,7 @@ public sealed partial class SetupIndexerTests
 				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteAllGetterCallbacks()
 			{
 				int callCount1 = 0;
@@ -591,7 +591,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount3).IsEqualTo(2);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteGetterCallbacks()
 			{
 				int callCount = 0;
@@ -612,7 +612,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(3);
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldExecuteGetterCallbacksWithValue()
 			{
 				int callCount = 0;
@@ -633,7 +633,7 @@ public sealed partial class SetupIndexerTests
 				await That(callCount).IsEqualTo(36);
 			}
 
-			[Fact]
+			[Test]
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];

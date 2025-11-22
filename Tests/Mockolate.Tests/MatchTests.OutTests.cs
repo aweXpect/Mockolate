@@ -4,7 +4,7 @@ public sealed partial class MatchTests
 {
 	public sealed class OutTests
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_AnyOut_ShouldReturnExpectedValue()
 		{
 			IOutParameter<int> sut = AnyOut<int>();
@@ -15,7 +15,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IOutParameter<int> sut = Out(() => 3);
@@ -26,7 +26,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_Verify_ShouldReturnExpectedValue()
 		{
 			IVerifyOutParameter<int> sut = Out<int>();
@@ -37,11 +37,11 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Theory]
-		[InlineData(42L, false)]
-		[InlineData("foo", false)]
-		[InlineData(null, true)]
-		[InlineData(123, true)]
+		[Test]
+		[Arguments(42L, false)]
+		[Arguments("foo", false)]
+		[Arguments(null, true)]
+		[Arguments(123, true)]
 		public async Task WithAnyOut_ShouldCheckType(object? value, bool expectMatch)
 		{
 			IOutParameter<int?> sut = AnyOut<int?>();
@@ -51,9 +51,9 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectMatch);
 		}
 
-		[Theory]
-		[InlineData(42)]
-		[InlineData(-2)]
+		[Test]
+		[Arguments(42)]
+		[Arguments(-2)]
 		public async Task WithOut_ShouldReturnValue(int? value)
 		{
 			IOutParameter<int?> sut = Out(() => value);
@@ -63,9 +63,9 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(value);
 		}
 
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(42L)]
+		[Arguments("foo")]
 		public async Task WithOut_Verify_ShouldAlwaysMatch(object? value)
 		{
 			IVerifyOutParameter<int?> sut = Out<int?>();

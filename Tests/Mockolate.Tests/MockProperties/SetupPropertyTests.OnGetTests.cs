@@ -6,7 +6,7 @@ public sealed partial class SetupPropertyTests
 {
 	public sealed class OnGetTests
 	{
-		[Fact]
+		[Test]
 		public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
 			List<int> invocations = [];
@@ -23,7 +23,7 @@ public sealed partial class SetupPropertyTests
 			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
 			List<int> invocations = [];
@@ -41,7 +41,7 @@ public sealed partial class SetupPropertyTests
 			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task MultipleOnGet_ShouldAllGetInvoked()
 		{
 			int callCount1 = 0;
@@ -61,7 +61,7 @@ public sealed partial class SetupPropertyTests
 			await That(callCount2).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldExecuteWhenPropertyIsRead()
 		{
 			int callCount = 0;
@@ -75,7 +75,7 @@ public sealed partial class SetupPropertyTests
 			await That(callCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldNotExecuteWhenPropertyIsWrittenToOrOtherPropertyIsRead()
 		{
 			int callCount = 0;
@@ -90,7 +90,7 @@ public sealed partial class SetupPropertyTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 		{
 			List<int> invocations = [];
@@ -107,7 +107,7 @@ public sealed partial class SetupPropertyTests
 			await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithValue_ShouldExecuteWhenPropertyIsRead()
 		{
 			int callCount = 0;
@@ -128,7 +128,7 @@ public sealed partial class SetupPropertyTests
 			await That(receivedValue).IsEqualTo(4);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithValue_ShouldNotExecuteWhenPropertyIsWrittenToOrOtherPropertyIsRead()
 		{
 			int callCount = 0;

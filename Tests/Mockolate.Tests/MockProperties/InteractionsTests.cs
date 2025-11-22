@@ -6,7 +6,7 @@ namespace Mockolate.Tests.MockProperties;
 
 public sealed class InteractionsTests
 {
-	[Fact]
+	[Test]
 	public async Task MockGot_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -18,7 +18,7 @@ public sealed class InteractionsTests
 		await That(result).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task MockGot_WhenNameMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -30,7 +30,7 @@ public sealed class InteractionsTests
 		await That(result).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task MockGot_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -42,7 +42,7 @@ public sealed class InteractionsTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property bar");
 	}
 
-	[Fact]
+	[Test]
 	public async Task MockSet_WhenNameAndValueMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -54,7 +54,7 @@ public sealed class InteractionsTests
 		await That(result).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task MockSet_WhenOnlyNameMatches_ShouldReturnNever()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -67,7 +67,7 @@ public sealed class InteractionsTests
 		await That(result).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task MockSet_WhenOnlyValueMatches_ShouldReturnNever()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -79,7 +79,7 @@ public sealed class InteractionsTests
 		await That(result).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task MockSet_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -91,7 +91,7 @@ public sealed class InteractionsTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value Any<int>()");
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertyGetterAccess_ToString_ShouldReturnExpectedValue()
 	{
 		PropertyGetterAccess interaction = new(3, "SomeProperty");
@@ -100,7 +100,7 @@ public sealed class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertySetterAccess_ToString_ShouldReturnExpectedValue()
 	{
 		PropertySetterAccess interaction = new(3, "SomeProperty", 5);
@@ -109,7 +109,7 @@ public sealed class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertySetterAccess_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		PropertySetterAccess interaction = new(4, "SomeProperty", null);

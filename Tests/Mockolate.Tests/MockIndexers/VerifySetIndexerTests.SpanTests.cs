@@ -6,7 +6,7 @@ public sealed partial class VerifySetIndexerTests
 {
 	public sealed class SpanTests
 	{
-		[Fact]
+		[Test]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -18,7 +18,7 @@ public sealed partial class VerifySetIndexerTests
 			await That(mock.VerifyMock.SetIndexer(With<Memory<int>>(v => v.Length == 4), Any<int>())).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Memory_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -30,7 +30,7 @@ public sealed partial class VerifySetIndexerTests
 			await That(mock.VerifyMock.SetIndexer(Any<Memory<int>>(), Any<int>())).Twice();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
 			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -42,7 +42,7 @@ public sealed partial class VerifySetIndexerTests
 			await That(mock.VerifyMock.SetIndexer(WithReadOnlySpan<int>(v => v.Length == 4), Any<int>())).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -54,7 +54,7 @@ public sealed partial class VerifySetIndexerTests
 			await That(mock.VerifyMock.SetIndexer(AnyReadOnlySpan<int>(), Any<int>())).Twice();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
 			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());
@@ -66,7 +66,7 @@ public sealed partial class VerifySetIndexerTests
 			await That(mock.VerifyMock.SetIndexer(WithSpan<int>(v => v.Length == 4), Any<int>())).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			ISpanMock mock = Mock.Create<ISpanMock>(MockBehavior.Default.CallingBaseClass());

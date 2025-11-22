@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using PublicApiGenerator;
+using Assembly = System.Reflection.Assembly;
 
 namespace Mockolate.Api.Tests;
 

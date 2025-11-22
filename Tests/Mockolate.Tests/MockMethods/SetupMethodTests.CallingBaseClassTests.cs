@@ -4,9 +4,9 @@ public sealed partial class SetupMethodTests
 {
 	public sealed class CallingBaseClassTests
 	{
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyReturnMethodWith1Parameter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -18,9 +18,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyReturnMethodWith1ParameterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyReturnMethodWith2Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -32,9 +32,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyReturnMethodWith2ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyReturnMethodWith3Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -47,9 +47,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyReturnMethodWith3ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyReturnMethodWith4Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -62,9 +62,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyReturnMethodWith4ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyReturnMethodWith5Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -78,9 +78,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyReturnMethodWith5ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyReturnMethodWithoutParameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -92,9 +92,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyReturnMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyVoidMethodWith1Parameter_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -106,9 +106,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyVoidMethodWith1ParameterCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyVoidMethodWith2Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -120,9 +120,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyVoidMethodWith2ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyVoidMethodWith3Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -135,9 +135,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyVoidMethodWith3ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyVoidMethodWith4Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -150,9 +150,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyVoidMethodWith4ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyVoidMethodWith5Parameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -166,9 +166,9 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyVoidMethodWith5ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
+		[Test]
+		[Arguments(false, 0)]
+		[Arguments(true, 1)]
 		public async Task MyVoidMethodWithoutParameters_ShouldCallBaseWhenRequested(bool callBaseClass,
 			int expectedCallCount)
 		{
@@ -180,7 +180,7 @@ public sealed partial class SetupMethodTests
 			await That(mock.MyVoidMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task SetupCallingBaseClassWithoutReturn_ShouldReturnBaseValue()
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();

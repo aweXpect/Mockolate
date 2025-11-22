@@ -6,7 +6,7 @@ namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class InteractionsTests
 {
-	[Fact]
+	[Test]
 	public async Task Method_WhenNameAndValueMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -19,7 +19,7 @@ public sealed partial class InteractionsTests
 		await That(result).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WhenOnlyNameMatches_ShouldReturnNever()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -32,7 +32,7 @@ public sealed partial class InteractionsTests
 		await That(result).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WhenOnlyValueMatches_ShouldReturnNever()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -45,7 +45,7 @@ public sealed partial class InteractionsTests
 		await That(result).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -58,7 +58,7 @@ public sealed partial class InteractionsTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(Any<int>())");
 	}
 
-	[Fact]
+	[Test]
 	public async Task MethodInvocation_ToString_ShouldReturnExpectedValue()
 	{
 		MethodInvocation interaction = new(3, "SomeMethod", [1, null, TimeSpan.FromSeconds(90),]);

@@ -2,7 +2,7 @@ namespace Mockolate.Tests;
 
 public sealed class BaseClassTests
 {
-	[Fact]
+	[Test]
 	public async Task ConstructorWithInitSetter_ShouldSetParameters()
 	{
 		BaseClass.ConstructorParameters result = new([2, "bar",])
@@ -13,7 +13,7 @@ public sealed class BaseClassTests
 		await That(result.Parameters).IsEqualTo([1, "foo",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithConstructorParameters_ShouldReturnParameters()
 	{
 		object?[] parameters =
@@ -26,7 +26,7 @@ public sealed class BaseClassTests
 		await That(result.Parameters).IsEqualTo(parameters);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithConstructorParameters_WithNull_ShouldReturnArrayWithNullElement()
 	{
 		BaseClass.ConstructorParameters result = BaseClass.WithConstructorParameters(null);

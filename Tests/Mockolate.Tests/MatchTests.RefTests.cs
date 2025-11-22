@@ -4,7 +4,7 @@ public sealed partial class MatchTests
 {
 	public sealed class RefTests
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_AnyRef_ShouldReturnExpectedValue()
 		{
 			IRefParameter<int> sut = AnyRef<int>();
@@ -15,7 +15,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IRefParameter<int?> sut = Ref<int?>(v => v * 3);
@@ -26,7 +26,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_Verify_ShouldReturnExpectedValue()
 		{
 			IVerifyRefParameter<int> sut = Ref<int>();
@@ -37,7 +37,7 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_WithPredicate_ShouldReturnExpectedValue()
 		{
 			IRefParameter<int?> sut = Ref<int?>(v => v > 3, v => v * 3);
@@ -48,9 +48,9 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(42L)]
+		[Arguments("foo")]
 		public async Task WithRef_DifferentType_ShouldNotMatch(object? value)
 		{
 			IRefParameter<int?> sut = Ref<int?>(_ => true, _ => null);
@@ -60,9 +60,9 @@ public sealed partial class MatchTests
 			await That(result).IsFalse();
 		}
 
-		[Theory]
-		[InlineData(true)]
-		[InlineData(false)]
+		[Test]
+		[Arguments(true)]
+		[Arguments(false)]
 		public async Task WithRef_ShouldMatchForExpectedResult(bool predicateValue)
 		{
 			IRefParameter<string> sut = Ref<string>(_ => predicateValue, _ => "");
@@ -72,9 +72,9 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(predicateValue);
 		}
 
-		[Theory]
-		[InlineData(42)]
-		[InlineData(-2)]
+		[Test]
+		[Arguments(42)]
+		[Arguments(-2)]
 		public async Task WithRef_ShouldReturnValue(int? value)
 		{
 			IRefParameter<int?> sut = Ref<int?>(v => v * 2);
@@ -84,9 +84,9 @@ public sealed partial class MatchTests
 			await That(result).IsEqualTo(2 * value);
 		}
 
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(42L)]
+		[Arguments("foo")]
 		public async Task WithRef_Verify_ShouldAlwaysMatch(object? value)
 		{
 			IVerifyRefParameter<int?> sut = Ref<int?>();

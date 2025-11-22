@@ -6,7 +6,7 @@ namespace Mockolate.Tests;
 
 public sealed partial class MatchTests
 {
-	[Fact]
+	[Test]
 	public async Task ShouldOnlyHaveOneParameterlessPrivateConstructor()
 	{
 		ConstructorInfo[] constructors = typeof(Match)
@@ -18,7 +18,7 @@ public sealed partial class MatchTests
 		_ = constructors.Single().Invoke([]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_NamedParameter_ShouldReturnExpectedValue()
 	{
 		NamedParameter sut = new("foo", (IParameter)Out<int>());
