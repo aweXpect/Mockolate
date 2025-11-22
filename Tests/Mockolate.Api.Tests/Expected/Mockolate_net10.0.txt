@@ -996,6 +996,8 @@ namespace Mockolate.Setup
     {
         public ReadOnlySpanWrapper(System.ReadOnlySpan<T> span) { }
         public T[] ReadOnlySpanValues { get; }
+        public static System.ReadOnlySpan<T> op_Implicit(Mockolate.Setup.ReadOnlySpanWrapper<T> wrapper) { }
+        public static Mockolate.Setup.ReadOnlySpanWrapper<T> op_Implicit(System.ReadOnlySpan<T> span) { }
     }
     public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>
     {
@@ -1137,6 +1139,8 @@ namespace Mockolate.Setup
     {
         public SpanWrapper(System.Span<T> span) { }
         public T[] SpanValues { get; }
+        public static System.Span<T> op_Implicit(Mockolate.Setup.SpanWrapper<T> wrapper) { }
+        public static Mockolate.Setup.SpanWrapper<T> op_Implicit(System.Span<T> span) { }
     }
     public class VoidMethodSetup : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder
     {
