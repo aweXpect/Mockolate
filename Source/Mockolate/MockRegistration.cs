@@ -35,7 +35,7 @@ public partial class MockRegistration
 	}
 
 	/// <inheritdoc cref="MockRegistration" />
-	internal MockRegistration(MockBehavior behavior, string prefix, object? wrappedInstance)
+	public MockRegistration(MockBehavior behavior, string prefix, object? wrappedInstance)
 	{
 		Behavior = behavior;
 		Prefix = prefix;
@@ -281,4 +281,52 @@ public partial class MockRegistration
 			yield return (target, method);
 		}
 	}
+
+	#pragma warning disable IL2075 // Wrapped instance methods are accessed dynamically
+	private TResult? InvokeWrappedMethod<TResult>(string methodName, object?[] parameters)
+	{
+		if (WrappedInstance is null)
+		{
+			return default;
+		}
+
+		System.Type wrappedType = WrappedInstance.GetType();
+		
+		// Try to find a method with matching name and parameter count
+		MethodInfo? method = wrappedType.GetMethod(methodName, 
+			BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		
+		if (method is null)
+		{
+			// Try to find by parameter types
+			System.Type[] parameterTypes = parameters.Select(p => p?.GetType() ?? typeof(object)).ToArray();
+			method = wrappedType.GetMethod(methodName, parameterTypes);
+		}
+
+		if (method is null)
+		{
+			// Last attempt: search through all methods with the given name
+			MethodInfo[] methods = wrappedType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(m => m.Name == methodName && m.GetParameters().Length == parameters.Length)
+				.ToArray();
+			
+			if (methods.Length == 1)
+			{
+				method = methods[0];
+			}
+		}
+
+		if (method is not null)
+		{
+			object? result = method.Invoke(WrappedInstance, parameters);
+			if (typeof(TResult) == typeof(object) && method.ReturnType == typeof(void))
+			{
+				return default;
+			}
+			return (TResult?)result;
+		}
+
+		return default;
+	}
+	#pragma warning restore IL2075
 }

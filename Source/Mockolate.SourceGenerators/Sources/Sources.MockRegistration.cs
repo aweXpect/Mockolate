@@ -343,6 +343,76 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine("\t\t}");
+			
+			// Generate the GenerateWrapped partial method
+			sb.AppendLine();
+			sb.AppendLine(
+				"\t\tpartial void GenerateWrapped<T>(T instance, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups)");
+			sb.Append("\t\t{").AppendLine();
+			index = 0;
+			foreach ((string Name, MockClass MockClass) mock in mocks)
+			{
+				if (index++ > 0)
+				{
+					sb.Append("\t\t\telse ");
+				}
+				else
+				{
+					sb.Append("\t\t\t");
+				}
+
+				sb.Append("if (typeof(T) == typeof(").Append(mock.MockClass.ClassFullName).Append("))").AppendLine();
+				sb.Append("\t\t\t{").AppendLine();
+				
+				// Create MockRegistration with wrapped instance
+				sb.Append("\t\t\t\tMockRegistration mockRegistration = new MockRegistration(mockBehavior, \"")
+					.Append(mock.MockClass.DisplayString).Append("\", instance);").AppendLine();
+				
+				if (mock.MockClass.Delegate != null)
+				{
+					sb.Append("\t\t\t\tMockFor").Append(mock.Name).Append(" mockTarget = new MockFor").Append(mock.Name)
+						.Append("(mockBehavior);")
+						.AppendLine();
+					sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
+					sb.Append("\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append("> setupTarget = ((IMockSubject<").Append(mock.MockClass.ClassFullName)
+						.Append(">)mockTarget).Mock;").AppendLine();
+					sb.Append("\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append(">> setup in setups)").AppendLine();
+					sb.Append("\t\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
+					sb.Append("\t\t\t\t\t}").AppendLine();
+					sb.Append("\t\t\t\t}").AppendLine();
+					sb.Append("\t\t\t\t_value = mockTarget.Object;").AppendLine();
+				}
+				else if (mock.MockClass.IsInterface)
+				{
+					sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
+					sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
+					sb.Append("\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append("> setupTarget = ((IMockSubject<").Append(mock.MockClass.ClassFullName)
+						.Append(">)_value).Mock;").AppendLine();
+					sb.Append("\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append(">> setup in setups)").AppendLine();
+					sb.Append("\t\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
+					sb.Append("\t\t\t\t\t}").AppendLine();
+					sb.Append("\t\t\t\t}").AppendLine();
+				}
+				else
+				{
+					// For classes with constructors, wrapping is not fully supported with source generators
+					// The best we can do is use the instance with CallBaseClass behavior
+					sb.Append("\t\t\t\tthrow new MockException(\"Wrapping concrete class instances with constructors is not supported. Use CallBaseClass behavior with Mock.Create instead.\");")
+						.AppendLine();
+				}
+				
+				sb.Append("\t\t\t}").AppendLine();
+			}
+			sb.AppendLine("\t\t}");
+			
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}

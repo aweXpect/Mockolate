@@ -396,6 +396,65 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.AppendLine("""
+		              	/// <summary>
+		              	///     Wraps a concrete instance with a mock proxy that intercepts and delegates method calls,
+		              	///     supporting setup and verification on the wrapped instance.
+		              	/// </summary>
+		              	/// <typeparam name="T">Type to wrap, which can be an interface or a class.</typeparam>
+		              	/// <param name="instance">The concrete instance to wrap.</param>
+		              	/// <param name="setups">Optional setup actions to configure the mock.</param>
+		              	/// <remarks>
+		              	///     When no setup is specified for a method, the call is delegated to the wrapped instance.
+		              	///     Setup and verification work the same as with regular mocks.
+		              	/// </remarks>
+		              	[MockGenerator]
+		              	public static T Wrap<T>(T instance, params Action<IMockSetup<T>>[] setups)
+		              		where T : class
+		              	{
+		              		if (instance == null)
+		              		{
+		              			throw new ArgumentNullException(nameof(instance));
+		              		}
+		              	
+		              		ThrowIfNotMockable(typeof(T));
+		              	
+		              		return new MockGenerator().GetWrapped<T>(instance, MockBehavior.Default, setups)
+		              			?? throw new MockException("Could not generate wrapped Mock<T>. Did the source generator run correctly?");
+		              	}
+		              """);
+		sb.AppendLine();
+
+		sb.AppendLine("""
+		              	/// <summary>
+		              	///     Wraps a concrete instance with a mock proxy that intercepts and delegates method calls,
+		              	///     supporting setup and verification on the wrapped instance.
+		              	/// </summary>
+		              	/// <typeparam name="T">Type to wrap, which can be an interface or a class.</typeparam>
+		              	/// <param name="instance">The concrete instance to wrap.</param>
+		              	/// <param name="mockBehavior">The behavior settings for the mock.</param>
+		              	/// <param name="setups">Optional setup actions to configure the mock.</param>
+		              	/// <remarks>
+		              	///     When no setup is specified for a method, the call is delegated to the wrapped instance.
+		              	///     Setup and verification work the same as with regular mocks.
+		              	/// </remarks>
+		              	[MockGenerator]
+		              	public static T Wrap<T>(T instance, MockBehavior mockBehavior, params Action<IMockSetup<T>>[] setups)
+		              		where T : class
+		              	{
+		              		if (instance == null)
+		              		{
+		              			throw new ArgumentNullException(nameof(instance));
+		              		}
+		              	
+		              		ThrowIfNotMockable(typeof(T));
+		              	
+		              		return new MockGenerator().GetWrapped<T>(instance, mockBehavior, setups)
+		              			?? throw new MockException("Could not generate wrapped Mock<T>. Did the source generator run correctly?");
+		              	}
+		              """);
+		sb.AppendLine();
+
+		sb.AppendLine("""
 		              	private static void ThrowIfNotMockable(Type type)
 		              	{
 		              		if (type.IsSealed && type.BaseType != typeof(MulticastDelegate))
@@ -441,6 +500,18 @@ internal static partial class Sources
 			                		}
 			                """);
 		}
+
+		sb.AppendLine();
+		sb.AppendLine("""
+		              		partial void GenerateWrapped<T>(T instance, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups);
+		              		
+		              		public T? GetWrapped<T>(T instance, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups)
+		              			where T : class
+		              		{
+		              			GenerateWrapped<T>(instance, mockBehavior, setups);
+		              			return _value as T;
+		              		}
+		              """);
 
 		sb.AppendLine("""
 		              	}
