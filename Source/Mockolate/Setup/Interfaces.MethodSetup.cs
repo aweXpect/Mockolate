@@ -63,7 +63,7 @@ public interface IMethodSetup
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn>
+public interface IReturnMethodSetup<TMock, in TReturn>
 {
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -71,17 +71,17 @@ public interface IReturnMethodSetup<in TReturn>
 	/// <remarks>
 	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TMock, TReturn> CallingBaseClass(bool callBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn> Do(Action callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn> Do(Action<int> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn> Do(Action<int> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -89,7 +89,7 @@ public interface IReturnMethodSetup<in TReturn>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn> Do<TMock>(Action<TMock> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn> Do(Action<TMock> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -97,39 +97,39 @@ public interface IReturnMethodSetup<in TReturn>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn> Do<TMock>(Action<TMock, int> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn> Do(Action<TMock, int> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Returns(Func<TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Returns(TReturn returnValue);
+	IReturnMethodSetup<TMock, TReturn> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Throws<TException>()
+	IReturnMethodSetup<TMock, TReturn> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Throws(Exception exception);
+	IReturnMethodSetup<TMock, TReturn> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Throws(Func<Exception> callback);
+	IReturnMethodSetup<TMock, TReturn> Throws(Func<Exception> callback);
 }
 
 /// <summary>
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackBuilder<in TReturn> : IReturnMethodSetupCallbackWhenBuilder<TReturn>
+public interface IReturnMethodSetupCallbackBuilder<TMock, in TReturn> : IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn>
 {
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns true.
@@ -137,13 +137,13 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn> : IReturnMethodSe
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
-	IReturnMethodSetupCallbackWhenBuilder<TReturn> When(Func<int, bool> predicate);
+	IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn> : IReturnMethodSetup<TReturn>
+public interface IReturnMethodSetupCallbackWhenBuilder<TMock, in TReturn> : IReturnMethodSetup<TMock, TReturn>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -154,13 +154,13 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn> : IReturnMeth
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn> For(int times);
+	IReturnMethodSetup<TMock, TReturn> For(int times);
 }
 
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn, out T1>
+public interface IReturnMethodSetup<TMock, in TReturn, out T1>
 {
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -168,22 +168,22 @@ public interface IReturnMethodSetup<in TReturn, out T1>
 	/// <remarks>
 	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TMock, TReturn, T1> CallingBaseClass(bool callBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<T1> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1> Do(Action<T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1> Do(Action<int, T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -191,7 +191,7 @@ public interface IReturnMethodSetup<in TReturn, out T1>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock, T1> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1> Do(Action<TMock, T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -199,50 +199,50 @@ public interface IReturnMethodSetup<in TReturn, out T1>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do<TMock>(Action<TMock, int, T1> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1> Do(Action<TMock, int, T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Returns(Func<T1, TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn, T1> Returns(Func<T1, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Returns(Func<TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn, T1> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Returns(TReturn returnValue);
+	IReturnMethodSetup<TMock, TReturn, T1> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Throws<TException>()
+	IReturnMethodSetup<TMock, TReturn, T1> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Throws(Exception exception);
+	IReturnMethodSetup<TMock, TReturn, T1> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Throws(Func<Exception> callback);
+	IReturnMethodSetup<TMock, TReturn, T1> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Throws(Func<T1, Exception> callback);
+	IReturnMethodSetup<TMock, TReturn, T1> Throws(Func<T1, Exception> callback);
 }
 
 /// <summary>
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>
+public interface IReturnMethodSetupCallbackBuilder<TMock, in TReturn, out T1>
+	: IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn, T1>
 {
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns true.
@@ -250,14 +250,14 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1>
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
-	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> When(Func<int, bool> predicate);
+	IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn, T1> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
-	: IReturnMethodSetup<TReturn, T1>
+public interface IReturnMethodSetupCallbackWhenBuilder<TMock, in TReturn, out T1>
+	: IReturnMethodSetup<TMock, TReturn, T1>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -268,13 +268,13 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1> For(int times);
+	IReturnMethodSetup<TMock, TReturn, T1> For(int times);
 }
 
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn, out T1, out T2>
+public interface IReturnMethodSetup<TMock, in TReturn, out T1, out T2>
 {
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -282,22 +282,22 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2>
 	/// <remarks>
 	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TMock, TReturn, T1, T2> CallingBaseClass(bool callBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<T1, T2> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2> Do(Action<T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<int, T1, T2> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2> Do(Action<int, T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -305,7 +305,7 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do<TMock>(Action<TMock, T1, T2> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2> Do(Action<TMock, T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -313,50 +313,50 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do<TMock>(Action<TMock, int, T1, T2> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2> Do(Action<TMock, int, T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Returns(Func<TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue);
+	IReturnMethodSetup<TMock, TReturn, T1, T2> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Throws<TException>()
+	IReturnMethodSetup<TMock, TReturn, T1, T2> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Throws(Exception exception);
+	IReturnMethodSetup<TMock, TReturn, T1, T2> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Throws(Func<Exception> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Throws(Func<T1, T2, Exception> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2> Throws(Func<T1, T2, Exception> callback);
 }
 
 /// <summary>
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1,
+public interface IReturnMethodSetupCallbackBuilder<TMock, in TReturn, out T1, out T2>
+	: IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn, T1,
 		T2>
 {
 	/// <summary>
@@ -365,14 +365,14 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2>
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
-	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> When(Func<int, bool> predicate);
+	IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn, T1, T2> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2>
-	: IReturnMethodSetup<TReturn, T1, T2>
+public interface IReturnMethodSetupCallbackWhenBuilder<TMock, in TReturn, out T1, out T2>
+	: IReturnMethodSetup<TMock, TReturn, T1, T2>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -383,13 +383,13 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2> For(int times);
+	IReturnMethodSetup<TMock, TReturn, T1, T2> For(int times);
 }
 
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
+public interface IReturnMethodSetup<TMock, in TReturn, out T1, out T2, out T3>
 {
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -397,22 +397,22 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
 	/// <remarks>
 	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> CallingBaseClass(bool callBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<T1, T2, T3> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3> Do(Action<T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -420,7 +420,7 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do<TMock>(Action<TMock, T1, T2, T3> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3> Do(Action<TMock, T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -428,50 +428,50 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do<TMock>(Action<TMock, int, T1, T2, T3> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3> Do(Action<TMock, int, T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Throws<TException>()
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Throws(Exception exception);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Throws(Func<Exception> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
 }
 
 /// <summary>
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>
+public interface IReturnMethodSetupCallbackBuilder<TMock, in TReturn, out T1, out T2, out T3>
+	: IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns true.
@@ -479,14 +479,14 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, o
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
-	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> When(Func<int, bool> predicate);
+	IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn, T1, T2, T3> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2, out T3>
-	: IReturnMethodSetup<TReturn, T1, T2, T3>
+public interface IReturnMethodSetupCallbackWhenBuilder<TMock, in TReturn, out T1, out T2, out T3>
+	: IReturnMethodSetup<TMock, TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -497,14 +497,14 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3> For(int times);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3> For(int times);
 }
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
+public interface IReturnMethodSetup<TMock, in TReturn, out T1, out T2, out T3, out T4>
 {
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -512,22 +512,22 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -535,7 +535,7 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do<TMock>(Action<TMock, T1, T2, T3, T4> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3, T4> Do(Action<TMock, T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -543,50 +543,50 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do<TMock>(Action<TMock, int, T1, T2, T3, T4> callback);
+	IReturnMethodSetupCallbackBuilder<TMock, TReturn, T1, T2, T3, T4> Do(Action<TMock, int, T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws<TException>()
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Exception exception);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
 }
 
 /// <summary>
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3, out T4>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>
+public interface IReturnMethodSetupCallbackBuilder<TMock, in TReturn, out T1, out T2, out T3, out T4>
+	: IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns true.
@@ -594,14 +594,14 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, o
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
-	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> When(Func<int, bool> predicate);
+	IReturnMethodSetupCallbackWhenBuilder<TMock, TReturn, T1, T2, T3, T4> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2, out T3, out T4>
-	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+public interface IReturnMethodSetupCallbackWhenBuilder<TMock, in TReturn, out T1, out T2, out T3, out T4>
+	: IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -612,14 +612,14 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> For(int times);
+	IReturnMethodSetup<TMock, TReturn, T1, T2, T3, T4> For(int times);
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters
 
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetup
+public interface IVoidMethodSetup<TMock>
 {
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -645,7 +645,7 @@ public interface IVoidMethodSetup
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder Do<TMock>(Action<TMock> callback);
+	IVoidMethodSetupCallbackBuilder Do(Action<TMock> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -653,7 +653,7 @@ public interface IVoidMethodSetup
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder Do<TMock>(Action<TMock, int> callback);
+	IVoidMethodSetupCallbackBuilder Do(Action<TMock, int> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -694,7 +694,7 @@ public interface IVoidMethodSetupCallbackBuilder : IVoidMethodSetupCallbackWhenB
 /// <summary>
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupCallbackWhenBuilder : IVoidMethodSetup
+public interface IVoidMethodSetupCallbackWhenBuilder : IVoidMethodSetup<TMock>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -741,7 +741,7 @@ public interface IVoidMethodSetup<out T1>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock> callback);
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action<TMock> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -749,7 +749,7 @@ public interface IVoidMethodSetup<out T1>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, int> callback);
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action<TMock, int> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -757,7 +757,7 @@ public interface IVoidMethodSetup<out T1>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, T1> callback);
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action<TMock, T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -765,7 +765,7 @@ public interface IVoidMethodSetup<out T1>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1> Do<TMock>(Action<TMock, int, T1> callback);
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action<TMock, int, T1> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -858,7 +858,7 @@ public interface IVoidMethodSetup<out T1, out T2>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1, T2> Do<TMock>(Action<TMock, T1, T2> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<TMock, T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -866,7 +866,7 @@ public interface IVoidMethodSetup<out T1, out T2>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1, T2> Do<TMock>(Action<TMock, int, T1, T2> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<TMock, int, T1, T2> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -959,7 +959,7 @@ public interface IVoidMethodSetup<out T1, out T2, out T3>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do<TMock>(Action<TMock, T1, T2, T3> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<TMock, T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -967,7 +967,7 @@ public interface IVoidMethodSetup<out T1, out T2, out T3>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do<TMock>(Action<TMock, int, T1, T2, T3> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<TMock, int, T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1061,7 +1061,7 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do<TMock>(Action<TMock, T1, T2, T3, T4> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<TMock, T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -1069,7 +1069,7 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     The callback receives the mock subject as its first parameter and the invocation count as the second parameter.
 	/// </remarks>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do<TMock>(Action<TMock, int, T1, T2, T3, T4> callback);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<TMock, int, T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
