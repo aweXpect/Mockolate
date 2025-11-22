@@ -60,12 +60,12 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 		return false;
 	}
 
-	private static bool HasCancellationToken(object?[] parameters, out CancellationToken cancellationToken)
+	private static bool HasCanceledCancellationToken(object?[] parameters, out CancellationToken cancellationToken)
 	{
-		CancellationToken? parameter = parameters.OfType<CancellationToken>().FirstOrDefault();
-		if (parameter != null && parameter.Value.IsCancellationRequested)
+		CancellationToken parameter = parameters.OfType<CancellationToken>().FirstOrDefault();
+		if (parameter.IsCancellationRequested)
 		{
-			cancellationToken = parameter.Value;
+			cancellationToken = parameter;
 			return true;
 		}
 
@@ -82,8 +82,7 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 		/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
 		public object Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
 		{
-			if (HasCancellationToken(parameters, out CancellationToken cancellationToken)
-			    && cancellationToken.IsCancellationRequested)
+			if (HasCanceledCancellationToken(parameters, out CancellationToken cancellationToken))
 			{
 				return Task.FromCanceled(cancellationToken);
 			}
@@ -101,8 +100,7 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 		/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
 		public object Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
 		{
-			if (HasCancellationToken(parameters, out CancellationToken cancellationToken)
-			    && cancellationToken.IsCancellationRequested)
+			if (HasCanceledCancellationToken(parameters, out CancellationToken cancellationToken))
 			{
 				return ValueTask.FromCanceled(cancellationToken);
 			}

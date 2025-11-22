@@ -109,10 +109,10 @@ internal static partial class Sources
 					.Append(">(");
 				sb.Append("(defaultValueGenerator, parameters) => ").AppendLine();
 				sb.Append("\t\t{").AppendLine();
-				sb.Append("\t\t\tCancellationToken? cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();").AppendLine();
-				sb.Append("\t\t\tif (cancellationToken is not null && cancellationToken.Value.IsCancellationRequested)").AppendLine();
+				sb.Append("\t\t\tCancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();").AppendLine();
+				sb.Append("\t\t\tif (cancellationToken.IsCancellationRequested)").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\treturn System.Threading.Tasks.Task.FromCanceled<").Append(innerType).Append(">(cancellationToken.Value);").AppendLine();
+				sb.Append("\t\t\t\treturn System.Threading.Tasks.Task.FromCanceled<").Append(innerType).Append(">(cancellationToken);").AppendLine();
 				sb.Append("\t\t\t}").AppendLine();
 				sb.Append("\t\t\treturn System.Threading.Tasks.Task.FromResult<").Append(innerType)
 					.Append(">(defaultValueGenerator.Generate<").Append(innerType).Append(">());").AppendLine();
@@ -130,11 +130,11 @@ internal static partial class Sources
 					.Append(">(");
 				sb.Append("(defaultValueGenerator, parameters) => ").AppendLine();
 				sb.Append("\t\t{").AppendLine();
-				sb.Append("\t\t\tCancellationToken? cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();").AppendLine();
+				sb.Append("\t\t\tCancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();").AppendLine();
 				sb.Append("\t\t\t#if NET8_0_OR_GREATER").AppendLine();
-				sb.Append("\t\t\tif (cancellationToken is not null && cancellationToken.Value.IsCancellationRequested)").AppendLine();
+				sb.Append("\t\t\tif (cancellationToken.IsCancellationRequested)").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\treturn System.Threading.Tasks.ValueTask.FromCanceled<").Append(innerType).Append(">(cancellationToken.Value);").AppendLine();
+				sb.Append("\t\t\t\treturn System.Threading.Tasks.ValueTask.FromCanceled<").Append(innerType).Append(">(cancellationToken);").AppendLine();
 				sb.Append("\t\t\t}").AppendLine();
 				sb.Append("\t\t\t#endif").AppendLine();
 				sb.Append("\t\t\treturn new System.Threading.Tasks.ValueTask<").Append(innerType)
