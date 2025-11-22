@@ -31,7 +31,7 @@ public class MockGenerator : IIncrementalGenerator
 			.Collect();
 
 		context.RegisterSourceOutput(expectationsToRegister,
-			(spc, source) => Execute(source.Distinct().ToImmutableArray(), spc));
+			(spc, source) => Execute([..source.Distinct(),], spc));
 	}
 
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)

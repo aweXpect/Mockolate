@@ -11,10 +11,13 @@ namespace Mockolate.Analyzers;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class UseVerificationAnalyzer : DiagnosticAnalyzer
 {
-	/// <inheritdoc />
-	public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = [Rules.UseVerificationRule,];
+	/// <inheritdoc cref="DiagnosticAnalyzer.SupportedDiagnostics" />
+	public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+	[
+		Rules.UseVerificationRule,
+	];
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="DiagnosticAnalyzer.Initialize(AnalysisContext)" />
 	public override void Initialize(AnalysisContext context)
 	{
 		context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
