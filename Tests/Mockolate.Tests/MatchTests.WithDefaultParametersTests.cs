@@ -1,0 +1,18 @@
+namespace Mockolate.Tests;
+
+public sealed partial class MatchTests
+{
+	public sealed class WithDefaultParametersTests
+	{
+		[Fact]
+		public async Task ToString_ShouldReturnExpectedValue()
+		{
+			IDefaultEventParameters sut = WithDefaultParameters();
+			string expectedValue = "WithDefaultParameters()";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+	}
+}
