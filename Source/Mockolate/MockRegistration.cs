@@ -34,6 +34,15 @@ public partial class MockRegistration
 		Interactions = interactions;
 	}
 
+	/// <inheritdoc cref="MockRegistration" />
+	internal MockRegistration(MockBehavior behavior, string prefix, object? wrappedInstance)
+	{
+		Behavior = behavior;
+		Prefix = prefix;
+		Interactions = new MockInteractions();
+		WrappedInstance = wrappedInstance;
+	}
+
 	/// <summary>
 	///     Gets the behavior settings used by this mock instance.
 	/// </summary>
@@ -49,6 +58,11 @@ public partial class MockRegistration
 	/// </summary>
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	public MockInteractions Interactions { get; }
+
+	/// <summary>
+	///     Gets the wrapped instance if this mock is wrapping a concrete object.
+	/// </summary>
+	internal object? WrappedInstance { get; }
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
@@ -70,6 +84,13 @@ public partial class MockRegistration
 		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
+			if (WrappedInstance is not null)
+			{
+				// Call the method on the wrapped instance using reflection
+				TResult? result = InvokeWrappedMethod<TResult>(methodName, parameters);
+				return new MethodSetupResult<TResult>(null, Behavior, result!);
+			}
+
 			if (Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
@@ -96,10 +117,20 @@ public partial class MockRegistration
 				methodName, parameters));
 
 		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		if (matchingSetup is null)
 		{
-			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+			if (WrappedInstance is not null)
+			{
+				// Call the method on the wrapped instance using reflection
+				InvokeWrappedMethod<object>(methodName, parameters);
+				return new MethodSetupResult(null, Behavior);
+			}
+
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+			}
 		}
 
 		matchingSetup?.Invoke(methodInvocation, Behavior);
