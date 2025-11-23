@@ -391,8 +391,22 @@ internal static partial class Sources
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
-					sb.Append("\t\t\tvar indexerResult = MockRegistrations.GetIndexer<").Append(property.Type.Fullname)
-						.Append(">(")
+					sb.Append("\t\t\tvar indexerResult = MockRegistrations.GetIndexer<");
+					
+					if (property.ReturnsSpan)
+					{
+						sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+					}
+					else if (property.ReturnsReadOnlySpan)
+					{
+						sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+					}
+					else
+					{
+						sb.Append(property.Type.Fullname);
+					}
+					
+					sb.Append(">(")
 						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p
 							=> (p.IsSpan, p.IsReadOnlySpan) switch
 							{
@@ -415,16 +429,44 @@ internal static partial class Sources
 				else
 				{
 					sb.Append(
-							"\t\t\treturn MockRegistrations.GetProperty<").Append(property.Type.Fullname).Append(">(")
+							"\t\t\treturn MockRegistrations.GetProperty<");
+					
+					if (property.ReturnsSpan)
+					{
+						sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+					}
+					else if (property.ReturnsReadOnlySpan)
+					{
+						sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+					}
+					else
+					{
+						sb.Append(property.Type.Fullname);
+					}
+					
+					sb.Append(">(")
 						.Append(property.GetUniqueNameString()).Append(", () => base.").Append(property.Name)
 						.Append(");").AppendLine();
 				}
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
-				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<")
-					.Append(property.Type.Fullname)
-					.Append(">(").Append(string.Join(", ", property.IndexerParameters.Value.Select(p
+				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<");
+				
+				if (property.ReturnsSpan)
+				{
+					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else if (property.ReturnsReadOnlySpan)
+				{
+					sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else
+				{
+					sb.Append(property.Type.Fullname);
+				}
+				
+				sb.Append(">(").Append(string.Join(", ", property.IndexerParameters.Value.Select(p
 						=> (p.IsSpan, p.IsReadOnlySpan) switch
 						{
 							(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
@@ -435,9 +477,22 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\treturn MockRegistrations.GetProperty<")
-					.Append(property.Type.Fullname)
-					.Append(">(").Append(property.GetUniqueNameString()).Append(");").AppendLine();
+				sb.Append("\t\t\treturn MockRegistrations.GetProperty<");
+				
+				if (property.ReturnsSpan)
+				{
+					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else if (property.ReturnsReadOnlySpan)
+				{
+					sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else
+				{
+					sb.Append(property.Type.Fullname);
+				}
+				
+				sb.Append(">(").Append(property.GetUniqueNameString()).Append(");").AppendLine();
 			}
 
 			sb.AppendLine("\t\t}");
@@ -575,9 +630,37 @@ internal static partial class Sources
 		sb.AppendLine("\t{");
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\tMethodSetupResult<").Append(method.ReturnType.Fullname)
-				.Append("> methodExecution = MockRegistrations.InvokeMethod<")
-				.Append(method.ReturnType.Fullname).Append(">(").Append(method.GetUniqueNameString());
+			sb.Append("\t\tMethodSetupResult<");
+			
+			if (method.ReturnsSpan)
+			{
+				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else if (method.ReturnsReadOnlySpan)
+			{
+				sb.Append("ReadOnlySpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else
+			{
+				sb.Append(method.ReturnType.Fullname);
+			}
+			
+			sb.Append("> methodExecution = MockRegistrations.InvokeMethod<");
+			
+			if (method.ReturnsSpan)
+			{
+				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else if (method.ReturnsReadOnlySpan)
+			{
+				sb.Append("ReadOnlySpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else
+			{
+				sb.Append(method.ReturnType.Fullname);
+			}
+			
+			sb.Append(">(").Append(method.GetUniqueNameString());
 		}
 		else
 		{

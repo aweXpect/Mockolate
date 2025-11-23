@@ -9,25 +9,11 @@ internal readonly record struct MethodParameter
 		Type = new Type(parameterSymbol.Type);
 		Name = parameterSymbol.Name;
 		RefKind = parameterSymbol.RefKind;
-		if (parameterSymbol.Type.ContainingNamespace?.Name == "System" &&
-		    parameterSymbol.Type.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true)
+		if (parameterSymbol.Type.IsSpanOrReadOnlySpan(out bool isSpan, out bool isReadOnlySpan, out Type? spanType))
 		{
-			IsSpan = parameterSymbol.Type.Name == "Span";
-			IsReadOnlySpan = parameterSymbol.Type.Name == "ReadOnlySpan";
-			if (IsSpan || IsReadOnlySpan)
-			{
-				INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)parameterSymbol.Type;
-				if (namedTypeSymbol.TypeArguments.Length == 1)
-				{
-					ITypeSymbol elementType = namedTypeSymbol.TypeArguments[0];
-					SpanType = new Type(elementType);
-				}
-				else
-				{
-					IsSpan = false;
-					IsReadOnlySpan = false;
-				}
-			}
+			IsSpan = isSpan;
+			IsReadOnlySpan = isReadOnlySpan;
+			SpanType = spanType;
 		}
 	}
 

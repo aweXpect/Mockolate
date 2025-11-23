@@ -7,6 +7,30 @@ namespace Mockolate.SourceGenerators.Entities;
 
 internal static class Helpers
 {
+	public static bool IsSpanOrReadOnlySpan(this ITypeSymbol typeSymbol, out bool isSpan, out bool isReadOnlySpan,
+		out Type? spanType)
+	{
+		if (typeSymbol.ContainingNamespace?.Name == "System" &&
+		    typeSymbol.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true)
+		{
+			isSpan = typeSymbol.Name == "Span";
+			isReadOnlySpan = typeSymbol.Name == "ReadOnlySpan";
+			if ((isSpan || isReadOnlySpan) && typeSymbol is INamedTypeSymbol
+			    {
+				    TypeArguments.Length: 1,
+			    } namedTypeSymbol)
+			{
+				spanType = new Type(namedTypeSymbol.TypeArguments[0]);
+				return true;
+			}
+		}
+
+		isSpan = false;
+		isReadOnlySpan = false;
+		spanType = null;
+		return false;
+	}
+
 	public static StringBuilder Append(this StringBuilder sb, EquatableArray<Attribute>? attributes, string prefix = "")
 	{
 		if (attributes is null)

@@ -361,8 +361,21 @@ internal static partial class Sources
 		sb.Append("\t\t/// </summary>").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\tpublic IReturnMethodSetup<")
-				.Append(method.ReturnType.Fullname);
+			sb.Append("\t\tpublic IReturnMethodSetup<");
+			
+			if (method.ReturnsSpan)
+			{
+				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else if (method.ReturnsReadOnlySpan)
+			{
+				sb.Append("ReadOnlySpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else
+			{
+				sb.Append(method.ReturnType.Fullname);
+			}
+			
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
@@ -453,8 +466,21 @@ internal static partial class Sources
 
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<")
-				.Append(method.ReturnType.Fullname);
+			sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<");
+			
+			if (method.ReturnsSpan)
+			{
+				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else if (method.ReturnsReadOnlySpan)
+			{
+				sb.Append("ReadOnlySpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else
+			{
+				sb.Append(method.ReturnType.Fullname);
+			}
+			
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
@@ -713,7 +739,21 @@ internal static partial class Sources
 					.Append("\" />.")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
-				sb.Append("\t\tpublic IIndexerSetup<").Append(indexer.Type.Fullname);
+				sb.Append("\t\tpublic IIndexerSetup<");
+				
+				if (indexer.ReturnsSpan)
+				{
+					sb.Append("SpanWrapper<").Append(indexer.SpanElementType!.Fullname).Append(">");
+				}
+				else if (indexer.ReturnsReadOnlySpan)
+				{
+					sb.Append("ReadOnlySpanWrapper<").Append(indexer.SpanElementType!.Fullname).Append(">");
+				}
+				else
+				{
+					sb.Append(indexer.Type.Fullname);
+				}
+				
 				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
 					sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
@@ -733,7 +773,21 @@ internal static partial class Sources
 							(_, _) => $"Match.IParameter<{p.Type.Fullname}>",
 						} + (IsNullable(p) ? "?" : "") + $" parameter{i + 1}"))).Append(")").AppendLine();
 				sb.Append("\t\t{").AppendLine();
-				sb.Append("\t\t\tvar indexerSetup = new IndexerSetup<").Append(indexer.Type.Fullname);
+				sb.Append("\t\t\tvar indexerSetup = new IndexerSetup<");
+				
+				if (indexer.ReturnsSpan)
+				{
+					sb.Append("SpanWrapper<").Append(indexer.SpanElementType!.Fullname).Append(">");
+				}
+				else if (indexer.ReturnsReadOnlySpan)
+				{
+					sb.Append("ReadOnlySpanWrapper<").Append(indexer.SpanElementType!.Fullname).Append(">");
+				}
+				else
+				{
+					sb.Append(indexer.Type.Fullname);
+				}
+				
 				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
 					sb.Append(", ").Append((parameter.IsSpan, parameter.IsReadOnlySpan) switch
