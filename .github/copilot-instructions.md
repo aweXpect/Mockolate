@@ -77,7 +77,7 @@ dotnet test Tests/Mockolate.Tests/Mockolate.Tests.csproj
 
 ### Naming Conventions
 - Use PascalCase for public members
-- Use camelCase for private fields (no underscore prefix)
+- Use camelCase with leading underscore prefix for private fields (e.g., `_fieldName`)
 - Use meaningful, descriptive names
 
 ### Testing Standards
@@ -213,6 +213,7 @@ The project uses GitHub Actions with several workflows:
 ## Documentation
 
 - Keep README.md up to date with API changes
+- Update markdown files under `Docs/` to match README.md content - they are published to https://awexpect.com/docs/mockolate/index
 - Document public APIs with XML comments
 - Examples should be in Mockolate.ExampleTests
 - Follow existing documentation style
