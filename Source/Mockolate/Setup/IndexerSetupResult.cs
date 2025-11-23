@@ -84,7 +84,7 @@ public class IndexerSetupResult<TResult>(
 			value = _behavior.DefaultValue.Generate<TResult>();
 		}
 
-		TResult? result = getIndexerValue(_setup, () => value, indexerAccess.Parameters);
+		TResult result = getIndexerValue(_setup, () => value, indexerAccess.Parameters);
 		setIndexerValue(indexerAccess.Parameters, result);
 		return result;
 	}

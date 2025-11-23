@@ -203,10 +203,11 @@ public static class VerificationResultExtensions
 		IVerificationResult result = verificationResult;
 		IMockVerify<T> mockVerify = GetMockVerify(((IVerificationResult<T>)verificationResult).Object);
 		int after = -1;
-		foreach (Func<IMockVerify<T>, VerificationResult<T>>? check in orderedChecks)
+		foreach (Func<IMockVerify<T>, VerificationResult<T>> check in orderedChecks)
 		{
 			expectations.Add(result.Expectation);
-			if (!result.Verify(VerifyInteractions))
+			IVerificationResult currentResult = result;
+			if (!result.Verify(interactions => VerifyInteractions(interactions, currentResult)))
 			{
 				flag = false;
 			}
@@ -215,9 +216,9 @@ public static class VerificationResultExtensions
 		}
 
 		expectations.Add(result.Expectation);
-		if (!result.Verify(VerifyInteractions) || !flag)
+		if (!result.Verify(interactions => VerifyInteractions(interactions, result)) || !flag)
 		{
-			string? separator = ", then ";
+			string separator = ", then ";
 			throw new MockVerificationException(
 				$"Expected that mock {string.Join(separator, expectations)} in order, but it {error}.");
 		}
@@ -237,7 +238,8 @@ public static class VerificationResultExtensions
 			throw new MockException("The subject is no mock subject.");
 		}
 
-		bool VerifyInteractions(IInteraction[] interactions)
+
+		bool VerifyInteractions(IInteraction[] interactions, IVerificationResult currentResult)
 		{
 			bool hasInteractionAfter = interactions.Any(x => x.Index > after);
 			after = hasInteractionAfter
@@ -246,8 +248,8 @@ public static class VerificationResultExtensions
 			if (!hasInteractionAfter && error is null)
 			{
 				error = interactions.Length > 0
-					? $"{result.Expectation} too early"
-					: $"{result.Expectation} not at all";
+					? $"{currentResult.Expectation} too early"
+					: $"{currentResult.Expectation} not at all";
 			}
 
 			return hasInteractionAfter;

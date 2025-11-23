@@ -177,7 +177,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action callback)
 	{
-		Callback<Action<int, T1>>? currentCallback = new((_, _) => callback());
+		Callback<Action<int, T1>> currentCallback = new((_, _) => callback());
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -188,7 +188,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<T1> callback)
 	{
-		Callback<Action<int, T1>>? currentCallback = new((_, p1) => callback(p1));
+		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback(p1));
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -199,7 +199,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<int, T1> callback)
 	{
-		Callback<Action<int, T1>>? currentCallback = new(callback);
+		Callback<Action<int, T1>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -210,7 +210,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action callback)
 	{
-		Callback<Action<int, TValue, T1>>? currentCallback = new((_, _, _) => callback());
+		Callback<Action<int, TValue, T1>> currentCallback = new((_, _, _) => callback());
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -221,7 +221,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<TValue> callback)
 	{
-		Callback<Action<int, TValue, T1>>? currentCallback = new((_, v, _) => callback(v));
+		Callback<Action<int, TValue, T1>> currentCallback = new((_, v, _) => callback(v));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -232,7 +232,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<TValue, T1> callback)
 	{
-		Callback<Action<int, TValue, T1>>? currentCallback = new((_, v, p1) => callback(v, p1));
+		Callback<Action<int, TValue, T1>> currentCallback = new((_, v, p1) => callback(v, p1));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -243,7 +243,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<int, TValue, T1> callback)
 	{
-		Callback<Action<int, TValue, T1>>? currentCallback = new(callback);
+		Callback<Action<int, TValue, T1>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -467,7 +467,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action callback)
 	{
-		Callback<Action<int, T1, T2>>? currentCallback = new((_, _, _) => callback());
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => callback());
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -478,7 +478,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<T1, T2> callback)
 	{
-		Callback<Action<int, T1, T2>>? currentCallback = new((_, p1, p2) => callback(p1, p2));
+		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => callback(p1, p2));
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -489,7 +489,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<int, T1, T2> callback)
 	{
-		Callback<Action<int, T1, T2>>? currentCallback = new(callback);
+		Callback<Action<int, T1, T2>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -500,7 +500,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action callback)
 	{
-		Callback<Action<int, TValue, T1, T2>>? currentCallback = new((_, _, _, _) => callback());
+		Callback<Action<int, TValue, T1, T2>> currentCallback = new((_, _, _, _) => callback());
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -511,7 +511,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<TValue> callback)
 	{
-		Callback<Action<int, TValue, T1, T2>>? currentCallback = new((_, v, _, _) => callback(v));
+		Callback<Action<int, TValue, T1, T2>> currentCallback = new((_, v, _, _) => callback(v));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -522,7 +522,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<TValue, T1, T2> callback)
 	{
-		Callback<Action<int, TValue, T1, T2>>? currentCallback = new((_, v, p1, p2) => callback(v, p1, p2));
+		Callback<Action<int, TValue, T1, T2>> currentCallback = new((_, v, p1, p2) => callback(v, p1, p2));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -533,7 +533,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<int, TValue, T1, T2> callback)
 	{
-		Callback<Action<int, TValue, T1, T2>>? currentCallback = new(callback);
+		Callback<Action<int, TValue, T1, T2>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -764,7 +764,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3>>? currentCallback = new((_, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => callback());
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -775,7 +775,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<T1, T2, T3> callback)
 	{
-		Callback<Action<int, T1, T2, T3>>? currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -786,7 +786,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<int, T1, T2, T3> callback)
 	{
-		Callback<Action<int, T1, T2, T3>>? currentCallback = new(callback);
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -797,7 +797,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3>>? currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Action<int, TValue, T1, T2, T3>> currentCallback = new((_, _, _, _, _) => callback());
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -808,7 +808,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<TValue> callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3>>? currentCallback = new((_, v, _, _, _) => callback(v));
+		Callback<Action<int, TValue, T1, T2, T3>> currentCallback = new((_, v, _, _, _) => callback(v));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -819,7 +819,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<TValue, T1, T2, T3> callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3>>? currentCallback = new((_, v, p1, p2, p3) => callback(v, p1, p2, p3));
+		Callback<Action<int, TValue, T1, T2, T3>> currentCallback = new((_, v, p1, p2, p3) => callback(v, p1, p2, p3));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -830,7 +830,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<int, TValue, T1, T2, T3> callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3>>? currentCallback = new(callback);
+		Callback<Action<int, TValue, T1, T2, T3>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -1066,7 +1066,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>>? currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => callback());
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -1077,7 +1077,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>>? currentCallback = new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -1088,7 +1088,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<int, T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>>? currentCallback = new(callback);
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
@@ -1099,7 +1099,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3, T4>>? currentCallback = new((_, _, _, _, _, _) => callback());
+		Callback<Action<int, TValue, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _, _) => callback());
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -1110,7 +1110,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<TValue> callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3, T4>>? currentCallback = new((_, v, _, _, _, _) => callback(v));
+		Callback<Action<int, TValue, T1, T2, T3, T4>> currentCallback = new((_, v, _, _, _, _) => callback(v));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
@@ -1121,7 +1121,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<TValue, T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3, T4>>? currentCallback =
+		Callback<Action<int, TValue, T1, T2, T3, T4>> currentCallback =
 			new((_, v, p1, p2, p3, p4) => callback(v, p1, p2, p3, p4));
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
@@ -1133,7 +1133,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// </summary>
 	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<int, TValue, T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, TValue, T1, T2, T3, T4>>? currentCallback = new(callback);
+		Callback<Action<int, TValue, T1, T2, T3, T4>> currentCallback = new(callback);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;

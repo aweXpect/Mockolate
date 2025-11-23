@@ -57,7 +57,7 @@ public abstract class MockMonitor
 	{
 		if (_monitoringStart >= 0)
 		{
-			foreach (IInteraction? interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
+			foreach (IInteraction interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
 			{
 				((IMockInteractions)Interactions).RegisterInteraction(interaction);
 			}
@@ -80,7 +80,7 @@ public abstract class MockMonitor
 	{
 		if (_monitoringStart >= 0)
 		{
-			foreach (IInteraction? interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
+			foreach (IInteraction interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
 			{
 				((IMockInteractions)Interactions).RegisterInteraction(interaction);
 				_monitoringStart = interaction.Index + 1;

@@ -66,7 +66,7 @@ internal static class TypeFormatter
 
 	internal static string FormatType(this Type value)
 	{
-		StringBuilder? stringBuilder = new();
+		StringBuilder stringBuilder = new();
 		FormatType(value, stringBuilder);
 		return stringBuilder.ToString();
 	}
