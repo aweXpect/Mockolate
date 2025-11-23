@@ -15,30 +15,15 @@ internal record Method
 		ContainingType = methodSymbol.ContainingType.ToDisplayString();
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
-		
-		// Check if return type is Span or ReadOnlySpan
+
 		if (!methodSymbol.ReturnsVoid &&
-		    methodSymbol.ReturnType.ContainingNamespace?.Name == "System" &&
-		    methodSymbol.ReturnType.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true)
+		    methodSymbol.ReturnType.IsSpanOrReadOnlySpan(out bool isSpan, out bool isReadOnlySpan, out Type? spanType))
 		{
-			ReturnsSpan = methodSymbol.ReturnType.Name == "Span";
-			ReturnsReadOnlySpan = methodSymbol.ReturnType.Name == "ReadOnlySpan";
-			if (ReturnsSpan || ReturnsReadOnlySpan)
-			{
-				INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)methodSymbol.ReturnType;
-				if (namedTypeSymbol.TypeArguments.Length == 1)
-				{
-					ITypeSymbol elementType = namedTypeSymbol.TypeArguments[0];
-					SpanElementType = new Type(elementType);
-				}
-				else
-				{
-					ReturnsSpan = false;
-					ReturnsReadOnlySpan = false;
-				}
-			}
+			ReturnsSpan = isSpan;
+			ReturnsReadOnlySpan = isReadOnlySpan;
+			SpanElementType = spanType;
 		}
-		
+
 		if (methodSymbol.IsGenericMethod)
 		{
 			GenericParameters = new EquatableArray<GenericParameter>(methodSymbol.TypeArguments

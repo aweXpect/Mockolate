@@ -393,7 +393,6 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\tvar indexerResult = MockRegistrations.GetIndexer<");
 					
-					// Use wrapper type for Span/ReadOnlySpan return types
 					if (property.ReturnsSpan)
 					{
 						sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
@@ -432,7 +431,6 @@ internal static partial class Sources
 					sb.Append(
 							"\t\t\treturn MockRegistrations.GetProperty<");
 					
-					// Use wrapper type for Span/ReadOnlySpan return types
 					if (property.ReturnsSpan)
 					{
 						sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
@@ -455,7 +453,6 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<");
 				
-				// Use wrapper type for Span/ReadOnlySpan return types
 				if (property.ReturnsSpan)
 				{
 					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
@@ -482,7 +479,6 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\treturn MockRegistrations.GetProperty<");
 				
-				// Use wrapper type for Span/ReadOnlySpan return types
 				if (property.ReturnsSpan)
 				{
 					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
@@ -636,7 +632,6 @@ internal static partial class Sources
 		{
 			sb.Append("\t\tMethodSetupResult<");
 			
-			// Use wrapper type for Span/ReadOnlySpan return types
 			if (method.ReturnsSpan)
 			{
 				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
@@ -652,7 +647,6 @@ internal static partial class Sources
 			
 			sb.Append("> methodExecution = MockRegistrations.InvokeMethod<");
 			
-			// Use wrapper type for Span/ReadOnlySpan return types
 			if (method.ReturnsSpan)
 			{
 				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");

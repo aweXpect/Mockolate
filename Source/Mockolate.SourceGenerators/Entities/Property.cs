@@ -19,27 +19,12 @@ internal record Property
 			IndexerParameters = new EquatableArray<MethodParameter>(
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
-		
-		// Check if return type is Span or ReadOnlySpan
-		if (propertySymbol.Type.ContainingNamespace?.Name == "System" &&
-		    propertySymbol.Type.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true)
+
+		if (propertySymbol.Type.IsSpanOrReadOnlySpan(out bool isSpan, out bool isReadOnlySpan, out Type? spanType))
 		{
-			ReturnsSpan = propertySymbol.Type.Name == "Span";
-			ReturnsReadOnlySpan = propertySymbol.Type.Name == "ReadOnlySpan";
-			if (ReturnsSpan || ReturnsReadOnlySpan)
-			{
-				INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)propertySymbol.Type;
-				if (namedTypeSymbol.TypeArguments.Length == 1)
-				{
-					ITypeSymbol elementType = namedTypeSymbol.TypeArguments[0];
-					SpanElementType = new Type(elementType);
-				}
-				else
-				{
-					ReturnsSpan = false;
-					ReturnsReadOnlySpan = false;
-				}
-			}
+			ReturnsSpan = isSpan;
+			ReturnsReadOnlySpan = isReadOnlySpan;
+			SpanElementType = spanType;
 		}
 
 		Attributes = propertySymbol.GetAttributes().ToAttributeArray();

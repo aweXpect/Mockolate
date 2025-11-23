@@ -363,7 +363,6 @@ internal static partial class Sources
 		{
 			sb.Append("\t\tpublic IReturnMethodSetup<");
 			
-			// Use wrapper type for Span/ReadOnlySpan return types
 			if (method.ReturnsSpan)
 			{
 				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
@@ -469,7 +468,6 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<");
 			
-			// Use wrapper type for Span/ReadOnlySpan return types
 			if (method.ReturnsSpan)
 			{
 				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
@@ -743,7 +741,6 @@ internal static partial class Sources
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic IIndexerSetup<");
 				
-				// Use wrapper type for Span/ReadOnlySpan return types
 				if (indexer.ReturnsSpan)
 				{
 					sb.Append("SpanWrapper<").Append(indexer.SpanElementType!.Fullname).Append(">");
@@ -778,7 +775,6 @@ internal static partial class Sources
 				sb.Append("\t\t{").AppendLine();
 				sb.Append("\t\t\tvar indexerSetup = new IndexerSetup<");
 				
-				// Use wrapper type for Span/ReadOnlySpan return types
 				if (indexer.ReturnsSpan)
 				{
 					sb.Append("SpanWrapper<").Append(indexer.SpanElementType!.Fullname).Append(">");
