@@ -49,7 +49,7 @@ public sealed partial class SetupIndexerTests
 			];
 			mock.SetupMock.Indexer(Any<string>()).Returns(new ReadOnlySpan<char>(expectedData));
 
-			ReadOnlySpan<char> result = mock["test"].ToArray();
+			ReadOnlySpan<char> result = mock["test"];
 
 			await That(result).IsEqualTo(expectedData);
 		}
