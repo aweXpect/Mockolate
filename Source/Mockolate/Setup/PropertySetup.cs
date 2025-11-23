@@ -80,7 +80,9 @@ public abstract class PropertySetup : IPropertySetup
 				return typedValue;
 			}
 
-			return behavior.DefaultValue.Generate<TResult>();
+			TResult result = behavior.DefaultValue.Generate<TResult>();
+			_value = result;
+			return result;
 		}
 	}
 }

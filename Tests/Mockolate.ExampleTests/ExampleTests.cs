@@ -1,4 +1,5 @@
 using System;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
@@ -61,6 +62,19 @@ public class ExampleTests
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
 #endif
+
+	[Fact]
+	public async Task MockIFileSystem_ShouldWork()
+	{
+		IFileSystem mock = Mock.Create<IFileSystem>(MockBehavior.Default.CallingBaseClass());
+
+		mock.Path.SetupMock.Property.DirectorySeparatorChar.Returns('a');
+
+		char result = mock.Path.DirectorySeparatorChar;
+
+		await That(result).IsEqualTo('a');
+	}
+
 	[Fact]
 	public async Task SimpleInterfaceMock()
 	{
