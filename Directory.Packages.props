@@ -32,7 +32,7 @@
 		<PackageVersion Include="xunit.v3" Version="3.0.1"/>
 		<PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5"/>
 		<PackageVersion Include="coverlet.collector" Version="6.0.4"/>
-		<PackageVersion Include="PublicApiGenerator" Version="11.4.6"/>
+		<PackageVersion Include="PublicApiGenerator" Version="11.5.1"/>
 		<PackageVersion Include="aweXpect" Version="2.29.0"/>
 		<PackageVersion Include="aweXpect.Mockolate" Version="0.5.0"/>
 		<PackageVersion Include="Testably.Abstractions" Version="10.0.0" />
