@@ -47,7 +47,7 @@ public sealed partial class MatchTests
 			IParameter<double> sut = InRange(1.1, 4.1).Exclusive();
 			string expectedValue = "InRange(1.1, 4.1).Exclusive()";
 
-			string result = sut.ToString();
+			string? result = sut.ToString();
 
 			await That(result).IsEqualTo(expectedValue);
 		}
@@ -58,7 +58,7 @@ public sealed partial class MatchTests
 			IParameter<int> sut = InRange(1, 4);
 			string expectedValue = "InRange(1, 4)";
 
-			string result = sut.ToString();
+			string? result = sut.ToString();
 
 			await That(result).IsEqualTo(expectedValue);
 		}
