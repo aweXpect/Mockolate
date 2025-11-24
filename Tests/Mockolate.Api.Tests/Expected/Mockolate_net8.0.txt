@@ -307,6 +307,7 @@ namespace Mockolate.Interactions
         public MockInteractions() { }
         public int Count { get; }
         public System.Collections.Generic.IEnumerable<Mockolate.Interactions.IInteraction> Interactions { get; }
+        public System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class PropertyGetterAccess : Mockolate.Interactions.IInteraction
