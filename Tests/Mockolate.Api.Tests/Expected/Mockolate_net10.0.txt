@@ -36,6 +36,7 @@ namespace Mockolate
         public static Mockolate.Match.IParameter<T> Null<T>() { }
         public static Mockolate.Match.IVerifyOutParameter<T> Out<T>() { }
         public static Mockolate.Match.IOutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Match.IParameters Parameters(System.Func<object?[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IVerifyRefParameter<T> Ref<T>() { }
         public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
