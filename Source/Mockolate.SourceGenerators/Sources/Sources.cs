@@ -466,7 +466,7 @@ internal static partial class Sources
 		              ///     Marks a method as a mock generator for its generic parameters.
 		              /// </summary>
 		              [AttributeUsage(AttributeTargets.Method)]
-		              public class MockGeneratorAttribute : Attribute
+		              internal class MockGeneratorAttribute : Attribute
 		              {
 		              }
 		              """);
