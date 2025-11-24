@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Mockolate.Exceptions;
 
 namespace Mockolate.Interactions;
 
@@ -32,6 +33,7 @@ public class MockInteractions : IMockInteractions
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{
+		_missingVerification?.Add(interaction);
 		_interactions.TryAdd(interaction.Index, interaction);
 		return interaction;
 	}
