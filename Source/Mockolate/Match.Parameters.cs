@@ -7,7 +7,7 @@ namespace Mockolate;
 public partial class Match
 {
 	/// <summary>
-	///     Matches the paramters against the <paramref name="predicate"/>.
+	///     Matches the parameters against the <paramref name="predicate"/>.
 	/// </summary>
 	public static IParameters Parameters(Func<object?[], bool> predicate,
 		[CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
