@@ -26,6 +26,9 @@ namespace Mockolate
         public static Mockolate.Match.IOutParameter<T> AnyOut<T>() { }
         public static Mockolate.Match.IParameters AnyParameters() { }
         public static Mockolate.Match.IRefParameter<T> AnyRef<T>() { }
+        public static Mockolate.Match.IParameter<bool> False() { }
+        public static Mockolate.Match.IInRangeParameter<T> InRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
+            where T : System.IComparable<T> { }
         public static Mockolate.Match.IParameter<T> Null<T>() { }
         public static Mockolate.Match.IVerifyOutParameter<T> Out<T>() { }
         public static Mockolate.Match.IOutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
@@ -33,11 +36,17 @@ namespace Mockolate
         public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.Match.IParameter<bool> True() { }
         public static Mockolate.Match.IParameter<T> With<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IParameter<T> With<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Match.IParameter<T> With<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Match.IDefaultEventParameters WithDefaultParameters() { }
         public interface IDefaultEventParameters { }
+        public interface IInRangeParameter<out T> : Mockolate.Match.IParameter<T>
+        {
+            Mockolate.Match.IParameter<T> Exclusive();
+            Mockolate.Match.IParameter<T> Inclusive();
+        }
         public interface IOutParameter<out T>
         {
             Mockolate.Match.IOutParameter<T> Do(System.Action<T> callback);
