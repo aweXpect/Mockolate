@@ -7,7 +7,7 @@ namespace Mockolate;
 public partial class Match
 {
 	/// <summary>
-	///     Matches any parameter that is <see langword="null" />.
+	///     Matches any parameter that is within the specified range.
 	/// </summary>
 	public static IInRangeParameter<T> InRange<T>(T minimum, T maximum,
 		[CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "",
