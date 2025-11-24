@@ -15,7 +15,7 @@ public partial class Mock<T> : IMockVerify<T>,
 {
 	/// <inheritdoc cref="IMockVerify{T}.ThatAllInteractionsAreVerified()" />
 	bool IMockVerify<T>.ThatAllInteractionsAreVerified()
-		=> !Interactions.HasMissingVerifications;
+		=> Interactions.GetUnverifiedInteractions().Count == 0;
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithToString{T}.ToString()" />
 	VerificationResult<T> IMockVerifyInvokedWithToString<T>.ToString()

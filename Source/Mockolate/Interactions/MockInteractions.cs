@@ -29,19 +29,20 @@ public class MockInteractions : IMockInteractions
 	public IEnumerable<IInteraction> Interactions
 		=> _interactions.Values.OrderBy(x => x.Index);
 
-	/// <summary>
-	///     Gets a value indicating whether there are any missing verifications for the current context.
-	/// </summary>
-	internal bool HasMissingVerifications
-		=> _missingVerification is null
-			? !_interactions.IsEmpty
-			: _missingVerification.Count > 0;
-
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{
 		_interactions.TryAdd(interaction.Index, interaction);
 		return interaction;
+	}
+
+	/// <summary>
+	///     Gets the unverified interactions of the mock.
+	/// </summary>
+	public IReadOnlyCollection<IInteraction> GetUnverifiedInteractions()
+	{
+		_missingVerification ??= _interactions.Values.OrderBy(x => x.Index).ToList();
+		return _missingVerification;
 	}
 
 	internal event EventHandler? OnClearing;
