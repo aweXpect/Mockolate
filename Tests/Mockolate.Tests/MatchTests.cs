@@ -80,6 +80,8 @@ public sealed partial class MatchTests
 	internal interface IMyServiceWithNullable
 	{
 		void DoSomething(int? value, bool flag);
+		void DoSomethingWithInt(int value);
+		void DoSomethingWithLong(int value);
 	}
 
 	internal class AllEqualComparer : IEqualityComparer<int>
