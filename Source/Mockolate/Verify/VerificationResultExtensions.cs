@@ -88,6 +88,16 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void Between<TMock>(this VerificationResult<TMock> verificationResult, int min, int max)
 	{
+		if (min < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(min), "Minimum value must be non-negative.");
+		}
+
+		if (max < min)
+		{
+			throw new ArgumentOutOfRangeException(nameof(max), "Maximum value must be greater than or equal to minimum.");
+		}
+
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>
@@ -214,6 +224,11 @@ public static class VerificationResultExtensions
 	/// </summary>
 	public static void Times<TMock>(this VerificationResult<TMock> verificationResult, Func<int, bool> predicate)
 	{
+		if (predicate is null)
+		{
+			throw new ArgumentNullException(nameof(predicate));
+		}
+
 		IVerificationResult result = verificationResult;
 		int found = 0;
 		if (!result.Verify(interactions =>

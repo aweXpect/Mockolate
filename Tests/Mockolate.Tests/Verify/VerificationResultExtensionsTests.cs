@@ -435,6 +435,48 @@ public class VerificationResultExtensionsTests
 		}
 	}
 
+	[Fact]
+	public async Task Between_WithNegativeMin_ShouldThrowArgumentOutOfRangeException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(-1, 5);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("min");
+	}
+
+	[Fact]
+	public async Task Between_WithMaxLessThanMin_ShouldThrowArgumentOutOfRangeException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(5, 2);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("max");
+	}
+
+	[Fact]
+	public async Task Times_WithNullPredicate_ShouldThrowArgumentNullException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Times(null!);
+		}
+
+		await That(Act).Throws<ArgumentNullException>()
+			.WithParamName("predicate");
+	}
+
 	internal static void ExecuteDoSomethingOn(IChocolateDispenser mock, int amount)
 	{
 		for (int i = 0; i < amount; i++)
