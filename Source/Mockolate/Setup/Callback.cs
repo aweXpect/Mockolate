@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace Mockolate.Setup;
 
@@ -41,6 +42,11 @@ public class Callback
 	/// </summary>
 	protected bool CheckMatching(int matchingCount)
 		=> _matchingPredicate?.Invoke(matchingCount) ?? true;
+	
+	/// <summary>
+	///     Check if a <see cref="For" />-predicate was specified.
+	/// </summary>
+	protected bool HasForSpecified => _matchingPredicate != null;
 }
 
 /// <summary>
@@ -58,14 +64,75 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	{
 		if (CheckInvocations(_invocationCount))
 		{
+			_invocationCount++;
 			if (CheckMatching(_matchingCount))
 			{
-				callback(_invocationCount, @delegate);
+				_matchingCount++;
+				callback(_invocationCount - 1, @delegate);
+			}
+			else
+			{
+				_matchingCount++;
+			}
+
+		}
+		else
+		{
+			_invocationCount++;
+		}
+	}
+
+	/// <summary>
+	///     Invokes the callback if the predicates are satisfied, providing the invocation count.
+	/// </summary>
+	public bool Invoke(ref int index, Action<int, TDelegate> callback)
+	{
+		if (CheckInvocations(_invocationCount))
+		{
+			if (CheckMatching(_matchingCount))
+			{
+				if (HasForSpecified && CheckMatching(_matchingCount + 1))
+				{
+					Interlocked.Decrement(ref index);
+				}
+
+				_invocationCount++;
+				_matchingCount++;
+				callback(_invocationCount - 1, @delegate);
+				return true;
 			}
 
 			_matchingCount++;
 		}
 
 		_invocationCount++;
+		return false;
+	}
+	
+	/// <summary>
+	///     Invokes the callback if the predicates are satisfied, providing the invocation count.
+	/// </summary>
+	public bool Invoke<TReturn>(ref int index, Func<int, TDelegate, TReturn> callback, out TReturn? returnValue)
+	{
+		if (CheckInvocations(_invocationCount))
+		{
+			if (CheckMatching(_matchingCount))
+			{
+				if (HasForSpecified && CheckMatching(_matchingCount + 1))
+				{
+					Interlocked.Decrement(ref index);
+				}
+
+				_invocationCount++;
+				_matchingCount++;
+				returnValue = callback(_invocationCount - 1, @delegate)!;
+
+				return true;
+			}
+		}
+
+		_invocationCount++;
+		returnValue = default;
+		return false;
 	}
 }

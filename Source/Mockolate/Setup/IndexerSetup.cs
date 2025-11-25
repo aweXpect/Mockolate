@@ -127,13 +127,14 @@ public abstract class IndexerSetup : IIndexerSetup
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
 public class IndexerSetup<TValue, T1>(Match.IParameter match1)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1>
+	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>
 {
 	private readonly List<Callback<Action<int, T1>>> _getterCallbacks = [];
-	private readonly List<Func<TValue, T1, TValue>> _returnCallbacks = [];
+	private readonly List<Callback<Func<int, TValue, T1, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, TValue, T1>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, TValue>? _initialization;
 
@@ -252,96 +253,129 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Returns(Func<TValue, T1, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue, T1, TValue> callback)
 	{
-		_returnCallbacks.Add(callback);
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, v, p1) => callback(v, p1));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Returns(Func<T1, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue> callback)
 	{
-		_returnCallbacks.Add((_, p1) => callback(p1));
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, _, p1) => callback(p1));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Returns(Func<TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue> callback)
 	{
-		_returnCallbacks.Add((_, _) => callback());
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, _, _) => callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Returns(TValue returnValue)
+	public IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue)
 	{
-		_returnCallbacks.Add((_, _) => returnValue);
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, _, _) => returnValue);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws<TException>()
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add((_, _) => throw new TException());
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, _, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws(Exception exception)
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Exception exception)
 	{
-		_returnCallbacks.Add((_, _) => throw exception);
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, _, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws(Func<Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add((_, _) => throw callback());
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, _, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws(Func<T1, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, Exception> callback)
 	{
-		_returnCallbacks.Add((_, p1) => throw callback(p1));
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, _, p1) => throw callback(p1));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws(Func<TValue, T1, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<TValue, T1, Exception> callback)
 	{
-		_returnCallbacks.Add((v, p1) => throw callback(v, p1));
+		Callback<Func<int, TValue, T1, TValue>> currentCallback = new((_, v, p1) => throw callback(v, p1));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1}.When(Func{int, bool})" />
-	public IIndexerSetupCallbackWhenBuilder<TValue, T1> When(Func<int, bool> predicate)
+	IIndexerSetupCallbackWhenBuilder<TValue, T1> IIndexerSetupCallbackBuilder<TValue, T1>.When(
+		Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1}.For(int)" />
-	public IIndexerSetup<TValue, T1> For(int times)
+	IIndexerSetup<TValue, T1> IIndexerSetupCallbackWhenBuilder<TValue, T1>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnBuilder{TValue, T1}.When(Func{int, bool})" />
+	IIndexerSetupReturnWhenBuilder<TValue, T1> IIndexerSetupReturnBuilder<TValue, T1>.When(Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1}.For(int)" />
+	IIndexerSetup<TValue, T1> IIndexerSetupReturnWhenBuilder<TValue, T1>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -363,12 +397,14 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1)));
-			if (_returnCallbacks.Count > 0)
+			foreach (Callback<Func<int, TValue, T1, TValue>> _ in _returnCallbacks)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Func<TValue, T1, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				TValue newValue = returnCallback(resultValue, p1);
-				if (TryCast(newValue, out T returnValue, behavior))
+				Callback<Func<int, TValue, T1, TValue>> returnCallback =
+					_returnCallbacks[index % _returnCallbacks.Count];
+				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, resultValue, p1), out TValue? newValue) &&
+				    TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
 				}
@@ -417,13 +453,14 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
 /// </summary>
 public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParameter match2)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2>
+	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2>>> _getterCallbacks = [];
-	private readonly List<Func<TValue, T1, T2, TValue>> _returnCallbacks = [];
+	private readonly List<Callback<Func<int, TValue, T1, T2, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, TValue, T1, T2>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, TValue>? _initialization;
 
@@ -542,96 +579,132 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Returns(Func<TValue, T1, T2, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue, T1, T2, TValue> callback)
 	{
-		_returnCallbacks.Add(callback);
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback = new((_, v, p1, p2) => callback(v, p1, p2));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback)
 	{
-		_returnCallbacks.Add((_, p1, p2) => callback(p1, p2));
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback = new((_, _, p1, p2) => callback(p1, p2));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Returns(Func<TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue> callback)
 	{
-		_returnCallbacks.Add((_, _, _) => callback());
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback = new((_, _, _, _) => callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Returns(TValue returnValue)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue)
 	{
-		_returnCallbacks.Add((_, _, _) => returnValue);
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback = new((_, _, _, _) => returnValue);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Throws<TException>()
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add((_, _, _) => throw new TException());
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback = new((_, _, _, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Throws(Exception exception)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Exception exception)
 	{
-		_returnCallbacks.Add((_, _, _) => throw exception);
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback = new((_, _, _, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Throws(Func<Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add((_, _, _) => throw callback());
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback = new((_, _, _, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
-		_returnCallbacks.Add((_, p1, p2) => throw callback(p1, p2));
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback =
+			new((_, _, p1, p2) => throw callback(p1, p2));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2> Throws(Func<TValue, T1, T2, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<TValue, T1, T2, Exception> callback)
 	{
-		_returnCallbacks.Add((v, p1, p2) => throw callback(v, p1, p2));
+		Callback<Func<int, TValue, T1, T2, TValue>> currentCallback =
+			new((_, v, p1, p2) => throw callback(v, p1, p2));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" />
-	public IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> When(Func<int, bool> predicate)
+	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetupCallbackBuilder<TValue, T1, T2>.When(
+		Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2}.For(int)" />
-	public IIndexerSetup<TValue, T1, T2> For(int times)
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2}.For(int)" />
+	IIndexerSetup<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnBuilder{TValue, T1, T2}.When(Func{int, bool})" />
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2> IIndexerSetupReturnBuilder<TValue, T1, T2>.When(
+		Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2}.For(int)" />
+	IIndexerSetup<TValue, T1, T2> IIndexerSetupReturnWhenBuilder<TValue, T1, T2>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -654,12 +727,14 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2)));
-			if (_returnCallbacks.Count > 0)
+			foreach (Callback<Func<int, TValue, T1, T2, TValue>> _ in _returnCallbacks)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Func<TValue, T1, T2, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				TValue newValue = returnCallback(resultValue, p1, p2);
-				if (TryCast(newValue, out T returnValue, behavior))
+				Callback<Func<int, TValue, T1, T2, TValue>> returnCallback =
+					_returnCallbacks[index % _returnCallbacks.Count];
+				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, resultValue, p1, p2), out TValue? newValue) &&
+				    TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
 				}
@@ -714,13 +789,14 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	Match.IParameter match1,
 	Match.IParameter match2,
 	Match.IParameter match3)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>
+	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _getterCallbacks = [];
-	private readonly List<Func<TValue, T1, T2, T3, TValue>> _returnCallbacks = [];
+	private readonly List<Callback<Func<int, TValue, T1, T2, T3, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, TValue, T1, T2, T3>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, TValue>? _initialization;
 
@@ -839,96 +915,136 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Returns(Func<TValue, T1, T2, T3, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue, T1, T2, T3, TValue> callback)
 	{
-		_returnCallbacks.Add(callback);
+		Callback<Func<int, TValue, T1, T2, T3, TValue>> currentCallback =
+			new((_, v, p1, p2, p3) => callback(v, p1, p2, p3));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback)
 	{
-		_returnCallbacks.Add((_, p1, p2, p3) => callback(p1, p2, p3));
+		Callback<Func<int, TValue, T1, T2, T3, TValue>> currentCallback =
+			new((_, _, p1, p2, p3) => callback(p1, p2, p3));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Returns(Func<TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue> callback)
 	{
-		_returnCallbacks.Add((_, _, _, _) => callback());
+		Callback<Func<int, TValue, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Returns(TValue returnValue)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue)
 	{
-		_returnCallbacks.Add((_, _, _, _) => returnValue);
+		Callback<Func<int, TValue, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => returnValue);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Throws<TException>()
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add((_, _, _, _) => throw new TException());
+		Callback<Func<int, TValue, T1, T2, T3, TValue>> currentCallback =
+			new((_, _, _, _, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Throws(Exception exception)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Exception exception)
 	{
-		_returnCallbacks.Add((_, _, _, _) => throw exception);
+		Callback<Func<int, TValue, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Throws(Func<Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add((_, _, _, _) => throw callback());
+		Callback<Func<int, TValue, T1, T2, T3, TValue>>
+			currentCallback = new((_, _, _, _, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
-		_returnCallbacks.Add((_, p1, p2, p3) => throw callback(p1, p2, p3));
+		Callback<Func<int, TValue, T1, T2, T3, TValue>> currentCallback =
+			new((_, _, p1, p2, p3) => throw callback(p1, p2, p3));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3> Throws(Func<TValue, T1, T2, T3, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<TValue, T1, T2, T3, Exception> callback)
 	{
-		_returnCallbacks.Add((v, p1, p2, p3) => throw callback(v, p1, p2, p3));
+		Callback<Func<int, TValue, T1, T2, T3, TValue>> currentCallback =
+			new((_, v, p1, p2, p3) => throw callback(v, p1, p2, p3));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
-	public IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> When(Func<int, bool> predicate)
+	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>.When(
+		Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3}.For(int)" />
-	public IIndexerSetup<TValue, T1, T2, T3> For(int times)
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3}.For(int)" />
+	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3> IIndexerSetupReturnBuilder<TValue, T1, T2, T3>.When(
+		Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3}.For(int)" />
+	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -952,12 +1068,14 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2, p3)));
-			if (_returnCallbacks.Count > 0)
+			foreach (Callback<Func<int, TValue, T1, T2, T3, TValue>> _ in _returnCallbacks)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Func<TValue, T1, T2, T3, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				TValue newValue = returnCallback(resultValue, p1, p2, p3);
-				if (TryCast(newValue, out T returnValue, behavior))
+				Callback<Func<int, TValue, T1, T2, T3, TValue>> returnCallback =
+					_returnCallbacks[index % _returnCallbacks.Count];
+				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, resultValue, p1, p2, p3), out TValue? newValue) &&
+				    TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
 				}
@@ -1016,13 +1134,15 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	Match.IParameter match2,
 	Match.IParameter match3,
 	Match.IParameter match4)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>
+	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>,
+		IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _getterCallbacks = [];
-	private readonly List<Func<TValue, T1, T2, T3, T4, TValue>> _returnCallbacks = [];
+	private readonly List<Callback<Func<int, TValue, T1, T2, T3, T4, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, TValue, T1, T2, T3, T4>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
 
@@ -1142,96 +1262,139 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<TValue, T1, T2, T3, T4, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue, T1, T2, T3, T4, TValue> callback)
 	{
-		_returnCallbacks.Add(callback);
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, v, p1, p2, p3, p4) => callback(v, p1, p2, p3, p4));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback)
 	{
-		_returnCallbacks.Add((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, _, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback)
 	{
-		_returnCallbacks.Add((_, _, _, _, _) => callback());
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, _, _, _, _, _) => callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Returns(TValue returnValue)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue)
 	{
-		_returnCallbacks.Add((_, _, _, _, _) => returnValue);
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, _, _, _, _, _) => returnValue);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Throws<TException>()
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add((_, _, _, _, _) => throw new TException());
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, _, _, _, _, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Throws(Exception exception)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Exception exception)
 	{
-		_returnCallbacks.Add((_, _, _, _, _) => throw exception);
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, _, _, _, _, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add((_, _, _, _, _) => throw callback());
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, _, _, _, _, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
-		_returnCallbacks.Add((_, p1, p2, p3, p4) => throw callback(p1, p2, p3, p4));
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, _, p1, p2, p3, p4) => throw callback(p1, p2, p3, p4));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<TValue, T1, T2, T3, T4, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<TValue, T1, T2, T3, T4, Exception> callback)
 	{
-		_returnCallbacks.Add((v, p1, p2, p3, p4) => throw callback(v, p1, p2, p3, p4));
+		Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, v, p1, p2, p3, p4) => throw callback(v, p1, p2, p3, p4));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />
-	public IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> When(Func<int, bool> predicate)
+	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>.When(
+		Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.For(int)" />
-	public IIndexerSetup<TValue, T1, T2, T3, T4> For(int times)
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3, T4}.For(int)" />
+	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>.When(
+		Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3, T4}.For(int)" />
+	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -1256,12 +1419,14 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		{
 			_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2, p3, p4)));
-			if (_returnCallbacks.Count > 0)
+			foreach (Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> _ in _returnCallbacks)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Func<TValue, T1, T2, T3, T4, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				TValue newValue = returnCallback(resultValue, p1, p2, p3, p4);
-				if (TryCast(newValue, out T returnValue, behavior))
+				Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> returnCallback =
+					_returnCallbacks[index % _returnCallbacks.Count];
+				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, resultValue, p1, p2, p3, p4), out TValue? newValue) &&
+				    TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
 				}

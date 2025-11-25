@@ -107,38 +107,38 @@ public interface IPropertySetup<T>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IPropertySetup<T> Returns(Func<T, T> callback);
+	IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IPropertySetup<T> Returns(Func<T> callback);
+	IPropertySetupReturnBuilder<T> Returns(Func<T> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	IPropertySetup<T> Returns(T returnValue);
+	IPropertySetupReturnBuilder<T> Returns(T returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	IPropertySetup<T> Throws<TException>()
+	IPropertySetupReturnBuilder<T> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	IPropertySetup<T> Throws(Exception exception);
+	IPropertySetupReturnBuilder<T> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IPropertySetup<T> Throws(Func<Exception> callback);
+	IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IPropertySetup<T> Throws(Func<T, Exception> callback);
+	IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback);
 }
 
 /// <summary>
@@ -166,6 +166,35 @@ public interface IPropertySetupWhenBuilder<T> : IPropertySetup<T>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	/// </remarks>
+	IPropertySetup<T> For(int times);
+}
+
+/// <summary>
+///     Interface for setting up a return/throw builder for a property with fluent syntax.
+/// </summary>
+public interface IPropertySetupReturnBuilder<T> : IPropertySetupReturnWhenBuilder<T>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for property accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	/// </remarks>
+	IPropertySetupReturnWhenBuilder<T> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Interface for setting up a when builder for returns/throws for a property with fluent syntax.
+/// </summary>
+public interface IPropertySetupReturnWhenBuilder<T> : IPropertySetup<T>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IPropertySetupReturnBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
 	IPropertySetup<T> For(int times);
 }

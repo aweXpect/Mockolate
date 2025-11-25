@@ -90,28 +90,43 @@ public abstract class PropertySetup : IPropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
-public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>
+public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>
 {
 	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
-	private readonly List<Func<T, T>> _returnCallbacks = [];
+	private readonly List<Callback<Func<int, T, T>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T, T>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private bool _isInitialized;
 	private T _value = default!;
 
 	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" />
-	public IPropertySetupWhenBuilder<T> When(Func<int, bool> predicate)
+	IPropertySetupWhenBuilder<T> IPropertySetupCallbackBuilder<T>.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IPropertySetupWhenBuilder{T}.For(int)" />
-	public IPropertySetup<T> For(int times)
+	IPropertySetup<T> IPropertySetupWhenBuilder<T>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetupReturnBuilder{T}.When(Func{int, bool})" />
+	IPropertySetupReturnWhenBuilder<T> IPropertySetupReturnBuilder<T>.When(Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetupReturnWhenBuilder{T}.For(int)" />
+	IPropertySetup<T> IPropertySetupReturnWhenBuilder<T>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -134,11 +149,25 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>
 	{
 		_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 			=> @delegate(invocationCount, _value)));
-		if (_returnCallbacks.Count > 0)
+
+		bool foundCallback = false;
+		foreach (Callback<Func<int, T, T>> _ in _returnCallbacks)
 		{
 			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-			Func<T, T> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-			_value = returnCallback(_value);
+			Callback<Func<int, T, T>> returnCallback =
+				_returnCallbacks[index % _returnCallbacks.Count];
+			if (returnCallback.Invoke<T>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, _value), out T? newValue))
+			{
+				foundCallback = true;
+				_value = newValue ?? default!;
+				break;
+			}
+		}
+
+		if (!foundCallback && _returnCallbacks.Count > 0)
+		{
+			_value = behavior.DefaultValue.Generate<T>();
 		}
 
 		if (!TryCast(_value, out TResult result, MockBehavior.Default))
@@ -302,64 +331,78 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IPropertySetup<T> Returns(Func<T, T> callback)
+	public IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback)
 	{
-		_returnCallbacks.Add(callback);
+		Callback<Func<int, T, T>> currentCallback = new((_, p) => callback(p));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IPropertySetup<T> Returns(Func<T> callback)
+	public IPropertySetupReturnBuilder<T> Returns(Func<T> callback)
 	{
-		_returnCallbacks.Add(_ => callback());
+		Callback<Func<int, T, T>> currentCallback = new((_, _) => callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	public IPropertySetup<T> Returns(T returnValue)
+	public IPropertySetupReturnBuilder<T> Returns(T returnValue)
 	{
-		_returnCallbacks.Add(_ => returnValue);
+		Callback<Func<int, T, T>> currentCallback = new((_, _) => returnValue);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	public IPropertySetup<T> Throws<TException>()
+	public IPropertySetupReturnBuilder<T> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add(_ => throw new TException());
+		Callback<Func<int, T, T>> currentCallback = new((_, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	public IPropertySetup<T> Throws(Exception exception)
+	public IPropertySetupReturnBuilder<T> Throws(Exception exception)
 	{
-		_returnCallbacks.Add(_ => throw exception);
+		Callback<Func<int, T, T>> currentCallback = new((_, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IPropertySetup<T> Throws(Func<Exception> callback)
+	public IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add(_ => throw callback());
+		Callback<Func<int, T, T>> currentCallback = new((_, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IPropertySetup<T> Throws(Func<T, Exception> callback)
+	public IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback)
 	{
-		_returnCallbacks.Add(v => throw callback(v));
+		Callback<Func<int, T, T>> currentCallback = new((_, p) => throw callback(p));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 

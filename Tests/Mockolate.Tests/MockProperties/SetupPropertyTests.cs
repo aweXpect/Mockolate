@@ -124,6 +124,7 @@ public sealed partial class SetupPropertyTests
 	{
 		int MyProperty { get; set; }
 		int MyOtherProperty { get; set; }
+		string MyStringProperty { get; set; }
 	}
 
 	private sealed class MyPropertySetup<T> : PropertySetup<T>
