@@ -136,7 +136,7 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIVoidMethodSetup<").Append(typeParams).Append("> Throws<TException>()")
+		sb.Append("\tIVoidMethodSetupThrowBuilder<").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
 		sb.Append("\t\twhere TException : Exception, new();").AppendLine();
 		sb.AppendLine();
@@ -145,7 +145,7 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIVoidMethodSetup<").Append(typeParams).Append("> Throws(Exception exception);").AppendLine();
+		sb.Append("\tIVoidMethodSetupThrowBuilder<").Append(typeParams).Append("> Throws(Exception exception);").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
@@ -153,7 +153,7 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIVoidMethodSetup<").Append(typeParams).Append("> Throws(Func<")
+		sb.Append("\tIVoidMethodSetupThrowBuilder<").Append(typeParams).Append("> Throws(Func<")
 			.Append(typeParams).Append(", Exception> callback);").AppendLine();
 		sb.AppendLine();
 
@@ -162,7 +162,7 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIVoidMethodSetup<").Append(typeParams).Append("> Throws(Func<Exception> callback);").AppendLine();
+		sb.Append("\tIVoidMethodSetupThrowBuilder<").Append(typeParams).Append("> Throws(Func<Exception> callback);").AppendLine();
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
@@ -208,6 +208,62 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("/// <summary>").AppendLine();
+		sb.Append("///     Sets up a throw builder for a method with ").Append(numberOfParameters)
+			.Append(" parameters ");
+		for (int i = 1; i < numberOfParameters - 1; i++)
+		{
+			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
+		}
+
+		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
+			.Append(numberOfParameters).Append("\" /> returning <see langword=\"void\" />.").AppendLine();
+		sb.Append("/// </summary>").AppendLine();
+		sb.Append("internal interface IVoidMethodSetupThrowBuilder<").Append(typeParams)
+			.Append("> : IVoidMethodSetupThrowWhenBuilder<").Append(typeParams).Append(">").AppendLine();
+		sb.Append("{").AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Limits the throw to only execute for method invocations where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append("\t///     Provides a zero-based counter indicating how many times the method has been invoked so far.")
+			.AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tIVoidMethodSetupThrowWhenBuilder<").Append(typeParams)
+			.Append("> When(Func<int, bool> predicate);").AppendLine();
+		sb.Append("}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("/// <summary>").AppendLine();
+		sb.Append("///     Sets up a when builder for throws for a method with ").Append(numberOfParameters)
+			.Append(" parameters ");
+		for (int i = 1; i < numberOfParameters - 1; i++)
+		{
+			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
+		}
+
+		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
+			.Append(numberOfParameters).Append("\" /> returning <see langword=\"void\" />.").AppendLine();
+		sb.Append("/// </summary>").AppendLine();
+		sb.Append("internal interface IVoidMethodSetupThrowWhenBuilder<").Append(typeParams)
+			.Append("> : IVoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
+		sb.Append("{").AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Limits the throw to only execute for the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append("\t///     The number of times is only counted for actual executions (")
+			.AppendLine();
+		sb.Append("\t///     <see cref=\"IVoidMethodSetupThrowBuilder{").Append(typeParams)
+			.Append("}.When(Func{int, bool})\" /> evaluates to").AppendLine();
+		sb.Append("\t///     <see langword=\"true\" />).").AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tIVoidMethodSetup<").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Sets up a method with ").Append(numberOfParameters).Append(" parameters ");
 		for (int i = 1; i < numberOfParameters - 1; i++)
 		{
@@ -218,11 +274,11 @@ internal static partial class Sources
 			.Append(numberOfParameters).Append("\" /> returning <see langword=\"void\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
 		sb.Append("internal class VoidMethodSetup<").Append(typeParams)
-			.Append("> : MethodSetup, IVoidMethodSetupCallbackBuilder<").Append(typeParams).Append(">").AppendLine();
+			.Append("> : MethodSetup, IVoidMethodSetupCallbackBuilder<").Append(typeParams).Append(">, IVoidMethodSetupThrowBuilder<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Callback<Action<int, ").Append(typeParams).Append(">>> _callbacks = [];")
 			.AppendLine();
-		sb.Append("\tprivate readonly List<Action<").Append(typeParams).Append(">> _returnCallbacks = [];")
+		sb.Append("\tprivate readonly List<Callback<Action<").Append(typeParams).Append(">>> _returnCallbacks = [];")
 			.AppendLine();
 		sb.Append("\tprivate readonly string _name;").AppendLine();
 		sb.Append("\tprivate readonly Match.IParameters? _matches;").AppendLine();
@@ -233,6 +289,7 @@ internal static partial class Sources
 
 		sb.Append("\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\tprivate Callback? _currentCallback;").AppendLine();
+		sb.Append("\tprivate Callback? _currentReturnCallback;").AppendLine();
 		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 
@@ -349,13 +406,15 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IVoidMethodSetup<").Append(typeParams).Append("> Throws<TException>()")
+		sb.Append("\tpublic IVoidMethodSetupThrowBuilder<").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
 		sb.Append("\t\twhere TException : Exception, new()").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
+		sb.Append("\t\tCallback<Action<").Append(typeParams).Append(">> callback = new((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw new TException());").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = callback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(callback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -364,12 +423,14 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IVoidMethodSetup<").Append(typeParams).Append("> Throws(Exception exception)")
+		sb.Append("\tpublic IVoidMethodSetupThrowBuilder<").Append(typeParams).Append("> Throws(Exception exception)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
+		sb.Append("\t\tCallback<Action<").Append(typeParams).Append(">> callback = new((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw exception);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = callback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(callback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -379,11 +440,13 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IVoidMethodSetup<").Append(typeParams).Append("> Throws(Func<")
+		sb.Append("\tpublic IVoidMethodSetupThrowBuilder<").Append(typeParams).Append("> Throws(Func<")
 			.Append(typeParams).Append(", Exception> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((").Append(parameters).Append(") => throw callback(").Append(parameters)
+		sb.Append("\t\tCallback<Action<").Append(typeParams).Append(">> cb = new((").Append(parameters).Append(") => throw callback(").Append(parameters)
 			.Append("));").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -393,12 +456,14 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IVoidMethodSetup<").Append(typeParams).Append("> Throws(Func<Exception> callback)")
+		sb.Append("\tpublic IVoidMethodSetupThrowBuilder<").Append(typeParams).Append("> Throws(Func<Exception> callback)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
+		sb.Append("\t\tCallback<Action<").Append(typeParams).Append(">> cb = new((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw callback());").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -409,6 +474,7 @@ internal static partial class Sources
 			.Append("> When(Func<int, bool> predicate)").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_currentCallback?.When(predicate);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback?.When(predicate);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -418,6 +484,7 @@ internal static partial class Sources
 		sb.Append("\tpublic IVoidMethodSetup<").Append(typeParams).Append("> For(int times)").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_currentCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback?.For(x => x < times);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -448,8 +515,8 @@ internal static partial class Sources
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tvar index = Interlocked.Increment(ref _currentReturnCallbackIndex);").AppendLine();
 		sb.Append("\t\t\t\tvar returnCallback = _returnCallbacks[index % _returnCallbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\treturnCallback(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(");")
+		sb.Append("\t\t\t\treturnCallback.Invoke((invocationCount, @delegate) => @delegate(")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append("));")
 			.AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -604,7 +671,7 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this method.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Returns(Func<")
+		sb.Append("\tIReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(Func<")
 			.Append(typeParams).Append(", TReturn> callback);").AppendLine();
 		sb.AppendLine();
 
@@ -612,14 +679,14 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this method.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Returns(Func<TReturn> callback);")
+		sb.Append("\tIReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(Func<TReturn> callback);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers the <paramref name=\"returnValue\" /> for this method.").AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Returns(TReturn returnValue);")
+		sb.Append("\tIReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(TReturn returnValue);")
 			.AppendLine();
 		sb.AppendLine();
 
@@ -627,7 +694,7 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws<TException>()")
+		sb.Append("\tIReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
 		sb.Append("\t\twhere TException : Exception, new();").AppendLine();
 		sb.AppendLine();
@@ -636,7 +703,7 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Exception exception);")
+		sb.Append("\tIReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Throws(Exception exception);")
 			.AppendLine();
 		sb.AppendLine();
 
@@ -645,7 +712,7 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Func<")
+		sb.Append("\tIReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Throws(Func<")
 			.Append(typeParams).Append(", Exception> callback);").AppendLine();
 		sb.AppendLine();
 
@@ -654,7 +721,7 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIReturnMethodSetup<TReturn, ").Append(typeParams)
+		sb.Append("\tIReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams)
 			.Append("> Throws(Func<Exception> callback);").AppendLine();
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
@@ -700,6 +767,63 @@ internal static partial class Sources
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
+		sb.Append("/// <summary>").AppendLine();
+		sb.Append("///     Sets up a return/throw builder for a method with ").Append(numberOfParameters)
+			.Append(" parameters ");
+		for (int i = 1; i < numberOfParameters - 1; i++)
+		{
+			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
+		}
+
+		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
+			.Append(numberOfParameters).Append("\" /> returning <typeparamref name=\"TReturn\" />.").AppendLine();
+		sb.Append("/// </summary>").AppendLine();
+		sb.Append("internal interface IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams)
+			.Append("> : IReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams).Append(">")
+			.AppendLine();
+		sb.Append("{").AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Limits the return/throw to only execute for method invocations where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append("\t///     Provides a zero-based counter indicating how many times the method has been invoked so far.")
+			.AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tIReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams)
+			.Append("> When(Func<int, bool> predicate);").AppendLine();
+		sb.Append("}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("/// <summary>").AppendLine();
+		sb.Append("///     Sets up a when builder for returns/throws for a method with ").Append(numberOfParameters)
+			.Append(" parameters ");
+		for (int i = 1; i < numberOfParameters - 1; i++)
+		{
+			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
+		}
+
+		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
+			.Append(numberOfParameters).Append("\" /> returning <typeparamref name=\"TReturn\" />.").AppendLine();
+		sb.Append("/// </summary>").AppendLine();
+		sb.Append("internal interface IReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams)
+			.Append("> : IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
+			.AppendLine();
+		sb.Append("{").AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Limits the return/throw to only execute for the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append("\t///     The number of times is only counted for actual executions (")
+			.AppendLine();
+		sb.Append("\t///     <see cref=\"IReturnMethodSetupReturnBuilder{TReturn, ").Append(typeParams)
+			.Append("}.When(Func{int, bool})\" /> evaluates to").AppendLine();
+		sb.Append("\t///     <see langword=\"true\" />).").AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("}").AppendLine();
+		sb.AppendLine();
 
 		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Sets up a method with ").Append(numberOfParameters).Append(" parameters ");
@@ -712,12 +836,12 @@ internal static partial class Sources
 			.Append(numberOfParameters).Append("\" /> returning <typeparamref name=\"TReturn\" />.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
 		sb.Append("internal class ReturnMethodSetup<TReturn, ").Append(typeParams)
-			.Append("> : MethodSetup, IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append(">")
+			.Append("> : MethodSetup, IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append(">, IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Callback<Action<int, ").Append(typeParams).Append(">>> _callbacks = [];")
 			.AppendLine();
-		sb.Append("\tprivate readonly List<Func<").Append(typeParams).Append(", TReturn>> _returnCallbacks = [];")
+		sb.Append("\tprivate readonly List<Callback<Func<").Append(typeParams).Append(", TReturn>>> _returnCallbacks = [];")
 			.AppendLine();
 		sb.Append("\tprivate readonly string _name;").AppendLine();
 		sb.Append("\tprivate readonly Match.IParameters? _matches;").AppendLine();
@@ -728,6 +852,7 @@ internal static partial class Sources
 
 		sb.Append("\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\tprivate Callback? _currentCallback;").AppendLine();
+		sb.Append("\tprivate Callback? _currentReturnCallback;").AppendLine();
 		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.AppendLine();
 
@@ -830,10 +955,12 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this method.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Returns(Func<")
+		sb.Append("\tpublic IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(Func<")
 			.Append(typeParams).Append(", TReturn> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add(callback);").AppendLine();
+		sb.Append("\t\tCallback<Func<").Append(typeParams).Append(", TReturn>> cb = new(callback);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -842,13 +969,15 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this method.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams)
+		sb.Append("\tpublic IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams)
 			.Append("> Returns(Func<TReturn> callback)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
+		sb.Append("\t\tCallback<Func<").Append(typeParams).Append(", TReturn>> cb = new((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => callback());").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -856,12 +985,14 @@ internal static partial class Sources
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers the <paramref name=\"returnValue\" /> for this method.").AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Returns(TReturn returnValue)")
+		sb.Append("\tpublic IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(TReturn returnValue)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
+		sb.Append("\t\tCallback<Func<").Append(typeParams).Append(", TReturn>> cb = new((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => returnValue);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -870,13 +1001,15 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws<TException>()")
+		sb.Append("\tpublic IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
 		sb.Append("\t\twhere TException : Exception, new()").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
+		sb.Append("\t\tCallback<Func<").Append(typeParams).Append(", TReturn>> cb = new((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw new TException());").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -885,12 +1018,14 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Exception exception)")
+		sb.Append("\tpublic IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Throws(Exception exception)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
+		sb.Append("\t\tCallback<Func<").Append(typeParams).Append(", TReturn>> cb = new((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw exception);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -900,11 +1035,13 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Throws(Func<")
+		sb.Append("\tpublic IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Throws(Func<")
 			.Append(typeParams).Append(", Exception> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((").Append(parameters).Append(") => throw callback(").Append(parameters)
+		sb.Append("\t\tCallback<Func<").Append(typeParams).Append(", TReturn>> cb = new((").Append(parameters).Append(") => throw callback(").Append(parameters)
 			.Append("));").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -914,13 +1051,15 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams)
+		sb.Append("\tpublic IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams)
 			.Append("> Throws(Func<Exception> callback)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((")
+		sb.Append("\t\tCallback<Func<").Append(typeParams).Append(", TReturn>> cb = new((")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw callback());").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = cb;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(cb);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -931,6 +1070,7 @@ internal static partial class Sources
 			.Append("> When(Func<int, bool> predicate)").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_currentCallback?.When(predicate);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback?.When(predicate);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -940,6 +1080,7 @@ internal static partial class Sources
 		sb.Append("\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> For(int times)").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_currentCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback?.For(x => x < times);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -997,9 +1138,10 @@ internal static partial class Sources
 
 		sb.Append("\t\tvar index = Interlocked.Increment(ref _currentReturnCallbackIndex);").AppendLine();
 		sb.Append("\t\tvar returnCallback = _returnCallbacks[index % _returnCallbacks.Count];").AppendLine();
-		sb.Append("\t\tTReturn returnValue = returnCallback(")
+		sb.Append("\t\tTReturn returnValue = default!;").AppendLine();
+		sb.Append("\t\treturnCallback.Invoke((invocationCount, func) => returnValue = func(")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}")))
-			.Append(");").AppendLine();
+			.Append("));").AppendLine();
 		sb.Append("\t\tif (returnValue is null)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\treturn default!;").AppendLine();
