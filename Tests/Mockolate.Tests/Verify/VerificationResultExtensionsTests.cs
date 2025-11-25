@@ -129,6 +129,67 @@ public class VerificationResultExtensionsTests
 	}
 
 	[Theory]
+	[InlineData(0, 0, 0, true)]
+	[InlineData(1, 0, 2, true)]
+	[InlineData(2, 0, 2, true)]
+	[InlineData(3, 2, 5, true)]
+	[InlineData(1, 2, 5, false)]
+	[InlineData(6, 2, 5, false)]
+	[InlineData(2, 2, 2, true)]
+	public async Task Between_ShouldReturnExpectedResult(int count, int minimum, int maximum, bool expectSuccess)
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, count);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(minimum, maximum);
+		}
+
+		string expectedDidTimes = count switch
+		{
+			0 => "never did",
+			1 => "did once",
+			2 => "did twice",
+			_ => $"did {count} times",
+		};
+
+		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
+			.WithMessage(
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) between {minimum} and {maximum} times, but it {expectedDidTimes}.");
+	}
+
+	[Fact]
+	public async Task Between_WithMaximumLessThanMinimum_ShouldThrowArgumentOutOfRangeException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(5, 2);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("maximum").And
+			.WithMessage("Maximum value must be greater than or equal to minimum.").AsPrefix();
+	}
+
+	[Fact]
+	public async Task Between_WithNegativeMinimum_ShouldThrowArgumentOutOfRangeException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(-1, 5);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("minimum").And
+			.WithMessage("Minimum value must be non-negative.").AsPrefix();
+	}
+
+	[Theory]
 	[InlineData(0, 0, true)]
 	[InlineData(2, 3, false)]
 	[InlineData(2, 2, true)]
@@ -256,6 +317,97 @@ public class VerificationResultExtensionsTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The subject is no mock subject.");
+	}
+
+	[Theory]
+	[InlineData(0, true)]
+	[InlineData(1, false)]
+	[InlineData(2, true)]
+	[InlineData(3, false)]
+	[InlineData(4, true)]
+	[InlineData(5, false)]
+	public async Task Times_WithEvenPredicate_ShouldReturnExpectedResult(int count, bool expectSuccess)
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, count);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Times(n => n % 2 == 0);
+		}
+
+		string expectedDidTimes = count switch
+		{
+			0 => "never did",
+			1 => "did once",
+			2 => "did twice",
+			_ => $"did {count} times",
+		};
+
+		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
+			.WithMessage(
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) according to the predicate n => n % 2 == 0, but it {expectedDidTimes}.");
+	}
+
+	[Theory]
+	[InlineData(0, false)]
+	[InlineData(1, false)]
+	[InlineData(2, true)]
+	[InlineData(3, true)]
+	[InlineData(4, false)]
+	[InlineData(5, true)]
+	[InlineData(6, false)]
+	[InlineData(7, true)]
+	public async Task Times_WithPrimePredicate_ShouldReturnExpectedResult(int count, bool expectSuccess)
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, count);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Times(IsPrime);
+		}
+
+		string expectedDidTimes = count switch
+		{
+			0 => "never did",
+			1 => "did once",
+			2 => "did twice",
+			_ => $"did {count} times",
+		};
+
+		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
+			.WithMessage(
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) according to the predicate IsPrime, but it {expectedDidTimes}.");
+
+		static bool IsPrime(int number)
+		{
+			if (number <= 1)
+			{
+				return false;
+			}
+
+			if (number == 2)
+			{
+				return true;
+			}
+
+			if (number % 2 == 0)
+			{
+				return false;
+			}
+
+			int boundary = (int)Math.Floor(Math.Sqrt(number));
+			for (int i = 3; i <= boundary; i += 2)
+			{
+				if (number % i == 0)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 	}
 
 	[Theory]
