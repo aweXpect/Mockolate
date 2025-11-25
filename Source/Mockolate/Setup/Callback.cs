@@ -12,6 +12,11 @@ public class Callback
 	private Func<int, bool>? _matchingPredicate;
 
 	/// <summary>
+	///     Check if a <see cref="For" />-predicate was specified.
+	/// </summary>
+	protected bool HasForSpecified => _matchingPredicate != null;
+
+	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns <see langword="true" />.
 	/// </summary>
 	/// <remarks>
@@ -42,11 +47,6 @@ public class Callback
 	/// </summary>
 	protected bool CheckMatching(int matchingCount)
 		=> _matchingPredicate?.Invoke(matchingCount) ?? true;
-	
-	/// <summary>
-	///     Check if a <see cref="For" />-predicate was specified.
-	/// </summary>
-	protected bool HasForSpecified => _matchingPredicate != null;
 }
 
 /// <summary>
@@ -74,7 +74,6 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 			{
 				_matchingCount++;
 			}
-
 		}
 		else
 		{
@@ -108,7 +107,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 		_invocationCount++;
 		return false;
 	}
-	
+
 	/// <summary>
 	///     Invokes the callback if the predicates are satisfied, providing the invocation count.
 	/// </summary>
@@ -129,6 +128,8 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 
 				return true;
 			}
+
+			_matchingCount++;
 		}
 
 		_invocationCount++;
