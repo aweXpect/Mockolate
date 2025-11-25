@@ -135,7 +135,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 	private Func<T1, TValue>? _initialization;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.CallingBaseClass(bool)" />
@@ -399,9 +399,8 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 				=> @delegate(invocationCount, p1)));
 			foreach (Callback<Func<int, TValue, T1, TValue>> _ in _returnCallbacks)
 			{
-				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Callback<Func<int, TValue, T1, TValue>> returnCallback =
-					_returnCallbacks[index % _returnCallbacks.Count];
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, resultValue, p1), out TValue? newValue) &&
 				    TryCast(newValue, out T returnValue, behavior))
@@ -461,7 +460,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 	private Func<T1, T2, TValue>? _initialization;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.CallingBaseClass(bool)" />
@@ -729,9 +728,8 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 				=> @delegate(invocationCount, p1, p2)));
 			foreach (Callback<Func<int, TValue, T1, T2, TValue>> _ in _returnCallbacks)
 			{
-				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Callback<Func<int, TValue, T1, T2, TValue>> returnCallback =
-					_returnCallbacks[index % _returnCallbacks.Count];
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, resultValue, p1, p2), out TValue? newValue) &&
 				    TryCast(newValue, out T returnValue, behavior))
@@ -797,7 +795,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 	private Func<T1, T2, T3, TValue>? _initialization;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.CallingBaseClass(bool)" />
@@ -1070,9 +1068,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 				=> @delegate(invocationCount, p1, p2, p3)));
 			foreach (Callback<Func<int, TValue, T1, T2, T3, TValue>> _ in _returnCallbacks)
 			{
-				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Callback<Func<int, TValue, T1, T2, T3, TValue>> returnCallback =
-					_returnCallbacks[index % _returnCallbacks.Count];
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, resultValue, p1, p2, p3), out TValue? newValue) &&
 				    TryCast(newValue, out T returnValue, behavior))
@@ -1143,7 +1140,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.CallingBaseClass(bool)" />
@@ -1421,9 +1418,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 				=> @delegate(invocationCount, p1, p2, p3, p4)));
 			foreach (Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> _ in _returnCallbacks)
 			{
-				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 				Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> returnCallback =
-					_returnCallbacks[index % _returnCallbacks.Count];
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, resultValue, p1, p2, p3, p4), out TValue? newValue) &&
 				    TryCast(newValue, out T returnValue, behavior))

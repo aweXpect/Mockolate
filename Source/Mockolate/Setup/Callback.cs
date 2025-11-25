@@ -90,9 +90,9 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 		{
 			if (CheckMatching(_matchingCount))
 			{
-				if (HasForSpecified && CheckMatching(_matchingCount + 1))
+				if (!HasForSpecified || !CheckMatching(_matchingCount + 1))
 				{
-					Interlocked.Decrement(ref index);
+					Interlocked.Increment(ref index);
 				}
 
 				_invocationCount++;
@@ -105,6 +105,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 		}
 
 		_invocationCount++;
+		Interlocked.Increment(ref index);
 		return false;
 	}
 
@@ -117,9 +118,9 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 		{
 			if (CheckMatching(_matchingCount))
 			{
-				if (HasForSpecified && CheckMatching(_matchingCount + 1))
+				if (!HasForSpecified || !CheckMatching(_matchingCount + 1))
 				{
-					Interlocked.Decrement(ref index);
+					Interlocked.Increment(ref index);
 				}
 
 				_invocationCount++;
@@ -134,6 +135,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 
 		_invocationCount++;
 		returnValue = default;
+		Interlocked.Increment(ref index);
 		return false;
 	}
 }

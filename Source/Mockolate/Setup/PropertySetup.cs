@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -98,7 +97,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 	private bool _isInitialized;
 	private T _value = default!;
 
@@ -153,9 +152,8 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 		bool foundCallback = false;
 		foreach (Callback<Func<int, T, T>> _ in _returnCallbacks)
 		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 			Callback<Func<int, T, T>> returnCallback =
-				_returnCallbacks[index % _returnCallbacks.Count];
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 			if (returnCallback.Invoke<T>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, _value), out T? newValue))
 			{

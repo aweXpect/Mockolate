@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 
@@ -16,7 +15,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
@@ -131,12 +130,11 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	{
 		_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 			=> @delegate(invocationCount)));
-		
-		foreach (var _ in _returnCallbacks)
+
+		foreach (Callback<Action<int>> _ in _returnCallbacks)
 		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-			var returnCallback =
-				_returnCallbacks[index % _returnCallbacks.Count];
+			Callback<Action<int>> returnCallback =
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount)))
 			{
@@ -194,7 +192,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1}" />
 	public VoidMethodSetup(string name, Match.NamedParameter match1)
@@ -346,11 +344,10 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		{
 			_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1)));
-			foreach (var _ in _returnCallbacks)
+			foreach (Callback<Action<int, T1>> _ in _returnCallbacks)
 			{
-				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				var returnCallback =
-					_returnCallbacks[index % _returnCallbacks.Count];
+				Callback<Action<int, T1>> returnCallback =
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1)))
 				{
@@ -430,7 +427,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
 	public VoidMethodSetup(string name, Match.NamedParameter match1, Match.NamedParameter match2)
@@ -584,11 +581,10 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		{
 			_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2)));
-			foreach (var _ in _returnCallbacks)
+			foreach (Callback<Action<int, T1, T2>> _ in _returnCallbacks)
 			{
-				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				var returnCallback =
-					_returnCallbacks[index % _returnCallbacks.Count];
+				Callback<Action<int, T1, T2>> returnCallback =
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2)))
 				{
@@ -669,7 +665,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
 	public VoidMethodSetup(
@@ -793,7 +789,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3}.When(Func{int, bool})" />
-	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> IVoidMethodSetupCallbackBuilder<T1, T2, T3>.When(Func<int, bool> predicate)
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> IVoidMethodSetupCallbackBuilder<T1, T2, T3>.When(
+		Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
@@ -807,7 +804,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder{T1, T2, T3}.When(Func{int, bool})" />
-	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> IVoidMethodSetupReturnBuilder<T1, T2, T3>.When(Func<int, bool> predicate)
+	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> IVoidMethodSetupReturnBuilder<T1, T2, T3>.When(
+		Func<int, bool> predicate)
 	{
 		_currentReturnCallback?.When(predicate);
 		return this;
@@ -829,11 +827,10 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		{
 			_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2, p3)));
-			foreach (var _ in _returnCallbacks)
+			foreach (Callback<Action<int, T1, T2, T3>> _ in _returnCallbacks)
 			{
-				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				var returnCallback =
-					_returnCallbacks[index % _returnCallbacks.Count];
+				Callback<Action<int, T1, T2, T3>> returnCallback =
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2, p3)))
 				{
@@ -915,7 +912,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
 	public VoidMethodSetup(
@@ -1034,14 +1031,16 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// </summary>
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => throw callback(p1, p2, p3, p4));
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback =
+			new((_, p1, p2, p3, p4) => throw callback(p1, p2, p3, p4));
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3, T4}.When(Func{int, bool})" />
-	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>.When(Func<int, bool> predicate)
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>.When(
+		Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
@@ -1055,7 +1054,8 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder{T1, T2, T3, T4}.When(Func{int, bool})" />
-	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>.When(Func<int, bool> predicate)
+	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>.When(
+		Func<int, bool> predicate)
 	{
 		_currentReturnCallback?.When(predicate);
 		return this;
@@ -1078,11 +1078,10 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		{
 			_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2, p3, p4)));
-			foreach (var _ in _returnCallbacks)
+			foreach (Callback<Action<int, T1, T2, T3, T4>> _ in _returnCallbacks)
 			{
-				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				var returnCallback =
-					_returnCallbacks[index % _returnCallbacks.Count];
+				Callback<Action<int, T1, T2, T3, T4>> returnCallback =
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2, p3, p4)))
 				{
