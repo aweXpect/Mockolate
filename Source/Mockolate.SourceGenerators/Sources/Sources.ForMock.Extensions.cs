@@ -60,12 +60,12 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\textension(IMockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
-			AppendMethodSetup(@class, sb, @delegate, false);
+			AppendMethodSetup(@class, sb, @delegate, false, "Delegate");
 			sb.AppendLine();
 
 			if (@delegate.Parameters.Count > 0)
 			{
-				AppendMethodSetup(@class, sb, @delegate, true);
+				AppendMethodSetup(@class, sb, @delegate, true, "Delegate");
 			}
 
 			sb.AppendLine("\t}");
@@ -83,7 +83,7 @@ internal static partial class Sources
 				.Append(".")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(@delegate.Name)
+			sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> Invoked")
 				.Append("(");
 			int i = 0;
 			foreach (MethodParameter parameter in @delegate.Parameters)
@@ -153,8 +153,8 @@ internal static partial class Sources
 					.Append(")\"/> with the given <paramref name=\"parameters\"/>..")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
-				sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> ")
-					.Append(@delegate.Name).Append("(Match.IParameters parameters)");
+				sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> Invoked")
+					.Append("(Match.IParameters parameters)");
 				if (@delegate.GenericParameters is not null && @delegate.GenericParameters.Value.Count > 0)
 				{
 					foreach (GenericParameter gp in @delegate.GenericParameters.Value)
@@ -338,8 +338,9 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	private static void AppendMethodSetup(Class @class, StringBuilder sb, Method method, bool useParameters)
+	private static void AppendMethodSetup(Class @class, StringBuilder sb, Method method, bool useParameters, string? methodNameOverride = null)
 	{
+		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Setup for the method <see cref=\"")
 			.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
@@ -387,7 +388,7 @@ internal static partial class Sources
 			}
 
 			sb.Append("> ");
-			sb.Append(method.Name).Append("(");
+			sb.Append(methodName).Append("(");
 		}
 		else
 		{
@@ -414,7 +415,7 @@ internal static partial class Sources
 				sb.Append('>');
 			}
 
-			sb.Append(' ').Append(method.Name).Append("(");
+			sb.Append(' ').Append(methodName).Append("(");
 		}
 
 		if (useParameters)
