@@ -100,4 +100,64 @@ public sealed partial class ForMockTests
 			.IgnoringNewlineStyle().And
 			.Contains("System.Func<int,bool> Object").IgnoringNewlineStyle();
 	}
+
+	[Fact]
+	public async Task DelegateWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<ProcessResult>();
+			         }
+
+			         public delegate int ProcessResult(int result);
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForProgramProcessResult.g.cs").WhoseValue
+			.Contains("var result1 = _mock.Registrations.InvokeMethod<int>(")
+			.IgnoringNewlineStyle().And
+			.Contains("result1.TriggerCallbacks(result)")
+			.IgnoringNewlineStyle().And
+			.Contains("return result1.Result;")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task VoidDelegateWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<ProcessResult>();
+			         }
+
+			         public delegate void ProcessResult(string result, out int value);
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForProgramProcessResult.g.cs").WhoseValue
+			.Contains("var result1 = _mock.Registrations.InvokeMethod(")
+			.IgnoringNewlineStyle().And
+			.Contains("value = result1.SetOutParameter<int>(\"value\");")
+			.IgnoringNewlineStyle().And
+			.Contains("result1.TriggerCallbacks(result, value)")
+			.IgnoringNewlineStyle();
+	}
 }

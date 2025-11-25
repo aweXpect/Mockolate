@@ -86,4 +86,24 @@ internal static class Helpers
 	private static bool IsNullableAttribute(INamedTypeSymbol attribute)
 		=> attribute.Name is "NullableContextAttribute" or "NullableAttribute" &&
 		   attribute.ContainingNamespace.ToDisplayString() == "System.Runtime.CompilerServices";
+
+	/// <summary>
+	/// Generates a unique local variable name that does not conflict with any parameter names.
+	/// </summary>
+	/// <param name="baseName">The base name for the variable (e.g., "result", "methodExecution")</param>
+	/// <param name="parameters">The parameters to check against for conflicts</param>
+	/// <returns>A unique variable name that does not conflict with any parameter names</returns>
+	public static string GetUniqueLocalVariableName(string baseName, EquatableArray<MethodParameter> parameters)
+	{
+		string candidateName = baseName;
+		int suffix = 0;
+
+		while (parameters.Any(p => p.Name == candidateName))
+		{
+			suffix++;
+			candidateName = $"{baseName}{suffix}";
+		}
+
+		return candidateName;
+	}
 }
