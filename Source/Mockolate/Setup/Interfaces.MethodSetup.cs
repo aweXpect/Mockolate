@@ -86,28 +86,28 @@ public interface IReturnMethodSetup<in TReturn>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Returns(Func<TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Returns(TReturn returnValue);
+	IReturnMethodSetupReturnBuilder<TReturn> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Throws<TException>()
+	IReturnMethodSetupReturnBuilder<TReturn> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Throws(Exception exception);
+	IReturnMethodSetupReturnBuilder<TReturn> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn> Throws(Func<Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn> Throws(Func<Exception> callback);
 }
 
 /// <summary>
@@ -135,6 +135,37 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn> : IReturnMeth
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn> For(int times);
+}
+
+/// <summary>
+///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnBuilder<in TReturn> : IReturnMethodSetupReturnWhenBuilder<TReturn>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IReturnMethodSetupReturnWhenBuilder<TReturn> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn> : IReturnMethodSetup<TReturn>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -172,38 +203,38 @@ public interface IReturnMethodSetup<in TReturn, out T1>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Returns(Func<T1, TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Returns(Func<TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Returns(TReturn returnValue);
+	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Throws<TException>()
+	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Throws(Exception exception);
+	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Throws(Func<Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1> Throws(Func<T1, Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<T1, Exception> callback);
 }
 
 /// <summary>
@@ -233,6 +264,37 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1> For(int times);
+}
+
+/// <summary>
+///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IReturnMethodSetupReturnWhenBuilder<TReturn, T1> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1> : IReturnMethodSetup<TReturn, T1>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn, T1}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -270,38 +332,38 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Returns(Func<TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Throws<TException>()
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Throws(Exception exception);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Throws(Func<Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> Throws(Func<T1, T2, Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<T1, T2, Exception> callback);
 }
 
 /// <summary>
@@ -339,6 +401,37 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 }
 
 /// <summary>
+///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2> : IReturnMethodSetup<TReturn, T1, T2>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2> For(int times);
+}
+
+/// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
@@ -369,38 +462,38 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Returns(Func<TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Throws<TException>()
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Throws(Exception exception);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Throws(Func<Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
 }
 
 /// <summary>
@@ -430,6 +523,37 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2, T3> For(int times);
+}
+
+/// <summary>
+///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3> : IReturnMethodSetup<TReturn, T1, T2, T3>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -468,38 +592,38 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this method.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws<TException>()
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Exception exception);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
 }
 
 /// <summary>
@@ -529,6 +653,37 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2, T3, T4> For(int times);
+}
+
+/// <summary>
+///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -567,18 +722,18 @@ public interface IVoidMethodSetup
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup Throws<TException>()
+	IVoidMethodSetupThrowBuilder Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup Throws(Exception exception);
+	IVoidMethodSetupThrowBuilder Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup Throws(Func<Exception> callback);
+	IVoidMethodSetupThrowBuilder Throws(Func<Exception> callback);
 }
 
 /// <summary>
@@ -606,6 +761,36 @@ public interface IVoidMethodSetupCallbackWhenBuilder : IVoidMethodSetup
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup For(int times);
+}
+
+/// <summary>
+///     Sets up a throw builder for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowBuilder : IVoidMethodSetupThrowWhenBuilder
+{
+	/// <summary>
+	///     Limits the throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IVoidMethodSetupThrowWhenBuilder When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for throws for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowWhenBuilder : IVoidMethodSetup
+{
+	/// <summary>
+	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupThrowBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup For(int times);
@@ -647,23 +832,23 @@ public interface IVoidMethodSetup<out T1>
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1> Throws<TException>()
+	IVoidMethodSetupThrowBuilder<T1> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1> Throws(Exception exception);
+	IVoidMethodSetupThrowBuilder<T1> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1> Throws(Func<Exception> callback);
+	IVoidMethodSetupThrowBuilder<T1> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1> Throws(Func<T1, Exception> callback);
+	IVoidMethodSetupThrowBuilder<T1> Throws(Func<T1, Exception> callback);
 }
 
 /// <summary>
@@ -691,6 +876,36 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1> : IVoidMethodSetup<
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1> For(int times);
+}
+
+/// <summary>
+///     Sets up a throw builder for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowBuilder<out T1> : IVoidMethodSetupThrowWhenBuilder<T1>
+{
+	/// <summary>
+	///     Limits the throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IVoidMethodSetupThrowWhenBuilder<T1> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for throws for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowWhenBuilder<out T1> : IVoidMethodSetup<T1>
+{
+	/// <summary>
+	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupThrowBuilder{T1}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1> For(int times);
@@ -732,23 +947,23 @@ public interface IVoidMethodSetup<out T1, out T2>
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2> Throws<TException>()
+	IVoidMethodSetupThrowBuilder<T1, T2> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2> Throws(Exception exception);
+	IVoidMethodSetupThrowBuilder<T1, T2> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2> Throws(Func<Exception> callback);
+	IVoidMethodSetupThrowBuilder<T1, T2> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2> Throws(Func<T1, T2, Exception> callback);
+	IVoidMethodSetupThrowBuilder<T1, T2> Throws(Func<T1, T2, Exception> callback);
 }
 
 /// <summary>
@@ -776,6 +991,36 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2> : IVoidMeth
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2> For(int times);
+}
+
+/// <summary>
+///     Sets up a throw builder for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowBuilder<out T1, out T2> : IVoidMethodSetupThrowWhenBuilder<T1, T2>
+{
+	/// <summary>
+	///     Limits the throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IVoidMethodSetupThrowWhenBuilder<T1, T2> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for throws for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowWhenBuilder<out T1, out T2> : IVoidMethodSetup<T1, T2>
+{
+	/// <summary>
+	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupThrowBuilder{T1, T2}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1, T2> For(int times);
@@ -817,23 +1062,23 @@ public interface IVoidMethodSetup<out T1, out T2, out T3>
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2, T3> Throws<TException>()
+	IVoidMethodSetupThrowBuilder<T1, T2, T3> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2, T3> Throws(Exception exception);
+	IVoidMethodSetupThrowBuilder<T1, T2, T3> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2, T3> Throws(Func<Exception> callback);
+	IVoidMethodSetupThrowBuilder<T1, T2, T3> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
+	IVoidMethodSetupThrowBuilder<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
 }
 
 /// <summary>
@@ -862,6 +1107,36 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3> : I
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2, T3> For(int times);
+}
+
+/// <summary>
+///     Sets up a throw builder for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowBuilder<out T1, out T2, out T3> : IVoidMethodSetupThrowWhenBuilder<T1, T2, T3>
+{
+	/// <summary>
+	///     Limits the throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IVoidMethodSetupThrowWhenBuilder<T1, T2, T3> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for throws for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowWhenBuilder<out T1, out T2, out T3> : IVoidMethodSetup<T1, T2, T3>
+{
+	/// <summary>
+	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupThrowBuilder{T1, T2, T3}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1, T2, T3> For(int times);
@@ -903,23 +1178,23 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2, T3, T4> Throws<TException>()
+	IVoidMethodSetupThrowBuilder<T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2, T3, T4> Throws(Exception exception);
+	IVoidMethodSetupThrowBuilder<T1, T2, T3, T4> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2, T3, T4> Throws(Func<Exception> callback);
+	IVoidMethodSetupThrowBuilder<T1, T2, T3, T4> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	IVoidMethodSetup<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
+	IVoidMethodSetupThrowBuilder<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
 }
 
 /// <summary>
@@ -949,6 +1224,36 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2, T3, T4> For(int times);
+}
+
+/// <summary>
+///     Sets up a throw builder for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowBuilder<out T1, out T2, out T3, out T4> : IVoidMethodSetupThrowWhenBuilder<T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Limits the throw to only execute for method invocations where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
+	/// </remarks>
+	IVoidMethodSetupThrowWhenBuilder<T1, T2, T3, T4> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for throws for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupThrowWhenBuilder<out T1, out T2, out T3, out T4> : IVoidMethodSetup<T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupThrowBuilder{T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1, T2, T3, T4> For(int times);
