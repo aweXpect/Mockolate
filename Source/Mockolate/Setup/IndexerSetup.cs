@@ -127,13 +127,14 @@ public abstract class IndexerSetup : IIndexerSetup
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
 public class IndexerSetup<TValue, T1>(Match.IParameter match1)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1>
+	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>
 {
 	private readonly List<Callback<Action<int, T1>>> _getterCallbacks = [];
-	private readonly List<Func<TValue, T1, TValue>> _returnCallbacks = [];
+	private readonly List<Callback<Func<TValue, T1, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, TValue, T1>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 	private Func<T1, TValue>? _initialization;
 
@@ -252,82 +253,100 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Returns(Func<TValue, T1, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue, T1, TValue> callback)
 	{
-		_returnCallbacks.Add(callback);
+		Callback<Func<TValue, T1, TValue>> cb = new(callback);
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Returns(Func<T1, TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue> callback)
 	{
-		_returnCallbacks.Add((_, p1) => callback(p1));
+		Callback<Func<TValue, T1, TValue>> cb = new((_, p1) => callback(p1));
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Returns(Func<TValue> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue> callback)
 	{
-		_returnCallbacks.Add((_, _) => callback());
+		Callback<Func<TValue, T1, TValue>> cb = new((_, _) => callback());
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Returns(TValue returnValue)
+	public IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue)
 	{
-		_returnCallbacks.Add((_, _) => returnValue);
+		Callback<Func<TValue, T1, TValue>> cb = new((_, _) => returnValue);
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws<TException>()
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add((_, _) => throw new TException());
+		Callback<Func<TValue, T1, TValue>> cb = new((_, _) => throw new TException());
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws(Exception exception)
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Exception exception)
 	{
-		_returnCallbacks.Add((_, _) => throw exception);
+		Callback<Func<TValue, T1, TValue>> cb = new((_, _) => throw exception);
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws(Func<Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add((_, _) => throw callback());
+		Callback<Func<TValue, T1, TValue>> cb = new((_, _) => throw callback());
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws(Func<T1, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, Exception> callback)
 	{
-		_returnCallbacks.Add((_, p1) => throw callback(p1));
+		Callback<Func<TValue, T1, TValue>> cb = new((_, p1) => throw callback(p1));
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	public IIndexerSetup<TValue, T1> Throws(Func<TValue, T1, Exception> callback)
+	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<TValue, T1, Exception> callback)
 	{
-		_returnCallbacks.Add((v, p1) => throw callback(v, p1));
+		Callback<Func<TValue, T1, TValue>> cb = new((v, p1) => throw callback(v, p1));
+		_currentReturnCallback = cb;
+		_returnCallbacks.Add(cb);
 		return this;
 	}
 
@@ -335,6 +354,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	public IIndexerSetupCallbackWhenBuilder<TValue, T1> When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
+		_currentReturnCallback?.When(predicate);
 		return this;
 	}
 
@@ -342,6 +362,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	public IIndexerSetup<TValue, T1> For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -366,8 +387,9 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 			if (_returnCallbacks.Count > 0)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Func<TValue, T1, TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				TValue newValue = returnCallback(resultValue, p1);
+				Callback<Func<TValue, T1, TValue>> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
+				TValue newValue = resultValue;
+				returnCallback.Invoke((invocationCount, func) => newValue = func(resultValue, p1));
 				if (TryCast(newValue, out T returnValue, behavior))
 				{
 					return returnValue;
