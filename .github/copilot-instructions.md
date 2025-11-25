@@ -119,9 +119,11 @@ The library provides several key APIs:
 - `mock.SetupMock.Method.*` - Configure method behavior
 - `mock.SetupMock.Property.*` - Configure property behavior
 - `mock.SetupMock.Indexer()` - Configure indexer behavior
+- `mock.SetupMock.Delegate(...)` - Configure delegate behavior (for Action, Func, and custom delegates)
 
 ### Verification
 - `mock.VerifyMock.Invoked.*` - Verify method calls
+- `mock.VerifyMock.Invoked(...)` - Verify delegate invocations (for Action, Func, and custom delegates)
 - `mock.VerifyMock.Got.*` - Verify property reads
 - `mock.VerifyMock.Set.*` - Verify property writes
 - `mock.VerifyMock.GotIndexer()` - Verify indexer reads

@@ -26,7 +26,7 @@ public sealed partial class ForMockTests
 		await That(result.Sources)
 			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public IReturnMethodSetup<int, int, int> Invoke(Match.IParameter<int>? x, Match.IParameter<int>? y)
+			          		public IReturnMethodSetup<int, int, int> Delegate(Match.IParameter<int>? x, Match.IParameter<int>? y)
 			          		{
 			          			var methodSetup = new ReturnMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", (Match.IParameter)(x ?? Match.Null<int>())), new Match.NamedParameter("y", (Match.IParameter)(y ?? Match.Null<int>())));
 			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
@@ -34,7 +34,7 @@ public sealed partial class ForMockTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<MyCode.Program.DoSomething> Invoke(Match.IParameter<int>? x, Match.IParameter<int>? y)
+			          		public VerificationResult<MyCode.Program.DoSomething> Invoked(Match.IParameter<int>? x, Match.IParameter<int>? y)
 			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", (Match.IParameter)(x ?? Match.Null<int>())), new Match.NamedParameter("y", (Match.IParameter)(y ?? Match.Null<int>())));
 			          """).IgnoringNewlineStyle();
 	}
@@ -63,7 +63,7 @@ public sealed partial class ForMockTests
 		await That(result.Sources)
 			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public IVoidMethodSetup<int, int, int> Invoke(Match.IParameter<int>? x, Match.IRefParameter<int> y, Match.IOutParameter<int> z)
+			          		public IVoidMethodSetup<int, int, int> Delegate(Match.IParameter<int>? x, Match.IRefParameter<int> y, Match.IOutParameter<int> z)
 			          		{
 			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new Match.NamedParameter("x", (Match.IParameter)(x ?? Match.Null<int>())), new Match.NamedParameter("y", (Match.IParameter)(y)), new Match.NamedParameter("z", (Match.IParameter)(z)));
 			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
@@ -71,7 +71,7 @@ public sealed partial class ForMockTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<MyCode.Program.DoSomething> Invoke(Match.IParameters parameters)
+			          		public VerificationResult<MyCode.Program.DoSomething> Invoked(Match.IParameters parameters)
 			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", parameters);
 			          """).IgnoringNewlineStyle();
 	}

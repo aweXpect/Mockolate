@@ -7,11 +7,11 @@ public class DelegateTests
 	{
 		bool isCalled = false;
 		Action mock = Mock.Create<Action>();
-		mock.SetupMock.Invoke().Do(() => isCalled = true);
+		mock.SetupMock.Delegate().Do(() => isCalled = true);
 
 		mock.Invoke();
 
-		await That(mock.VerifyMock.Invoke()).Once();
+		await That(mock.VerifyMock.Invoked()).Once();
 		Assert.True(isCalled);
 	}
 
@@ -20,11 +20,11 @@ public class DelegateTests
 	{
 		bool isCalled = false;
 		Func<int> mock = Mock.Create<Func<int>>();
-		mock.SetupMock.Invoke().Do(() => isCalled = true).Returns(3);
+		mock.SetupMock.Delegate().Do(() => isCalled = true).Returns(3);
 
 		int result = mock();
 
-		await That(mock.VerifyMock.Invoke()).Once();
+		await That(mock.VerifyMock.Invoked()).Once();
 		Assert.True(isCalled);
 		Assert.Equal(3, result);
 	}
@@ -33,7 +33,7 @@ public class DelegateTests
 	public async Task WithCustomDelegate_SetupShouldWork()
 	{
 		DoSomething mock = Mock.Create<DoSomething>();
-		mock.SetupMock.Invoke(Any<int>(), Any<string>())
+		mock.SetupMock.Delegate(Any<int>(), Any<string>())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
@@ -54,7 +54,7 @@ public class DelegateTests
 		_ = mock(1, "foo");
 		_ = mock(2, "bar");
 
-		await That(mock.VerifyMock.Invoke(Any<int>(), Any<string>())).Twice();
+		await That(mock.VerifyMock.Invoked(Any<int>(), Any<string>())).Twice();
 	}
 
 	[Fact]
@@ -62,11 +62,11 @@ public class DelegateTests
 	{
 		DoSomethingWithRefAndOut mock = Mock.Create<DoSomethingWithRefAndOut>();
 		int value = 5;
-		mock.SetupMock.Invoke(Any<int>(), Ref<int>(v => v + 1), Out(() => 10));
+		mock.SetupMock.Delegate(Any<int>(), Ref<int>(v => v + 1), Out(() => 10));
 
 		mock(1, ref value, out int value2);
 
-		await That(mock.VerifyMock.Invoke(Any<int>(), Ref<int>(), Out<int>())).Once();
+		await That(mock.VerifyMock.Invoked(Any<int>(), Ref<int>(), Out<int>())).Once();
 		await That(value).IsEqualTo(6);
 		await That(value2).IsEqualTo(10);
 	}
@@ -79,7 +79,7 @@ public class DelegateTests
 
 		mock(1, ref value, out int _);
 
-		await That(mock.VerifyMock.Invoke(Any<int>(), Ref<int>(), Out<int>())).Once();
+		await That(mock.VerifyMock.Invoked(Any<int>(), Ref<int>(), Out<int>())).Once();
 		await That(value).IsEqualTo(5);
 	}
 
@@ -87,7 +87,7 @@ public class DelegateTests
 	public async Task WithCustomGenericDelegate_SetupShouldWork()
 	{
 		DoGeneric<long, string> mock = Mock.Create<DoGeneric<long, string>>();
-		mock.SetupMock.Invoke(Any<long>(), Any<string>())
+		mock.SetupMock.Delegate(Any<long>(), Any<string>())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
@@ -108,7 +108,7 @@ public class DelegateTests
 		_ = mock(1, "foo");
 		_ = mock(2, "bar");
 
-		await That(mock.VerifyMock.Invoke(Any<short>(), Any<string>())).Twice();
+		await That(mock.VerifyMock.Invoked(Any<short>(), Any<string>())).Twice();
 	}
 
 	internal delegate int DoSomething(int x, string y);
