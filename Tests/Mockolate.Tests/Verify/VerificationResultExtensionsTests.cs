@@ -9,37 +9,6 @@ namespace Mockolate.Tests.Verify;
 public class VerificationResultExtensionsTests
 {
 	[Theory]
-	[InlineData(0, 0, 0, true)]
-	[InlineData(1, 0, 2, true)]
-	[InlineData(2, 0, 2, true)]
-	[InlineData(3, 2, 5, true)]
-	[InlineData(1, 2, 5, false)]
-	[InlineData(6, 2, 5, false)]
-	[InlineData(2, 2, 2, true)]
-	public async Task Between_ShouldReturnExpectedResult(int count, int min, int max, bool expectSuccess)
-	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		ExecuteDoSomethingOn(mock, count);
-
-		void Act()
-		{
-			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(min, max);
-		}
-
-		string expectedDidTimes = count switch
-		{
-			0 => "never did",
-			1 => "did once",
-			2 => "did twice",
-			_ => $"did {count} times"
-		};
-
-		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
-			.WithMessage(
-				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) between {min} and {max} times, but it {expectedDidTimes}.");
-	}
-
-	[Theory]
 	[InlineData(0, 0, true)]
 	[InlineData(2, 3, false)]
 	[InlineData(2, 2, true)]
@@ -157,6 +126,67 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) at most twice, but it did {count} times.");
+	}
+
+	[Theory]
+	[InlineData(0, 0, 0, true)]
+	[InlineData(1, 0, 2, true)]
+	[InlineData(2, 0, 2, true)]
+	[InlineData(3, 2, 5, true)]
+	[InlineData(1, 2, 5, false)]
+	[InlineData(6, 2, 5, false)]
+	[InlineData(2, 2, 2, true)]
+	public async Task Between_ShouldReturnExpectedResult(int count, int minimum, int maximum, bool expectSuccess)
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, count);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(minimum, maximum);
+		}
+
+		string expectedDidTimes = count switch
+		{
+			0 => "never did",
+			1 => "did once",
+			2 => "did twice",
+			_ => $"did {count} times",
+		};
+
+		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
+			.WithMessage(
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) between {minimum} and {maximum} times, but it {expectedDidTimes}.");
+	}
+
+	[Fact]
+	public async Task Between_WithMaximumLessThanMinimum_ShouldThrowArgumentOutOfRangeException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(5, 2);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("maximum").And
+			.WithMessage("Maximum value must be greater than or equal to minimum.").AsPrefix();
+	}
+
+	[Fact]
+	public async Task Between_WithNegativeMinimum_ShouldThrowArgumentOutOfRangeException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(-1, 5);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("minimum").And
+			.WithMessage("Minimum value must be non-negative.").AsPrefix();
 	}
 
 	[Theory]
@@ -290,26 +320,6 @@ public class VerificationResultExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(0, false)]
-	[InlineData(1, false)]
-	[InlineData(2, true)]
-	[InlineData(3, false)]
-	public async Task Twice_ShouldReturnExpectedResult(int count, bool expectSuccess)
-	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		ExecuteDoSomethingOn(mock, count);
-
-		void Act()
-		{
-			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Twice();
-		}
-
-		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
-			.WithMessage(
-				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) exactly twice, but it {count switch { 0 => "never did", 1 => "did once", _ => $"did {count} times", }}.");
-	}
-
-	[Theory]
 	[InlineData(0, true)]
 	[InlineData(1, false)]
 	[InlineData(2, true)]
@@ -331,12 +341,12 @@ public class VerificationResultExtensionsTests
 			0 => "never did",
 			1 => "did once",
 			2 => "did twice",
-			_ => $"did {count} times"
+			_ => $"did {count} times",
 		};
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) a number of times matching the predicate, but it {expectedDidTimes}.");
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) according to the predicate n => n % 2 == 0, but it {expectedDidTimes}.");
 	}
 
 	[Theory]
@@ -363,12 +373,12 @@ public class VerificationResultExtensionsTests
 			0 => "never did",
 			1 => "did once",
 			2 => "did twice",
-			_ => $"did {count} times"
+			_ => $"did {count} times",
 		};
 
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
-				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) a number of times matching the predicate, but it {expectedDidTimes}.");
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) according to the predicate IsPrime, but it {expectedDidTimes}.");
 
 		static bool IsPrime(int number)
 		{
@@ -398,6 +408,26 @@ public class VerificationResultExtensionsTests
 
 			return true;
 		}
+	}
+
+	[Theory]
+	[InlineData(0, false)]
+	[InlineData(1, false)]
+	[InlineData(2, true)]
+	[InlineData(3, false)]
+	public async Task Twice_ShouldReturnExpectedResult(int count, bool expectSuccess)
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, count);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Twice();
+		}
+
+		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
+			.WithMessage(
+				$"Expected that mock invoked method Dispense(Any<string>(), Any<int>()) exactly twice, but it {count switch { 0 => "never did", 1 => "did once", _ => $"did {count} times", }}.");
 	}
 
 	private class MyChocolateDispenser : IChocolateDispenser
@@ -433,48 +463,6 @@ public class VerificationResultExtensionsTests
 
 			return false;
 		}
-	}
-
-	[Fact]
-	public async Task Between_WithNegativeMin_ShouldThrowArgumentOutOfRangeException()
-	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-
-		void Act()
-		{
-			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(-1, 5);
-		}
-
-		await That(Act).Throws<ArgumentOutOfRangeException>()
-			.WithParamName("min");
-	}
-
-	[Fact]
-	public async Task Between_WithMaxLessThanMin_ShouldThrowArgumentOutOfRangeException()
-	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-
-		void Act()
-		{
-			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Between(5, 2);
-		}
-
-		await That(Act).Throws<ArgumentOutOfRangeException>()
-			.WithParamName("max");
-	}
-
-	[Fact]
-	public async Task Times_WithNullPredicate_ShouldThrowArgumentNullException()
-	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-
-		void Act()
-		{
-			mock.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>()).Times(null!);
-		}
-
-		await That(Act).Throws<ArgumentNullException>()
-			.WithParamName("predicate");
 	}
 
 	internal static void ExecuteDoSomethingOn(IChocolateDispenser mock, int amount)

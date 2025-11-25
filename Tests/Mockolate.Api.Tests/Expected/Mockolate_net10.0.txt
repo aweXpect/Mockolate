@@ -1329,19 +1329,23 @@ namespace Mockolate.Verify
     }
     public static class VerificationResultExtensions
     {
-        public static void AtLeast<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
-        public static void AtLeastOnce<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void AtLeastTwice<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void AtMost<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
-        public static void AtMostOnce<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void AtMostTwice<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void Between<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int min, int max) { }
-        public static void Exactly<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, int times) { }
-        public static void Never<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void Once<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
-        public static void Then<T>(this Mockolate.Verify.VerificationResult<T> verificationResult, params System.Func<Mockolate.Verify.IMockVerify<T>, Mockolate.Verify.VerificationResult<T>>[] orderedChecks) { }
-        public static void Times<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult, System.Func<int, bool> predicate) { }
-        public static void Twice<TMock>(this Mockolate.Verify.VerificationResult<TMock> verificationResult) { }
+        extension<TMock>(Mockolate.Verify.VerificationResult<TMock> verificationResult)
+            where TMock :  notnull
+        {
+            public void AtLeast(int times) { }
+            public void AtLeastOnce() { }
+            public void AtLeastTwice() { }
+            public void AtMost(int times) { }
+            public void Between(int minimum, int maximum) { }
+            public void AtMostOnce() { }
+            public void AtMostTwice() { }
+            public void Exactly(int times) { }
+            public void Never() { }
+            public void Once() { }
+            public void Twice() { }
+            public void Times(System.Func<int, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+            public void Then(params System.Func<Mockolate.Verify.IMockVerify<TMock>, Mockolate.Verify.VerificationResult<TMock>>[] orderedChecks) { }
+        }
     }
     public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult, Mockolate.Verify.IVerificationResult<TVerify>
     {
