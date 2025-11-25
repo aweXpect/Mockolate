@@ -93,47 +93,47 @@ public interface IIndexerSetup<TValue, out T1>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Returns(Func<TValue, T1, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue, T1, TValue> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Returns(Func<T1, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Returns(Func<TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Returns(TValue returnValue);
+	IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Throws<TException>() where TException : Exception, new();
+	IIndexerSetupReturnBuilder<TValue, T1> Throws<TException>() where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Throws(Exception exception);
+	IIndexerSetupReturnBuilder<TValue, T1> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Throws(Func<Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Throws(Func<T1, Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1> Throws(Func<TValue, T1, Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<TValue, T1, Exception> callback);
 }
 
 /// <summary>
@@ -161,6 +161,36 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1> : IIndexerSetu
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />
+	///     ).
+	/// </remarks>
+	IIndexerSetup<TValue, T1> For(int times);
+}
+
+/// <summary>
+///     Sets up a return/throw builder for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
+/// </summary>
+public interface IIndexerSetupReturnBuilder<TValue, out T1> : IIndexerSetupReturnWhenBuilder<TValue, T1>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for indexer accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
+	/// </remarks>
+	IIndexerSetupReturnWhenBuilder<TValue, T1> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
+/// </summary>
+public interface IIndexerSetupReturnWhenBuilder<TValue, out T1> : IIndexerSetup<TValue, T1>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetupReturnBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />
 	///     ).
 	/// </remarks>
 	IIndexerSetup<TValue, T1> For(int times);
@@ -227,47 +257,47 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Returns(Func<TValue, T1, T2, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue, T1, T2, TValue> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Returns(Func<TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Returns(TValue returnValue);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Throws<TException>() where TException : Exception, new();
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws<TException>() where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Throws(Exception exception);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Throws(Func<Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2> Throws(Func<TValue, T1, T2, Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<TValue, T1, T2, Exception> callback);
 }
 
 /// <summary>
@@ -297,6 +327,39 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2> : IInd
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IIndexerSetup<TValue, T1, T2> For(int times);
+}
+
+/// <summary>
+///     Sets up a return/throw builder for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
+/// </summary>
+public interface IIndexerSetupReturnBuilder<TValue, out T1, out T2> : IIndexerSetupReturnWhenBuilder<TValue, T1, T2>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for indexer accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
+	/// </remarks>
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
+/// </summary>
+public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2> : IIndexerSetup<TValue, T1, T2>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetupReturnBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -365,47 +428,47 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Returns(Func<TValue, T1, T2, T3, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue, T1, T2, T3, TValue> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Returns(Func<TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Returns(TValue returnValue);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Throws<TException>() where TException : Exception, new();
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws<TException>() where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Throws(Exception exception);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Throws(Func<Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> Throws(Func<TValue, T1, T2, T3, Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<TValue, T1, T2, T3, Exception> callback);
 }
 
 /// <summary>
@@ -436,6 +499,39 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IIndexerSetup<TValue, T1, T2, T3> For(int times);
+}
+
+/// <summary>
+///     Sets up a return/throw builder for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
+/// </summary>
+public interface IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3> : IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for indexer accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
+	/// </remarks>
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
+/// </summary>
+public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2, out T3> : IIndexerSetup<TValue, T1, T2, T3>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetupReturnBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -505,47 +601,47 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<TValue, T1, T2, T3, T4, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue, T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Returns(TValue returnValue);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Throws<TException>() where TException : Exception, new();
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>() where TException : Exception, new();
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Throws(Exception exception);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Exception exception);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
 	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<TValue, T1, T2, T3, T4, Exception> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<TValue, T1, T2, T3, T4, Exception> callback);
 }
 
 /// <summary>
@@ -579,6 +675,40 @@ public interface
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IIndexerSetup<TValue, T1, T2, T3, T4> For(int times);
+}
+
+/// <summary>
+///     Sets up a return/throw builder for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
+/// </summary>
+public interface
+	IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3, out T4> : IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for indexer accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
+	/// </remarks>
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
+/// </summary>
+public interface
+	IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2, out T3, out T4> : IIndexerSetup<TValue, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetupReturnBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IIndexerSetup<TValue, T1, T2, T3, T4> For(int times);

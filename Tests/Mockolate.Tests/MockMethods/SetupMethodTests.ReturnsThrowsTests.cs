@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class SetupMethodTests
@@ -57,6 +59,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method0());
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -66,6 +86,42 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method0();
 
 				await That(result).IsEqualTo("d");
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut.Method0();
+				string result2 = sut.Method0();
+				string result3 = sut.Method0();
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method0());
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -189,6 +245,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method1(1));
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -198,6 +272,42 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method1(3);
 
 				await That(result).IsEqualTo("d");
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut.Method1(1);
+				string result2 = sut.Method1(1);
+				string result3 = sut.Method1(1);
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method1(1));
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -356,6 +466,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method2(1, 2));
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -365,6 +493,42 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method2(2, 3);
 
 				await That(result).IsEqualTo("d");
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut.Method2(1, 2);
+				string result2 = sut.Method2(1, 2);
+				string result3 = sut.Method2(1, 2);
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method2(1, 2));
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -526,6 +690,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method3(1, 2, 3));
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -536,6 +718,42 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method3(1, 2, 3);
 
 				await That(result).IsEqualTo("d");
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut.Method3(1, 2, 3);
+				string result2 = sut.Method3(1, 2, 3);
+				string result3 = sut.Method3(1, 2, 3);
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method3(1, 2, 3));
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -698,6 +916,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method4(1, 2, 3, 4));
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -708,6 +944,42 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method4(1, 2, 3, 4);
 
 				await That(result).IsEqualTo("d");
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut.Method4(1, 2, 3, 4);
+				string result2 = sut.Method4(1, 2, 3, 4);
+				string result3 = sut.Method4(1, 2, 3, 4);
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method4(1, 2, 3, 4));
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -874,6 +1146,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method5(1, 2, 3, 4, 5));
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -885,6 +1175,42 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method5(1, 2, 3, 4, 5);
 
 				await That(result).IsEqualTo("d");
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut.Method5(1, 2, 3, 4, 5);
+				string result2 = sut.Method5(1, 2, 3, 4, 5);
+				string result3 = sut.Method5(1, 2, 3, 4, 5);
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut.Method5(1, 2, 3, 4, 5));
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -1007,6 +1333,72 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Throws(new Exception("foo")).For(2)
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method0();
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Throws(new Exception("foo")).When(i => i > 0);
+
+				await That(() => sut.Method0()).DoesNotThrow();
+				await That(() => sut.Method0()).ThrowsException().WithMessage("foo");
+				await That(() => sut.Method0()).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Throws(new Exception("foo")).When(i => i > 0).For(2)
+					.Throws(new Exception("baz"))
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method0();
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
+			}
+
+			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
@@ -1073,6 +1465,72 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Throws(new Exception("foo")).For(2)
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method1(1);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0);
+
+				await That(() => sut.Method1(1)).DoesNotThrow();
+				await That(() => sut.Method1(1)).ThrowsException().WithMessage("foo");
+				await That(() => sut.Method1(1)).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0).For(2)
+					.Throws(new Exception("baz"))
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method1(1);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -1159,6 +1617,72 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).For(2)
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method2(1, 2);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0);
+
+				await That(() => sut.Method2(1, 2)).DoesNotThrow();
+				await That(() => sut.Method2(1, 2)).ThrowsException().WithMessage("foo");
+				await That(() => sut.Method2(1, 2)).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0).For(2)
+					.Throws(new Exception("baz"))
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method2(1, 2);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -1250,6 +1774,72 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).For(2)
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method3(1, 2, 3);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0);
+
+				await That(() => sut.Method3(1, 2, 3)).DoesNotThrow();
+				await That(() => sut.Method3(1, 2, 3)).ThrowsException().WithMessage("foo");
+				await That(() => sut.Method3(1, 2, 3)).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0).For(2)
+					.Throws(new Exception("baz"))
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method3(1, 2, 3);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
+			}
+
+			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
@@ -1335,6 +1925,72 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).For(2)
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method4(1, 2, 3, 4);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0);
+
+				await That(() => sut.Method4(1, 2, 3, 4)).DoesNotThrow();
+				await That(() => sut.Method4(1, 2, 3, 4)).ThrowsException().WithMessage("foo");
+				await That(() => sut.Method4(1, 2, 3, 4)).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0).For(2)
+					.Throws(new Exception("baz"))
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method4(1, 2, 3, 4);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]
@@ -1424,6 +2080,72 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).For(2)
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method5(1, 2, 3, 4, 5);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0);
+
+				await That(() => sut.Method5(1, 2, 3, 4, 5)).DoesNotThrow();
+				await That(() => sut.Method5(1, 2, 3, 4, 5)).ThrowsException().WithMessage("foo");
+				await That(() => sut.Method5(1, 2, 3, 4, 5)).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("foo")).When(i => i > 0).For(2)
+					.Throws(new Exception("baz"))
+					.Throws(new Exception("bar")).For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method5(1, 2, 3, 4, 5);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
 			[Fact]

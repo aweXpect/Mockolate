@@ -145,7 +145,7 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Returns(Func<TValue, ")
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<TValue, ")
 			.Append(typeParams).Append(", TValue> callback);").AppendLine();
 		sb.AppendLine();
 
@@ -153,7 +153,7 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Returns(Func<").Append(typeParams)
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<").Append(typeParams)
 			.Append(", TValue> callback);").AppendLine();
 		sb.AppendLine();
 
@@ -161,21 +161,21 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Returns(Func<TValue> callback);")
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<TValue> callback);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers the <paramref name=\"returnValue\" /> for this indexer.").AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Returns(TValue returnValue);").AppendLine();
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(TValue returnValue);").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Throws<TException>()")
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
 		sb.Append("\t\twhere TException : Exception, new();").AppendLine();
 		sb.AppendLine();
@@ -184,7 +184,7 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Throws(Exception exception);").AppendLine();
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Exception exception);").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <summary>").AppendLine();
@@ -192,7 +192,7 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Throws(Func<Exception> callback);")
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<Exception> callback);")
 			.AppendLine();
 		sb.AppendLine();
 
@@ -201,7 +201,7 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Throws(Func<").Append(typeParams)
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<").Append(typeParams)
 			.Append(", Exception> callback);").AppendLine();
 		sb.AppendLine();
 
@@ -210,7 +210,7 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Throws(Func<TValue, ")
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<TValue, ")
 			.Append(typeParams).Append(", Exception> callback);").AppendLine();
 
 		sb.Append("}").AppendLine();
@@ -272,6 +272,61 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("/// <summary>").AppendLine();
+		sb.Append("///     Sets up a callback for a <typeparamref name=\"TValue\"/> indexer for ");
+		for (int i = 1; i < numberOfParameters - 1; i++)
+		{
+			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
+		}
+
+		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
+			.Append(numberOfParameters).Append("\" />.").AppendLine();
+		sb.Append("/// </summary>").AppendLine();
+		sb.Append("internal interface IIndexerSetupReturnBuilder<TValue, ").Append(outTypeParams)
+			.Append("> : IIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams).Append(">").AppendLine();
+		sb.Append("{").AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t///     Limits the callback to only execute for property accesses where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t///     Provides a zero-based counter indicating how many times the property has been accessed so far.")
+			.AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams)
+			.Append("> When(Func<int, bool> predicate);").AppendLine();
+		sb.Append("}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("/// <summary>").AppendLine();
+		sb.Append("///     Sets up a when callback for a <typeparamref name=\"TValue\"/> indexer for ");
+		for (int i = 1; i < numberOfParameters - 1; i++)
+		{
+			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
+		}
+
+		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
+			.Append(numberOfParameters).Append("\" />.").AppendLine();
+		sb.Append("/// </summary>").AppendLine();
+		sb.Append("internal interface IIndexerSetupReturnWhenBuilder<TValue, ").Append(outTypeParams)
+			.Append("> : IIndexerSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
+		sb.Append("{").AppendLine();
+		sb.Append("\t/// <summary>").AppendLine();
+		sb.Append("\t///     Limits the callback to only execute for the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t/// </summary>").AppendLine();
+		sb.Append("\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t///     The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{TValue, ")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t/// </remarks>").AppendLine();
+		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Sets up a <typeparamref name=\"TValue\"/> indexer for ");
 		for (int i = 1; i < numberOfParameters - 1; i++)
 		{
@@ -284,8 +339,10 @@ internal static partial class Sources
 		sb.Append("internal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
 			.Append(
 				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"Match.IParameter match{i}")))
-			.Append(") : IndexerSetup, IIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append(">")
+			.Append(") : IndexerSetup,")
 			.AppendLine();
+		sb.Append("\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();
+		sb.Append("\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\tprivate readonly List<Callback<Action<int, ").Append(typeParams)
 			.Append(">>> _getterCallbacks = [];")
@@ -293,11 +350,12 @@ internal static partial class Sources
 		sb.Append("\tprivate readonly List<Callback<Action<int, TValue, ").Append(typeParams)
 			.Append(">>> _setterCallbacks = [];")
 			.AppendLine();
-		sb.Append("\tprivate readonly List<Func<TValue, ").Append(typeParams)
-			.Append(", TValue>> _returnCallbacks = [];")
+		sb.Append("\tprivate readonly List<Callback<Func<int, TValue, ").Append(typeParams)
+			.Append(", TValue>>> _returnCallbacks = [];")
 			.AppendLine();
 		sb.Append("\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\tprivate Callback? _currentCallback;").AppendLine();
+		sb.Append("\tprivate Callback? _currentReturnCallback;").AppendLine();
 		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
 		sb.Append("\tprivate Func<").Append(typeParams).Append(", TValue>? _initialization;").AppendLine();
 		sb.AppendLine();
@@ -476,10 +534,12 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Returns(Func<TValue, ")
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<TValue, ")
 			.Append(typeParams).Append(", TValue> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add(callback);").AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, v, ").Append(parameters).Append(") => callback(v, ").Append(parameters).Append("));").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -488,11 +548,12 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Returns(Func<").Append(typeParams)
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<").Append(typeParams)
 			.Append(", TValue> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(parameters).Append(") => callback(").Append(parameters)
-			.Append("));").AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, _, ").Append(parameters).Append(") => callback(").Append(parameters).Append("));").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -501,10 +562,12 @@ internal static partial class Sources
 		sb.Append("\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Returns(Func<TValue> callback)")
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<TValue> callback)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(discards).Append(") => callback());").AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, _, ").Append(discards).Append(") => callback());").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -512,10 +575,12 @@ internal static partial class Sources
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Registers the <paramref name=\"returnValue\" /> for this indexer.").AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Returns(TValue returnValue)")
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(TValue returnValue)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(discards).Append(") => returnValue);").AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, _, ").Append(discards).Append(") => returnValue);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -524,12 +589,13 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <typeparamref name=\"TException\" /> to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Throws<TException>()")
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
 		sb.Append("\t\twhere TException : Exception, new()").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(discards).Append(") => throw new TException());")
-			.AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, _, ").Append(discards).Append(") => throw new TException());").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -538,10 +604,12 @@ internal static partial class Sources
 		sb.Append("\t///     Registers an <paramref name=\"exception\" /> to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Throws(Exception exception)")
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Exception exception)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(discards).Append(") => throw exception);").AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, _, ").Append(discards).Append(") => throw exception);").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -551,10 +619,12 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Throws(Func<Exception> callback)")
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<Exception> callback)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(discards).Append(") => throw callback());").AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, _, ").Append(discards).Append(") => throw callback());").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -564,11 +634,12 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Throws(Func<").Append(typeParams)
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<").Append(typeParams)
 			.Append(", Exception> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((_, ").Append(parameters).Append(") => throw callback(").Append(parameters)
-			.Append("));").AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, _, ").Append(parameters).Append(") => throw callback(").Append(parameters).Append("));").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -578,19 +649,21 @@ internal static partial class Sources
 				"\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
 			.AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> Throws(Func<TValue, ")
+		sb.Append("\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<TValue, ")
 			.Append(typeParams).Append(", Exception> callback)").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_returnCallbacks.Add((v, ").Append(parameters).Append(") => throw callback(v, ")
-			.Append(parameters).Append("));").AppendLine();
+		sb.Append("\t\tvar currentCallback = new Callback<Func<int, TValue, ").Append(typeParams).Append(", TValue>>((_, v, ").Append(parameters).Append(") => throw callback(v, ").Append(parameters).Append("));").AppendLine();
+		sb.Append("\t\t_currentReturnCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t/// <inheritdoc cref=\"IIndexerSetupCallbackBuilder{TValue, ").Append(typeParams)
 			.Append("}.When(Func{int, bool})\" />").AppendLine();
-		sb.Append("\tpublic IIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
-			.Append("> When(Func<int, bool> predicate)").AppendLine();
+		sb.Append("\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
+			.Append("> IIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+			.Append(">.When(Func<int, bool> predicate)").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_currentCallback?.When(predicate);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
@@ -599,9 +672,31 @@ internal static partial class Sources
 
 		sb.Append("\t/// <inheritdoc cref=\"IIndexerSetupCallbackWhenBuilder{TValue, ").Append(typeParams)
 			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> For(int times)").AppendLine();
+		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
+			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t_currentCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"IIndexerSetupReturnBuilder{TValue, ").Append(typeParams)
+			.Append("}.When(Func{int, bool})\" />").AppendLine();
+		sb.Append("\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams)
+			.Append("> IIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
+			.Append(">.When(Func<int, bool> predicate)").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_currentReturnCallback?.When(predicate);").AppendLine();
+		sb.Append("\t\treturn this;").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t/// <inheritdoc cref=\"IIndexerSetupReturnWhenBuilder{TValue, ").Append(typeParams)
+			.Append("}.For(int)\" />").AppendLine();
+		sb.Append("\tIIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams)
+			.Append(">.For(int times)").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\t_currentReturnCallback?.For(x => x < times);").AppendLine();
 		sb.Append("\t\treturn this;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -629,14 +724,14 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t\t\t\t=> @delegate(invocationCount, ").Append(parameters).Append(")));")
 			.AppendLine();
-		sb.Append("\t\t\tif (_returnCallbacks.Count > 0)").AppendLine();
+		sb.Append("\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tint index = Interlocked.Increment(ref _currentReturnCallbackIndex);").AppendLine();
-		sb.Append("\t\t\t\tFunc<TValue, ").Append(typeParams)
-			.Append(", TValue> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\tTValue newValue = returnCallback(resultValue, ").Append(parameters).Append(");")
-			.AppendLine();
-		sb.Append("\t\t\t\tif (TryCast<T>(newValue, out T? returnValue, behavior))").AppendLine();
+		sb.Append("\t\t\t\tCallback<Func<int, TValue, ").Append(typeParams)
+			.Append(", TValue>> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];").AppendLine();
+		sb.Append("\t\t\t\tif (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)").AppendLine();
+		sb.Append("\t\t\t\t\t\t=> @delegate(invocationCount, resultValue, ").Append(parameters).Append("), out TValue? newValue) &&").AppendLine();
+		sb.Append("\t\t\t\t\tTryCast(newValue, out T returnValue, behavior))").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\treturn returnValue;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();

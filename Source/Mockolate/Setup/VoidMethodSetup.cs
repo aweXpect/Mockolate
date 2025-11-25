@@ -9,12 +9,13 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbackBuilder
+public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbackBuilder, IVoidMethodSetupReturnBuilder
 {
 	private readonly List<Callback<Action<int>>> _callbacks = [];
-	private readonly List<Action> _returnCallbacks = [];
+	private readonly List<Callback<Action<int>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <summary>
@@ -56,49 +57,72 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	/// </summary>
 	public IVoidMethodSetup DoesNotThrow()
 	{
-		_returnCallbacks.Add(() => { });
+		Callback<Action<int>> currentCallback = new(_ => { });
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup Throws<TException>()
+	public IVoidMethodSetupReturnBuilder Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add(() => throw new TException());
+		Callback<Action<int>> currentCallback = new(_ => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup Throws(Exception exception)
+	public IVoidMethodSetupReturnBuilder Throws(Exception exception)
 	{
-		_returnCallbacks.Add(() => throw exception);
+		Callback<Action<int>> currentCallback = new(_ => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup Throws(Func<Exception> callback)
+	public IVoidMethodSetupReturnBuilder Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add(() => throw callback());
+		Callback<Action<int>> currentCallback = new(_ => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" />
-	public IVoidMethodSetupCallbackWhenBuilder When(Func<int, bool> predicate)
+	IVoidMethodSetupCallbackWhenBuilder IVoidMethodSetupCallbackBuilder.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder.For(int)" />
-	public IVoidMethodSetup For(int times)
+	IVoidMethodSetup IVoidMethodSetupCallbackWhenBuilder.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder.When(Func{int, bool})" />
+	IVoidMethodSetupReturnWhenBuilder IVoidMethodSetupReturnBuilder.When(Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder.For(int)" />
+	IVoidMethodSetup IVoidMethodSetupReturnWhenBuilder.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -107,11 +131,17 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	{
 		_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 			=> @delegate(invocationCount)));
-		if (_returnCallbacks.Count > 0)
+		
+		foreach (var _ in _returnCallbacks)
 		{
 			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-			Action returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-			returnCallback();
+			var returnCallback =
+				_returnCallbacks[index % _returnCallbacks.Count];
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount)))
+			{
+				return;
+			}
 		}
 	}
 
@@ -153,15 +183,17 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<T1>
+public class VoidMethodSetup<T1> : MethodSetup,
+	IVoidMethodSetupCallbackBuilder<T1>, IVoidMethodSetupReturnBuilder<T1>
 {
 	private readonly List<Callback<Action<int, T1>>> _callbacks = [];
 	private readonly Match.NamedParameter? _match1;
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
-	private readonly List<Action<T1>> _returnCallbacks = [];
+	private readonly List<Callback<Action<int, T1>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1}" />
@@ -228,58 +260,82 @@ public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<
 	/// </summary>
 	public IVoidMethodSetup<T1> DoesNotThrow()
 	{
-		_returnCallbacks.Add(_ => { });
+		Callback<Action<int, T1>> currentCallback = new((_, _) => { });
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1> Throws<TException>()
+	public IVoidMethodSetupReturnBuilder<T1> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add(_ => throw new TException());
+		Callback<Action<int, T1>> currentCallback = new((_, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1> Throws(Exception exception)
+	public IVoidMethodSetupReturnBuilder<T1> Throws(Exception exception)
 	{
-		_returnCallbacks.Add(_ => throw exception);
+		Callback<Action<int, T1>> currentCallback = new((_, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1> Throws(Func<Exception> callback)
+	public IVoidMethodSetupReturnBuilder<T1> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add(_ => throw callback());
+		Callback<Action<int, T1>> currentCallback = new((_, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1> Throws(Func<T1, Exception> callback)
+	public IVoidMethodSetupReturnBuilder<T1> Throws(Func<T1, Exception> callback)
 	{
-		_returnCallbacks.Add(v1 => throw callback(v1));
+		Callback<Action<int, T1>> currentCallback = new((_, p1) => throw callback(p1));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1}.When(Func{int, bool})" />
-	public IVoidMethodSetupCallbackWhenBuilder<T1> When(Func<int, bool> predicate)
+	IVoidMethodSetupCallbackWhenBuilder<T1> IVoidMethodSetupCallbackBuilder<T1>.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1}.For(int)" />
-	public IVoidMethodSetup<T1> For(int times)
+	IVoidMethodSetup<T1> IVoidMethodSetupCallbackWhenBuilder<T1>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder{T1}.When(Func{int, bool})" />
+	IVoidMethodSetupReturnWhenBuilder<T1> IVoidMethodSetupReturnBuilder<T1>.When(Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1}.For(int)" />
+	IVoidMethodSetup<T1> IVoidMethodSetupReturnWhenBuilder<T1>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -290,11 +346,16 @@ public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<
 		{
 			_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1)));
-			if (_returnCallbacks.Count > 0)
+			foreach (var _ in _returnCallbacks)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Action<T1> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				returnCallback(p1);
+				var returnCallback =
+					_returnCallbacks[index % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, p1)))
+				{
+					return;
+				}
 			}
 		}
 	}
@@ -357,16 +418,18 @@ public class VoidMethodSetup<T1> : MethodSetup, IVoidMethodSetupCallbackBuilder<
 ///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
 ///     <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1, T2> : MethodSetup, IVoidMethodSetupCallbackBuilder<T1, T2>
+public class VoidMethodSetup<T1, T2> : MethodSetup,
+	IVoidMethodSetupCallbackBuilder<T1, T2>, IVoidMethodSetupReturnBuilder<T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2>>> _callbacks = [];
 	private readonly Match.NamedParameter? _match1;
 	private readonly Match.NamedParameter? _match2;
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
-	private readonly List<Action<T1, T2>> _returnCallbacks = [];
+	private readonly List<Callback<Action<int, T1, T2>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
@@ -434,58 +497,82 @@ public class VoidMethodSetup<T1, T2> : MethodSetup, IVoidMethodSetupCallbackBuil
 	/// </summary>
 	public IVoidMethodSetup<T1, T2> DoesNotThrow()
 	{
-		_returnCallbacks.Add((_, _) => { });
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => { });
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2> Throws<TException>()
+	public IVoidMethodSetupReturnBuilder<T1, T2> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add((_, _) => throw new TException());
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2> Throws(Exception exception)
+	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Exception exception)
 	{
-		_returnCallbacks.Add((_, _) => throw exception);
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2> Throws(Func<Exception> callback)
+	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add((_, _) => throw callback());
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2> Throws(Func<T1, T2, Exception> callback)
+	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
-		_returnCallbacks.Add((v1, v2) => throw callback(v1, v2));
+		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => throw callback(p1, p2));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2}.When(Func{int, bool})" />
-	public IVoidMethodSetupCallbackWhenBuilder<T1, T2> When(Func<int, bool> predicate)
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2> IVoidMethodSetupCallbackBuilder<T1, T2>.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2}.For(int)" />
-	public IVoidMethodSetup<T1, T2> For(int times)
+	IVoidMethodSetup<T1, T2> IVoidMethodSetupCallbackWhenBuilder<T1, T2>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder{T1, T2}.When(Func{int, bool})" />
+	IVoidMethodSetupReturnWhenBuilder<T1, T2> IVoidMethodSetupReturnBuilder<T1, T2>.When(Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2}.For(int)" />
+	IVoidMethodSetup<T1, T2> IVoidMethodSetupReturnWhenBuilder<T1, T2>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -497,11 +584,16 @@ public class VoidMethodSetup<T1, T2> : MethodSetup, IVoidMethodSetupCallbackBuil
 		{
 			_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2)));
-			if (_returnCallbacks.Count > 0)
+			foreach (var _ in _returnCallbacks)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Action<T1, T2> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				returnCallback(p1, p2);
+				var returnCallback =
+					_returnCallbacks[index % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, p1, p2)))
+				{
+					return;
+				}
 			}
 		}
 	}
@@ -564,7 +656,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup, IVoidMethodSetupCallbackBuil
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallbackBuilder<T1, T2, T3>
+public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3>, IVoidMethodSetupReturnBuilder<T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _callbacks = [];
 	private readonly Match.NamedParameter? _match1;
@@ -572,9 +665,10 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallback
 	private readonly Match.NamedParameter? _match3;
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
-	private readonly List<Action<T1, T2, T3>> _returnCallbacks = [];
+	private readonly List<Callback<Action<int, T1, T2, T3>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
@@ -647,58 +741,82 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallback
 	/// </summary>
 	public IVoidMethodSetup<T1, T2, T3> DoesNotThrow()
 	{
-		_returnCallbacks.Add((_, _, _) => { });
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => { });
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2, T3> Throws<TException>()
+	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add((_, _, _) => throw new TException());
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2, T3> Throws(Exception exception)
+	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Exception exception)
 	{
-		_returnCallbacks.Add((_, _, _) => throw exception);
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2, T3> Throws(Func<Exception> callback)
+	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add((_, _, _) => throw callback());
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
+	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
-		_returnCallbacks.Add((v1, v2, v3) => throw callback(v1, v2, v3));
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => throw callback(p1, p2, p3));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3}.When(Func{int, bool})" />
-	public IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> When(Func<int, bool> predicate)
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> IVoidMethodSetupCallbackBuilder<T1, T2, T3>.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2, T3}.For(int)" />
-	public IVoidMethodSetup<T1, T2, T3> For(int times)
+	IVoidMethodSetup<T1, T2, T3> IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder{T1, T2, T3}.When(Func{int, bool})" />
+	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> IVoidMethodSetupReturnBuilder<T1, T2, T3>.When(Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2, T3}.For(int)" />
+	IVoidMethodSetup<T1, T2, T3> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -711,11 +829,16 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallback
 		{
 			_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2, p3)));
-			if (_returnCallbacks.Count > 0)
+			foreach (var _ in _returnCallbacks)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Action<T1, T2, T3> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				returnCallback(p1, p2, p3);
+				var returnCallback =
+					_returnCallbacks[index % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, p1, p2, p3)))
+				{
+					return;
+				}
 			}
 		}
 	}
@@ -778,7 +901,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup, IVoidMethodSetupCallback
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>
+public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _callbacks = [];
 	private readonly Match.NamedParameter? _match1;
@@ -787,9 +911,10 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IVoidMethodSetupCall
 	private readonly Match.NamedParameter? _match4;
 	private readonly Match.IParameters? _matches;
 	private readonly string _name;
-	private readonly List<Action<T1, T2, T3, T4>> _returnCallbacks = [];
+	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex = -1;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
@@ -864,58 +989,82 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IVoidMethodSetupCall
 	/// </summary>
 	public IVoidMethodSetup<T1, T2, T3, T4> DoesNotThrow()
 	{
-		_returnCallbacks.Add((_, _, _, _) => { });
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => { });
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2, T3, T4> Throws<TException>()
+	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new()
 	{
-		_returnCallbacks.Add((_, _, _, _) => throw new TException());
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => throw new TException());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2, T3, T4> Throws(Exception exception)
+	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Exception exception)
 	{
-		_returnCallbacks.Add((_, _, _, _) => throw exception);
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => throw exception);
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2, T3, T4> Throws(Func<Exception> callback)
+	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<Exception> callback)
 	{
-		_returnCallbacks.Add((_, _, _, _) => throw callback());
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => throw callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
-	public IVoidMethodSetup<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
+	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
-		_returnCallbacks.Add((v1, v2, v3, v4) => throw callback(v1, v2, v3, v4));
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => throw callback(p1, p2, p3, p4));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3, T4}.When(Func{int, bool})" />
-	public IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> When(Func<int, bool> predicate)
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2, T3, T4}.For(int)" />
-	public IVoidMethodSetup<T1, T2, T3, T4> For(int times)
+	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder{T1, T2, T3, T4}.When(Func{int, bool})" />
+	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>.When(Func<int, bool> predicate)
+	{
+		_currentReturnCallback?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2, T3, T4}.For(int)" />
+	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>.For(int times)
+	{
+		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
 
@@ -929,11 +1078,16 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IVoidMethodSetupCall
 		{
 			_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 				=> @delegate(invocationCount, p1, p2, p3, p4)));
-			if (_returnCallbacks.Count > 0)
+			foreach (var _ in _returnCallbacks)
 			{
 				int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
-				Action<T1, T2, T3, T4> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];
-				returnCallback(p1, p2, p3, p4);
+				var returnCallback =
+					_returnCallbacks[index % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, p1, p2, p3, p4)))
+				{
+					return;
+				}
 			}
 		}
 	}

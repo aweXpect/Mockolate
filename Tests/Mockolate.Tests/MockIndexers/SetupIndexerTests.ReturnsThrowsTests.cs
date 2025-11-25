@@ -1,4 +1,6 @@
-﻿namespace Mockolate.Tests.MockIndexers;
+﻿using System.Collections.Generic;
+
+namespace Mockolate.Tests.MockIndexers;
 
 public sealed partial class SetupIndexerTests
 {
@@ -97,6 +99,60 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
+		public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+		{
+			IIndexerService sut = Mock.Create<IIndexerService>();
+
+			sut.SetupMock.Indexer(Any<int>())
+				.Returns("foo").When(i => i > 0);
+
+			string result1 = sut[3];
+			string result2 = sut[4];
+			string result3 = sut[5];
+
+			await That(result1).IsEqualTo("");
+			await That(result2).IsEqualTo("foo");
+			await That(result3).IsEqualTo("foo");
+		}
+
+		[Fact]
+		public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+		{
+			IIndexerService sut = Mock.Create<IIndexerService>();
+
+			sut.SetupMock.Indexer(Any<int>())
+				.Returns("foo").When(i => i > 0).For(2)
+				.Returns("baz")
+				.Returns("bar").For(3);
+
+			List<string> values = [];
+			for (int i = 0; i < 10; i++)
+			{
+				values.Add(sut[i]);
+			}
+
+			await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
+		}
+
+		[Fact]
+		public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+		{
+			IIndexerService sut = Mock.Create<IIndexerService>();
+
+			sut.SetupMock.Indexer(Any<int>())
+				.Returns("foo").For(2)
+				.Returns("bar").For(3);
+
+			List<string> values = [];
+			for (int i = 0; i < 10; i++)
+			{
+				values.Add(sut[i]);
+			}
+
+			await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+		}
+
+		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -190,6 +246,60 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With2Levels
 		{
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut[3, 2];
+				string result2 = sut[4, 2];
+				string result3 = sut[5, 2];
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i, 2]);
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
+			}
+
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i, 2]);
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+			
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -377,6 +487,60 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With3Levels
 		{
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut[3, 2, 3];
+				string result2 = sut[4, 2, 3];
+				string result3 = sut[5, 2, 3];
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i, 2, 3]);
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
+			}
+
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i, 2, 3]);
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -566,6 +730,60 @@ public sealed partial class SetupIndexerTests
 		public sealed class With4Levels
 		{
 			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut[3, 2, 3, 4];
+				string result2 = sut[4, 2, 3, 4];
+				string result3 = sut[5, 2, 3, 4];
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i, 2, 3, 4]);
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
+			}
+
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i, 2, 3, 4]);
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+			
+			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -754,6 +972,60 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With5Levels
 		{
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut[3, 2, 3, 4, 5];
+				string result2 = sut[4, 2, 3, 4, 5];
+				string result3 = sut[5, 2, 3, 4, 5];
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
+			}
+
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i, 2, 3, 4, 5]);
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
+			}
+
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i, 2, 3, 4, 5]);
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
