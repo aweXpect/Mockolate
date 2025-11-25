@@ -84,7 +84,7 @@ public static class VerificationResultExtensions
 	}
 
 	/// <summary>
-	///     …between <paramref name="min" /> and <paramref name="max" /> times (inclusive).
+	///     Verifies that the mock was invoked between <paramref name="min" /> and <paramref name="max" /> times (inclusive).
 	/// </summary>
 	public static void Between<TMock>(this VerificationResult<TMock> verificationResult, int min, int max)
 	{
@@ -220,7 +220,7 @@ public static class VerificationResultExtensions
 	}
 
 	/// <summary>
-	///     …a number of times that satisfies the specified <paramref name="predicate" />.
+	///     Verifies that the mock was invoked a number of times that satisfies the specified <paramref name="predicate" />.
 	/// </summary>
 	public static void Times<TMock>(this VerificationResult<TMock> verificationResult, Func<int, bool> predicate)
 	{
