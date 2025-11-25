@@ -356,7 +356,7 @@ internal static partial class Sources
 		sb.Append("\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\tprivate Callback? _currentCallback;").AppendLine();
 		sb.Append("\tprivate Callback? _currentReturnCallback;").AppendLine();
-		sb.Append("\tprivate int _currentReturnCallbackIndex = -1;").AppendLine();
+		sb.Append("\tprivate int _currentReturnCallbackIndex;").AppendLine();
 		sb.Append("\tprivate Func<").Append(typeParams).Append(", TValue>? _initialization;").AppendLine();
 		sb.AppendLine();
 
@@ -726,9 +726,8 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\tint index = Interlocked.Increment(ref _currentReturnCallbackIndex);").AppendLine();
 		sb.Append("\t\t\t\tCallback<Func<int, TValue, ").Append(typeParams)
-			.Append(", TValue>> returnCallback = _returnCallbacks[index % _returnCallbacks.Count];").AppendLine();
+			.Append(", TValue>> returnCallback = _returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];").AppendLine();
 		sb.Append("\t\t\t\tif (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)").AppendLine();
 		sb.Append("\t\t\t\t\t\t=> @delegate(invocationCount, resultValue, ").Append(parameters).Append("), out TValue? newValue) &&").AppendLine();
 		sb.Append("\t\t\t\t\tTryCast(newValue, out T returnValue, behavior))").AppendLine();

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 
@@ -17,7 +16,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.CallingBaseClass(bool)" />
 	public IReturnMethodSetup<TReturn> CallingBaseClass(bool callBaseClass = true)
@@ -146,9 +145,8 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 	{
 		foreach (Callback<Func<int, TReturn>> _ in _returnCallbacks)
 		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 			Callback<Func<int, TReturn>> returnCallback =
-				_returnCallbacks[index % _returnCallbacks.Count];
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount), out TReturn? newValue))
 			{
@@ -214,7 +212,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
 	public ReturnMethodSetup(string name, Match.NamedParameter match1)
@@ -406,9 +404,8 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 
 		foreach (Callback<Func<int, T1, TReturn>> _ in _returnCallbacks)
 		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 			Callback<Func<int, T1, TReturn>> returnCallback =
-				_returnCallbacks[index % _returnCallbacks.Count];
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1), out TReturn? newValue))
 			{
@@ -416,7 +413,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 				{
 					return default!;
 				}
-				
+
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
 					throw new MockException(
@@ -495,7 +492,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
 	public ReturnMethodSetup(string name, Match.NamedParameter match1, Match.NamedParameter match2)
@@ -695,9 +692,8 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 
 		foreach (Callback<Func<int, T1, T2, TReturn>> _ in _returnCallbacks)
 		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 			Callback<Func<int, T1, T2, TReturn>> returnCallback =
-				_returnCallbacks[index % _returnCallbacks.Count];
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2), out TReturn? newValue))
 			{
@@ -785,7 +781,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
 	public ReturnMethodSetup(
@@ -998,9 +994,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 
 		foreach (Callback<Func<int, T1, T2, T3, TReturn>> _ in _returnCallbacks)
 		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 			Callback<Func<int, T1, T2, T3, TReturn>> returnCallback =
-				_returnCallbacks[index % _returnCallbacks.Count];
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2, p3), out TReturn? newValue))
 			{
@@ -1090,7 +1085,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex = -1;
+	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
 	public ReturnMethodSetup(
@@ -1316,9 +1311,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 
 		foreach (Callback<Func<int, T1, T2, T3, T4, TReturn>> _ in _returnCallbacks)
 		{
-			int index = Interlocked.Increment(ref _currentReturnCallbackIndex);
 			Callback<Func<int, T1, T2, T3, T4, TReturn>> returnCallback =
-				_returnCallbacks[index % _returnCallbacks.Count];
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
 			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2, p3, p4), out TReturn? newValue))
 			{
