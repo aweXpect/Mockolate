@@ -63,9 +63,10 @@ internal static partial class Sources
 					mockClass.Delegate.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Type.Fullname} {p.Name}")))
 				.Append(')').AppendLine();
 			sb.Append("\t{").AppendLine();
+			string resultVarName = Helpers.GetUniqueLocalVariableName("result", mockClass.Delegate.Parameters);
 			if (mockClass.Delegate.ReturnType != Type.Void)
 			{
-				sb.Append("\t\tvar result = _mock.Registrations.InvokeMethod<")
+				sb.Append("\t\tvar ").Append(resultVarName).Append(" = _mock.Registrations.InvokeMethod<")
 					.Append(mockClass.Delegate.ReturnType.Fullname)
 					.Append(">(").Append(mockClass.Delegate.GetUniqueNameString());
 				foreach (MethodParameter p in mockClass.Delegate.Parameters)
@@ -77,7 +78,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\tvar result = _mock.Registrations.InvokeMethod(")
+				sb.Append("\t\tvar ").Append(resultVarName).Append(" = _mock.Registrations.InvokeMethod(")
 					.Append(mockClass.Delegate.GetUniqueNameString());
 				foreach (MethodParameter p in mockClass.Delegate.Parameters)
 				{
@@ -91,24 +92,24 @@ internal static partial class Sources
 			{
 				if (parameter.RefKind == RefKind.Out)
 				{
-					sb.Append("\t\t").Append(parameter.Name).Append(" = result.SetOutParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(resultVarName).Append(".SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
 						.Append("\");").AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
-					sb.Append("\t\t").Append(parameter.Name).Append(" = result.SetRefParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(resultVarName).Append(".SetRefParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
 						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
 				}
 			}
 
-			sb.Append("\t\tresult.TriggerCallbacks(")
+			sb.Append("\t\t").Append(resultVarName).Append(".TriggerCallbacks(")
 				.Append(string.Join(", ", mockClass.Delegate.Parameters.Select(p => p.Name)))
 				.Append(");").AppendLine();
 			if (mockClass.Delegate.ReturnType != Type.Void)
 			{
-				sb.Append("\t\treturn result.Result;").AppendLine();
+				sb.Append("\t\treturn ").Append(resultVarName).Append(".Result;").AppendLine();
 			}
 
 			sb.Append("\t}").AppendLine();
@@ -391,7 +392,9 @@ internal static partial class Sources
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
-					sb.Append("\t\t\tvar indexerResult = MockRegistrations.GetIndexer<");
+					string indexerResultVarName = Helpers.GetUniqueLocalVariableName("indexerResult", property.IndexerParameters.Value);
+					string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
+					sb.Append("\t\t\tvar ").Append(indexerResultVarName).Append(" = MockRegistrations.GetIndexer<");
 					
 					if (property.ReturnsSpan)
 					{
@@ -416,15 +419,15 @@ internal static partial class Sources
 							})))
 						.AppendLine(");");
 					sb.Append(
-							"\t\t\tif (indexerResult.CallBaseClass)")
+							"\t\t\tif (").Append(indexerResultVarName).Append(".CallBaseClass)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\tvar baseResult = base[")
+					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base[")
 						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
 						.Append("];").AppendLine();
-					sb.Append("\t\t\t\treturn indexerResult.GetResult(baseResult);").AppendLine();
+					sb.Append("\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(").Append(baseResultVarName).Append(");").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
-					sb.Append("\t\t\treturn indexerResult.GetResult();").AppendLine();
+					sb.Append("\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult();").AppendLine();
 				}
 				else
 				{
@@ -628,6 +631,7 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		sb.AppendLine("\t{");
+		string methodExecutionVarName = Helpers.GetUniqueLocalVariableName("methodExecution", method.Parameters);
 		if (method.ReturnType != Type.Void)
 		{
 			sb.Append("\t\tMethodSetupResult<");
@@ -645,7 +649,7 @@ internal static partial class Sources
 				sb.Append(method.ReturnType.Fullname);
 			}
 			
-			sb.Append("> methodExecution = MockRegistrations.InvokeMethod<");
+			sb.Append("> ").Append(methodExecutionVarName).Append(" = MockRegistrations.InvokeMethod<");
 			
 			if (method.ReturnsSpan)
 			{
@@ -664,7 +668,7 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\tMethodSetupResult methodExecution = MockRegistrations.InvokeMethod(")
+			sb.Append("\t\tMethodSetupResult ").Append(methodExecutionVarName).Append(" = MockRegistrations.InvokeMethod(")
 				.Append(method.GetUniqueNameString());
 		}
 
@@ -687,33 +691,34 @@ internal static partial class Sources
 			{
 				if (parameter.RefKind == RefKind.Out)
 				{
-					sb.Append("\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
-					sb.Append("\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetRefParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name).Append(");").AppendLine();
 				}
 			}
 
-			sb.Append("\t\tmethodExecution.TriggerCallbacks(")
+			sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
 				.Append(
 					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
 				.Append(");").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{
-				sb.Append("\t\treturn methodExecution.Result;").AppendLine();
+				sb.Append("\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
 			}
 		}
 		else if (method.ReturnType != Type.Void)
 		{
+			string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
 			sb.Append(
-					"\t\tif (methodExecution.CallBaseClass)")
+					"\t\tif (").Append(methodExecutionVarName).Append(".CallBaseClass)")
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tvar baseResult = base.").Append(method.Name).Append('(')
+			sb.Append("\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name).Append('(')
 				.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
 				.Append(");").AppendLine();
 			foreach (MethodParameter parameter in method.Parameters)
@@ -721,20 +726,20 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append(
-							"\t\t\tif (methodExecution.HasSetupResult == true)")
+							"\t\t\tif (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
 					sb.Append("\t\t\t}").AppendLine().AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.Append(
-							"\t\t\tif (methodExecution.HasSetupResult == true)")
+							"\t\t\tif (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetRefParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t\t}").AppendLine().AppendLine();
@@ -742,14 +747,14 @@ internal static partial class Sources
 			}
 
 			sb.Append(
-					"\t\t\tif (!methodExecution.HasSetupResult)")
+					"\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)")
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tmethodExecution.TriggerCallbacks(")
+			sb.Append("\t\t\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
 				.Append(
 					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
 				.Append(");").AppendLine();
-			sb.Append("\t\t\t\treturn baseResult;").AppendLine();
+			sb.Append("\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			if (method.Parameters.Any(p => p.RefKind == RefKind.Ref || p.RefKind == RefKind.Out))
@@ -760,12 +765,12 @@ internal static partial class Sources
 				{
 					if (parameter.RefKind == RefKind.Out)
 					{
-						sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetOutParameter<")
 							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
 					}
 					else if (parameter.RefKind == RefKind.Ref)
 					{
-						sb.Append("\t\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetRefParameter<")
 							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 							.Append(parameter.Name).Append(");").AppendLine();
 					}
@@ -775,16 +780,16 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine();
-			sb.Append("\t\tmethodExecution.TriggerCallbacks(")
+			sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
 				.Append(
 					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
 				.Append(");").AppendLine();
-			sb.Append("\t\treturn methodExecution.Result;").AppendLine();
+			sb.Append("\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
 		}
 		else
 		{
 			sb.Append(
-					"\t\tif (methodExecution.CallBaseClass)")
+					"\t\tif (").Append(methodExecutionVarName).Append(".CallBaseClass)")
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tbase.").Append(method.Name).Append('(')
@@ -796,18 +801,18 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.AppendLine();
-					sb.Append("\t\t").Append(parameter.Name).Append(" = methodExecution.SetOutParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
 					sb.AppendLine();
-					sb.Append("\t\t").Append(parameter.Name).Append(" = methodExecution.SetRefParameter<")
+					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetRefParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 						.Append(parameter.Name).Append(");").AppendLine();
 				}
 
-				sb.Append("\t\tmethodExecution.TriggerCallbacks(")
+				sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
 					.Append(string.Join(", ",
 						method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
 					.Append(");").AppendLine();

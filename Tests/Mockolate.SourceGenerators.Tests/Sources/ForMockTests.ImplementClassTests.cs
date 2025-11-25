@@ -1054,5 +1054,137 @@ public sealed partial class ForMockTests
 				          	}
 				          """).IgnoringNewlineStyle();
 		}
+
+		[Fact]
+		public async Task InterfaceMethodWithParameterNamedMethodExecution_ShouldGenerateUniqueLocalVariableName()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         int ProcessData(int methodExecution);
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+				.Contains("MethodSetupResult<int> methodExecution1 = MockRegistrations.InvokeMethod<int>(")
+				.IgnoringNewlineStyle().And
+				.Contains("methodExecution1.TriggerCallbacks(methodExecution)")
+				.IgnoringNewlineStyle().And
+				.Contains("return methodExecution1.Result;")
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task InterfaceMethodWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         int ProcessResult(int result);
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+				.Contains("MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>(")
+				.IgnoringNewlineStyle().And
+				.Contains("methodExecution.TriggerCallbacks(result)")
+				.IgnoringNewlineStyle().And
+				.Contains("return methodExecution.Result;")
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task InterfaceIndexerWithParameterNamedIndexerResult_ShouldGenerateUniqueLocalVariableName()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         int this[int indexerResult] { get; set; }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+				.Contains("return MockRegistrations.GetIndexer<int>(indexerResult).GetResult();")
+				.IgnoringNewlineStyle().And
+				.Contains("MockRegistrations.SetIndexer<int>(value, indexerResult);")
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task BaseClassMethodWithParameterNamedBaseResult_ShouldGenerateUniqueLocalVariableName()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<MyService>();
+				         }
+				     }
+
+				     public class MyService
+				     {
+				         public virtual int ProcessData(int baseResult) => baseResult;
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForMyService.g.cs").WhoseValue
+				.Contains("MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>(")
+				.IgnoringNewlineStyle().And
+				.Contains("if (methodExecution.CallBaseClass)")
+				.IgnoringNewlineStyle().And
+				.Contains("var baseResult1 = base.ProcessData(baseResult);")
+				.IgnoringNewlineStyle().And
+				.Contains("return methodExecution.GetResult(baseResult1);")
+				.Or
+				.Contains("if (!methodExecution.HasSetupResult)")
+				.IgnoringNewlineStyle().And
+				.Contains("return baseResult1;")
+				.IgnoringNewlineStyle();
+		}
 	}
 }
