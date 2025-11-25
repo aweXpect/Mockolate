@@ -84,6 +84,24 @@ public static class VerificationResultExtensions
 	}
 
 	/// <summary>
+	///     …between <paramref name="min" /> and <paramref name="max" /> times (inclusive).
+	/// </summary>
+	public static void Between<TMock>(this VerificationResult<TMock> verificationResult, int min, int max)
+	{
+		IVerificationResult result = verificationResult;
+		int found = 0;
+		if (!result.Verify(interactions =>
+		    {
+			    found = interactions.Length;
+			    return interactions.Length >= min && interactions.Length <= max;
+		    }))
+		{
+			throw new MockVerificationException(
+				$"Expected that mock {result.Expectation} between {min} and {max} times, but it {found.ToTimes("did")}.");
+		}
+	}
+
+	/// <summary>
 	///     …at most once.
 	/// </summary>
 	public static void AtMostOnce<TMock>(this VerificationResult<TMock> verificationResult)
@@ -188,6 +206,24 @@ public static class VerificationResultExtensions
 		{
 			throw new MockVerificationException(
 				$"Expected that mock {result.Expectation} exactly {2.ToTimes()}, but it {found.ToTimes("did")}.");
+		}
+	}
+
+	/// <summary>
+	///     …a number of times that satisfies the specified <paramref name="predicate" />.
+	/// </summary>
+	public static void Times<TMock>(this VerificationResult<TMock> verificationResult, Func<int, bool> predicate)
+	{
+		IVerificationResult result = verificationResult;
+		int found = 0;
+		if (!result.Verify(interactions =>
+		    {
+			    found = interactions.Length;
+			    return predicate(interactions.Length);
+		    }))
+		{
+			throw new MockVerificationException(
+				$"Expected that mock {result.Expectation} a number of times matching the predicate, but it {found.ToTimes("did")}.");
 		}
 	}
 
