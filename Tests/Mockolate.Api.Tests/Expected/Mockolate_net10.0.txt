@@ -114,7 +114,11 @@ namespace Mockolate
     }
     public static class MockBehaviorExtensions
     {
-        public static Mockolate.MockBehavior CallingBaseClass(this Mockolate.MockBehavior mockBehavior, bool callBaseClass = true) { }
+        extension(Mockolate.MockBehavior mockBehavior)
+        {
+            public Mockolate.MockBehavior CallingBaseClass(bool callBaseClass = true) { }
+            public Mockolate.MockBehavior ThrowingWhenNotSetup(bool throwWhenNotSetup = true) { }
+        }
     }
     public static class MockExtensions
     {
