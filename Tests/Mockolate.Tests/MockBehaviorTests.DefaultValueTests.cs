@@ -19,6 +19,25 @@ public sealed partial class MockBehaviorTests
 		}
 
 		[Fact]
+		public async Task UseReflectionBasedDefaultValues_WithTaskOfUnknownType_ShouldReturnCompletedTaskOfUnknownType()
+		{
+			MockBehavior behavior = MockBehavior.Default;
+			Task<ulong> result1 = behavior.DefaultValue.Generate<Task<ulong>>();
+			Task<ulong> result2;
+			using (_ = MockBehavior.UseReflectionBasedDefaultValues())
+			{
+				result2 = behavior.DefaultValue.Generate<Task<ulong>>();
+			}
+
+			Task<ulong> result3 = behavior.DefaultValue.Generate<Task<ulong>>();
+
+			await That((object?)result1).IsNull();
+			await That(result2.IsCompleted).IsTrue();
+			await That(result2).IsEqualTo(0L);
+			await That((object?)result3).IsNull();
+		}
+
+		[Fact]
 		public async Task WithArray_ShouldReturnEmptyArray()
 		{
 			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();

@@ -111,6 +111,8 @@ namespace Mockolate
         public Mockolate.MockBehavior Initialize<T>(params System.Action<Mockolate.Setup.IMockSetup<T>>[] setups) { }
         public Mockolate.MockBehavior Initialize<T>(params System.Action<int, Mockolate.Setup.IMockSetup<T>>[] setups) { }
         public bool TryInitialize<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Action<Mockolate.Setup.IMockSetup<T>>[]? setups) { }
+        [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Uses reflection to create generic methods at runtime.")]
+        public static System.IDisposable UseReflectionBasedDefaultValues() { }
     }
     public static class MockBehaviorExtensions
     {
@@ -214,10 +216,11 @@ namespace Mockolate.DefaultValues
     public class DefaultValueGenerator : Mockolate.DefaultValues.IDefaultValueGenerator
     {
         public DefaultValueGenerator() { }
+        public object? Generate(System.Type type, params object?[] parameters) { }
         public T Generate<T>() { }
         public T Generate<T>(params object?[] parameters) { }
         protected virtual bool TryGenerate(System.Type type, object?[] parameters, out object? value) { }
-        public static void Register(Mockolate.DefaultValues.IDefaultValueFactory defaultValueFactory) { }
+        public static System.IDisposable Register(Mockolate.DefaultValues.IDefaultValueFactory defaultValueFactory) { }
     }
     public interface IDefaultValueFactory
     {
@@ -226,6 +229,7 @@ namespace Mockolate.DefaultValues
     }
     public interface IDefaultValueGenerator
     {
+        object? Generate(System.Type type, params object?[] parameters);
         T Generate<T>();
         T Generate<T>(params object?[] parameters);
     }

@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Mockolate.DefaultValues;
 using Mockolate.Setup;
 
@@ -96,6 +99,36 @@ public record MockBehavior
 		return true;
 	}
 
+	/// <summary>
+	///     Use reflection-based default value generation for Tasks.
+	/// </summary>
+#if NET8_0_OR_GREATER
+	[RequiresDynamicCode("Uses reflection to create generic methods at runtime.")]
+#endif
+	public static IDisposable UseReflectionBasedDefaultValues()
+	{
+		DisposableAction disposable = new();
+		disposable.Add(DefaultValueGenerator.Register(new TaskDefaultValueFactory()));
+#if NET8_0_OR_GREATER
+		disposable.Add(DefaultValueGenerator.Register(new ValueTaskDefaultValueFactory()));
+#endif
+		return disposable;
+	}
+
+	private class DisposableAction : IDisposable
+	{
+		private readonly List<IDisposable> _disposables = [];
+
+		public void Dispose()
+			=> _disposables.ForEach(d => d.Dispose());
+
+		public DisposableAction Add(IDisposable disposable)
+		{
+			_disposables.Add(disposable);
+			return this;
+		}
+	}
+
 	private interface IInitializer;
 
 	private interface IInitializer<in T> : IInitializer
@@ -119,4 +152,59 @@ public record MockBehavior
 			return setups.Select(a => new Action<IMockSetup<T>>(s => a(index, s))).ToArray();
 		}
 	}
+
+#if NET8_0_OR_GREATER
+	[RequiresDynamicCode("Uses reflection to create generic Tasks at runtime.")]
+#endif
+	private class TaskDefaultValueFactory : IDefaultValueFactory
+	{
+		public bool IsMatch(Type type)
+			=> type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Task<>);
+
+		public object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters)
+		{
+			Type innerType = type.GetGenericArguments()[0];
+			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+			if (cancellationToken.IsCancellationRequested)
+			{
+				MethodInfo? method = typeof(Task).GetMethod(nameof(Task.FromCanceled));
+				MethodInfo generic = method!.MakeGenericMethod(innerType);
+				return generic.Invoke(this, [cancellationToken,]);
+			}
+			else
+			{
+				MethodInfo? method = typeof(Task).GetMethod(nameof(Task.FromResult));
+				MethodInfo generic = method!.MakeGenericMethod(innerType);
+				object? innerValue = defaultValueGenerator.Generate(innerType);
+				return generic.Invoke(this, [innerValue,]);
+			}
+		}
+	}
+
+#if NET8_0_OR_GREATER
+	[RequiresDynamicCode("Uses reflection to create generic ValueTasks at runtime.")]
+	private class ValueTaskDefaultValueFactory : IDefaultValueFactory
+	{
+		public bool IsMatch(Type type)
+			=> type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ValueTask<>);
+
+		public object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters)
+		{
+			Type innerType = type.GetGenericArguments()[0];
+			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+			if (cancellationToken.IsCancellationRequested)
+			{
+				MethodInfo? method = typeof(ValueTask).GetMethod(nameof(ValueTask.FromCanceled));
+				MethodInfo generic = method!.MakeGenericMethod(innerType);
+				return generic.Invoke(this, [cancellationToken,]);
+			}
+			else
+			{
+				MethodInfo? method = typeof(ValueTask).GetMethod(nameof(ValueTask.FromResult));
+				MethodInfo generic = method!.MakeGenericMethod(innerType);
+				return generic.Invoke(this, [defaultValueGenerator.Generate(innerType),]);
+			}
+		}
+	}
+#endif
 }

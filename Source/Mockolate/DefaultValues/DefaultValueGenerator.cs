@@ -12,14 +12,14 @@ namespace Mockolate.DefaultValues;
 /// </summary>
 public class DefaultValueGenerator : IDefaultValueGenerator
 {
-	private static readonly ConcurrentQueue<IDefaultValueFactory> _factories = new([
-		new TypedDefaultValueFactory<string>(""),
-		new CancellableTaskFactory(),
+	private static readonly ConcurrentQueue<DefaultValueFactoryContainer> _factories = new([
+		new DefaultValueFactoryContainer(new TypedDefaultValueFactory<string>("")),
+		new DefaultValueFactoryContainer(new CancellableTaskFactory()),
 #if NET8_0_OR_GREATER
-		new CancellableValueTaskFactory(),
+		new DefaultValueFactoryContainer(new CancellableValueTaskFactory()),
 #endif
-		new TypedDefaultValueFactory<CancellationToken>(CancellationToken.None),
-		new TypedDefaultValueFactory<IEnumerable>(Array.Empty<object?>()),
+		new DefaultValueFactoryContainer(new TypedDefaultValueFactory<CancellationToken>(CancellationToken.None)),
+		new DefaultValueFactoryContainer(new TypedDefaultValueFactory<IEnumerable>(Array.Empty<object?>())),
 	]);
 
 	/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}()" />
@@ -38,18 +38,39 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 		return default!;
 	}
 
+	/// <inheritdoc cref="IDefaultValueGenerator.Generate(Type, object?[])" />
+	public object? Generate(Type type, params object?[] parameters)
+	{
+		if (TryGenerate(type, parameters, out object? value))
+		{
+			return value;
+		}
+
+		return null;
+	}
+
 	/// <summary>
 	///     Registers a <paramref name="defaultValueFactory" /> to provide default values for a specific type.
 	/// </summary>
-	public static void Register(IDefaultValueFactory defaultValueFactory)
-		=> _factories.Enqueue(defaultValueFactory);
+	public static IDisposable Register(IDefaultValueFactory defaultValueFactory)
+	{
+		DefaultValueFactoryContainer factory = new(defaultValueFactory);
+		_factories.Enqueue(factory);
+		return new DisposableAction(() =>
+		{
+			factory.IsActive = false;
+		});
+	}
 
 	/// <summary>
 	///     Tries to generate a default value for the specified type.
 	/// </summary>
 	protected virtual bool TryGenerate(Type type, object?[] parameters, out object? value)
 	{
-		IDefaultValueFactory? matchingFactory = _factories.FirstOrDefault(f => f.IsMatch(type));
+		IDefaultValueFactory? matchingFactory = _factories
+			.Where(f => f.IsActive && f.Factory.IsMatch(type))
+			.Select(f => f.Factory)
+			.FirstOrDefault();
 		if (matchingFactory is not null)
 		{
 			value = matchingFactory.Create(type, this, parameters);
@@ -71,6 +92,18 @@ public class DefaultValueGenerator : IDefaultValueGenerator
 
 		cancellationToken = CancellationToken.None;
 		return false;
+	}
+
+	private class DefaultValueFactoryContainer(IDefaultValueFactory factory)
+	{
+		public IDefaultValueFactory Factory { get; } = factory;
+		public bool IsActive { get; set; } = true;
+	}
+
+	private struct DisposableAction(Action action) : IDisposable
+	{
+		public void Dispose()
+			=> action();
 	}
 
 	private sealed class CancellableTaskFactory : IDefaultValueFactory
