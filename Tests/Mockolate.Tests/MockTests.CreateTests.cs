@@ -10,10 +10,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With2Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
-			MockBehavior behavior = new()
-			{
-				ThrowWhenNotSetup = true,
-			};
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
 			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService>(behavior);
 
@@ -77,10 +74,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With3Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
-			MockBehavior behavior = new()
-			{
-				ThrowWhenNotSetup = true,
-			};
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
 			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService>(behavior);
 
@@ -129,10 +123,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With4Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
-			MockBehavior behavior = new()
-			{
-				ThrowWhenNotSetup = true,
-			};
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
 			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService>(behavior);
 
@@ -194,10 +185,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With5Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
-			MockBehavior behavior = new()
-			{
-				ThrowWhenNotSetup = true,
-			};
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
 			MyServiceBase sut = Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService>(behavior);
 
@@ -259,10 +247,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With6Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
-			MockBehavior behavior = new()
-			{
-				ThrowWhenNotSetup = true,
-			};
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
 			MyServiceBase sut =
 				Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService>(behavior);
@@ -342,10 +327,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With7Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
-			MockBehavior behavior = new()
-			{
-				ThrowWhenNotSetup = true,
-			};
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
 			MyServiceBase sut =
 				Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>(
@@ -462,10 +444,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With8Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
-			MockBehavior behavior = new()
-			{
-				ThrowWhenNotSetup = true,
-			};
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
 			MyServiceBase sut =
 				Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,
@@ -597,10 +576,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With9Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
-			MockBehavior behavior = new()
-			{
-				ThrowWhenNotSetup = true,
-			};
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
 			MyServiceBase sut =
 				Mock.Create<MyServiceBase, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService,

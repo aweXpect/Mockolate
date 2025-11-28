@@ -102,11 +102,10 @@ namespace Mockolate
     }
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
     {
-        public MockBehavior() { }
+        public MockBehavior(Mockolate.DefaultValues.IDefaultValueGenerator defaultValue) { }
         public bool CallBaseClass { get; init; }
         public Mockolate.DefaultValues.IDefaultValueGenerator DefaultValue { get; init; }
         public bool ThrowWhenNotSetup { get; init; }
-        public static Mockolate.MockBehavior Default { get; }
         public Mockolate.MockBehavior Initialize<T>(params System.Action<Mockolate.Setup.IMockSetup<T>>[] setups) { }
         public Mockolate.MockBehavior Initialize<T>(params System.Action<int, Mockolate.Setup.IMockSetup<T>>[] setups) { }
         public bool TryInitialize<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Action<Mockolate.Setup.IMockSetup<T>>[]? setups) { }
@@ -217,6 +216,12 @@ namespace Mockolate.DefaultValues
         public T Generate<T>(params object?[] parameters) { }
         protected virtual bool TryGenerate(System.Type type, object?[] parameters, out object? value) { }
         public static void Register(Mockolate.DefaultValues.IDefaultValueFactory defaultValueFactory) { }
+    }
+    public static class DefaultValueGeneratorExtensions
+    {
+        public static System.Threading.Tasks.Task<T> Generate<T>(this Mockolate.DefaultValues.IDefaultValueGenerator generator, System.Threading.Tasks.Task<T> nullValue, params object?[] parameters) { }
+        public static System.Threading.Tasks.ValueTask<T> Generate<T>(this Mockolate.DefaultValues.IDefaultValueGenerator generator, System.Threading.Tasks.ValueTask<T> nullValue, params object?[] parameters) { }
+        public static T Generate<T>(this Mockolate.DefaultValues.IDefaultValueGenerator generator, T nullValue, params object?[] parameters) { }
     }
     public interface IDefaultValueFactory
     {

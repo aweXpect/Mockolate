@@ -23,6 +23,10 @@ public class MockGenerator : IIncrementalGenerator
 			"Mock.g.cs",
 			SourceText.From(Sources.Sources.MockClass(), Encoding.UTF8)));
 
+		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
+			"MockBehaviorExtensions.g.cs",
+			SourceText.From(Sources.Sources.MockBehaviorExtensions(), Encoding.UTF8)));
+
 		IncrementalValueProvider<ImmutableArray<MockClass>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
 				static (s, _) => s.IsCreateMethodInvocation(),

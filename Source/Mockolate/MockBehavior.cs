@@ -15,10 +15,11 @@ public record MockBehavior
 {
 	private ConcurrentStack<IInitializer>? _initializers;
 
-	/// <summary>
-	///     The default mock behavior settings.
-	/// </summary>
-	public static MockBehavior Default { get; } = new();
+	/// <inheritdoc cref="MockBehavior" />
+	public MockBehavior(IDefaultValueGenerator defaultValue)
+	{
+		DefaultValue = defaultValue;
+	}
 
 	/// <summary>
 	///     Specifies whether an exception is thrown when an operation is attempted without prior setup.
@@ -46,7 +47,6 @@ public record MockBehavior
 	///     Defaults to an instance of <see cref="DefaultValueGenerator" />.
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
-		= new DefaultValueGenerator();
 
 	/// <summary>
 	///     Initialize all mocks of type <typeparamref name="T" /> with the given <paramref name="setups" />.

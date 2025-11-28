@@ -154,7 +154,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 		{
 			Callback<Func<int, T, T>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke<T>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, _value), out T? newValue))
 			{
 				foundCallback = true;
@@ -168,7 +168,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 			_value = behavior.DefaultValue.Generate<T>();
 		}
 
-		if (!TryCast(_value, out TResult result, MockBehavior.Default))
+		if (!TryCast(_value, out TResult result, behavior))
 		{
 			throw new MockException(
 				$"The property only supports '{typeof(T).FormatType()}' and not '{typeof(TResult).FormatType()}'.");

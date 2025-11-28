@@ -29,6 +29,7 @@ public class MockGeneratorTests
 		await ThatAll(
 			That(result.Sources.Keys).IsEqualTo([
 				"Mock.g.cs",
+				"MockBehaviorExtensions.g.cs",
 				"MockGeneratorAttribute.g.cs",
 				"MockRegistration.g.cs",
 			]).InAnyOrder().IgnoringCase(),
@@ -191,6 +192,7 @@ public class MockGeneratorTests
 		await ThatAll(
 			That(result.Sources.Keys).IsEqualTo([
 				"Mock.g.cs",
+				"MockBehaviorExtensions.g.cs",
 				"MockGeneratorAttribute.g.cs",
 				"MockRegistration.g.cs",
 			]).InAnyOrder().IgnoringCase(),
@@ -292,6 +294,7 @@ public class MockGeneratorTests
 
 		await That(result.Sources.Keys).IsEqualTo([
 				"Mock.g.cs",
+				"MockBehaviorExtensions.g.cs",
 				"MockGeneratorAttribute.g.cs",
 				"MockForIMyInterface1Extensions.g.cs",
 				"MockForIMyInterface2Extensions.g.cs",
