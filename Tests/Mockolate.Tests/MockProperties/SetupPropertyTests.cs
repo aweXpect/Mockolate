@@ -53,22 +53,25 @@ public sealed partial class SetupPropertyTests
 	}
 
 	[Fact]
-	public async Task Register_SamePropertyTwice_ShouldThrowMockException()
+	public async Task Register_SamePropertyTwice_ShouldOverwritePreviousSetup()
 	{
 		IPropertyService mock = Mock.Create<IPropertyService>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		mock.SetupMock.Property.MyProperty.InitializeWith(4);
 
-		registration.SetupProperty("my.property", new PropertySetup<int>());
+		int result1 = mock.MyProperty;
+		mock.MyProperty = 5;
+		int result2 = mock.MyProperty;
 
-		void Act()
-		{
-			registration.SetupProperty("my.property", new PropertySetup<int>());
-		}
+		mock.SetupMock.Property.MyProperty.Returns(6);
 
-		await That(Act).Throws<MockException>()
-			.WithMessage("You cannot setup property 'my.property' twice.");
+		int result3 = mock.MyProperty;
+		mock.MyProperty = 7;
+		int result4 = mock.MyProperty;
 
-		registration.SetupProperty("my.other.property", new PropertySetup<int>());
+		await That(result1).IsEqualTo(4);
+		await That(result2).IsEqualTo(5);
+		await That(result3).IsEqualTo(6);
+		await That(result4).IsEqualTo(6);
 	}
 
 	[Fact]

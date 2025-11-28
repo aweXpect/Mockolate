@@ -21,13 +21,13 @@ public abstract class PropertySetup : IPropertySetup
 	bool? IPropertySetup.CallBaseClass()
 		=> GetCallBaseClass();
 
-	void IPropertySetup.InitializeWith(object? baseValue)
+	void IPropertySetup.InitializeWith(Func<object?> baseValue)
 		=> InitializeValue(baseValue);
 
 	/// <summary>
 	///     Initializes the property with the <paramref name="baseValue" />.
 	/// </summary>
-	protected abstract void InitializeValue(object? baseValue);
+	protected abstract void InitializeValue(Func<object?> baseValue);
 
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values
@@ -47,16 +47,16 @@ public abstract class PropertySetup : IPropertySetup
 
 	internal class Default(object? initialValue) : PropertySetup
 	{
-		private bool _isInitialized;
+		private bool _isInitialized = true;
 		private object? _value = initialValue;
 
-		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
-		protected override void InitializeValue(object? baseValue)
+		/// <inheritdoc cref="PropertySetup.InitializeValue(Func{object?})" />
+		protected override void InitializeValue(Func<object?> baseValue)
 		{
 			if (!_isInitialized)
 			{
 				_isInitialized = true;
-				_value = baseValue;
+				_value = baseValue();
 			}
 		}
 
@@ -159,14 +159,15 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 			{
 				foundCallback = true;
 				_value = newValue ?? default!;
+				_isInitialized = true;
 				break;
 			}
 		}
 
-		if (!foundCallback && _returnCallbacks.Count > 0 &&
-		    TryCast(defaultValueGenerator(), out T value, behavior))
+		if (!foundCallback && _returnCallbacks.Count > 0)
 		{
-			_value = value;
+			_value = defaultValueGenerator() is T value ? value : default!;
+			_isInitialized = true;
 		}
 
 		if (!TryCast(_value, out TResult result, behavior))
@@ -178,16 +179,17 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 		return result;
 	}
 
-	/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
-	protected override void InitializeValue(object? baseValue)
+	/// <inheritdoc cref="PropertySetup.InitializeValue(Func{object?})" />
+	protected override void InitializeValue(Func<object?> baseValue)
 	{
 		if (_isInitialized)
 		{
 			return;
 		}
 
-		_isInitialized = baseValue is T or null;
-		if (baseValue is T typedValue)
+		var value = baseValue();
+		_isInitialized = value is T or null;
+		if (value is T typedValue)
 		{
 			_value = typedValue;
 		}

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -18,9 +19,12 @@ namespace Mockolate;
 [DebuggerDisplay("{ToString()}")]
 public partial class MockRegistration
 {
+	private static int _globalId;
+	internal int Id { get; }
 	/// <inheritdoc cref="MockRegistration" />
 	public MockRegistration(MockBehavior behavior, string prefix)
 	{
+		Id = Interlocked.Increment(ref _globalId);
 		Behavior = behavior;
 		Prefix = prefix;
 		Interactions = new MockInteractions();
@@ -29,6 +33,7 @@ public partial class MockRegistration
 	/// <inheritdoc cref="MockRegistration" />
 	internal MockRegistration(MockBehavior behavior, string prefix, MockInteractions interactions)
 	{
+		Id = Interlocked.Increment(ref _globalId);
 		Behavior = behavior;
 		Prefix = prefix;
 		Interactions = interactions;

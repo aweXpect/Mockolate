@@ -32,7 +32,7 @@ public interface IPropertySetup
 	///     Initialize the <see cref="IPropertySetup{T}" /> with the <paramref name="baseValue" /> from the base class.
 	/// </summary>
 	/// <param name="baseValue"></param>
-	void InitializeWith(object? baseValue);
+	void InitializeWith(Func<object?> baseValue);
 }
 
 /// <summary>

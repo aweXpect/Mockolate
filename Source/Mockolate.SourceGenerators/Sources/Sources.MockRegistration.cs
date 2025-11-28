@@ -262,60 +262,7 @@ internal static partial class Sources
 		          		result = default!;
 		          		return value is null;
 		          	}
-		          """);
-		sb.AppendLine();
-		sb.AppendLine();
-		sb.AppendLine("\tprivate class TypedDefaultValueFactory<T>(T value) : ExtensionsOnMockBehavior.IDefaultValueFactory");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"ExtensionsOnMockBehavior.IDefaultValueFactory.IsMatch(Type)\" />");
-		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
-		sb.AppendLine("\t\t\t=> type == typeof(T);");
-		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"ExtensionsOnMockBehavior.IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object?[])\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters)");
-		sb.AppendLine("\t\t\t=> value;");
-		sb.AppendLine("\t}");
-
-		sb.AppendLine();
-		sb.AppendLine(
-			"\tprivate class CallbackDefaultValueFactory<T>(Func<IDefaultValueGenerator, T> callback, Func<Type, bool>? isMatch = null) : ExtensionsOnMockBehavior.IDefaultValueFactory");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"ExtensionsOnMockBehavior.IDefaultValueFactory.IsMatch(Type)\" />");
-		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
-		sb.AppendLine("\t\t\t=> isMatch?.Invoke(type) ?? type == typeof(T);");
-		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"ExtensionsOnMockBehavior.IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object?[])\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters)");
-		sb.AppendLine("\t\t\t=> callback(defaultValueGenerator);");
-		sb.AppendLine("\t}");
-
-		sb.AppendLine();
-		sb.AppendLine(
-			"\tprivate class ParametrizedCallbackDefaultValueFactory<T>(Func<IDefaultValueGenerator, object?[], T> callbackWithParams, Func<Type, bool>? isMatch = null) : ExtensionsOnMockBehavior.IDefaultValueFactory");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"ExtensionsOnMockBehavior.IDefaultValueFactory.IsMatch(Type)\" />");
-		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
-		sb.AppendLine("\t\t\t=> isMatch?.Invoke(type) ?? type == typeof(T);");
-		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"ExtensionsOnMockBehavior.IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object?[])\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)");
-		sb.AppendLine("\t\t\t=> callbackWithParams(defaultValueGenerator, parameters);");
-		sb.AppendLine("\t}");
-
-		sb.AppendLine();
-		sb.AppendLine(
-			"\tprivate class RecursiveMockValueFactory() : ExtensionsOnMockBehavior.IDefaultValueFactory");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"ExtensionsOnMockBehavior.IDefaultValueFactory.IsMatch(Type)\" />");
-		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
-		sb.AppendLine("\t\t\t=> true;");
-		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"ExtensionsOnMockBehavior.IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object?[])\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)");
-		sb.AppendLine("\t\t{");
-		sb.AppendLine("\t\t\treturn new MockGenerator().Get(null, MockBehavior.Default, type);");
-		sb.AppendLine("\t\t}");
-		sb.AppendLine("\t}");
+		          """).AppendLine();
 		sb.AppendLine("}");
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();

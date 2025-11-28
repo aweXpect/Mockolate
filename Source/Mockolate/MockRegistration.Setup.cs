@@ -51,11 +51,11 @@ public partial class MockRegistration
 			}
 
 			matchingSetup = new PropertySetup.Default(defaultValueGenerator?.Invoke());
-			_propertySetups.TryAdd(propertyName, matchingSetup);
+			_propertySetups.Add(propertyName, matchingSetup);
 		}
 		else if (defaultValueGenerator is not null && (matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass))
 		{
-			matchingSetup.InitializeWith(defaultValueGenerator());
+			matchingSetup.InitializeWith(defaultValueGenerator);
 		}
 
 		return matchingSetup;
@@ -89,12 +89,7 @@ public partial class MockRegistration
 	///     Registers the <paramref name="propertySetup" /> in the mock.
 	/// </summary>
 	public void SetupProperty(string propertyName, IPropertySetup propertySetup)
-	{
-		if (!_propertySetups.TryAdd(propertyName, propertySetup))
-		{
-			throw new MockException($"You cannot setup property '{propertyName}' twice.");
-		}
-	}
+		=> _propertySetups.Add(propertyName, propertySetup);
 
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class MethodSetups
@@ -146,13 +141,13 @@ public partial class MockRegistration
 	{
 		private ConcurrentDictionary<string, IPropertySetup>? _storage;
 
-		public int Count
-			=> _storage?.Count ?? 0;
+		public int Count { get; private set; }
 
-		public bool TryAdd(string propertyName, IPropertySetup setup)
+		public void Add(string propertyName, IPropertySetup setup)
 		{
 			_storage ??= new ConcurrentDictionary<string, IPropertySetup>();
-			return _storage.TryAdd(propertyName, setup);
+			_storage.AddOrUpdate(propertyName, setup, (_, _) => setup);
+			Count = _storage.Count(x => x.Value is not PropertySetup.Default);
 		}
 
 		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out IPropertySetup? setup)
@@ -170,9 +165,17 @@ public partial class MockRegistration
 				return "0 properties";
 			}
 
+			List<KeyValuePair<string, IPropertySetup>> setups =
+				_storage.Where(x => x.Value is not PropertySetup.Default).ToList();
+			
+			if (setups.Count == 0)
+			{
+				return "0 properties";
+			}
+
 			StringBuilder sb = new();
-			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " property:" : " properties:").AppendLine();
-			foreach (KeyValuePair<string, IPropertySetup> item in _storage!)
+			sb.Append(setups.Count).Append(setups.Count == 1 ? " property:" : " properties:").AppendLine();
+			foreach (KeyValuePair<string, IPropertySetup> item in setups)
 			{
 				sb.Append(item.Value).Append(' ').Append(item.Key).AppendLine();
 			}
