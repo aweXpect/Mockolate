@@ -35,12 +35,12 @@ public class IndexerSetupResult<TResult>(
 	/// <summary>
 	///     The return value of the setup method.
 	/// </summary>
-	public TResult GetResult(TResult baseValue)
+	public TResult GetResult(TResult baseValue, Func<TResult> defaultValueGenerator)
 	{
 		TResult value;
 		if (_setup is IndexerSetup indexerSetup)
 		{
-			value = indexerSetup.InvokeGetter(indexerAccess, baseValue ?? _behavior.DefaultValue.Generate<TResult>(),
+			value = indexerSetup.InvokeGetter(indexerAccess, baseValue ?? defaultValueGenerator(),
 				_behavior);
 			setIndexerValue(indexerAccess.Parameters, value);
 		}
@@ -51,7 +51,7 @@ public class IndexerSetupResult<TResult>(
 		}
 		else
 		{
-			value = baseValue ?? _behavior.DefaultValue.Generate<TResult>();
+			value = baseValue ?? defaultValueGenerator();
 		}
 
 		return getIndexerValue(_setup, () => value, indexerAccess.Parameters);
@@ -60,18 +60,18 @@ public class IndexerSetupResult<TResult>(
 	/// <summary>
 	///     The return value of the setup method.
 	/// </summary>
-	public TResult GetResult()
+	public TResult GetResult(Func<TResult> defaultValueGenerator)
 	{
 		TResult value;
 		if (_setup is IndexerSetup indexerSetup)
 		{
-			if (_setup.TryGetInitialValue(_behavior, indexerAccess.Parameters, out value))
+			if (_setup.TryGetInitialValue(_behavior, defaultValueGenerator, indexerAccess.Parameters, out value))
 			{
 				value = indexerSetup.InvokeGetter(indexerAccess, value, _behavior);
 			}
 			else
 			{
-				value = indexerSetup.InvokeGetter(indexerAccess, _behavior.DefaultValue.Generate<TResult>(), _behavior);
+				value = indexerSetup.InvokeGetter(indexerAccess, defaultValueGenerator(), _behavior);
 			}
 		}
 		else if (_behavior.ThrowWhenNotSetup)
@@ -81,7 +81,7 @@ public class IndexerSetupResult<TResult>(
 		}
 		else
 		{
-			value = _behavior.DefaultValue.Generate<TResult>();
+			value = defaultValueGenerator();
 		}
 
 		TResult result = getIndexerValue(_setup, () => value, indexerAccess.Parameters);

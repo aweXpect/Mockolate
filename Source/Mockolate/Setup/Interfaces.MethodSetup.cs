@@ -30,9 +30,9 @@ public interface IMethodSetup
 	/// </summary>
 	/// <remarks>
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
-	///     is generated using the current <paramref name="behavior" />.
+	///     is generated using the <paramref name="defaultValueGenerator" />.
 	/// </remarks>
-	T SetOutParameter<T>(string parameterName, MockBehavior behavior);
+	T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator);
 
 	/// <summary>
 	///     Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value" /> and
@@ -47,7 +47,7 @@ public interface IMethodSetup
 	/// <summary>
 	///     Invokes the <paramref name="methodInvocation" /> returning a value of type <typeparamref name="TResult" />.
 	/// </summary>
-	TResult Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior);
+	TResult Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
 	/// <summary>
 	///     Invokes the <paramref name="methodInvocation" /> returning <see langword="void" />.

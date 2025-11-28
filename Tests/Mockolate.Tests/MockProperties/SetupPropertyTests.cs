@@ -43,10 +43,10 @@ public sealed partial class SetupPropertyTests
 		IPropertyService mock = Mock.Create<IPropertyService>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		int result0 = registration.GetProperty<int>("my.other.property");
+		int result0 = registration.GetProperty("my.other.property", () => 0);
 		PropertySetup<int> setup = new();
 		registration.SetupProperty("my.property", (IPropertySetup)setup.InitializeWith(42));
-		int result1 = registration.GetProperty<int>("my.property");
+		int result1 = registration.GetProperty("my.property", () => 0);
 
 		await That(result0).IsEqualTo(0);
 		await That(result1).IsEqualTo(42);
@@ -77,10 +77,10 @@ public sealed partial class SetupPropertyTests
 		IPropertyService mock = Mock.Create<IPropertyService>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		string result0 = registration.GetProperty<string>("my.property");
+		string result0 = registration.GetProperty<string>("my.property", () => "");
 		registration.SetProperty("my.property", "foo");
-		string result1 = registration.GetProperty<string>("my.property");
-		string result2 = registration.GetProperty<string>("my.other.property");
+		string result1 = registration.GetProperty<string>("my.property", () => "");
+		string result2 = registration.GetProperty<string>("my.other.property", () => "");
 
 		await That(result0).IsEmpty();
 		await That(result1).IsEqualTo("foo");
@@ -133,6 +133,6 @@ public sealed partial class SetupPropertyTests
 			=> InvokeSetter(value, MockBehavior.Default);
 
 		public TResult InvokeGetter<TResult>()
-			=> InvokeGetter<TResult>(MockBehavior.Default);
+			=> InvokeGetter<TResult>(MockBehavior.Default, () => default!);
 	}
 }

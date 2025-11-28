@@ -535,10 +535,10 @@ internal static partial class Sources
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)\" />")
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})\" />")
 			.AppendLine();
 		sb.Append(
-				"\tprotected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)")
+				"\tprotected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)")
 			.AppendLine();
 		sb.Append("\t\twhere TResult : default").AppendLine();
 		sb.Append("\t\t=> throw new MockException(\"The method setup does not support return values.\");").AppendLine();
@@ -571,8 +571,8 @@ internal static partial class Sources
 		sb.Append("\t\t=> _returnCallbacks.Count > 0;").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
-		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)")
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, Func{T})\" />").AppendLine();
+		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tif (")
@@ -582,10 +582,10 @@ internal static partial class Sources
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out Match.IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\treturn outParameter.GetValue(behavior);").AppendLine();
+		sb.Append("\t\t\treturn outParameter.GetValue(defaultValueGenerator);").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\treturn behavior.DefaultValue.Generate<T>();").AppendLine();
+		sb.Append("\t\treturn defaultValueGenerator();").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -1133,10 +1133,10 @@ internal static partial class Sources
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)\" />")
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})\" />")
 			.AppendLine();
 		sb.Append(
-				"\tprotected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)")
+				"\tprotected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)")
 			.AppendLine();
 		sb.Append("\t\twhere TResult : default").AppendLine();
 		sb.Append("\t{").AppendLine();
@@ -1176,7 +1176,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\treturn behavior.DefaultValue.Generate<TResult>();").AppendLine();
+		sb.Append("\t\treturn defaultValueGenerator();").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -1207,8 +1207,8 @@ internal static partial class Sources
 		sb.Append("\t\t=> _returnCallbacks.Count > 0;").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, MockBehavior)\" />").AppendLine();
-		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)")
+		sb.Append("\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, Func{T})\" />").AppendLine();
+		sb.Append("\tprotected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tif (")
@@ -1218,10 +1218,10 @@ internal static partial class Sources
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out Match.IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\treturn outParameter.GetValue(behavior);").AppendLine();
+		sb.Append("\t\t\treturn outParameter.GetValue(defaultValueGenerator);").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\treturn behavior.DefaultValue.Generate<T>();").AppendLine();
+		sb.Append("\t\treturn defaultValueGenerator();").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 

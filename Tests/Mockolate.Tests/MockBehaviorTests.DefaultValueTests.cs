@@ -33,7 +33,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			CancellationToken result = sut.DefaultValue.Generate<CancellationToken>();
+			CancellationToken result = sut.DefaultValue.Generate(CancellationToken.None);
 
 			await That(result).IsEqualTo(CancellationToken.None);
 		}
@@ -63,7 +63,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			int result = sut.DefaultValue.Generate<int>();
+			int result = sut.DefaultValue.Generate(0);
 
 			await That(result).IsEqualTo(0);
 		}
@@ -103,7 +103,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			int? result = sut.DefaultValue.Generate<int?>();
+			int? result = sut.DefaultValue.Generate((int?)null);
 
 			await That(result).IsNull();
 		}
@@ -113,7 +113,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			object result = sut.DefaultValue.Generate<object>();
+			object result = sut.DefaultValue.Generate((object)null!);
 
 			await That(result).IsNull();
 		}
@@ -123,7 +123,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			string result = sut.DefaultValue.Generate<string>();
+			string result = sut.DefaultValue.Generate("");
 
 			await That(result).IsEmpty();
 		}
@@ -133,7 +133,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			DateTime result = sut.DefaultValue.Generate<DateTime>();
+			DateTime result = sut.DefaultValue.Generate(default(DateTime));
 
 			await That(result).IsEqualTo(DateTime.MinValue);
 		}
@@ -143,7 +143,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			Task result = sut.DefaultValue.Generate<Task>();
+			Task result = sut.DefaultValue.Generate(default(Task)!);
 
 			await That(result).IsNotNull();
 			await That(result.IsCompleted).IsTrue();

@@ -15,8 +15,8 @@ public abstract class PropertySetup : IPropertySetup
 	void IPropertySetup.InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
 		=> InvokeSetter(value, behavior);
 
-	TResult IPropertySetup.InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior)
-		=> InvokeGetter<TResult>(behavior);
+	TResult IPropertySetup.InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+		=> InvokeGetter(behavior, defaultValueGenerator);
 
 	bool? IPropertySetup.CallBaseClass()
 		=> GetCallBaseClass();
@@ -43,7 +43,7 @@ public abstract class PropertySetup : IPropertySetup
 	/// <summary>
 	///     Invokes the getter logic and returns the value of type <typeparamref name="TResult" />.
 	/// </summary>
-	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior);
+	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
 	internal class Default(object? initialValue) : PropertySetup
 	{
@@ -71,15 +71,15 @@ public abstract class PropertySetup : IPropertySetup
 			_value = value;
 		}
 
-		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior)" />
-		protected override TResult InvokeGetter<TResult>(MockBehavior behavior)
+		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
+		protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		{
 			if (_value is TResult typedValue)
 			{
 				return typedValue;
 			}
 
-			TResult result = behavior.DefaultValue.Generate<TResult>();
+			TResult result = defaultValueGenerator();
 			_value = result;
 			return result;
 		}
@@ -143,8 +143,8 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 		_value = newValue;
 	}
 
-	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior)" />
-	protected override TResult InvokeGetter<TResult>(MockBehavior behavior)
+	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
+	protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
 	{
 		_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 			=> @delegate(invocationCount, _value)));
@@ -163,9 +163,10 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 			}
 		}
 
-		if (!foundCallback && _returnCallbacks.Count > 0)
+		if (!foundCallback && _returnCallbacks.Count > 0 &&
+		    TryCast(defaultValueGenerator(), out T value, behavior))
 		{
-			_value = behavior.DefaultValue.Generate<T>();
+			_value = value;
 		}
 
 		if (!TryCast(_value, out TResult result, behavior))
@@ -212,7 +213,14 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 			return true;
 		}
 
-		result = behavior.DefaultValue.Generate<TValue>();
+		// TODO: Does this work with Task<T>?
+		if (value is null && behavior.DefaultValue.Generate(typeof(TValue)) is TValue defaultValue)
+		{
+			result = defaultValue;
+			return true;
+		}
+
+		result = default!;
 		return value is null;
 	}
 

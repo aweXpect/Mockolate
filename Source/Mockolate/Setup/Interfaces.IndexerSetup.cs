@@ -29,7 +29,7 @@ public interface IIndexerSetup
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
-	bool TryGetInitialValue<TValue>(MockBehavior behavior, object?[] parameters, [NotNullWhen(true)] out TValue value);
+	bool TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator, object?[] parameters, [NotNullWhen(true)] out TValue value);
 }
 
 /// <summary>

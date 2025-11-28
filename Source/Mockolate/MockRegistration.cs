@@ -60,7 +60,7 @@ public partial class MockRegistration
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, params object?[]? parameters)
+	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, Func<object?[], TResult> defaultValue, params object?[]? parameters)
 	{
 		parameters ??= [null,];
 		MethodInvocation methodInvocation =
@@ -76,12 +76,11 @@ public partial class MockRegistration
 					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
-			return new MethodSetupResult<TResult>(null, Behavior,
-				Behavior.DefaultValue.Generate<TResult>(parameters));
+			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke<TResult>(methodInvocation, Behavior));
+			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
 	}
 
 	/// <summary>
@@ -109,14 +108,13 @@ public partial class MockRegistration
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName" />.
 	/// </summary>
-	public TResult GetProperty<TResult>(string propertyName, Func<TResult>? defaultValueGenerator = null)
+	public TResult GetProperty<TResult>(string propertyName, Func<TResult> defaultValueGenerator)
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
 				propertyName));
-		IPropertySetup matchingSetup = GetPropertySetup(propertyName,
-			defaultValueGenerator is null ? null : () => defaultValueGenerator());
-		return matchingSetup.InvokeGetter<TResult>(interaction, Behavior);
+		IPropertySetup matchingSetup = GetPropertySetup(propertyName, () => defaultValueGenerator());
+		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
 	}
 
 	/// <summary>

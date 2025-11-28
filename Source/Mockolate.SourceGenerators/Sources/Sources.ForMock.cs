@@ -69,6 +69,7 @@ internal static partial class Sources
 				sb.Append("\t\tvar ").Append(resultVarName).Append(" = _mock.Registrations.InvokeMethod<")
 					.Append(mockClass.Delegate.ReturnType.Fullname)
 					.Append(">(").Append(mockClass.Delegate.GetUniqueNameString());
+				sb.Append(", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(").Append(mockClass.Delegate.ReturnType.Fullname).Append(")!, p)");
 				foreach (MethodParameter p in mockClass.Delegate.Parameters)
 				{
 					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
@@ -94,7 +95,8 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(resultVarName).Append(".SetOutParameter<")
 						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-						.Append("\");").AppendLine();
+						.Append("\", () => _mock.Registrations.Behavior.DefaultValue.Generate(default(")
+						.Append(parameter.Type.Fullname).Append(")!));").AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
@@ -425,9 +427,39 @@ internal static partial class Sources
 					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base[")
 						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
 						.Append("];").AppendLine();
-					sb.Append("\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(").Append(baseResultVarName).Append(");").AppendLine();
+					sb.Append("\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(").Append(baseResultVarName).Append(", () => MockRegistrations.Behavior.DefaultValue.Generate(default(");
+				
+				if (property.ReturnsSpan)
+				{
+					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else if (property.ReturnsReadOnlySpan)
+				{
+					sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else
+				{
+					sb.Append(property.Type.Fullname);
+				}
+				
+				sb.Append(")!));").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
-					sb.Append("\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult();").AppendLine();
+					sb.Append("\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(");
+				
+				if (property.ReturnsSpan)
+				{
+					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else if (property.ReturnsReadOnlySpan)
+				{
+					sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else
+				{
+					sb.Append(property.Type.Fullname);
+				}
+				
+				sb.Append(")!));").AppendLine();
 				}
 				else
 				{
@@ -476,7 +508,22 @@ internal static partial class Sources
 							(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
 							(_, _) => p.Name,
 						})))
-					.AppendLine(").GetResult();");
+					.AppendLine(").GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(");
+				
+				if (property.ReturnsSpan)
+				{
+					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else if (property.ReturnsReadOnlySpan)
+				{
+					sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
+				}
+				else
+				{
+					sb.Append(property.Type.Fullname);
+				}
+				
+				sb.Append(")!));");
 			}
 			else
 			{
@@ -495,7 +542,7 @@ internal static partial class Sources
 					sb.Append(property.Type.Fullname);
 				}
 				
-				sb.Append(">(").Append(property.GetUniqueNameString()).Append(");").AppendLine();
+				sb.Append(">(").Append(property.GetUniqueNameString()).Append(", () => MockRegistrations.Behavior.DefaultValue.Generate(default(").Append(property.Type.Fullname).Append(")!));").AppendLine();
 			}
 
 			sb.AppendLine("\t\t}");
@@ -665,6 +712,22 @@ internal static partial class Sources
 			}
 			
 			sb.Append(">(").Append(method.GetUniqueNameString());
+			sb.Append(", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(");
+			
+			if (method.ReturnsSpan)
+			{
+				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else if (method.ReturnsReadOnlySpan)
+			{
+				sb.Append("ReadOnlySpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
+			}
+			else
+			{
+				sb.Append(method.ReturnType.Fullname);
+			}
+			
+			sb.Append(")!, p)");
 		}
 		else
 		{
@@ -692,7 +755,8 @@ internal static partial class Sources
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetOutParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\", () => _mock.Registrations.Behavior.DefaultValue.Generate(default(")
+						.Append(parameter.Type.Fullname).Append(")!));");
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
@@ -730,7 +794,8 @@ internal static partial class Sources
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetOutParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\", () => _mock.Registrations.Behavior.DefaultValue.Generate(default(")
+						.Append(parameter.Type.Fullname).Append(")!));");
 					sb.Append("\t\t\t}").AppendLine().AppendLine();
 				}
 				else if (parameter.RefKind == RefKind.Ref)
@@ -766,7 +831,8 @@ internal static partial class Sources
 					if (parameter.RefKind == RefKind.Out)
 					{
 						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetOutParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
+							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\", () => _mock.Registrations.Behavior.DefaultValue.Generate(default(")
+						.Append(parameter.Type.Fullname).Append(")!));");
 					}
 					else if (parameter.RefKind == RefKind.Ref)
 					{
@@ -802,7 +868,8 @@ internal static partial class Sources
 				{
 					sb.AppendLine();
 					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName).Append(".SetOutParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\");");
+						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).AppendLine("\", () => _mock.Registrations.Behavior.DefaultValue.Generate(default(")
+						.Append(parameter.Type.Fullname).Append(")!));");
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{

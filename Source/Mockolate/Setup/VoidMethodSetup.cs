@@ -143,8 +143,8 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -166,9 +166,9 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
 
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
-		=> behavior.DefaultValue.Generate<T>();
+	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
+	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+		=> defaultValueGenerator();
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
@@ -357,8 +357,8 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -380,16 +380,16 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
 
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
+	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		if (_match1 is not null &&
 		    HasOutParameter([_match1,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
-			return outParameter.GetValue(behavior);
+			return outParameter.GetValue(defaultValueGenerator);
 		}
 
-		return behavior.DefaultValue.Generate<T>();
+		return defaultValueGenerator();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -594,8 +594,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -617,16 +617,16 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
 
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
+	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		if (_match1 is not null && _match2 is not null &&
 		    HasOutParameter([_match1, _match2,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
-			return outParameter.GetValue(behavior);
+			return outParameter.GetValue(defaultValueGenerator);
 		}
 
-		return behavior.DefaultValue.Generate<T>();
+		return defaultValueGenerator();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -840,8 +840,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -863,16 +863,16 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
 
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
+	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		if (_match1 is not null && _match2 is not null && _match3 is not null &&
 		    HasOutParameter([_match1, _match2, _match3,], parameterName, out Match.IOutParameter<T>? outParameter))
 		{
-			return outParameter.GetValue(behavior);
+			return outParameter.GetValue(defaultValueGenerator);
 		}
 
-		return behavior.DefaultValue.Generate<T>();
+		return defaultValueGenerator();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
@@ -1091,8 +1091,8 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior)" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -1114,17 +1114,17 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	protected override bool HasReturnCalls()
 		=> _returnCallbacks.Count > 0;
 
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	protected override T SetOutParameter<T>(string parameterName, MockBehavior behavior)
+	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
+	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		if (_match1 is not null && _match2 is not null && _match3 is not null && _match4 is not null &&
 		    HasOutParameter([_match1, _match2, _match3, _match4,], parameterName,
 			    out Match.IOutParameter<T>? outParameter))
 		{
-			return outParameter.GetValue(behavior);
+			return outParameter.GetValue(defaultValueGenerator);
 		}
 
-		return behavior.DefaultValue.Generate<T>();
+		return defaultValueGenerator();
 	}
 
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />

@@ -1,3 +1,5 @@
+using System;
+
 namespace Mockolate.Setup;
 
 /// <summary>
@@ -26,14 +28,14 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current behavior.
 	/// </remarks>
-	public T SetOutParameter<T>(string parameterName)
+	public T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		if (setup is not null)
 		{
-			return setup.SetOutParameter<T>(parameterName, behavior);
+			return setup.SetOutParameter(parameterName, defaultValueGenerator);
 		}
 
-		return behavior.DefaultValue.Generate<T>();
+		return defaultValueGenerator();
 	}
 
 	/// <summary>

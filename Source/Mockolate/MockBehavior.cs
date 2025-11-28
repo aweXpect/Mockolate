@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using Mockolate.DefaultValues;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -43,8 +42,6 @@ public record MockBehavior
 	/// </summary>
 	/// <remarks>
 	///     If <see cref="ThrowWhenNotSetup" /> is not set to <see langword="false" />, an exception is thrown in such cases.
-	///     <para />
-	///     Defaults to an instance of <see cref="DefaultValueGenerator" />.
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
 

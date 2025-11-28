@@ -33,7 +33,7 @@ public sealed partial class MatchTests
 		{
 			IOutParameter<int?> sut = Out(() => value);
 
-			int? result = sut.GetValue(MockBehavior.Default);
+			int? result = sut.GetValue(() => null);
 
 			await That(result).IsEqualTo(value);
 		}
