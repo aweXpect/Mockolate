@@ -113,13 +113,19 @@ public partial class MockRegistration
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName" />.
 	/// </summary>
-	public TResult GetProperty<TResult>(string propertyName, Func<TResult> defaultValueGenerator)
+	public TResult GetProperty<TResult>(string propertyName, Func<TResult> defaultValueGenerator, Func<TResult>? baseValueAccessor)
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
 				propertyName));
-		IPropertySetup matchingSetup = GetPropertySetup(propertyName, () => defaultValueGenerator());
-		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
+		IPropertySetup matchingSetup = GetPropertySetup(propertyName,
+			callBase => callBase && baseValueAccessor is not null
+				? baseValueAccessor.Invoke()
+				: defaultValueGenerator());
+		return matchingSetup.InvokeGetter(interaction, Behavior,
+			matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass && baseValueAccessor is not null
+				? baseValueAccessor
+				: defaultValueGenerator);
 	}
 
 	/// <summary>
@@ -131,7 +137,7 @@ public partial class MockRegistration
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(Interactions.GetNextIndex(),
 				propertyName, value));
-		IPropertySetup matchingSetup = GetPropertySetup(propertyName, null);
+		IPropertySetup matchingSetup = GetPropertySetup(propertyName, _ => null);
 		matchingSetup.InvokeSetter(interaction, value, Behavior);
 		return matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass;
 	}

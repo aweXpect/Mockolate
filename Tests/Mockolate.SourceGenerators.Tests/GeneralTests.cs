@@ -459,7 +459,7 @@ public class GeneralTests
 			          	{
 			          		get
 			          		{
-			          			return MockRegistrations.GetProperty<string>("MyCode.IMyService.SomeProperty");
+			          			return MockRegistrations.GetProperty<string>("MyCode.IMyService.SomeProperty", () => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!), null);
 			          		}
 			          		set
 			          		{
@@ -472,7 +472,7 @@ public class GeneralTests
 			          	[System.ComponentModel.Localizable(false)]
 			          	public string MyMethod(string message)
 			          	{
-			          		MethodSetupResult<string> methodExecution = MockRegistrations.InvokeMethod<string>("MyCode.IMyService.MyMethod", message);
+			          		MethodSetupResult<string> methodExecution = MockRegistrations.InvokeMethod<string>("MyCode.IMyService.MyMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!, p), message);
 			          		methodExecution.TriggerCallbacks(message);
 			          		return methodExecution.Result;
 			          	}

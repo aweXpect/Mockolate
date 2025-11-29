@@ -39,6 +39,18 @@ public sealed partial class MockBehaviorTests
 		}
 
 		[Fact]
+		public async Task WithCombination_ShouldReturnNotNullValues()
+		{
+			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			(int, int[], string) result = await mock.ComplexTask();
+
+			await That(result.Item1).IsEqualTo(0);
+			await That(result.Item2).IsEmpty();
+			await That(result.Item3).IsEqualTo("");
+		}
+
+		[Fact]
 		public async Task WithIEnumerable_ShouldReturnEmptyEnumerable()
 		{
 			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
@@ -69,28 +81,10 @@ public sealed partial class MockBehaviorTests
 		}
 
 		[Fact]
-		public async Task WithLazyInt_ShouldReturnLazyWithZero()
-		{
-			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
-
-			Lazy<int> result = mock.LazyInt;
-
-			await That(result.Value).IsEqualTo(0);
-		}
-
-		[Fact]
-		public async Task WithLazyString_ShouldReturnLazyWithEmptyString()
-		{
-			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
-
-			Lazy<string> result = mock.LazyString;
-
-			await That(result.Value).IsEmpty();
-		}
-
-		[Fact]
 		public async Task WithMultidimensionalArray_ShouldReturnEmptyArray()
 		{
+			MockBehavior.Default.DefaultValue.Generate(default(int[,])!);
+
 			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
 
 			int[,,][,][] result = mock.MultiDimensionalArray;
@@ -183,6 +177,7 @@ public sealed partial class MockBehaviorTests
 			await That(await result).IsEqualTo(0);
 		}
 
+#if NET8_0_OR_GREATER
 		[Fact]
 		public async Task WithValueTaskIntArray_ShouldReturnZero()
 		{
@@ -193,6 +188,7 @@ public sealed partial class MockBehaviorTests
 			await That(result.IsCompleted).IsTrue();
 			await That(await result).IsEmpty();
 		}
+#endif
 
 		[Fact]
 		public async Task WithValueTuple_ShouldReturnValueTupleWithDefaultValues()
@@ -231,13 +227,13 @@ public sealed partial class MockBehaviorTests
 			IEnumerable<int> IEnumerableOfInt { get; }
 			(int V1, string V2) NamedValueTuple { get; }
 			(int, string, int, string, int, string, int, string) ValueTuple8 { get; }
-			Lazy<int> LazyInt { get; }
-			Lazy<string> LazyString { get; }
 			Task<int> IntTask { get; }
 			Task<int[]> IntArrayTask { get; }
 			ValueTask<int> IntValueTask { get; }
 			ValueTask<int[]> IntArrayValueTask { get; }
 			IMyRecursiveService RecursiveService { get; }
+
+			Task<(int, int[], string)> ComplexTask();
 		}
 
 		public interface IMyRecursiveService

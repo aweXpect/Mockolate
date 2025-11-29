@@ -5,13 +5,23 @@ using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
+internal enum SpecialGenericType
+{
+	None,
+	Span,
+	ReadOnlySpan,
+	Tuple,
+	Task,
+	ValueTask,
+}
+
 internal static class Helpers
 {
+	// TODO: Replace with specialgenerictype
 	public static bool IsSpanOrReadOnlySpan(this ITypeSymbol typeSymbol, out bool isSpan, out bool isReadOnlySpan,
 		out Type? spanType)
 	{
-		if (typeSymbol.ContainingNamespace?.Name == "System" &&
-		    typeSymbol.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true)
+		if (typeSymbol.ContainingNamespace is { Name: "System", ContainingNamespace.IsGlobalNamespace: true })
 		{
 			isSpan = typeSymbol.Name == "Span";
 			isReadOnlySpan = typeSymbol.Name == "ReadOnlySpan";
@@ -29,6 +39,43 @@ internal static class Helpers
 		isReadOnlySpan = false;
 		spanType = null;
 		return false;
+	}
+
+	public static SpecialGenericType GetSpecialType(this ITypeSymbol typeSymbol)
+	{
+		if (typeSymbol.ContainingNamespace is { Name: "System", ContainingNamespace.IsGlobalNamespace: true })
+		{
+			if (typeSymbol.Name == "Span")
+			{
+				return SpecialGenericType.Span;
+			}
+
+			if (typeSymbol.Name == "ReadOnlySpan")
+			{
+				return SpecialGenericType.ReadOnlySpan;
+			}
+
+			if (typeSymbol.Name == "ValueTuple")
+			{
+				return SpecialGenericType.Tuple;
+			}
+		}
+		else if (typeSymbol.ContainingNamespace is { Name: "Tasks", ContainingNamespace.Name: "Threading", } &&
+		         typeSymbol.ContainingNamespace.ContainingNamespace?.ContainingNamespace.Name == "System" && 
+		         typeSymbol.ContainingNamespace.ContainingNamespace?.ContainingNamespace?.ContainingNamespace?.IsGlobalNamespace == true)
+		{
+			if (typeSymbol.Name == "Task")
+			{
+				return SpecialGenericType.Task;
+			}
+
+			if (typeSymbol.Name == "ValueTask")
+			{
+				return SpecialGenericType.ValueTask;
+			}
+		}
+		
+		return SpecialGenericType.None;
 	}
 
 	public static StringBuilder Append(this StringBuilder sb, EquatableArray<Attribute>? attributes, string prefix = "")

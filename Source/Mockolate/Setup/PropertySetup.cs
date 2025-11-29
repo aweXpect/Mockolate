@@ -15,19 +15,20 @@ public abstract class PropertySetup : IPropertySetup
 	void IPropertySetup.InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
 		=> InvokeSetter(value, behavior);
 
-	TResult IPropertySetup.InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	TResult IPropertySetup.InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior,
+		Func<TResult>? defaultValueGenerator)
 		=> InvokeGetter(behavior, defaultValueGenerator);
 
 	bool? IPropertySetup.CallBaseClass()
 		=> GetCallBaseClass();
 
-	void IPropertySetup.InitializeWith(Func<object?> baseValue)
-		=> InitializeValue(baseValue);
+	void IPropertySetup.InitializeWith(object? value)
+		=> InitializeValue(value);
 
 	/// <summary>
-	///     Initializes the property with the <paramref name="baseValue" />.
+	///     Initializes the property with the <paramref name="value" />.
 	/// </summary>
-	protected abstract void InitializeValue(Func<object?> baseValue);
+	protected abstract void InitializeValue(object? value);
 
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values
@@ -43,20 +44,20 @@ public abstract class PropertySetup : IPropertySetup
 	/// <summary>
 	///     Invokes the getter logic and returns the value of type <typeparamref name="TResult" />.
 	/// </summary>
-	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator);
+	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult>? defaultValueGenerator);
 
 	internal class Default(object? initialValue) : PropertySetup
 	{
 		private bool _isInitialized = true;
 		private object? _value = initialValue;
 
-		/// <inheritdoc cref="PropertySetup.InitializeValue(Func{object?})" />
-		protected override void InitializeValue(Func<object?> baseValue)
+		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
+		protected override void InitializeValue(object? value)
 		{
 			if (!_isInitialized)
 			{
 				_isInitialized = true;
-				_value = baseValue();
+				_value = value;
 			}
 		}
 
@@ -72,14 +73,19 @@ public abstract class PropertySetup : IPropertySetup
 		}
 
 		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
-		protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
+		protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult>? defaultValueGenerator)
 		{
 			if (_value is TResult typedValue)
 			{
 				return typedValue;
 			}
 
-			TResult result = defaultValueGenerator();
+			TResult result = default!;
+			if (defaultValueGenerator is not null)
+			{
+				result = defaultValueGenerator.Invoke();
+			}
+
 			_value = result;
 			return result;
 		}
@@ -144,7 +150,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 	}
 
 	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
-	protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult>? defaultValueGenerator)
 	{
 		_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
 			=> @delegate(invocationCount, _value)));
@@ -166,7 +172,15 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 
 		if (!foundCallback && _returnCallbacks.Count > 0)
 		{
-			_value = defaultValueGenerator() is T value ? value : default!;
+			if (defaultValueGenerator is null)
+			{
+				_value = default!;
+			}
+			else
+			{
+				_value = defaultValueGenerator() is T value ? value : default!;
+			}
+
 			_isInitialized = true;
 		}
 
@@ -179,15 +193,14 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 		return result;
 	}
 
-	/// <inheritdoc cref="PropertySetup.InitializeValue(Func{object?})" />
-	protected override void InitializeValue(Func<object?> baseValue)
+	/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
+	protected override void InitializeValue(object? value)
 	{
 		if (_isInitialized)
 		{
 			return;
 		}
 
-		var value = baseValue();
 		_isInitialized = value is T or null;
 		if (value is T typedValue)
 		{
@@ -246,6 +259,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 	public IPropertySetup<T> InitializeWith(T value)
 	{
 		_value = value;
+		_isInitialized = true;
 		return this;
 	}
 

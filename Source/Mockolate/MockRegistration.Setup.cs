@@ -36,7 +36,7 @@ public partial class MockRegistration
 	///     retrievals,
 	///     so that getter and setter work in tandem.
 	/// </remarks>
-	private IPropertySetup GetPropertySetup(string propertyName, Func<object?>? defaultValueGenerator)
+	private IPropertySetup GetPropertySetup(string propertyName, Func<bool, object?> defaultValueGenerator)
 	{
 		if (!_propertySetups.TryGetValue(propertyName, out IPropertySetup? matchingSetup))
 		{
@@ -45,17 +45,12 @@ public partial class MockRegistration
 				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
 			}
 
-			if (!Behavior.CallBaseClass)
-			{
-				defaultValueGenerator = null;
-			}
-
-			matchingSetup = new PropertySetup.Default(defaultValueGenerator?.Invoke());
+			matchingSetup = new PropertySetup.Default(defaultValueGenerator.Invoke(Behavior.CallBaseClass));
 			_propertySetups.Add(propertyName, matchingSetup);
 		}
-		else if (defaultValueGenerator is not null && (matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass))
+		else
 		{
-			matchingSetup.InitializeWith(defaultValueGenerator);
+			matchingSetup.InitializeWith(defaultValueGenerator(matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass));
 		}
 
 		return matchingSetup;

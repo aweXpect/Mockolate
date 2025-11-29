@@ -17,138 +17,6 @@ internal static partial class Sources
 			"System.Threading.Tasks",
 			"Mockolate",
 		]);
-		/*
-		 *
-		 * 
-		static IEnumerable<Type> GetTypes(MockClass mockClass)
-		{
-			foreach (Class? @class in mockClass.GetAllClasses())
-			{
-				foreach (Property? property in @class.Properties)
-				{
-					yield return property.Type;
-				}
-
-				foreach (Method? method in @class.Methods.Where(m => m.ReturnType != Type.Void))
-				{
-					yield return method.ReturnType;
-				}
-			}
-		}
-
-		sb.AppendLine("\tstatic Mock()");
-		sb.AppendLine("\t{");
-		foreach (Type type in mocks.SelectMany(x => GetTypes(x.MockClass)).Distinct())
-		{
-			if (type.IsArray && type.ElementType is { IsTypeParameter: false, })
-			{
-				sb.Append("\t\tDefaultValueGenerator.Register(new TypedDefaultValueFactory<").Append(type.Fullname)
-					.Append(">(");
-				if (type.Fullname.EndsWith("[]") && type.Fullname.IndexOf('[') == type.Fullname.LastIndexOf('['))
-				{
-					sb.Append("Array.Empty<").Append(type.Fullname.Substring(0, type.Fullname.Length - 2))
-						.Append(">()");
-				}
-				else
-				{
-					//int[,,][,][] -> int[0,0,0][,][]
-					string constructorExpression = type.Fullname;
-					int idxStart = constructorExpression.IndexOf('[');
-					int idxEnd = constructorExpression.IndexOf(']');
-					string prefix = constructorExpression.Substring(0, idxStart);
-					string firstArrayPart = constructorExpression.Substring(idxStart + 1, idxEnd - idxStart - 1);
-					string suffix = constructorExpression.Substring(idxEnd + 1);
-					constructorExpression = $"{prefix}[0{firstArrayPart.Replace(",", ",0")}]{suffix}";
-					sb.Append("new ").Append(constructorExpression);
-				}
-
-				sb.AppendLine("));");
-			}
-			else if (type.Fullname.StartsWith("System.Collections.Generic.IEnumerable<")
-			         && type.Fullname.EndsWith(">")
-			         && type.GenericTypeParameters?.Count == 1
-			         && !type.GenericTypeParameters.Value.Single().IsTypeParameter)
-			{
-				sb.Append("\t\tDefaultValueGenerator.Register(new TypedDefaultValueFactory<").Append(type.Fullname)
-					.Append(">(Array.Empty<").Append(type.GenericTypeParameters.Value.Single().Fullname)
-					.Append(">()));").AppendLine();
-			}
-			else if (type.TupleTypes is not null
-			         && type.GenericTypeParameters.HasValue
-			         && type.GenericTypeParameters.Value.All(t => !t.IsTypeParameter))
-			{
-				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname)
-					.Append(">(defaultValueGenerator => (").Append(string.Join(", ",
-						type.TupleTypes.Value.Select(t => $"defaultValueGenerator.Generate<{t.Fullname}>()")))
-					.Append(")));").AppendLine();
-			}
-			else if (type.Fullname.StartsWith("System.Threading.Tasks.Task<")
-			         && type.Fullname.EndsWith(">")
-			         && type.GenericTypeParameters?.Count == 1
-			         && !type.GenericTypeParameters.Value.Single().IsTypeParameter)
-			{
-				string innerType = type.GenericTypeParameters.Value.Single().Fullname;
-				sb.Append("\t\tDefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<").Append(type.Fullname)
-					.Append(">(");
-				sb.Append("(defaultValueGenerator, parameters) => ").AppendLine();
-				sb.Append("\t\t{").AppendLine();
-				sb.Append("\t\t\tCancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();").AppendLine();
-				sb.Append("\t\t\tif (cancellationToken.IsCancellationRequested)").AppendLine();
-				sb.Append("\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\treturn System.Threading.Tasks.Task.FromCanceled<").Append(innerType).Append(">(cancellationToken);").AppendLine();
-				sb.Append("\t\t\t}").AppendLine();
-				sb.Append("\t\t\treturn System.Threading.Tasks.Task.FromResult<").Append(innerType)
-					.Append(">(defaultValueGenerator.Generate<").Append(innerType).Append(">());").AppendLine();
-				sb.Append("\t\t}");
-				sb.Append(", type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(")
-					.Append(innerType).Append(")));").AppendLine();
-			}
-			else if (type.Fullname.StartsWith("System.Threading.Tasks.ValueTask<")
-			         && type.Fullname.EndsWith(">")
-			         && type.GenericTypeParameters?.Count == 1
-			         && !type.GenericTypeParameters.Value.Single().IsTypeParameter)
-			{
-				string innerType = type.GenericTypeParameters.Value.Single().Fullname;
-				sb.Append("\t\tDefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<").Append(type.Fullname)
-					.Append(">(");
-				sb.Append("(defaultValueGenerator, parameters) => ").AppendLine();
-				sb.Append("\t\t{").AppendLine();
-				sb.Append("\t\t\tCancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();").AppendLine();
-				sb.Append("\t\t\t#if NET8_0_OR_GREATER").AppendLine();
-				sb.Append("\t\t\tif (cancellationToken.IsCancellationRequested)").AppendLine();
-				sb.Append("\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\treturn System.Threading.Tasks.ValueTask.FromCanceled<").Append(innerType).Append(">(cancellationToken);").AppendLine();
-				sb.Append("\t\t\t}").AppendLine();
-				sb.Append("\t\t\t#endif").AppendLine();
-				sb.Append("\t\t\treturn new System.Threading.Tasks.ValueTask<").Append(innerType)
-					.Append(">(defaultValueGenerator.Generate<").Append(innerType).Append(">());").AppendLine();
-				sb.Append("\t\t}");
-				sb.Append(", type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(")
-					.Append(innerType).Append(")));").AppendLine();
-			}
-			else if (type.Fullname.StartsWith("System.Lazy<")
-			         && type.Fullname.EndsWith(">")
-			         && type.GenericTypeParameters?.Count == 1
-			         && !type.GenericTypeParameters.Value.Single().IsTypeParameter)
-			{
-				sb.Append("\t\tDefaultValueGenerator.Register(new CallbackDefaultValueFactory<").Append(type.Fullname)
-					.Append(">(defaultValueGenerator => new System.Lazy<")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname)
-					.Append(">(() => defaultValueGenerator.Generate<")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname)
-					.Append(
-						">()), type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Lazy<>) && type.GenericTypeArguments[0] == typeof(")
-					.Append(type.GenericTypeParameters.Value.Single().Fullname).Append(")));").AppendLine();
-			}
-		}
-
-		sb.Append("\t\tDefaultValueGenerator.Register(new RecursiveMockValueFactory());").AppendLine();
-
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-
-		 * 
-		 */
 
 		sb.Append("""
 		          namespace Mockolate;
@@ -300,7 +168,7 @@ internal static partial class Sources
 		          	#endif
 		          	}
 		          }
-		          
+
 		          /// <summary>
 		          ///     Extensions on <see cref="IDefaultValueGenerator" />
 		          /// </summary>
@@ -313,38 +181,23 @@ internal static partial class Sources
 		          		///     Generates a <see cref="Task" /> of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>
-		          		public Task<T> Generate<T>(Task<T> nullValue,
-		          			params object?[] parameters)
+		          		public Task<T> Generate<T>(Task<T> nullValue, params object?[] parameters)
 		          		{
-		          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+		          			CancellationToken cancellationToken = parameters.OfType<object?[]>().FirstOrDefault()?
+		          				.OfType<CancellationToken>().FirstOrDefault() ?? CancellationToken.None;
 		          			if (cancellationToken.IsCancellationRequested)
 		          			{
 		          				return Task.FromCanceled<T>(cancellationToken);
 		          			}
-		          
+		          			
+		          			if (parameters.Length > 0 && parameters[0] is Func<T> func)
+		          			{
+		          				return Task.FromResult(func());
+		          			}
+		          			
 		          			return Task.FromResult(generator.Generate(default(T)!, parameters));
 		          		}
-		          		
-		          		/// <summary>
-		          		///     Generates an empty array of <typeparamref name="T" />, with
-		          		///     the <paramref name="parameters" /> for context.
-		          		/// </summary>
-		          		public IEnumerable<T> Generate<T>(IEnumerable<T> nullValue,
-		          			params object?[] parameters)
-		          		{
-		          			return Array.Empty<T>();
-		          		}
-		          		
-		          		/// <summary>
-		          		///     Generates an empty array of <typeparamref name="T" />, with
-		          		///     the <paramref name="parameters" /> for context.
-		          		/// </summary>
-		          		public T[] Generate<T>(T[] nullValue,
-		          			params object?[] parameters)
-		          		{
-		          			return Array.Empty<T>();
-		          		}
-		          
+
 		          #if NET8_0_OR_GREATER
 		          		/// <summary>
 		          		///     Generates a <see cref="ValueTask" /> of <typeparamref name="T" />, with
@@ -352,15 +205,97 @@ internal static partial class Sources
 		          		/// </summary>
 		          		public ValueTask<T> Generate<T>(ValueTask<T> nullValue, params object?[] parameters)
 		          		{
-		          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+		          			CancellationToken cancellationToken = parameters.OfType<object?[]>().FirstOrDefault()?
+		          				.OfType<CancellationToken>().FirstOrDefault() ?? CancellationToken.None;
 		          			if (cancellationToken.IsCancellationRequested)
 		          			{
 		          				return ValueTask.FromCanceled<T>(cancellationToken);
 		          			}
-		          
+		          			
+		          			if (parameters.Length > 0 && parameters[0] is Func<T> func)
+		          			{
+		          				return ValueTask.FromResult(func());
+		          			}
+		          			
 		          			return ValueTask.FromResult(generator.Generate(default(T)!, parameters));
 		          		}
 		          #endif
+
+		          		/// <summary>
+		          		///     Generates a tuple of (<typeparamref name="T1" />, <typeparamref name="T2" />), with
+		          		///     the <paramref name="parameters" /> for context.
+		          		/// </summary>
+		          		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params object?[] parameters)
+		          		{
+		          			if (parameters.Length >= 2 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2)
+		          			{
+		          				return (func1(), func2());
+		          			}
+		          			
+		          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters));
+		          		}
+		          """).AppendLine();
+		for (int i = 3; i <= 8; i++)
+		{
+			string ts = string.Join(", ", Enumerable.Range(1, i).Select(x => $"T{x}"));
+			sb.Append($$"""
+			          		/// <summary>
+			          		///     Generates a tuple of ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"<typeparamref name=\"T{x}\" />"))}}), with
+			          		///     the <paramref name="parameters" /> for context.
+			          		/// </summary>
+			          		public ({{ts}}) Generate<{{ts}}>(({{ts}}) nullValue, params object?[] parameters)
+			          		{
+			          			if (parameters.Length >= {{i}} && {{string.Join(" && ", Enumerable.Range(1, i).Select(x => $"parameters[{x-1}] is Func<T{x}> func{x}"))}})
+			          			{
+			          				return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"func{x}()"))}});
+			          			}
+			          			
+			          			return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"generator.Generate(default(T{x})!, parameters)"))}});
+			          		}
+			          """).AppendLine();
+		}
+		sb.Append("""
+		          		/// <summary>
+		          		///     Generates an empty enumerable of <typeparamref name="T" />, with
+		          		///     the <paramref name="parameters" /> for context.
+		          		/// </summary>
+		          		public IEnumerable<T> Generate<T>(IEnumerable<T> nullValue, params object?[] parameters)
+		          			=> Array.Empty<T>();
+		          		
+		          		/// <summary>
+		          		///     Generates an empty enumerable of <typeparamref name="T" />, with
+		          		///     the <paramref name="parameters" /> for context.
+		          		/// </summary>
+		          		public List<T> Generate<T>(List<T> nullValue, params object?[] parameters)
+		          			=> new List<T>();
+		          		
+		          		/// <summary>
+		          		///     Generates an empty array of <typeparamref name="T" />, with
+		          		///     the <paramref name="parameters" /> for context.
+		          		/// </summary>
+		          		public T[] Generate<T>(T[] nullValue, params object?[] parameters)
+		          			=> Array.Empty<T>();
+		          		
+		          		/// <summary>
+		          		///     Generates an empty two-dimensional array of <typeparamref name="T" />, with
+		          		///     the <paramref name="parameters" /> for context.
+		          		/// </summary>
+		          		public T[,] Generate<T>(T[,] nullValue, params object?[] parameters)
+		          			=> new T[,] { };
+		          				
+		          		/// <summary>
+		          		///     Generates an empty three-dimensional array of <typeparamref name="T" />, with
+		          		///     the <paramref name="parameters" /> for context.
+		          		/// </summary>
+		          		public T[,,] Generate<T>(T[,,] nullValue, params object?[] parameters)
+		          			=> new T[,,] { };
+		          				
+		          		/// <summary>
+		          		///     Generates an empty four-dimensional array of <typeparamref name="T" />, with
+		          		///     the <paramref name="parameters" /> for context.
+		          		/// </summary>
+		          		public T[,,,] Generate<T>(T[,,,] nullValue, params object?[] parameters)
+		          			=> new T[,,,] { };
 		          
 		          		/// <summary>
 		          		///     Generates a default value of type <typeparamref name="T" />, with
@@ -380,64 +315,6 @@ internal static partial class Sources
 		          
 		          #nullable disable
 		          """);
-		
-		
-		
-		
-		/*
-		sb.AppendLine();
-		sb.AppendLine("\tprivate class TypedDefaultValueFactory<T>(T value) : Mock.IDefaultValueFactory");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"Mock.IDefaultValueFactory.IsMatch(Type)\" />");
-		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
-		sb.AppendLine("\t\t\t=> type == typeof(T);");
-		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"Mock.IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object?[])\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters)");
-		sb.AppendLine("\t\t\t=> value;");
-		sb.AppendLine("\t}");
-
-		sb.AppendLine();
-		sb.AppendLine(
-			"\tprivate class CallbackDefaultValueFactory<T>(Func<IDefaultValueGenerator, T> callback, Func<Type, bool>? isMatch = null) : Mock.IDefaultValueFactory");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"Mock.IDefaultValueFactory.IsMatch(Type)\" />");
-		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
-		sb.AppendLine("\t\t\t=> isMatch?.Invoke(type) ?? type == typeof(T);");
-		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"Mock.IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object?[])\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters)");
-		sb.AppendLine("\t\t\t=> callback(defaultValueGenerator);");
-		sb.AppendLine("\t}");
-
-		sb.AppendLine();
-		sb.AppendLine(
-			"\tprivate class ParametrizedCallbackDefaultValueFactory<T>(Func<IDefaultValueGenerator, object?[], T> callbackWithParams, Func<Type, bool>? isMatch = null) : Mock.IDefaultValueFactory");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"Mock.IDefaultValueFactory.IsMatch(Type)\" />");
-		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
-		sb.AppendLine("\t\t\t=> isMatch?.Invoke(type) ?? type == typeof(T);");
-		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"Mock.IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object?[])\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)");
-		sb.AppendLine("\t\t\t=> callbackWithParams(defaultValueGenerator, parameters);");
-		sb.AppendLine("\t}");
-
-		sb.AppendLine();
-		sb.AppendLine(
-			"\tprivate class RecursiveMockValueFactory() : Mock.IDefaultValueFactory");
-		sb.AppendLine("\t{");
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"Mock.IDefaultValueFactory.IsMatch(Type)\" />");
-		sb.AppendLine("\t\tpublic bool IsMatch(Type type)");
-		sb.AppendLine("\t\t\t=> true;");
-		sb.AppendLine();
-		sb.AppendLine("\t\t/// <inheritdoc cref=\"Mock.IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object?[])\" />");
-		sb.AppendLine("\t\tpublic object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)");
-		sb.AppendLine("\t\t{");
-		sb.AppendLine("\t\t\treturn new MockGenerator().Get(null, MockBehavior.Default, type);");
-		sb.AppendLine("\t\t}");
-		sb.AppendLine("\t}");
-		*/
 		return sb.ToString();
 	}
 }
