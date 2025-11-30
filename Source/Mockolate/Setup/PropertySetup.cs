@@ -228,13 +228,6 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 			return true;
 		}
 
-		// TODO: Does this work with Task<T>?
-		if (value is null && behavior.DefaultValue.Generate(typeof(TValue)) is TValue defaultValue)
-		{
-			result = defaultValue;
-			return true;
-		}
-
 		result = default!;
 		return value is null;
 	}

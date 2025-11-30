@@ -68,13 +68,6 @@ public abstract class IndexerSetup : IIndexerSetup
 			return true;
 		}
 
-		// TODO: Does this work with Task<T>?
-		if (value is null && behavior.DefaultValue.Generate(typeof(T)) is T defaultValue)
-		{
-			result = defaultValue;
-			return true;
-		}
-
 		result = default!;
 		return value is null;
 	}
