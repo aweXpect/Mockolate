@@ -38,7 +38,7 @@ public sealed partial class SetupMethodTests
 
 				string result = setup.SetOutParameter<string>("p0");
 
-				await That(result).IsEmpty();
+				await That(result).IsNullOrEmpty();
 			}
 
 			[Fact]
@@ -54,13 +54,13 @@ public sealed partial class SetupMethodTests
 			private class MyReturnMethodSetup(string name) : ReturnMethodSetup<int>(name)
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
-					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
 		}
 
@@ -198,7 +198,7 @@ public sealed partial class SetupMethodTests
 
 				string result = setup.SetOutParameter<string>("p1");
 
-				await That(result).IsEmpty();
+				await That(result).IsNullOrEmpty();
 			}
 
 			[Fact]
@@ -215,20 +215,20 @@ public sealed partial class SetupMethodTests
 				: ReturnMethodSetup<int, T1>(name, new NamedParameter("p1", (IParameter)With<T1>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
-					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
 
 			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
 				: ReturnMethodSetup<Task, string>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -404,7 +404,7 @@ public sealed partial class SetupMethodTests
 
 				string result = setup.SetOutParameter<string>("p1");
 
-				await That(result).IsEmpty();
+				await That(result).IsNullOrEmpty();
 			}
 
 			[Fact]
@@ -423,20 +423,20 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p2", (IParameter)With<T2>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
-					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
 
 			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
 				: ReturnMethodSetup<Task, string, long>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -649,7 +649,7 @@ public sealed partial class SetupMethodTests
 
 				string result = setup.SetOutParameter<string>("p1");
 
-				await That(result).IsEmpty();
+				await That(result).IsNullOrEmpty();
 			}
 
 			[Fact]
@@ -669,20 +669,20 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p3", (IParameter)With<T3>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
-					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
 
 			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
 				: ReturnMethodSetup<Task, string, long, int>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -932,7 +932,7 @@ public sealed partial class SetupMethodTests
 
 				string result = setup.SetOutParameter<string>("p1");
 
-				await That(result).IsEmpty();
+				await That(result).IsNullOrEmpty();
 			}
 
 			[Fact]
@@ -953,20 +953,20 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p4", (IParameter)With<T4>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
-					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
 
 			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
 				: ReturnMethodSetup<Task, string, long, int, int>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -1254,7 +1254,7 @@ public sealed partial class SetupMethodTests
 
 				string result = setup.SetOutParameter<string>("p1");
 
-				await That(result).IsEmpty();
+				await That(result).IsNullOrEmpty();
 			}
 
 			[Fact]
@@ -1276,20 +1276,20 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p5", (IParameter)With<T5>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
-					=> base.GetReturnValue<T>(invocation, MockBehavior.Default);
+					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
 
 			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
 				: ReturnMethodSetup<Task, string, long, int, int, int>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -1322,7 +1322,7 @@ public sealed partial class SetupMethodTests
 			private class MyVoidMethodSetup(string name) : VoidMethodSetup(name)
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
@@ -1442,7 +1442,7 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p1", (IParameter)With<T1>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
@@ -1451,8 +1451,8 @@ public sealed partial class SetupMethodTests
 			private class MyVoidMethodSetupWithParameters(string name)
 				: VoidMethodSetup<string>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -1591,7 +1591,7 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p2", (IParameter)With<T2>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
@@ -1600,8 +1600,8 @@ public sealed partial class SetupMethodTests
 			private class MyVoidMethodSetupWithParameters(string name)
 				: VoidMethodSetup<string, long>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -1760,7 +1760,7 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p3", (IParameter)With<T3>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
@@ -1769,8 +1769,8 @@ public sealed partial class SetupMethodTests
 			private class MyVoidMethodSetupWithParameters(string name)
 				: VoidMethodSetup<string, long, int>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -1949,7 +1949,7 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p4", (IParameter)With<T4>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
@@ -1958,8 +1958,8 @@ public sealed partial class SetupMethodTests
 			private class MyVoidMethodSetupWithParameters(string name)
 				: VoidMethodSetup<string, long, int, int>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);
@@ -2159,7 +2159,7 @@ public sealed partial class SetupMethodTests
 					new NamedParameter("p5", (IParameter)With<T5>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
-					=> base.SetOutParameter<T>(parameterName, MockBehavior.Default);
+					=> base.SetOutParameter<T>(parameterName, () => default!);
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
@@ -2168,8 +2168,8 @@ public sealed partial class SetupMethodTests
 			private class MyVoidMethodSetupWithParameters(string name)
 				: VoidMethodSetup<string, long, int, int, int>(name, AnyParameters())
 			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, MockBehavior behavior)
-					=> SetOutParameter<TValue>(parameterName, behavior);
+				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
+					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
 
 				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
 					=> SetRefParameter(parameterName, value, behavior);

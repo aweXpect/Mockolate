@@ -33,9 +33,21 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			CancellationToken result = sut.DefaultValue.Generate<CancellationToken>();
+			CancellationToken result = sut.DefaultValue.Generate(CancellationToken.None);
 
 			await That(result).IsEqualTo(CancellationToken.None);
+		}
+
+		[Fact]
+		public async Task WithCombination_ShouldReturnNotNullValues()
+		{
+			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			(int, int[], string) result = await mock.ComplexTask();
+
+			await That(result.Item1).IsEqualTo(0);
+			await That(result.Item2).IsEmpty();
+			await That(result.Item3).IsEqualTo("");
 		}
 
 		[Fact]
@@ -63,34 +75,16 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			int result = sut.DefaultValue.Generate<int>();
+			int result = sut.DefaultValue.Generate(0);
 
 			await That(result).IsEqualTo(0);
 		}
 
 		[Fact]
-		public async Task WithLazyInt_ShouldReturnLazyWithZero()
-		{
-			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
-
-			Lazy<int> result = mock.LazyInt;
-
-			await That(result.Value).IsEqualTo(0);
-		}
-
-		[Fact]
-		public async Task WithLazyString_ShouldReturnLazyWithEmptyString()
-		{
-			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
-
-			Lazy<string> result = mock.LazyString;
-
-			await That(result.Value).IsEmpty();
-		}
-
-		[Fact]
 		public async Task WithMultidimensionalArray_ShouldReturnEmptyArray()
 		{
+			MockBehavior.Default.DefaultValue.Generate(default(int[,])!);
+
 			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
 
 			int[,,][,][] result = mock.MultiDimensionalArray;
@@ -103,7 +97,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			int? result = sut.DefaultValue.Generate<int?>();
+			int? result = sut.DefaultValue.Generate((int?)null);
 
 			await That(result).IsNull();
 		}
@@ -113,7 +107,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			object result = sut.DefaultValue.Generate<object>();
+			object result = sut.DefaultValue.Generate((object)null!);
 
 			await That(result).IsNull();
 		}
@@ -123,7 +117,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			string result = sut.DefaultValue.Generate<string>();
+			string result = sut.DefaultValue.Generate("");
 
 			await That(result).IsEmpty();
 		}
@@ -133,7 +127,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			DateTime result = sut.DefaultValue.Generate<DateTime>();
+			DateTime result = sut.DefaultValue.Generate(default(DateTime));
 
 			await That(result).IsEqualTo(DateTime.MinValue);
 		}
@@ -143,7 +137,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior sut = MockBehavior.Default;
 
-			Task result = sut.DefaultValue.Generate<Task>();
+			Task result = sut.DefaultValue.Generate(default(Task)!);
 
 			await That(result).IsNotNull();
 			await That(result.IsCompleted).IsTrue();
@@ -183,6 +177,7 @@ public sealed partial class MockBehaviorTests
 			await That(await result).IsEqualTo(0);
 		}
 
+#if NET8_0_OR_GREATER
 		[Fact]
 		public async Task WithValueTaskIntArray_ShouldReturnZero()
 		{
@@ -193,6 +188,7 @@ public sealed partial class MockBehaviorTests
 			await That(result.IsCompleted).IsTrue();
 			await That(await result).IsEmpty();
 		}
+#endif
 
 		[Fact]
 		public async Task WithValueTuple_ShouldReturnValueTupleWithDefaultValues()
@@ -231,13 +227,13 @@ public sealed partial class MockBehaviorTests
 			IEnumerable<int> IEnumerableOfInt { get; }
 			(int V1, string V2) NamedValueTuple { get; }
 			(int, string, int, string, int, string, int, string) ValueTuple8 { get; }
-			Lazy<int> LazyInt { get; }
-			Lazy<string> LazyString { get; }
 			Task<int> IntTask { get; }
 			Task<int[]> IntArrayTask { get; }
 			ValueTask<int> IntValueTask { get; }
 			ValueTask<int[]> IntArrayValueTask { get; }
 			IMyRecursiveService RecursiveService { get; }
+
+			Task<(int, int[], string)> ComplexTask();
 		}
 
 		public interface IMyRecursiveService

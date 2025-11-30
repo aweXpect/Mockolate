@@ -96,7 +96,7 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources).ContainsKey("MockForFuncintbool.g.cs").WhoseValue
-			.Contains("_mock.Registrations.InvokeMethod<bool>(\"System.Func<int, bool>.Invoke\", arg)")
+			.Contains("_mock.Registrations.InvokeMethod<bool>(\"System.Func<int, bool>.Invoke\", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(bool)!, p), arg)")
 			.IgnoringNewlineStyle().And
 			.Contains("System.Func<int,bool> Object").IgnoringNewlineStyle();
 	}
@@ -155,7 +155,7 @@ public sealed partial class ForMockTests
 		await That(result.Sources).ContainsKey("MockForProgramProcessResult.g.cs").WhoseValue
 			.Contains("var result1 = _mock.Registrations.InvokeMethod(")
 			.IgnoringNewlineStyle().And
-			.Contains("value = result1.SetOutParameter<int>(\"value\");")
+			.Contains("value = result1.SetOutParameter<int>(\"value\", () => _mock.Registrations.Behavior.DefaultValue.Generate(default(int)!));")
 			.IgnoringNewlineStyle().And
 			.Contains("result1.TriggerCallbacks(result, value)")
 			.IgnoringNewlineStyle();

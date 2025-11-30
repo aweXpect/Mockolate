@@ -174,8 +174,8 @@ public sealed partial class SetupIndexerTests
 		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(1);
 		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(1);
 
-		await That(result1.GetResult()).IsEqualTo("foo");
-		await That(result2.GetResult()).IsEqualTo(0);
+		await That(result1.GetResult(() => "")).IsEqualTo("foo");
+		await That(result2.GetResult(() => 0)).IsEqualTo(0);
 	}
 
 	[Fact]

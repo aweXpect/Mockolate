@@ -14,9 +14,9 @@ public abstract class MethodSetup : IMethodSetup
 	bool IMethodSetup.HasReturnCalls()
 		=> HasReturnCalls();
 
-	/// <inheritdoc cref="IMethodSetup.SetOutParameter{T}(string, MockBehavior)" />
-	T IMethodSetup.SetOutParameter<T>(string parameterName, MockBehavior behavior)
-		=> SetOutParameter<T>(parameterName, behavior);
+	/// <inheritdoc cref="IMethodSetup.SetOutParameter{T}(string, Func{T})" />
+	T IMethodSetup.SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+		=> SetOutParameter(parameterName, defaultValueGenerator);
 
 	/// <inheritdoc cref="IMethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	T IMethodSetup.SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
@@ -31,11 +31,12 @@ public abstract class MethodSetup : IMethodSetup
 		=> GetCallBaseClass();
 
 
-	/// <inheritdoc cref="IMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior)" />
-	TResult IMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior)
+	/// <inheritdoc cref="IMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
+	TResult IMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 	{
 		ExecuteCallback(methodInvocation, behavior);
-		return GetReturnValue<TResult>(methodInvocation, behavior);
+		return GetReturnValue(methodInvocation, behavior, defaultValueGenerator);
 	}
 
 	/// <inheritdoc cref="IMethodSetup.Invoke(MethodInvocation, MockBehavior)" />
@@ -63,9 +64,9 @@ public abstract class MethodSetup : IMethodSetup
 	/// </summary>
 	/// <remarks>
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
-	///     is generated using the current <paramref name="behavior" />.
+	///     is generated using the current <paramref name="defaultValueGenerator" />.
 	/// </remarks>
-	protected abstract T SetOutParameter<T>(string parameterName, MockBehavior behavior);
+	protected abstract T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator);
 
 	/// <summary>
 	///     Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value" /> and
@@ -85,7 +86,8 @@ public abstract class MethodSetup : IMethodSetup
 	/// <summary>
 	///     Gets the registered return value.
 	/// </summary>
-	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior);
+	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator);
 
 	/// <summary>
 	///     Checks if the <paramref name="invocation" /> matches the setup.
@@ -199,7 +201,7 @@ public abstract class MethodSetup : IMethodSetup
 			return true;
 		}
 
-		result = behavior.DefaultValue.Generate<T>();
+		result = default!;
 		return value is null;
 	}
 

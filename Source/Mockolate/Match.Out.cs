@@ -33,8 +33,8 @@ public partial class Match
 	/// </summary>
 	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : TypedOutMatch<T>
 	{
-		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
-		public override T GetValue(MockBehavior mockBehavior) => setter();
+		/// <inheritdoc cref="IOutParameter{T}.GetValue(Func{T})" />
+		public override T GetValue(Func<T> defaultValue) => setter();
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Out<{typeof(T).FormatType()}>({setterExpression})";
@@ -74,9 +74,9 @@ public partial class Match
 	{
 		private List<Action<T>>? _callbacks;
 
-		/// <inheritdoc cref="IOutParameter{T}.GetValue(MockBehavior)" />
-		public virtual T GetValue(MockBehavior mockBehavior)
-			=> mockBehavior.DefaultValue.Generate<T>();
+		/// <inheritdoc cref="IOutParameter{T}.GetValue(Func{T})" />
+		public virtual T GetValue(Func<T> defaultValue)
+			=> defaultValue();
 
 		/// <inheritdoc cref="IOutParameter{T}.Do(Action{T})" />
 		public IOutParameter<T> Do(Action<T> callback)

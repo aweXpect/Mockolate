@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 
@@ -20,10 +19,11 @@ public abstract class IndexerSetup : IIndexerSetup
 	bool IIndexerSetup.Matches(IndexerAccess indexerAccess)
 		=> IsMatch(indexerAccess.Parameters);
 
-	/// <inheritdoc cref="IIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, object?[], out TValue)" />
-	bool IIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, object?[] parameters,
+	/// <inheritdoc cref="IIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, object?[], out TValue)" />
+	bool IIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out TValue value)
-		=> TryGetInitialValue(behavior, parameters, out value);
+		=> TryGetInitialValue(behavior, defaultValueGenerator, parameters, out value);
 
 	/// <inheritdoc cref="IIndexerSetup.CallBaseClass()" />
 	bool? IIndexerSetup.CallBaseClass()
@@ -69,7 +69,7 @@ public abstract class IndexerSetup : IIndexerSetup
 			return true;
 		}
 
-		result = behavior.DefaultValue.Generate<T>();
+		result = default!;
 		return value is null;
 	}
 
@@ -119,7 +119,8 @@ public abstract class IndexerSetup : IIndexerSetup
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
-	protected abstract bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	protected abstract bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value);
 }
 
@@ -401,7 +402,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 			{
 				Callback<Func<int, TValue, T1, TValue>> returnCallback =
 					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, resultValue, p1), out TValue? newValue) &&
 				    TryCast(newValue, out T returnValue, behavior))
 				{
@@ -430,8 +431,9 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 	protected override bool IsMatch(object?[] parameters)
 		=> Matches([match1,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -443,7 +445,7 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 			return true;
 		}
 
-		value = behavior.DefaultValue.Generate<T>();
+		value = defaultValueGenerator();
 		return false;
 	}
 }
@@ -730,7 +732,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 			{
 				Callback<Func<int, TValue, T1, T2, TValue>> returnCallback =
 					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, resultValue, p1, p2), out TValue? newValue) &&
 				    TryCast(newValue, out T returnValue, behavior))
 				{
@@ -760,8 +762,9 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 	protected override bool IsMatch(object?[] parameters)
 		=> Matches([match1, match2,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -774,7 +777,7 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 			return true;
 		}
 
-		value = behavior.DefaultValue.Generate<T>();
+		value = defaultValueGenerator();
 		return false;
 	}
 }
@@ -1070,7 +1073,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 			{
 				Callback<Func<int, TValue, T1, T2, T3, TValue>> returnCallback =
 					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, resultValue, p1, p2, p3), out TValue? newValue) &&
 				    TryCast(newValue, out T returnValue, behavior))
 				{
@@ -1101,8 +1104,9 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	protected override bool IsMatch(object?[] parameters)
 		=> Matches([match1, match2, match3,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -1116,7 +1120,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 			return true;
 		}
 
-		value = behavior.DefaultValue.Generate<T>();
+		value = defaultValueGenerator();
 		return false;
 	}
 }
@@ -1420,7 +1424,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 			{
 				Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> returnCallback =
 					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke<TValue>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, resultValue, p1, p2, p3, p4), out TValue? newValue) &&
 				    TryCast(newValue, out T returnValue, behavior))
 				{
@@ -1452,8 +1456,9 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	protected override bool IsMatch(object?[] parameters)
 		=> Matches([match1, match2, match3, match4,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, object?[] parameters,
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -1468,7 +1473,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 			return true;
 		}
 
-		value = behavior.DefaultValue.Generate<T>();
+		value = defaultValueGenerator();
 		return false;
 	}
 }

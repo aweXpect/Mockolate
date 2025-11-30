@@ -17,7 +17,7 @@ public interface IPropertySetup
 	///     Invokes the getter logic for the <paramref name="invocation" /> and returns the value of type
 	///     <typeparamref name="TResult" />.
 	/// </summary>
-	TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior);
+	TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior, Func<TResult>? defaultValueGenerator);
 
 	/// <summary>
 	///     Gets a flag indicating if the base class implementation should be called, and its return values used as default
@@ -29,10 +29,9 @@ public interface IPropertySetup
 	bool? CallBaseClass();
 
 	/// <summary>
-	///     Initialize the <see cref="IPropertySetup{T}" /> with the <paramref name="baseValue" /> from the base class.
+	///     Initialize the <see cref="IPropertySetup{T}" /> with the <paramref name="value" />.
 	/// </summary>
-	/// <param name="baseValue"></param>
-	void InitializeWith(object? baseValue);
+	void InitializeWith(object? value);
 }
 
 /// <summary>

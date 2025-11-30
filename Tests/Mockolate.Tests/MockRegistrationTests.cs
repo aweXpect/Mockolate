@@ -16,7 +16,7 @@ public sealed class MockRegistrationTests
 			{
 				for (int j = 0; j < 20; j++)
 				{
-					sut.GetProperty<string>("foo");
+					sut.GetProperty<string>("foo", () => "", null);
 					await Task.Delay(1);
 				}
 			}, CancellationToken.None);

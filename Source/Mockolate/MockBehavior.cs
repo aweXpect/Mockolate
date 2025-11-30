@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using Mockolate.DefaultValues;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -15,10 +14,11 @@ public record MockBehavior
 {
 	private ConcurrentStack<IInitializer>? _initializers;
 
-	/// <summary>
-	///     The default mock behavior settings.
-	/// </summary>
-	public static MockBehavior Default { get; } = new();
+	/// <inheritdoc cref="MockBehavior" />
+	public MockBehavior(IDefaultValueGenerator defaultValue)
+	{
+		DefaultValue = defaultValue;
+	}
 
 	/// <summary>
 	///     Specifies whether an exception is thrown when an operation is attempted without prior setup.
@@ -42,11 +42,8 @@ public record MockBehavior
 	/// </summary>
 	/// <remarks>
 	///     If <see cref="ThrowWhenNotSetup" /> is not set to <see langword="false" />, an exception is thrown in such cases.
-	///     <para />
-	///     Defaults to an instance of <see cref="DefaultValueGenerator" />.
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
-		= new DefaultValueGenerator();
 
 	/// <summary>
 	///     Initialize all mocks of type <typeparamref name="T" /> with the given <paramref name="setups" />.

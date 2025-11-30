@@ -30,9 +30,9 @@ public interface IMethodSetup
 	/// </summary>
 	/// <remarks>
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
-	///     is generated using the current <paramref name="behavior" />.
+	///     is generated using the <paramref name="defaultValueGenerator" />.
 	/// </remarks>
-	T SetOutParameter<T>(string parameterName, MockBehavior behavior);
+	T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator);
 
 	/// <summary>
 	///     Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value" /> and
@@ -47,7 +47,8 @@ public interface IMethodSetup
 	/// <summary>
 	///     Invokes the <paramref name="methodInvocation" /> returning a value of type <typeparamref name="TResult" />.
 	/// </summary>
-	TResult Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior);
+	TResult Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator);
 
 	/// <summary>
 	///     Invokes the <paramref name="methodInvocation" /> returning <see langword="void" />.
@@ -403,7 +404,8 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 /// <summary>
 ///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>
+public interface
+	IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
@@ -532,7 +534,10 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 /// <summary>
 ///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>
+public interface
+	IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3> : IReturnMethodSetupReturnWhenBuilder<TReturn,
+	T1,
+	T2, T3>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
@@ -546,7 +551,8 @@ public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out
 /// <summary>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3> : IReturnMethodSetup<TReturn, T1, T2, T3>
+public interface
+	IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3> : IReturnMethodSetup<TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
@@ -662,7 +668,9 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 /// <summary>
 ///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>
+public interface
+	IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetupReturnWhenBuilder<
+	TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
@@ -676,7 +684,10 @@ public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out
 /// <summary>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+public interface
+	IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetup<TReturn, T1, T2
+	, T3
+	, T4>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
@@ -1232,7 +1243,8 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out
 /// <summary>
 ///     Sets up a throw builder for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupReturnBuilder<out T1, out T2, out T3, out T4> : IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>
+public interface
+	IVoidMethodSetupReturnBuilder<out T1, out T2, out T3, out T4> : IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the throw to only execute for method invocations where the predicate returns true.

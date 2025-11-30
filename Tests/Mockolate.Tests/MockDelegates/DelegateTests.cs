@@ -33,14 +33,14 @@ public class DelegateTests
 	public async Task WithCustomDelegate_SetupShouldWork()
 	{
 		DoSomething mock = Mock.Create<DoSomething>();
-		mock.SetupMock.Delegate(Any<int>(), Any<string>())
+		mock.SetupMock.Delegate(Any<int>(), Any<string>(), True())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
 
-		int result1 = mock(1, "foo");
-		await That(() => mock(2, "foo")).Throws<Exception>().WithMessage("foobar");
-		int result3 = mock(2, "bar");
+		int result1 = mock(1, "foo", true);
+		await That(() => mock(2, "foo", true)).Throws<Exception>().WithMessage("foobar");
+		int result3 = mock(2, "bar", true);
 
 		await That(result1).IsEqualTo(1);
 		await That(result3).IsEqualTo(3);
@@ -51,10 +51,10 @@ public class DelegateTests
 	{
 		DoSomething mock = Mock.Create<DoSomething>();
 
-		_ = mock(1, "foo");
-		_ = mock(2, "bar");
+		_ = mock(1, "foo", true);
+		_ = mock(2, "bar", true);
 
-		await That(mock.VerifyMock.Invoked(Any<int>(), Any<string>())).Twice();
+		await That(mock.VerifyMock.Invoked(Any<int>(), Any<string>(), Any<bool>())).Twice();
 	}
 
 	[Fact]
@@ -111,7 +111,7 @@ public class DelegateTests
 		await That(mock.VerifyMock.Invoked(Any<short>(), Any<string>())).Twice();
 	}
 
-	internal delegate int DoSomething(int x, string y);
+	internal delegate int DoSomething(int x, string y, bool p);
 
 	internal delegate void DoSomethingWithRefAndOut(int x, ref int y, out int z);
 

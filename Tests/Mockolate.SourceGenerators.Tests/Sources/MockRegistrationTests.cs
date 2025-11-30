@@ -32,11 +32,23 @@ public sealed class MockRegistrationTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
-			.Contains("DefaultValueGenerator.Register(new TypedDefaultValueFactory<int[]>(Array.Empty<int>()));").And
-			.Contains(
-				"DefaultValueGenerator.Register(new TypedDefaultValueFactory<int[,,][,][]>(new int[0,0,0][,][]));").And
-			.DoesNotContain("T[]");
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+			.Contains("""
+			          		public T[] Generate<T>(T[] nullValue, params object?[] parameters)
+			          			=> Array.Empty<T>();
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public T[,] Generate<T>(T[,] nullValue, params object?[] parameters)
+			          			=> new T[,] { };
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public T[,,] Generate<T>(T[,,] nullValue, params object?[] parameters)
+			          			=> new T[,,] { };
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public T[,,,] Generate<T>(T[,,,] nullValue, params object?[] parameters)
+			          			=> new T[,,,] { };
+			          """).IgnoringNewlineStyle();
 	}
 
 	[Fact]
@@ -67,14 +79,15 @@ public sealed class MockRegistrationTests
 			     }
 			     """, typeof(IEnumerable<>));
 
-		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
-			.Contains(
-				"DefaultValueGenerator.Register(new TypedDefaultValueFactory<System.Collections.Generic.IEnumerable<int>>(Array.Empty<int>()));")
-			.And
-			.Contains(
-				"DefaultValueGenerator.Register(new TypedDefaultValueFactory<System.Collections.Generic.IEnumerable<int[]>>(Array.Empty<int[]>()));")
-			.And
-			.DoesNotContain("IEnumerable<T>");
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+			.Contains("""
+			          		public IEnumerable<T> Generate<T>(IEnumerable<T> nullValue, params object?[] parameters)
+			          			=> Array.Empty<T>();
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public List<T> Generate<T>(List<T> nullValue, params object?[] parameters)
+			          			=> new List<T>();
+			          """).IgnoringNewlineStyle();
 	}
 
 	[Fact]
@@ -105,32 +118,25 @@ public sealed class MockRegistrationTests
 			     }
 			     """, typeof(Task));
 
-		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		DefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<System.Threading.Tasks.Task<int>>((defaultValueGenerator, parameters) => 
+			          		public Task<T> Generate<T>(Task<T> nullValue, params object?[] parameters)
 			          		{
-			          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
+			          			CancellationToken cancellationToken = parameters.OfType<object?[]>().FirstOrDefault()?
+			          				.OfType<CancellationToken>().FirstOrDefault() ?? CancellationToken.None;
 			          			if (cancellationToken.IsCancellationRequested)
 			          			{
-			          				return System.Threading.Tasks.Task.FromCanceled<int>(cancellationToken);
+			          				return Task.FromCanceled<T>(cancellationToken);
 			          			}
-			          			return System.Threading.Tasks.Task.FromResult<int>(defaultValueGenerator.Generate<int>());
-			          		}, type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int)));
-			          """).IgnoringNewlineStyle()
-			.And
-			.Contains("""
-			          		DefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<System.Threading.Tasks.Task<int[]>>((defaultValueGenerator, parameters) => 
-			          		{
-			          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
-			          			if (cancellationToken.IsCancellationRequested)
+			          			
+			          			if (parameters.Length > 0 && parameters[0] is Func<T> func)
 			          			{
-			          				return System.Threading.Tasks.Task.FromCanceled<int[]>(cancellationToken);
+			          				return Task.FromResult(func());
 			          			}
-			          			return System.Threading.Tasks.Task.FromResult<int[]>(defaultValueGenerator.Generate<int[]>());
-			          		}, type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.Task<>) && type.GenericTypeArguments[0] == typeof(int[])));
-			          """).IgnoringNewlineStyle()
-			.And
-			.DoesNotContain("Task<T>");
+			          			
+			          			return Task.FromResult(generator.Generate(default(T)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle();
 	}
 
 	[Fact]
@@ -161,36 +167,25 @@ public sealed class MockRegistrationTests
 			     }
 			     """, typeof(ValueTask));
 
-		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		DefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int>>((defaultValueGenerator, parameters) => 
+			          		public ValueTask<T> Generate<T>(ValueTask<T> nullValue, params object?[] parameters)
 			          		{
-			          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
-			          			#if NET8_0_OR_GREATER
+			          			CancellationToken cancellationToken = parameters.OfType<object?[]>().FirstOrDefault()?
+			          				.OfType<CancellationToken>().FirstOrDefault() ?? CancellationToken.None;
 			          			if (cancellationToken.IsCancellationRequested)
 			          			{
-			          				return System.Threading.Tasks.ValueTask.FromCanceled<int>(cancellationToken);
+			          				return ValueTask.FromCanceled<T>(cancellationToken);
 			          			}
-			          			#endif
-			          			return new System.Threading.Tasks.ValueTask<int>(defaultValueGenerator.Generate<int>());
-			          		}, type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int)));
-			          """).IgnoringNewlineStyle()
-			.And
-			.Contains("""
-			          		DefaultValueGenerator.Register(new ParametrizedCallbackDefaultValueFactory<System.Threading.Tasks.ValueTask<int[]>>((defaultValueGenerator, parameters) => 
-			          		{
-			          			CancellationToken cancellationToken = parameters.OfType<CancellationToken>().FirstOrDefault();
-			          			#if NET8_0_OR_GREATER
-			          			if (cancellationToken.IsCancellationRequested)
+			          			
+			          			if (parameters.Length > 0 && parameters[0] is Func<T> func)
 			          			{
-			          				return System.Threading.Tasks.ValueTask.FromCanceled<int[]>(cancellationToken);
+			          				return ValueTask.FromResult(func());
 			          			}
-			          			#endif
-			          			return new System.Threading.Tasks.ValueTask<int[]>(defaultValueGenerator.Generate<int[]>());
-			          		}, type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Threading.Tasks.ValueTask<>) && type.GenericTypeArguments[0] == typeof(int[])));
-			          """).IgnoringNewlineStyle()
-			.And
-			.DoesNotContain("ValueTask<T>");
+			          			
+			          			return ValueTask.FromResult(generator.Generate(default(T)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle();
 	}
 
 	[Fact]
@@ -220,14 +215,84 @@ public sealed class MockRegistrationTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
-			.Contains(
-				"DefaultValueGenerator.Register(new CallbackDefaultValueFactory<(int V1, string V2)>(defaultValueGenerator => (defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>())));")
-			.And
-			.Contains(
-				"DefaultValueGenerator.Register(new CallbackDefaultValueFactory<(int, string, int, string, int, string, int, string)>(defaultValueGenerator => (defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>(), defaultValueGenerator.Generate<int>(), defaultValueGenerator.Generate<string>())));")
-			.And
-			.DoesNotContain("(int, T1, T2)");
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+			.Contains("""
+			          		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params object?[] parameters)
+			          		{
+			          			if (parameters.Length >= 2 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2)
+			          			{
+			          				return (func1(), func2());
+			          			}
+			          			
+			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public (T1, T2, T3) Generate<T1, T2, T3>((T1, T2, T3) nullValue, params object?[] parameters)
+			          		{
+			          			if (parameters.Length >= 3 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3)
+			          			{
+			          				return (func1(), func2(), func3());
+			          			}
+			          			
+			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public (T1, T2, T3, T4) Generate<T1, T2, T3, T4>((T1, T2, T3, T4) nullValue, params object?[] parameters)
+			          		{
+			          			if (parameters.Length >= 4 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4)
+			          			{
+			          				return (func1(), func2(), func3(), func4());
+			          			}
+			          			
+			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public (T1, T2, T3, T4, T5) Generate<T1, T2, T3, T4, T5>((T1, T2, T3, T4, T5) nullValue, params object?[] parameters)
+			          		{
+			          			if (parameters.Length >= 5 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4 && parameters[4] is Func<T5> func5)
+			          			{
+			          				return (func1(), func2(), func3(), func4(), func5());
+			          			}
+			          			
+			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public (T1, T2, T3, T4, T5, T6) Generate<T1, T2, T3, T4, T5, T6>((T1, T2, T3, T4, T5, T6) nullValue, params object?[] parameters)
+			          		{
+			          			if (parameters.Length >= 6 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4 && parameters[4] is Func<T5> func5 && parameters[5] is Func<T6> func6)
+			          			{
+			          				return (func1(), func2(), func3(), func4(), func5(), func6());
+			          			}
+			          			
+			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters), generator.Generate(default(T6)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public (T1, T2, T3, T4, T5, T6, T7) Generate<T1, T2, T3, T4, T5, T6, T7>((T1, T2, T3, T4, T5, T6, T7) nullValue, params object?[] parameters)
+			          		{
+			          			if (parameters.Length >= 7 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4 && parameters[4] is Func<T5> func5 && parameters[5] is Func<T6> func6 && parameters[6] is Func<T7> func7)
+			          			{
+			          				return (func1(), func2(), func3(), func4(), func5(), func6(), func7());
+			          			}
+			          			
+			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters), generator.Generate(default(T6)!, parameters), generator.Generate(default(T7)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		public (T1, T2, T3, T4, T5, T6, T7, T8) Generate<T1, T2, T3, T4, T5, T6, T7, T8>((T1, T2, T3, T4, T5, T6, T7, T8) nullValue, params object?[] parameters)
+			          		{
+			          			if (parameters.Length >= 8 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4 && parameters[4] is Func<T5> func5 && parameters[5] is Func<T6> func6 && parameters[6] is Func<T7> func7 && parameters[7] is Func<T8> func8)
+			          			{
+			          				return (func1(), func2(), func3(), func4(), func5(), func6(), func7(), func8());
+			          			}
+			          			
+			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters), generator.Generate(default(T6)!, parameters), generator.Generate(default(T7)!, parameters), generator.Generate(default(T8)!, parameters));
+			          		}
+			          """).IgnoringNewlineStyle();
 	}
 
 	[Fact]

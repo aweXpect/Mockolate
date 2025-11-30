@@ -35,7 +35,11 @@ internal record Type
 				.Select(x => new Type(x))
 				.ToArray());
 		}
+
+		SpecialGenericType = typeSymbol.GetSpecialType();
 	}
+
+	public SpecialGenericType SpecialGenericType { get; }
 
 	public bool IsArray { get; }
 	public bool IsTypeParameter { get; }

@@ -120,12 +120,12 @@ public partial class Match
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
-	public interface IOutParameter<out T>
+	public interface IOutParameter<T>
 	{
 		/// <summary>
 		///     Retrieves the value to which the <see langword="out" /> parameter should be set.
 		/// </summary>
-		T GetValue(MockBehavior mockBehavior);
+		T GetValue(Func<T> defaultValue);
 
 		/// <summary>
 		///     Registers a <paramref name="callback" /> to execute for matching parameters.

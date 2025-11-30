@@ -1,4 +1,3 @@
-using Mockolate.DefaultValues;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
@@ -13,7 +12,7 @@ public sealed partial class MockBehaviorTests
 
 		await That(sut.CallBaseClass).IsFalse();
 		await That(sut.ThrowWhenNotSetup).IsFalse();
-		await That(sut.DefaultValue).Is<DefaultValueGenerator>();
+		await That(sut.DefaultValue).IsNotNull();
 	}
 
 	[Fact]
@@ -28,25 +27,21 @@ public sealed partial class MockBehaviorTests
 
 		await That(sut.CallBaseClass).IsTrue();
 		await That(sut.ThrowWhenNotSetup).IsTrue();
-		await That(sut.DefaultValue.Generate<string>()).IsEqualTo("foo");
-		await That(sut.DefaultValue.Generate<int>()).IsEqualTo(0);
+		await That(sut.DefaultValue.Generate("")).IsEqualTo("foo");
+		await That(sut.DefaultValue.Generate(0)).IsEqualTo(0);
 	}
 
 	private sealed class MyDefaultValueGenerator : IDefaultValueGenerator
 	{
-		/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}()" />
-		public T Generate<T>()
+		/// <inheritdoc cref="IDefaultValueGenerator.Generate(Type, object?[])" />
+		public object? Generate(Type type, params object?[] parameters)
 		{
-			if (typeof(T) == typeof(string))
+			if (type == typeof(string))
 			{
-				return (T)(object)"foo";
+				return "foo";
 			}
 
-			return default!;
+			return null;
 		}
-
-		/// <inheritdoc cref="IDefaultValueGenerator.Generate{T}(object?[])" />
-		public T Generate<T>(params object?[] parameters)
-			=> Generate<T>();
 	}
 }
