@@ -32,7 +32,8 @@ public abstract class MethodSetup : IMethodSetup
 
 
 	/// <inheritdoc cref="IMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	TResult IMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	TResult IMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 	{
 		ExecuteCallback(methodInvocation, behavior);
 		return GetReturnValue(methodInvocation, behavior, defaultValueGenerator);
@@ -85,7 +86,8 @@ public abstract class MethodSetup : IMethodSetup
 	/// <summary>
 	///     Gets the registered return value.
 	/// </summary>
-	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator);
+	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator);
 
 	/// <summary>
 	///     Checks if the <paramref name="invocation" /> matches the setup.

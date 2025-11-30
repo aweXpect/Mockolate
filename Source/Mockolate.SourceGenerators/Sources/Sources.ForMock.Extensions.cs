@@ -328,7 +328,8 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	private static void AppendMethodSetup(Class @class, StringBuilder sb, Method method, bool useParameters, string? methodNameOverride = null)
+	private static void AppendMethodSetup(Class @class, StringBuilder sb, Method method, bool useParameters,
+		string? methodNameOverride = null)
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <summary>").AppendLine();
@@ -353,7 +354,7 @@ internal static partial class Sources
 		if (method.ReturnType != Type.Void)
 		{
 			sb.Append("\t\tpublic IReturnMethodSetup<").AppendTypeOrWrapper(method.ReturnType);
-			
+
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -399,7 +400,7 @@ internal static partial class Sources
 					sb.Append(", ");
 				}
 
-				sb.AppendParameter(parameter);
+				sb.Append(parameter.ToParameter());
 				if (parameter.IsNullable())
 				{
 					sb.Append('?');
@@ -425,7 +426,7 @@ internal static partial class Sources
 		if (method.ReturnType != Type.Void)
 		{
 			sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<").AppendTypeOrWrapper(method.ReturnType);
-			
+
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -551,7 +552,8 @@ internal static partial class Sources
 			sb.Append("\t\t\tMockBehavior mockBehavior = mock.Registrations.Behavior;").AppendLine();
 			sb.Append("\t\t\tmock.Registrations.Raise(").Append(@event.GetUniqueNameString()).Append(", ")
 				.Append(string.Join(", ",
-					@event.Delegate.Parameters.Select(p => $"mockBehavior.DefaultValue.Generate(typeof({p.Type.Fullname.TrimEnd('?')}))")))
+					@event.Delegate.Parameters.Select(p
+						=> $"mockBehavior.DefaultValue.Generate(typeof({p.Type.Fullname.TrimEnd('?')}))")))
 				.Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
@@ -675,18 +677,19 @@ internal static partial class Sources
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic IIndexerSetup<").AppendTypeOrWrapper(indexer.Type);
-				
+
 				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
 					sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
 				}
 
 				sb.Append("> Indexer").Append("(").Append(string.Join(", ",
-					indexer.IndexerParameters.Value.Select((p, i)
-						=> p.ToParameter() + (p.IsNullable() ? "?" : "") + $" parameter{i + 1}"))).Append(")").AppendLine();
+						indexer.IndexerParameters.Value.Select((p, i)
+							=> p.ToParameter() + (p.IsNullable() ? "?" : "") + $" parameter{i + 1}"))).Append(")")
+					.AppendLine();
 				sb.Append("\t\t{").AppendLine();
 				sb.Append("\t\t\tvar indexerSetup = new IndexerSetup<").AppendTypeOrWrapper(indexer.Type);
-				
+
 				foreach (MethodParameter parameter in indexer.IndexerParameters!)
 				{
 					sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -1116,7 +1119,8 @@ internal static partial class Sources
 				.Append(isProtected ? "Protected" : "").Append("Indexer")
 				.Append("(").Append(string.Join(", ",
 					indexerParameters.Value.Select((p, i)
-						=> p.ToParameter() + (p.IsNullable() ? "?" : "") + $" parameter{i + 1}"))).Append(")").AppendLine();
+						=> p.ToParameter() + (p.IsNullable() ? "?" : "") + $" parameter{i + 1}"))).Append(")")
+				.AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).GotIndexer(")
 				.Append(string.Join(", ", indexerParameters.Value.Select((p, i)
@@ -1270,7 +1274,8 @@ internal static partial class Sources
 				.Append("(")
 				.Append(string.Join(", ",
 					indexer.IndexerParameters.Value.Select((p, i)
-						=> p.ToParameter() + (p.IsNullable() ? "?" : "") + $" parameter{i + 1}"))).Append(", Match.IParameter<")
+						=> p.ToParameter() + (p.IsNullable() ? "?" : "") + $" parameter{i + 1}")))
+				.Append(", Match.IParameter<")
 				.Append(indexer.Type.Fullname).Append(">? value)").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).SetIndexer((Match.IParameter?)value, ")
@@ -1425,6 +1430,5 @@ internal static partial class Sources
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 	}
-
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

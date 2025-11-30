@@ -5,16 +5,6 @@ using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
-internal enum SpecialGenericType
-{
-	None,
-	Span,
-	ReadOnlySpan,
-	Tuple,
-	Task,
-	ValueTask,
-}
-
 internal static class Helpers
 {
 	public static SpecialGenericType GetSpecialType(this ITypeSymbol typeSymbol)
@@ -145,26 +135,6 @@ internal static class Helpers
 			(RefKind.Out, _) => "Match.IVerifyOutParameter<",
 			(_, SpecialGenericType.Span) => "Match.IVerifySpanParameter<",
 			(_, SpecialGenericType.ReadOnlySpan) => "Match.IVerifyReadOnlySpanParameter<",
-			(_, _) => "Match.IParameter<",
-		});
-		sb.Append(parameter.Type.SpecialGenericType switch
-		{
-			SpecialGenericType.Span => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
-			SpecialGenericType.ReadOnlySpan => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
-			_ => parameter.Type.Fullname,
-		}).Append('>');
-
-		return sb;
-	}
-
-	public static StringBuilder AppendParameter(this StringBuilder sb, MethodParameter parameter)
-	{
-		sb.Append((parameter.RefKind, parameter.Type.SpecialGenericType) switch
-		{
-			(RefKind.Ref, _) => "Match.IRefParameter<",
-			(RefKind.Out, _) => "Match.IOutParameter<",
-			(_, SpecialGenericType.Span) => "Match.ISpanParameter<",
-			(_, SpecialGenericType.ReadOnlySpan) => "Match.IReadOnlySpanParameter<",
 			(_, _) => "Match.IParameter<",
 		});
 		sb.Append(parameter.Type.SpecialGenericType switch

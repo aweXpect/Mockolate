@@ -66,7 +66,7 @@ internal static partial class Sources
 			string resultVarName = Helpers.GetUniqueLocalVariableName("result", mockClass.Delegate.Parameters);
 			if (mockClass.Delegate.ReturnType != Type.Void)
 			{
-				var parameterVarName = Helpers.GetUniqueLocalVariableName("p", mockClass.Delegate.Parameters);
+				string parameterVarName = Helpers.GetUniqueLocalVariableName("p", mockClass.Delegate.Parameters);
 				sb.Append("\t\tvar ").Append(resultVarName).Append(" = _mock.Registrations.InvokeMethod<")
 					.Append(mockClass.Delegate.ReturnType.Fullname)
 					.Append(">(").Append(mockClass.Delegate.GetUniqueNameString());
@@ -94,7 +94,6 @@ internal static partial class Sources
 
 			foreach (MethodParameter parameter in mockClass.Delegate.Parameters)
 			{
-				
 				if (parameter.RefKind == RefKind.Out)
 				{
 					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(resultVarName)
@@ -430,11 +429,11 @@ internal static partial class Sources
 				else
 				{
 					sb.Append(
-						"\t\t\treturn MockRegistrations.GetProperty<")
+							"\t\t\treturn MockRegistrations.GetProperty<")
 						.AppendTypeOrWrapper(property.Type).Append(">(")
 						.Append(property.GetUniqueNameString()).Append(", () => ")
-					.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
-					.Append(", () => base.").Append(property.Name).Append(");").AppendLine();
+						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
+						.Append(", () => base.").Append(property.Name).Append(");").AppendLine();
 				}
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
@@ -581,13 +580,14 @@ internal static partial class Sources
 		string methodExecutionVarName = Helpers.GetUniqueLocalVariableName("methodExecution", method.Parameters);
 		if (method.ReturnType != Type.Void)
 		{
-			var parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
+			string parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
 			sb.Append("\t\tMethodSetupResult<")
 				.AppendTypeOrWrapper(method.ReturnType).Append("> ").Append(methodExecutionVarName)
 				.Append(" = MockRegistrations.InvokeMethod<")
 				.AppendTypeOrWrapper(method.ReturnType).Append(">(").Append(method.GetUniqueNameString())
 				.Append(", ").Append(parameterVarName).Append(" => ")
-				.AppendDefaultValueGeneratorFor(method.ReturnType, "MockRegistrations.Behavior.DefaultValue", $", {parameterVarName}");
+				.AppendDefaultValueGeneratorFor(method.ReturnType, "MockRegistrations.Behavior.DefaultValue",
+					$", {parameterVarName}");
 		}
 		else
 		{

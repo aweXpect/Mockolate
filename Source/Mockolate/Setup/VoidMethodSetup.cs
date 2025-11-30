@@ -144,7 +144,8 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -358,7 +359,8 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -595,7 +597,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -841,7 +844,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
@@ -1092,7 +1096,8 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 

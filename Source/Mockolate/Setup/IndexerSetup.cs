@@ -20,7 +20,8 @@ public abstract class IndexerSetup : IIndexerSetup
 		=> IsMatch(indexerAccess.Parameters);
 
 	/// <inheritdoc cref="IIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, object?[], out TValue)" />
-	bool IIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator, object?[] parameters,
+	bool IIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out TValue value)
 		=> TryGetInitialValue(behavior, defaultValueGenerator, parameters, out value);
 
@@ -118,7 +119,8 @@ public abstract class IndexerSetup : IIndexerSetup
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
-	protected abstract bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, object?[] parameters,
+	protected abstract bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value);
 }
 
@@ -430,7 +432,8 @@ public class IndexerSetup<TValue, T1>(Match.IParameter match1)
 		=> Matches([match1,], parameters);
 
 	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, object?[] parameters,
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -760,7 +763,8 @@ public class IndexerSetup<TValue, T1, T2>(Match.IParameter match1, Match.IParame
 		=> Matches([match1, match2,], parameters);
 
 	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, object?[] parameters,
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -1101,7 +1105,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		=> Matches([match1, match2, match3,], parameters);
 
 	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, object?[] parameters,
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
@@ -1452,7 +1457,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		=> Matches([match1, match2, match3, match4,], parameters);
 
 	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, object?[] parameters,
+	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		object?[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&

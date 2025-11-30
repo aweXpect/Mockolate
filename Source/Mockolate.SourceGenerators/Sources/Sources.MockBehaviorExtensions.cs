@@ -239,21 +239,22 @@ internal static partial class Sources
 		{
 			string ts = string.Join(", ", Enumerable.Range(1, i).Select(x => $"T{x}"));
 			sb.Append($$"""
-			          		/// <summary>
-			          		///     Generates a tuple of ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"<typeparamref name=\"T{x}\" />"))}}), with
-			          		///     the <paramref name="parameters" /> for context.
-			          		/// </summary>
-			          		public ({{ts}}) Generate<{{ts}}>(({{ts}}) nullValue, params object?[] parameters)
-			          		{
-			          			if (parameters.Length >= {{i}} && {{string.Join(" && ", Enumerable.Range(1, i).Select(x => $"parameters[{x-1}] is Func<T{x}> func{x}"))}})
-			          			{
-			          				return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"func{x}()"))}});
-			          			}
-			          			
-			          			return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"generator.Generate(default(T{x})!, parameters)"))}});
-			          		}
-			          """).AppendLine();
+			            		/// <summary>
+			            		///     Generates a tuple of ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"<typeparamref name=\"T{x}\" />"))}}), with
+			            		///     the <paramref name="parameters" /> for context.
+			            		/// </summary>
+			            		public ({{ts}}) Generate<{{ts}}>(({{ts}}) nullValue, params object?[] parameters)
+			            		{
+			            			if (parameters.Length >= {{i}} && {{string.Join(" && ", Enumerable.Range(1, i).Select(x => $"parameters[{x - 1}] is Func<T{x}> func{x}"))}})
+			            			{
+			            				return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"func{x}()"))}});
+			            			}
+			            			
+			            			return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"generator.Generate(default(T{x})!, parameters)"))}});
+			            		}
+			            """).AppendLine();
 		}
+
 		sb.Append("""
 		          		/// <summary>
 		          		///     Generates an empty enumerable of <typeparamref name="T" />, with
@@ -296,7 +297,7 @@ internal static partial class Sources
 		          		/// </summary>
 		          		public T[,,,] Generate<T>(T[,,,] nullValue, params object?[] parameters)
 		          			=> new T[,,,] { };
-		          
+
 		          		/// <summary>
 		          		///     Generates a default value of type <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
@@ -307,12 +308,12 @@ internal static partial class Sources
 		          			{
 		          				return value;
 		          			}
-		          
+
 		          			return nullValue;
 		          		}
 		          	}
 		          }
-		          
+
 		          #nullable disable
 		          """);
 		return sb.ToString();

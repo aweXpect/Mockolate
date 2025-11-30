@@ -29,7 +29,8 @@ public interface IIndexerSetup
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
-	bool TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator, object?[] parameters, [NotNullWhen(true)] out TValue value);
+	bool TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator, object?[] parameters,
+		[NotNullWhen(true)] out TValue value);
 }
 
 /// <summary>
@@ -181,7 +182,8 @@ public interface IIndexerSetupReturnBuilder<TValue, out T1> : IIndexerSetupRetur
 }
 
 /// <summary>
-///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
+///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for
+///     <typeparamref name="T1" />.
 /// </summary>
 public interface IIndexerSetupReturnWhenBuilder<TValue, out T1> : IIndexerSetup<TValue, T1>
 {
@@ -349,7 +351,8 @@ public interface IIndexerSetupReturnBuilder<TValue, out T1, out T2> : IIndexerSe
 }
 
 /// <summary>
-///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
+///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for
+///     <typeparamref name="T1" /> and
 ///     <typeparamref name="T2" />.
 /// </summary>
 public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2> : IIndexerSetup<TValue, T1, T2>
@@ -509,7 +512,8 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 ///     Sets up a return/throw builder for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
 ///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
-public interface IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3> : IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>
+public interface
+	IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3> : IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for indexer accesses where the predicate returns true.
@@ -521,7 +525,8 @@ public interface IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3> : II
 }
 
 /// <summary>
-///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for
+///     <typeparamref name="T1" />,
 ///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
 public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2, out T3> : IIndexerSetup<TValue, T1, T2, T3>
@@ -685,7 +690,8 @@ public interface
 ///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public interface
-	IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3, out T4> : IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>
+	IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3, out T4> : IIndexerSetupReturnWhenBuilder<TValue, T1, T2,
+	T3, T4>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for indexer accesses where the predicate returns true.
@@ -697,7 +703,8 @@ public interface
 }
 
 /// <summary>
-///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     Sets up a when builder for returns/throws for a <typeparamref name="TValue" /> indexer for
+///     <typeparamref name="T1" />,
 ///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public interface

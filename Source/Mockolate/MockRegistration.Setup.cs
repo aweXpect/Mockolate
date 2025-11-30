@@ -50,7 +50,8 @@ public partial class MockRegistration
 		}
 		else
 		{
-			matchingSetup.InitializeWith(defaultValueGenerator(matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass));
+			matchingSetup.InitializeWith(
+				defaultValueGenerator(matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass));
 		}
 
 		return matchingSetup;
@@ -162,7 +163,7 @@ public partial class MockRegistration
 
 			List<KeyValuePair<string, IPropertySetup>> setups =
 				_storage.Where(x => x.Value is not PropertySetup.Default).ToList();
-			
+
 			if (setups.Count == 0)
 			{
 				return "0 properties";

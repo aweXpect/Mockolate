@@ -30,7 +30,10 @@ internal record AttributeParameter
 	private static string SerializeConstantValue(TypedConstant value)
 	{
 		if (value.Value is null)
+		{
 			return "null";
+		}
+
 		return value.Type?.SpecialType switch
 		{
 			SpecialType.System_Char => $"'{value.Value}'",
@@ -45,7 +48,7 @@ internal record AttributeParameter
 			SpecialType.System_Int64 => $"{value.Value}L",
 			SpecialType.System_UInt64 => $"{value.Value}uL",
 			SpecialType.System_UInt32 => $"{value.Value}u",
-			_ => value.Value.ToString()
+			_ => value.Value.ToString(),
 		};
 	}
 }

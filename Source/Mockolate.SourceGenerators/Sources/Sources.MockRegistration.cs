@@ -253,12 +253,6 @@ internal static partial class Sources
 		          			return true;
 		          		}
 		          		
-		          		if (behavior.DefaultValue.Generate(typeof(TValue)) is TValue defaultValue)
-		          		{
-		          			result = defaultValue;
-		          			return true;
-		          		}
-		          		
 		          		result = default!;
 		          		return value is null;
 		          	}

@@ -140,14 +140,15 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 			=> @delegate(invocationCount)));
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
 		foreach (Callback<Func<int, TReturn>> _ in _returnCallbacks)
 		{
 			Callback<Func<int, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount), out TReturn? newValue))
 			{
 				if (newValue is null)
@@ -388,7 +389,8 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -406,7 +408,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		{
 			Callback<Func<int, T1, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1), out TReturn? newValue))
 			{
 				if (newValue is null)
@@ -670,7 +672,8 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -694,7 +697,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		{
 			Callback<Func<int, T1, T2, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2), out TReturn? newValue))
 			{
 				if (newValue is null)
@@ -966,7 +969,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -996,7 +1000,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		{
 			Callback<Func<int, T1, T2, T3, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2, p3), out TReturn? newValue))
 			{
 				if (newValue is null)
@@ -1277,7 +1281,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
 		if (_returnCallbacks.Count == 0)
@@ -1313,7 +1318,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		{
 			Callback<Func<int, T1, T2, T3, T4, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2, p3, p4), out TReturn? newValue))
 			{
 				if (newValue is null)

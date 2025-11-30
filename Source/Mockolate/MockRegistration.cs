@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -19,12 +18,9 @@ namespace Mockolate;
 [DebuggerDisplay("{ToString()}")]
 public partial class MockRegistration
 {
-	private static int _globalId;
-	internal int Id { get; }
 	/// <inheritdoc cref="MockRegistration" />
 	public MockRegistration(MockBehavior behavior, string prefix)
 	{
-		Id = Interlocked.Increment(ref _globalId);
 		Behavior = behavior;
 		Prefix = prefix;
 		Interactions = new MockInteractions();
@@ -33,7 +29,6 @@ public partial class MockRegistration
 	/// <inheritdoc cref="MockRegistration" />
 	internal MockRegistration(MockBehavior behavior, string prefix, MockInteractions interactions)
 	{
-		Id = Interlocked.Increment(ref _globalId);
 		Behavior = behavior;
 		Prefix = prefix;
 		Interactions = interactions;
@@ -65,7 +60,8 @@ public partial class MockRegistration
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, Func<object?[], TResult> defaultValue, params object?[]? parameters)
+	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, Func<object?[], TResult> defaultValue,
+		params object?[]? parameters)
 	{
 		parameters ??= [null,];
 		MethodInvocation methodInvocation =
@@ -113,7 +109,8 @@ public partial class MockRegistration
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName" />.
 	/// </summary>
-	public TResult GetProperty<TResult>(string propertyName, Func<TResult> defaultValueGenerator, Func<TResult>? baseValueAccessor)
+	public TResult GetProperty<TResult>(string propertyName, Func<TResult> defaultValueGenerator,
+		Func<TResult>? baseValueAccessor)
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
@@ -123,7 +120,7 @@ public partial class MockRegistration
 				? baseValueAccessor.Invoke()
 				: defaultValueGenerator());
 		return matchingSetup.InvokeGetter(interaction, Behavior,
-			matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass && baseValueAccessor is not null
+			matchingSetup.CallBaseClass() ?? (Behavior.CallBaseClass && baseValueAccessor is not null)
 				? baseValueAccessor
 				: defaultValueGenerator);
 	}
