@@ -138,7 +138,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 	protected override void InvokeSetter(object? value, MockBehavior behavior)
 	{
-		if (!TryCast(value, out T newValue, behavior))
+		if (!TryCast(value, out T newValue))
 		{
 			throw new MockException(
 				$"The property value only supports '{typeof(T).FormatType()}', but is '{value.GetType().FormatType()}'.");
@@ -184,7 +184,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 			_isInitialized = true;
 		}
 
-		if (!TryCast(_value, out TResult result, behavior))
+		if (!TryCast(_value, out TResult result))
 		{
 			throw new MockException(
 				$"The property only supports '{typeof(T).FormatType()}' and not '{typeof(TResult).FormatType()}'.");
@@ -220,7 +220,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 	public override string ToString()
 		=> typeof(T).FormatType();
 
-	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result, MockBehavior behavior)
+	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
 	{
 		if (value is TValue typedValue)
 		{
