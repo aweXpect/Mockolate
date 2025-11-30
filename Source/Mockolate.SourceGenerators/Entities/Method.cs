@@ -16,14 +16,6 @@ internal record Method
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 
-		if (!methodSymbol.ReturnsVoid &&
-		    methodSymbol.ReturnType.IsSpanOrReadOnlySpan(out bool isSpan, out bool isReadOnlySpan, out Type? spanType))
-		{
-			ReturnsSpan = isSpan;
-			ReturnsReadOnlySpan = isReadOnlySpan;
-			SpanElementType = spanType;
-		}
-
 		if (methodSymbol.IsGenericMethod)
 		{
 			GenericParameters = new EquatableArray<GenericParameter>(methodSymbol.TypeArguments
@@ -63,9 +55,6 @@ internal record Method
 	public EquatableArray<MethodParameter> Parameters { get; }
 	public string? ExplicitImplementation { get; }
 	public EquatableArray<Attribute>? Attributes { get; }
-	public bool ReturnsSpan { get; }
-	public bool ReturnsReadOnlySpan { get; }
-	public Type? SpanElementType { get; }
 
 	internal string GetUniqueNameString()
 	{

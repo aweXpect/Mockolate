@@ -17,33 +17,9 @@ internal enum SpecialGenericType
 
 internal static class Helpers
 {
-	// TODO: Replace with specialgenerictype
-	public static bool IsSpanOrReadOnlySpan(this ITypeSymbol typeSymbol, out bool isSpan, out bool isReadOnlySpan,
-		out Type? spanType)
-	{
-		if (typeSymbol.ContainingNamespace is { Name: "System", ContainingNamespace.IsGlobalNamespace: true })
-		{
-			isSpan = typeSymbol.Name == "Span";
-			isReadOnlySpan = typeSymbol.Name == "ReadOnlySpan";
-			if ((isSpan || isReadOnlySpan) && typeSymbol is INamedTypeSymbol
-			    {
-				    TypeArguments.Length: 1,
-			    } namedTypeSymbol)
-			{
-				spanType = new Type(namedTypeSymbol.TypeArguments[0]);
-				return true;
-			}
-		}
-
-		isSpan = false;
-		isReadOnlySpan = false;
-		spanType = null;
-		return false;
-	}
-
 	public static SpecialGenericType GetSpecialType(this ITypeSymbol typeSymbol)
 	{
-		if (typeSymbol.ContainingNamespace is { Name: "System", ContainingNamespace.IsGlobalNamespace: true })
+		if (typeSymbol.ContainingNamespace is { Name: "System", ContainingNamespace.IsGlobalNamespace: true, })
 		{
 			if (typeSymbol.Name == "Span")
 			{
@@ -61,8 +37,9 @@ internal static class Helpers
 			}
 		}
 		else if (typeSymbol.ContainingNamespace is { Name: "Tasks", ContainingNamespace.Name: "Threading", } &&
-		         typeSymbol.ContainingNamespace.ContainingNamespace?.ContainingNamespace.Name == "System" && 
-		         typeSymbol.ContainingNamespace.ContainingNamespace?.ContainingNamespace?.ContainingNamespace?.IsGlobalNamespace == true)
+		         typeSymbol.ContainingNamespace.ContainingNamespace?.ContainingNamespace.Name == "System" &&
+		         typeSymbol.ContainingNamespace.ContainingNamespace?.ContainingNamespace?.ContainingNamespace
+			         ?.IsGlobalNamespace == true)
 		{
 			if (typeSymbol.Name == "Task")
 			{
@@ -74,7 +51,7 @@ internal static class Helpers
 				return SpecialGenericType.ValueTask;
 			}
 		}
-		
+
 		return SpecialGenericType.None;
 	}
 
@@ -116,6 +93,158 @@ internal static class Helpers
 		return sb;
 	}
 
+	public static StringBuilder AppendTypeOrWrapper(this StringBuilder sb, Type type)
+	{
+		if (type.SpecialGenericType == SpecialGenericType.Span)
+		{
+			sb.Append("SpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
+		}
+		else if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+		{
+			sb.Append("ReadOnlySpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
+		}
+		else
+		{
+			sb.Append(type.Fullname);
+		}
+
+		return sb;
+	}
+
+	public static string ToNameOrWrapper(this MethodParameter parameter)
+	{
+		if (parameter.Type.SpecialGenericType == SpecialGenericType.Span)
+		{
+			return $"new SpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>({parameter.Name})";
+		}
+
+		if (parameter.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+		{
+			return
+				$"new ReadOnlySpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>({parameter.Name})";
+		}
+
+		return parameter.Name;
+	}
+
+	public static string ToNameOrNull(this MethodParameter parameter)
+	{
+		if (parameter.Type.SpecialGenericType is SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan)
+		{
+			return "null";
+		}
+
+		return parameter.Name;
+	}
+
+	public static StringBuilder AppendVerifyParameter(this StringBuilder sb, MethodParameter parameter)
+	{
+		sb.Append((parameter.RefKind, parameter.Type.SpecialGenericType) switch
+		{
+			(RefKind.Ref, _) => "Match.IVerifyRefParameter<",
+			(RefKind.Out, _) => "Match.IVerifyOutParameter<",
+			(_, SpecialGenericType.Span) => "Match.IVerifySpanParameter<",
+			(_, SpecialGenericType.ReadOnlySpan) => "Match.IVerifyReadOnlySpanParameter<",
+			(_, _) => "Match.IParameter<",
+		});
+		sb.Append(parameter.Type.SpecialGenericType switch
+		{
+			SpecialGenericType.Span => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+			SpecialGenericType.ReadOnlySpan => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+			_ => parameter.Type.Fullname,
+		}).Append('>');
+
+		return sb;
+	}
+
+	public static StringBuilder AppendParameter(this StringBuilder sb, MethodParameter parameter)
+	{
+		sb.Append((parameter.RefKind, parameter.Type.SpecialGenericType) switch
+		{
+			(RefKind.Ref, _) => "Match.IRefParameter<",
+			(RefKind.Out, _) => "Match.IOutParameter<",
+			(_, SpecialGenericType.Span) => "Match.ISpanParameter<",
+			(_, SpecialGenericType.ReadOnlySpan) => "Match.IReadOnlySpanParameter<",
+			(_, _) => "Match.IParameter<",
+		});
+		sb.Append(parameter.Type.SpecialGenericType switch
+		{
+			SpecialGenericType.Span => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+			SpecialGenericType.ReadOnlySpan => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+			_ => parameter.Type.Fullname,
+		}).Append('>');
+
+		return sb;
+	}
+
+	public static string ToParameter(this MethodParameter parameter)
+	{
+		return (parameter.RefKind, parameter.Type.SpecialGenericType) switch
+		{
+			(RefKind.Ref, _) => $"Match.IRefParameter<{GetType(parameter)}>",
+			(RefKind.Out, _) => $"Match.IOutParameter<{GetType(parameter)}>",
+			(_, SpecialGenericType.Span) => $"Match.ISpanParameter<{GetType(parameter)}>",
+			(_, SpecialGenericType.ReadOnlySpan) => $"Match.IReadOnlySpanParameter<{GetType(parameter)}>",
+			(_, _) => $"Match.IParameter<{GetType(parameter)}>",
+		};
+
+		static string GetType(MethodParameter parameter)
+		{
+			return parameter.Type.SpecialGenericType switch
+			{
+				SpecialGenericType.Span => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+				SpecialGenericType.ReadOnlySpan => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+				_ => parameter.Type.Fullname,
+			};
+		}
+	}
+
+	public static bool IsNullable(this MethodParameter parameter)
+		=> parameter.RefKind is not RefKind.Ref and not RefKind.Out &&
+		   parameter.Type.SpecialGenericType is not (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
+
+
+	public static StringBuilder AppendDefaultValueGeneratorFor(this StringBuilder sb, Type type,
+		string defaultValueName, string suffix = "")
+	{
+		sb.Append(defaultValueName);
+		sb.Append(".Generate(default(");
+
+		if (type.SpecialGenericType == SpecialGenericType.Span)
+		{
+			sb.Append("SpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
+		}
+		else if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+		{
+			sb.Append("ReadOnlySpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
+		}
+		else
+		{
+			sb.Append(type.Fullname);
+		}
+
+		sb.Append(")!");
+
+		if (type.TupleTypes is not null)
+		{
+			foreach (Type? genericType in type.TupleTypes.Value)
+			{
+				sb.Append(", () => ").AppendDefaultValueGeneratorFor(genericType, defaultValueName);
+			}
+		}
+		else if (type.SpecialGenericType != SpecialGenericType.None && type.GenericTypeParameters?.Count > 0)
+		{
+			foreach (Type? genericType in type.GenericTypeParameters.Value)
+			{
+				sb.Append(", () => ").AppendDefaultValueGeneratorFor(genericType, defaultValueName);
+			}
+		}
+
+		sb.Append(suffix);
+		sb.Append(")");
+		return sb;
+	}
+
 	public static EquatableArray<Attribute>? ToAttributeArray(this ImmutableArray<AttributeData> attributes)
 	{
 		Attribute[] consideredAttributes = attributes
@@ -135,7 +264,7 @@ internal static class Helpers
 		   attribute.ContainingNamespace.ToDisplayString() == "System.Runtime.CompilerServices";
 
 	/// <summary>
-	/// Generates a unique local variable name that does not conflict with any parameter names.
+	///     Generates a unique local variable name that does not conflict with any parameter names.
 	/// </summary>
 	/// <param name="baseName">The base name for the variable (e.g., "result", "methodExecution")</param>
 	/// <param name="parameters">The parameters to check against for conflicts</param>

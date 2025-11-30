@@ -405,29 +405,9 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("indexerResult", property.IndexerParameters.Value);
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
-					sb.Append("\t\t\tvar ").Append(indexerResultVarName).Append(" = MockRegistrations.GetIndexer<");
-
-					if (property.ReturnsSpan)
-					{
-						sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
-					}
-					else if (property.ReturnsReadOnlySpan)
-					{
-						sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
-					}
-					else
-					{
-						sb.Append(property.Type.Fullname);
-					}
-
-					sb.Append(">(")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p
-							=> (p.IsSpan, p.IsReadOnlySpan) switch
-							{
-								(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-								(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-								(_, _) => p.Name,
-							})))
+					sb.Append("\t\t\tvar ").Append(indexerResultVarName).Append(" = MockRegistrations.GetIndexer<")
+						.AppendTypeOrWrapper(property.Type).Append(">(")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
 						.AppendLine(");");
 					sb.Append(
 							"\t\t\tif (").Append(indexerResultVarName).Append(".CallBaseClass)")
@@ -450,22 +430,8 @@ internal static partial class Sources
 				else
 				{
 					sb.Append(
-						"\t\t\treturn MockRegistrations.GetProperty<");
-
-					if (property.ReturnsSpan)
-					{
-						sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
-					}
-					else if (property.ReturnsReadOnlySpan)
-					{
-						sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
-					}
-					else
-					{
-						sb.Append(property.Type.Fullname);
-					}
-
-					sb.Append(">(")
+						"\t\t\treturn MockRegistrations.GetProperty<")
+						.AppendTypeOrWrapper(property.Type).Append(">(")
 						.Append(property.GetUniqueNameString()).Append(", () => ")
 					.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
 					.Append(", () => base.").Append(property.Name).Append(");").AppendLine();
@@ -473,50 +439,17 @@ internal static partial class Sources
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
-				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<");
-
-				if (property.ReturnsSpan)
-				{
-					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
-				}
-				else if (property.ReturnsReadOnlySpan)
-				{
-					sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
-				}
-				else
-				{
-					sb.Append(property.Type.Fullname);
-				}
-
-				sb.Append(">(").Append(string.Join(", ", property.IndexerParameters.Value.Select(p
-						=> (p.IsSpan, p.IsReadOnlySpan) switch
-						{
-							(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-							(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-							(_, _) => p.Name,
-						})))
+				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<")
+					.AppendTypeOrWrapper(property.Type).Append(">(")
+					.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
 					.Append(").GetResult(() => ")
 					.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
 					.Append(");").AppendLine();
 			}
 			else
 			{
-				sb.Append("\t\t\treturn MockRegistrations.GetProperty<");
-
-				if (property.ReturnsSpan)
-				{
-					sb.Append("SpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
-				}
-				else if (property.ReturnsReadOnlySpan)
-				{
-					sb.Append("ReadOnlySpanWrapper<").Append(property.SpanElementType!.Fullname).Append(">");
-				}
-				else
-				{
-					sb.Append(property.Type.Fullname);
-				}
-
-				sb.Append(">(").Append(property.GetUniqueNameString())
+				sb.Append("\t\t\treturn MockRegistrations.GetProperty<")
+					.AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
 					.Append(", () => ")
 					.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
 					.Append(", null);").AppendLine();
@@ -543,13 +476,8 @@ internal static partial class Sources
 					sb.Append(
 							"\t\t\tif (MockRegistrations.SetIndexer<")
 						.Append(property.Type.Fullname)
-						.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p
-							=> (p.IsSpan, p.IsReadOnlySpan) switch
-							{
-								(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-								(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-								(_, _) => p.Name,
-							})))
+						.Append(">(value, ")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
 						.Append("))").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tbase[")
@@ -561,13 +489,8 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\tMockRegistrations.SetIndexer<")
 						.Append(property.Type.Fullname)
-						.Append(">(value, ").Append(string.Join(", ", property.IndexerParameters.Value.Select(p
-							=> (p.IsSpan, p.IsReadOnlySpan) switch
-							{
-								(true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-								(false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-								(_, _) => p.Name,
-							})))
+						.Append(">(value, ")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
 						.AppendLine(");");
 				}
 			}
@@ -658,38 +581,12 @@ internal static partial class Sources
 		string methodExecutionVarName = Helpers.GetUniqueLocalVariableName("methodExecution", method.Parameters);
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\tMethodSetupResult<");
-
-			if (method.ReturnsSpan)
-			{
-				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
-			}
-			else if (method.ReturnsReadOnlySpan)
-			{
-				sb.Append("ReadOnlySpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
-			}
-			else
-			{
-				sb.Append(method.ReturnType.Fullname);
-			}
-
-			sb.Append("> ").Append(methodExecutionVarName).Append(" = MockRegistrations.InvokeMethod<");
-
-			if (method.ReturnsSpan)
-			{
-				sb.Append("SpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
-			}
-			else if (method.ReturnsReadOnlySpan)
-			{
-				sb.Append("ReadOnlySpanWrapper<").Append(method.SpanElementType!.Fullname).Append(">");
-			}
-			else
-			{
-				sb.Append(method.ReturnType.Fullname);
-			}
-
 			var parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
-			sb.Append(">(").Append(method.GetUniqueNameString()).Append(", ").Append(parameterVarName).Append(" => ")
+			sb.Append("\t\tMethodSetupResult<")
+				.AppendTypeOrWrapper(method.ReturnType).Append("> ").Append(methodExecutionVarName)
+				.Append(" = MockRegistrations.InvokeMethod<")
+				.AppendTypeOrWrapper(method.ReturnType).Append(">(").Append(method.GetUniqueNameString())
+				.Append(", ").Append(parameterVarName).Append(" => ")
 				.AppendDefaultValueGeneratorFor(method.ReturnType, "MockRegistrations.Behavior.DefaultValue", $", {parameterVarName}");
 		}
 		else
@@ -701,12 +598,10 @@ internal static partial class Sources
 
 		foreach (MethodParameter p in method.Parameters)
 		{
-			sb.Append(", ").Append((p.RefKind, p.IsSpan, p.IsReadOnlySpan) switch
+			sb.Append(", ").Append(p.RefKind switch
 			{
-				(RefKind.Out, _, _) => "null",
-				(_, true, false) => $"new SpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-				(_, false, true) => $"new ReadOnlySpanWrapper<{p.SpanType!.Fullname}>({p.Name})",
-				(_, _, _) => p.Name,
+				RefKind.Out => "null",
+				_ => p.ToNameOrWrapper(),
 			});
 		}
 
@@ -736,7 +631,7 @@ internal static partial class Sources
 
 			sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
 				.Append(
-					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+					string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull())))
 				.Append(");").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{
@@ -789,7 +684,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
 				.Append(
-					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+					string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull())))
 				.Append(");").AppendLine();
 			sb.Append("\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
@@ -824,7 +719,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
 				.Append(
-					string.Join(", ", method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+					string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull())))
 				.Append(");").AppendLine();
 			sb.Append("\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
 		}
@@ -861,53 +756,12 @@ internal static partial class Sources
 
 				sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
 					.Append(string.Join(", ",
-						method.Parameters.Select(p => p.IsSpan || p.IsReadOnlySpan ? "null" : p.Name)))
+						method.Parameters.Select(p => p.ToNameOrNull())))
 					.Append(");").AppendLine();
 			}
 		}
 
 		sb.AppendLine("\t}");
-	}
-
-	private static StringBuilder AppendDefaultValueGeneratorFor(this StringBuilder sb, Type type,
-		string defaultValueName, string suffix = "")
-	{
-		sb.Append(defaultValueName);
-		sb.Append(".Generate(default(");
-
-		if (type.SpecialGenericType == SpecialGenericType.Span)
-		{
-			sb.Append("SpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
-		}
-		else if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
-		{
-			sb.Append("ReadOnlySpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
-		}
-		else
-		{
-			sb.Append(type.Fullname);
-		}
-
-		sb.Append(")!");
-
-		if (type.TupleTypes is not null)
-		{
-			foreach (Type? genericType in type.TupleTypes.Value)
-			{
-				sb.Append(", () => ").AppendDefaultValueGeneratorFor(genericType, defaultValueName);
-			}
-		}
-		else if (type.SpecialGenericType != SpecialGenericType.None && type.GenericTypeParameters?.Count > 0)
-		{
-			foreach (Type? genericType in type.GenericTypeParameters.Value)
-			{
-				sb.Append(", () => ").AppendDefaultValueGeneratorFor(genericType, defaultValueName);
-			}
-		}
-
-		sb.Append(suffix);
-		sb.Append(")");
-		return sb;
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

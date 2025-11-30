@@ -20,13 +20,6 @@ internal record Property
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
 
-		if (propertySymbol.Type.IsSpanOrReadOnlySpan(out bool isSpan, out bool isReadOnlySpan, out Type? spanType))
-		{
-			ReturnsSpan = isSpan;
-			ReturnsReadOnlySpan = isReadOnlySpan;
-			SpanElementType = spanType;
-		}
-
 		Attributes = propertySymbol.GetAttributes().ToAttributeArray();
 
 		if (alreadyDefinedProperties is not null)
@@ -64,9 +57,6 @@ internal record Property
 	public Accessibility Accessibility { get; }
 	public string Name { get; }
 	public string? ExplicitImplementation { get; }
-	public bool ReturnsSpan { get; }
-	public bool ReturnsReadOnlySpan { get; }
-	public Type? SpanElementType { get; }
 
 	internal string GetUniqueNameString()
 		=> $"\"{ContainingType}.{Name}\"";
