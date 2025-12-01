@@ -172,7 +172,7 @@ internal static partial class Sources
 		          /// <summary>
 		          ///     Extensions on <see cref="IDefaultValueGenerator" />
 		          /// </summary>
-		          public static class DefaultValueGeneratorExtensions
+		          internal static class DefaultValueGeneratorExtensions
 		          {
 		          	/// <inheritdoc cref="DefaultValueGeneratorExtensions" />
 		          	extension(IDefaultValueGenerator generator)
