@@ -174,7 +174,9 @@ internal static partial class Sources
 		          /// </summary>
 		          internal static class DefaultValueGeneratorExtensions
 		          {
-		          	/// <inheritdoc cref="DefaultValueGeneratorExtensions" />
+		          	/// <summary>
+		          	///     Adds a generic <see cref="IDefaultValueGenerator.Generate" /> method for specific types.
+		          	/// </summary>
 		          	extension(IDefaultValueGenerator generator)
 		          	{
 		          		/// <summary>
