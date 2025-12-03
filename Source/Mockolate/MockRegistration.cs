@@ -68,7 +68,7 @@ public partial class MockRegistration
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
 
-		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
 			if (Behavior.ThrowWhenNotSetup)
@@ -95,7 +95,7 @@ public partial class MockRegistration
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
 
-		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
@@ -115,7 +115,7 @@ public partial class MockRegistration
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
 				propertyName));
-		IPropertySetup matchingSetup = GetPropertySetup(propertyName,
+		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName,
 			callBase => callBase && baseValueAccessor is not null
 				? baseValueAccessor.Invoke()
 				: defaultValueGenerator());
@@ -134,7 +134,7 @@ public partial class MockRegistration
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(Interactions.GetNextIndex(),
 				propertyName, value));
-		IPropertySetup matchingSetup = GetPropertySetup(propertyName, _ => null);
+		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, _ => null);
 		matchingSetup.InvokeSetter(interaction, value, Behavior);
 		return matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass;
 	}
@@ -163,7 +163,7 @@ public partial class MockRegistration
 		_indexerSetups.UpdateValue(parameters, value);
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
 		matchingSetup?.InvokeSetter(interaction, value, Behavior);
-		return (matchingSetup as IIndexerSetup)?.CallBaseClass() ?? Behavior.CallBaseClass;
+		return (matchingSetup as IInteractiveIndexerSetup)?.CallBaseClass() ?? Behavior.CallBaseClass;
 	}
 
 	/// <summary>

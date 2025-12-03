@@ -5,7 +5,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     A result of a method setup invocation.
 /// </summary>
-public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
+public class MethodSetupResult(IInteractiveMethodSetup? setup, MockBehavior behavior)
 {
 	/// <summary>
 	///     Flag indicating if the method setup result has an underlying setup.
@@ -62,7 +62,7 @@ public class MethodSetupResult(IMethodSetup? setup, MockBehavior behavior)
 /// <summary>
 ///     A result of a method setup invocation with return type <typeparamref name="TResult" />.
 /// </summary>
-public class MethodSetupResult<TResult>(IMethodSetup? setup, MockBehavior behavior, TResult result)
+public class MethodSetupResult<TResult>(IInteractiveMethodSetup? setup, MockBehavior behavior, TResult result)
 	: MethodSetupResult(setup, behavior)
 {
 	/// <summary>

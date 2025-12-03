@@ -45,7 +45,7 @@ public sealed partial class SetupPropertyTests
 
 		int result0 = registration.GetProperty("my.other.property", () => 0, null);
 		PropertySetup<int> setup = new("my.property");
-		((IPropertySetup)setup).InitializeWith(42);
+		((IInteractivePropertySetup)setup).InitializeWith(42);
 		registration.SetupProperty(setup);
 		int result1 = registration.GetProperty("my.property", () => 0, null);
 

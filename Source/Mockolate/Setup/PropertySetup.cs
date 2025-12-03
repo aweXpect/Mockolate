@@ -10,32 +10,32 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for property setups.
 /// </summary>
-public abstract class PropertySetup : IPropertySetup
+public abstract class PropertySetup : IInteractivePropertySetup
 {
 	/// <summary>
 	///     The property name.
 	/// </summary>
 	public abstract string Name { get; }
 
-	/// <inheritdoc cref="IPropertySetup.InvokeSetter(IInteraction, object?, MockBehavior)" />
-	void IPropertySetup.InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
+	/// <inheritdoc cref="IInteractivePropertySetup.InvokeSetter(IInteraction, object?, MockBehavior)" />
+	void IInteractivePropertySetup.InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
 		=> InvokeSetter(value, behavior);
 
-	/// <inheritdoc cref="IPropertySetup.InvokeGetter{TResult}(IInteraction, MockBehavior, Func{TResult}?)" />
-	TResult IPropertySetup.InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior,
+	/// <inheritdoc cref="IInteractivePropertySetup.InvokeGetter{TResult}(IInteraction, MockBehavior, Func{TResult}?)" />
+	TResult IInteractivePropertySetup.InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior,
 		Func<TResult>? defaultValueGenerator)
 		=> InvokeGetter(behavior, defaultValueGenerator);
 
-	/// <inheritdoc cref="IPropertySetup.Matches(PropertyAccess)" />
-	bool IPropertySetup.Matches(PropertyAccess propertyAccess)
+	/// <inheritdoc cref="IInteractivePropertySetup.Matches(PropertyAccess)" />
+	bool IInteractivePropertySetup.Matches(PropertyAccess propertyAccess)
 		=> Matches(propertyAccess);
 
-	/// <inheritdoc cref="IPropertySetup.CallBaseClass()" />
-	bool? IPropertySetup.CallBaseClass()
+	/// <inheritdoc cref="IInteractivePropertySetup.CallBaseClass()" />
+	bool? IInteractivePropertySetup.CallBaseClass()
 		=> GetCallBaseClass();
 
-	/// <inheritdoc cref="IPropertySetup.InitializeWith(object?)" />
-	void IPropertySetup.InitializeWith(object? value)
+	/// <inheritdoc cref="IInteractivePropertySetup.InitializeWith(object?)" />
+	void IInteractivePropertySetup.InitializeWith(object? value)
 		=> InitializeValue(value);
 
 	/// <summary>

@@ -6,7 +6,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Interface for hiding some implementation details of <see cref="PropertySetup" />.
 /// </summary>
-public interface IPropertySetup : ISetup
+public interface IInteractivePropertySetup : ISetup
 {
 	/// <summary>
 	///     Invokes the setter logic for the <paramref name="invocation" /> and <paramref name="value" />.

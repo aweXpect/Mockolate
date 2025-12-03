@@ -9,24 +9,24 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for indexer setups.
 /// </summary>
-public abstract class IndexerSetup : IIndexerSetup
+public abstract class IndexerSetup : IInteractiveIndexerSetup
 {
-	/// <inheritdoc cref="IIndexerSetup.HasReturnCalls()" />
-	bool IIndexerSetup.HasReturnCalls()
+	/// <inheritdoc cref="IInteractiveIndexerSetup.HasReturnCalls()" />
+	bool IInteractiveIndexerSetup.HasReturnCalls()
 		=> HasReturnCalls();
 
-	/// <inheritdoc cref="IIndexerSetup.Matches(IndexerAccess)" />
-	bool IIndexerSetup.Matches(IndexerAccess indexerAccess)
+	/// <inheritdoc cref="IInteractiveIndexerSetup.Matches(IndexerAccess)" />
+	bool IInteractiveIndexerSetup.Matches(IndexerAccess indexerAccess)
 		=> IsMatch(indexerAccess.Parameters);
 
-	/// <inheritdoc cref="IIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, object?[], out TValue)" />
-	bool IIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
+	/// <inheritdoc cref="IInteractiveIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, object?[], out TValue)" />
+	bool IInteractiveIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
 		object?[] parameters,
 		[NotNullWhen(true)] out TValue value)
 		=> TryGetInitialValue(behavior, defaultValueGenerator, parameters, out value);
 
-	/// <inheritdoc cref="IIndexerSetup.CallBaseClass()" />
-	bool? IIndexerSetup.CallBaseClass()
+	/// <inheritdoc cref="IInteractiveIndexerSetup.CallBaseClass()" />
+	bool? IInteractiveIndexerSetup.CallBaseClass()
 		=> GetCallBaseClass();
 
 	internal TValue InvokeGetter<TValue>(IndexerGetterAccess getterAccess, TValue value, MockBehavior behavior)
