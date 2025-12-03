@@ -24,7 +24,7 @@ public partial class MockRegistration
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	private IMethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
-		=> _methodSetups.GetLatestOrDefault(setup => setup.Matches(methodInvocation));
+		=> _methodSetups.GetLatestOrDefault(setup => ((IMethodSetup)setup).Matches(methodInvocation));
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
@@ -36,22 +36,22 @@ public partial class MockRegistration
 	///     retrievals,
 	///     so that getter and setter work in tandem.
 	/// </remarks>
-	private IPropertySetup GetPropertySetup(string propertyName, Func<bool, object?> defaultValueGenerator)
+	private PropertySetup GetPropertySetup(string propertyName, Func<bool, object?> defaultValueGenerator)
 	{
-		if (!_propertySetups.TryGetValue(propertyName, out IPropertySetup? matchingSetup))
+		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
 		{
 			if (Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
 			}
 
-			matchingSetup = new PropertySetup.Default(defaultValueGenerator.Invoke(Behavior.CallBaseClass));
-			_propertySetups.Add(propertyName, matchingSetup);
+			matchingSetup = new PropertySetup.Default(propertyName, defaultValueGenerator.Invoke(Behavior.CallBaseClass));
+			_propertySetups.Add(matchingSetup);
 		}
 		else
 		{
-			matchingSetup.InitializeWith(
-				defaultValueGenerator(matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass));
+			((IPropertySetup)matchingSetup).InitializeWith(
+				defaultValueGenerator(((IPropertySetup)matchingSetup).CallBaseClass() ?? Behavior.CallBaseClass));
 		}
 
 		return matchingSetup;
@@ -79,29 +79,29 @@ public partial class MockRegistration
 	/// <summary>
 	///     Registers the <paramref name="methodSetup" /> in the mock.
 	/// </summary>
-	public void SetupMethod(IMethodSetup methodSetup) => _methodSetups.Add(methodSetup);
+	public void SetupMethod(MethodSetup methodSetup) => _methodSetups.Add(methodSetup);
 
 	/// <summary>
 	///     Registers the <paramref name="propertySetup" /> in the mock.
 	/// </summary>
-	public void SetupProperty(string propertyName, IPropertySetup propertySetup)
-		=> _propertySetups.Add(propertyName, propertySetup);
+	public void SetupProperty(PropertySetup propertySetup)
+		=> _propertySetups.Add(propertySetup);
 
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class MethodSetups
 	{
-		private ConcurrentStack<IMethodSetup>? _storage;
+		private ConcurrentStack<MethodSetup>? _storage;
 
 		public int Count
 			=> _storage?.Count ?? 0;
 
-		public void Add(IMethodSetup setup)
+		public void Add(MethodSetup setup)
 		{
-			_storage ??= new ConcurrentStack<IMethodSetup>();
+			_storage ??= new ConcurrentStack<MethodSetup>();
 			_storage.Push(setup);
 		}
 
-		public IMethodSetup? GetLatestOrDefault(Func<IMethodSetup, bool> predicate)
+		public MethodSetup? GetLatestOrDefault(Func<MethodSetup, bool> predicate)
 		{
 			if (_storage is null)
 			{
@@ -109,6 +109,19 @@ public partial class MockRegistration
 			}
 
 			return _storage.FirstOrDefault(predicate);
+		}
+		
+		internal IEnumerable<MethodSetup> Enumerate()
+		{
+			if (_storage is null)
+			{
+				yield break;
+			}
+
+			foreach (MethodSetup item in _storage)
+			{
+				yield return item;
+			}
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -135,21 +148,34 @@ public partial class MockRegistration
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class PropertySetups
 	{
-		private ConcurrentDictionary<string, IPropertySetup>? _storage;
+		private ConcurrentDictionary<string, PropertySetup>? _storage;
 
 		public int Count { get; private set; }
 
-		public void Add(string propertyName, IPropertySetup setup)
+		public void Add(PropertySetup setup)
 		{
-			_storage ??= new ConcurrentDictionary<string, IPropertySetup>();
-			_storage.AddOrUpdate(propertyName, setup, (_, _) => setup);
+			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
+			_storage.AddOrUpdate(setup.Name, setup, (_, _) => setup);
 			Count = _storage.Count(x => x.Value is not PropertySetup.Default);
 		}
 
-		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out IPropertySetup? setup)
+		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out PropertySetup? setup)
 		{
-			_storage ??= new ConcurrentDictionary<string, IPropertySetup>();
+			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
 			return _storage.TryGetValue(propertyName, out setup);
+		}
+		
+		internal IEnumerable<PropertySetup> Enumerate()
+		{
+			if (_storage is null)
+			{
+				yield break;
+			}
+
+			foreach (PropertySetup item in _storage.Values)
+			{
+				yield return item;
+			}
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -161,7 +187,7 @@ public partial class MockRegistration
 				return "0 properties";
 			}
 
-			List<KeyValuePair<string, IPropertySetup>> setups =
+			List<KeyValuePair<string, PropertySetup>> setups =
 				_storage.Where(x => x.Value is not PropertySetup.Default).ToList();
 
 			if (setups.Count == 0)
@@ -171,7 +197,7 @@ public partial class MockRegistration
 
 			StringBuilder sb = new();
 			sb.Append(setups.Count).Append(setups.Count == 1 ? " property:" : " properties:").AppendLine();
-			foreach (KeyValuePair<string, IPropertySetup> item in setups)
+			foreach (KeyValuePair<string, PropertySetup> item in setups)
 			{
 				sb.Append(item.Value).Append(' ').Append(item.Key).AppendLine();
 			}
@@ -278,6 +304,19 @@ public partial class MockRegistration
 
 				_storage ??= new ConcurrentDictionary<object, ValueStorage>();
 				return _storage.GetOrAdd(key, _ => valueGenerator());
+			}
+		}
+		
+		internal IEnumerable<IndexerSetup> Enumerate()
+		{
+			if (_storage is null)
+			{
+				yield break;
+			}
+
+			foreach (IndexerSetup item in _storage)
+			{
+				yield return item;
 			}
 		}
 	}

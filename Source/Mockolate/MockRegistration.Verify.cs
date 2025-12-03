@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
+using Mockolate.Setup;
 using Mockolate.Verify;
 
 namespace Mockolate;
@@ -127,4 +129,47 @@ public partial class MockRegistration
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"unsubscribed from event {eventName.SubstringAfterLast('.')}");
+
+	/// <summary>
+	///     Returns the setups that have not been used by the given <paramref name="interactions" />.
+	/// </summary>
+	public Setups GetUnusedSetups(MockInteractions interactions)
+	{
+		List<IndexerSetup> indexers = [];
+		foreach (IndexerSetup indexerSetup in _indexerSetups.Enumerate())
+		{
+			if (indexerSetup is IIndexerSetup setup && interactions.Interactions
+				    .All(interaction => interaction is not IndexerAccess indexerAccess
+				                        || !setup.Matches(indexerAccess)))
+			{
+				indexers.Add(indexerSetup);
+			}
+		}
+
+		List<PropertySetup> properties = [];
+		foreach (PropertySetup propertySetup in _propertySetups.Enumerate())
+		{
+			if (propertySetup is IPropertySetup setup && interactions.Interactions
+				    .All(interaction => (interaction is not PropertyGetterAccess propertyGetterAccess ||
+				                         !propertySetup.Name.Equals(propertyGetterAccess.Name)) &&
+				                        (interaction is not PropertySetterAccess propertySetterAccess ||
+				                         !propertySetup.Name.Equals(propertySetterAccess.Name))))
+			{
+				properties.Add(propertySetup);
+			}
+		}
+
+		List<MethodSetup> methods = [];
+		foreach (MethodSetup methodSetup in _methodSetups.Enumerate())
+		{
+			if (methodSetup is IMethodSetup setup && interactions.Interactions
+				    .All(interaction => interaction is not MethodInvocation methodInvocation
+				                        || !setup.Matches(methodInvocation)))
+			{
+				methods.Add(methodSetup);
+			}
+		}
+
+		return new Setups(indexers, properties, methods);
+	}
 }

@@ -140,6 +140,7 @@ namespace Mockolate
         public void ClearAllInteractions() { }
         public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
+        public Mockolate.Setup.Setups GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Match.NamedParameter?[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Match.IParameter? value, params Mockolate.Match.NamedParameter?[] parameters) { }
         public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params object?[]? parameters) { }
@@ -153,8 +154,8 @@ namespace Mockolate
         public bool SetIndexer<TResult>(TResult value, params object?[] parameters) { }
         public bool SetProperty(string propertyName, object? value) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
-        public void SetupMethod(Mockolate.Setup.IMethodSetup methodSetup) { }
-        public void SetupProperty(string propertyName, Mockolate.Setup.IPropertySetup propertySetup) { }
+        public void SetupMethod(Mockolate.Setup.MethodSetup methodSetup) { }
+        public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
         public override string ToString() { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName) { }
@@ -1072,6 +1073,7 @@ namespace Mockolate.Setup
     public abstract class PropertySetup : Mockolate.Setup.IPropertySetup
     {
         protected PropertySetup() { }
+        public abstract string Name { get; }
         protected abstract bool? GetCallBaseClass();
         protected abstract void InitializeValue(object? value);
         protected abstract TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior, System.Func<TResult>? defaultValueGenerator);
@@ -1079,7 +1081,8 @@ namespace Mockolate.Setup
     }
     public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetupWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
-        public PropertySetup() { }
+        public PropertySetup(string name) { }
+        public override string Name { get; }
         public Mockolate.Setup.IPropertySetup<T> CallingBaseClass(bool callBaseClass = true) { }
         protected override bool? GetCallBaseClass() { }
         protected override void InitializeValue(object? value) { }
@@ -1234,6 +1237,13 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
         protected override void TriggerParameterCallbacks(object?[] parameters) { }
+    }
+    public class Setups
+    {
+        public Setups(System.Collections.Generic.IReadOnlyList<Mockolate.Setup.IndexerSetup> indexers, System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.PropertySetup> properties, System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.MethodSetup> methods) { }
+        public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.IndexerSetup> Indexers { get; }
+        public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.MethodSetup> Methods { get; }
+        public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.PropertySetup> Properties { get; }
     }
     public class SpanWrapper<T>
     {
@@ -1395,6 +1405,7 @@ namespace Mockolate.Verify
     public interface IMockVerify<out T> : Mockolate.IInteractiveMock<T>
     {
         bool ThatAllInteractionsAreVerified();
+        bool ThatAllSetupsWereUsed();
     }
     public interface IVerificationResult
     {

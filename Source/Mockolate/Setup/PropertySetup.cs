@@ -12,6 +12,11 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class PropertySetup : IPropertySetup
 {
+	/// <summary>
+	///     The property name.
+	/// </summary>
+	public abstract string Name { get; }
+
 	void IPropertySetup.InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
 		=> InvokeSetter(value, behavior);
 
@@ -46,10 +51,13 @@ public abstract class PropertySetup : IPropertySetup
 	/// </summary>
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult>? defaultValueGenerator);
 
-	internal class Default(object? initialValue) : PropertySetup
+	internal class Default(string name, object? initialValue) : PropertySetup
 	{
 		private bool _isInitialized = true;
 		private object? _value = initialValue;
+
+		/// <inheritdoc cref="PropertySetup.Name" />
+		public override string Name => name;
 
 		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
 		protected override void InitializeValue(object? value)
@@ -95,7 +103,8 @@ public abstract class PropertySetup : IPropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
-public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>
+public class PropertySetup<T>(string name)
+	: PropertySetup, IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>
 {
 	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T, T>>> _returnCallbacks = [];
@@ -106,6 +115,9 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 	private int _currentReturnCallbackIndex;
 	private bool _isInitialized;
 	private T _value = default!;
+
+	/// <inheritdoc cref="PropertySetup.Name" />
+	public override string Name => name;
 
 	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" />
 	IPropertySetupWhenBuilder<T> IPropertySetupCallbackBuilder<T>.When(Func<int, bool> predicate)
@@ -218,7 +230,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> typeof(T).FormatType();
+		=> $"{typeof(T).FormatType()} {Name}";
 
 	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
 	{

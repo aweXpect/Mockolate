@@ -30,7 +30,7 @@ public sealed class MockSetupsTests
 
 		for (int i = 0; i < propertyCount; i++)
 		{
-			sut.Registrations.SetupProperty($"my.property{i}", new PropertySetup<int>());
+			sut.Registrations.SetupProperty(new PropertySetup<int>($"my.property{i}"));
 		}
 
 		for (int i = 0; i < eventCount; i++)

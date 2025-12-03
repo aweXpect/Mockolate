@@ -10,6 +10,11 @@ public interface IMockVerify<out T> : IInteractiveMock<T>
 	///     Gets a value indicating whether all expected interactions have been verified.
 	/// </summary>
 	bool ThatAllInteractionsAreVerified();
+	
+	/// <summary>
+	///     Gets a value indicating whether all registered setups were used.
+	/// </summary>
+	bool ThatAllSetupsWereUsed();
 }
 
 /// <summary>
