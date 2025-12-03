@@ -116,18 +116,12 @@ public partial class MockRegistration
 		{
 			if (_storage is null)
 			{
-				yield break;
+				return [];
 			}
 
-			foreach (MethodSetup methodSetup in _storage)
-			{
-				if (interactions.Interactions.All(interaction
-					    => interaction is not MethodInvocation methodInvocation
-					       || !((IMethodSetup)methodSetup).Matches(methodInvocation)))
-				{
-					yield return methodSetup;
-				}
-			}
+			return _storage.Where(methodSetup => interactions.Interactions.All(interaction
+				=> interaction is not MethodInvocation methodInvocation
+				   || !((IMethodSetup)methodSetup).Matches(methodInvocation)));
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -175,18 +169,12 @@ public partial class MockRegistration
 		{
 			if (_storage is null)
 			{
-				yield break;
+				return [];
 			}
 
-			foreach (PropertySetup propertySetup in _storage.Values)
-			{
-				if (interactions.Interactions.All(interaction
-					    => interaction is not PropertyAccess propertyAccess
-					       || !((IPropertySetup)propertySetup).Matches(propertyAccess)))
-				{
-					yield return propertySetup;
-				}
-			}
+			return _storage.Values.Where(propertySetup => interactions.Interactions.All(interaction
+				=> interaction is not PropertyAccess propertyAccess
+				   || !((IPropertySetup)propertySetup).Matches(propertyAccess)));
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -298,18 +286,12 @@ public partial class MockRegistration
 		{
 			if (_storage is null)
 			{
-				yield break;
+				return [];
 			}
 
-			foreach (IndexerSetup indexerSetup in _storage)
-			{
-				if (interactions.Interactions.All(interaction
-					    => interaction is not IndexerAccess indexerAccess
-					       || !((IIndexerSetup)indexerSetup).Matches(indexerAccess)))
-				{
-					yield return indexerSetup;
-				}
-			}
+			return _storage.Where(indexerSetup => interactions.Interactions.All(interaction
+				=> interaction is not IndexerAccess indexerAccess
+				   || !((IIndexerSetup)indexerSetup).Matches(indexerAccess)));
 		}
 
 		private sealed class ValueStorage
