@@ -149,11 +149,11 @@ public partial class MockRegistration
 		List<PropertySetup> properties = [];
 		foreach (PropertySetup propertySetup in _propertySetups.Enumerate())
 		{
-			if (propertySetup is IPropertySetup setup && interactions.Interactions
-				    .All(interaction => (interaction is not PropertyGetterAccess propertyGetterAccess ||
-				                         !propertySetup.Name.Equals(propertyGetterAccess.Name)) &&
-				                        (interaction is not PropertySetterAccess propertySetterAccess ||
-				                         !propertySetup.Name.Equals(propertySetterAccess.Name))))
+			if (interactions.Interactions
+			    .All(interaction => (interaction is not PropertyGetterAccess propertyGetterAccess ||
+			                         !propertySetup.Name.Equals(propertyGetterAccess.Name)) &&
+			                        (interaction is not PropertySetterAccess propertySetterAccess ||
+			                         !propertySetup.Name.Equals(propertySetterAccess.Name))))
 			{
 				properties.Add(propertySetup);
 			}

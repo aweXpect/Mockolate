@@ -23,7 +23,7 @@ public partial class MockRegistration
 	///     Retrieves the latest method setup that matches the specified <paramref name="methodInvocation" />,
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	private IMethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
+	private MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
 		=> _methodSetups.GetLatestOrDefault(setup => ((IMethodSetup)setup).Matches(methodInvocation));
 
 	/// <summary>
