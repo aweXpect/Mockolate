@@ -234,6 +234,7 @@ public sealed partial class MockBehaviorTests
 			IMyRecursiveService RecursiveService { get; }
 
 			Task<(int, int[], string)> ComplexTask();
+			Type GetMyType();
 		}
 
 		public interface IMyRecursiveService

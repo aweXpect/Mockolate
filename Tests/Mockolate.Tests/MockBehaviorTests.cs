@@ -33,8 +33,8 @@ public sealed partial class MockBehaviorTests
 
 	private sealed class MyDefaultValueGenerator : IDefaultValueGenerator
 	{
-		/// <inheritdoc cref="IDefaultValueGenerator.Generate(Type, object?[])" />
-		public object? Generate(Type type, params object?[] parameters)
+		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(Type, object?[])" />
+		public object? GenerateValue(Type type, params object?[] parameters)
 		{
 			if (type == typeof(string))
 			{
