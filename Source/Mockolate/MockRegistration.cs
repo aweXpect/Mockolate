@@ -34,6 +34,15 @@ public partial class MockRegistration
 		Interactions = interactions;
 	}
 
+	/// <inheritdoc cref="MockRegistration" />
+	public MockRegistration(MockBehavior behavior, string prefix, object? wrappedInstance)
+	{
+		Behavior = behavior;
+		Prefix = prefix;
+		Interactions = new MockInteractions();
+		WrappedInstance = wrappedInstance;
+	}
+
 	/// <summary>
 	///     Gets the behavior settings used by this mock instance.
 	/// </summary>
@@ -49,6 +58,11 @@ public partial class MockRegistration
 	/// </summary>
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	public MockInteractions Interactions { get; }
+
+	/// <summary>
+	///     Gets the wrapped instance if this mock is wrapping a concrete object.
+	/// </summary>
+	internal object? WrappedInstance { get; }
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
@@ -71,6 +85,13 @@ public partial class MockRegistration
 		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
 		{
+			if (WrappedInstance is not null)
+			{
+				// Call the method on the wrapped instance using reflection
+				TResult? result = InvokeWrappedMethod<TResult>(methodName, parameters);
+				return new MethodSetupResult<TResult>(null, Behavior, result!);
+			}
+
 			if (Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
@@ -96,10 +117,20 @@ public partial class MockRegistration
 				methodName, parameters));
 
 		IMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		if (matchingSetup is null)
 		{
-			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+			if (WrappedInstance is not null)
+			{
+				// Call the method on the wrapped instance using reflection
+				InvokeWrappedMethod<object>(methodName, parameters);
+				return new MethodSetupResult(null, Behavior);
+			}
+
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+			}
 		}
 
 		matchingSetup?.Invoke(methodInvocation, Behavior);
@@ -256,4 +287,52 @@ public partial class MockRegistration
 			yield return (target, method);
 		}
 	}
+
+	#pragma warning disable IL2075 // Wrapped instance methods are accessed dynamically
+	private TResult? InvokeWrappedMethod<TResult>(string methodName, object?[] parameters)
+	{
+		if (WrappedInstance is null)
+		{
+			return default;
+		}
+
+		System.Type wrappedType = WrappedInstance.GetType();
+		
+		// Try to find a method with matching name and parameter count
+		MethodInfo? method = wrappedType.GetMethod(methodName, 
+			BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		
+		if (method is null)
+		{
+			// Try to find by parameter types
+			System.Type[] parameterTypes = parameters.Select(p => p?.GetType() ?? typeof(object)).ToArray();
+			method = wrappedType.GetMethod(methodName, parameterTypes);
+		}
+
+		if (method is null)
+		{
+			// Last attempt: search through all methods with the given name
+			MethodInfo[] methods = wrappedType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(m => m.Name == methodName && m.GetParameters().Length == parameters.Length)
+				.ToArray();
+			
+			if (methods.Length == 1)
+			{
+				method = methods[0];
+			}
+		}
+
+		if (method is not null)
+		{
+			object? result = method.Invoke(WrappedInstance, parameters);
+			if (typeof(TResult) == typeof(object) && method.ReturnType == typeof(void))
+			{
+				return default;
+			}
+			return (TResult?)result;
+		}
+
+		return default;
+	}
+	#pragma warning restore IL2075
 }
