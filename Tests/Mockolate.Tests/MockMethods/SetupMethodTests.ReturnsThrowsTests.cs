@@ -77,6 +77,25 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut.Method0();
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -260,6 +279,25 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut.Method1(i);
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]
@@ -481,6 +519,25 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut.Method2(i, 2);
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]
@@ -708,6 +765,25 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut.Method3(i, 2, 3);
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -931,6 +1007,25 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut.Method4(i, 2, 3, 4);
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]
@@ -1164,6 +1259,25 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut.Method5(i, 2, 3, 4, 5);
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -1359,6 +1473,33 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Throws(new Exception("a"))
+					.Throws(new Exception("b"))
+					.Throws(new Exception("c")).Forever();
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method0();
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
+			}
+
+			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
@@ -1491,6 +1632,33 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(Any<int>())
+					.Throws(new Exception("a"))
+					.Throws(new Exception("b"))
+					.Throws(new Exception("c")).Forever();
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method1(i);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]
@@ -1643,6 +1811,33 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(Any<int>(), Any<int>())
+					.Throws(new Exception("a"))
+					.Throws(new Exception("b"))
+					.Throws(new Exception("c")).Forever();
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method2(i, 2);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]
@@ -1800,6 +1995,33 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("a"))
+					.Throws(new Exception("b"))
+					.Throws(new Exception("c")).Forever();
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method3(i, 2, 3);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
+			}
+
+			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
@@ -1951,6 +2173,33 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("a"))
+					.Throws(new Exception("b"))
+					.Throws(new Exception("c")).Forever();
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method4(i, 2, 3, 4);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]
@@ -2106,6 +2355,33 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Throws(new Exception("a"))
+					.Throws(new Exception("b"))
+					.Throws(new Exception("c")).Forever();
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					try
+					{
+						sut.Method5(i, 2, 3, 4, 5);
+						values.Add("");
+					}
+					catch (Exception ex)
+					{
+						values.Add(ex.Message);
+					}
+				}
+
+				await That(values).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]

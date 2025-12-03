@@ -124,6 +124,25 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
+		public async Task Returns_Forever_ShouldUseTheLastValueForever()
+		{
+			IIndexerService sut = Mock.Create<IIndexerService>();
+
+			sut.SetupMock.Indexer(Any<int>())
+				.Returns("a")
+				.Returns("b")
+				.Returns("c").Forever();
+
+			string[] result = new string[10];
+			for (int i = 0; i < 10; i++)
+			{
+				result[i] = sut[i];
+			}
+
+			await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
+		}
+
+		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -361,6 +380,25 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut[i, 2];
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]
@@ -603,6 +641,25 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut[i, 2, 3];
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]
@@ -849,6 +906,25 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut[i, 2, 3, 4];
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
+			}
+
+			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1089,6 +1165,25 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			}
+
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut[i, 2, 3, 4, 5];
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
 			[Fact]

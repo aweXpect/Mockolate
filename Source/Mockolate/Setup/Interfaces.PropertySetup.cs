@@ -109,9 +109,9 @@ public interface IPropertySetup<T>
 	IPropertySetupCallbackBuilder<T> OnSet(Action<int, T, T> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	///     Registers the <paramref name="returnValue" /> for this property.
 	/// </summary>
-	IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback);
+	IPropertySetupReturnBuilder<T> Returns(T returnValue);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this property.
@@ -119,9 +119,9 @@ public interface IPropertySetup<T>
 	IPropertySetupReturnBuilder<T> Returns(Func<T> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this property.
+	///     Registers a <paramref name="callback" /> to setup the return value for this property.
 	/// </summary>
-	IPropertySetupReturnBuilder<T> Returns(T returnValue);
+	IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the property is read.

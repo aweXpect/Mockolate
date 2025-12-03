@@ -188,6 +188,69 @@ namespace Mockolate
         public static Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> setup, System.Func<T1, T2, T3, T4, TReturn> callback) { }
         public static Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(this Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4> setup, TReturn returnValue) { }
     }
+    public static class SetupExtensions
+    {
+        extension<T>(Mockolate.Setup.IPropertySetupReturnWhenBuilder<T> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TValue, T1>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TValue, T1, T2>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TValue, T1, T2, T3>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TValue, T1, T2, T3, T4>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TReturn>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TReturn, T1>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TReturn, T1, T2>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TReturn, T1, T2, T3>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> setup)
+        {
+            public void Forever() { }
+        }
+        extension<TReturn, T1, T2, T3, T4>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> setup)
+        {
+            public void Forever() { }
+        }
+        extension(Mockolate.Setup.IVoidMethodSetupReturnBuilder setup)
+        {
+            public void Forever() { }
+        }
+        extension<T1>(Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1> setup)
+        {
+            public void Forever() { }
+        }
+        extension<T1, T2>(Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2> setup)
+        {
+            public void Forever() { }
+        }
+        extension<T1, T2, T3>(Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3> setup)
+        {
+            public void Forever() { }
+        }
+        extension<T1, T2, T3, T4>(Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> setup)
+        {
+            public void Forever() { }
+        }
+    }
 }
 namespace Mockolate.Exceptions
 {
