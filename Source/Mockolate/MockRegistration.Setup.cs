@@ -24,7 +24,7 @@ public partial class MockRegistration
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	private MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
-		=> _methodSetups.GetLatestOrDefault(setup => ((IMethodSetup)setup).Matches(methodInvocation));
+		=> _methodSetups.GetLatestOrDefault(setup => ((IInteractiveMethodSetup)setup).Matches(methodInvocation));
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
@@ -51,8 +51,8 @@ public partial class MockRegistration
 		}
 		else
 		{
-			((IPropertySetup)matchingSetup).InitializeWith(
-				defaultValueGenerator(((IPropertySetup)matchingSetup).CallBaseClass() ?? Behavior.CallBaseClass));
+			((IInteractivePropertySetup)matchingSetup).InitializeWith(
+				defaultValueGenerator(((IInteractivePropertySetup)matchingSetup).CallBaseClass() ?? Behavior.CallBaseClass));
 		}
 
 		return matchingSetup;
@@ -63,12 +63,12 @@ public partial class MockRegistration
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	private IndexerSetup? GetIndexerSetup(IndexerAccess interaction)
-		=> _indexerSetups.GetLastestOrDefault(setup => ((IIndexerSetup)setup).Matches(interaction));
+		=> _indexerSetups.GetLastestOrDefault(setup => ((IInteractiveIndexerSetup)setup).Matches(interaction));
 
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters" />.
 	/// </summary>
-	private TValue GetIndexerValue<TValue>(IIndexerSetup? setup, Func<TValue> defaultValueGenerator,
+	private TValue GetIndexerValue<TValue>(IInteractiveIndexerSetup? setup, Func<TValue> defaultValueGenerator,
 		object?[] parameters)
 		=> _indexerSetups.GetOrAddValue(parameters, defaultValueGenerator);
 
@@ -121,7 +121,7 @@ public partial class MockRegistration
 
 			return _storage.Where(methodSetup => interactions.Interactions.All(interaction
 				=> interaction is not MethodInvocation methodInvocation
-				   || !((IMethodSetup)methodSetup).Matches(methodInvocation)));
+				   || !((IInteractiveMethodSetup)methodSetup).Matches(methodInvocation)));
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -135,7 +135,7 @@ public partial class MockRegistration
 
 			StringBuilder sb = new();
 			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " method:" : " methods:").AppendLine();
-			foreach (IMethodSetup methodSetup in _storage)
+			foreach (IInteractiveMethodSetup methodSetup in _storage)
 			{
 				sb.Append(methodSetup).AppendLine();
 			}
@@ -174,7 +174,7 @@ public partial class MockRegistration
 
 			return _storage.Values.Where(propertySetup => interactions.Interactions.All(interaction
 				=> interaction is not PropertyAccess propertyAccess
-				   || !((IPropertySetup)propertySetup).Matches(propertyAccess)));
+				   || !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)));
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -291,7 +291,7 @@ public partial class MockRegistration
 
 			return _storage.Where(indexerSetup => interactions.Interactions.All(interaction
 				=> interaction is not IndexerAccess indexerAccess
-				   || !((IIndexerSetup)indexerSetup).Matches(indexerAccess)));
+				   || !((IInteractiveIndexerSetup)indexerSetup).Matches(indexerAccess)));
 		}
 
 		private sealed class ValueStorage
