@@ -6,7 +6,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Interface for hiding some implementation details of <see cref="PropertySetup" />.
 /// </summary>
-public interface IPropertySetup
+public interface IPropertySetup : ISetup
 {
 	/// <summary>
 	///     Invokes the setter logic for the <paramref name="invocation" /> and <paramref name="value" />.
@@ -18,6 +18,11 @@ public interface IPropertySetup
 	///     <typeparamref name="TResult" />.
 	/// </summary>
 	TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior, Func<TResult>? defaultValueGenerator);
+
+	/// <summary>
+	///     Checks if the <paramref name="propertyAccess" /> matches the setup.
+	/// </summary>
+	bool Matches(PropertyAccess propertyAccess);
 
 	/// <summary>
 	///     Gets a flag indicating if the base class implementation should be called, and its return values used as default

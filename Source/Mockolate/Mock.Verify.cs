@@ -1,4 +1,3 @@
-using Mockolate.Setup;
 using Mockolate.Verify;
 
 namespace Mockolate;
@@ -20,12 +19,7 @@ public partial class Mock<T> : IMockVerify<T>,
 
 	/// <inheritdoc cref="IMockVerify{T}.ThatAllSetupsWereUsed()" />
 	bool IMockVerify<T>.ThatAllSetupsWereUsed()
-	{
-		Setups setups = Registrations.GetUnusedSetups(Interactions);
-		return setups.Indexers.Count == 0 &&
-		       setups.Properties.Count == 0 &&
-		       setups.Methods.Count == 0;
-	}
+		=> Registrations.GetUnusedSetups(Interactions).Count == 0;
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithToString{T}.ToString()" />
 	VerificationResult<T> IMockVerifyInvokedWithToString<T>.ToString()

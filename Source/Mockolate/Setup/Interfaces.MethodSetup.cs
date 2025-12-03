@@ -6,7 +6,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Interface for hiding some implementation details of <see cref="MethodSetup" />.
 /// </summary>
-public interface IMethodSetup
+public interface IMethodSetup : ISetup
 {
 	/// <summary>
 	///     Checks if the <paramref name="methodInvocation" /> matches the setup.

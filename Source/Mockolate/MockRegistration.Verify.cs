@@ -133,37 +133,14 @@ public partial class MockRegistration
 	/// <summary>
 	///     Returns the setups that have not been used by the given <paramref name="interactions" />.
 	/// </summary>
-	public Setups GetUnusedSetups(MockInteractions interactions)
+	public IReadOnlyCollection<ISetup> GetUnusedSetups(MockInteractions interactions)
 	{
-		List<IndexerSetup> indexers = [];
-		foreach (IndexerSetup indexerSetup in _indexerSetups.Enumerate())
-		{
-			if (indexerSetup is IIndexerSetup setup && interactions.Interactions
-				    .All(interaction => interaction is not IndexerAccess indexerAccess
-				                        || !setup.Matches(indexerAccess)))
-			{
-				indexers.Add(indexerSetup);
-			}
-		}
-
-		List<PropertySetup> properties = _propertySetups.Enumerate().Where(propertySetup => interactions.Interactions
-				.All(interaction => (interaction is not PropertyGetterAccess propertyGetterAccess ||
-				                     !propertySetup.Name.Equals(propertyGetterAccess.Name)) &&
-				                    (interaction is not PropertySetterAccess propertySetterAccess ||
-				                     !propertySetup.Name.Equals(propertySetterAccess.Name))))
-			.ToList();
-
-		List<MethodSetup> methods = [];
-		foreach (MethodSetup methodSetup in _methodSetups.Enumerate())
-		{
-			if (methodSetup is IMethodSetup setup && interactions.Interactions
-				    .All(interaction => interaction is not MethodInvocation methodInvocation
-				                        || !setup.Matches(methodInvocation)))
-			{
-				methods.Add(methodSetup);
-			}
-		}
-
-		return new Setups(indexers, properties, methods);
+		List<ISetup> unusedSetups =
+		[
+			.._indexerSetups.EnumerateUnusedSetupsBy(interactions),
+			.._propertySetups.EnumerateUnusedSetupsBy(interactions),
+			.._methodSetups.EnumerateUnusedSetupsBy(interactions),
+		];
+		return unusedSetups;
 	}
 }

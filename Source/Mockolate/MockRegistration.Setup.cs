@@ -45,7 +45,8 @@ public partial class MockRegistration
 				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
 			}
 
-			matchingSetup = new PropertySetup.Default(propertyName, defaultValueGenerator.Invoke(Behavior.CallBaseClass));
+			matchingSetup =
+				new PropertySetup.Default(propertyName, defaultValueGenerator.Invoke(Behavior.CallBaseClass));
 			_propertySetups.Add(matchingSetup);
 		}
 		else
@@ -110,17 +111,22 @@ public partial class MockRegistration
 
 			return _storage.FirstOrDefault(predicate);
 		}
-		
-		internal IEnumerable<MethodSetup> Enumerate()
+
+		internal IEnumerable<MethodSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
 			if (_storage is null)
 			{
 				yield break;
 			}
 
-			foreach (MethodSetup item in _storage)
+			foreach (MethodSetup methodSetup in _storage)
 			{
-				yield return item;
+				if (interactions.Interactions.All(interaction
+					    => interaction is not MethodInvocation methodInvocation
+					       || !((IMethodSetup)methodSetup).Matches(methodInvocation)))
+				{
+					yield return methodSetup;
+				}
 			}
 		}
 
@@ -164,17 +170,22 @@ public partial class MockRegistration
 			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
 			return _storage.TryGetValue(propertyName, out setup);
 		}
-		
-		internal IEnumerable<PropertySetup> Enumerate()
+
+		internal IEnumerable<PropertySetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
 			if (_storage is null)
 			{
 				yield break;
 			}
 
-			foreach (PropertySetup item in _storage.Values)
+			foreach (PropertySetup propertySetup in _storage.Values)
 			{
-				yield return item;
+				if (interactions.Interactions.All(interaction
+					    => interaction is not PropertyAccess propertyAccess
+					       || !((IPropertySetup)propertySetup).Matches(propertyAccess)))
+				{
+					yield return propertySetup;
+				}
 			}
 		}
 
@@ -283,6 +294,24 @@ public partial class MockRegistration
 			storage.Value = value;
 		}
 
+		internal IEnumerable<IndexerSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
+		{
+			if (_storage is null)
+			{
+				yield break;
+			}
+
+			foreach (IndexerSetup indexerSetup in _storage)
+			{
+				if (interactions.Interactions.All(interaction
+					    => interaction is not IndexerAccess indexerAccess
+					       || !((IIndexerSetup)indexerSetup).Matches(indexerAccess)))
+				{
+					yield return indexerSetup;
+				}
+			}
+		}
+
 		private sealed class ValueStorage
 		{
 			private ValueStorage? _nullStorage;
@@ -304,19 +333,6 @@ public partial class MockRegistration
 
 				_storage ??= new ConcurrentDictionary<object, ValueStorage>();
 				return _storage.GetOrAdd(key, _ => valueGenerator());
-			}
-		}
-		
-		internal IEnumerable<IndexerSetup> Enumerate()
-		{
-			if (_storage is null)
-			{
-				yield break;
-			}
-
-			foreach (IndexerSetup item in _storage)
-			{
-				yield return item;
 			}
 		}
 	}
