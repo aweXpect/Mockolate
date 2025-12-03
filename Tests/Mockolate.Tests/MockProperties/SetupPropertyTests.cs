@@ -44,8 +44,9 @@ public sealed partial class SetupPropertyTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
 		int result0 = registration.GetProperty("my.other.property", () => 0, null);
-		PropertySetup<int> setup = new();
-		registration.SetupProperty("my.property", (IPropertySetup)setup.InitializeWith(42));
+		PropertySetup<int> setup = new("my.property");
+		((IPropertySetup)setup).InitializeWith(42);
+		registration.SetupProperty(setup);
 		int result1 = registration.GetProperty("my.property", () => 0, null);
 
 		await That(result0).IsEqualTo(0);
@@ -93,11 +94,11 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task ToString_ShouldReturnType()
 	{
-		PropertySetup<int> setup = new();
+		PropertySetup<int> setup = new("Foo");
 
 		string result = setup.ToString();
 
-		await That(result).IsEqualTo("int");
+		await That(result).IsEqualTo("int Foo");
 	}
 
 	[Fact]
@@ -130,7 +131,7 @@ public sealed partial class SetupPropertyTests
 		string MyStringProperty { get; set; }
 	}
 
-	private sealed class MyPropertySetup<T> : PropertySetup<T>
+	private sealed class MyPropertySetup<T>() : PropertySetup<T>("My.Property")
 	{
 		public void InvokeSetter(object? value)
 			=> InvokeSetter(value, MockBehavior.Default);

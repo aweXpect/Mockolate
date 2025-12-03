@@ -12,16 +12,29 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class PropertySetup : IPropertySetup
 {
+	/// <summary>
+	///     The property name.
+	/// </summary>
+	public abstract string Name { get; }
+
+	/// <inheritdoc cref="IPropertySetup.InvokeSetter(IInteraction, object?, MockBehavior)" />
 	void IPropertySetup.InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
 		=> InvokeSetter(value, behavior);
 
+	/// <inheritdoc cref="IPropertySetup.InvokeGetter{TResult}(IInteraction, MockBehavior, Func{TResult}?)" />
 	TResult IPropertySetup.InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior,
 		Func<TResult>? defaultValueGenerator)
 		=> InvokeGetter(behavior, defaultValueGenerator);
 
+	/// <inheritdoc cref="IPropertySetup.Matches(PropertyAccess)" />
+	bool IPropertySetup.Matches(PropertyAccess propertyAccess)
+		=> Matches(propertyAccess);
+
+	/// <inheritdoc cref="IPropertySetup.CallBaseClass()" />
 	bool? IPropertySetup.CallBaseClass()
 		=> GetCallBaseClass();
 
+	/// <inheritdoc cref="IPropertySetup.InitializeWith(object?)" />
 	void IPropertySetup.InitializeWith(object? value)
 		=> InitializeValue(value);
 
@@ -37,6 +50,11 @@ public abstract class PropertySetup : IPropertySetup
 	protected abstract bool? GetCallBaseClass();
 
 	/// <summary>
+	///     Checks if the <paramref name="propertyAccess" /> matches the setup.
+	/// </summary>
+	protected abstract bool Matches(PropertyAccess propertyAccess);
+
+	/// <summary>
 	///     Invokes the setter logic with the given <paramref name="value" />.
 	/// </summary>
 	protected abstract void InvokeSetter(object? value, MockBehavior behavior);
@@ -46,10 +64,13 @@ public abstract class PropertySetup : IPropertySetup
 	/// </summary>
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult>? defaultValueGenerator);
 
-	internal class Default(object? initialValue) : PropertySetup
+	internal class Default(string name, object? initialValue) : PropertySetup
 	{
 		private bool _isInitialized = true;
 		private object? _value = initialValue;
+
+		/// <inheritdoc cref="PropertySetup.Name" />
+		public override string Name => name;
 
 		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
 		protected override void InitializeValue(object? value)
@@ -64,6 +85,10 @@ public abstract class PropertySetup : IPropertySetup
 		/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
 		protected override bool? GetCallBaseClass()
 			=> null;
+
+		/// <inheritdoc cref="PropertySetup.Matches(PropertyAccess)" />
+		protected override bool Matches(PropertyAccess propertyAccess)
+			=> name.Equals(propertyAccess.Name);
 
 		/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 		protected override void InvokeSetter(object? value, MockBehavior behavior)
@@ -95,7 +120,8 @@ public abstract class PropertySetup : IPropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
-public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>
+public class PropertySetup<T>(string name)
+	: PropertySetup, IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>
 {
 	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T, T>>> _returnCallbacks = [];
@@ -106,6 +132,9 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 	private int _currentReturnCallbackIndex;
 	private bool _isInitialized;
 	private T _value = default!;
+
+	/// <inheritdoc cref="PropertySetup.Name" />
+	public override string Name => name;
 
 	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" />
 	IPropertySetupWhenBuilder<T> IPropertySetupCallbackBuilder<T>.When(Func<int, bool> predicate)
@@ -134,6 +163,10 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 		_currentReturnCallback?.For(x => x < times);
 		return this;
 	}
+
+	/// <inheritdoc cref="PropertySetup.Matches(PropertyAccess)" />
+	protected override bool Matches(PropertyAccess propertyAccess)
+		=> name.Equals(propertyAccess.Name);
 
 	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 	protected override void InvokeSetter(object? value, MockBehavior behavior)
@@ -218,7 +251,7 @@ public class PropertySetup<T> : PropertySetup, IPropertySetupCallbackBuilder<T>,
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> typeof(T).FormatType();
+		=> $"{typeof(T).FormatType()} {name}";
 
 	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
 	{

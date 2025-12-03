@@ -624,10 +624,8 @@ internal static partial class Sources
 				sb.AppendLine("\t\t\tget");
 				sb.AppendLine("\t\t\t{");
 				sb.Append("\t\t\t\tvar propertySetup = new PropertySetup<").Append(property.Type.Fullname)
-					.Append(">();").AppendLine();
-				sb.AppendLine("\t\t\t\tCastToMockRegistrationOrThrow(setup).SetupProperty(")
-					.Append(property.GetUniqueNameString())
-					.Append(", propertySetup);").AppendLine();
+					.Append(">(").Append(property.GetUniqueNameString()).Append(");").AppendLine();
+				sb.AppendLine("\t\t\t\tCastToMockRegistrationOrThrow(setup).SetupProperty(propertySetup);").AppendLine();
 				sb.AppendLine("\t\t\t\treturn propertySetup;");
 				sb.AppendLine("\t\t\t}");
 				sb.AppendLine("\t\t}");

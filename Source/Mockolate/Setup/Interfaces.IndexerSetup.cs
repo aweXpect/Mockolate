@@ -7,7 +7,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Interface for hiding some implementation details of <see cref="IndexerSetup" />.
 /// </summary>
-public interface IIndexerSetup
+public interface IIndexerSetup : ISetup
 {
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values

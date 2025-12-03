@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
+using Mockolate.Setup;
 using Mockolate.Verify;
 
 namespace Mockolate;
@@ -127,4 +129,18 @@ public partial class MockRegistration
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"unsubscribed from event {eventName.SubstringAfterLast('.')}");
+
+	/// <summary>
+	///     Returns the setups that have not been used by the given <paramref name="interactions" />.
+	/// </summary>
+	public IReadOnlyCollection<ISetup> GetUnusedSetups(MockInteractions interactions)
+	{
+		List<ISetup> unusedSetups =
+		[
+			.._indexerSetups.EnumerateUnusedSetupsBy(interactions),
+			.._propertySetups.EnumerateUnusedSetupsBy(interactions),
+			.._methodSetups.EnumerateUnusedSetupsBy(interactions),
+		];
+		return unusedSetups;
+	}
 }
