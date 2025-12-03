@@ -42,6 +42,12 @@ public class IndexerSetupResult<TResult>(
 		{
 			value = indexerSetup.InvokeGetter(indexerAccess, baseValue ?? defaultValueGenerator(),
 				_behavior);
+			if (_setup.HasReturnCalls())
+			{
+				setIndexerValue(indexerAccess.Parameters, value);
+				return value;
+			}
+
 			setIndexerValue(indexerAccess.Parameters, value);
 		}
 		else if (_behavior.ThrowWhenNotSetup)
@@ -72,6 +78,12 @@ public class IndexerSetupResult<TResult>(
 			else
 			{
 				value = indexerSetup.InvokeGetter(indexerAccess, defaultValueGenerator(), _behavior);
+			}
+
+			if (_setup.HasReturnCalls())
+			{
+				setIndexerValue(indexerAccess.Parameters, value);
+				return value;
 			}
 		}
 		else if (_behavior.ThrowWhenNotSetup)
