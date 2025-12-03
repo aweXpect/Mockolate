@@ -84,8 +84,8 @@ internal static partial class Sources
 		          			new TypedDefaultValueFactory<System.Collections.IEnumerable>(Array.Empty<object?>()),
 		          		]);
 		          	
-		          		/// <inheritdoc cref="IDefaultValueGenerator.Generate(Type, object?[])" />
-		          		public object? Generate(Type type, params object?[] parameters)
+		          		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(Type, object?[])" />
+		          		public object? GenerateValue(Type type, params object?[] parameters)
 		          		{
 		          			if (TryGenerate(type, parameters, out object? value))
 		          			{
@@ -306,7 +306,7 @@ internal static partial class Sources
 		          		/// </summary>
 		          		public T Generate<T>(T nullValue, params object?[] parameters)
 		          		{
-		          			if (generator.Generate(typeof(T), parameters) is T value)
+		          			if (generator.GenerateValue(typeof(T), parameters) is T value)
 		          			{
 		          				return value;
 		          			}

@@ -14,7 +14,7 @@ namespace Mockolate
     }
     public interface IDefaultValueGenerator
     {
-        object? Generate(System.Type type, params object?[] parameters);
+        object? GenerateValue(System.Type type, params object?[] parameters);
     }
     public interface IHasMockRegistration
     {

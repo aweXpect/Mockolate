@@ -11,5 +11,5 @@ public interface IDefaultValueGenerator
 	///     Generates a default value of the specified <paramref name="type" />, with
 	///     the <paramref name="parameters" /> for context.
 	/// </summary>
-	object? Generate(Type type, params object?[] parameters);
+	object? GenerateValue(Type type, params object?[] parameters);
 }

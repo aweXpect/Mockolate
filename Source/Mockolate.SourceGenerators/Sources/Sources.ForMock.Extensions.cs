@@ -553,7 +553,7 @@ internal static partial class Sources
 			sb.Append("\t\t\tmock.Registrations.Raise(").Append(@event.GetUniqueNameString()).Append(", ")
 				.Append(string.Join(", ",
 					@event.Delegate.Parameters.Select(p
-						=> $"mockBehavior.DefaultValue.Generate(typeof({p.Type.Fullname.TrimEnd('?')}))")))
+						=> $"mockBehavior.DefaultValue.Generate(default({p.Type.Fullname.TrimEnd('?')}))")))
 				.Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
