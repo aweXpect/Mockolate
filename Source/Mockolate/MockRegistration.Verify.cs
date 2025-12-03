@@ -146,18 +146,12 @@ public partial class MockRegistration
 			}
 		}
 
-		List<PropertySetup> properties = [];
-		foreach (PropertySetup propertySetup in _propertySetups.Enumerate())
-		{
-			if (interactions.Interactions
-			    .All(interaction => (interaction is not PropertyGetterAccess propertyGetterAccess ||
-			                         !propertySetup.Name.Equals(propertyGetterAccess.Name)) &&
-			                        (interaction is not PropertySetterAccess propertySetterAccess ||
-			                         !propertySetup.Name.Equals(propertySetterAccess.Name))))
-			{
-				properties.Add(propertySetup);
-			}
-		}
+		List<PropertySetup> properties = _propertySetups.Enumerate().Where(propertySetup => interactions.Interactions
+				.All(interaction => (interaction is not PropertyGetterAccess propertyGetterAccess ||
+				                     !propertySetup.Name.Equals(propertyGetterAccess.Name)) &&
+				                    (interaction is not PropertySetterAccess propertySetterAccess ||
+				                     !propertySetup.Name.Equals(propertySetterAccess.Name))))
+			.ToList();
 
 		List<MethodSetup> methods = [];
 		foreach (MethodSetup methodSetup in _methodSetups.Enumerate())
