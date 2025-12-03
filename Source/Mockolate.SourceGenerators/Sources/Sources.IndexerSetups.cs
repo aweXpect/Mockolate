@@ -41,7 +41,7 @@ internal static partial class Sources
 			string types = string.Join(", ", Enumerable.Range(1, item).Select(i => $"T{i}"));
 			sb.Append($$"""
 			            		/// <summary>
-			            		///     Extensions for indexer setups with four parameters.
+			            		///     Extensions for indexer setups with {{item}} parameters.
 			            		/// </summary>
 			            		extension<TValue, {{types}}>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, {{types}}> setup)
 			            		{
