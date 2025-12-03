@@ -8,42 +8,42 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for method setups.
 /// </summary>
-public abstract class MethodSetup : IMethodSetup
+public abstract class MethodSetup : IInteractiveMethodSetup
 {
-	/// <inheritdoc cref="IMethodSetup.HasReturnCalls()" />
-	bool IMethodSetup.HasReturnCalls()
+	/// <inheritdoc cref="IInteractiveMethodSetup.HasReturnCalls()" />
+	bool IInteractiveMethodSetup.HasReturnCalls()
 		=> HasReturnCalls();
 
-	/// <inheritdoc cref="IMethodSetup.SetOutParameter{T}(string, Func{T})" />
-	T IMethodSetup.SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+	/// <inheritdoc cref="IInteractiveMethodSetup.SetOutParameter{T}(string, Func{T})" />
+	T IInteractiveMethodSetup.SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 		=> SetOutParameter(parameterName, defaultValueGenerator);
 
-	/// <inheritdoc cref="IMethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	T IMethodSetup.SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	/// <inheritdoc cref="IInteractiveMethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
+	T IInteractiveMethodSetup.SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 		=> SetRefParameter(parameterName, value, behavior);
 
-	/// <inheritdoc cref="IMethodSetup.Matches(MethodInvocation)" />
-	bool IMethodSetup.Matches(MethodInvocation methodInvocation)
+	/// <inheritdoc cref="IInteractiveMethodSetup.Matches(MethodInvocation)" />
+	bool IInteractiveMethodSetup.Matches(MethodInvocation methodInvocation)
 		=> IsMatch(methodInvocation);
 
-	/// <inheritdoc cref="IMethodSetup.CallBaseClass()" />
-	bool? IMethodSetup.CallBaseClass()
+	/// <inheritdoc cref="IInteractiveMethodSetup.CallBaseClass()" />
+	bool? IInteractiveMethodSetup.CallBaseClass()
 		=> GetCallBaseClass();
 
 
-	/// <inheritdoc cref="IMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	TResult IMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior,
+	/// <inheritdoc cref="IInteractiveMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
+	TResult IInteractiveMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
 	{
 		ExecuteCallback(methodInvocation, behavior);
 		return GetReturnValue(methodInvocation, behavior, defaultValueGenerator);
 	}
 
-	/// <inheritdoc cref="IMethodSetup.Invoke(MethodInvocation, MockBehavior)" />
-	void IMethodSetup.Invoke(MethodInvocation methodInvocation, MockBehavior behavior)
+	/// <inheritdoc cref="IInteractiveMethodSetup.Invoke(MethodInvocation, MockBehavior)" />
+	void IInteractiveMethodSetup.Invoke(MethodInvocation methodInvocation, MockBehavior behavior)
 		=> ExecuteCallback(methodInvocation, behavior);
 
-	/// <inheritdoc cref="IMethodSetup.TriggerCallbacks(object?[])" />
+	/// <inheritdoc cref="IInteractiveMethodSetup.TriggerCallbacks(object?[])" />
 	public void TriggerCallbacks(object?[] parameters)
 		=> TriggerParameterCallbacks(parameters);
 

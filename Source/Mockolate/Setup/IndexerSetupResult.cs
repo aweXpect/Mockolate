@@ -8,7 +8,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     A result of a method setup invocation.
 /// </summary>
-public class IndexerSetupResult(IIndexerSetup? setup, MockBehavior behavior)
+public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior behavior)
 {
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default
@@ -22,15 +22,15 @@ public class IndexerSetupResult(IIndexerSetup? setup, MockBehavior behavior)
 ///     A result of a method setup invocation with return type <typeparamref name="TResult" />.
 /// </summary>
 public class IndexerSetupResult<TResult>(
-	IIndexerSetup? setup,
+	IInteractiveIndexerSetup? setup,
 	IndexerGetterAccess indexerAccess,
 	MockBehavior behavior,
-	Func<IIndexerSetup?, Func<TResult>, object?[], TResult> getIndexerValue,
+	Func<IInteractiveIndexerSetup?, Func<TResult>, object?[], TResult> getIndexerValue,
 	Action<object?[], TResult> setIndexerValue)
 	: IndexerSetupResult(setup, behavior)
 {
 	private readonly MockBehavior _behavior = behavior;
-	private readonly IIndexerSetup? _setup = setup;
+	private readonly IInteractiveIndexerSetup? _setup = setup;
 
 	/// <summary>
 	///     The return value of the setup method.

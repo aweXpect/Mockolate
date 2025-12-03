@@ -337,13 +337,6 @@ namespace Mockolate.Setup
         public bool Invoke(ref int index, System.Action<int, TDelegate> callback) { }
         public bool Invoke<TReturn>(ref int index, System.Func<int, TDelegate, TReturn> callback, out TReturn? returnValue) { }
     }
-    public interface IIndexerSetup : Mockolate.Setup.ISetup
-    {
-        bool? CallBaseClass();
-        bool HasReturnCalls();
-        bool Matches(Mockolate.Interactions.IndexerAccess indexerAccess);
-        bool TryGetInitialValue<TValue>(Mockolate.MockBehavior behavior, System.Func<TValue> defaultValueGenerator, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TValue value);
-    }
     public interface IIndexerSetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
         Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1> When(System.Func<int, bool> predicate);
@@ -500,7 +493,14 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new ();
     }
-    public interface IMethodSetup : Mockolate.Setup.ISetup
+    public interface IInteractiveIndexerSetup : Mockolate.Setup.ISetup
+    {
+        bool? CallBaseClass();
+        bool HasReturnCalls();
+        bool Matches(Mockolate.Interactions.IndexerAccess indexerAccess);
+        bool TryGetInitialValue<TValue>(Mockolate.MockBehavior behavior, System.Func<TValue> defaultValueGenerator, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TValue value);
+    }
+    public interface IInteractiveMethodSetup : Mockolate.Setup.ISetup
     {
         bool? CallBaseClass();
         bool HasReturnCalls();
@@ -510,6 +510,14 @@ namespace Mockolate.Setup
         T SetOutParameter<T>(string parameterName, System.Func<T> defaultValueGenerator);
         T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
         void TriggerCallbacks(object?[] parameters);
+    }
+    public interface IInteractivePropertySetup : Mockolate.Setup.ISetup
+    {
+        bool? CallBaseClass();
+        void InitializeWith(object? value);
+        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction invocation, Mockolate.MockBehavior behavior, System.Func<TResult>? defaultValueGenerator);
+        void InvokeSetter(Mockolate.Interactions.IInteraction invocation, object? value, Mockolate.MockBehavior behavior);
+        bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
     public interface IMockMethodSetupWithEqualsWithGetHashCode<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetupWithEquals<T>, Mockolate.Setup.IMockMethodSetupWithGetHashCode<T>, Mockolate.Setup.IMockMethodSetup<T> { }
     public interface IMockMethodSetupWithEquals<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetup<T>
@@ -532,14 +540,6 @@ namespace Mockolate.Setup
     public interface IMockSetup<out T> : Mockolate.IInteractiveMock<T>
     {
         T Subject { get; }
-    }
-    public interface IPropertySetup : Mockolate.Setup.ISetup
-    {
-        bool? CallBaseClass();
-        void InitializeWith(object? value);
-        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction invocation, Mockolate.MockBehavior behavior, System.Func<TResult>? defaultValueGenerator);
-        void InvokeSetter(Mockolate.Interactions.IInteraction invocation, object? value, Mockolate.MockBehavior behavior);
-        bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
     public interface IPropertySetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetupWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
@@ -875,7 +875,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new ();
     }
-    public abstract class IndexerSetup : Mockolate.Setup.IIndexerSetup, Mockolate.Setup.ISetup
+    public abstract class IndexerSetup : Mockolate.Setup.IInteractiveIndexerSetup, Mockolate.Setup.ISetup
     {
         protected IndexerSetup() { }
         protected abstract T ExecuteGetterCallback<T>(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, T value, Mockolate.MockBehavior behavior);
@@ -889,12 +889,12 @@ namespace Mockolate.Setup
     }
     public class IndexerSetupResult
     {
-        public IndexerSetupResult(Mockolate.Setup.IIndexerSetup? setup, Mockolate.MockBehavior behavior) { }
+        public IndexerSetupResult(Mockolate.Setup.IInteractiveIndexerSetup? setup, Mockolate.MockBehavior behavior) { }
         public bool CallBaseClass { get; }
     }
     public class IndexerSetupResult<TResult> : Mockolate.Setup.IndexerSetupResult
     {
-        public IndexerSetupResult(Mockolate.Setup.IIndexerSetup? setup, Mockolate.Interactions.IndexerGetterAccess indexerAccess, Mockolate.MockBehavior behavior, System.Func<Mockolate.Setup.IIndexerSetup?, System.Func<TResult>, object?[], TResult> getIndexerValue, System.Action<object?[], TResult> setIndexerValue) { }
+        public IndexerSetupResult(Mockolate.Setup.IInteractiveIndexerSetup? setup, Mockolate.Interactions.IndexerGetterAccess indexerAccess, Mockolate.MockBehavior behavior, System.Func<Mockolate.Setup.IInteractiveIndexerSetup?, System.Func<TResult>, object?[], TResult> getIndexerValue, System.Action<object?[], TResult> setIndexerValue) { }
         public TResult GetResult(System.Func<TResult> defaultValueGenerator) { }
         public TResult GetResult(TResult baseValue, System.Func<TResult> defaultValueGenerator) { }
     }
@@ -1018,7 +1018,7 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, System.Func<T> defaultValueGenerator, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
     }
-    public abstract class MethodSetup : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    public abstract class MethodSetup : Mockolate.Setup.IInteractiveMethodSetup, Mockolate.Setup.ISetup
     {
         protected MethodSetup() { }
         protected abstract void ExecuteCallback(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior);
@@ -1039,7 +1039,7 @@ namespace Mockolate.Setup
     }
     public class MethodSetupResult
     {
-        public MethodSetupResult(Mockolate.Setup.IMethodSetup? setup, Mockolate.MockBehavior behavior) { }
+        public MethodSetupResult(Mockolate.Setup.IInteractiveMethodSetup? setup, Mockolate.MockBehavior behavior) { }
         public bool CallBaseClass { get; }
         public bool HasSetupResult { get; }
         public T SetOutParameter<T>(string parameterName, System.Func<T> defaultValueGenerator) { }
@@ -1048,10 +1048,10 @@ namespace Mockolate.Setup
     }
     public class MethodSetupResult<TResult> : Mockolate.Setup.MethodSetupResult
     {
-        public MethodSetupResult(Mockolate.Setup.IMethodSetup? setup, Mockolate.MockBehavior behavior, TResult result) { }
+        public MethodSetupResult(Mockolate.Setup.IInteractiveMethodSetup? setup, Mockolate.MockBehavior behavior, TResult result) { }
         public TResult Result { get; }
     }
-    public abstract class PropertySetup : Mockolate.Setup.IPropertySetup, Mockolate.Setup.ISetup
+    public abstract class PropertySetup : Mockolate.Setup.IInteractivePropertySetup, Mockolate.Setup.ISetup
     {
         protected PropertySetup() { }
         public abstract string Name { get; }
