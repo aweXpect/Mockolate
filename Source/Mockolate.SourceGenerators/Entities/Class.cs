@@ -146,14 +146,22 @@ internal record Class
 	{
 		(specialName, bool returnValue) = namedType.SpecialType switch
 		{
-			SpecialType.System_Int32 => ("int", true),
-			SpecialType.System_Int64 => ("long", true),
-			SpecialType.System_Int16 => ("short", true),
-			SpecialType.System_UInt32 => ("uint", true),
-			SpecialType.System_UInt64 => ("ulong", true),
-			SpecialType.System_UInt16 => ("ushort", true),
+			SpecialType.System_Void => ("void", true),
+			SpecialType.System_Object => ("object", true),
 			SpecialType.System_Boolean => ("bool", true),
 			SpecialType.System_String => ("string", true),
+			SpecialType.System_Char => ("char", true),
+			SpecialType.System_Byte => ("byte", true),
+			SpecialType.System_SByte => ("sbyte", true),
+			SpecialType.System_Int16 => ("short", true),
+			SpecialType.System_UInt16 => ("ushort", true),
+			SpecialType.System_Int32 => ("int", true),
+			SpecialType.System_UInt32 => ("uint", true),
+			SpecialType.System_Int64 => ("long", true),
+			SpecialType.System_UInt64 => ("ulong", true),
+			SpecialType.System_Single => ("float", true),
+			SpecialType.System_Double => ("double", true),
+			SpecialType.System_Decimal => ("decimal", true),
 			_ => (namedType.Name, false),
 		};
 		return returnValue;
