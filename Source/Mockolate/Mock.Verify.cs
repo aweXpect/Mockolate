@@ -17,7 +17,7 @@ public partial class Mock<T> : IMockVerify<T>,
 	bool IMockVerify<T>.ThatAllInteractionsAreVerified()
 		=> Interactions.GetUnverifiedInteractions().Count == 0;
 
-	/// <inheritdoc cref="IMockVerify{T}.ThatAllSetupsAreUsed" />
+	/// <inheritdoc cref="IMockVerify{T}.ThatAllSetupsAreUsed()" />
 	bool IMockVerify<T>.ThatAllSetupsAreUsed()
 		=> Registrations.GetUnusedSetups(Interactions).Count == 0;
 
