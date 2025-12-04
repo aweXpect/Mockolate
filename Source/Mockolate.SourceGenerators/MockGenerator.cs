@@ -98,9 +98,9 @@ public class MockGenerator : IIncrementalGenerator
 		const int dotNetFuncActionParameterLimit = 16;
 		if (methodSetups.Any(x => x.Item1 >= dotNetFuncActionParameterLimit))
 		{
-			context.AddSource("MethodSetups.ActionFunc.g.cs",
+			context.AddSource("ActionFunc.g.cs",
 				SourceText.From(
-					Sources.Sources.MethodSetupsActionFunc(methodSetups
+					Sources.Sources.ActionFunc(methodSetups
 						.Where(x => x.Item1 >= dotNetFuncActionParameterLimit)
 						.SelectMany<(int, bool), int>(x => [x.Item1, x.Item1 + 1,])
 						.Where(x => x > dotNetFuncActionParameterLimit)

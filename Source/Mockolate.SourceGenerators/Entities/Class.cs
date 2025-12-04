@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Internals;
 
@@ -99,17 +100,10 @@ internal record Class
 					namedType.TypeArguments.Select(GetTypeName)) + ">";
 			}
 
-			return namedType.SpecialType switch
+			if (TryExtractSpecialName(namedType, out string? name))
 			{
-				SpecialType.System_Int32 => "int",
-				SpecialType.System_Int64 => "long",
-				SpecialType.System_Int16 => "short",
-				SpecialType.System_UInt32 => "uint",
-				SpecialType.System_UInt64 => "ulong",
-				SpecialType.System_UInt16 => "ushort",
-				SpecialType.System_Boolean => "bool",
-				_ => type.Name,
-			};
+				return name;
+			}
 		}
 
 		return type.Name;
@@ -139,20 +133,30 @@ internal record Class
 						=> t.TypeKind == TypeKind.TypeParameter ? t.Name : GetTypeFullName(t))) + ">";
 			}
 
-			return namedType.SpecialType switch
+			if (TryExtractSpecialName(namedType, out string? name))
 			{
-				SpecialType.System_Int32 => "int",
-				SpecialType.System_Int64 => "long",
-				SpecialType.System_Int16 => "short",
-				SpecialType.System_UInt32 => "uint",
-				SpecialType.System_UInt64 => "ulong",
-				SpecialType.System_UInt16 => "ushort",
-				SpecialType.System_Boolean => "bool",
-				_ => GetPrefix(namedType) + namedType.Name,
-			};
+				return name;
+			}
 		}
 
 		return GetPrefix(type) + type.Name;
+	}
+
+	private bool TryExtractSpecialName(INamedTypeSymbol namedType, [NotNullWhen(true)] out string? specialName)
+	{
+		(specialName, bool returnValue) = namedType.SpecialType switch
+		{
+			SpecialType.System_Int32 => ("int", true),
+			SpecialType.System_Int64 => ("long", true),
+			SpecialType.System_Int16 => ("short", true),
+			SpecialType.System_UInt32 => ("uint", true),
+			SpecialType.System_UInt64 => ("ulong", true),
+			SpecialType.System_UInt16 => ("ushort", true),
+			SpecialType.System_Boolean => ("bool", true),
+			SpecialType.System_String => ("string", true),
+			_ => (namedType.Name, false),
+		};
+		return returnValue;
 	}
 
 	private static List<T> ToListExcept<T>(IEnumerable<T> source, IEnumerable<T>? except, IEqualityComparer<T> comparer)
