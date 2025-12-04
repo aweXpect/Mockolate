@@ -142,7 +142,7 @@ internal record Class
 		return GetPrefix(type) + type.Name;
 	}
 
-	private bool TryExtractSpecialName(INamedTypeSymbol namedType, [NotNullWhen(true)] out string? specialName)
+	private static bool TryExtractSpecialName(INamedTypeSymbol namedType, [NotNullWhen(true)] out string? specialName)
 	{
 		(specialName, bool hasSpecialType) = namedType.SpecialType switch
 		{

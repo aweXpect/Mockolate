@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests.MockIndexers;
 
@@ -10,20 +9,24 @@ public sealed partial class SetupIndexerTests
 		[Fact]
 		public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 		{
-			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-			mock.SetupMock.Indexer(With("Dark"))
-				.Returns(1)
-				.Returns(2);
+			IIndexerService mock = Mock.Create<IIndexerService>();
+			mock.SetupMock.Indexer(With(1))
+				.Returns("a")
+				.Returns("b");
 
-			int resultDark1 = mock["Dark"];
-			int resultLight1 = mock["Light"];
-			int resultDark2 = mock["Dark"];
-			int resultDark3 = mock["Dark"];
+			string result11 = mock[1];
+			string result2 = mock[2];
+			string result12 = mock[1];
+			string result13 = mock[1];
+			string result14 = mock[1];
+			string result15 = mock[1];
 
-			await That(resultDark1).IsEqualTo(1);
-			await That(resultLight1).IsEqualTo(0);
-			await That(resultDark2).IsEqualTo(2);
-			await That(resultDark3).IsEqualTo(1);
+			await That(result11).IsEqualTo("a");
+			await That(result2).IsEqualTo("");
+			await That(result12).IsEqualTo("b");
+			await That(result13).IsEqualTo("a");
+			await That(result14).IsEqualTo("b");
+			await That(result15).IsEqualTo("a");
 		}
 
 		[Fact]
@@ -286,6 +289,29 @@ public sealed partial class SetupIndexerTests
 		public sealed class With2Levels
 		{
 			[Fact]
+			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				mock.SetupMock.Indexer(With(1), Any<int>())
+					.Returns("a")
+					.Returns("b");
+
+				string result11 = mock[1, 2];
+				string result2 = mock[2, 2];
+				string result12 = mock[1, 2];
+				string result13 = mock[1, 2];
+				string result14 = mock[1, 2];
+				string result15 = mock[1, 2];
+
+				await That(result11).IsEqualTo("a");
+				await That(result2).IsEqualTo("");
+				await That(result12).IsEqualTo("b");
+				await That(result13).IsEqualTo("a");
+				await That(result14).IsEqualTo("b");
+				await That(result15).IsEqualTo("a");
+			}
+
+			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -545,6 +571,29 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With3Levels
 		{
+			[Fact]
+			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				mock.SetupMock.Indexer(With(1), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b");
+
+				string result11 = mock[1, 2, 3];
+				string result2 = mock[2, 2, 3];
+				string result12 = mock[1, 2, 3];
+				string result13 = mock[1, 2, 3];
+				string result14 = mock[1, 2, 3];
+				string result15 = mock[1, 2, 3];
+
+				await That(result11).IsEqualTo("a");
+				await That(result2).IsEqualTo("");
+				await That(result12).IsEqualTo("b");
+				await That(result13).IsEqualTo("a");
+				await That(result14).IsEqualTo("b");
+				await That(result15).IsEqualTo("a");
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -807,6 +856,29 @@ public sealed partial class SetupIndexerTests
 		public sealed class With4Levels
 		{
 			[Fact]
+			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				mock.SetupMock.Indexer(With(1), Any<int>(), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b");
+
+				string result11 = mock[1, 2, 3, 4];
+				string result2 = mock[2, 2, 3, 4];
+				string result12 = mock[1, 2, 3, 4];
+				string result13 = mock[1, 2, 3, 4];
+				string result14 = mock[1, 2, 3, 4];
+				string result15 = mock[1, 2, 3, 4];
+
+				await That(result11).IsEqualTo("a");
+				await That(result2).IsEqualTo("");
+				await That(result12).IsEqualTo("b");
+				await That(result13).IsEqualTo("a");
+				await That(result14).IsEqualTo("b");
+				await That(result15).IsEqualTo("a");
+			}
+
+			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1068,6 +1140,29 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With5Levels
 		{
+			[Fact]
+			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				mock.SetupMock.Indexer(With(1), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+					.Returns("a")
+					.Returns("b");
+
+				string result11 = mock[1, 2, 3, 4, 5];
+				string result2 = mock[2, 2, 3, 4, 5];
+				string result12 = mock[1, 2, 3, 4, 5];
+				string result13 = mock[1, 2, 3, 4, 5];
+				string result14 = mock[1, 2, 3, 4, 5];
+				string result15 = mock[1, 2, 3, 4, 5];
+
+				await That(result11).IsEqualTo("a");
+				await That(result2).IsEqualTo("");
+				await That(result12).IsEqualTo("b");
+				await That(result13).IsEqualTo("a");
+				await That(result14).IsEqualTo("b");
+				await That(result15).IsEqualTo("a");
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
