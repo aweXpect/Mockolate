@@ -144,7 +144,7 @@ internal record Class
 
 	private bool TryExtractSpecialName(INamedTypeSymbol namedType, [NotNullWhen(true)] out string? specialName)
 	{
-		(specialName, bool returnValue) = namedType.SpecialType switch
+		(specialName, bool hasSpecialType) = namedType.SpecialType switch
 		{
 			SpecialType.System_Void => ("void", true),
 			SpecialType.System_Object => ("object", true),
@@ -162,9 +162,9 @@ internal record Class
 			SpecialType.System_Single => ("float", true),
 			SpecialType.System_Double => ("double", true),
 			SpecialType.System_Decimal => ("decimal", true),
-			_ => (namedType.Name, false),
+			_ => (null, false),
 		};
-		return returnValue;
+		return hasSpecialType;
 	}
 
 	private static List<T> ToListExcept<T>(IEnumerable<T> source, IEnumerable<T>? except, IEqualityComparer<T> comparer)
