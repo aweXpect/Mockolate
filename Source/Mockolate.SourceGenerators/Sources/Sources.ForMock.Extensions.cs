@@ -73,12 +73,9 @@ internal static partial class Sources
 			sb.Append("\textension(IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"")
+			sb.Append("\t\t///     Validates the invocations for the delegate <see cref=\"")
 				.Append(@class.ClassFullName.EscapeForXmlDoc())
-				.Append(".").Append(@delegate.Name.EscapeForXmlDoc()).Append("(")
-				.Append(string.Join(", ",
-					@delegate.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
-				.Append(")\"/>").Append(@delegate.Parameters.Count > 0 ? " with the given " : "")
+				.Append("\"/>").Append(@delegate.Parameters.Count > 0 ? " with the given " : "")
 				.Append(string.Join(", ", @delegate.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>")))
 				.Append(".")
 				.AppendLine();
@@ -333,12 +330,21 @@ internal static partial class Sources
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Setup for the method <see cref=\"")
-			.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
-			.Append(method.Name.EscapeForXmlDoc()).Append("(")
-			.Append(string.Join(", ",
-				method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
-			.Append(")\"/>");
+		if (methodNameOverride is null)
+		{
+			sb.Append("\t\t///     Setup for the method <see cref=\"")
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+				.Append(method.Name.EscapeForXmlDoc()).Append("(")
+				.Append(string.Join(", ",
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+				.Append(")\"/>");
+		}
+		else
+		{
+			sb.Append("\t\t///     Setup for the delegate <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append("\"/>");
+		}
+
 		if (useParameters)
 		{
 			sb.Append(" with the given <paramref name=\"parameters\" />");
@@ -625,7 +631,8 @@ internal static partial class Sources
 				sb.AppendLine("\t\t\t{");
 				sb.Append("\t\t\t\tvar propertySetup = new PropertySetup<").Append(property.Type.Fullname)
 					.Append(">(").Append(property.GetUniqueNameString()).Append(");").AppendLine();
-				sb.AppendLine("\t\t\t\tCastToMockRegistrationOrThrow(setup).SetupProperty(propertySetup);").AppendLine();
+				sb.AppendLine("\t\t\t\tCastToMockRegistrationOrThrow(setup).SetupProperty(propertySetup);")
+					.AppendLine();
 				sb.AppendLine("\t\t\t\treturn propertySetup;");
 				sb.AppendLine("\t\t\t}");
 				sb.AppendLine("\t\t}");
