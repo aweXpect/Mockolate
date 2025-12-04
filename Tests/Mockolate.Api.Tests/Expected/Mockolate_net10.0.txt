@@ -1468,7 +1468,7 @@ namespace Mockolate.Verify
     public interface IMockVerify<out T> : Mockolate.IInteractiveMock<T>
     {
         bool ThatAllInteractionsAreVerified();
-        bool ThatAllSetupsWereUsed();
+        bool ThatAllSetupsAreUsed();
     }
     public interface IVerificationResult
     {
