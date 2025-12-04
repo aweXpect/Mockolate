@@ -14,7 +14,7 @@ public interface IMockVerify<out T> : IInteractiveMock<T>
 	/// <summary>
 	///     Gets a value indicating whether all registered setups were used.
 	/// </summary>
-	bool ThatAllSetupsWereUsed();
+	bool ThatAllSetupsAreUsed();
 }
 
 /// <summary>
