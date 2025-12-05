@@ -130,7 +130,7 @@ If the order is incorrect or a call is missing, a `MockVerificationException` wi
 
    ```csharp
    // Returns true if all setups have been used
-   bool allVerified = sut.VerifyMock.ThatAllSetupsAreUsed();
+   bool allUsed = sut.VerifyMock.ThatAllSetupsAreUsed();
    ```
 
    This is useful for ensuring that your test setup and test execution match.
