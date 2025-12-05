@@ -28,7 +28,7 @@ sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
 sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-sut.VerifyMock.Invoked.Dispense(AnyParameters()).Exactly(2);
+sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Exactly(2);
 ```
 
 ### Argument Matchers

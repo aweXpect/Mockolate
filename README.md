@@ -26,7 +26,6 @@ Framework 4.8.
 2. Create and use the mock
    ```csharp
    using Mockolate;
-   using static Mockolate.Match;
 
    // Create a mock for IChocolateDispenser
    var sut = Mock.Create<IChocolateDispenser>();
@@ -196,7 +195,9 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 - `It.Is<T>(predicate)`: Matches values based on a predicate.
 - `It.Is<T>(value)`: Matches a specific value.
 - `It.IsNull<T>()`: Matches null.
-- `It.Is<T>(…)`/`It.Is<T>(…)`: Matches and sets out/ref parameters, supports value setting and
+- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
+- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the minimum and maximum value.
+- `It.IsOut<T>(…)`/`It.IsRef<T>(…)`: Matches and sets out/ref parameters, supports value setting and
   predicates.
 
 #### Parameter Interaction
@@ -351,7 +352,7 @@ sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
 sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-sut.VerifyMock.Invoked.Dispense(AnyParameters()()).Exactly(2);
+sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()()).Exactly(2);
 ```
 
 #### Argument Matchers
@@ -362,8 +363,8 @@ You can use argument matchers from the `With` class to verify calls with flexibl
 - `It.IsNull<T>()`: matches `null`
 - `It.Is<T>(predicate)`: matches values satisfying a predicate
 - `It.Is(value)`: matches a specific value
-- `It.Is<T>()`: matches any out parameter of type `T`
-- `It.Is<T>()`: matches any ref parameter of type `T`
+- `It.IsOut<T>()`: matches any out parameter of type `T`
+- `It.IsRef<T>()`: matches any ref parameter of type `T`
 
 **Example:**
 

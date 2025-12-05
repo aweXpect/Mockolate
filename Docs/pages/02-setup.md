@@ -58,6 +58,8 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 - `It.Is<T>(predicate)`: Matches values based on a predicate.
 - `It.Is<T>(value)`: Matches a specific value.
 - `It.IsNull<T>()`: Matches null.
+- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
+- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the minimum and maximum value.
 - `It.IsOut<T>(…)`/`It.IsRef<T>(…)`: Matches and sets out/ref parameters, supports value setting and
   predicates.
 

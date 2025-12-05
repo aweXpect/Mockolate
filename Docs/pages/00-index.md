@@ -22,7 +22,6 @@ Framework 4.8.
 2. Create and use the mock
    ```csharp
    using Mockolate;
-   using static Mockolate.Match;
 
    // Create a mock for IChocolateDispenser
    var sut = Mock.Create<IChocolateDispenser>();
