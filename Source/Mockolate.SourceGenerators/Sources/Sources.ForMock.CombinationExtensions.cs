@@ -194,7 +194,7 @@ internal static partial class Sources
 			sb.Append(", new NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
-				sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+				sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
 					.Append(">()");
 			}
 
@@ -263,7 +263,7 @@ internal static partial class Sources
 			sb.Append(parameter.Name);
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
-				sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+				sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
 					.Append(">()");
 			}
 		}

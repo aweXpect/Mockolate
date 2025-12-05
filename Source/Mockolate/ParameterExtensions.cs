@@ -4,9 +4,9 @@ using Mockolate.Parameters;
 namespace Mockolate;
 
 /// <summary>
-///     Extension methods for <see cref="Match" />.
+///     Extension methods for <see cref="IParameter" />s.
 /// </summary>
-public static class MatchExtensions
+public static class ParameterExtensions
 {
 	/// <summary>
 	///     Create a <paramref name="monitor" /> to collect the matched values of the <paramref name="parameter" />.

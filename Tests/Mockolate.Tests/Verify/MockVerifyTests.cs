@@ -20,7 +20,7 @@ public class MockVerifyTests
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Dark", 2);
 
-		await That(sut.VerifyMock.Invoked.Dispense(With("Dark"), With(1))).Once();
+		await That(sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Once();
 		await That(sut.VerifyMock.ThatAllInteractionsAreVerified()).IsFalse();
 	}
 
@@ -32,7 +32,7 @@ public class MockVerifyTests
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Dark", 2);
 
-		await That(sut.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>())).AtLeastOnce();
+		await That(sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())).AtLeastOnce();
 		await That(sut.VerifyMock.ThatAllInteractionsAreVerified()).IsTrue();
 	}
 
@@ -43,7 +43,7 @@ public class MockVerifyTests
 	public async Task ThatAllSetupsAreUsed_ShouldCheckIndexersWithGetter(int interactionCount, bool expectedResult)
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-		sut.SetupMock.Indexer(Any<string>()).InitializeWith(1);
+		sut.SetupMock.Indexer(It.IsAny<string>()).InitializeWith(1);
 
 		for (int i = 0; i < interactionCount; i++)
 		{
@@ -60,7 +60,7 @@ public class MockVerifyTests
 	public async Task ThatAllSetupsAreUsed_ShouldCheckIndexersWithSetter(int interactionCount, bool expectedResult)
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-		sut.SetupMock.Indexer(Any<string>()).InitializeWith(1);
+		sut.SetupMock.Indexer(It.IsAny<string>()).InitializeWith(1);
 
 		for (int i = 0; i < interactionCount; i++)
 		{
@@ -77,7 +77,7 @@ public class MockVerifyTests
 	public async Task ThatAllSetupsAreUsed_ShouldCheckMethods(int interactionCount, bool expectedResult)
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-		sut.SetupMock.Method.Dispense(Any<string>(), Any<int>());
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>());
 
 		for (int i = 0; i < interactionCount; i++)
 		{
@@ -125,8 +125,8 @@ public class MockVerifyTests
 	public async Task ThatAllSetupsAreUsed_WithMultipleUsedSetups_ShouldReturnTrue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-		sut.SetupMock.Method.Dispense(Any<string>(), With(1));
-		sut.SetupMock.Method.Dispense(Any<string>(), With(2));
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.Is(1));
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.Is(2));
 
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Dark", 2);
@@ -154,10 +154,10 @@ public class MockVerifyTests
 	public async Task ThatAllSetupsAreUsed_WithPartlyUsedSetups_ShouldReturnFalse()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-		sut.SetupMock.Method.Dispense(Any<string>(), With(1));
-		sut.SetupMock.Method.Dispense(Any<string>(), With(2));
-		sut.SetupMock.Method.Dispense(Any<string>(), With(3));
-		sut.SetupMock.Method.Dispense(Any<string>(), With(4));
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.Is(1));
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.Is(2));
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.Is(3));
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.Is(4));
 
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Dark", 3);
@@ -169,7 +169,7 @@ public class MockVerifyTests
 	public async Task ThatAllSetupsAreUsed_WithUnusedSetup_ShouldReturnFalse()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-		sut.SetupMock.Method.Dispense(Any<string>(), Any<int>());
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>());
 
 		await That(sut.VerifyMock.ThatAllSetupsAreUsed()).IsFalse();
 	}
@@ -178,7 +178,7 @@ public class MockVerifyTests
 	public async Task ThatAllSetupsAreUsed_WithUsedSetup_ShouldReturnTrue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-		sut.SetupMock.Method.Dispense(Any<string>(), Any<int>());
+		sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>());
 
 		sut.Dispense("Dark", 1);
 

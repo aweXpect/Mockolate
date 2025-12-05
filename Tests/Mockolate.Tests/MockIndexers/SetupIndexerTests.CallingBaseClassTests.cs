@@ -11,7 +11,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Indexer(It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			_ = mock[1];
 
@@ -25,7 +25,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Indexer(It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			mock[1] = 1;
 
@@ -39,7 +39,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			_ = mock[1, 2];
 
@@ -53,7 +53,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			mock[1, 2] = 1;
 
@@ -67,7 +67,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			_ = mock[1, 2, 3];
 
@@ -81,7 +81,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			mock[1, 2, 3] = 1;
 
@@ -95,7 +95,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			_ = mock[1, 2, 3, 4];
 
@@ -109,7 +109,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			mock[1, 2, 3, 4] = 1;
 
@@ -123,7 +123,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+			mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.CallingBaseClass(callBaseClass);
 
 			_ = mock[1, 2, 3, 4, 5];
@@ -138,7 +138,7 @@ public sealed partial class SetupIndexerTests
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+			mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.CallingBaseClass(callBaseClass);
 
 			mock[1, 2, 3, 4, 5] = 1;
@@ -150,7 +150,7 @@ public sealed partial class SetupIndexerTests
 		public async Task SetupCallingBaseClassWithoutReturn_ShouldReturnBaseValue()
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
-			mock.SetupMock.Indexer(Any<string>())
+			mock.SetupMock.Indexer(It.IsAny<string>())
 				.CallingBaseClass();
 
 			int result = mock["returning 2"];

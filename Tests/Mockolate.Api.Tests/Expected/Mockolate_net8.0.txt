@@ -25,43 +25,40 @@ namespace Mockolate
     {
         Mockolate.Mock<T> Mock { get; }
     }
-    public class Match
+    public class It
     {
-        public static Mockolate.Parameters.IParameter<T> Any<T>() { }
-        public static Mockolate.Parameters.IOutParameter<T> AnyOut<T>() { }
-        public static Mockolate.Parameters.IParameters AnyParameters() { }
-        public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> AnyReadOnlySpan<T>() { }
-        public static Mockolate.Parameters.IRefParameter<T> AnyRef<T>() { }
-        public static Mockolate.Parameters.IVerifySpanParameter<T> AnySpan<T>() { }
-        public static Mockolate.Parameters.IParameter<bool> False() { }
-        public static Mockolate.Match.IInRangeParameter<T> InRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
+        public static Mockolate.Parameters.IParameter<T> Is<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IParameter<T> Is<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IParameter<T> Is<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.Parameters.IParameter<T> IsAny<T>() { }
+        public static Mockolate.Parameters.IOutParameter<T> IsAnyOut<T>() { }
+        public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> IsAnyReadOnlySpan<T>() { }
+        public static Mockolate.Parameters.IRefParameter<T> IsAnyRef<T>() { }
+        public static Mockolate.Parameters.IVerifySpanParameter<T> IsAnySpan<T>() { }
+        public static Mockolate.Parameters.IParameter<bool> IsFalse() { }
+        public static Mockolate.It.IInRangeParameter<T> IsInRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
             where T : System.IComparable<T> { }
-        public static Mockolate.Parameters.IParameter<T> Null<T>() { }
-        public static Mockolate.Parameters.IVerifyOutParameter<T> Out<T>() { }
-        public static Mockolate.Parameters.IOutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IParameters Parameters(System.Func<object?[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IVerifyRefParameter<T> Ref<T>() { }
-        public static Mockolate.Parameters.IRefParameter<T> Ref<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
-        public static Mockolate.Parameters.IParameter<bool> True() { }
-        public static Mockolate.Parameters.IParameter<T> With<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IParameter<T> With<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IParameter<T> With<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
-        public static Mockolate.Parameters.IDefaultEventParameters WithDefaultParameters() { }
-        public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> WithReadOnlySpan<T>(System.Func<T[], bool> predicate) { }
-        public static Mockolate.Parameters.IVerifySpanParameter<T> WithSpan<T>(System.Func<T[], bool> predicate) { }
+        public static Mockolate.Parameters.IParameter<T> IsNull<T>() { }
+        public static Mockolate.Parameters.IVerifyOutParameter<T> IsOut<T>() { }
+        public static Mockolate.Parameters.IOutParameter<T> IsOut<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> IsReadOnlySpan<T>(System.Func<T[], bool> predicate) { }
+        public static Mockolate.Parameters.IVerifyRefParameter<T> IsRef<T>() { }
+        public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.Parameters.IVerifySpanParameter<T> IsSpan<T>(System.Func<T[], bool> predicate) { }
+        public static Mockolate.Parameters.IParameter<bool> IsTrue() { }
         public interface IInRangeParameter<out T> : Mockolate.Parameters.IParameter<T>
         {
             Mockolate.Parameters.IParameter<T> Exclusive();
             Mockolate.Parameters.IParameter<T> Inclusive();
         }
     }
-    public static class MatchExtensions
+    public class Match
     {
-        public static Mockolate.Parameters.IOutParameter<T> Monitor<T>(this Mockolate.Parameters.IOutParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
-        public static Mockolate.Parameters.IParameter<T> Monitor<T>(this Mockolate.Parameters.IParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
-        public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Parameters.IParameters AnyParameters() { }
+        public static Mockolate.Parameters.IParameters Parameters(System.Func<object?[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IDefaultEventParameters WithDefaultParameters() { }
     }
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
     {
@@ -138,6 +135,12 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<T> SetIndexer(Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter?[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo(string eventName) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom(string eventName) { }
+    }
+    public static class ParameterExtensions
+    {
+        public static Mockolate.Parameters.IOutParameter<T> Monitor<T>(this Mockolate.Parameters.IOutParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Parameters.IParameter<T> Monitor<T>(this Mockolate.Parameters.IParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
     }
     public static class ReturnsAsyncExtensions
     {

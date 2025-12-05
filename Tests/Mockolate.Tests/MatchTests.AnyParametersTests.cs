@@ -12,7 +12,7 @@ public sealed partial class MatchTests
 		[InlineData("foo", null)]
 		public async Task ShouldAlwaysMatch(params object?[] values)
 		{
-			IParameters sut = AnyParameters();
+			IParameters sut = Match.AnyParameters();
 
 			bool result = sut.Matches(values);
 
@@ -22,7 +22,7 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameters sut = AnyParameters();
+			IParameters sut = Match.AnyParameters();
 			string expectedValue = "AnyParameters()";
 
 			string? result = sut.ToString();

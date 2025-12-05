@@ -28,14 +28,14 @@ public sealed partial class ForMockTests
 			.Contains("""
 			          		public IReturnMethodSetup<int, int, int> Delegate(IParameter<int>? x, IParameter<int>? y)
 			          		{
-			          			var methodSetup = new ReturnMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? Match.Null<int>())), new NamedParameter("y", (IParameter)(y ?? Match.Null<int>())));
+			          			var methodSetup = new ReturnMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y ?? It.IsNull<int>())));
 			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		public VerificationResult<MyCode.Program.DoSomething> Invoked(IParameter<int>? x, IParameter<int>? y)
-			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? Match.Null<int>())), new NamedParameter("y", (IParameter)(y ?? Match.Null<int>())));
+			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y ?? It.IsNull<int>())));
 			          """).IgnoringNewlineStyle();
 	}
 
@@ -65,7 +65,7 @@ public sealed partial class ForMockTests
 			.Contains("""
 			          		public IVoidMethodSetup<int, int, int> Delegate(IParameter<int>? x, IRefParameter<int> y, IOutParameter<int> z)
 			          		{
-			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? Match.Null<int>())), new NamedParameter("y", (IParameter)(y)), new NamedParameter("z", (IParameter)(z)));
+			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y)), new NamedParameter("z", (IParameter)(z)));
 			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}

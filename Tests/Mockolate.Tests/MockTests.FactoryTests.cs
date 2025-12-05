@@ -191,8 +191,8 @@ public sealed partial class MockTests
 			MyServiceBase mock =
 				factory.Create<MyServiceBase, IMyService, TestHelpers.IMyService, TestHelpers.Other.IMyService>();
 
-			mock.SetupIMyServiceMock.Method.DoSomething(Any<int>()).Do(() => isDoSomethingCalled1 = true);
-			mock.SetupIMyService__2Mock.Method.DoSomething(Any<int>()).Do(() => isDoSomethingCalled2 = true);
+			mock.SetupIMyServiceMock.Method.DoSomething(It.IsAny<int>()).Do(() => isDoSomethingCalled1 = true);
+			mock.SetupIMyService__2Mock.Method.DoSomething(It.IsAny<int>()).Do(() => isDoSomethingCalled2 = true);
 
 			((TestHelpers.IMyService)mock).DoSomething(1);
 
@@ -228,10 +228,10 @@ public sealed partial class MockTests
 			Mock.Factory factory = new(behavior);
 
 			IMyService mock1 =
-				factory.Create<IMyService>(setup => setup.Method.Multiply(Any<int>(), Any<int?>()).Returns(42));
+				factory.Create<IMyService>(setup => setup.Method.Multiply(It.IsAny<int>(), It.IsAny<int?>()).Returns(42));
 			MyServiceBase mock2 = factory.Create<MyServiceBase, IMyService>(BaseClass.WithConstructorParameters(),
-				setup => setup.Method.DoSomething(Any<int>(), With(true)).Returns(5),
-				setup => setup.Method.DoSomething(Any<int>(), With(false)).Returns(6));
+				setup => setup.Method.DoSomething(It.IsAny<int>(), It.Is(true)).Returns(5),
+				setup => setup.Method.DoSomething(It.IsAny<int>(), It.Is(false)).Returns(6));
 
 			int result = mock1.Multiply(2, null);
 			int result21 = mock2.DoSomething(1, true);

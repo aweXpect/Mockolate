@@ -10,7 +10,7 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 		{
 			IIndexerService mock = Mock.Create<IIndexerService>();
-			mock.SetupMock.Indexer(With(1))
+			mock.SetupMock.Indexer(It.Is(1))
 				.Returns("a")
 				.Returns("b");
 
@@ -34,7 +34,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Returns("a")
 				.Throws(new Exception("foo"))
 				.Returns(() => "b");
@@ -53,7 +53,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Returns("a")
 				.Returns(() => "b")
 				.Returns(p1 => $"foo-{p1}");
@@ -72,7 +72,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Returns(() => "foo");
 
 			string result = sut[1];
@@ -85,7 +85,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.InitializeWith("a")
 				.Returns(p1 => $"foo-{p1}");
 
@@ -99,7 +99,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.InitializeWith("init")
 				.Returns((v, p1) => $"foo-{v}-{p1}");
 
@@ -113,7 +113,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Returns("foo").For(2)
 				.Returns("bar").For(3);
 
@@ -131,7 +131,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Returns("a")
 				.Returns("b")
 				.Returns("c").Forever();
@@ -150,7 +150,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Returns("foo");
 
 			string result = sut[3];
@@ -163,7 +163,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Returns("foo").When(i => i > 0);
 
 			string result1 = sut[3];
@@ -180,7 +180,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Returns("foo").When(i => i > 0).For(2)
 				.Returns("baz")
 				.Returns("bar").For(3);
@@ -209,7 +209,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Throws(() => new Exception("foo"));
 
 			void Act()
@@ -225,7 +225,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.InitializeWith("init")
 				.Throws(p1 => new Exception($"foo-{p1}"));
 
@@ -242,7 +242,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.InitializeWith("init")
 				.Throws((v, p1) => new Exception($"foo-{v}-{p1}"));
 
@@ -259,7 +259,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Throws<ArgumentNullException>();
 
 			void Act()
@@ -275,7 +275,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			sut.SetupMock.Indexer(Any<int>())
+			sut.SetupMock.Indexer(It.IsAny<int>())
 				.Throws(new Exception("foo"));
 
 			void Act()
@@ -292,7 +292,7 @@ public sealed partial class SetupIndexerTests
 			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(With(1), Any<int>())
+				mock.SetupMock.Indexer(It.Is(1), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b");
 
@@ -316,7 +316,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -335,7 +335,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns(() => "b")
 					.Returns((p1, p2) => $"foo-{p1}-{p2}");
@@ -354,7 +354,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Returns(() => "foo");
 
 				string result = sut[1, 2];
@@ -367,7 +367,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("a")
 					.Returns((p1, p2) => $"foo-{p1}-{p2}");
 
@@ -381,7 +381,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Returns((v, p1, p2) => $"foo-{v}-{p1}-{p2}");
 
@@ -395,7 +395,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -413,7 +413,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -432,7 +432,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo");
 
 				string result = sut[1, 2];
@@ -445,7 +445,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut[3, 2];
@@ -462,7 +462,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3);
@@ -491,7 +491,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -507,7 +507,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((p1, p2) => new Exception($"foo-{p1}-{p2}"));
 
@@ -524,7 +524,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((v, p1, p2) => new Exception($"foo-{v}-{p1}-{p2}"));
 
@@ -541,7 +541,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -557,7 +557,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -575,7 +575,7 @@ public sealed partial class SetupIndexerTests
 			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(With(1), Any<int>(), Any<int>())
+				mock.SetupMock.Indexer(It.Is(1), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b");
 
@@ -599,7 +599,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -618,7 +618,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns(() => "b")
 					.Returns((p1, p2, p3) => $"foo-{p1}-{p2}-{p3}");
@@ -638,7 +638,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns(() => "foo");
 
 				string result = sut[1, 2, 3];
@@ -651,7 +651,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("a")
 					.Returns((p1, p2, p3) => $"foo-{p1}-{p2}-{p3}");
 
@@ -665,7 +665,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Returns((v, p1, p2, p3) => $"foo-{v}-{p1}-{p2}-{p3}");
 
@@ -679,7 +679,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -697,7 +697,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -716,7 +716,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo");
 
 				string result = sut[1, 2, 3];
@@ -729,7 +729,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut[3, 2, 3];
@@ -746,7 +746,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3);
@@ -775,7 +775,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -791,7 +791,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((p1, p2, p3) => new Exception($"foo-{p1}-{p2}-{p3}"));
 
@@ -808,7 +808,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((v, p1, p2, p3) => new Exception($"foo-{v}-{p1}-{p2}-{p3}"));
 
@@ -825,7 +825,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -841,7 +841,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -859,7 +859,7 @@ public sealed partial class SetupIndexerTests
 			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(With(1), Any<int>(), Any<int>(), Any<int>())
+				mock.SetupMock.Indexer(It.Is(1), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b");
 
@@ -883,7 +883,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -902,7 +902,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns(() => "b")
 					.Returns((p1, p2, p3, p4) => $"foo-{p1}-{p2}-{p3}-{p4}");
@@ -923,7 +923,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns(() => "foo");
 
 				string result = sut[1, 2, 3, 4];
@@ -936,7 +936,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("a")
 					.Returns((p1, p2, p3, p4) => $"foo-{p1}-{p2}-{p3}-{p4}");
 
@@ -950,7 +950,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Returns((v, p1, p2, p3, p4) => $"foo-{v}-{p1}-{p2}-{p3}-{p4}");
 
@@ -964,7 +964,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -982,7 +982,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -1001,7 +1001,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo");
 
 				string result = sut[1, 2, 3, 4];
@@ -1014,7 +1014,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut[3, 2, 3, 4];
@@ -1031,7 +1031,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3);
@@ -1060,7 +1060,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1076,7 +1076,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((p1, p2, p3, p4) => new Exception($"foo-{p1}-{p2}-{p3}-{p4}"));
 
@@ -1093,7 +1093,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((v, p1, p2, p3, p4) => new Exception($"foo-{v}-{p1}-{p2}-{p3}-{p4}"));
 
@@ -1110,7 +1110,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -1126,7 +1126,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -1144,7 +1144,7 @@ public sealed partial class SetupIndexerTests
 			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(With(1), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				mock.SetupMock.Indexer(It.Is(1), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b");
 
@@ -1168,7 +1168,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -1187,7 +1187,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns(() => "b")
 					.Returns((p1, p2, p3, p4, p5) => $"foo-{p1}-{p2}-{p3}-{p4}-{p5}");
@@ -1208,7 +1208,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns(() => "foo");
 
 				string result = sut[1, 2, 3, 4, 5];
@@ -1221,7 +1221,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("a")
 					.Returns((p1, p2, p3, p4, p5) => $"foo-{p1}-{p2}-{p3}-{p4}-{p5}");
 
@@ -1235,7 +1235,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Returns((v, p1, p2, p3, p4, p5) => $"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}");
 
@@ -1249,7 +1249,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -1267,7 +1267,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -1286,7 +1286,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo");
 
 				string result = sut[1, 2, 3, 4, 5];
@@ -1299,7 +1299,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut[3, 2, 3, 4, 5];
@@ -1316,7 +1316,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3);
@@ -1345,7 +1345,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1361,7 +1361,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((p1, p2, p3, p4, p5) => new Exception($"foo-{p1}-{p2}-{p3}-{p4}-{p5}"));
 
@@ -1378,7 +1378,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((v, p1, p2, p3, p4, p5) => new Exception($"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}"));
 
@@ -1395,7 +1395,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -1411,7 +1411,7 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()

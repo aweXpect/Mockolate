@@ -7,26 +7,26 @@ using Mockolate.Parameters;
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
-public partial class Match
+public partial class It
 {
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
-	public static IVerifyOutParameter<T> Out<T>()
+	public static IVerifyOutParameter<T> IsOut<T>()
 		=> new InvokedOutParameterMatch<T>();
 
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
-	public static IOutParameter<T> Out<T>(Func<T> setter,
+	public static IOutParameter<T> IsOut<T>(Func<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new OutParameterMatch<T>(setter, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
-	public static IOutParameter<T> AnyOut<T>()
+	public static IOutParameter<T> IsAnyOut<T>()
 		=> new AnyOutParameterMatch<T>();
 
 	/// <summary>
@@ -38,7 +38,7 @@ public partial class Match
 		public override T GetValue(Func<T> defaultValue) => setter();
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"Out<{typeof(T).FormatType()}>({setterExpression})";
+		public override string ToString() => $"It.IsOut<{typeof(T).FormatType()}>({setterExpression})";
 	}
 
 	/// <summary>
@@ -47,7 +47,7 @@ public partial class Match
 	private sealed class AnyOutParameterMatch<T> : TypedOutMatch<T>
 	{
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"AnyOut<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"It.IsAnyOut<{typeof(T).FormatType()}>()";
 	}
 
 	/// <summary>
@@ -65,7 +65,7 @@ public partial class Match
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"Out<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"It.IsOut<{typeof(T).FormatType()}>()";
 	}
 
 	/// <summary>

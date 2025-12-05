@@ -11,7 +11,7 @@ public sealed partial class MatchTests
 	public async Task InvokeCallbacks_WithCorrectType_ShouldInvokeCallback()
 	{
 		int isCalled = 0;
-		IParameter<int> sut = With<int>(_ => true)
+		IParameter<int> sut = It.Is<int>(_ => true)
 			.Do(v => isCalled += v);
 
 		((IParameter)sut).InvokeCallbacks(5);
@@ -23,7 +23,7 @@ public sealed partial class MatchTests
 	public async Task InvokeCallbacks_WithDifferentType_ShouldNotInvokeCallback()
 	{
 		int isCalled = 0;
-		IParameter<int> sut = With<int>(_ => true)
+		IParameter<int> sut = It.Is<int>(_ => true)
 			.Do(v => isCalled += v);
 
 		((IParameter)sut).InvokeCallbacks("5");
@@ -35,7 +35,7 @@ public sealed partial class MatchTests
 	public async Task InvokeCallbacks_WithNull_WhenTypeIsNotNullable_ShouldNotInvokeCallback()
 	{
 		int isCalled = 0;
-		IParameter<int> sut = With<int>(_ => true)
+		IParameter<int> sut = It.Is<int>(_ => true)
 			.Do(_ => isCalled++);
 
 		((IParameter)sut).InvokeCallbacks(null);
@@ -47,7 +47,7 @@ public sealed partial class MatchTests
 	public async Task InvokeCallbacks_WithNull_WhenTypeIsNullable_ShouldInvokeCallback()
 	{
 		int isCalled = 0;
-		IParameter<int?> sut = With<int?>(_ => true)
+		IParameter<int?> sut = It.Is<int?>(_ => true)
 			.Do(_ => isCalled++);
 
 		((IParameter)sut).InvokeCallbacks(null);
@@ -70,8 +70,8 @@ public sealed partial class MatchTests
 	[Fact]
 	public async Task ToString_NamedParameter_ShouldReturnExpectedValue()
 	{
-		NamedParameter sut = new("foo", (IParameter)Out<int>());
-		string expectedValue = "Out<int>() foo";
+		NamedParameter sut = new("foo", (IParameter)It.IsOut<int>());
+		string expectedValue = "It.IsOut<int>() foo";
 
 		string result = sut.ToString();
 

@@ -22,10 +22,10 @@ You can verify that methods were invoked with specific arguments and how many ti
 
 ```csharp
 // Verify that Dispense("Dark", 5) was invoked at least once
-sut.VerifyMock.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-sut.VerifyMock.Invoked.Dispense(With("White"), Any<int>()).Never();
+sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
 sut.VerifyMock.Invoked.Dispense(AnyParameters()).Exactly(2);
@@ -35,18 +35,18 @@ sut.VerifyMock.Invoked.Dispense(AnyParameters()).Exactly(2);
 
 You can use argument matchers from the `Match` class to verify calls with flexible conditions:
 
-- `Match.Any<T>()`: matches any value of type `T`
-- `Match.Null<T>()`: matches `null`
-- `Match.With<T>(predicate)`: matches values satisfying a predicate
-- `Match.With(value)`: matches a specific value
-- `Match.Out<T>()`: matches any out parameter of type `T`
-- `Match.Ref<T>()`: matches any ref parameter of type `T`
+- `It.IsAny<T>()`: matches any value of type `T`
+- `It.IsNull<T>()`: matches `null`
+- `It.Is<T>(predicate)`: matches values satisfying a predicate
+- `It.Is(value)`: matches a specific value
+- `It.IsOut<T>()`: matches any out parameter of type `T`
+- `It.IsRef<T>()`: matches any ref parameter of type `T`
 
 **Example:**
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(With<string>(t => t.StartsWith("D")), Any<int>()).Once();
-sut.VerifyMock.Invoked.Dispense(With("Milk"), Any<int>()).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(It.Is<string>(t => t.StartsWith("D")), It.IsAny<int>()).Once();
+sut.VerifyMock.Invoked.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
 ```
 
 ## Properties
@@ -58,7 +58,7 @@ You can verify access to property getter and setter:
 sut.VerifyMock.Got.TotalDispensed().AtLeastOnce();
 
 // Verify that the property 'TotalDispensed' was set to 42 exactly once
-sut.VerifyMock.Set.TotalDispensed(With(42)).Once();
+sut.VerifyMock.Set.TotalDispensed(It.Is(42)).Once();
 ```
 
 **Note:**  
@@ -70,10 +70,10 @@ You can verify access to indexer getter and setter:
 
 ```csharp
 // Verify that the indexer was read with key "Dark" exactly once
-sut.VerifyMock.GotIndexer(With("Dark")).Once();
+sut.VerifyMock.GotIndexer(It.Is("Dark")).Once();
 
 // Verify that the indexer was set with key "Milk" to value 7 at least once
-sut.VerifyMock.SetIndexer(With("Milk"), 7).AtLeastOnce();
+sut.VerifyMock.SetIndexer(It.Is("Milk"), 7).AtLeastOnce();
 ```
 
 **Note:**  
@@ -96,17 +96,17 @@ sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(With("Dark"), With(2)).Then(
-    m => m.Invoked.Dispense(With("Dark"), With(3))
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(2)).Then(
+    m => m.Invoked.Dispense(It.Is("Dark"), It.Is(3))
 );
 ```
 
 You can chain multiple calls for strict order verification:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(With("Dark"), With(1)).Then(
-    m => m.Invoked.Dispense(With("Milk"), With(2)),
-    m => m.Invoked.Dispense(With("White"), With(3)));
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1)).Then(
+    m => m.Invoked.Dispense(It.Is("Milk"), It.Is(2)),
+    m => m.Invoked.Dispense(It.Is("White"), It.Is(3)));
 ```
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.

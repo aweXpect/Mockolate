@@ -22,9 +22,9 @@ public class VerificationResultTests
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 
 		VerificationResult<IChocolateDispenser> result
-			= sut.VerifyMock.GotIndexer(Any<string>());
+			= sut.VerifyMock.GotIndexer(It.IsAny<string>());
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer Any<string>()");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer It.IsAny<string>()");
 	}
 
 	[Fact]
@@ -33,10 +33,10 @@ public class VerificationResultTests
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 
 		VerificationResult<IChocolateDispenser> result
-			= sut.VerifyMock.Invoked.Dispense(Any<string>(), Any<int>());
+			= sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>());
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("invoked method Dispense(Any<string>(), Any<int>())");
+			.IsEqualTo("invoked method Dispense(It.IsAny<string>(), It.IsAny<int>())");
 	}
 
 	[Fact]
@@ -45,7 +45,7 @@ public class VerificationResultTests
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 
 		VerificationResult<IChocolateDispenser> result
-			= sut.VerifyMock.Set.TotalDispensed(With(5));
+			= sut.VerifyMock.Set.TotalDispensed(It.Is(5));
 
 		await That(((IVerificationResult)result).Expectation)
 			.IsEqualTo("set property TotalDispensed to value 5");
@@ -57,10 +57,10 @@ public class VerificationResultTests
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 
 		VerificationResult<IChocolateDispenser> result
-			= sut.VerifyMock.SetIndexer(Any<string>(), With(5));
+			= sut.VerifyMock.SetIndexer(It.IsAny<string>(), It.Is(5));
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("set indexer Any<string>() to value 5");
+			.IsEqualTo("set indexer It.IsAny<string>() to value 5");
 	}
 
 	[Fact]

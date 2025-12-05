@@ -120,7 +120,7 @@ internal static partial class Sources
 				sb.Append(parameter.Name);
 				if (parameter.IsNullable())
 				{
-					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+					sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
 						.Append(">()");
 				}
 
@@ -479,7 +479,7 @@ internal static partial class Sources
 					.Append(parameter.Name);
 				if (parameter.IsNullable())
 				{
-					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+					sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
 						.Append(">()");
 				}
 
@@ -703,7 +703,7 @@ internal static partial class Sources
 
 				sb.Append(">(").Append(string.Join(", ",
 						indexer.IndexerParameters.Value.Select((p, i) => $"(IParameter)(parameter{i + 1}{
-							(p.IsNullable() ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")})")))
+							(p.IsNullable() ? $" ?? It.IsNull<{p.Type.Fullname}>()" : "")})")))
 					.Append(");").AppendLine();
 				sb.Append("\t\t\tCastToMockRegistrationOrThrow(setup).SetupIndexer(indexerSetup);").AppendLine();
 				sb.Append("\t\t\treturn indexerSetup;").AppendLine();
@@ -934,7 +934,7 @@ internal static partial class Sources
 				sb.Append(parameter.Name);
 				if (parameter.IsNullable())
 				{
-					sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+					sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
 						.Append(">()");
 				}
 
@@ -1131,7 +1131,7 @@ internal static partial class Sources
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).GotIndexer(")
 				.Append(string.Join(", ", indexerParameters.Value.Select((p, i)
 					=> $"new NamedParameter(\"{p.Name}\", (IParameter)(parameter{i + 1}{
-						(p.IsNullable() ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}))"))).Append(");")
+						(p.IsNullable() ? $" ?? It.IsNull<{p.Type.Fullname}>()" : "")}))"))).Append(");")
 				.AppendLine();
 			sb.AppendLine("\t\t}");
 		}
@@ -1287,7 +1287,7 @@ internal static partial class Sources
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).SetIndexer((IParameter?)value, ")
 				.Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i)
 					=> $"new NamedParameter(\"{p.Name}\", (IParameter)(parameter{i + 1}{
-						(p.IsNullable() ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}))")))
+						(p.IsNullable() ? $" ?? It.IsNull<{p.Type.Fullname}>()" : "")}))")))
 				.Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}

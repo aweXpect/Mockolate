@@ -10,7 +10,7 @@ public sealed partial class VerifyGotIndexerTests
 		IMyService mock = Mock.Create<IMyService>();
 		_ = mock[null, null, null, null];
 
-		await That(mock.VerifyMock.GotIndexer(Any<int?>(), null, Null<int?>(), Any<int?>())).Once();
+		await That(mock.VerifyMock.GotIndexer(It.IsAny<int?>(), null, It.IsNull<int?>(), It.IsAny<int?>())).Once();
 	}
 
 	[Fact]
@@ -19,9 +19,9 @@ public sealed partial class VerifyGotIndexerTests
 		IMyService mock = Mock.Create<IMyService>();
 		_ = mock[1, 2];
 
-		await That(mock.VerifyMock.GotIndexer(Any<int>())).Never();
-		await That(mock.VerifyMock.GotIndexer(Any<int>(), Any<int>())).Once();
-		await That(mock.VerifyMock.GotIndexer(Any<int>(), Any<int>(), Any<int>())).Never();
+		await That(mock.VerifyMock.GotIndexer(It.IsAny<int>())).Never();
+		await That(mock.VerifyMock.GotIndexer(It.IsAny<int>(), It.IsAny<int>())).Once();
+		await That(mock.VerifyMock.GotIndexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Never();
 	}
 
 	[Fact]
@@ -30,8 +30,8 @@ public sealed partial class VerifyGotIndexerTests
 		IMyService mock = Mock.Create<IMyService>();
 		_ = mock[1, 2];
 
-		await That(mock.VerifyMock.GotIndexer(With(1), With(2))).Once();
-		await That(mock.VerifyMock.GotIndexer(With<int>(i => i != 1), With(2))).Never();
-		await That(mock.VerifyMock.GotIndexer(With(1), With<int>(i => i != 2))).Never();
+		await That(mock.VerifyMock.GotIndexer(It.Is(1), It.Is(2))).Once();
+		await That(mock.VerifyMock.GotIndexer(It.Is<int>(i => i != 1), It.Is(2))).Never();
+		await That(mock.VerifyMock.GotIndexer(It.Is(1), It.Is<int>(i => i != 2))).Never();
 	}
 }

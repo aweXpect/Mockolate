@@ -11,7 +11,7 @@ public sealed partial class SetupMethodTests
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyReturnMethodWith1Parameter(Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyReturnMethodWith1Parameter(It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			mock.MyReturnMethodWith1Parameter(1);
 
@@ -25,7 +25,7 @@ public sealed partial class SetupMethodTests
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyReturnMethodWith2Parameters(Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyReturnMethodWith2Parameters(It.IsAny<int>(), It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			mock.MyReturnMethodWith2Parameters(1, 2);
 
@@ -39,7 +39,7 @@ public sealed partial class SetupMethodTests
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyReturnMethodWith3Parameters(Any<int>(), Any<int>(), Any<int>())
+			mock.SetupMock.Method.MyReturnMethodWith3Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.CallingBaseClass(callBaseClass);
 
 			mock.MyReturnMethodWith3Parameters(1, 2, 3);
@@ -54,7 +54,7 @@ public sealed partial class SetupMethodTests
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyReturnMethodWith4Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+			mock.SetupMock.Method.MyReturnMethodWith4Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.CallingBaseClass(callBaseClass);
 
 			mock.MyReturnMethodWith4Parameters(1, 2, 3, 4);
@@ -70,7 +70,7 @@ public sealed partial class SetupMethodTests
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
 			mock.SetupMock.Method
-				.MyReturnMethodWith5Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				.MyReturnMethodWith5Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.CallingBaseClass(callBaseClass);
 
 			mock.MyReturnMethodWith5Parameters(1, 2, 3, 4, 5);
@@ -99,7 +99,7 @@ public sealed partial class SetupMethodTests
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyVoidMethodWith1Parameter(Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyVoidMethodWith1Parameter(It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			mock.MyVoidMethodWith1Parameter(1);
 
@@ -113,7 +113,7 @@ public sealed partial class SetupMethodTests
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyVoidMethodWith2Parameters(Any<int>(), Any<int>()).CallingBaseClass(callBaseClass);
+			mock.SetupMock.Method.MyVoidMethodWith2Parameters(It.IsAny<int>(), It.IsAny<int>()).CallingBaseClass(callBaseClass);
 
 			mock.MyVoidMethodWith2Parameters(1, 2);
 
@@ -127,7 +127,7 @@ public sealed partial class SetupMethodTests
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyVoidMethodWith3Parameters(Any<int>(), Any<int>(), Any<int>())
+			mock.SetupMock.Method.MyVoidMethodWith3Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.CallingBaseClass(callBaseClass);
 
 			mock.MyVoidMethodWith3Parameters(1, 2, 3);
@@ -142,7 +142,7 @@ public sealed partial class SetupMethodTests
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
-			mock.SetupMock.Method.MyVoidMethodWith4Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>())
+			mock.SetupMock.Method.MyVoidMethodWith4Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.CallingBaseClass(callBaseClass);
 
 			mock.MyVoidMethodWith4Parameters(1, 2, 3, 4);
@@ -158,7 +158,7 @@ public sealed partial class SetupMethodTests
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
 			mock.SetupMock.Method
-				.MyVoidMethodWith5Parameters(Any<int>(), Any<int>(), Any<int>(), Any<int>(), Any<int>())
+				.MyVoidMethodWith5Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.CallingBaseClass(callBaseClass);
 
 			mock.MyVoidMethodWith5Parameters(1, 2, 3, 4, 5);

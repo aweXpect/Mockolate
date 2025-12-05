@@ -12,18 +12,18 @@ public sealed partial class MatchTests
 		public async Task Null_ShouldMatchWhenNull(int? value, int expectedCount)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
-			mock.SetupMock.Method.DoSomething(null, With(true));
+			mock.SetupMock.Method.DoSomething(null, It.Is(true));
 
 			mock.DoSomething(value, true);
 
-			await That(mock.VerifyMock.Invoked.DoSomething(null, With(true))).Exactly(expectedCount);
+			await That(mock.VerifyMock.Invoked.DoSomething(null, It.Is(true))).Exactly(expectedCount);
 		}
 
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = Null<string>();
-			string expectedValue = "Null<string>()";
+			IParameter<string> sut = It.IsNull<string>();
+			string expectedValue = "It.IsNull<string>()";
 
 			string? result = sut.ToString();
 

@@ -5,12 +5,12 @@ using Mockolate.Parameters;
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
-public partial class Match
+public partial class It
 {
 	/// <summary>
 	///     Matches any parameter that is within the specified range.
 	/// </summary>
-	public static IInRangeParameter<T> InRange<T>(T minimum, T maximum,
+	public static IInRangeParameter<T> IsInRange<T>(T minimum, T maximum,
 		[CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
 		where T : IComparable<T>
@@ -84,8 +84,8 @@ public partial class Match
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => _includeBounds
-			? $"InRange({_minimumExpression}, {_maximumExpression})"
-			: $"InRange({_minimumExpression}, {_maximumExpression}).Exclusive()";
+			? $"It.IsInRange({_minimumExpression}, {_maximumExpression})"
+			: $"It.IsInRange({_minimumExpression}, {_maximumExpression}).Exclusive()";
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

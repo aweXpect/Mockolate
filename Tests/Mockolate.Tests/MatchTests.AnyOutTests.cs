@@ -13,7 +13,7 @@ public sealed partial class MatchTests
 		[InlineData(123, true)]
 		public async Task ShouldCheckType(object? value, bool expectMatch)
 		{
-			IOutParameter<int?> sut = AnyOut<int?>();
+			IOutParameter<int?> sut = It.IsAnyOut<int?>();
 
 			bool result = ((IParameter)sut).Matches(value);
 
@@ -23,8 +23,8 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IOutParameter<int> sut = AnyOut<int>();
-			string expectedValue = "AnyOut<int>()";
+			IOutParameter<int> sut = It.IsAnyOut<int>();
+			string expectedValue = "It.IsAnyOut<int>()";
 
 			string? result = sut.ToString();
 

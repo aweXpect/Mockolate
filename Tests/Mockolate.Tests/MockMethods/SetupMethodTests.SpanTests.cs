@@ -10,7 +10,7 @@ public sealed partial class SetupMethodTests
 		public async Task Memory_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(With<Memory<int>>(v => v.Length == 2)).Returns(4);
+			mock.SetupMock.Method.MyMethod(It.Is<Memory<int>>(v => v.Length == 2)).Returns(4);
 
 			int result = mock.MyMethod(new Memory<int>([1, 2, 3,]));
 
@@ -21,7 +21,7 @@ public sealed partial class SetupMethodTests
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(With<Memory<int>>(v => v.Length == 3)).Returns(42);
+			mock.SetupMock.Method.MyMethod(It.Is<Memory<int>>(v => v.Length == 3)).Returns(42);
 
 			int result = mock.MyMethod(new Memory<int>([1, 2, 3,]));
 
@@ -32,7 +32,7 @@ public sealed partial class SetupMethodTests
 		public async Task Memory_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(Any<Memory<int>>()).Returns(42);
+			mock.SetupMock.Method.MyMethod(It.IsAny<Memory<int>>()).Returns(42);
 
 			int result = mock.MyMethod(new Memory<int>([1, 2, 3,]));
 
@@ -55,7 +55,7 @@ public sealed partial class SetupMethodTests
 		public async Task ReadOnlySpan_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(WithReadOnlySpan<int>(v => v.Length == 2)).Returns(4);
+			mock.SetupMock.Method.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 2)).Returns(4);
 
 			int result = mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
 
@@ -66,7 +66,7 @@ public sealed partial class SetupMethodTests
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(WithReadOnlySpan<int>(v => v is [1, _, _,])).Returns(42);
+			mock.SetupMock.Method.MyMethod(It.IsReadOnlySpan<int>(v => v is [1, _, _,])).Returns(42);
 
 			int result = mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
 
@@ -77,7 +77,7 @@ public sealed partial class SetupMethodTests
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(AnyReadOnlySpan<int>()).Returns(42);
+			mock.SetupMock.Method.MyMethod(It.IsAnyReadOnlySpan<int>()).Returns(42);
 
 			int result = mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
 
@@ -91,7 +91,7 @@ public sealed partial class SetupMethodTests
 			byte[] inputData = [10, 20, 30,];
 			byte[] outputData = [100, 200,];
 
-			mock.SetupMock.Method.ProcessData(AnySpan<byte>())
+			mock.SetupMock.Method.ProcessData(It.IsAnySpan<byte>())
 				.Returns(new ReadOnlySpan<byte>(outputData));
 
 			byte[] result = mock.ProcessData(new Span<byte>(inputData)).ToArray();
@@ -134,7 +134,7 @@ public sealed partial class SetupMethodTests
 		public async Task Span_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(WithSpan<int>(v => v.Length == 2)).Returns(4);
+			mock.SetupMock.Method.MyMethod(It.IsSpan<int>(v => v.Length == 2)).Returns(4);
 
 			int result = mock.MyMethod(new Span<int>([1, 2, 3,]));
 
@@ -145,7 +145,7 @@ public sealed partial class SetupMethodTests
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(WithSpan<int>(v => v is [1, _, _,])).Returns(42);
+			mock.SetupMock.Method.MyMethod(It.IsSpan<int>(v => v is [1, _, _,])).Returns(42);
 
 			int result = mock.MyMethod(new Span<int>([1, 2, 3,]));
 
@@ -173,7 +173,7 @@ public sealed partial class SetupMethodTests
 		public async Task Span_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(AnySpan<int>()).Returns(42);
+			mock.SetupMock.Method.MyMethod(It.IsAnySpan<int>()).Returns(42);
 
 			int result = mock.MyMethod(new Span<int>([1, 2, 3,]));
 

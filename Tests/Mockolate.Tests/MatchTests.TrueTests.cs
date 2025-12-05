@@ -9,8 +9,8 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameter<bool> sut = True();
-			string expectedValue = "True()";
+			IParameter<bool> sut = It.IsTrue();
+			string expectedValue = "It.IsTrue()";
 
 			string? result = sut.ToString();
 
@@ -23,11 +23,11 @@ public sealed partial class MatchTests
 		public async Task True_ShouldMatchWhenTrue(bool value, int expectedCount)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
-			mock.SetupMock.Method.DoSomething(null, True());
+			mock.SetupMock.Method.DoSomething(null, It.IsTrue());
 
 			mock.DoSomething(null, value);
 
-			await That(mock.VerifyMock.Invoked.DoSomething(null, True())).Exactly(expectedCount);
+			await That(mock.VerifyMock.Invoked.DoSomething(null, It.IsTrue())).Exactly(expectedCount);
 		}
 	}
 }

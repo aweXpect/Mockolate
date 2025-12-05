@@ -29,7 +29,7 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// <inheritdoc cref="IMockVerifyInvokedWithEquals{T}.Equals(IParameter{object?})" />
 	VerificationResult<T> IMockVerifyInvokedWithEquals<T>.Equals(IParameter<object?>? obj)
 		=> Registrations.Method(Subject, Registrations.Prefix + ".Equals",
-			new NamedParameter("obj", (IParameter)(obj ?? Match.Null<object>())));
+			new NamedParameter("obj", (IParameter)(obj ?? It.IsNull<object>())));
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithGetHashCode{T}.GetHashCode()" />
 	VerificationResult<T> IMockVerifyInvokedWithGetHashCode<T>.GetHashCode()

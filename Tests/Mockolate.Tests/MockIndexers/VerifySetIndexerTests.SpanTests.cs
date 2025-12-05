@@ -13,9 +13,9 @@ public sealed partial class VerifySetIndexerTests
 
 			mock[new Memory<int>([1, 2, 3,])] = 3;
 
-			await That(mock.VerifyMock.SetIndexer(With<Memory<int>>(v => v.Length == 2), Any<int>())).Never();
-			await That(mock.VerifyMock.SetIndexer(With<Memory<int>>(v => v.Length == 3), Any<int>())).Once();
-			await That(mock.VerifyMock.SetIndexer(With<Memory<int>>(v => v.Length == 4), Any<int>())).Never();
+			await That(mock.VerifyMock.SetIndexer(It.Is<Memory<int>>(v => v.Length == 2), It.IsAny<int>())).Never();
+			await That(mock.VerifyMock.SetIndexer(It.Is<Memory<int>>(v => v.Length == 3), It.IsAny<int>())).Once();
+			await That(mock.VerifyMock.SetIndexer(It.Is<Memory<int>>(v => v.Length == 4), It.IsAny<int>())).Never();
 		}
 
 		[Fact]
@@ -27,7 +27,7 @@ public sealed partial class VerifySetIndexerTests
 			mock[new Span<int>([1, 2, 3,])] = 3;
 			mock[new Memory<int>([1, 2,])] = 3;
 
-			await That(mock.VerifyMock.SetIndexer(Any<Memory<int>>(), Any<int>())).Twice();
+			await That(mock.VerifyMock.SetIndexer(It.IsAny<Memory<int>>(), It.IsAny<int>())).Twice();
 		}
 
 		[Fact]
@@ -37,9 +37,9 @@ public sealed partial class VerifySetIndexerTests
 
 			mock[new ReadOnlySpan<int>([1, 2, 3,])] = 3;
 
-			await That(mock.VerifyMock.SetIndexer(WithReadOnlySpan<int>(v => v.Length == 2), Any<int>())).Never();
-			await That(mock.VerifyMock.SetIndexer(WithReadOnlySpan<int>(v => v.Length == 3), Any<int>())).Once();
-			await That(mock.VerifyMock.SetIndexer(WithReadOnlySpan<int>(v => v.Length == 4), Any<int>())).Never();
+			await That(mock.VerifyMock.SetIndexer(It.IsReadOnlySpan<int>(v => v.Length == 2), It.IsAny<int>())).Never();
+			await That(mock.VerifyMock.SetIndexer(It.IsReadOnlySpan<int>(v => v.Length == 3), It.IsAny<int>())).Once();
+			await That(mock.VerifyMock.SetIndexer(It.IsReadOnlySpan<int>(v => v.Length == 4), It.IsAny<int>())).Never();
 		}
 
 		[Fact]
@@ -51,7 +51,7 @@ public sealed partial class VerifySetIndexerTests
 			mock[new Span<int>([1, 2, 3,])] = 3;
 			mock[new ReadOnlySpan<int>([1, 2,])] = 3;
 
-			await That(mock.VerifyMock.SetIndexer(AnyReadOnlySpan<int>(), Any<int>())).Twice();
+			await That(mock.VerifyMock.SetIndexer(It.IsAnyReadOnlySpan<int>(), It.IsAny<int>())).Twice();
 		}
 
 		[Fact]
@@ -61,9 +61,9 @@ public sealed partial class VerifySetIndexerTests
 
 			mock[new Span<int>([1, 2, 3,])] = 3;
 
-			await That(mock.VerifyMock.SetIndexer(WithSpan<int>(v => v.Length == 2), Any<int>())).Never();
-			await That(mock.VerifyMock.SetIndexer(WithSpan<int>(v => v.Length == 3), Any<int>())).Once();
-			await That(mock.VerifyMock.SetIndexer(WithSpan<int>(v => v.Length == 4), Any<int>())).Never();
+			await That(mock.VerifyMock.SetIndexer(It.IsSpan<int>(v => v.Length == 2), It.IsAny<int>())).Never();
+			await That(mock.VerifyMock.SetIndexer(It.IsSpan<int>(v => v.Length == 3), It.IsAny<int>())).Once();
+			await That(mock.VerifyMock.SetIndexer(It.IsSpan<int>(v => v.Length == 4), It.IsAny<int>())).Never();
 		}
 
 		[Fact]
@@ -75,7 +75,7 @@ public sealed partial class VerifySetIndexerTests
 			mock[new ReadOnlySpan<int>([1, 2, 3,])] = 3;
 			mock[new Span<int>([1, 2,])] = 3;
 
-			await That(mock.VerifyMock.SetIndexer(AnySpan<int>(), Any<int>())).Twice();
+			await That(mock.VerifyMock.SetIndexer(It.IsAnySpan<int>(), It.IsAny<int>())).Twice();
 		}
 
 		internal interface ISpanMock
