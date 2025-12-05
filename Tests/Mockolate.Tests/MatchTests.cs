@@ -71,9 +71,9 @@ public sealed partial class MatchTests
 	public async Task ToString_NamedParameter_ShouldReturnExpectedValue()
 	{
 		NamedParameter sut = new("foo", (IParameter)It.IsOut<int>());
-		string expectedValue = "It.IsOut<int>() foo";
+		string expectedValue = "It.IsOut<int>()";
 
-		string result = sut.ToString();
+		string? result = sut.ToString();
 
 		await That(result).IsEqualTo(expectedValue);
 	}

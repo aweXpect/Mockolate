@@ -578,7 +578,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(It.IsAny<string>() bar)");
+			await That(result).IsEqualTo("int Foo(It.IsAny<string>())");
 		}
 
 		[Fact]
@@ -619,7 +619,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(It.IsAny<string>() p1, It.IsAny<long>() p2)");
+			await That(result).IsEqualTo("int Foo(It.IsAny<string>(), It.IsAny<long>())");
 		}
 
 		[Fact]
@@ -661,7 +661,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(It.IsAny<string>() p1, It.IsAny<long>() p2, It.IsAny<int>() p3)");
+			await That(result).IsEqualTo("int Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>())");
 		}
 
 		[Fact]
@@ -706,7 +706,7 @@ public sealed partial class SetupMethodTests
 
 			await That(result)
 				.IsEqualTo(
-					"int Foo(It.IsAny<string>() p1, It.IsAny<long>() p2, It.IsAny<int>() p3, It.IsAny<int>() p4)");
+					"int Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>())");
 		}
 
 		[Fact]
@@ -752,7 +752,7 @@ public sealed partial class SetupMethodTests
 
 			await That(result)
 				.IsEqualTo(
-					"int Foo(It.IsAny<string>() p1, It.IsAny<long>() p2, It.IsAny<int>() p3, It.IsAny<int>() p4, It.IsAny<int>() p5)");
+					"int Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())");
 		}
 
 		[Fact]
@@ -796,7 +796,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(It.IsAny<string>() bar)");
+			await That(result).IsEqualTo("void Foo(It.IsAny<string>())");
 		}
 	}
 
@@ -821,7 +821,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(It.IsAny<string>() p1, It.IsAny<long>() p2)");
+			await That(result).IsEqualTo("void Foo(It.IsAny<string>(), It.IsAny<long>())");
 		}
 	}
 
@@ -847,7 +847,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(It.IsAny<string>() p1, It.IsAny<long>() p2, It.IsAny<int>() p3)");
+			await That(result).IsEqualTo("void Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>())");
 		}
 	}
 
@@ -876,7 +876,7 @@ public sealed partial class SetupMethodTests
 
 			await That(result)
 				.IsEqualTo(
-					"void Foo(It.IsAny<string>() p1, It.IsAny<long>() p2, It.IsAny<int>() p3, It.IsAny<int>() p4)");
+					"void Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>())");
 		}
 	}
 
@@ -906,7 +906,7 @@ public sealed partial class SetupMethodTests
 
 			await That(result)
 				.IsEqualTo(
-					"void Foo(It.IsAny<string>() p1, It.IsAny<long>() p2, It.IsAny<int>() p3, It.IsAny<int>() p4, It.IsAny<int>() p5)");
+					"void Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())");
 		}
 	}
 

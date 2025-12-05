@@ -8,5 +8,5 @@ namespace Mockolate.Parameters;
 public record NamedParameter(string Name, IParameter Parameter)
 {
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"{Parameter} {Name}";
+	public override string? ToString() => Parameter.ToString();
 }
