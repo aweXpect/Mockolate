@@ -10,8 +10,8 @@ public sealed partial class SetupIndexerTests
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(Any<int>()).InitializeWith("foo");
-		mock.SetupMock.Indexer(With(2)).InitializeWith("bar");
+		mock.SetupMock.Indexer(It.IsAny<int>()).InitializeWith("foo");
+		mock.SetupMock.Indexer(It.Is(2)).InitializeWith("bar");
 
 		string result1 = mock[1];
 		string result2 = mock[2];
@@ -26,8 +26,8 @@ public sealed partial class SetupIndexerTests
 	public async Task OverlappingSetups_WhenGeneralSetupIsLater_ShouldOnlyUseGeneralSetup()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(With(2)).InitializeWith("bar");
-		mock.SetupMock.Indexer(Any<int>()).InitializeWith("foo");
+		mock.SetupMock.Indexer(It.Is(2)).InitializeWith("bar");
+		mock.SetupMock.Indexer(It.IsAny<int>()).InitializeWith("foo");
 
 		string result1 = mock[1];
 		string result2 = mock[2];
@@ -43,7 +43,7 @@ public sealed partial class SetupIndexerTests
 	{
 		List<string> capturedValues = [];
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(Any<string>().Do(v => capturedValues.Add(v)), With(1), With(2)).InitializeWith(42);
+		mock.SetupMock.Indexer(It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)).InitializeWith(42);
 
 		_ = mock["foo", 1, 2];
 		_ = mock["bar", 1, 2];
@@ -56,7 +56,7 @@ public sealed partial class SetupIndexerTests
 	{
 		List<string> capturedValues = [];
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(Any<string>().Do(v => capturedValues.Add(v)), With(1), With(2)).InitializeWith(42);
+		mock.SetupMock.Indexer(It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)).InitializeWith(42);
 
 		_ = mock["foo", 1, 2];
 		_ = mock["bar", 2, 2];
@@ -94,7 +94,7 @@ public sealed partial class SetupIndexerTests
 	public async Task ShouldUseInitializedValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(With(2)).InitializeWith("foo");
+		mock.SetupMock.Indexer(It.Is(2)).InitializeWith("foo");
 
 		string result1 = mock[2];
 		string result2 = mock[3];
@@ -107,7 +107,7 @@ public sealed partial class SetupIndexerTests
 	public async Task ThreeLevels_ShouldUseInitializedValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(With("foo"), With(1), With(2)).InitializeWith(42);
+		mock.SetupMock.Indexer(It.Is("foo"), It.Is(1), It.Is(2)).InitializeWith(42);
 
 		int? result1 = mock["foo", 1, 2];
 		int? result2 = mock["bar", 1, 2];
@@ -140,7 +140,7 @@ public sealed partial class SetupIndexerTests
 	public async Task TwoLevels_ShouldUseInitializedValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(With(2), With(3)).InitializeWith("foo");
+		mock.SetupMock.Indexer(It.Is(2), It.Is(3)).InitializeWith("foo");
 
 		string result1 = mock[2, 3];
 		string result2 = mock[1, 4];
@@ -168,7 +168,7 @@ public sealed partial class SetupIndexerTests
 	public async Task WhenTypeOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(Any<int>()).Returns("foo");
+		mock.SetupMock.Indexer(It.IsAny<int>()).Returns("foo");
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
 		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(1);

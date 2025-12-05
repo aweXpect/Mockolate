@@ -1,3 +1,5 @@
+using Mockolate.Parameters;
+
 namespace Mockolate.Tests;
 
 public sealed partial class MatchTests
@@ -7,8 +9,8 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IOutParameter<int> sut = Out(() => 3);
-			string expectedValue = "Out<int>(() => 3)";
+			IOutParameter<int> sut = It.IsOut(() => 3);
+			string expectedValue = "It.IsOut<int>(() => 3)";
 
 			string? result = sut.ToString();
 
@@ -18,8 +20,8 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_Verify_ShouldReturnExpectedValue()
 		{
-			IVerifyOutParameter<int> sut = Out<int>();
-			string expectedValue = "Out<int>()";
+			IVerifyOutParameter<int> sut = It.IsOut<int>();
+			string expectedValue = "It.IsOut<int>()";
 
 			string? result = sut.ToString();
 
@@ -31,7 +33,7 @@ public sealed partial class MatchTests
 		[InlineData(-2)]
 		public async Task WithOut_ShouldReturnValue(int? value)
 		{
-			IOutParameter<int?> sut = Out(() => value);
+			IOutParameter<int?> sut = It.IsOut(() => value);
 
 			int? result = sut.GetValue(() => null);
 
@@ -43,7 +45,7 @@ public sealed partial class MatchTests
 		[InlineData("foo")]
 		public async Task WithOut_Verify_ShouldAlwaysMatch(object? value)
 		{
-			IVerifyOutParameter<int?> sut = Out<int?>();
+			IVerifyOutParameter<int?> sut = It.IsOut<int?>();
 
 			bool result = ((IParameter)sut).Matches(value);
 

@@ -13,9 +13,9 @@ public sealed partial class VerifyInvokedTests
 
 			mock.MyMethod(new Memory<int>([1, 2, 3,]));
 
-			await That(mock.VerifyMock.Invoked.MyMethod(With<Memory<int>>(v => v.Length == 2))).Never();
-			await That(mock.VerifyMock.Invoked.MyMethod(With<Memory<int>>(v => v.Length == 3))).Once();
-			await That(mock.VerifyMock.Invoked.MyMethod(With<Memory<int>>(v => v.Length == 4))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.Is<Memory<int>>(v => v.Length == 2))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.Is<Memory<int>>(v => v.Length == 3))).Once();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.Is<Memory<int>>(v => v.Length == 4))).Never();
 		}
 
 		[Fact]
@@ -27,7 +27,7 @@ public sealed partial class VerifyInvokedTests
 			mock.MyMethod(new Span<int>([1, 2, 3,]));
 			mock.MyMethod(new Memory<int>([1, 2,]));
 
-			await That(mock.VerifyMock.Invoked.MyMethod(Any<Memory<int>>())).Twice();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsAny<Memory<int>>())).Twice();
 		}
 
 		[Fact]
@@ -37,9 +37,9 @@ public sealed partial class VerifyInvokedTests
 
 			mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
 
-			await That(mock.VerifyMock.Invoked.MyMethod(WithReadOnlySpan<int>(v => v.Length == 2))).Never();
-			await That(mock.VerifyMock.Invoked.MyMethod(WithReadOnlySpan<int>(v => v.Length == 3))).Once();
-			await That(mock.VerifyMock.Invoked.MyMethod(WithReadOnlySpan<int>(v => v.Length == 4))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 2))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 3))).Once();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 4))).Never();
 		}
 
 		[Fact]
@@ -51,7 +51,7 @@ public sealed partial class VerifyInvokedTests
 			mock.MyMethod(new Span<int>([1, 2, 3,]));
 			mock.MyMethod(new ReadOnlySpan<int>([1, 2,]));
 
-			await That(mock.VerifyMock.Invoked.MyMethod(AnyReadOnlySpan<int>())).Twice();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsAnyReadOnlySpan<int>())).Twice();
 		}
 
 		[Fact]
@@ -61,9 +61,9 @@ public sealed partial class VerifyInvokedTests
 
 			mock.MyMethod(new Span<int>([1, 2, 3,]));
 
-			await That(mock.VerifyMock.Invoked.MyMethod(WithSpan<int>(v => v.Length == 2))).Never();
-			await That(mock.VerifyMock.Invoked.MyMethod(WithSpan<int>(v => v.Length == 3))).Once();
-			await That(mock.VerifyMock.Invoked.MyMethod(WithSpan<int>(v => v.Length == 4))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsSpan<int>(v => v.Length == 2))).Never();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsSpan<int>(v => v.Length == 3))).Once();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsSpan<int>(v => v.Length == 4))).Never();
 		}
 
 		[Fact]
@@ -75,7 +75,7 @@ public sealed partial class VerifyInvokedTests
 			mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
 			mock.MyMethod(new Span<int>([1, 2,]));
 
-			await That(mock.VerifyMock.Invoked.MyMethod(AnySpan<int>())).Twice();
+			await That(mock.VerifyMock.Invoked.MyMethod(It.IsAnySpan<int>())).Twice();
 		}
 
 		internal class SpanMock

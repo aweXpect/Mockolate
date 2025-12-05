@@ -26,15 +26,14 @@ Framework 4.8.
 2. Create and use the mock
    ```csharp
    using Mockolate;
-   using static Mockolate.Match;
 
    // Create a mock for IChocolateDispenser
    var sut = Mock.Create<IChocolateDispenser>();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   sut.SetupMock.Indexer(With("Dark")).InitializeWith(10);
+   sut.SetupMock.Indexer(It.Is("Dark")).InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
+   sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
        .Returns((type, amount) =>
        {
            var current = sut[type];
@@ -57,7 +56,7 @@ Framework 4.8.
    bool gotChoc3 = sut.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   sut.VerifyMock.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
+   sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
@@ -147,7 +146,7 @@ Use `mock.SetupMock.Method.MethodName(…)` to set up methods. You can specify a
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
     .Returns((type, amount) =>
     {
         var current = sut[type];
@@ -161,11 +160,11 @@ sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
     });
 
 // Setup method with callback
-sut.SetupMock.Method.Dispense(With("White"), Any<int>())
+sut.SetupMock.Method.Dispense(It.Is("White"), It.IsAny<int>())
     .Do((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
-sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
+sut.SetupMock.Method.Dispense(It.Is("Green"), It.IsAny<int>())
     .Throws<InvalidChocolateException>();
 ```
 
@@ -184,7 +183,7 @@ sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
 
 ```csharp
-sut.SetupMock.Method.DispenseAsync(Any<string>(), Any<int>())
+sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
     .ReturnsAsync(true);
 ```
 
@@ -192,11 +191,13 @@ sut.SetupMock.Method.DispenseAsync(Any<string>(), Any<int>())
 
 Mockolate provides flexible parameter matching for method setups and verifications:
 
-- `Match.Any<T>()`: Matches any value of type `T`.
-- `Match.With<T>(predicate)`: Matches values based on a predicate.
-- `Match.With<T>(value)`: Matches a specific value.
-- `Match.Null<T>()`: Matches null.
-- `Match.Out<T>(…)`/`Match.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and
+- `It.IsAny<T>()`: Matches any value of type `T`.
+- `It.Is<T>(predicate)`: Matches values based on a predicate.
+- `It.Is<T>(value)`: Matches a specific value.
+- `It.IsNull<T>()`: Matches null.
+- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
+- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the minimum and maximum value.
+- `It.IsOut<T>(…)`/`It.IsRef<T>(…)`: Matches and sets out/ref parameters, supports value setting and
   predicates.
 
 #### Parameter Interaction
@@ -209,7 +210,7 @@ values passed during test execution and analyze them afterwards.
 
 ```csharp
 int lastAmount = 0;
-sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Do(amount => lastAmount = amount));
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Do(amount => lastAmount = amount));
 sut.Dispense("Dark", 42);
 // lastAmount == 42
 ```
@@ -218,7 +219,7 @@ sut.Dispense("Dark", 42);
 
 ```csharp
 Mockolate.ParameterMonitor<int> monitor;
-sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Monitor(out monitor));
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Monitor(out monitor));
 sut.Dispense("Dark", 5);
 sut.Dispense("Dark", 7);
 // monitor.Values == [5, 7]
@@ -263,11 +264,11 @@ sut.SetupMock.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.Writ
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-sut.SetupMock.Indexer(Any<string>())
+sut.SetupMock.Indexer(It.IsAny<string>())
     .InitializeWith(type => 20)
     .OnGet(type => Console.WriteLine($"Stock for {type} was read"));
 
-sut.SetupMock.Indexer(With("Dark"))
+sut.SetupMock.Indexer(It.Is("Dark"))
     .InitializeWith(10)
     .OnSet((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
 ```
@@ -345,31 +346,31 @@ You can verify that methods were invoked with specific arguments and how many ti
 
 ```csharp
 // Verify that Dispense("Dark", 5) was invoked at least once
-sut.VerifyMock.Invoked.Dispense(With("Dark"), With(5)).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-sut.VerifyMock.Invoked.Dispense(With("White"), Any<int>()).Never();
+sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-sut.VerifyMock.Invoked.Dispense(AnyParameters()()).Exactly(2);
+sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()()).Exactly(2);
 ```
 
 #### Argument Matchers
 
 You can use argument matchers from the `With` class to verify calls with flexible conditions:
 
-- `Match.Any<T>()`: matches any value of type `T`
-- `Match.Null<T>()`: matches `null`
-- `Match.With<T>(predicate)`: matches values satisfying a predicate
-- `Match.With(value)`: matches a specific value
-- `Match.Out<T>()`: matches any out parameter of type `T`
-- `Match.Ref<T>()`: matches any ref parameter of type `T`
+- `It.IsAny<T>()`: matches any value of type `T`
+- `It.IsNull<T>()`: matches `null`
+- `It.Is<T>(predicate)`: matches values satisfying a predicate
+- `It.Is(value)`: matches a specific value
+- `It.IsOut<T>()`: matches any out parameter of type `T`
+- `It.IsRef<T>()`: matches any ref parameter of type `T`
 
 **Example:**
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(With<string>(t => t.StartsWith("D")), Any<int>()).Once();
-sut.VerifyMock.Invoked.Dispense(With("Milk"), Any<int>()).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(It.Is<string>(t => t.StartsWith("D")), It.IsAny<int>()).Once();
+sut.VerifyMock.Invoked.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
 ```
 
 ### Properties
@@ -381,7 +382,7 @@ You can verify access to property getter and setter:
 sut.VerifyMock.Got.TotalDispensed().AtLeastOnce();
 
 // Verify that the property 'TotalDispensed' was set to 42 exactly once
-sut.VerifyMock.Set.TotalDispensed(With(42)).Once();
+sut.VerifyMock.Set.TotalDispensed(It.Is(42)).Once();
 ```
 
 **Note:**  
@@ -393,10 +394,10 @@ You can verify access to indexer getter and setter:
 
 ```csharp
 // Verify that the indexer was read with key "Dark" exactly once
-sut.VerifyMock.GotIndexer(With("Dark")).Once();
+sut.VerifyMock.GotIndexer(It.Is("Dark")).Once();
 
 // Verify that the indexer was set with key "Milk" to value 7 at least once
-sut.VerifyMock.SetIndexer(With("Milk"), 7).AtLeastOnce();
+sut.VerifyMock.SetIndexer(It.Is("Milk"), 7).AtLeastOnce();
 ```
 
 **Note:**  
@@ -419,17 +420,17 @@ sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(With("Dark"), With(2)).Then(
-    m => m.Invoked.Dispense(With("Dark"), With(3))
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(2)).Then(
+    m => m.Invoked.Dispense(It.Is("Dark"), It.Is(3))
 );
 ```
 
 You can chain multiple calls for strict order verification:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(With("Dark"), With(1)).Then(
-    m => m.Invoked.Dispense(With("Milk"), With(2)),
-    m => m.Invoked.Dispense(With("White"), With(3)));
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1)).Then(
+    m => m.Invoked.Dispense(It.Is("Milk"), It.Is(2)),
+    m => m.Invoked.Dispense(It.Is("White"), It.Is(3)));
 ```
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.

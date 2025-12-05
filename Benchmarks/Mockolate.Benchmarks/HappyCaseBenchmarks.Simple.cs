@@ -1,9 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using Mockolate.Verify;
-using Moq;
 using NSubstitute;
-using static Mockolate.Match;
 using Times = Moq.Times;
 
 namespace Mockolate.Benchmarks;
@@ -21,11 +19,11 @@ public partial class HappyCaseBenchmarks
 	public void Simple_Mockolate()
 	{
 		IMyInterface mock = Mock.Create<IMyInterface>();
-		mock.SetupMock.Method.MyFunc(Any<int>()).Returns(true);
+		mock.SetupMock.Method.MyFunc(It.IsAny<int>()).Returns(true);
 
 		mock.MyFunc(42);
 
-		mock.VerifyMock.Invoked.MyFunc(Any<int>()).Once();
+		mock.VerifyMock.Invoked.MyFunc(It.IsAny<int>()).Once();
 	}
 
 	/// <summary>
@@ -35,11 +33,11 @@ public partial class HappyCaseBenchmarks
 	public void Simple_Moq()
 	{
 		Moq.Mock<IMyInterface> mock = new();
-		mock.Setup(x => x.MyFunc(It.IsAny<int>())).Returns(true);
+		mock.Setup(x => x.MyFunc(Moq.It.IsAny<int>())).Returns(true);
 
 		mock.Object.MyFunc(42);
 
-		mock.Verify(x => x.MyFunc(It.IsAny<int>()), Times.Once());
+		mock.Verify(x => x.MyFunc(Moq.It.IsAny<int>()), Times.Once());
 	}
 
 	/// <summary>

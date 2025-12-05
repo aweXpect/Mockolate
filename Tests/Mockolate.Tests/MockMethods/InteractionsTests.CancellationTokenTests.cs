@@ -34,7 +34,7 @@ public sealed partial class InteractionsTests
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
 			CancellationToken canceledToken = new(true);
-			sut.SetupMock.Method.TaskOfIntMethod(Any<CancellationToken>()).Returns(Task.FromResult(42));
+			sut.SetupMock.Method.TaskOfIntMethod(It.IsAny<CancellationToken>()).Returns(Task.FromResult(42));
 
 			Task<int> result = sut.TaskOfIntMethod(canceledToken);
 

@@ -23,15 +23,15 @@ public sealed class MockExtensionsTests
 
 			mock.Dispense("Light", 4);
 
-			await That(mock.VerifyMock.Invoked.Dispense(With("Dark"), With(1))).Never();
-			await That(mock.VerifyMock.Invoked.Dispense(With("Light"), With(2))).Never();
-			await That(mock.VerifyMock.Invoked.Dispense(With("Dark"), With(3))).Once();
-			await That(mock.VerifyMock.Invoked.Dispense(With("Light"), With(4))).Once();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(2))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(3))).Once();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(4))).Once();
 
-			await That(monitor.Verify.Invoked.Dispense(With("Dark"), With(1))).Never();
-			await That(monitor.Verify.Invoked.Dispense(With("Light"), With(2))).Once();
-			await That(monitor.Verify.Invoked.Dispense(With("Dark"), With(3))).Once();
-			await That(monitor.Verify.Invoked.Dispense(With("Light"), With(4))).Never();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(2))).Once();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.Is(3))).Once();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(4))).Never();
 		}
 
 		[Fact]
@@ -45,10 +45,10 @@ public sealed class MockExtensionsTests
 			mock.Dispense("Dark", 3);
 			mock.Dispense("Light", 4);
 
-			await That(mock.VerifyMock.Invoked.Dispense(With("Dark"), With(1))).Never();
-			await That(mock.VerifyMock.Invoked.Dispense(With("Light"), With(2))).Never();
-			await That(mock.VerifyMock.Invoked.Dispense(With("Dark"), With(3))).Once();
-			await That(mock.VerifyMock.Invoked.Dispense(With("Light"), With(4))).Once();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(2))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(3))).Once();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(4))).Once();
 		}
 	}
 }

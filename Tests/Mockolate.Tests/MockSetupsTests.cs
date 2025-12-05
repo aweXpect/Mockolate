@@ -1,4 +1,5 @@
-﻿using Mockolate.Setup;
+﻿using Mockolate.Parameters;
+using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
@@ -40,7 +41,7 @@ public sealed class MockSetupsTests
 
 		for (int i = 0; i < indexerCount; i++)
 		{
-			sut.Registrations.SetupIndexer(new IndexerSetup<string, int>((IParameter)Any<int>()));
+			sut.Registrations.SetupIndexer(new IndexerSetup<string, int>((IParameter)It.IsAny<int>()));
 		}
 
 		string result = sut.Registrations.ToString();

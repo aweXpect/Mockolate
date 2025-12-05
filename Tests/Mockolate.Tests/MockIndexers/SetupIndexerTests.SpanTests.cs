@@ -10,7 +10,7 @@ public sealed partial class SetupIndexerTests
 		public async Task Memory_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(With<Memory<int>>(v => v.Length == 2)).Returns(4);
+			mock.SetupMock.Indexer(It.Is<Memory<int>>(v => v.Length == 2)).Returns(4);
 
 			int result = mock[new Memory<int>([1, 2, 3,])];
 
@@ -21,7 +21,7 @@ public sealed partial class SetupIndexerTests
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(With<Memory<int>>(v => v.Length == 3)).Returns(42);
+			mock.SetupMock.Indexer(It.Is<Memory<int>>(v => v.Length == 3)).Returns(42);
 
 			int result = mock[new Memory<int>([1, 2, 3,])];
 
@@ -32,7 +32,7 @@ public sealed partial class SetupIndexerTests
 		public async Task Memory_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(Any<Memory<int>>()).Returns(42);
+			mock.SetupMock.Indexer(It.IsAny<Memory<int>>()).Returns(42);
 
 			int result = mock[new Memory<int>([1, 2, 3,])];
 
@@ -47,7 +47,7 @@ public sealed partial class SetupIndexerTests
 			[
 				'x', 'y', 'z',
 			];
-			mock.SetupMock.Indexer(Any<string>()).Returns(new ReadOnlySpan<char>(expectedData));
+			mock.SetupMock.Indexer(It.IsAny<string>()).Returns(new ReadOnlySpan<char>(expectedData));
 
 			ReadOnlySpan<char> result = mock["test"];
 
@@ -58,7 +58,7 @@ public sealed partial class SetupIndexerTests
 		public async Task ReadOnlySpan_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(WithReadOnlySpan<int>(v => v.Length == 2)).Returns(4);
+			mock.SetupMock.Indexer(It.IsReadOnlySpan<int>(v => v.Length == 2)).Returns(4);
 
 			int result = mock[new ReadOnlySpan<int>([1, 2, 3,])];
 
@@ -69,7 +69,7 @@ public sealed partial class SetupIndexerTests
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(WithReadOnlySpan<int>(v => v is [1, _, _,])).Returns(42);
+			mock.SetupMock.Indexer(It.IsReadOnlySpan<int>(v => v is [1, _, _,])).Returns(42);
 
 			int result = mock[new ReadOnlySpan<int>([1, 2, 3,])];
 
@@ -80,7 +80,7 @@ public sealed partial class SetupIndexerTests
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(AnyReadOnlySpan<int>()).Returns(42);
+			mock.SetupMock.Indexer(It.IsAnyReadOnlySpan<int>()).Returns(42);
 
 			int result = mock[new ReadOnlySpan<int>([1, 2, 3,])];
 
@@ -95,7 +95,7 @@ public sealed partial class SetupIndexerTests
 			[
 				1, 2, 3,
 			];
-			mock.SetupMock.Indexer(Any<int>()).Returns(new Span<int>(expectedData));
+			mock.SetupMock.Indexer(It.IsAny<int>()).Returns(new Span<int>(expectedData));
 
 			Span<int> result = mock[5];
 
@@ -115,8 +115,8 @@ public sealed partial class SetupIndexerTests
 				30, 40, 50,
 			];
 
-			mock.SetupMock.Indexer(With<int>(k => k == 1)).Returns(new Span<int>(key1Data));
-			mock.SetupMock.Indexer(With<int>(k => k == 2)).Returns(new Span<int>(key2Data));
+			mock.SetupMock.Indexer(It.Is<int>(k => k == 1)).Returns(new Span<int>(key1Data));
+			mock.SetupMock.Indexer(It.Is<int>(k => k == 2)).Returns(new Span<int>(key2Data));
 
 			int[] result1 = mock[1].ToArray();
 			int[] result2 = mock[2].ToArray();
@@ -129,7 +129,7 @@ public sealed partial class SetupIndexerTests
 		public async Task Span_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(WithSpan<int>(v => v.Length == 2)).Returns(4);
+			mock.SetupMock.Indexer(It.IsSpan<int>(v => v.Length == 2)).Returns(4);
 
 			int result = mock[new Span<int>([1, 2, 3,])];
 
@@ -140,7 +140,7 @@ public sealed partial class SetupIndexerTests
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(WithSpan<int>(v => v is [1, _, _,])).Returns(42);
+			mock.SetupMock.Indexer(It.IsSpan<int>(v => v is [1, _, _,])).Returns(42);
 
 			int result = mock[new Span<int>([1, 2, 3,])];
 
@@ -151,7 +151,7 @@ public sealed partial class SetupIndexerTests
 		public async Task Span_WithoutPredicate_ShouldMatchAnySpan()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(AnySpan<int>()).Returns(42);
+			mock.SetupMock.Indexer(It.IsAnySpan<int>()).Returns(42);
 
 			int result = mock[new Span<int>([1, 2, 3,])];
 

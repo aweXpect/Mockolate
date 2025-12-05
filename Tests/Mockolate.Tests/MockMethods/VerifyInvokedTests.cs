@@ -13,7 +13,7 @@ public sealed partial class VerifyInvokedTests
 
 		_ = mock.Equals(obj);
 
-		await That(mock.VerifyMock.Invoked.Equals(With(obj))).Once();
+		await That(mock.VerifyMock.Invoked.Equals(It.Is(obj))).Once();
 	}
 
 	[Fact]
@@ -32,14 +32,14 @@ public sealed partial class VerifyInvokedTests
 	public async Task MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
-		sut.SetupMock.Method.Multiply(Any<int>(), Any<int?>()).Returns(1);
+		sut.SetupMock.Method.Multiply(It.IsAny<int>(), It.IsAny<int?>()).Returns(1);
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
 			sut.Multiply(i, 4);
 		}
 
-		await That(sut.VerifyMock.Invoked.Multiply(Any<int>(), Any<int?>())).Exactly(numberOfInvocations);
+		await That(sut.VerifyMock.Invoked.Multiply(It.IsAny<int>(), It.IsAny<int?>())).Exactly(numberOfInvocations);
 	}
 
 	[Fact]
@@ -58,14 +58,14 @@ public sealed partial class VerifyInvokedTests
 	public async Task VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
-		sut.SetupMock.Method.SetIsValid(Any<bool>(), Any<Func<bool>?>());
+		sut.SetupMock.Method.SetIsValid(It.IsAny<bool>(), It.IsAny<Func<bool>?>());
 
 		for (int i = 0; i < numberOfInvocations; i++)
 		{
 			sut.SetIsValid(i % 2 == 0, () => true);
 		}
 
-		await That(sut.VerifyMock.Invoked.SetIsValid(Any<bool>(), Any<Func<bool>?>()))
+		await That(sut.VerifyMock.Invoked.SetIsValid(It.IsAny<bool>(), It.IsAny<Func<bool>?>()))
 			.Exactly(numberOfInvocations);
 	}
 

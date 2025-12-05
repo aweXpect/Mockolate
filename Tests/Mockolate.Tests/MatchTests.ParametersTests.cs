@@ -1,3 +1,5 @@
+using Mockolate.Parameters;
+
 namespace Mockolate.Tests;
 
 public sealed partial class MatchTests
@@ -13,7 +15,7 @@ public sealed partial class MatchTests
 		[InlineData(false, "foo", null)]
 		public async Task ShouldMatchWhenPredicateReturnsTrue(bool expectedResult, params object?[] values)
 		{
-			IParameters sut = Parameters(_ => expectedResult);
+			IParameters sut = Match.Parameters(_ => expectedResult);
 
 			bool result = sut.Matches(values);
 
@@ -23,7 +25,7 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameters sut = Parameters(_ => true);
+			IParameters sut = Match.Parameters(_ => true);
 			string expectedValue = "Parameters(_ => true)";
 
 			string? result = sut.ToString();

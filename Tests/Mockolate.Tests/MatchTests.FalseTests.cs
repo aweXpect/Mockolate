@@ -1,3 +1,5 @@
+using Mockolate.Parameters;
+
 namespace Mockolate.Tests;
 
 public sealed partial class MatchTests
@@ -10,18 +12,18 @@ public sealed partial class MatchTests
 		public async Task False_ShouldMatchWhenFalse(bool value, int expectedCount)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
-			mock.SetupMock.Method.DoSomething(null, False());
+			mock.SetupMock.Method.DoSomething(null, It.IsFalse());
 
 			mock.DoSomething(null, value);
 
-			await That(mock.VerifyMock.Invoked.DoSomething(null, False())).Exactly(expectedCount);
+			await That(mock.VerifyMock.Invoked.DoSomething(null, It.IsFalse())).Exactly(expectedCount);
 		}
 
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameter<bool> sut = False();
-			string expectedValue = "False()";
+			IParameter<bool> sut = It.IsFalse();
+			string expectedValue = "It.IsFalse()";
 
 			string? result = sut.ToString();
 

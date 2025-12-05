@@ -1,3 +1,5 @@
+using Mockolate.Parameters;
+
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.

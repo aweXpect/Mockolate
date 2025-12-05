@@ -1,4 +1,5 @@
 ﻿using Mockolate.Interactions;
+using Mockolate.Parameters;
 using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
@@ -14,7 +15,7 @@ public sealed partial class InteractionsTests
 		registration.InvokeMethod("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Method(mock, "foo.bar", new NamedParameter("p1", (IParameter)Any<int>()));
+			registration.Method(mock, "foo.bar", new NamedParameter("p1", (IParameter)It.IsAny<int>()));
 
 		await That(result).Once();
 	}
@@ -27,7 +28,7 @@ public sealed partial class InteractionsTests
 		registration.InvokeMethod("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Method(mock, "foo.bar", new NamedParameter("p1", (IParameter)Any<string>()));
+			registration.Method(mock, "foo.bar", new NamedParameter("p1", (IParameter)It.IsAny<string>()));
 
 		await That(result).Never();
 	}
@@ -40,7 +41,7 @@ public sealed partial class InteractionsTests
 		registration.InvokeMethod("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Method(mock, "baz.bar", new NamedParameter("p1", (IParameter)Any<int>()));
+			registration.Method(mock, "baz.bar", new NamedParameter("p1", (IParameter)It.IsAny<int>()));
 
 		await That(result).Never();
 	}
@@ -52,10 +53,10 @@ public sealed partial class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Method(mock, "foo.bar", new NamedParameter("p1", (IParameter)Any<int>()));
+			registration.Method(mock, "foo.bar", new NamedParameter("p1", (IParameter)It.IsAny<int>()));
 
 		await That(result).Never();
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(Any<int>())");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method bar(It.IsAny<int>())");
 	}
 
 	[Fact]

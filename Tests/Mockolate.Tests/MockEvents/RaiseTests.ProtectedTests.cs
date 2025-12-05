@@ -37,11 +37,11 @@ public sealed partial class RaiseTests
 			EventHandler handler = (_, _) => { callCount++; };
 
 			mock.SubscribeToSomeEvent += handler;
-			mock.RaiseOnMock.Protected.SomeEvent(WithDefaultParameters());
-			mock.RaiseOnMock.Protected.SomeEvent(WithDefaultParameters());
+			mock.RaiseOnMock.Protected.SomeEvent(Match.WithDefaultParameters());
+			mock.RaiseOnMock.Protected.SomeEvent(Match.WithDefaultParameters());
 			mock.SubscribeToSomeEvent -= handler;
-			mock.RaiseOnMock.Protected.SomeEvent(WithDefaultParameters());
-			mock.RaiseOnMock.Protected.SomeEvent(WithDefaultParameters());
+			mock.RaiseOnMock.Protected.SomeEvent(Match.WithDefaultParameters());
+			mock.RaiseOnMock.Protected.SomeEvent(Match.WithDefaultParameters());
 
 			await That(callCount).IsEqualTo(2);
 		}

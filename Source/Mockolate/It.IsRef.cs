@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
+using Mockolate.Parameters;
 
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
-public partial class Match
+public partial class It
 {
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
-	public static IRefParameter<T> Ref<T>(Func<T, T> setter,
+	public static IRefParameter<T> IsRef<T>(Func<T, T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new RefParameterMatch<T>(_ => true, setter, null, doNotPopulateThisValue);
 
@@ -21,7 +22,7 @@ public partial class Match
 	///     <paramref name="predicate" /> and
 	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
 	/// </summary>
-	public static IRefParameter<T> Ref<T>(Func<T, bool> predicate, Func<T, T> setter,
+	public static IRefParameter<T> IsRef<T>(Func<T, bool> predicate, Func<T, T> setter,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
@@ -31,7 +32,7 @@ public partial class Match
 	///     Matches a <see langword="ref" /> parameter of type <typeparamref name="T" /> that satisfies the
 	///     <paramref name="predicate" />.
 	/// </summary>
-	public static IRefParameter<T> Ref<T>(Func<T, bool> predicate,
+	public static IRefParameter<T> IsRef<T>(Func<T, bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
 		=> new RefParameterMatch<T>(predicate, null, doNotPopulateThisValue, null);
@@ -39,13 +40,13 @@ public partial class Match
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
-	public static IVerifyRefParameter<T> Ref<T>()
+	public static IVerifyRefParameter<T> IsRef<T>()
 		=> new InvokedRefParameterMatch<T>();
 
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter of type <typeparamref name="T" />.
 	/// </summary>
-	public static IRefParameter<T> AnyRef<T>()
+	public static IRefParameter<T> IsAnyRef<T>()
 		=> new AnyRefParameterMatch<T>();
 
 	/// <summary>
@@ -76,9 +77,9 @@ public partial class Match
 		public override string ToString()
 			=> (predicateExpression is not null, setterExpression is not null) switch
 			{
-				(true, true) => $"Ref<{typeof(T).FormatType()}>({predicateExpression}, {setterExpression})",
-				(true, false) => $"Ref<{typeof(T).FormatType()}>({predicateExpression})",
-				(false, _) => $"Ref<{typeof(T).FormatType()}>({setterExpression})",
+				(true, true) => $"It.IsRef<{typeof(T).FormatType()}>({predicateExpression}, {setterExpression})",
+				(true, false) => $"It.IsRef<{typeof(T).FormatType()}>({predicateExpression})",
+				(false, _) => $"It.IsRef<{typeof(T).FormatType()}>({setterExpression})",
 			};
 	}
 
@@ -89,7 +90,7 @@ public partial class Match
 	{
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> $"AnyRef<{typeof(T).FormatType()}>()";
+			=> $"It.IsAnyRef<{typeof(T).FormatType()}>()";
 
 		/// <inheritdoc cref="TypedRefMatch{T}.Matches(T)" />
 		protected override bool Matches(T value)
@@ -111,7 +112,7 @@ public partial class Match
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"Ref<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"It.IsRef<{typeof(T).FormatType()}>()";
 	}
 
 	/// <summary>

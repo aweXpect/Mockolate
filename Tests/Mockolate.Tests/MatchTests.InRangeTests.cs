@@ -1,3 +1,5 @@
+using Mockolate.Parameters;
+
 namespace Mockolate.Tests;
 
 public sealed partial class MatchTests
@@ -19,7 +21,7 @@ public sealed partial class MatchTests
 
 			mock.DoSomethingWithInt(5);
 
-			await That(mock.VerifyMock.Invoked.DoSomethingWithInt(InRange(minimum, maximum).Exclusive()))
+			await That(mock.VerifyMock.Invoked.DoSomethingWithInt(It.IsInRange(minimum, maximum).Exclusive()))
 				.Exactly(expectFound ? 1 : 0);
 		}
 
@@ -37,15 +39,15 @@ public sealed partial class MatchTests
 
 			mock.DoSomethingWithInt(5);
 
-			await That(mock.VerifyMock.Invoked.DoSomethingWithInt(InRange(minimum, maximum)))
+			await That(mock.VerifyMock.Invoked.DoSomethingWithInt(It.IsInRange(minimum, maximum)))
 				.Exactly(expectFound ? 1 : 0);
 		}
 
 		[Fact]
 		public async Task ToString_Exclusive_ShouldReturnExpectedValue()
 		{
-			IParameter<double> sut = InRange(1.1, 4.1).Exclusive();
-			string expectedValue = "InRange(1.1, 4.1).Exclusive()";
+			IParameter<double> sut = It.IsInRange(1.1, 4.1).Exclusive();
+			string expectedValue = "It.IsInRange(1.1, 4.1).Exclusive()";
 
 			string? result = sut.ToString();
 
@@ -55,8 +57,8 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_Inclusive_ShouldReturnExpectedValue()
 		{
-			IParameter<int> sut = InRange(1, 4);
-			string expectedValue = "InRange(1, 4)";
+			IParameter<int> sut = It.IsInRange(1, 4);
+			string expectedValue = "It.IsInRange(1, 4)";
 
 			string? result = sut.ToString();
 
@@ -68,7 +70,7 @@ public sealed partial class MatchTests
 		{
 			void Act()
 			{
-				_ = InRange(4, 3);
+				_ = It.IsInRange(4, 3);
 			}
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()

@@ -13,6 +13,7 @@ internal static partial class Sources
 			"System.Threading",
 			"Mockolate.Exceptions",
 			"Mockolate.Interactions",
+			"Mockolate.Parameters",
 		]);
 
 		sb.Append("""
@@ -382,7 +383,7 @@ internal static partial class Sources
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\tinternal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
 			.Append(
-				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"Match.IParameter match{i}")))
+				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"IParameter match{i}")))
 			.Append(") : IndexerSetup,")
 			.AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();
@@ -854,7 +855,7 @@ internal static partial class Sources
 		sb.Append("\t\tprotected override bool IsMatch(object?[] parameters)").AppendLine();
 		sb.Append("\t\t\t=> Matches([")
 			.Append(string.Join(", ",
-				Enumerable.Range(1, numberOfParameters).Select(i => $"(Match.IParameter)match{i}")))
+				Enumerable.Range(1, numberOfParameters).Select(i => $"(IParameter)match{i}")))
 			.Append("], parameters);").AppendLine();
 		sb.AppendLine();
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 using Mockolate.Verify;
 
@@ -13,7 +14,7 @@ public partial class MockRegistration
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
 	///     <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Method<T>(T subject, string methodName, params Match.NamedParameter[] parameters)
+	public VerificationResult<T> Method<T>(T subject, string methodName, params NamedParameter[] parameters)
 		=> new(
 			subject,
 			Interactions,
@@ -31,7 +32,7 @@ public partial class MockRegistration
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
 	///     <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Method<T>(T subject, string methodName, Match.IParameters parameters) => new(subject,
+	public VerificationResult<T> Method<T>(T subject, string methodName, IParameters parameters) => new(subject,
 		Interactions,
 		Interactions.Interactions
 			.OfType<MethodInvocation>()
@@ -59,7 +60,7 @@ public partial class MockRegistration
 	///     with the matching <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Property<T>(T subject, string propertyName,
-		Match.IParameter value)
+		IParameter value)
 		=> new(subject,
 			Interactions,
 			Interactions.Interactions
@@ -74,7 +75,7 @@ public partial class MockRegistration
 	///     <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Indexer<T>(T subject,
-		params Match.NamedParameter?[] parameters)
+		params NamedParameter?[] parameters)
 		=> new(subject,
 			Interactions,
 			Interactions.Interactions
@@ -91,8 +92,8 @@ public partial class MockRegistration
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Indexer<T>(T subject, Match.IParameter? value,
-		params Match.NamedParameter?[] parameters)
+	public VerificationResult<T> Indexer<T>(T subject, IParameter? value,
+		params NamedParameter?[] parameters)
 		=> new(subject,
 			Interactions,
 			Interactions.Interactions

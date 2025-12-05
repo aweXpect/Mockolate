@@ -26,7 +26,7 @@ public sealed partial class MockBehaviorTests
 			MyBaseClassWithVirtualCalls mock =
 				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default.CallingBaseClass());
 			int value1 = 5;
-			mock.SetupMock.Method.VirtualMethodWithRefAndOutParameters(Ref<int>(x => x + 1), Out(() => 8))
+			mock.SetupMock.Method.VirtualMethodWithRefAndOutParameters(It.IsRef<int>(x => x + 1), It.IsOut(() => 8))
 				.Returns(10);
 
 			int sum = mock.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
@@ -61,7 +61,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MyBaseClassWithVirtualCalls mock =
 				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(Any<int>()).Returns(15);
+			mock.SetupMock.Indexer(It.IsAny<int>()).Returns(15);
 
 			int result = mock[1];
 			mock[1] = 42;

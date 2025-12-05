@@ -9,7 +9,7 @@ Use `mock.SetupMock.Method.MethodName(…)` to set up methods. You can specify a
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
     .Returns((type, amount) =>
     {
         var current = sut[type];
@@ -23,11 +23,11 @@ sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
     });
 
 // Setup method with callback
-sut.SetupMock.Method.Dispense(With("White"), Any<int>())
+sut.SetupMock.Method.Dispense(It.Is("White"), It.IsAny<int>())
     .Do((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 
 // Setup method to throw
-sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
+sut.SetupMock.Method.Dispense(It.Is("Green"), It.IsAny<int>())
     .Throws<InvalidChocolateException>();
 ```
 
@@ -46,7 +46,7 @@ sut.SetupMock.Method.Dispense(With("Green"), Any<int>())
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
 
 ```csharp
-sut.SetupMock.Method.DispenseAsync(Any<string>(), Any<int>())
+sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
     .ReturnsAsync(true);
 ```
 
@@ -54,11 +54,13 @@ sut.SetupMock.Method.DispenseAsync(Any<string>(), Any<int>())
 
 Mockolate provides flexible parameter matching for method setups and verifications:
 
-- `Match.Any<T>()`: Matches any value of type `T`.
-- `Match.With<T>(predicate)`: Matches values based on a predicate.
-- `Match.With<T>(value)`: Matches a specific value.
-- `Match.Null<T>()`: Matches null.
-- `Match.Out<T>(…)`/`Match.Ref<T>(…)`: Matches and sets out/ref parameters, supports value setting and
+- `It.IsAny<T>()`: Matches any value of type `T`.
+- `It.Is<T>(predicate)`: Matches values based on a predicate.
+- `It.Is<T>(value)`: Matches a specific value.
+- `It.IsNull<T>()`: Matches null.
+- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
+- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the minimum and maximum value.
+- `It.IsOut<T>(…)`/`It.IsRef<T>(…)`: Matches and sets out/ref parameters, supports value setting and
   predicates.
 
 #### Parameter Interaction
@@ -71,7 +73,7 @@ values passed during test execution and analyze them afterwards.
 
 ```csharp
 int lastAmount = 0;
-sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Do(amount => lastAmount = amount));
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Do(amount => lastAmount = amount));
 sut.Dispense("Dark", 42);
 // lastAmount == 42
 ```
@@ -80,7 +82,7 @@ sut.Dispense("Dark", 42);
 
 ```csharp
 Mockolate.ParameterMonitor<int> monitor;
-sut.SetupMock.Method.Dispense(With("Dark"), Any<int>().Monitor(out monitor));
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Monitor(out monitor));
 sut.Dispense("Dark", 5);
 sut.Dispense("Dark", 7);
 // monitor.Values == [5, 7]
@@ -125,11 +127,11 @@ sut.SetupMock.Property.TotalDispensed.OnSet((oldValue, newValue) => Console.Writ
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-sut.SetupMock.Indexer(Any<string>())
+sut.SetupMock.Indexer(It.IsAny<string>())
     .InitializeWith(type => 20)
     .OnGet(type => Console.WriteLine($"Stock for {type} was read"));
 
-sut.SetupMock.Indexer(With("Dark"))
+sut.SetupMock.Indexer(It.Is("Dark"))
     .InitializeWith(10)
     .OnSet((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
 ```

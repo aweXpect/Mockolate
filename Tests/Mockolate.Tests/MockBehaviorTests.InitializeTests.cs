@@ -10,10 +10,10 @@ public sealed partial class MockBehaviorTests
 		public async Task Initialize_DirectSetupsTakePrecedence()
 		{
 			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>((counter, setup)
-				=> setup.Indexer(With<string>(s => s.StartsWith("da"))).InitializeWith(5));
+				=> setup.Indexer(It.Is<string>(s => s.StartsWith("da"))).InitializeWith(5));
 
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(behavior,
-				setup => setup.Indexer(With<string>(s => s.EndsWith("rk"))).InitializeWith(16));
+				setup => setup.Indexer(It.Is<string>(s => s.EndsWith("rk"))).InitializeWith(16));
 
 			int bothMatchResult = mock["dark"];
 			int directMatchResult = mock["--rk"];
@@ -31,7 +31,7 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior behavior =
 				MockBehavior.Default.Initialize<IChocolateDispenser>(setup
-					=> setup.Indexer(With("Dark")).InitializeWith(15));
+					=> setup.Indexer(It.Is("Dark")).InitializeWith(15));
 
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(behavior);
 
@@ -46,7 +46,7 @@ public sealed partial class MockBehaviorTests
 		public async Task WithCounter_ShouldIncrementForEachCreatedMock()
 		{
 			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>((counter, setup)
-				=> setup.Indexer(With("Dark")).InitializeWith(counter));
+				=> setup.Indexer(It.Is("Dark")).InitializeWith(counter));
 
 			IChocolateDispenser mockA = Mock.Create<IChocolateDispenser>(behavior);
 			IChocolateDispenser mockB = Mock.Create<IChocolateDispenser>(behavior);

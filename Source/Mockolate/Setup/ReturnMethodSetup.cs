@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
 
@@ -206,8 +207,8 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>
 {
 	private readonly List<Callback<Action<int, T1>>> _callbacks = [];
-	private readonly Match.NamedParameter? _match1;
-	private readonly Match.IParameters? _matches;
+	private readonly NamedParameter? _match1;
+	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, TReturn>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
@@ -216,14 +217,14 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
-	public ReturnMethodSetup(string name, Match.NamedParameter match1)
+	public ReturnMethodSetup(string name, NamedParameter match1)
 	{
 		_name = name;
 		_match1 = match1;
 	}
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
-	public ReturnMethodSetup(string name, Match.IParameters matches)
+	public ReturnMethodSetup(string name, IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -451,7 +452,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		if (_match1 is not null &&
-		    HasOutParameter([_match1,], parameterName, out Match.IOutParameter<T>? outParameter))
+		    HasOutParameter([_match1,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(defaultValueGenerator);
 		}
@@ -463,7 +464,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (_match1 is not null &&
-		    HasRefParameter([_match1,], parameterName, out Match.IRefParameter<T>? refParameter))
+		    HasRefParameter([_match1,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -486,9 +487,9 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2>>> _callbacks = [];
-	private readonly Match.NamedParameter? _match1;
-	private readonly Match.NamedParameter? _match2;
-	private readonly Match.IParameters? _matches;
+	private readonly NamedParameter? _match1;
+	private readonly NamedParameter? _match2;
+	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, TReturn>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
@@ -497,7 +498,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	private int _currentReturnCallbackIndex;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
-	public ReturnMethodSetup(string name, Match.NamedParameter match1, Match.NamedParameter match2)
+	public ReturnMethodSetup(string name, NamedParameter match1, NamedParameter match2)
 	{
 		_name = name;
 		_match1 = match1;
@@ -505,7 +506,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
-	public ReturnMethodSetup(string name, Match.IParameters matches)
+	public ReturnMethodSetup(string name, IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -740,7 +741,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		if (_match1 is not null && _match2 is not null &&
-		    HasOutParameter([_match1, _match2,], parameterName, out Match.IOutParameter<T>? outParameter))
+		    HasOutParameter([_match1, _match2,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(defaultValueGenerator);
 		}
@@ -752,7 +753,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (_match1 is not null && _match2 is not null &&
-		    HasRefParameter([_match1, _match2,], parameterName, out Match.IRefParameter<T>? refParameter))
+		    HasRefParameter([_match1, _match2,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -775,10 +776,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _callbacks = [];
-	private readonly Match.NamedParameter? _match1;
-	private readonly Match.NamedParameter? _match2;
-	private readonly Match.NamedParameter? _match3;
-	private readonly Match.IParameters? _matches;
+	private readonly NamedParameter? _match1;
+	private readonly NamedParameter? _match2;
+	private readonly NamedParameter? _match3;
+	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, T3, TReturn>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
@@ -789,9 +790,9 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
 	public ReturnMethodSetup(
 		string name,
-		Match.NamedParameter match1,
-		Match.NamedParameter match2,
-		Match.NamedParameter match3)
+		NamedParameter match1,
+		NamedParameter match2,
+		NamedParameter match3)
 	{
 		_name = name;
 		_match1 = match1;
@@ -800,7 +801,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
-	public ReturnMethodSetup(string name, Match.IParameters matches)
+	public ReturnMethodSetup(string name, IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -1043,7 +1044,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		if (_match1 is not null && _match2 is not null && _match3 is not null &&
-		    HasOutParameter([_match1, _match2, _match3,], parameterName, out Match.IOutParameter<T>? outParameter))
+		    HasOutParameter([_match1, _match2, _match3,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(defaultValueGenerator);
 		}
@@ -1055,7 +1056,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		if (_match1 is not null && _match2 is not null && _match3 is not null &&
-		    HasRefParameter([_match1, _match2, _match3,], parameterName, out Match.IRefParameter<T>? refParameter))
+		    HasRefParameter([_match1, _match2, _match3,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -1079,11 +1080,11 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _callbacks = [];
-	private readonly Match.NamedParameter? _match1;
-	private readonly Match.NamedParameter? _match2;
-	private readonly Match.NamedParameter? _match3;
-	private readonly Match.NamedParameter? _match4;
-	private readonly Match.IParameters? _matches;
+	private readonly NamedParameter? _match1;
+	private readonly NamedParameter? _match2;
+	private readonly NamedParameter? _match3;
+	private readonly NamedParameter? _match4;
+	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, T3, T4, TReturn>>> _returnCallbacks = [];
 	private bool? _callBaseClass;
@@ -1094,10 +1095,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
 	public ReturnMethodSetup(
 		string name,
-		Match.NamedParameter match1,
-		Match.NamedParameter match2,
-		Match.NamedParameter match3,
-		Match.NamedParameter match4)
+		NamedParameter match1,
+		NamedParameter match2,
+		NamedParameter match3,
+		NamedParameter match4)
 	{
 		_name = name;
 		_match1 = match1;
@@ -1107,7 +1108,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
-	public ReturnMethodSetup(string name, Match.IParameters matches)
+	public ReturnMethodSetup(string name, IParameters matches)
 	{
 		_name = name;
 		_matches = matches;
@@ -1362,7 +1363,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	{
 		if (_match1 is not null && _match2 is not null && _match3 is not null && _match4 is not null &&
 		    HasOutParameter([_match1, _match2, _match3, _match4,], parameterName,
-			    out Match.IOutParameter<T>? outParameter))
+			    out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(defaultValueGenerator);
 		}
@@ -1375,7 +1376,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	{
 		if (_match1 is not null && _match2 is not null && _match3 is not null && _match4 is not null &&
 		    HasRefParameter([_match1, _match2, _match3, _match4,], parameterName,
-			    out Match.IRefParameter<T>? refParameter))
+			    out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}

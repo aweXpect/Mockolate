@@ -12,6 +12,7 @@ internal static partial class Sources
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Exceptions",
+			"Mockolate.Parameters",
 			"Mockolate.Raise",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
@@ -128,9 +129,9 @@ internal static partial class Sources
 
 			sb.Append(parameter.RefKind switch
 				{
-					RefKind.Ref => "Match.IRefParameter<",
-					RefKind.Out => "Match.IOutParameter<",
-					_ => "Match.IParameter<",
+					RefKind.Ref => "IRefParameter<",
+					RefKind.Out => "IOutParameter<",
+					_ => "IParameter<",
 				}).Append(parameter.Type.Fullname)
 				.Append('>');
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
@@ -190,10 +191,10 @@ internal static partial class Sources
 		sb.Append("(\"").Append(mockClass.ClassFullName).Append('.').Append(method.Name).Append("\"");
 		foreach (MethodParameter parameter in method.Parameters)
 		{
-			sb.Append(", new Match.NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
+			sb.Append(", new NamedParameter(\"").Append(parameter.Name).Append("\", ").Append(parameter.Name);
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
-				sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+				sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
 					.Append(">()");
 			}
 
@@ -233,9 +234,9 @@ internal static partial class Sources
 
 			sb.Append(parameter.RefKind switch
 				{
-					RefKind.Ref => "Match.IVerifyRefParameter<",
-					RefKind.Out => "Match.IVerifyOutParameter<",
-					_ => "Match.IParameter<",
+					RefKind.Ref => "IVerifyRefParameter<",
+					RefKind.Out => "IVerifyOutParameter<",
+					_ => "IParameter<",
 				}).Append(parameter.Type.Fullname)
 				.Append('>');
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
@@ -262,7 +263,7 @@ internal static partial class Sources
 			sb.Append(parameter.Name);
 			if (parameter.RefKind is not RefKind.Ref and not RefKind.Out)
 			{
-				sb.Append(" ?? Match.Null<").Append(parameter.Type.Fullname)
+				sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
 					.Append(">()");
 			}
 		}

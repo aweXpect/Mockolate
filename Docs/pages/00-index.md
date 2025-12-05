@@ -22,15 +22,14 @@ Framework 4.8.
 2. Create and use the mock
    ```csharp
    using Mockolate;
-   using static Mockolate.Match;
 
    // Create a mock for IChocolateDispenser
    var sut = Mock.Create<IChocolateDispenser>();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   sut.SetupMock.Indexer(With("Dark")).InitializeWith(10);
+   sut.SetupMock.Indexer(It.Is("Dark")).InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   sut.SetupMock.Method.Dispense(With("Dark"), Any<int>())
+   sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
        .Returns((type, amount) =>
        {
            var current = sut[type];
@@ -53,7 +52,7 @@ Framework 4.8.
    bool gotChoc3 = sut.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   sut.VerifyMock.Invoked.Dispense(With("Dark"), Any<int>()).Exactly(3);
+   sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");

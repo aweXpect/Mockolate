@@ -1,4 +1,5 @@
 ﻿using Mockolate.Interactions;
+using Mockolate.Parameters;
 using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
@@ -49,7 +50,7 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.SetProperty("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", (IParameter)Any<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", (IParameter)It.IsAny<int>());
 
 		await That(result).Once();
 	}
@@ -62,7 +63,7 @@ public sealed class InteractionsTests
 		registration.SetProperty("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Property(mock, "foo.bar", (IParameter)Any<string>());
+			registration.Property(mock, "foo.bar", (IParameter)It.IsAny<string>());
 
 		await That(result).Never();
 	}
@@ -74,7 +75,7 @@ public sealed class InteractionsTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 		registration.SetProperty("foo.bar", 4);
 
-		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "baz.bar", (IParameter)Any<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "baz.bar", (IParameter)It.IsAny<int>());
 
 		await That(result).Never();
 	}
@@ -85,10 +86,10 @@ public sealed class InteractionsTests
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", (IParameter)Any<int>());
+		VerificationResult<IChocolateDispenser> result = registration.Property(mock, "foo.bar", (IParameter)It.IsAny<int>());
 
 		await That(result).Never();
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value Any<int>()");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value It.IsAny<int>()");
 	}
 
 	[Fact]
