@@ -12,6 +12,7 @@ internal static partial class Sources
 			"System.Threading",
 			"Mockolate.Exceptions",
 			"Mockolate.Interactions",
+			"Mockolate.Parameters",
 		]);
 
 		sb.Append("""
@@ -284,10 +285,10 @@ internal static partial class Sources
 			.Append(">>> _returnCallbacks = [];")
 			.AppendLine();
 		sb.Append("\t\tprivate readonly string _name;").AppendLine();
-		sb.Append("\t\tprivate readonly Match.IParameters? _matches;").AppendLine();
+		sb.Append("\t\tprivate readonly IParameters? _matches;").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\tprivate readonly Match.NamedParameter? _match").Append(i).Append(";").AppendLine();
+			sb.Append("\t\tprivate readonly NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
 
 		sb.Append("\t\tprivate bool? _callBaseClass;").AppendLine();
@@ -303,7 +304,7 @@ internal static partial class Sources
 		sb.Append("\t\t\tstring name");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append(',').AppendLine().Append("\t\tMatch.NamedParameter match").Append(i);
+			sb.Append(',').AppendLine().Append("\t\tNamedParameter match").Append(i);
 		}
 
 		sb.Append(')').AppendLine();
@@ -320,7 +321,7 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc cref=\"VoidMethodSetup{")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />")
 			.AppendLine();
-		sb.Append("\t\tpublic VoidMethodSetup(string name, Match.IParameters matches)").AppendLine();
+		sb.Append("\t\tpublic VoidMethodSetup(string name, IParameters matches)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_name = name;").AppendLine();
 		sb.Append("\t\t\t_matches = matches;").AppendLine();
@@ -604,7 +605,7 @@ internal static partial class Sources
 			.Append(" &&").AppendLine();
 		sb.Append("\t\t\t\tHasOutParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
-			.Append("], parameterName, out Match.IOutParameter<T>? outParameter))").AppendLine();
+			.Append("], parameterName, out IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\treturn outParameter.GetValue(defaultValueGenerator);").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
@@ -622,7 +623,7 @@ internal static partial class Sources
 			.Append(" &&").AppendLine();
 		sb.Append("\t\t\t\tHasRefParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
-			.Append("], parameterName, out Match.IRefParameter<T>? refParameter))").AppendLine();
+			.Append("], parameterName, out IRefParameter<T>? refParameter))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\treturn refParameter.GetValue(value);").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
@@ -869,10 +870,10 @@ internal static partial class Sources
 			.Append(", TReturn>>> _returnCallbacks = [];")
 			.AppendLine();
 		sb.Append("\t\tprivate readonly string _name;").AppendLine();
-		sb.Append("\t\tprivate readonly Match.IParameters? _matches;").AppendLine();
+		sb.Append("\t\tprivate readonly IParameters? _matches;").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\tprivate readonly Match.NamedParameter? _match").Append(i).Append(";").AppendLine();
+			sb.Append("\t\tprivate readonly NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
 
 		sb.Append("\t\tprivate bool? _callBaseClass;").AppendLine();
@@ -888,7 +889,7 @@ internal static partial class Sources
 		sb.Append("\t\t\tstring name");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append(',').AppendLine().Append("\t\tMatch.NamedParameter match").Append(i);
+			sb.Append(',').AppendLine().Append("\t\tNamedParameter match").Append(i);
 		}
 
 		sb.Append(')').AppendLine();
@@ -905,7 +906,7 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />")
 			.AppendLine();
-		sb.Append("\t\tpublic ReturnMethodSetup(string name, Match.IParameters matches)").AppendLine();
+		sb.Append("\t\tpublic ReturnMethodSetup(string name, IParameters matches)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_name = name;").AppendLine();
 		sb.Append("\t\t\t_matches = matches;").AppendLine();
@@ -1254,7 +1255,7 @@ internal static partial class Sources
 			.Append(" &&").AppendLine();
 		sb.Append("\t\t\t\tHasOutParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
-			.Append("], parameterName, out Match.IOutParameter<T>? outParameter))").AppendLine();
+			.Append("], parameterName, out IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\treturn outParameter.GetValue(defaultValueGenerator);").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
@@ -1272,7 +1273,7 @@ internal static partial class Sources
 			.Append(" &&").AppendLine();
 		sb.Append("\t\t\t\tHasRefParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
-			.Append("], parameterName, out Match.IRefParameter<T>? refParameter))").AppendLine();
+			.Append("], parameterName, out IRefParameter<T>? refParameter))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\treturn refParameter.GetValue(value);").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();

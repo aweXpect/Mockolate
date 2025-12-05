@@ -1,3 +1,4 @@
+using Mockolate.Parameters;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;

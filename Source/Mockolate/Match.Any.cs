@@ -1,4 +1,5 @@
 using Mockolate.Internals;
+using Mockolate.Parameters;
 
 namespace Mockolate;
 

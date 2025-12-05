@@ -131,11 +131,11 @@ internal static class Helpers
 	{
 		sb.Append((parameter.RefKind, parameter.Type.SpecialGenericType) switch
 		{
-			(RefKind.Ref, _) => "Match.IVerifyRefParameter<",
-			(RefKind.Out, _) => "Match.IVerifyOutParameter<",
-			(_, SpecialGenericType.Span) => "Match.IVerifySpanParameter<",
-			(_, SpecialGenericType.ReadOnlySpan) => "Match.IVerifyReadOnlySpanParameter<",
-			(_, _) => "Match.IParameter<",
+			(RefKind.Ref, _) => "IVerifyRefParameter<",
+			(RefKind.Out, _) => "IVerifyOutParameter<",
+			(_, SpecialGenericType.Span) => "IVerifySpanParameter<",
+			(_, SpecialGenericType.ReadOnlySpan) => "IVerifyReadOnlySpanParameter<",
+			(_, _) => "IParameter<",
 		});
 		sb.Append(parameter.Type.SpecialGenericType switch
 		{
@@ -151,11 +151,11 @@ internal static class Helpers
 	{
 		return (parameter.RefKind, parameter.Type.SpecialGenericType) switch
 		{
-			(RefKind.Ref, _) => $"Match.IRefParameter<{GetType(parameter)}>",
-			(RefKind.Out, _) => $"Match.IOutParameter<{GetType(parameter)}>",
-			(_, SpecialGenericType.Span) => $"Match.ISpanParameter<{GetType(parameter)}>",
-			(_, SpecialGenericType.ReadOnlySpan) => $"Match.IReadOnlySpanParameter<{GetType(parameter)}>",
-			(_, _) => $"Match.IParameter<{GetType(parameter)}>",
+			(RefKind.Ref, _) => $"IRefParameter<{GetType(parameter)}>",
+			(RefKind.Out, _) => $"IOutParameter<{GetType(parameter)}>",
+			(_, SpecialGenericType.Span) => $"ISpanParameter<{GetType(parameter)}>",
+			(_, SpecialGenericType.ReadOnlySpan) => $"IReadOnlySpanParameter<{GetType(parameter)}>",
+			(_, _) => $"IParameter<{GetType(parameter)}>",
 		};
 
 		static string GetType(MethodParameter parameter)

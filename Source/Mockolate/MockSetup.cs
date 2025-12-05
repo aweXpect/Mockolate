@@ -1,6 +1,7 @@
 using System;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -50,11 +51,11 @@ public class MockSetup<T> : IHasMockRegistration, IMockSetup<T>, IProtectedMockS
 	/// <inheritdoc cref="IHasMockRegistration.Registrations" />
 	public MockRegistration Registrations { get; }
 
-	/// <inheritdoc cref="IMockMethodSetupWithEquals{T}.Equals(Match.IParameter{object?})" />
-	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(Match.IParameter<object?> obj)
+	/// <inheritdoc cref="IMockMethodSetupWithEquals{T}.Equals(IParameter{object?})" />
+	ReturnMethodSetup<bool, object?> IMockMethodSetupWithEquals<T>.Equals(IParameter<object?> obj)
 	{
 		ReturnMethodSetup<bool, object?> methodSetup =
-			new(Registrations.Prefix + ".Equals", new Match.NamedParameter("obj", (Match.IParameter)obj));
+			new(Registrations.Prefix + ".Equals", new NamedParameter("obj", (IParameter)obj));
 		Registrations.SetupMethod(methodSetup);
 		return methodSetup;
 	}

@@ -1,3 +1,5 @@
+using Mockolate.Parameters;
+
 namespace Mockolate.Tests;
 
 public sealed partial class MatchTests

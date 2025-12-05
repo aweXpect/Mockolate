@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mockolate.Parameters;
 
 namespace Mockolate;
 
@@ -10,8 +11,8 @@ public static class MatchExtensions
 	/// <summary>
 	///     Create a <paramref name="monitor" /> to collect the matched values of the <paramref name="parameter" />.
 	/// </summary>
-	public static Match.IParameter<T> Monitor<T>(this Match.IParameter<T> parameter,
-		out Match.IParameterMonitor<T> monitor)
+	public static IParameter<T> Monitor<T>(this IParameter<T> parameter,
+		out IParameterMonitor<T> monitor)
 	{
 		ParameterMonitor<T> parameterMonitor = new();
 		parameter.Do(v => parameterMonitor.AddValue(v));
@@ -22,8 +23,8 @@ public static class MatchExtensions
 	/// <summary>
 	///     Create a <paramref name="monitor" /> to collect the matched values of the <paramref name="parameter" />.
 	/// </summary>
-	public static Match.IRefParameter<T> Monitor<T>(this Match.IRefParameter<T> parameter,
-		out Match.IParameterMonitor<T> monitor)
+	public static IRefParameter<T> Monitor<T>(this IRefParameter<T> parameter,
+		out IParameterMonitor<T> monitor)
 	{
 		ParameterMonitor<T> parameterMonitor = new();
 		parameter.Do(v => parameterMonitor.AddValue(v));
@@ -34,8 +35,8 @@ public static class MatchExtensions
 	/// <summary>
 	///     Create a <paramref name="monitor" /> to collect the matched values of the <paramref name="parameter" />.
 	/// </summary>
-	public static Match.IOutParameter<T> Monitor<T>(this Match.IOutParameter<T> parameter,
-		out Match.IParameterMonitor<T> monitor)
+	public static IOutParameter<T> Monitor<T>(this IOutParameter<T> parameter,
+		out IParameterMonitor<T> monitor)
 	{
 		ParameterMonitor<T> parameterMonitor = new();
 		parameter.Do(v => parameterMonitor.AddValue(v));
@@ -43,7 +44,7 @@ public static class MatchExtensions
 		return parameter;
 	}
 
-	private sealed class ParameterMonitor<T> : Match.IParameterMonitor<T>
+	private sealed class ParameterMonitor<T> : IParameterMonitor<T>
 	{
 		private readonly List<T> _values = new();
 
@@ -53,7 +54,7 @@ public static class MatchExtensions
 			Values = _values.AsReadOnly();
 		}
 
-		/// <inheritdoc cref="Match.IParameterMonitor{T}.Values" />
+		/// <inheritdoc cref="IParameterMonitor{T}.Values" />
 		public IReadOnlyList<T> Values { get; }
 
 		public void AddValue(T value)

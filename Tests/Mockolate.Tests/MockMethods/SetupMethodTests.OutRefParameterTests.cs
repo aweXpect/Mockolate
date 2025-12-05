@@ -1,5 +1,6 @@
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 using Mockolate.Verify;
 

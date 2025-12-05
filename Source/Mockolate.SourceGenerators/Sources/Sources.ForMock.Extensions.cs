@@ -14,6 +14,7 @@ internal static partial class Sources
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Exceptions",
 			"Mockolate.Monitor",
+			"Mockolate.Parameters",
 			"Mockolate.Raise",
 			"Mockolate.Setup",
 			"Mockolate.Verify",
@@ -115,7 +116,7 @@ internal static partial class Sources
 			foreach (MethodParameter parameter in @delegate.Parameters)
 			{
 				sb.Append(", ");
-				sb.Append("new Match.NamedParameter(\"").Append(parameter.Name).Append("\", (Match.IParameter)(");
+				sb.Append("new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(");
 				sb.Append(parameter.Name);
 				if (parameter.IsNullable())
 				{
@@ -141,7 +142,7 @@ internal static partial class Sources
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> Invoked")
-					.Append("(Match.IParameters parameters)");
+					.Append("(IParameters parameters)");
 				if (@delegate.GenericParameters is not null && @delegate.GenericParameters.Value.Count > 0)
 				{
 					foreach (GenericParameter gp in @delegate.GenericParameters.Value)
@@ -394,7 +395,7 @@ internal static partial class Sources
 
 		if (useParameters)
 		{
-			sb.Append("Match.IParameters parameters)");
+			sb.Append("IParameters parameters)");
 		}
 		else
 		{
@@ -474,7 +475,7 @@ internal static partial class Sources
 			sb.Append("(").Append(method.GetUniqueNameString());
 			foreach (MethodParameter parameter in method.Parameters)
 			{
-				sb.Append(", new Match.NamedParameter(\"").Append(parameter.Name).Append("\", (Match.IParameter)(")
+				sb.Append(", new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(")
 					.Append(parameter.Name);
 				if (parameter.IsNullable())
 				{
@@ -550,7 +551,7 @@ internal static partial class Sources
 				.Append(".").Append(@event.Name.EscapeForXmlDoc())
 				.Append("\"/> event.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(Match.IDefaultEventParameters parameters)")
+			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(IDefaultEventParameters parameters)")
 				.AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tMock<").Append(@class.ClassFullName).Append("> mock = CastToMockOrThrow(mockRaises);")
@@ -623,7 +624,7 @@ internal static partial class Sources
 				sb.Append("\t\tpublic IPropertySetup<").Append(property.Type.Fullname).Append("> ")
 					.Append(property.IndexerParameters is not null
 						? property.Name.Replace("[]",
-							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"Match.IParameter<{p.Type.Fullname}> {p.Name}"))}]")
+							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"IParameter<{p.Type.Fullname}> {p.Name}"))}]")
 						: property.Name).AppendLine();
 
 				sb.AppendLine("\t\t{");
@@ -701,7 +702,7 @@ internal static partial class Sources
 				}
 
 				sb.Append(">(").Append(string.Join(", ",
-						indexer.IndexerParameters.Value.Select((p, i) => $"(Match.IParameter)(parameter{i + 1}{
+						indexer.IndexerParameters.Value.Select((p, i) => $"(IParameter)(parameter{i + 1}{
 							(p.IsNullable() ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")})")))
 					.Append(");").AppendLine();
 				sb.Append("\t\t\tCastToMockRegistrationOrThrow(setup).SetupIndexer(indexerSetup);").AppendLine();
@@ -929,7 +930,7 @@ internal static partial class Sources
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ");
-				sb.Append("new Match.NamedParameter(\"").Append(parameter.Name).Append("\", (Match.IParameter)(");
+				sb.Append("new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(");
 				sb.Append(parameter.Name);
 				if (parameter.IsNullable())
 				{
@@ -965,7 +966,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(method.Name)
-				.Append("(Match.IParameters parameters)");
+				.Append("(IParameters parameters)");
 			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 			{
 				foreach (GenericParameter gp in method.GenericParameters.Value)
@@ -1129,7 +1130,7 @@ internal static partial class Sources
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\treturn CastToMockOrThrow(verify).GotIndexer(")
 				.Append(string.Join(", ", indexerParameters.Value.Select((p, i)
-					=> $"new Match.NamedParameter(\"{p.Name}\", (Match.IParameter)(parameter{i + 1}{
+					=> $"new NamedParameter(\"{p.Name}\", (IParameter)(parameter{i + 1}{
 						(p.IsNullable() ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}))"))).Append(");")
 				.AppendLine();
 			sb.AppendLine("\t\t}");
@@ -1219,10 +1220,10 @@ internal static partial class Sources
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(property.Name)
-				.Append("(Match.IParameter<")
+				.Append("(IParameter<")
 				.Append(property.Type.Fullname).Append("> value)").AppendLine();
 			sb.Append("\t\t\t=> CastToMockOrThrow(verifySet).Property(").Append(property.GetUniqueNameString())
-				.Append(", (Match.IParameter)value);").AppendLine();
+				.Append(", (IParameter)value);").AppendLine();
 		}
 
 		sb.AppendLine("\t}");
@@ -1280,12 +1281,12 @@ internal static partial class Sources
 				.Append(string.Join(", ",
 					indexer.IndexerParameters.Value.Select((p, i)
 						=> p.ToParameter() + (p.IsNullable() ? "?" : "") + $" parameter{i + 1}")))
-				.Append(", Match.IParameter<")
+				.Append(", IParameter<")
 				.Append(indexer.Type.Fullname).Append(">? value)").AppendLine();
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\treturn CastToMockOrThrow(verify).SetIndexer((Match.IParameter?)value, ")
+			sb.Append("\t\t\treturn CastToMockOrThrow(verify).SetIndexer((IParameter?)value, ")
 				.Append(string.Join(", ", indexer.IndexerParameters.Value.Select((p, i)
-					=> $"new Match.NamedParameter(\"{p.Name}\", (Match.IParameter)(parameter{i + 1}{
+					=> $"new NamedParameter(\"{p.Name}\", (IParameter)(parameter{i + 1}{
 						(p.IsNullable() ? $" ?? Match.Null<{p.Type.Fullname}>()" : "")}))")))
 				.Append(");").AppendLine();
 			sb.AppendLine("\t\t}");

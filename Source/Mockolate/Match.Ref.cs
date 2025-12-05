@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
+using Mockolate.Parameters;
 
 namespace Mockolate;
 

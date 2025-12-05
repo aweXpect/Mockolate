@@ -1,3 +1,4 @@
+using Mockolate.Parameters;
 using Mockolate.Verify;
 
 namespace Mockolate;
@@ -25,10 +26,10 @@ public partial class Mock<T> : IMockVerify<T>,
 	VerificationResult<T> IMockVerifyInvokedWithToString<T>.ToString()
 		=> Registrations.Method(Subject, Registrations.Prefix + ".ToString");
 
-	/// <inheritdoc cref="IMockVerifyInvokedWithEquals{T}.Equals(Match.IParameter{object})" />
-	VerificationResult<T> IMockVerifyInvokedWithEquals<T>.Equals(Match.IParameter<object>? obj)
+	/// <inheritdoc cref="IMockVerifyInvokedWithEquals{T}.Equals(IParameter{object?})" />
+	VerificationResult<T> IMockVerifyInvokedWithEquals<T>.Equals(IParameter<object?>? obj)
 		=> Registrations.Method(Subject, Registrations.Prefix + ".Equals",
-			new Match.NamedParameter("obj", (Match.IParameter)(obj ?? Match.Null<object>())));
+			new NamedParameter("obj", (IParameter)(obj ?? Match.Null<object>())));
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithGetHashCode{T}.GetHashCode()" />
 	VerificationResult<T> IMockVerifyInvokedWithGetHashCode<T>.GetHashCode()
@@ -37,13 +38,13 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
-	public VerificationResult<T> Method(string methodName, params Match.NamedParameter[] parameters)
+	public VerificationResult<T> Method(string methodName, params NamedParameter[] parameters)
 		=> Registrations.Method(Subject, methodName, parameters);
 
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
-	public VerificationResult<T> Method(string methodName, Match.IParameters parameters)
+	public VerificationResult<T> Method(string methodName, IParameters parameters)
 		=> Registrations.Method(Subject, methodName, parameters);
 
 	/// <summary>
@@ -56,20 +57,20 @@ public partial class Mock<T> : IMockVerify<T>,
 	///     Counts the setter accesses of property <paramref name="propertyName" />
 	///     with the matching <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<T> Property(string propertyName, Match.IParameter value)
+	public VerificationResult<T> Property(string propertyName, IParameter value)
 		=> Registrations.Property(Subject, propertyName, value);
 
 	/// <summary>
 	///     Counts the getter accesses of the indexer with matching <paramref name="parameters" />.
 	/// </summary>
-	public VerificationResult<T> GotIndexer(params Match.NamedParameter?[] parameters)
+	public VerificationResult<T> GotIndexer(params NamedParameter?[] parameters)
 		=> Registrations.Indexer(Subject, parameters);
 
 	/// <summary>
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<T> SetIndexer(Match.IParameter? value, params Match.NamedParameter?[] parameters)
+	public VerificationResult<T> SetIndexer(IParameter? value, params NamedParameter?[] parameters)
 		=> Registrations.Indexer(Subject, value, parameters);
 
 	/// <summary>

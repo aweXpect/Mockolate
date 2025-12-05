@@ -28,82 +28,41 @@ namespace Mockolate
     }
     public class Match
     {
-        public static Mockolate.Match.IParameter<T> Any<T>() { }
-        public static Mockolate.Match.IOutParameter<T> AnyOut<T>() { }
-        public static Mockolate.Match.IParameters AnyParameters() { }
-        public static Mockolate.Match.IVerifyReadOnlySpanParameter<T> AnyReadOnlySpan<T>() { }
-        public static Mockolate.Match.IRefParameter<T> AnyRef<T>() { }
-        public static Mockolate.Match.IVerifySpanParameter<T> AnySpan<T>() { }
-        public static Mockolate.Match.IParameter<bool> False() { }
+        public static Mockolate.Parameters.IParameter<T> Any<T>() { }
+        public static Mockolate.Parameters.IOutParameter<T> AnyOut<T>() { }
+        public static Mockolate.Parameters.IParameters AnyParameters() { }
+        public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> AnyReadOnlySpan<T>() { }
+        public static Mockolate.Parameters.IRefParameter<T> AnyRef<T>() { }
+        public static Mockolate.Parameters.IVerifySpanParameter<T> AnySpan<T>() { }
+        public static Mockolate.Parameters.IParameter<bool> False() { }
         public static Mockolate.Match.IInRangeParameter<T> InRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
             where T : System.IComparable<T> { }
-        public static Mockolate.Match.IParameter<T> Null<T>() { }
-        public static Mockolate.Match.IVerifyOutParameter<T> Out<T>() { }
-        public static Mockolate.Match.IOutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Match.IParameters Parameters(System.Func<object?[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Match.IVerifyRefParameter<T> Ref<T>() { }
-        public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Match.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
-        public static Mockolate.Match.IParameter<bool> True() { }
-        public static Mockolate.Match.IParameter<T> With<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Match.IParameter<T> With<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Match.IParameter<T> With<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
-        public static Mockolate.Match.IDefaultEventParameters WithDefaultParameters() { }
-        public static Mockolate.Match.IVerifyReadOnlySpanParameter<T> WithReadOnlySpan<T>(System.Func<T[], bool> predicate) { }
-        public static Mockolate.Match.IVerifySpanParameter<T> WithSpan<T>(System.Func<T[], bool> predicate) { }
-        public interface IDefaultEventParameters { }
-        public interface IInRangeParameter<out T> : Mockolate.Match.IParameter<T>
+        public static Mockolate.Parameters.IParameter<T> Null<T>() { }
+        public static Mockolate.Parameters.IVerifyOutParameter<T> Out<T>() { }
+        public static Mockolate.Parameters.IOutParameter<T> Out<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IParameters Parameters(System.Func<object?[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IVerifyRefParameter<T> Ref<T>() { }
+        public static Mockolate.Parameters.IRefParameter<T> Ref<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IRefParameter<T> Ref<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.Parameters.IParameter<bool> True() { }
+        public static Mockolate.Parameters.IParameter<T> With<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IParameter<T> With<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IParameter<T> With<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.Parameters.IDefaultEventParameters WithDefaultParameters() { }
+        public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> WithReadOnlySpan<T>(System.Func<T[], bool> predicate) { }
+        public static Mockolate.Parameters.IVerifySpanParameter<T> WithSpan<T>(System.Func<T[], bool> predicate) { }
+        public interface IInRangeParameter<out T> : Mockolate.Parameters.IParameter<T>
         {
-            Mockolate.Match.IParameter<T> Exclusive();
-            Mockolate.Match.IParameter<T> Inclusive();
-        }
-        public interface IOutParameter<T>
-        {
-            Mockolate.Match.IOutParameter<T> Do(System.Action<T> callback);
-            T GetValue(System.Func<T> defaultValue);
-        }
-        public interface IParameter
-        {
-            void InvokeCallbacks(object? value);
-            bool Matches(object? value);
-        }
-        public interface IParameter<out T>
-        {
-            Mockolate.Match.IParameter<T> Do(System.Action<T> callback);
-        }
-        public interface IParameterMonitor<out T>
-        {
-            System.Collections.Generic.IReadOnlyList<T> Values { get; }
-        }
-        public interface IParameters
-        {
-            bool Matches(object?[] values);
-        }
-        public interface IReadOnlySpanParameter<T> : Mockolate.Match.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> { }
-        public interface IRefParameter<T>
-        {
-            Mockolate.Match.IRefParameter<T> Do(System.Action<T> callback);
-            T GetValue(T value);
-        }
-        public interface ISpanParameter<T> : Mockolate.Match.IParameter<Mockolate.Setup.SpanWrapper<T>> { }
-        public interface IVerifyOutParameter<out T> { }
-        public interface IVerifyReadOnlySpanParameter<T> : Mockolate.Match.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>>, Mockolate.Match.IReadOnlySpanParameter<T> { }
-        public interface IVerifyRefParameter<T> { }
-        public interface IVerifySpanParameter<T> : Mockolate.Match.IParameter<Mockolate.Setup.SpanWrapper<T>>, Mockolate.Match.ISpanParameter<T> { }
-        public class NamedParameter : System.IEquatable<Mockolate.Match.NamedParameter>
-        {
-            public NamedParameter(string Name, Mockolate.Match.IParameter Parameter) { }
-            public string Name { get; init; }
-            public Mockolate.Match.IParameter Parameter { get; init; }
-            public override string ToString() { }
+            Mockolate.Parameters.IParameter<T> Exclusive();
+            Mockolate.Parameters.IParameter<T> Inclusive();
         }
     }
     public static class MatchExtensions
     {
-        public static Mockolate.Match.IOutParameter<T> Monitor<T>(this Mockolate.Match.IOutParameter<T> parameter, out Mockolate.Match.IParameterMonitor<T> monitor) { }
-        public static Mockolate.Match.IParameter<T> Monitor<T>(this Mockolate.Match.IParameter<T> parameter, out Mockolate.Match.IParameterMonitor<T> monitor) { }
-        public static Mockolate.Match.IRefParameter<T> Monitor<T>(this Mockolate.Match.IRefParameter<T> parameter, out Mockolate.Match.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Parameters.IOutParameter<T> Monitor<T>(this Mockolate.Parameters.IOutParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Parameters.IParameter<T> Monitor<T>(this Mockolate.Parameters.IParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
     }
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
     {
@@ -141,14 +100,14 @@ namespace Mockolate
         public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
-        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Match.NamedParameter?[] parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Match.IParameter? value, params Mockolate.Match.NamedParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Parameters.NamedParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter?[] parameters) { }
         public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params object?[]? parameters) { }
         public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, params object?[]? parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, Mockolate.Match.IParameters parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, params Mockolate.Match.NamedParameter[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, Mockolate.Parameters.IParameters parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName) { }
-        public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName, Mockolate.Match.IParameter value) { }
+        public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName, Mockolate.Parameters.IParameter value) { }
         public void Raise(string eventName, params object?[] parameters) { }
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public bool SetIndexer<TResult>(TResult value, params object?[] parameters) { }
@@ -172,12 +131,12 @@ namespace Mockolate
     public class Mock<T> : Mockolate.MockSetup<T>, Mockolate.IInteractiveMock<T>, Mockolate.Raise.IMockRaises<T>, Mockolate.Raise.IProtectedMockRaises<T>, Mockolate.Verify.IMockVerifyGotIndexerProtected<T>, Mockolate.Verify.IMockVerifyGotIndexer<T>, Mockolate.Verify.IMockVerifyGotProtected<T>, Mockolate.Verify.IMockVerifyGot<T>, Mockolate.Verify.IMockVerifyInvokedProtected<T>, Mockolate.Verify.IMockVerifyInvokedWithEqualsWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithEqualsWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToString<T>, Mockolate.Verify.IMockVerifyInvoked<T>, Mockolate.Verify.IMockVerifySetIndexerProtected<T>, Mockolate.Verify.IMockVerifySetIndexer<T>, Mockolate.Verify.IMockVerifySetProtected<T>, Mockolate.Verify.IMockVerifySet<T>, Mockolate.Verify.IMockVerifySubscribedToProtected<T>, Mockolate.Verify.IMockVerifySubscribedTo<T>, Mockolate.Verify.IMockVerifyUnsubscribedFromProtected<T>, Mockolate.Verify.IMockVerifyUnsubscribedFrom<T>, Mockolate.Verify.IMockVerify<T>
     {
         public Mock(T subject, Mockolate.MockRegistration mockRegistration) { }
-        public Mockolate.Verify.VerificationResult<T> GotIndexer(params Mockolate.Match.NamedParameter?[] parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Method(string methodName, Mockolate.Match.IParameters parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Method(string methodName, params Mockolate.Match.NamedParameter[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> GotIndexer(params Mockolate.Parameters.NamedParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Method(string methodName, Mockolate.Parameters.IParameters parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Method(string methodName, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Property(string propertyName) { }
-        public Mockolate.Verify.VerificationResult<T> Property(string propertyName, Mockolate.Match.IParameter value) { }
-        public Mockolate.Verify.VerificationResult<T> SetIndexer(Mockolate.Match.IParameter? value, params Mockolate.Match.NamedParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Property(string propertyName, Mockolate.Parameters.IParameter value) { }
+        public Mockolate.Verify.VerificationResult<T> SetIndexer(Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter?[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo(string eventName) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom(string eventName) { }
     }
@@ -400,6 +359,50 @@ namespace Mockolate.Monitor
         public Mockolate.Verify.IMockVerify<T> Verify { get; }
     }
 }
+namespace Mockolate.Parameters
+{
+    public interface IDefaultEventParameters { }
+    public interface IOutParameter<T>
+    {
+        Mockolate.Parameters.IOutParameter<T> Do(System.Action<T> callback);
+        T GetValue(System.Func<T> defaultValue);
+    }
+    public interface IParameter
+    {
+        void InvokeCallbacks(object? value);
+        bool Matches(object? value);
+    }
+    public interface IParameterMonitor<out T>
+    {
+        System.Collections.Generic.IReadOnlyList<T> Values { get; }
+    }
+    public interface IParameter<out T>
+    {
+        Mockolate.Parameters.IParameter<T> Do(System.Action<T> callback);
+    }
+    public interface IParameters
+    {
+        bool Matches(object?[] values);
+    }
+    public interface IReadOnlySpanParameter<T> : Mockolate.Parameters.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> { }
+    public interface IRefParameter<T>
+    {
+        Mockolate.Parameters.IRefParameter<T> Do(System.Action<T> callback);
+        T GetValue(T value);
+    }
+    public interface ISpanParameter<T> : Mockolate.Parameters.IParameter<Mockolate.Setup.SpanWrapper<T>> { }
+    public interface IVerifyOutParameter<out T> { }
+    public interface IVerifyReadOnlySpanParameter<T> : Mockolate.Parameters.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>>, Mockolate.Parameters.IReadOnlySpanParameter<T> { }
+    public interface IVerifyRefParameter<T> { }
+    public interface IVerifySpanParameter<T> : Mockolate.Parameters.IParameter<Mockolate.Setup.SpanWrapper<T>>, Mockolate.Parameters.ISpanParameter<T> { }
+    public class NamedParameter : System.IEquatable<Mockolate.Parameters.NamedParameter>
+    {
+        public NamedParameter(string Name, Mockolate.Parameters.IParameter Parameter) { }
+        public string Name { get; init; }
+        public Mockolate.Parameters.IParameter Parameter { get; init; }
+        public override string ToString() { }
+    }
+}
 namespace Mockolate.Raise
 {
     public interface IMockRaises<out T> : Mockolate.IInteractiveMock<T> { }
@@ -609,7 +612,7 @@ namespace Mockolate.Setup
     public interface IMockMethodSetupWithEqualsWithGetHashCode<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetupWithEquals<T>, Mockolate.Setup.IMockMethodSetupWithGetHashCode<T>, Mockolate.Setup.IMockMethodSetup<T> { }
     public interface IMockMethodSetupWithEquals<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetup<T>
     {
-        Mockolate.Setup.ReturnMethodSetup<bool, object?> Equals(Mockolate.Match.IParameter<object?> obj);
+        Mockolate.Setup.ReturnMethodSetup<bool, object?> Equals(Mockolate.Parameters.IParameter<object?> obj);
     }
     public interface IMockMethodSetupWithGetHashCode<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetup<T>
     {
@@ -971,7 +974,7 @@ namespace Mockolate.Setup
         protected abstract bool HasReturnCalls();
         protected abstract bool IsMatch(object?[] parameters);
         protected abstract bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, System.Func<T> defaultValueGenerator, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value);
-        protected static bool Matches(Mockolate.Match.IParameter[] parameters, object?[] values) { }
+        protected static bool Matches(Mockolate.Parameters.IParameter[] parameters, object?[] values) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
     public class IndexerSetupResult
@@ -987,7 +990,7 @@ namespace Mockolate.Setup
     }
     public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
-        public IndexerSetup(Mockolate.Match.IParameter match1) { }
+        public IndexerSetup(Mockolate.Parameters.IParameter match1) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1> CallingBaseClass(bool callBaseClass = true) { }
         protected override T ExecuteGetterCallback<T>(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, T value, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
@@ -1017,7 +1020,7 @@ namespace Mockolate.Setup
     }
     public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
     {
-        public IndexerSetup(Mockolate.Match.IParameter match1, Mockolate.Match.IParameter match2) { }
+        public IndexerSetup(Mockolate.Parameters.IParameter match1, Mockolate.Parameters.IParameter match2) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2> CallingBaseClass(bool callBaseClass = true) { }
         protected override T ExecuteGetterCallback<T>(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, T value, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
@@ -1047,7 +1050,7 @@ namespace Mockolate.Setup
     }
     public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
     {
-        public IndexerSetup(Mockolate.Match.IParameter match1, Mockolate.Match.IParameter match2, Mockolate.Match.IParameter match3) { }
+        public IndexerSetup(Mockolate.Parameters.IParameter match1, Mockolate.Parameters.IParameter match2, Mockolate.Parameters.IParameter match3) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3> CallingBaseClass(bool callBaseClass = true) { }
         protected override T ExecuteGetterCallback<T>(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, T value, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
@@ -1077,7 +1080,7 @@ namespace Mockolate.Setup
     }
     public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
     {
-        public IndexerSetup(Mockolate.Match.IParameter match1, Mockolate.Match.IParameter match2, Mockolate.Match.IParameter match3, Mockolate.Match.IParameter match4) { }
+        public IndexerSetup(Mockolate.Parameters.IParameter match1, Mockolate.Parameters.IParameter match2, Mockolate.Parameters.IParameter match3, Mockolate.Parameters.IParameter match4) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true) { }
         protected override T ExecuteGetterCallback<T>(Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, T value, Mockolate.MockBehavior behavior) { }
         protected override void ExecuteSetterCallback<T>(Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, Mockolate.MockBehavior behavior) { }
@@ -1118,10 +1121,10 @@ namespace Mockolate.Setup
         public void TriggerCallbacks(object?[] parameters) { }
         protected abstract void TriggerParameterCallbacks(object?[] parameters);
         protected static string FormatType(System.Type type) { }
-        protected static bool HasOutParameter<T>(Mockolate.Match.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Match.IOutParameter<T>? parameter) { }
-        protected static bool HasRefParameter<T>(Mockolate.Match.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Match.IRefParameter<T>? parameter) { }
-        protected static bool Matches(Mockolate.Match.NamedParameter[] namedParameters, object?[] values) { }
-        protected static void TriggerCallbacks(Mockolate.Match.NamedParameter?[] namedParameters, object?[] values) { }
+        protected static bool HasOutParameter<T>(Mockolate.Parameters.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IOutParameter<T>? parameter) { }
+        protected static bool HasRefParameter<T>(Mockolate.Parameters.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IRefParameter<T>? parameter) { }
+        protected static bool Matches(Mockolate.Parameters.NamedParameter[] namedParameters, object?[] values) { }
+        protected static void TriggerCallbacks(Mockolate.Parameters.NamedParameter?[] namedParameters, object?[] values) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
     public class MethodSetupResult
@@ -1206,8 +1209,8 @@ namespace Mockolate.Setup
     }
     public class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
     {
-        public ReturnMethodSetup(string name, Mockolate.Match.IParameters matches) { }
-        public ReturnMethodSetup(string name, Mockolate.Match.NamedParameter match1) { }
+        public ReturnMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
+        public ReturnMethodSetup(string name, Mockolate.Parameters.NamedParameter match1) { }
         public Mockolate.Setup.IReturnMethodSetup<TReturn, T1> CallingBaseClass(bool callBaseClass = true) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(System.Action callback) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(System.Action<T1> callback) { }
@@ -1232,8 +1235,8 @@ namespace Mockolate.Setup
     }
     public class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
     {
-        public ReturnMethodSetup(string name, Mockolate.Match.IParameters matches) { }
-        public ReturnMethodSetup(string name, Mockolate.Match.NamedParameter match1, Mockolate.Match.NamedParameter match2) { }
+        public ReturnMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
+        public ReturnMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2) { }
         public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2> CallingBaseClass(bool callBaseClass = true) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(System.Action callback) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(System.Action<T1, T2> callback) { }
@@ -1258,8 +1261,8 @@ namespace Mockolate.Setup
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
     {
-        public ReturnMethodSetup(string name, Mockolate.Match.IParameters matches) { }
-        public ReturnMethodSetup(string name, Mockolate.Match.NamedParameter match1, Mockolate.Match.NamedParameter match2, Mockolate.Match.NamedParameter match3) { }
+        public ReturnMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
+        public ReturnMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2, Mockolate.Parameters.NamedParameter match3) { }
         public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3> CallingBaseClass(bool callBaseClass = true) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(System.Action callback) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(System.Action<T1, T2, T3> callback) { }
@@ -1284,8 +1287,8 @@ namespace Mockolate.Setup
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
     {
-        public ReturnMethodSetup(string name, Mockolate.Match.IParameters matches) { }
-        public ReturnMethodSetup(string name, Mockolate.Match.NamedParameter match1, Mockolate.Match.NamedParameter match2, Mockolate.Match.NamedParameter match3, Mockolate.Match.NamedParameter match4) { }
+        public ReturnMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
+        public ReturnMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2, Mockolate.Parameters.NamedParameter match3, Mockolate.Parameters.NamedParameter match4) { }
         public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(System.Action callback) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4> callback) { }
@@ -1338,8 +1341,8 @@ namespace Mockolate.Setup
     }
     public class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
     {
-        public VoidMethodSetup(string name, Mockolate.Match.IParameters matches) { }
-        public VoidMethodSetup(string name, Mockolate.Match.NamedParameter match1) { }
+        public VoidMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
+        public VoidMethodSetup(string name, Mockolate.Parameters.NamedParameter match1) { }
         public Mockolate.Setup.IVoidMethodSetup<T1> CallingBaseClass(bool callBaseClass = true) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1> Do(System.Action callback) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1> Do(System.Action<T1> callback) { }
@@ -1362,8 +1365,8 @@ namespace Mockolate.Setup
     }
     public class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
     {
-        public VoidMethodSetup(string name, Mockolate.Match.IParameters matches) { }
-        public VoidMethodSetup(string name, Mockolate.Match.NamedParameter match1, Mockolate.Match.NamedParameter match2) { }
+        public VoidMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
+        public VoidMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2) { }
         public Mockolate.Setup.IVoidMethodSetup<T1, T2> CallingBaseClass(bool callBaseClass = true) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2> Do(System.Action callback) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2> Do(System.Action<T1, T2> callback) { }
@@ -1386,8 +1389,8 @@ namespace Mockolate.Setup
     }
     public class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
     {
-        public VoidMethodSetup(string name, Mockolate.Match.IParameters matches) { }
-        public VoidMethodSetup(string name, Mockolate.Match.NamedParameter match1, Mockolate.Match.NamedParameter match2, Mockolate.Match.NamedParameter match3) { }
+        public VoidMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
+        public VoidMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2, Mockolate.Parameters.NamedParameter match3) { }
         public Mockolate.Setup.IVoidMethodSetup<T1, T2, T3> CallingBaseClass(bool callBaseClass = true) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(System.Action callback) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(System.Action<T1, T2, T3> callback) { }
@@ -1410,8 +1413,8 @@ namespace Mockolate.Setup
     }
     public class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
     {
-        public VoidMethodSetup(string name, Mockolate.Match.IParameters matches) { }
-        public VoidMethodSetup(string name, Mockolate.Match.NamedParameter match1, Mockolate.Match.NamedParameter match2, Mockolate.Match.NamedParameter match3, Mockolate.Match.NamedParameter match4) { }
+        public VoidMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
+        public VoidMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2, Mockolate.Parameters.NamedParameter match3, Mockolate.Parameters.NamedParameter match4) { }
         public Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(System.Action callback) { }
         public Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4> callback) { }
@@ -1443,7 +1446,7 @@ namespace Mockolate.Verify
     public interface IMockVerifyInvokedWithEqualsWithGetHashCode<T> : Mockolate.IInteractiveMock<T>, Mockolate.Verify.IMockVerifyInvokedWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithGetHashCode<T> { }
     public interface IMockVerifyInvokedWithEquals<T> : Mockolate.IInteractiveMock<T>
     {
-        Mockolate.Verify.VerificationResult<T> Equals(Mockolate.Match.IParameter<object>? obj);
+        Mockolate.Verify.VerificationResult<T> Equals(Mockolate.Parameters.IParameter<object?>? obj);
     }
     public interface IMockVerifyInvokedWithGetHashCode<T> : Mockolate.IInteractiveMock<T>
     {

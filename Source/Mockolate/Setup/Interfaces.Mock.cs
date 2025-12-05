@@ -1,3 +1,5 @@
+using Mockolate.Parameters;
+
 namespace Mockolate.Setup;
 
 /// <summary>
@@ -31,7 +33,7 @@ public interface IMockMethodSetupWithEquals<out T> : IMockMethodSetup<T>
 	/// <summary>
 	///     Setup for the method <see cref="object.Equals(object?)" /> with the given <paramref name="obj" />.
 	/// </summary>
-	ReturnMethodSetup<bool, object?> Equals(Match.IParameter<object?> obj);
+	ReturnMethodSetup<bool, object?> Equals(IParameter<object?> obj);
 }
 
 /// <summary>

@@ -1,3 +1,5 @@
+using Mockolate.Parameters;
+
 namespace Mockolate.Verify;
 
 #pragma warning disable S2326 // Unused type parameters should be removed
@@ -57,7 +59,7 @@ public interface IMockVerifyInvokedWithEquals<T> : IInteractiveMock<T>
 	///     Validates the invocations for the method <see cref="object.Equals(object)" /> with the given
 	///     <paramref name="obj" />.
 	/// </summary>
-	VerificationResult<T> Equals(Match.IParameter<object>? obj);
+	VerificationResult<T> Equals(IParameter<object?>? obj);
 }
 
 /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Exceptions;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
 

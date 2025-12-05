@@ -1,6 +1,7 @@
 #if NET8_0_OR_GREATER
 using System;
 using Mockolate.Internals;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate;
