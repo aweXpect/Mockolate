@@ -120,8 +120,9 @@ public abstract class PropertySetup : IInteractivePropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
-public class PropertySetup<T>(string name)
-	: PropertySetup, IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>
+public class PropertySetup<T>(string name) : PropertySetup,
+	IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>,
+	IPropertyGetterSetup<T>, IPropertySetterSetup<T>
 {
 	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T, T>>> _returnCallbacks = [];
@@ -326,8 +327,12 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetup{T}.OnGet(Action)" />
-	public IPropertySetupCallbackBuilder<T> OnGet(Action callback)
+	/// <inheritdoc cref="IPropertySetup{T}.OnGet" />
+	public IPropertyGetterSetup<T> OnGet
+		=> this;
+
+	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action)" />
+	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action callback)
 	{
 		Callback<Action<int, T>> item = new((_, _) => callback());
 		_currentCallback = item;
@@ -335,8 +340,8 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetup{T}.OnGet(Action{T})" />
-	public IPropertySetupCallbackBuilder<T> OnGet(Action<T> callback)
+	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action{T})" />
+	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action<T> callback)
 	{
 		Callback<Action<int, T>> item = new((_, v) => callback(v));
 		_currentCallback = item;
@@ -344,8 +349,8 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetup{T}.OnGet(Action{int, T})" />
-	public IPropertySetupCallbackBuilder<T> OnGet(Action<int, T> callback)
+	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action{int, T})" />
+	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action<int, T> callback)
 	{
 		Callback<Action<int, T>> item = new(callback);
 		_currentCallback = item;
@@ -353,8 +358,12 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetup{T}.OnSet(Action)" />
-	public IPropertySetupCallbackBuilder<T> OnSet(Action callback)
+	/// <inheritdoc cref="IPropertySetup{T}.OnSet" />
+	public IPropertySetterSetup<T> OnSet
+		=> this;
+
+	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action)" />
+	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action callback)
 	{
 		Callback<Action<int, T>> item = new((_, _) => callback());
 		_currentCallback = item;
@@ -362,8 +371,8 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetup{T}.OnSet(Action{T})" />
-	public IPropertySetupCallbackBuilder<T> OnSet(Action<T> callback)
+	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action{T})" />
+	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action<T> callback)
 	{
 		Callback<Action<int, T>> item = new((_, newValue) => callback(newValue));
 		_currentCallback = item;
@@ -371,8 +380,8 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetup{T}.OnSet(Action{int, T})" />
-	public IPropertySetupCallbackBuilder<T> OnSet(Action<int, T> callback)
+	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action{int, T})" />
+	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action<int, T> callback)
 	{
 		Callback<Action<int, T>> item = new(callback);
 		_currentCallback = item;

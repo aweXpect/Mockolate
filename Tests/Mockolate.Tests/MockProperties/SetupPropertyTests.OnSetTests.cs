@@ -12,7 +12,7 @@ public sealed partial class SetupPropertyTests
 			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnSet((i, _) => { invocations.Add(i); })
+				.OnSet.Do((i, _) => { invocations.Add(i); })
 				.For(4);
 
 			for (int i = 0; i < 20; i++)
@@ -29,7 +29,7 @@ public sealed partial class SetupPropertyTests
 			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnSet((i, _) => { invocations.Add(i); })
+				.OnSet.Do((i, _) => { invocations.Add(i); })
 				.When(x => x > 2)
 				.For(4);
 
@@ -51,9 +51,9 @@ public sealed partial class SetupPropertyTests
 
 			sut.SetupMock.Property.MyProperty
 				.InitializeWith(2)
-				.OnSet(() => { callCount1++; })
-				.OnSet((_, v) => { callCount2 += v; }).InParallel()
-				.OnSet((_, v) => { callCount3 += v; });
+				.OnSet.Do(() => { callCount1++; })
+				.OnSet.Do((_, v) => { callCount2 += v; }).InParallel()
+				.OnSet.Do((_, v) => { callCount3 += v; });
 
 			sut.MyProperty = 4;
 			sut.MyProperty = 6;
@@ -76,7 +76,7 @@ public sealed partial class SetupPropertyTests
 			IPropertyService sut = Mock.Create<IPropertyService>();
 
 			sut.SetupMock.Property.MyProperty
-				.OnSet((_, v) => { sum += v; }).Only(times);
+				.OnSet.Do((_, v) => { sum += v; }).Only(times);
 
 			sut.MyProperty = 1;
 			sut.MyProperty = 2;
@@ -95,8 +95,8 @@ public sealed partial class SetupPropertyTests
 			IPropertyService sut = Mock.Create<IPropertyService>();
 
 			sut.SetupMock.Property.MyProperty
-				.OnSet(() => { callCount1++; })
-				.OnSet((_, v) => { callCount2 += v; }).OnlyOnce();
+				.OnSet.Do(() => { callCount1++; })
+				.OnSet.Do((_, v) => { callCount2 += v; }).OnlyOnce();
 
 			sut.MyProperty = 1;
 			sut.MyProperty = 2;
@@ -116,8 +116,8 @@ public sealed partial class SetupPropertyTests
 
 			sut.SetupMock.Property.MyProperty
 				.InitializeWith(2)
-				.OnSet(() => { callCount1++; })
-				.OnSet((_, v) => { callCount2 += v; });
+				.OnSet.Do(() => { callCount1++; })
+				.OnSet.Do((_, v) => { callCount2 += v; });
 
 			sut.MyProperty = 4;
 			sut.MyProperty = 6;
@@ -135,7 +135,7 @@ public sealed partial class SetupPropertyTests
 			IPropertyService sut = Mock.Create<IPropertyService>();
 
 			sut.SetupMock.Property.MyProperty
-				.OnSet(() => { callCount++; });
+				.OnSet.Do(() => { callCount++; });
 
 			sut.MyProperty = 5;
 
@@ -149,7 +149,7 @@ public sealed partial class SetupPropertyTests
 			IPropertyService sut = Mock.Create<IPropertyService>();
 
 			sut.SetupMock.Property.MyProperty
-				.OnSet(() => { callCount++; });
+				.OnSet.Do(() => { callCount++; });
 
 			sut.MyOtherProperty = 1;
 			_ = sut.MyProperty;
@@ -163,7 +163,7 @@ public sealed partial class SetupPropertyTests
 			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnSet((i, _) => { invocations.Add(i); })
+				.OnSet.Do((i, _) => { invocations.Add(i); })
 				.When(x => x is > 3 and < 9);
 
 			for (int i = 0; i < 20; i++)
@@ -183,7 +183,7 @@ public sealed partial class SetupPropertyTests
 
 			sut.SetupMock.Property.MyProperty
 				.InitializeWith(4)
-				.OnSet((_, v) =>
+				.OnSet.Do((_, v) =>
 				{
 					callCount++;
 					receivedNewValue = v;
@@ -202,7 +202,7 @@ public sealed partial class SetupPropertyTests
 			IPropertyService sut = Mock.Create<IPropertyService>();
 
 			sut.SetupMock.Property.MyProperty
-				.OnSet((_, _) => { callCount++; });
+				.OnSet.Do((_, _) => { callCount++; });
 
 			sut.MyOtherProperty = 1;
 			_ = sut.MyProperty;

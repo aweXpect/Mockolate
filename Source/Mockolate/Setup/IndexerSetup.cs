@@ -129,8 +129,9 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
-public class IndexerSetup<TValue, T1>(IParameter match1)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>
+public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
+	IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>,
+	IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
 {
 	private readonly List<Callback<Action<int, T1, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, TValue, TValue>>> _returnCallbacks = [];
@@ -142,6 +143,78 @@ public class IndexerSetup<TValue, T1>(IParameter match1)
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private Func<T1, TValue>? _initialization;
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action)" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action callback)
+	{
+		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => callback());
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{T1})" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1> callback)
+	{
+		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, _) => callback(p1));
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
+	{
+		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, v) => callback(p1, v));
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<int, T1, TValue> callback)
+	{
+		Callback<Action<int, T1, TValue>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action)" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action callback)
+	{
+		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => callback());
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<TValue> callback)
+	{
+		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, v) => callback(v));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
+	{
+		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, v) => callback(p1, v));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<int, T1, TValue> callback)
+	{
+		Callback<Action<int, T1, TValue>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1> CallingBaseClass(bool callBaseClass = true)
@@ -174,77 +247,13 @@ public class IndexerSetup<TValue, T1>(IParameter match1)
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnGet(Action)" />
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action callback)
-	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => callback());
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnGet" />
+	public IIndexerGetterSetup<TValue, T1> OnGet
+		=> this;
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnGet(Action{T1})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<T1> callback)
-	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, _) => callback(p1));
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnGet(Action{T1, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<T1, TValue> callback)
-	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, v) => callback(p1, v));
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnGet(Action{int, T1, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<int, T1, TValue> callback)
-	{
-		Callback<Action<int, T1, TValue>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnSet(Action)" />
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action callback)
-	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => callback());
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnSet(Action{TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<TValue> callback)
-	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, v) => callback(v));
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnSet(Action{T1, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<T1, TValue> callback)
-	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, v) => callback(p1, v));
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnSet(Action{int, T1, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<int, T1, TValue> callback)
-	{
-		Callback<Action<int, T1, TValue>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnSet" />
+	public IIndexerSetterSetup<TValue, T1> OnSet
+		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Returns(TValue)" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue)
@@ -472,8 +481,9 @@ public class IndexerSetup<TValue, T1>(IParameter match1)
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
 /// </summary>
-public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>
+public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) : IndexerSetup
+	, IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>,
+	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, TValue, TValue>>> _returnCallbacks = [];
@@ -485,6 +495,80 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, TValue>? _initialization;
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action)" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action callback)
+	{
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => callback());
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{T1, T2})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2> callback)
+	{
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, _) => callback(p1, p2));
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, v) => callback(p1, p2, v));
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(
+		Action<int, T1, T2, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action)" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action callback)
+	{
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => callback());
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<TValue> callback)
+	{
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, v) => callback(v));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, v) => callback(p1, p2, v));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(
+		Action<int, T1, T2, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2> CallingBaseClass(bool callBaseClass = true)
@@ -517,77 +601,13 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnGet(Action)" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action callback)
-	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => callback());
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnGet" />
+	public IIndexerGetterSetup<TValue, T1, T2> OnGet
+		=> this;
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnGet(Action{T1, T2})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<T1, T2> callback)
-	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, _) => callback(p1, p2));
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnGet(Action{T1, T2, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<T1, T2, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, v) => callback(p1, p2, v));
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnGet(Action{int, T1, T2, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<int, T1, T2, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnSet(Action)" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action callback)
-	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => callback());
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnSet(Action{TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<TValue> callback)
-	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, v) => callback(v));
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnSet(Action{T1, T2, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<T1, T2, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, v) => callback(p1, p2, v));
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnSet(Action{int, T1, T2, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<int, T1, T2, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnSet" />
+	public IIndexerSetterSetup<TValue, T1, T2> OnSet
+		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Returns(TValue)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue)
@@ -825,8 +845,9 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
 public class IndexerSetup<TValue, T1, T2, T3>(
 	IParameter match1,
 	IParameter match2,
-	IParameter match3)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3>
+	IParameter match3) : IndexerSetup,
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
+	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, TValue, TValue>>> _returnCallbacks = [];
@@ -838,6 +859,83 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, T3, TValue>? _initialization;
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action)" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(Action callback)
+	{
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => callback());
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+		Action<T1, T2, T3> callback)
+	{
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, _) => callback(p1, p2, p3));
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+		Action<T1, T2, T3, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, v) => callback(p1, p2, p3, v));
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+		Action<int, T1, T2, T3, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action)" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(Action callback)
+	{
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => callback());
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(Action<TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, v) => callback(v));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
+		Action<T1, T2, T3, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, v) => callback(p1, p2, p3, v));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
+		Action<int, T1, T2, T3, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
@@ -870,77 +968,13 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnGet(Action)" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action callback)
-	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => callback());
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnGet" />
+	public IIndexerGetterSetup<TValue, T1, T2, T3> OnGet
+		=> this;
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnGet(Action{T1, T2, T3})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<T1, T2, T3> callback)
-	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, _) => callback(p1, p2, p3));
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnGet(Action{T1, T2, T3, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<T1, T2, T3, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, v) => callback(p1, p2, p3, v));
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnGet(Action{int, T1, T2, T3, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<int, T1, T2, T3, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnSet(Action)" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action callback)
-	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => callback());
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnSet(Action{TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, v) => callback(v));
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnSet(Action{T1, T2, T3, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<T1, T2, T3, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, v) => callback(p1, p2, p3, v));
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnSet(Action{int, T1, T2, T3, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<int, T1, T2, T3, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnSet" />
+	public IIndexerSetterSetup<TValue, T1, T2, T3> OnSet
+		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Returns(TValue)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue)
@@ -1189,8 +1223,9 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	IParameter match2,
 	IParameter match3,
 	IParameter match4)
-	: IndexerSetup, IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>,
-		IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>
+	: IndexerSetup,
+		IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
+		IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, T4, TValue, TValue>>> _returnCallbacks = [];
@@ -1202,6 +1237,87 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) => callback());
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<T1, T2, T3, T4> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, p1, p2, p3, p4, _) => callback(p1, p2, p3, p4));
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<T1, T2, T3, T4, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, p1, p2, p3, p4, v) => callback(p1, p2, p3, p4, v));
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<int, T1, T2, T3, T4, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_getterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) => callback());
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, v) => callback(v));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<T1, T2, T3, T4, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback =
+			new((_, p1, p2, p3, p4, v) => callback(p1, p2, p3, p4, v));
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<int, T1, T2, T3, T4, TValue> callback)
+	{
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(callback);
+		_currentCallback = currentCallback;
+		_setterCallbacks.Add(currentCallback);
+		return this;
+	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.CallingBaseClass(bool)" />
 	public IIndexerSetup<TValue, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
@@ -1234,78 +1350,13 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnGet(Action)" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action callback)
-	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) => callback());
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnGet" />
+	public IIndexerGetterSetup<TValue, T1, T2, T3, T4> OnGet
+		=> this;
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnGet(Action{T1, T2, T3, T4})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<T1, T2, T3, T4> callback)
-	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, p1, p2, p3, p4, _) => callback(p1, p2, p3, p4));
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnGet(Action{T1, T2, T3, T4, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<T1, T2, T3, T4, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, p1, p2, p3, p4, v) => callback(p1, p2, p3, p4, v));
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnGet(Action{int, T1, T2, T3, T4, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<int, T1, T2, T3, T4, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_getterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnSet(Action)" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action callback)
-	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) => callback());
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnSet(Action{TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, v) => callback(v));
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnSet(Action{T1, T2, T3, T4, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<T1, T2, T3, T4, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback =
-			new((_, p1, p2, p3, p4, v) => callback(p1, p2, p3, p4, v));
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnSet(Action{int, T1, T2, T3, T4, TValue})" />
-	public IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<int, T1, T2, T3, T4, TValue> callback)
-	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
-		_setterCallbacks.Add(currentCallback);
-		return this;
-	}
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnSet" />
+	public IIndexerSetterSetup<TValue, T1, T2, T3, T4> OnSet
+		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Returns(TValue)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue)
