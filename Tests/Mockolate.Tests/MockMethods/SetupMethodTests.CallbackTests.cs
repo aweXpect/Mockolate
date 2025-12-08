@@ -73,7 +73,51 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(() => { callCount1++; })
+					.Do(() => { callCount2++; }).InParallel()
+					.Do(() => { callCount3++; });
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(5);
+				await That(callCount3).IsEqualTo(2);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 2)]
+			[InlineData(3, 3)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int callCount = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(() => { callCount++; }).Only(times);
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callCount).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -81,13 +125,35 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method0()
 					.Do(() => { callCount1++; })
-					.Do(() => { callCount2++; })
-					.Returns("a");
+					.Do(() => { callCount2++; }).OnlyOnce();
 
 				sut.Method0();
 				sut.Method0();
+				sut.Method0();
+				sut.Method0();
 
-				await That(callCount1).IsEqualTo(2);
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(() => { callCount1++; })
+					.Do(() => { callCount2++; });
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
 			}
 
@@ -240,7 +306,50 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do(p1 => { callCount2 += p1; }).InParallel()
+					.Do(p1 => { callCount3 += p1; });
+
+				sut.Method1(1);
+				sut.Method1(2);
+				sut.Method1(3);
+				sut.Method1(4);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do(p1 => { sum += p1; }).Only(times);
+
+				sut.Method1(1);
+				sut.Method1(2);
+				sut.Method1(3);
+				sut.Method1(4);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -248,14 +357,35 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method1(It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do(v => { callCount2 += v; })
-					.Returns("a");
+					.Do(p1 => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method1(1);
 				sut.Method1(2);
+				sut.Method1(3);
+				sut.Method1(4);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do(p1 => { callCount2 += p1; });
+
+				sut.Method1(1);
+				sut.Method1(2);
+				sut.Method1(3);
+				sut.Method1(4);
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -417,7 +547,50 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _) => { callCount2 += p1; }).InParallel()
+					.Do((p1, _) => { callCount3 += p1; });
+
+				sut.Method2(1, 2);
+				sut.Method2(2, 2);
+				sut.Method2(3, 2);
+				sut.Method2(4, 2);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do((p1, _) => { sum += p1; }).Only(times);
+
+				sut.Method2(1, 2);
+				sut.Method2(2, 2);
+				sut.Method2(3, 2);
+				sut.Method2(4, 2);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -425,11 +598,32 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do((v1, v2) => { callCount2 += v1 * v2; })
-					.Returns("a");
+					.Do((p1, _) => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method2(1, 2);
 				sut.Method2(2, 2);
+				sut.Method2(3, 2);
+				sut.Method2(4, 2);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _) => { callCount2 += p1; });
+
+				sut.Method2(1, 2);
+				sut.Method2(2, 2);
+				sut.Method2(3, 2);
+				sut.Method2(4, 2);
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(6);
@@ -603,7 +797,50 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _) => { callCount2 += p1; }).InParallel()
+					.Do((p1, _, _) => { callCount3 += p1; });
+
+				sut.Method3(1, 2, 3);
+				sut.Method3(2, 2, 3);
+				sut.Method3(3, 2, 3);
+				sut.Method3(4, 2, 3);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((p1, _, _) => { sum += p1; }).Only(times);
+
+				sut.Method3(1, 2, 3);
+				sut.Method3(2, 2, 3);
+				sut.Method3(3, 2, 3);
+				sut.Method3(4, 2, 3);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -611,14 +848,35 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do((v1, v2, v3) => { callCount2 += v1 * v2 * v3; })
-					.Returns("a");
+					.Do((p1, _, _) => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method3(1, 2, 3);
 				sut.Method3(2, 2, 3);
+				sut.Method3(3, 2, 3);
+				sut.Method3(4, 2, 3);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _) => { callCount2 += p1; });
+
+				sut.Method3(1, 2, 3);
+				sut.Method3(2, 2, 3);
+				sut.Method3(3, 2, 3);
+				sut.Method3(4, 2, 3);
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(18);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -794,7 +1052,50 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _, _) => { callCount2 += p1; }).InParallel()
+					.Do((p1, _, _, _) => { callCount3 += p1; });
+
+				sut.Method4(1, 2, 3, 4);
+				sut.Method4(2, 2, 3, 4);
+				sut.Method4(3, 2, 3, 4);
+				sut.Method4(4, 2, 3, 4);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((p1, _, _, _) => { sum += p1; }).Only(times);
+
+				sut.Method4(1, 2, 3, 4);
+				sut.Method4(2, 2, 3, 4);
+				sut.Method4(3, 2, 3, 4);
+				sut.Method4(4, 2, 3, 4);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -802,14 +1103,35 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do((v1, v2, v3, v4) => { callCount2 += v1 * v2 * v3 * v4; })
-					.Returns("a");
+					.Do((p1, _, _, _) => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method4(1, 2, 3, 4);
 				sut.Method4(2, 2, 3, 4);
+				sut.Method4(3, 2, 3, 4);
+				sut.Method4(4, 2, 3, 4);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _, _) => { callCount2 += p1; });
+
+				sut.Method4(1, 2, 3, 4);
+				sut.Method4(2, 2, 3, 4);
+				sut.Method4(3, 2, 3, 4);
+				sut.Method4(4, 2, 3, 4);
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(72);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -965,7 +1287,8 @@ public sealed partial class SetupMethodTests
 			{
 				List<int> invocations = [];
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.For(4);
 
@@ -982,7 +1305,8 @@ public sealed partial class SetupMethodTests
 			{
 				List<int> invocations = [];
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.For(4);
@@ -996,7 +1320,52 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _, _, _) => { callCount2 += p1; }).InParallel()
+					.Do((p1, _, _, _, _) => { callCount3 += p1; });
+
+				sut.Method5(1, 2, 3, 4, 5);
+				sut.Method5(2, 2, 3, 4, 5);
+				sut.Method5(3, 2, 3, 4, 5);
+				sut.Method5(4, 2, 3, 4, 5);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do((p1, _, _, _, _) => { sum += p1; }).Only(times);
+
+				sut.Method5(1, 2, 3, 4, 5);
+				sut.Method5(2, 2, 3, 4, 5);
+				sut.Method5(3, 2, 3, 4, 5);
+				sut.Method5(4, 2, 3, 4, 5);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -1005,14 +1374,36 @@ public sealed partial class SetupMethodTests
 				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; })
-					.Returns("a");
+					.Do((p1, _, _, _, _) => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method5(1, 2, 3, 4, 5);
 				sut.Method5(2, 2, 3, 4, 5);
+				sut.Method5(3, 2, 3, 4, 5);
+				sut.Method5(4, 2, 3, 4, 5);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _, _, _) => { callCount2 += p1; });
+
+				sut.Method5(1, 2, 3, 4, 5);
+				sut.Method5(2, 2, 3, 4, 5);
+				sut.Method5(3, 2, 3, 4, 5);
+				sut.Method5(4, 2, 3, 4, 5);
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(360);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -1020,7 +1411,8 @@ public sealed partial class SetupMethodTests
 			{
 				List<int> invocations = [];
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -1098,7 +1490,71 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(() => { callCount1++; })
+					.Do(() => { callCount2++; }).InParallel()
+					.Do(() => { callCount3++; });
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(5);
+				await That(callCount3).IsEqualTo(2);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 2)]
+			[InlineData(3, 3)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int callCount = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(() => { callCount++; }).Only(times);
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callCount).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(() => { callCount1++; })
+					.Do(() => { callCount2++; }).OnlyOnce();
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -1110,8 +1566,11 @@ public sealed partial class SetupMethodTests
 
 				sut.Method0();
 				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
 
-				await That(callCount1).IsEqualTo(2);
+				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
 			}
 
@@ -1263,7 +1722,50 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do(p1 => { callCount2 += p1; }).InParallel()
+					.Do(p1 => { callCount3 += p1; });
+
+				sut.Method1(1);
+				sut.Method1(2);
+				sut.Method1(3);
+				sut.Method1(4);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do(p1 => { sum += p1; }).Only(times);
+
+				sut.Method1(1);
+				sut.Method1(2);
+				sut.Method1(3);
+				sut.Method1(4);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -1271,13 +1773,35 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method1(It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do(v => { callCount2 += v; });
+					.Do(p1 => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method1(1);
 				sut.Method1(2);
+				sut.Method1(3);
+				sut.Method1(4);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do(p1 => { callCount2 += p1; });
+
+				sut.Method1(1);
+				sut.Method1(2);
+				sut.Method1(3);
+				sut.Method1(4);
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -1438,7 +1962,50 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _) => { callCount2 += p1; }).InParallel()
+					.Do((p1, _) => { callCount3 += p1; });
+
+				sut.Method2(1, 2);
+				sut.Method2(2, 2);
+				sut.Method2(3, 2);
+				sut.Method2(4, 2);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do((p1, _) => { sum += p1; }).Only(times);
+
+				sut.Method2(1, 2);
+				sut.Method2(2, 2);
+				sut.Method2(3, 2);
+				sut.Method2(4, 2);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -1446,10 +2013,32 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do((v1, v2) => { callCount2 += v1 * v2; });
+					.Do((p1, _) => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method2(1, 2);
 				sut.Method2(2, 2);
+				sut.Method2(3, 2);
+				sut.Method2(4, 2);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _) => { callCount2 += p1; });
+
+				sut.Method2(1, 2);
+				sut.Method2(2, 2);
+				sut.Method2(3, 2);
+				sut.Method2(4, 2);
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(6);
@@ -1622,7 +2211,50 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _) => { callCount2 += p1; }).InParallel()
+					.Do((p1, _, _) => { callCount3 += p1; });
+
+				sut.Method3(1, 2, 3);
+				sut.Method3(2, 2, 3);
+				sut.Method3(3, 2, 3);
+				sut.Method3(4, 2, 3);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((p1, _, _) => { sum += p1; }).Only(times);
+
+				sut.Method3(1, 2, 3);
+				sut.Method3(2, 2, 3);
+				sut.Method3(3, 2, 3);
+				sut.Method3(4, 2, 3);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -1630,13 +2262,35 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do((v1, v2, v3) => { callCount2 += v1 * v2 * v3; });
+					.Do((p1, _, _) => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method3(1, 2, 3);
 				sut.Method3(2, 2, 3);
+				sut.Method3(3, 2, 3);
+				sut.Method3(4, 2, 3);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _) => { callCount2 += p1; });
+
+				sut.Method3(1, 2, 3);
+				sut.Method3(2, 2, 3);
+				sut.Method3(3, 2, 3);
+				sut.Method3(4, 2, 3);
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(18);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -1811,7 +2465,50 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _, _) => { callCount2 += p1; }).InParallel()
+					.Do((p1, _, _, _) => { callCount3 += p1; });
+
+				sut.Method4(1, 2, 3, 4);
+				sut.Method4(2, 2, 3, 4);
+				sut.Method4(3, 2, 3, 4);
+				sut.Method4(4, 2, 3, 4);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((p1, _, _, _) => { sum += p1; }).Only(times);
+
+				sut.Method4(1, 2, 3, 4);
+				sut.Method4(2, 2, 3, 4);
+				sut.Method4(3, 2, 3, 4);
+				sut.Method4(4, 2, 3, 4);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -1819,13 +2516,35 @@ public sealed partial class SetupMethodTests
 
 				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do((v1, v2, v3, v4) => { callCount2 += v1 * v2 * v3 * v4; });
+					.Do((p1, _, _, _) => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method4(1, 2, 3, 4);
 				sut.Method4(2, 2, 3, 4);
+				sut.Method4(3, 2, 3, 4);
+				sut.Method4(4, 2, 3, 4);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _, _) => { callCount2 += p1; });
+
+				sut.Method4(1, 2, 3, 4);
+				sut.Method4(2, 2, 3, 4);
+				sut.Method4(3, 2, 3, 4);
+				sut.Method4(4, 2, 3, 4);
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(72);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -1980,7 +2699,8 @@ public sealed partial class SetupMethodTests
 			{
 				List<int> invocations = [];
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.For(4);
 
@@ -1997,7 +2717,8 @@ public sealed partial class SetupMethodTests
 			{
 				List<int> invocations = [];
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.For(4);
@@ -2011,7 +2732,52 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task MultipleCallbacks_ShouldAllGetInvoked()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				int callCount3 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _, _, _) => { callCount2 += p1; }).InParallel()
+					.Do((p1, _, _, _, _) => { callCount3 += p1; });
+
+				sut.Method5(1, 2, 3, 4, 5);
+				sut.Method5(2, 2, 3, 4, 5);
+				sut.Method5(3, 2, 3, 4, 5);
+				sut.Method5(4, 2, 3, 4, 5);
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do((p1, _, _, _, _) => { sum += p1; }).Only(times);
+
+				sut.Method5(1, 2, 3, 4, 5);
+				sut.Method5(2, 2, 3, 4, 5);
+				sut.Method5(3, 2, 3, 4, 5);
+				sut.Method5(4, 2, 3, 4, 5);
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
@@ -2020,13 +2786,36 @@ public sealed partial class SetupMethodTests
 				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount1++; })
-					.Do((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; });
+					.Do((p1, _, _, _, _) => { callCount2 += p1; }).OnlyOnce();
 
 				sut.Method5(1, 2, 3, 4, 5);
 				sut.Method5(2, 2, 3, 4, 5);
+				sut.Method5(3, 2, 3, 4, 5);
+				sut.Method5(4, 2, 3, 4, 5);
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do(() => { callCount1++; })
+					.Do((p1, _, _, _, _) => { callCount2 += p1; });
+
+				sut.Method5(1, 2, 3, 4, 5);
+				sut.Method5(2, 2, 3, 4, 5);
+				sut.Method5(3, 2, 3, 4, 5);
+				sut.Method5(4, 2, 3, 4, 5);
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(360);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -2034,7 +2823,8 @@ public sealed partial class SetupMethodTests
 			{
 				List<int> invocations = [];
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 

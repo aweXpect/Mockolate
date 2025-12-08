@@ -42,7 +42,85 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task MultipleOnGet_ShouldAllGetInvoked()
+		public async Task MultipleOnGet_InParallel_ShouldInvokeParallelCallbacksAlways()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			int callCount3 = 0;
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyProperty
+				.OnGet(() => { callCount1++; })
+				.OnGet(v => { callCount2 += v; }).InParallel()
+				.OnGet(v => { callCount3 += v; });
+
+			sut.MyProperty = 1;
+			_ = sut.MyProperty;
+			sut.MyProperty = 2;
+			_ = sut.MyProperty;
+			sut.MyProperty = 3;
+			_ = sut.MyProperty;
+			sut.MyProperty = 4;
+			_ = sut.MyProperty;
+
+			await That(callCount1).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(10);
+			await That(callCount3).IsEqualTo(6);
+		}
+
+		[Theory]
+		[InlineData(1, 1)]
+		[InlineData(2, 3)]
+		[InlineData(3, 6)]
+		public async Task MultipleOnGet_Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times,
+			int expectedValue)
+		{
+			int sum = 0;
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyProperty
+				.OnGet(v => { sum += v; }).Only(times);
+
+			sut.MyProperty = 1;
+			_ = sut.MyProperty;
+			sut.MyProperty = 2;
+			_ = sut.MyProperty;
+			sut.MyProperty = 3;
+			_ = sut.MyProperty;
+			sut.MyProperty = 4;
+			_ = sut.MyProperty;
+			sut.MyProperty = 5;
+			_ = sut.MyProperty;
+
+			await That(sum).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task MultipleOnGet_OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyProperty
+				.OnGet(() => { callCount1++; })
+				.OnGet(v => { callCount2 += v; }).OnlyOnce();
+
+			sut.MyProperty = 1;
+			_ = sut.MyProperty;
+			sut.MyProperty = 2;
+			_ = sut.MyProperty;
+			sut.MyProperty = 3;
+			_ = sut.MyProperty;
+			sut.MyProperty = 4;
+			_ = sut.MyProperty;
+
+			await That(callCount1).IsEqualTo(3);
+			await That(callCount2).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task MultipleOnGet_ShouldInvokeCallbacksInSequence()
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
@@ -56,9 +134,13 @@ public sealed partial class SetupPropertyTests
 			_ = sut.MyProperty;
 			sut.MyProperty = 2;
 			_ = sut.MyProperty;
+			sut.MyProperty = 3;
+			_ = sut.MyProperty;
+			sut.MyProperty = 4;
+			_ = sut.MyProperty;
 
 			await That(callCount1).IsEqualTo(2);
-			await That(callCount2).IsEqualTo(3);
+			await That(callCount2).IsEqualTo(6);
 		}
 
 		[Fact]

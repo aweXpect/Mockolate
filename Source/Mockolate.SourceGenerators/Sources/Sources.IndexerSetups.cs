@@ -42,6 +42,18 @@ internal static partial class Sources
 			string types = string.Join(", ", Enumerable.Range(1, item).Select(i => $"T{i}"));
 			sb.Append($$"""
 			            		/// <summary>
+			            		///     Extensions for indexer callback setups with {{item}} parameters.
+			            		/// </summary>
+			            		extension<TValue, {{types}}>(Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, {{types}}> setup)
+			            		{
+			            			/// <summary>
+			            			///     Executes the callback only once.
+			            			/// </summary>
+			            			public Mockolate.Setup.IIndexerSetup<TValue, {{types}}> OnlyOnce()
+			            				=> setup.Only(1);
+			            		}
+			            		
+			            		/// <summary>
 			            		///     Extensions for indexer setups with {{item}} parameters.
 			            		/// </summary>
 			            		extension<TValue, {{types}}>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, {{types}}> setup)
@@ -53,6 +65,12 @@ internal static partial class Sources
 			            			{
 			            				setup.For(int.MaxValue);
 			            			}
+
+			            			/// <summary>
+			            			///     Uses the return value only once.
+			            			/// </summary>
+			            			public Mockolate.Setup.IIndexerSetup<TValue, {{types}}> OnlyOnce()
+			            				=> setup.Only(1);
 			            		}
 			            """).AppendLine();
 		}
@@ -274,12 +292,20 @@ internal static partial class Sources
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append(
-				"\t\t///     Limits the callback to only execute for property accesses where the predicate returns true.")
+				"\t\t///     Runs the callback in parallel to the other callbacks.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> InParallel();")
+			.AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the callback to only execute for indexer accesses where the predicate returns true.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\t/// <remarks>").AppendLine();
 		sb.Append(
-				"\t\t///     Provides a zero-based counter indicating how many times the property has been accessed so far.")
+				"\t\t///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.")
 			.AppendLine();
 		sb.Append("\t\t/// </remarks>").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
@@ -311,7 +337,21 @@ internal static partial class Sources
 			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
 			.AppendLine();
 		sb.Append("\t\t/// </remarks>").AppendLine();
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams).Append("> For(int times);")
+			.AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Deactivates the callback after the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{TValue, ")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -330,12 +370,12 @@ internal static partial class Sources
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append(
-				"\t\t///     Limits the callback to only execute for property accesses where the predicate returns true.")
+				"\t\t///     Limits the callback to only execute for indexer accesses where the predicate returns true.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\t/// <remarks>").AppendLine();
 		sb.Append(
-				"\t\t///     Provides a zero-based counter indicating how many times the property has been accessed so far.")
+				"\t\t///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.")
 			.AppendLine();
 		sb.Append("\t\t/// </remarks>").AppendLine();
 		sb.Append("\t\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams)
@@ -367,7 +407,21 @@ internal static partial class Sources
 			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
 			.AppendLine();
 		sb.Append("\t\t/// </remarks>").AppendLine();
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("\t\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams).Append("> For(int times);")
+			.AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Deactivates the return/throw after the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{TValue, ")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -401,7 +455,9 @@ internal static partial class Sources
 		sb.Append("\t\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentCallback;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentReturnCallback;").AppendLine();
+		sb.Append("\t\tprivate int _currentGetterCallbacksIndex;").AppendLine();
 		sb.Append("\t\tprivate int _currentReturnCallbackIndex;").AppendLine();
+		sb.Append("\t\tprivate int _currentSetterCallbacksIndex;").AppendLine();
 		sb.Append("\t\tprivate Func<").Append(typeParams).Append(", TValue>? _initialization;").AppendLine();
 		sb.AppendLine();
 
@@ -736,13 +792,36 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupCallbackBuilder{TValue, ").Append(typeParams)
+			.Append("}.InParallel()\" />").AppendLine();
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+			.Append("> IIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+			.Append(">.InParallel()").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentCallback?.InParallel();").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupCallbackWhenBuilder{TValue, ").Append(typeParams)
 			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupCallbackWhenBuilder<TValue, ")
+		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
+			.Append("> IIndexerSetupCallbackWhenBuilder<TValue, ")
 			.Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupCallbackWhenBuilder{TValue, ").Append(typeParams)
+			.Append("}.Only(int)\" />").AppendLine();
+		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupCallbackWhenBuilder<TValue, ")
+			.Append(typeParams)
+			.Append(">.Only(int times)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentCallback?.Only(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -760,11 +839,23 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupReturnWhenBuilder{TValue, ").Append(typeParams)
 			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupReturnWhenBuilder<TValue, ")
+		sb.Append("\t\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams)
+			.Append("> IIndexerSetupReturnWhenBuilder<TValue, ")
 			.Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupReturnWhenBuilder{TValue, ").Append(typeParams)
+			.Append("}.Only(int)\" />").AppendLine();
+		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupReturnWhenBuilder<TValue, ")
+			.Append(typeParams)
+			.Append(">.Only(int times)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentReturnCallback?.Only(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -788,10 +879,23 @@ internal static partial class Sources
 
 		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)")
+		sb.Append("\t\t\t\tbool wasInvoked = false;").AppendLine();
+		sb.Append("\t\t\t\tint currentGetterCallbacksIndex = _currentGetterCallbacksIndex;").AppendLine();
+		sb.Append("\t\t\t\tfor (int i = 0; i < _getterCallbacks.Count; i++)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tCallback<Action<int, ").Append(typeParams).Append(">> getterCallback =").AppendLine();
+		sb.Append("\t\t\t\t\t\t_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];")
 			.AppendLine();
-		sb.Append("\t\t\t\t\t=> @delegate(invocationCount, ").Append(parameters).Append(")));")
+		sb.Append(
+				"\t\t\t\t\tif (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)")
 			.AppendLine();
+		sb.Append("\t\t\t\t\t\t=> @delegate(invocationCount, ").Append(parameters).Append(")))")
+			.AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\twasInvoked = true;").AppendLine();
+		sb.Append("\t\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.AppendLine();
 		sb.Append("\t\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tCallback<Func<int, TValue, ").Append(typeParams)
@@ -843,10 +947,23 @@ internal static partial class Sources
 
 		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t_setterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)")
+		sb.Append("\t\t\t\tbool wasInvoked = false;").AppendLine();
+		sb.Append("\t\t\t\tint currentSetterCallbacksIndex = _currentSetterCallbacksIndex;").AppendLine();
+		sb.Append("\t\t\t\tfor (int i = 0; i < _setterCallbacks.Count; i++)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tCallback<Action<int, TValue, ").Append(typeParams).Append(">> setterCallback =")
 			.AppendLine();
-		sb.Append("\t\t\t\t\t=> @delegate(invocationCount, resultValue, ").Append(parameters).Append(")));")
+		sb.Append("\t\t\t\t\t\t_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];")
 			.AppendLine();
+		sb.Append(
+				"\t\t\t\t\tif (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)")
+			.AppendLine();
+		sb.Append("\t\t\t\t\t\t=> @delegate(invocationCount, resultValue, ").Append(parameters).Append(")))")
+			.AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\twasInvoked = true;").AppendLine();
+		sb.Append("\t\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();

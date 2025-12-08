@@ -42,23 +42,66 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
-		public async Task ShouldExecuteAllGetterCallbacks()
+		public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
 			int callCount3 = 0;
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			mock.SetupMock.Indexer(It.Is(2))
-				.OnGet(() => { callCount1++; })
-				.OnGet(v => { callCount2 += v; })
-				.OnGet(() => { callCount3++; });
+			IIndexerService sut = Mock.Create<IIndexerService>();
 
-			_ = mock[2];
-			_ = mock[2];
+			sut.SetupMock.Indexer(It.IsAny<int>())
+				.OnGet(() => { callCount1++; })
+				.OnGet(v => { callCount2 += v; }).InParallel()
+				.OnGet(v => { callCount3 += v; });
+
+			_ = sut[1];
+			_ = sut[2];
+			_ = sut[3];
+			_ = sut[4];
 
 			await That(callCount1).IsEqualTo(2);
-			await That(callCount2).IsEqualTo(4);
-			await That(callCount3).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(10);
+			await That(callCount3).IsEqualTo(6);
+		}
+
+		[Theory]
+		[InlineData(1, 1)]
+		[InlineData(2, 3)]
+		[InlineData(3, 6)]
+		public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+		{
+			int sum = 0;
+			IIndexerService sut = Mock.Create<IIndexerService>();
+
+			sut.SetupMock.Indexer(It.IsAny<int>())
+				.OnGet(v => { sum += v; }).Only(times);
+
+			_ = sut[1];
+			_ = sut[2];
+			_ = sut[3];
+			_ = sut[4];
+
+			await That(sum).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			IIndexerService sut = Mock.Create<IIndexerService>();
+
+			sut.SetupMock.Indexer(It.IsAny<int>())
+				.OnGet(() => { callCount1++; })
+				.OnGet(v => { callCount2 += v; }).OnlyOnce();
+
+			_ = sut[1];
+			_ = sut[2];
+			_ = sut[3];
+			_ = sut[4];
+
+			await That(callCount1).IsEqualTo(3);
+			await That(callCount2).IsEqualTo(2);
 		}
 
 		[Fact]
@@ -94,6 +137,26 @@ public sealed partial class SetupIndexerTests
 			_ = mock[5];
 
 			await That(callCount).IsEqualTo(6);
+		}
+
+		[Fact]
+		public async Task ShouldInvokeCallbacksInSequence()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			IIndexerService sut = Mock.Create<IIndexerService>();
+
+			sut.SetupMock.Indexer(It.IsAny<int>())
+				.OnGet(() => { callCount1++; })
+				.OnGet(v => { callCount2 += v; });
+
+			_ = sut[1];
+			_ = sut[2];
+			_ = sut[3];
+			_ = sut[4];
+
+			await That(callCount1).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(6);
 		}
 
 		[Fact]
@@ -181,23 +244,66 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task ShouldExecuteAllGetterCallbacks()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
-					.OnGet(() => { callCount1++; })
-					.OnGet((v1, v2) => { callCount2 += v1 * v2; })
-					.OnGet(() => { callCount3++; });
+				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				_ = mock[2, 3];
-				_ = mock[4, 5];
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _) => { callCount2 += p1; }).InParallel()
+					.OnGet((p1, _) => { callCount3 += p1; });
+
+				_ = sut[1, 2];
+				_ = sut[2, 2];
+				_ = sut[3, 2];
+				_ = sut[4, 2];
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(26);
-				await That(callCount3).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnGet((p1, _) => { sum += p1; }).Only(times);
+
+				_ = sut[1, 2];
+				_ = sut[2, 2];
+				_ = sut[3, 2];
+				_ = sut[4, 2];
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _) => { callCount2 += p1; }).OnlyOnce();
+
+				_ = sut[1, 2];
+				_ = sut[2, 2];
+				_ = sut[3, 2];
+				_ = sut[4, 2];
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
 			}
 
 			[Fact]
@@ -234,6 +340,26 @@ public sealed partial class SetupIndexerTests
 				_ = mock[8, 6]; // no
 
 				await That(callCount).IsEqualTo(8);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _) => { callCount2 += p1; });
+
+				_ = sut[1, 2];
+				_ = sut[2, 2];
+				_ = sut[3, 2];
+				_ = sut[4, 2];
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -308,23 +434,66 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task ShouldExecuteAllGetterCallbacks()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnGet(() => { callCount1++; })
-					.OnGet((v1, v2, v3) => { callCount2 += v1 * v2 * v3; })
-					.OnGet(() => { callCount3++; });
+				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				_ = mock[1, 2, 3]; // 6
-				_ = mock[4, 5, 6]; // 120
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _) => { callCount2 += p1; }).InParallel()
+					.OnGet((p1, _, _) => { callCount3 += p1; });
+
+				_ = sut[1, 2, 3];
+				_ = sut[2, 2, 3];
+				_ = sut[3, 2, 3];
+				_ = sut[4, 2, 3];
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(126);
-				await That(callCount3).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet((p1, _, _) => { sum += p1; }).Only(times);
+
+				_ = sut[1, 2, 3];
+				_ = sut[2, 2, 3];
+				_ = sut[3, 2, 3];
+				_ = sut[4, 2, 3];
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _) => { callCount2 += p1; }).OnlyOnce();
+
+				_ = sut[1, 2, 3];
+				_ = sut[2, 2, 3];
+				_ = sut[3, 2, 3];
+				_ = sut[4, 2, 3];
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
 			}
 
 			[Fact]
@@ -365,6 +534,26 @@ public sealed partial class SetupIndexerTests
 				_ = mock[6, 7, 8]; // no
 
 				await That(callCount).IsEqualTo(14);
+			}
+
+			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _) => { callCount2 += p1; });
+
+				_ = sut[1, 2, 3];
+				_ = sut[2, 2, 3];
+				_ = sut[3, 2, 3];
+				_ = sut[4, 2, 3];
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(6);
 			}
 
 			[Fact]
@@ -439,23 +628,66 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task ShouldExecuteAllGetterCallbacks()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnGet(() => { callCount1++; })
-					.OnGet((v1, v2, v3, v4) => { callCount2 += v1 * v2 * v3 * v4; })
-					.OnGet(() => { callCount3++; });
+				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				_ = mock[1, 2, 3, 4]; // 24
-				_ = mock[4, 5, 6, 7]; // 840
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _, _) => { callCount2 += p1; }).InParallel()
+					.OnGet((p1, _, _, _) => { callCount3 += p1; });
+
+				_ = sut[1, 2, 3, 4];
+				_ = sut[2, 2, 3, 4];
+				_ = sut[3, 2, 3, 4];
+				_ = sut[4, 2, 3, 4];
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(864);
-				await That(callCount3).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet((p1, _, _, _) => { sum += p1; }).Only(times);
+
+				_ = sut[1, 2, 3, 4];
+				_ = sut[2, 2, 3, 4];
+				_ = sut[3, 2, 3, 4];
+				_ = sut[4, 2, 3, 4];
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _, _) => { callCount2 += p1; }).OnlyOnce();
+
+				_ = sut[1, 2, 3, 4];
+				_ = sut[2, 2, 3, 4];
+				_ = sut[3, 2, 3, 4];
+				_ = sut[4, 2, 3, 4];
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
 			}
 
 			[Fact]
@@ -500,6 +732,26 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _, _) => { callCount2 += p1; });
+
+				_ = sut[1, 2, 3, 4];
+				_ = sut[2, 2, 3, 4];
+				_ = sut[3, 2, 3, 4];
+				_ = sut[4, 2, 3, 4];
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(6);
+			}
+
+			[Fact]
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
@@ -524,7 +776,8 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.OnGet(() => { callCount++; });
 
 				_ = mock[1];
@@ -541,7 +794,8 @@ public sealed partial class SetupIndexerTests
 			{
 				List<int> invocations = [];
 				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.OnGet((i, _, _, _, _, _) => { invocations.Add(i); })
 					.For(4);
 
@@ -558,7 +812,8 @@ public sealed partial class SetupIndexerTests
 			{
 				List<int> invocations = [];
 				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.OnGet((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.For(4);
@@ -572,23 +827,69 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task ShouldExecuteAllGetterCallbacks()
+			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnGet(() => { callCount1++; })
-					.OnGet((v1, v2, v3, v4, v5) => { callCount2 += v1 * v2 * v3 * v4 * v5; })
-					.OnGet(() => { callCount3++; });
+				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				_ = mock[1, 2, 3, 4, 5]; // 120
-				_ = mock[4, 5, 6, 7, 8]; // 6720
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _, _, _) => { callCount2 += p1; }).InParallel()
+					.OnGet((p1, _, _, _, _) => { callCount3 += p1; });
+
+				_ = sut[1, 2, 3, 4, 5];
+				_ = sut[2, 2, 3, 4, 5];
+				_ = sut[3, 2, 3, 4, 5];
+				_ = sut[4, 2, 3, 4, 5];
 
 				await That(callCount1).IsEqualTo(2);
-				await That(callCount2).IsEqualTo(6840);
-				await That(callCount3).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(10);
+				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(1, 1)]
+			[InlineData(2, 3)]
+			[InlineData(3, 6)]
+			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
+			{
+				int sum = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.OnGet((p1, _, _, _, _) => { sum += p1; }).Only(times);
+
+				_ = sut[1, 2, 3, 4, 5];
+				_ = sut[2, 2, 3, 4, 5];
+				_ = sut[3, 2, 3, 4, 5];
+				_ = sut[4, 2, 3, 4, 5];
+
+				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task OnlyOnce_ShouldDeactivateCallbackAfterFirstExecution()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _, _, _) => { callCount2 += p1; }).OnlyOnce();
+
+				_ = sut[1, 2, 3, 4, 5];
+				_ = sut[2, 2, 3, 4, 5];
+				_ = sut[3, 2, 3, 4, 5];
+				_ = sut[4, 2, 3, 4, 5];
+
+				await That(callCount1).IsEqualTo(3);
+				await That(callCount2).IsEqualTo(2);
 			}
 
 			[Fact]
@@ -634,11 +935,33 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldInvokeCallbacksInSequence()
+			{
+				int callCount1 = 0;
+				int callCount2 = 0;
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.OnGet(() => { callCount1++; })
+					.OnGet((p1, _, _, _, _) => { callCount2 += p1; });
+
+				_ = sut[1, 2, 3, 4, 5];
+				_ = sut[2, 2, 3, 4, 5];
+				_ = sut[3, 2, 3, 4, 5];
+				_ = sut[4, 2, 3, 4, 5];
+
+				await That(callCount1).IsEqualTo(2);
+				await That(callCount2).IsEqualTo(6);
+			}
+
+			[Fact]
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
 				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.OnGet((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 

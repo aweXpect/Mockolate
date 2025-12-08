@@ -10,11 +10,30 @@ public class Callback
 {
 	private Func<int, bool>? _invocationPredicate;
 	private Func<int, bool>? _matchingPredicate;
+	private int _onlyTimes;
+
+	/// <summary>
+	///     Specifies if the callback may be invoked in parallel.
+	/// </summary>
+	protected bool RunInParallel { get; private set; }
 
 	/// <summary>
 	///     Check if a <see cref="For" />-predicate was specified.
 	/// </summary>
 	protected bool HasForSpecified => _matchingPredicate != null;
+
+	/// <summary>
+	///     Flag indicating whether the callback is active.
+	/// </summary>
+	protected bool IsActive(int matchingCount)
+	{
+		if (_onlyTimes > 0 && matchingCount >= _onlyTimes)
+		{
+			return false;
+		}
+
+		return true;
+	}
 
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns <see langword="true" />.
@@ -35,6 +54,26 @@ public class Callback
 	/// </remarks>
 	public void For(Func<int, bool> predicate)
 		=> _matchingPredicate = predicate;
+
+	/// <summary>
+	///     Deactivates the callback after it was invoked the given number of <paramref name="times" />.
+	/// </summary>
+	public void Only(int times)
+	{
+		if (times <= 0)
+		{
+			// ReSharper disable once LocalizableElement
+			throw new ArgumentOutOfRangeException(nameof(times), "Times must be greater than zero.");
+		}
+
+		_onlyTimes = times;
+	}
+
+	/// <summary>
+	///     Specifies that the callback may be invoked in parallel.
+	/// </summary>
+	public void InParallel()
+		=> RunInParallel = true;
 
 	/// <summary>
 	///     Check if the invocation count satisfies the <see cref="When" />-predicate.
@@ -60,25 +99,44 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	/// <summary>
 	///     Invokes the callback if the predicates are satisfied, providing the invocation count.
 	/// </summary>
-	public void Invoke(Action<int, TDelegate> callback)
+	public bool Invoke(bool wasInvoked, ref int index, Action<int, TDelegate> callback)
 	{
-		if (CheckInvocations(_invocationCount))
+		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
 		{
-			_invocationCount++;
 			if (CheckMatching(_matchingCount))
 			{
-				_matchingCount++;
-				callback(_invocationCount - 1, @delegate);
+				_invocationCount++;
+
+				if (RunInParallel)
+				{
+					if (!wasInvoked)
+					{
+						Interlocked.Increment(ref index);
+					}
+
+					_matchingCount++;
+					callback(_invocationCount - 1, @delegate);
+				}
+				else if (!wasInvoked)
+				{
+					if (!HasForSpecified || !CheckMatching(_matchingCount + 1))
+					{
+						Interlocked.Increment(ref index);
+					}
+
+					_matchingCount++;
+					callback(_invocationCount - 1, @delegate);
+				}
+
+				return !RunInParallel;
 			}
-			else
-			{
-				_matchingCount++;
-			}
+
+			_matchingCount++;
 		}
-		else
-		{
-			_invocationCount++;
-		}
+
+		_invocationCount++;
+		Interlocked.Increment(ref index);
+		return false;
 	}
 
 	/// <summary>
@@ -86,7 +144,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	/// </summary>
 	public bool Invoke(ref int index, Action<int, TDelegate> callback)
 	{
-		if (CheckInvocations(_invocationCount))
+		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
 		{
 			if (CheckMatching(_matchingCount))
 			{
@@ -114,7 +172,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	/// </summary>
 	public bool Invoke<TReturn>(ref int index, Func<int, TDelegate, TReturn> callback, out TReturn? returnValue)
 	{
-		if (CheckInvocations(_invocationCount))
+		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
 		{
 			if (CheckMatching(_matchingCount))
 			{

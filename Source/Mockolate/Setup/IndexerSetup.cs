@@ -20,7 +20,8 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	bool IInteractiveIndexerSetup.Matches(IndexerAccess indexerAccess)
 		=> IsMatch(indexerAccess.Parameters);
 
-	/// <inheritdoc cref="IInteractiveIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, object?[], out TValue)" />
+	/// <inheritdoc
+	///     cref="IInteractiveIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, object?[], out TValue)" />
 	bool IInteractiveIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
 		object?[] parameters,
 		[NotNullWhen(true)] out TValue value)
@@ -136,8 +137,10 @@ public class IndexerSetup<TValue, T1>(IParameter match1)
 	private readonly List<Callback<Action<int, TValue, T1>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private int _currentSetterCallbacksIndex;
 	private Func<T1, TValue>? _initialization;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.CallingBaseClass(bool)" />
@@ -360,10 +363,24 @@ public class IndexerSetup<TValue, T1>(IParameter match1)
 		return this;
 	}
 
+	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1}.InParallel()" />
+	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetupCallbackBuilder<TValue, T1>.InParallel()
+	{
+		_currentCallback?.InParallel();
+		return this;
+	}
+
 	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1}.For(int)" />
-	IIndexerSetup<TValue, T1> IIndexerSetupCallbackWhenBuilder<TValue, T1>.For(int times)
+	IIndexerSetupCallbackWhenBuilder<TValue, T1> IIndexerSetupCallbackWhenBuilder<TValue, T1>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1}.Only(int)" />
+	IIndexerSetup<TValue, T1> IIndexerSetupCallbackWhenBuilder<TValue, T1>.Only(int times)
+	{
+		_currentCallback?.Only(times);
 		return this;
 	}
 
@@ -375,9 +392,16 @@ public class IndexerSetup<TValue, T1>(IParameter match1)
 	}
 
 	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1}.For(int)" />
-	IIndexerSetup<TValue, T1> IIndexerSetupReturnWhenBuilder<TValue, T1>.For(int times)
+	IIndexerSetupReturnWhenBuilder<TValue, T1> IIndexerSetupReturnWhenBuilder<TValue, T1>.For(int times)
 	{
 		_currentReturnCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1}.Only(int)" />
+	IIndexerSetup<TValue, T1> IIndexerSetupReturnWhenBuilder<TValue, T1>.Only(int times)
+	{
+		_currentReturnCallback?.Only(times);
 		return this;
 	}
 
@@ -397,8 +421,19 @@ public class IndexerSetup<TValue, T1>(IParameter match1)
 		    indexerGetterAccess.Parameters.Length == 1 &&
 		    TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior))
 		{
-			_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-				=> @delegate(invocationCount, p1)));
+			bool wasInvoked = false;
+			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+			for (int i = 0; i < _getterCallbacks.Count; i++)
+			{
+				Callback<Action<int, T1>> getterCallback =
+					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, p1)))
+				{
+					wasInvoked = true;
+				}
+			}
+
 			foreach (Callback<Func<int, TValue, T1, TValue>> _ in _returnCallbacks)
 			{
 				Callback<Func<int, TValue, T1, TValue>> returnCallback =
@@ -423,8 +458,18 @@ public class IndexerSetup<TValue, T1>(IParameter match1)
 		    indexerSetterAccess.Parameters.Length == 1 &&
 		    TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-				=> @delegate(invocationCount, resultValue, p1)));
+			bool wasInvoked = false;
+			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+			for (int i = 0; i < _setterCallbacks.Count; i++)
+			{
+				Callback<Action<int, TValue, T1>> setterCallback =
+					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, resultValue, p1)))
+				{
+					wasInvoked = true;
+				}
+			}
 		}
 	}
 
@@ -462,8 +507,10 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
 	private readonly List<Callback<Action<int, TValue, T1, T2>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, TValue>? _initialization;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.CallingBaseClass(bool)" />
@@ -688,10 +735,24 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
 		return this;
 	}
 
+	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2}.InParallel()" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetupCallbackBuilder<TValue, T1, T2>.InParallel()
+	{
+		_currentCallback?.InParallel();
+		return this;
+	}
+
 	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2}.For(int)" />
-	IIndexerSetup<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.For(int times)
+	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.Only(int times)
+	{
+		_currentCallback?.Only(times);
 		return this;
 	}
 
@@ -704,9 +765,16 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
 	}
 
 	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2}.For(int)" />
-	IIndexerSetup<TValue, T1, T2> IIndexerSetupReturnWhenBuilder<TValue, T1, T2>.For(int times)
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2> IIndexerSetupReturnWhenBuilder<TValue, T1, T2>.For(int times)
 	{
 		_currentReturnCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2> IIndexerSetupReturnWhenBuilder<TValue, T1, T2>.Only(int times)
+	{
+		_currentReturnCallback?.Only(times);
 		return this;
 	}
 
@@ -727,8 +795,19 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
 		    TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior) &&
 		    TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior))
 		{
-			_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-				=> @delegate(invocationCount, p1, p2)));
+			bool wasInvoked = false;
+			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+			for (int i = 0; i < _getterCallbacks.Count; i++)
+			{
+				Callback<Action<int, T1, T2>> getterCallback =
+					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, p1, p2)))
+				{
+					wasInvoked = true;
+				}
+			}
+
 			foreach (Callback<Func<int, TValue, T1, T2, TValue>> _ in _returnCallbacks)
 			{
 				Callback<Func<int, TValue, T1, T2, TValue>> returnCallback =
@@ -754,8 +833,18 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2)
 		    TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
 		    TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-				=> @delegate(invocationCount, resultValue, p1, p2)));
+			bool wasInvoked = false;
+			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+			for (int i = 0; i < _setterCallbacks.Count; i++)
+			{
+				Callback<Action<int, TValue, T1, T2>> setterCallback =
+					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, resultValue, p1, p2)))
+				{
+					wasInvoked = true;
+				}
+			}
 		}
 	}
 
@@ -798,8 +887,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private readonly List<Callback<Action<int, TValue, T1, T2, T3>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, T3, TValue>? _initialization;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.CallingBaseClass(bool)" />
@@ -1028,10 +1119,25 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return this;
 	}
 
+	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3}.InParallel()" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>.InParallel()
+	{
+		_currentCallback?.InParallel();
+		return this;
+	}
+
 	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3}.For(int)" />
-	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.For(int times)
+	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.
+		For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.Only(int times)
+	{
+		_currentCallback?.Only(times);
 		return this;
 	}
 
@@ -1044,9 +1150,16 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3}.For(int)" />
-	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>.For(int times)
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>.For(int times)
 	{
 		_currentReturnCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>.Only(int times)
+	{
+		_currentReturnCallback?.Only(times);
 		return this;
 	}
 
@@ -1068,8 +1181,19 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		    TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior) &&
 		    TryCast(indexerGetterAccess.Parameters[2], out T3 p3, behavior))
 		{
-			_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-				=> @delegate(invocationCount, p1, p2, p3)));
+			bool wasInvoked = false;
+			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+			for (int i = 0; i < _getterCallbacks.Count; i++)
+			{
+				Callback<Action<int, T1, T2, T3>> getterCallback =
+					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, p1, p2, p3)))
+				{
+					wasInvoked = true;
+				}
+			}
+
 			foreach (Callback<Func<int, TValue, T1, T2, T3, TValue>> _ in _returnCallbacks)
 			{
 				Callback<Func<int, TValue, T1, T2, T3, TValue>> returnCallback =
@@ -1096,8 +1220,18 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		    TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior) &&
 		    TryCast(indexerSetterAccess.Parameters[2], out T3 p3, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-				=> @delegate(invocationCount, resultValue, p1, p2, p3)));
+			bool wasInvoked = false;
+			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+			for (int i = 0; i < _setterCallbacks.Count; i++)
+			{
+				Callback<Action<int, TValue, T1, T2, T3>> setterCallback =
+					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, resultValue, p1, p2, p3)))
+				{
+					wasInvoked = true;
+				}
+			}
 		}
 	}
 
@@ -1144,8 +1278,10 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private readonly List<Callback<Action<int, TValue, T1, T2, T3, T4>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.CallingBaseClass(bool)" />
@@ -1378,10 +1514,26 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return this;
 	}
 
+	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3, T4}.InParallel()" />
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>.
+		InParallel()
+	{
+		_currentCallback?.InParallel();
+		return this;
+	}
+
 	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3, T4}.For(int)" />
-	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.For(int times)
+	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.
+		For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3, T4}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
+	{
+		_currentCallback?.Only(times);
 		return this;
 	}
 
@@ -1394,9 +1546,17 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3, T4}.For(int)" />
-	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.For(int times)
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.
+		For(int times)
 	{
 		_currentReturnCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3, T4}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
+	{
+		_currentReturnCallback?.Only(times);
 		return this;
 	}
 
@@ -1419,8 +1579,19 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		    TryCast(indexerGetterAccess.Parameters[2], out T3 p3, behavior) &&
 		    TryCast(indexerGetterAccess.Parameters[3], out T4 p4, behavior))
 		{
-			_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-				=> @delegate(invocationCount, p1, p2, p3, p4)));
+			bool wasInvoked = false;
+			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+			for (int i = 0; i < _getterCallbacks.Count; i++)
+			{
+				Callback<Action<int, T1, T2, T3, T4>> getterCallback =
+					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, p1, p2, p3, p4)))
+				{
+					wasInvoked = true;
+				}
+			}
+
 			foreach (Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> _ in _returnCallbacks)
 			{
 				Callback<Func<int, TValue, T1, T2, T3, T4, TValue>> returnCallback =
@@ -1448,8 +1619,18 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		    TryCast(indexerSetterAccess.Parameters[2], out T3 p3, behavior) &&
 		    TryCast(indexerSetterAccess.Parameters[3], out T4 p4, behavior))
 		{
-			_setterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-				=> @delegate(invocationCount, resultValue, p1, p2, p3, p4)));
+			bool wasInvoked = false;
+			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+			for (int i = 0; i < _setterCallbacks.Count; i++)
+			{
+				Callback<Action<int, TValue, T1, T2, T3, T4>> setterCallback =
+					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+					    => @delegate(invocationCount, resultValue, p1, p2, p3, p4)))
+				{
+					wasInvoked = true;
+				}
+			}
 		}
 	}
 

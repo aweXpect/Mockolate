@@ -51,11 +51,28 @@ internal static partial class Sources
 			}
 
 			string xmlDocSummary = item.Item2 ? "returning void" : "returning <typeparamref name=\"TReturn\"/>";
-			string typePrefix =
-				item.Item2
-					? "Mockolate.Setup.IVoidMethodSetupReturnBuilder"
-					: "Mockolate.Setup.IReturnMethodSetupReturnBuilder";
+			string typePrefix = item.Item2
+				? "Mockolate.Setup.IVoidMethodSetupReturnBuilder"
+				: "Mockolate.Setup.IReturnMethodSetupReturnBuilder";
+			string setupTypePrefix = item.Item2
+				? "Mockolate.Setup.IVoidMethodSetup"
+				: "Mockolate.Setup.IReturnMethodSetup";
+			string setupCallbackPrefix = item.Item2
+				? "Mockolate.Setup.IVoidMethodSetupCallbackBuilder"
+				: "Mockolate.Setup.IReturnMethodSetupCallbackBuilder";
 			sb.Append($$"""
+			            		/// <summary>
+			            		///     Extensions for method callback setup {{xmlDocSummary}} with {{item.Item1}} parameters.
+			            		/// </summary>
+			            		extension<{{genericParameters}}>({{setupCallbackPrefix}}<{{genericParameters}}> setup)
+			            		{
+			            			/// <summary>
+			            			///     Executes the callback only once.
+			            			/// </summary>
+			            			public {{setupTypePrefix}}<{{genericParameters}}> OnlyOnce()
+			            				=> setup.Only(1);
+			            		}
+			            		
 			            		/// <summary>
 			            		///     Extensions for method setup {{xmlDocSummary}} with {{item.Item1}} parameters.
 			            		/// </summary>
@@ -68,6 +85,12 @@ internal static partial class Sources
 			            			{
 			            				setup.For(int.MaxValue);
 			            			}
+
+			            			/// <summary>
+			            			///     Uses the return value only once.
+			            			/// </summary>
+			            			public {{setupTypePrefix}}<{{genericParameters}}> OnlyOnce()
+			            				=> setup.Only(1);
 			            		}
 			            """).AppendLine();
 		}
@@ -193,9 +216,27 @@ internal static partial class Sources
 		sb.Append("internal interface IVoidMethodSetupCallbackBuilder<").Append(typeParams)
 			.Append("> : IVoidMethodSetupCallbackWhenBuilder<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("{").AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupCallbackBuilder{").Append(typeParams)
-			.Append("}.When(Func{int, bool})\" />").AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Runs the callback in parallel to the other callbacks.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\tIVoidMethodSetupCallbackBuilder<").Append(typeParams).Append("> InParallel();").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the callback to only execute for indexer accesses where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the callback to only execute for method invocations where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     Provides a zero-based counter indicating how many times the method has been invoked so far.")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
 		sb.Append("\t\tIVoidMethodSetupCallbackWhenBuilder<").Append(typeParams)
 			.Append("> When(Func<int, bool> predicate);").AppendLine();
 		sb.Append("}").AppendLine();
@@ -215,9 +256,32 @@ internal static partial class Sources
 		sb.Append("internal interface IVoidMethodSetupCallbackWhenBuilder<").Append(typeParams)
 			.Append("> : IVoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("{").AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupCallbackWhenBuilder{").Append(typeParams)
-			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the callback to only execute for the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IVoidMethodSetupCallbackBuilder{")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIVoidMethodSetupCallbackWhenBuilder<").Append(typeParams).Append("> For(int times);")
+			.AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Deactivates the callback after the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IVoidMethodSetupCallbackBuilder{")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
@@ -236,9 +300,16 @@ internal static partial class Sources
 		sb.Append("internal interface IVoidMethodSetupReturnBuilder<").Append(typeParams)
 			.Append("> : IVoidMethodSetupReturnWhenBuilder<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("{").AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupReturnBuilder{").Append(typeParams)
-			.Append("}.When(Func{int, bool})\" />").AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the throw to only execute for method invocations where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     Provides a zero-based counter indicating how many times the method has been invoked so far.")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
 		sb.Append("\t\tIVoidMethodSetupReturnWhenBuilder<").Append(typeParams)
 			.Append("> When(Func<int, bool> predicate);").AppendLine();
 		sb.Append("}").AppendLine();
@@ -258,9 +329,31 @@ internal static partial class Sources
 		sb.Append("internal interface IVoidMethodSetupReturnWhenBuilder<").Append(typeParams)
 			.Append("> : IVoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("{").AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupReturnWhenBuilder{").Append(typeParams)
-			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the throw to only execute for the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IVoidMethodSetupReturnBuilder{")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIVoidMethodSetupReturnWhenBuilder<").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Deactivates the throw after the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IVoidMethodSetupReturnBuilder{")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
@@ -294,6 +387,7 @@ internal static partial class Sources
 		sb.Append("\t\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentCallback;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentReturnCallback;").AppendLine();
+		sb.Append("\t\tprivate int _currentCallbacksIndex;").AppendLine();
 		sb.Append("\t\tprivate int _currentReturnCallbackIndex;").AppendLine();
 		sb.AppendLine();
 
@@ -429,7 +523,8 @@ internal static partial class Sources
 		sb.Append("\t\t///     Registers an <paramref name=\"exception\" /> to throw when the method is invoked.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IVoidMethodSetupReturnBuilder<").Append(typeParams).Append("> Throws(Exception exception)")
+		sb.Append("\t\tpublic IVoidMethodSetupReturnBuilder<").Append(typeParams)
+			.Append("> Throws(Exception exception)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new Callback<Action<int, ").Append(typeParams).Append(">>((_, ")
@@ -476,6 +571,17 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupCallbackBuilder{").Append(typeParams)
+			.Append("}.InParallel()\" />").AppendLine();
+		sb.Append("\t\tIVoidMethodSetupCallbackBuilder<").Append(typeParams)
+			.Append("> IVoidMethodSetupCallbackBuilder<").Append(typeParams)
+			.Append(">.InParallel()").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentCallback?.InParallel();").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupCallbackBuilder{").Append(typeParams)
 			.Append("}.When(Func{int, bool})\" />").AppendLine();
 		sb.Append("\t\tIVoidMethodSetupCallbackWhenBuilder<").Append(typeParams)
 			.Append("> IVoidMethodSetupCallbackBuilder<").Append(typeParams)
@@ -488,11 +594,23 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupCallbackWhenBuilder{").Append(typeParams)
 			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> IVoidMethodSetupCallbackWhenBuilder<")
+		sb.Append("\t\tIVoidMethodSetupCallbackWhenBuilder<").Append(typeParams)
+			.Append("> IVoidMethodSetupCallbackWhenBuilder<")
 			.Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupCallbackWhenBuilder{").Append(typeParams)
+			.Append("}.Only(int)\" />").AppendLine();
+		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> IVoidMethodSetupCallbackWhenBuilder<")
+			.Append(typeParams)
+			.Append(">.Only(int times)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentCallback?.Only(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -510,11 +628,23 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupReturnWhenBuilder{").Append(typeParams)
 			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> IVoidMethodSetupReturnWhenBuilder<")
+		sb.Append("\t\tIVoidMethodSetupReturnWhenBuilder<").Append(typeParams)
+			.Append("> IVoidMethodSetupReturnWhenBuilder<")
 			.Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"IVoidMethodSetupReturnWhenBuilder{").Append(typeParams)
+			.Append("}.Only(int)\" />").AppendLine();
+		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> IVoidMethodSetupReturnWhenBuilder<")
+			.Append(typeParams)
+			.Append(">.Only(int times)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentReturnCallback?.Only(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -537,10 +667,22 @@ internal static partial class Sources
 			.Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)").AppendLine();
-		sb.Append("\t\t\t\t\t=> @delegate(invocationCount, ")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(")));")
+		sb.Append("\t\t\t\tbool wasInvoked = false;").AppendLine();
+		sb.Append("\t\t\t\tint currentCallbacksIndex = _currentCallbacksIndex;").AppendLine();
+		sb.Append("\t\t\t\tfor (int i = 0; i < _callbacks.Count; i++)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tCallback<Action<int, ").Append(typeParams).Append(">>? callback =").AppendLine();
+		sb.Append("\t\t\t\t\t\t_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];").AppendLine();
+		sb.Append("\t\t\t\t\tif (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)")
 			.AppendLine();
+		sb.Append("\t\t\t\t\t=> @delegate(invocationCount, ")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(")))")
+			.AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\twasInvoked = true;").AppendLine();
+		sb.Append("\t\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.AppendLine();
 		sb.Append("\t\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append(
@@ -566,7 +708,8 @@ internal static partial class Sources
 				"\t\tprotected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator)")
 			.AppendLine();
 		sb.Append("\t\t\twhere TResult : default").AppendLine();
-		sb.Append("\t\t\t=> throw new MockException(\"The method setup does not support return values.\");").AppendLine();
+		sb.Append("\t\t\t=> throw new MockException(\"The method setup does not support return values.\");")
+			.AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
@@ -614,7 +757,8 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.SetRefParameter{T}(string, T, MockBehavior)\" />").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.SetRefParameter{T}(string, T, MockBehavior)\" />")
+			.AppendLine();
 		sb.Append("\t\tprotected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -780,8 +924,28 @@ internal static partial class Sources
 			.Append("> : IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("{").AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupCallbackBuilder{TReturn, ").Append(typeParams)
-			.Append("}.When(Func{int, bool})\" />").AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Runs the callback in parallel to the other callbacks.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\tIReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append("> InParallel();")
+			.AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the callback to only execute for indexer accesses where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the callback to only execute for method invocations where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     Provides a zero-based counter indicating how many times the method has been invoked so far.")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
 		sb.Append("\t\tIReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams)
 			.Append("> When(Func<int, bool> predicate);").AppendLine();
 		sb.Append("}").AppendLine();
@@ -801,9 +965,32 @@ internal static partial class Sources
 			.Append("> : IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("{").AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupCallbackWhenBuilder{TReturn, ").Append(typeParams)
-			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the callback to only execute for the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IReturnMethodSetupCallbackBuilder{TReturn, ")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams).Append("> For(int times);")
+			.AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Deactivates the callback after the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IReturnMethodSetupCallbackBuilder{TReturn, ")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
@@ -821,8 +1008,16 @@ internal static partial class Sources
 			.Append("> : IReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("{").AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupReturnBuilder{TReturn, ").Append(typeParams)
-			.Append("}.When(Func{int, bool})\" />").AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the return/throw to only execute for method invocations where the predicate returns true.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     Provides a zero-based counter indicating how many times the method has been invoked so far.")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
 		sb.Append("\t\tIReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams)
 			.Append("> When(Func<int, bool> predicate);").AppendLine();
 		sb.Append("}").AppendLine();
@@ -842,9 +1037,32 @@ internal static partial class Sources
 			.Append("> : IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("{").AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupReturnWhenBuilder{TReturn, ").Append(typeParams)
-			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> For(int times);").AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Limits the callback to only execute for the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IReturnMethodSetupReturnBuilder{TReturn, ")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams).Append("> For(int times);")
+			.AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <summary>").AppendLine();
+		sb.Append(
+				"\t\t///     Deactivates the return/throw after the given number of <paramref name=\"times\" />.")
+			.AppendLine();
+		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.Append("\t\t/// <remarks>").AppendLine();
+		sb.Append(
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IReturnMethodSetupReturnBuilder{TReturn, ")
+			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
+			.AppendLine();
+		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
@@ -879,6 +1097,7 @@ internal static partial class Sources
 		sb.Append("\t\tprivate bool? _callBaseClass;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentCallback;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentReturnCallback;").AppendLine();
+		sb.Append("\t\tprivate int _currentCallbacksIndex;").AppendLine();
 		sb.Append("\t\tprivate int _currentReturnCallbackIndex;").AppendLine();
 		sb.AppendLine();
 
@@ -966,7 +1185,8 @@ internal static partial class Sources
 		sb.Append("\t\t///     Registers a <paramref name=\"callback\" /> to execute when the method is called.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append("> Do(Action<int, ")
+		sb.Append("\t\tpublic IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
+			.Append("> Do(Action<int, ")
 			.Append(typeParams).Append("> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams).Append(">>? currentCallback = new(callback);")
@@ -1098,6 +1318,17 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupCallbackBuilder{TReturn, ").Append(typeParams)
+			.Append("}.InParallel()\" />").AppendLine();
+		sb.Append("\t\tIReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
+			.Append("> IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
+			.Append(">.InParallel()").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentCallback?.InParallel();").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupCallbackBuilder{TReturn, ").Append(typeParams)
 			.Append("}.When(Func{int, bool})\" />").AppendLine();
 		sb.Append("\t\tIReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams)
 			.Append("> IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
@@ -1110,11 +1341,22 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupCallbackWhenBuilder{TReturn, ").Append(typeParams)
 			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams)
+		sb.Append("\t\tIReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams)
 			.Append("> IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupCallbackWhenBuilder{TReturn, ").Append(typeParams)
+			.Append("}.Only(int)\" />").AppendLine();
+		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams)
+			.Append("> IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams)
+			.Append(">.Only(int times)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentCallback?.Only(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1132,11 +1374,22 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupReturnWhenBuilder{TReturn, ").Append(typeParams)
 			.Append("}.For(int)\" />").AppendLine();
-		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams)
+		sb.Append("\t\tIReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams)
 			.Append("> IReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"IReturnMethodSetupReturnWhenBuilder{TReturn, ").Append(typeParams)
+			.Append("}.Only(int)\" />").AppendLine();
+		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams)
+			.Append("> IReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams)
+			.Append(">.Only(int times)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_currentReturnCallback?.Only(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1159,10 +1412,21 @@ internal static partial class Sources
 			.Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t_callbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)").AppendLine();
-		sb.Append("\t\t\t\t\t=> @delegate(invocationCount, ")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(")));")
+		sb.Append("\t\t\t\tbool wasInvoked = false;").AppendLine();
+		sb.Append("\t\t\t\tint currentCallbacksIndex = _currentCallbacksIndex;").AppendLine();
+		sb.Append("\t\t\t\tfor (int i = 0; i < _callbacks.Count; i++)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tCallback<Action<int, ").Append(typeParams).Append(">>? callback =").AppendLine();
+		sb.Append("\t\t\t\t\t\t_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];").AppendLine();
+		sb.Append("\t\t\t\t\tif (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)")
 			.AppendLine();
+		sb.Append("\t\t\t\t\t=> @delegate(invocationCount, ")
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append(")))")
+			.AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\twasInvoked = true;").AppendLine();
+		sb.Append("\t\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1190,7 +1454,8 @@ internal static partial class Sources
 
 		sb.Append("\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\tvar returnCallback = _returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];")
+		sb.Append(
+				"\t\t\t\tvar returnCallback = _returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];")
 			.AppendLine();
 		sb.Append(
 				"\t\t\t\tif (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)")
@@ -1264,7 +1529,8 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.SetRefParameter{T}(string, T, MockBehavior)\" />").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.SetRefParameter{T}(string, T, MockBehavior)\" />")
+			.AppendLine();
 		sb.Append("\t\tprotected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
