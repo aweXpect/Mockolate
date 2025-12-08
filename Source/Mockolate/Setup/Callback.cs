@@ -96,6 +96,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	private int _invocationCount;
 	private int _matchingCount;
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	/// <summary>
 	///     Invokes the callback if the predicates are satisfied, providing the invocation count.
 	/// </summary>
@@ -138,6 +139,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 		Interlocked.Increment(ref index);
 		return false;
 	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	/// <summary>
 	///     Invokes the callback if the predicates are satisfied, providing the invocation count.
