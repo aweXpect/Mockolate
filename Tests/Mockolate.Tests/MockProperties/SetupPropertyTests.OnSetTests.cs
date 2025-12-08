@@ -12,7 +12,7 @@ public sealed partial class SetupPropertyTests
 			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnSet((i, _, _) => { invocations.Add(i); })
+				.OnSet((i, _) => { invocations.Add(i); })
 				.For(4);
 
 			for (int i = 0; i < 20; i++)
@@ -29,7 +29,7 @@ public sealed partial class SetupPropertyTests
 			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnSet((i, _, _) => { invocations.Add(i); })
+				.OnSet((i, _) => { invocations.Add(i); })
 				.When(x => x > 2)
 				.For(4);
 
@@ -53,16 +53,16 @@ public sealed partial class SetupPropertyTests
 				.InitializeWith(2)
 				.OnSet(() => { callCount1++; })
 				.OnSet((_, v) => { callCount2 += v; }).InParallel()
-				.OnSet((old, @new) => { callCount3 += old * @new; });
+				.OnSet((_, v) => { callCount3 += v; });
 
 			sut.MyProperty = 4;
-			sut.MyProperty = 6; // 4 * 6 = 24
+			sut.MyProperty = 6;
 			sut.MyProperty = 8;
-			sut.MyProperty = 10; // 8 * 10 = 80
+			sut.MyProperty = 10;
 
 			await That(callCount1).IsEqualTo(2);
 			await That(callCount2).IsEqualTo(4 + 6 + 8 + 10);
-			await That(callCount3).IsEqualTo(24 + 80);
+			await That(callCount3).IsEqualTo(6 + 10);
 		}
 
 		[Theory]
@@ -117,15 +117,15 @@ public sealed partial class SetupPropertyTests
 			sut.SetupMock.Property.MyProperty
 				.InitializeWith(2)
 				.OnSet(() => { callCount1++; })
-				.OnSet((old, @new) => { callCount2 += old * @new; });
+				.OnSet((_, v) => { callCount2 += v; });
 
 			sut.MyProperty = 4;
-			sut.MyProperty = 6; // 4 * 6 = 24
+			sut.MyProperty = 6;
 			sut.MyProperty = 8;
-			sut.MyProperty = 10; // 8 * 10 = 80
+			sut.MyProperty = 10;
 
 			await That(callCount1).IsEqualTo(2);
-			await That(callCount2).IsEqualTo(24 + 80);
+			await That(callCount2).IsEqualTo(6 + 10);
 		}
 
 		[Fact]
@@ -163,7 +163,7 @@ public sealed partial class SetupPropertyTests
 			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnSet((i, _, _) => { invocations.Add(i); })
+				.OnSet((i, _) => { invocations.Add(i); })
 				.When(x => x is > 3 and < 9);
 
 			for (int i = 0; i < 20; i++)
@@ -177,24 +177,21 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WithValue_ShouldExecuteWhenPropertyIsWrittenTo()
 		{
-			int receivedOldValue = 0;
 			int receivedNewValue = 0;
 			int callCount = 0;
 			IPropertyService sut = Mock.Create<IPropertyService>();
 
 			sut.SetupMock.Property.MyProperty
 				.InitializeWith(4)
-				.OnSet((oldValue, newValue) =>
+				.OnSet((_, v) =>
 				{
 					callCount++;
-					receivedOldValue = oldValue;
-					receivedNewValue = newValue;
+					receivedNewValue = v;
 				});
 
 			sut.MyProperty = 6;
 
 			await That(callCount).IsEqualTo(1);
-			await That(receivedOldValue).IsEqualTo(4);
 			await That(receivedNewValue).IsEqualTo(6);
 		}
 

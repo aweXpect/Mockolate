@@ -51,8 +51,8 @@ public sealed partial class SetupIndexerTests
 
 			mock.SetupMock.Indexer(It.IsAny<int>())
 				.OnSet(() => { callCount1++; })
-				.OnSet((_, p1) => { callCount2 += p1; }).InParallel()
-				.OnSet((_, p1) => { callCount3 += p1; });
+				.OnSet((p1, _) => { callCount2 += p1; }).InParallel()
+				.OnSet((p1, _) => { callCount3 += p1; });
 
 			mock[4] = "foo";
 			mock[6] = "foo";
@@ -75,7 +75,7 @@ public sealed partial class SetupIndexerTests
 			IIndexerService mock = Mock.Create<IIndexerService>();
 
 			mock.SetupMock.Indexer(It.IsAny<int>())
-				.OnSet((_, p1) => { sum += p1; }).Only(times);
+				.OnSet((p1, _) => { sum += p1; }).Only(times);
 
 			mock[1] = "foo";
 			mock[2] = "foo";
@@ -95,7 +95,7 @@ public sealed partial class SetupIndexerTests
 
 			mock.SetupMock.Indexer(It.IsAny<int>())
 				.OnSet(() => { callCount++; })
-				.OnSet((_, p1) => { sum += p1; }).OnlyOnce();
+				.OnSet((p1, _) => { sum += p1; }).OnlyOnce();
 
 			mock[1] = "foo";
 			mock[2] = "foo";
@@ -150,7 +150,7 @@ public sealed partial class SetupIndexerTests
 
 			mock.SetupMock.Indexer(It.IsAny<int>())
 				.OnSet(() => { callCount1++; })
-				.OnSet((_, p1) => { callCount2 += p1; });
+				.OnSet((p1, _) => { callCount2 += p1; });
 
 			mock[4] = "foo";
 			mock[6] = "foo";
@@ -225,8 +225,8 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount1++; })
-					.OnSet((_, p1, _) => { callCount2 += p1; }).InParallel()
-					.OnSet((_, p1, _) => { callCount3 += p1; });
+					.OnSet((p1, _, _) => { callCount2 += p1; }).InParallel()
+					.OnSet((p1, _, _) => { callCount3 += p1; });
 
 				mock[4, 2] = "foo";
 				mock[6, 2] = "foo";
@@ -249,7 +249,7 @@ public sealed partial class SetupIndexerTests
 				IIndexerService mock = Mock.Create<IIndexerService>();
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
-					.OnSet((_, p1, _) => { sum += p1; }).Only(times);
+					.OnSet((p1, _, _) => { sum += p1; }).Only(times);
 
 				mock[1, 2] = "foo";
 				mock[2, 2] = "foo";
@@ -269,7 +269,7 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount++; })
-					.OnSet((_, p1, _) => { sum += p1; }).OnlyOnce();
+					.OnSet((p1, _, _) => { sum += p1; }).OnlyOnce();
 
 				mock[1, 2] = "foo";
 				mock[2, 2] = "foo";
@@ -328,7 +328,7 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount1++; })
-					.OnSet((_, p1, _) => { callCount2 += p1; });
+					.OnSet((p1, _, _) => { callCount2 += p1; });
 
 				mock[4, 2] = "foo";
 				mock[6, 2] = "foo";
@@ -404,8 +404,8 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount1++; })
-					.OnSet((_, p1, _, _) => { callCount2 += p1; }).InParallel()
-					.OnSet((_, p1, _, _) => { callCount3 += p1; });
+					.OnSet((p1, _, _, _) => { callCount2 += p1; }).InParallel()
+					.OnSet((p1, _, _, _) => { callCount3 += p1; });
 
 				mock[4, 2, 3] = "foo";
 				mock[6, 2, 3] = "foo";
@@ -428,7 +428,7 @@ public sealed partial class SetupIndexerTests
 				IIndexerService mock = Mock.Create<IIndexerService>();
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnSet((_, p1, _, _) => { sum += p1; }).Only(times);
+					.OnSet((p1, _, _, _) => { sum += p1; }).Only(times);
 
 				mock[1, 2, 3] = "foo";
 				mock[2, 2, 3] = "foo";
@@ -448,7 +448,7 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount++; })
-					.OnSet((_, p1, _, _) => { sum += p1; }).OnlyOnce();
+					.OnSet((p1, _, _, _) => { sum += p1; }).OnlyOnce();
 
 				mock[1, 2, 3] = "foo";
 				mock[2, 2, 3] = "foo";
@@ -510,7 +510,7 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount1++; })
-					.OnSet((_, p1, _, _) => { callCount2 += p1; });
+					.OnSet((p1, _, _, _) => { callCount2 += p1; });
 
 				mock[4, 2, 3] = "foo";
 				mock[6, 2, 3] = "foo";
@@ -586,8 +586,8 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount1++; })
-					.OnSet((_, p1, _, _, _) => { callCount2 += p1; }).InParallel()
-					.OnSet((_, p1, _, _, _) => { callCount3 += p1; });
+					.OnSet((p1, _, _, _, _) => { callCount2 += p1; }).InParallel()
+					.OnSet((p1, _, _, _, _) => { callCount3 += p1; });
 
 				mock[4, 2, 3, 4] = "foo";
 				mock[6, 2, 3, 4] = "foo";
@@ -610,7 +610,7 @@ public sealed partial class SetupIndexerTests
 				IIndexerService mock = Mock.Create<IIndexerService>();
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnSet((_, p1, _, _, _) => { sum += p1; }).Only(times);
+					.OnSet((p1, _, _, _, _) => { sum += p1; }).Only(times);
 
 				mock[1, 2, 3, 4] = "foo";
 				mock[2, 2, 3, 4] = "foo";
@@ -630,7 +630,7 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount++; })
-					.OnSet((_, p1, _, _, _) => { sum += p1; }).OnlyOnce();
+					.OnSet((p1, _, _, _, _) => { sum += p1; }).OnlyOnce();
 
 				mock[1, 2, 3, 4] = "foo";
 				mock[2, 2, 3, 4] = "foo";
@@ -692,7 +692,7 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.OnSet(() => { callCount1++; })
-					.OnSet((_, p1, _, _, _) => { callCount2 += p1; });
+					.OnSet((p1, _, _, _, _) => { callCount2 += p1; });
 
 				mock[4, 2, 3, 4] = "foo";
 				mock[6, 2, 3, 4] = "foo";
@@ -771,8 +771,8 @@ public sealed partial class SetupIndexerTests
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.OnSet(() => { callCount1++; })
-					.OnSet((_, p1, _, _, _, _) => { callCount2 += p1; }).InParallel()
-					.OnSet((_, p1, _, _, _, _) => { callCount3 += p1; });
+					.OnSet((p1, _, _, _, _, _) => { callCount2 += p1; }).InParallel()
+					.OnSet((p1, _, _, _, _, _) => { callCount3 += p1; });
 
 				mock[4, 2, 3, 4, 5] = "foo";
 				mock[6, 2, 3, 4, 5] = "foo";
@@ -796,7 +796,7 @@ public sealed partial class SetupIndexerTests
 
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
-					.OnSet((_, p1, _, _, _, _) => { sum += p1; }).Only(times);
+					.OnSet((p1, _, _, _, _, _) => { sum += p1; }).Only(times);
 
 				mock[1, 2, 3, 4, 5] = "foo";
 				mock[2, 2, 3, 4, 5] = "foo";
@@ -817,7 +817,7 @@ public sealed partial class SetupIndexerTests
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.OnSet(() => { callCount++; })
-					.OnSet((_, p1, _, _, _, _) => { sum += p1; }).OnlyOnce();
+					.OnSet((p1, _, _, _, _, _) => { sum += p1; }).OnlyOnce();
 
 				mock[1, 2, 3, 4, 5] = "foo";
 				mock[2, 2, 3, 4, 5] = "foo";
@@ -880,7 +880,7 @@ public sealed partial class SetupIndexerTests
 				mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.OnSet(() => { callCount1++; })
-					.OnSet((_, p1, _, _, _, _) => { callCount2 += p1; });
+					.OnSet((p1, _, _, _, _, _) => { callCount2 += p1; });
 
 				mock[4, 2, 3, 4, 5] = "foo";
 				mock[6, 2, 3, 4, 5] = "foo";

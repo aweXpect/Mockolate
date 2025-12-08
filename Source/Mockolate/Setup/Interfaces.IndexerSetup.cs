@@ -64,12 +64,26 @@ public interface IIndexerSetup<TValue, out T1>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameter of the indexer.
+	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<T1> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<int, T1> callback);
+	/// <remarks>
+	///     The callback receives the parameter of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<T1, TValue> callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter, the parameter of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1> OnGet(Action<int, T1, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -79,27 +93,31 @@ public interface IIndexerSetup<TValue, out T1>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the value the indexer is set to as single parameter.
+	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<TValue, T1> callback);
+	/// <remarks>
+	///     The callback receives the parameter of the indexer and the value the indexer is set to as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<T1, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<int, TValue, T1> callback);
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter, the parameter of the indexer and the value the indexer is set to as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1> OnSet(Action<int, T1, TValue> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
+	///     Registers the <paramref name="returnValue" /> for this indexer.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue, T1, TValue> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
@@ -107,9 +125,20 @@ public interface IIndexerSetup<TValue, out T1>
 	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this indexer.
+	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue);
+	/// <remarks>
+	///     The callback receives the parameter of the indexer.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameter of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue, TValue> callback);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
@@ -129,12 +158,18 @@ public interface IIndexerSetup<TValue, out T1>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameter of the indexer.
+	/// </remarks>
 	IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<TValue, T1, Exception> callback);
+	/// <remarks>
+	///     The callback receives the parameter of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, TValue, Exception> callback);
 }
 
 /// <summary>
@@ -256,12 +291,26 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<T1, T2> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<int, T1, T2> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<T1, T2, TValue> callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(Action<int, T1, T2, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -271,27 +320,31 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the value the indexer is set to as single parameter.
+	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<TValue, T1, T2> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<T1, T2, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<int, TValue, T1, T2> callback);
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(Action<int, T1, T2, TValue> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
+	///     Registers the <paramref name="returnValue" /> for this indexer.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue, T1, T2, TValue> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
@@ -299,9 +352,20 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this indexer.
+	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue, TValue> callback);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
@@ -321,12 +385,18 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
 	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<TValue, T1, T2, Exception> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, TValue, Exception> callback);
 }
 
 /// <summary>
@@ -456,12 +526,26 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<int, T1, T2, T3> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<T1, T2, T3, TValue> callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(Action<int, T1, T2, T3, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -471,27 +555,31 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the value the indexer is set to as single parameter.
+	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<TValue, T1, T2, T3> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<T1, T2, T3, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<int, TValue, T1, T2, T3> callback);
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(Action<int, T1, T2, T3, TValue> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
+	///     Registers the <paramref name="returnValue" /> for this indexer.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue, T1, T2, T3, TValue> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
@@ -499,9 +587,20 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this indexer.
+	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue, TValue> callback);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
@@ -521,12 +620,18 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<TValue, T1, T2, T3, Exception> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, TValue, Exception> callback);
 }
 
 /// <summary>
@@ -658,12 +763,26 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<int, T1, T2, T3, T4> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<T1, T2, T3, T4, TValue> callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(Action<int, T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -673,27 +792,31 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the value the indexer is set to as single parameter.
+	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<TValue, T1, T2, T3, T4> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<int, TValue, T1, T2, T3, T4> callback);
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.
+	/// </remarks>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(Action<int, T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
+	///     Registers the <paramref name="returnValue" /> for this indexer.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue, T1, T2, T3, T4, TValue> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback);
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
@@ -701,9 +824,20 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this indexer.
+	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue, TValue> callback);
 
 	/// <summary>
 	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
@@ -723,12 +857,18 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
 	/// </summary>
+	/// <remarks>
+	///     The callback receives the parameters of the indexer.
+	/// </remarks>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
 	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<TValue, T1, T2, T3, T4, Exception> callback);
+	/// <remarks>
+	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
+	/// </remarks>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, TValue, Exception> callback);
 }
 
 /// <summary>

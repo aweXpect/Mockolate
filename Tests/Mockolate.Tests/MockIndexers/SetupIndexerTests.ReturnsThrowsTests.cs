@@ -101,7 +101,7 @@ public sealed partial class SetupIndexerTests
 
 			sut.SetupMock.Indexer(It.IsAny<int>())
 				.InitializeWith("init")
-				.Returns((v, p1) => $"foo-{v}-{p1}");
+				.Returns((p1, v) => $"foo-{v}-{p1}");
 
 			string result = sut[3];
 
@@ -244,7 +244,7 @@ public sealed partial class SetupIndexerTests
 
 			sut.SetupMock.Indexer(It.IsAny<int>())
 				.InitializeWith("init")
-				.Throws((v, p1) => new Exception($"foo-{v}-{p1}"));
+				.Throws((p1, v) => new Exception($"foo-{v}-{p1}"));
 
 			void Act()
 			{
@@ -383,7 +383,7 @@ public sealed partial class SetupIndexerTests
 
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
-					.Returns((v, p1, p2) => $"foo-{v}-{p1}-{p2}");
+					.Returns((p1, p2, v) => $"foo-{v}-{p1}-{p2}");
 
 				string result = sut[3, 4];
 
@@ -526,7 +526,7 @@ public sealed partial class SetupIndexerTests
 
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
-					.Throws((v, p1, p2) => new Exception($"foo-{v}-{p1}-{p2}"));
+					.Throws((p1, p2, v) => new Exception($"foo-{v}-{p1}-{p2}"));
 
 				void Act()
 				{
@@ -667,7 +667,7 @@ public sealed partial class SetupIndexerTests
 
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
-					.Returns((v, p1, p2, p3) => $"foo-{v}-{p1}-{p2}-{p3}");
+					.Returns((p1, p2, p3, v) => $"foo-{v}-{p1}-{p2}-{p3}");
 
 				string result = sut[3, 4, 5];
 
@@ -810,7 +810,7 @@ public sealed partial class SetupIndexerTests
 
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
-					.Throws((v, p1, p2, p3) => new Exception($"foo-{v}-{p1}-{p2}-{p3}"));
+					.Throws((p1, p2, p3, v) => new Exception($"foo-{v}-{p1}-{p2}-{p3}"));
 
 				void Act()
 				{
@@ -952,7 +952,7 @@ public sealed partial class SetupIndexerTests
 
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
-					.Returns((v, p1, p2, p3, p4) => $"foo-{v}-{p1}-{p2}-{p3}-{p4}");
+					.Returns((p1, p2, p3, p4, v) => $"foo-{v}-{p1}-{p2}-{p3}-{p4}");
 
 				string result = sut[3, 4, 5, 6];
 
@@ -1095,7 +1095,7 @@ public sealed partial class SetupIndexerTests
 
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
-					.Throws((v, p1, p2, p3, p4) => new Exception($"foo-{v}-{p1}-{p2}-{p3}-{p4}"));
+					.Throws((p1, p2, p3, p4, v) => new Exception($"foo-{v}-{p1}-{p2}-{p3}-{p4}"));
 
 				void Act()
 				{
@@ -1237,7 +1237,7 @@ public sealed partial class SetupIndexerTests
 
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
-					.Returns((v, p1, p2, p3, p4, p5) => $"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}");
+					.Returns((p1, p2, p3, p4, p5, v) => $"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}");
 
 				string result = sut[3, 4, 5, 6, 7];
 
@@ -1380,7 +1380,7 @@ public sealed partial class SetupIndexerTests
 
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.InitializeWith("init")
-					.Throws((v, p1, p2, p3, p4, p5) => new Exception($"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}"));
+					.Throws((p1, p2, p3, p4, p5, v) => new Exception($"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}"));
 
 				void Act()
 				{

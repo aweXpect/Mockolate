@@ -60,16 +60,13 @@ public interface IPropertySetup<T>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the property's getter is accessed.
 	/// </summary>
-	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value is read.
-	/// </remarks>
 	IPropertySetupCallbackBuilder<T> OnGet(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the property's getter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value is read.
+	///     The callback receives the value of the property as single parameter.
 	/// </remarks>
 	IPropertySetupCallbackBuilder<T> OnGet(Action<T> callback);
 
@@ -77,36 +74,30 @@ public interface IPropertySetup<T>
 	///     Registers a callback to be invoked whenever the property's getter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value is read.
+	///     The callback receives an incrementing access counter as first parameter and the value of the property as second parameter.
 	/// </remarks>
 	IPropertySetupCallbackBuilder<T> OnGet(Action<int, T> callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set. The callback receives the new value being
-	///     set.
+	///     Registers a callback to be invoked whenever the property's value is set.
 	/// </summary>
-	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value changes.
-	/// </remarks>
 	IPropertySetupCallbackBuilder<T> OnSet(Action callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set. The callback receives the new value being
-	///     set.
+	///     Registers a callback to be invoked whenever the property's value is set.
 	/// </summary>
 	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value changes.
+	///     The callback receives the value the property is set to as single parameter.
 	/// </remarks>
-	IPropertySetupCallbackBuilder<T> OnSet(Action<T, T> callback);
+	IPropertySetupCallbackBuilder<T> OnSet(Action<T> callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set. The callback receives the new value being
-	///     set.
+	///     Registers a callback to be invoked whenever the property's value is set.
 	/// </summary>
 	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value changes.
+	///     The callback receives an incrementing access counter as first parameter and the value the property is set to as second parameter.
 	/// </remarks>
-	IPropertySetupCallbackBuilder<T> OnSet(Action<int, T, T> callback);
+	IPropertySetupCallbackBuilder<T> OnSet(Action<int, T> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
@@ -124,7 +115,7 @@ public interface IPropertySetup<T>
 	IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback);
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
+	///     Registers a <typeparamref name="TException" /> to throw when the property is read.
 	/// </summary>
 	IPropertySetupReturnBuilder<T> Throws<TException>()
 		where TException : Exception, new();

@@ -125,7 +125,7 @@ public class PropertySetup<T>(string name)
 {
 	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T, T>>> _returnCallbacks = [];
-	private readonly List<Callback<Action<int, T, T>>> _setterCallbacks = [];
+	private readonly List<Callback<Action<int, T>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
@@ -258,10 +258,10 @@ public class PropertySetup<T>(string name)
 		int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
 		for (int i = 0; i < _setterCallbacks.Count; i++)
 		{
-			Callback<Action<int, T, T>> setterCallback =
+			Callback<Action<int, T>> setterCallback =
 				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
 			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, _value, newValue)))
+				    => @delegate(invocationCount, newValue)))
 			{
 				wasInvoked = true;
 			}
@@ -311,21 +311,14 @@ public class PropertySetup<T>(string name)
 
 	#region IPropertySetup<T>
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
+	/// <inheritdoc cref="IPropertySetup{T}.CallingBaseClass(bool)" />
 	public IPropertySetup<T> CallingBaseClass(bool callBaseClass = true)
 	{
 		_callBaseClass = callBaseClass;
 		return this;
 	}
 
-	/// <summary>
-	///     Initializes the property with the given <paramref name="value" />.
-	/// </summary>
+	/// <inheritdoc cref="IPropertySetup{T}.InitializeWith(T)" />
 	public IPropertySetup<T> InitializeWith(T value)
 	{
 		_value = value;
@@ -333,12 +326,7 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
-	/// </summary>
-	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value is read.
-	/// </remarks>
+	/// <inheritdoc cref="IPropertySetup{T}.OnGet(Action)" />
 	public IPropertySetupCallbackBuilder<T> OnGet(Action callback)
 	{
 		Callback<Action<int, T>> item = new((_, _) => callback());
@@ -347,12 +335,7 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
-	/// </summary>
-	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value is read.
-	/// </remarks>
+	/// <inheritdoc cref="IPropertySetup{T}.OnGet(Action{T})" />
 	public IPropertySetupCallbackBuilder<T> OnGet(Action<T> callback)
 	{
 		Callback<Action<int, T>> item = new((_, v) => callback(v));
@@ -361,12 +344,7 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
-	/// </summary>
-	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value is read.
-	/// </remarks>
+	/// <inheritdoc cref="IPropertySetup{T}.OnGet(Action{int, T})" />
 	public IPropertySetupCallbackBuilder<T> OnGet(Action<int, T> callback)
 	{
 		Callback<Action<int, T>> item = new(callback);
@@ -375,76 +353,34 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set. The callback receives the new value being
-	///     set.
-	/// </summary>
-	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value changes.
-	/// </remarks>
+	/// <inheritdoc cref="IPropertySetup{T}.OnSet(Action)" />
 	public IPropertySetupCallbackBuilder<T> OnSet(Action callback)
 	{
-		Callback<Action<int, T, T>> item = new((_, _, _) => callback());
+		Callback<Action<int, T>> item = new((_, _) => callback());
 		_currentCallback = item;
 		_setterCallbacks.Add(item);
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set.
-	///     The callback receives the old and the new value being set.
-	/// </summary>
-	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value changes.
-	/// </remarks>
-	public IPropertySetupCallbackBuilder<T> OnSet(Action<T, T> callback)
+	/// <inheritdoc cref="IPropertySetup{T}.OnSet(Action{T})" />
+	public IPropertySetupCallbackBuilder<T> OnSet(Action<T> callback)
 	{
-		Callback<Action<int, T, T>> item = new((_, oldValue, newValue) => callback(oldValue, newValue));
+		Callback<Action<int, T>> item = new((_, newValue) => callback(newValue));
 		_currentCallback = item;
 		_setterCallbacks.Add(item);
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set.
-	///     The callback receives the old and the new value being set.
-	/// </summary>
-	/// <remarks>
-	///     Use this method to perform custom logic or side effects whenever the property's value changes.
-	/// </remarks>
-	public IPropertySetupCallbackBuilder<T> OnSet(Action<int, T, T> callback)
+	/// <inheritdoc cref="IPropertySetup{T}.OnSet(Action{int, T})" />
+	public IPropertySetupCallbackBuilder<T> OnSet(Action<int, T> callback)
 	{
-		Callback<Action<int, T, T>> item = new(callback);
+		Callback<Action<int, T>> item = new(callback);
 		_currentCallback = item;
 		_setterCallbacks.Add(item);
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this property.
-	/// </summary>
-	public IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback)
-	{
-		Callback<Func<int, T, T>> currentCallback = new((_, p) => callback(p));
-		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this property.
-	/// </summary>
-	public IPropertySetupReturnBuilder<T> Returns(Func<T> callback)
-	{
-		Callback<Func<int, T, T>> currentCallback = new((_, _) => callback());
-		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
-		return this;
-	}
-
-	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this property.
-	/// </summary>
+	/// <inheritdoc cref="IPropertySetup{T}.Returns(T)" />
 	public IPropertySetupReturnBuilder<T> Returns(T returnValue)
 	{
 		Callback<Func<int, T, T>> currentCallback = new((_, _) => returnValue);
@@ -453,9 +389,25 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the property is read.
-	/// </summary>
+	/// <inheritdoc cref="IPropertySetup{T}.Returns(Func{T})" />
+	public IPropertySetupReturnBuilder<T> Returns(Func<T> callback)
+	{
+		Callback<Func<int, T, T>> currentCallback = new((_, _) => callback());
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetup{T}.Returns(Func{T, T})" />
+	public IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback)
+	{
+		Callback<Func<int, T, T>> currentCallback = new((_, p) => callback(p));
+		_currentReturnCallback = currentCallback;
+		_returnCallbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetup{T}.Throws{TException}()" />
 	public IPropertySetupReturnBuilder<T> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -465,9 +417,7 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the property is read.
-	/// </summary>
+	/// <inheritdoc cref="IPropertySetup{T}.Throws(Exception)" />
 	public IPropertySetupReturnBuilder<T> Throws(Exception exception)
 	{
 		Callback<Func<int, T, T>> currentCallback = new((_, _) => throw exception);
@@ -476,9 +426,7 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
-	/// </summary>
+	/// <inheritdoc cref="IPropertySetup{T}.Throws(Func{Exception})" />
 	public IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T, T>> currentCallback = new((_, _) => throw callback());
@@ -487,9 +435,7 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
-	/// </summary>
+	/// <inheritdoc cref="IPropertySetup{T}.Throws(Func{T, Exception})" />
 	public IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback)
 	{
 		Callback<Func<int, T, T>> currentCallback = new((_, p) => throw callback(p));

@@ -648,19 +648,20 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetup<TValue, T1> InitializeWith(TValue value);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action<T1> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action<int, T1> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action<T1, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action<int, T1, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<TValue, T1> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<int, TValue, T1> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<T1, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<int, T1, TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<T1, TValue> callback);
-        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<TValue, T1, TValue> callback);
+        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<T1, TValue, TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Exception exception);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Func<T1, System.Exception> callback);
-        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Func<TValue, T1, System.Exception> callback);
+        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Func<T1, TValue, System.Exception> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws<TException>()
             where TException : System.Exception, new ();
     }
@@ -671,19 +672,20 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetup<TValue, T1, T2> InitializeWith(TValue value);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action<T1, T2> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action<int, T1, T2> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action<T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action<int, T1, T2, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<TValue, T1, T2> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<int, TValue, T1, T2> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<int, T1, T2, TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<T1, T2, TValue> callback);
-        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<TValue, T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<T1, T2, TValue, TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Exception exception);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback);
-        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Func<TValue, T1, T2, System.Exception> callback);
+        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Func<T1, T2, TValue, System.Exception> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws<TException>()
             where TException : System.Exception, new ();
     }
@@ -694,19 +696,20 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3> InitializeWith(TValue value);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action<T1, T2, T3> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action<int, T1, T2, T3> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action<T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action<int, T1, T2, T3, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<TValue, T1, T2, T3> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<int, TValue, T1, T2, T3> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<int, T1, T2, T3, TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<T1, T2, T3, TValue> callback);
-        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<TValue, T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<T1, T2, T3, TValue, TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Exception exception);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback);
-        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<TValue, T1, T2, T3, System.Exception> callback);
+        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<T1, T2, T3, TValue, System.Exception> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new ();
     }
@@ -717,19 +720,20 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(TValue value);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action<T1, T2, T3, T4> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action<int, T1, T2, T3, T4> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action<T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action<int, T1, T2, T3, T4, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<TValue, T1, T2, T3, T4> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<int, TValue, T1, T2, T3, T4> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<int, T1, T2, T3, T4, TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TValue> callback);
-        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<TValue, T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TValue, TValue> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Exception exception);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback);
-        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<TValue, T1, T2, T3, T4, System.Exception> callback);
+        Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, TValue, System.Exception> callback);
         Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new ();
     }
@@ -808,8 +812,8 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action<T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action<int, T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action callback);
-        Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<T, T> callback);
-        Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<int, T, T> callback);
+        Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<T> callback);
+        Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<int, T> callback);
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T> callback);
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T, T> callback);
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(T returnValue);
@@ -1184,19 +1188,20 @@ namespace Mockolate.Setup
         protected override bool IsMatch(object?[] parameters) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action<T1> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action<int, T1> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action<T1, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnGet(System.Action<int, T1, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<TValue> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<TValue, T1> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<int, TValue, T1> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<T1, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> OnSet(System.Action<int, T1, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<T1, TValue> callback) { }
-        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<TValue, T1, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<T1, TValue, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Exception exception) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Func<T1, System.Exception> callback) { }
-        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Func<TValue, T1, System.Exception> callback) { }
+        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Func<T1, TValue, System.Exception> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws<TException>()
             where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, System.Func<T> defaultValueGenerator, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
@@ -1214,19 +1219,20 @@ namespace Mockolate.Setup
         protected override bool IsMatch(object?[] parameters) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action<T1, T2> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action<int, T1, T2> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action<T1, T2, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnGet(System.Action<int, T1, T2, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<TValue> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<TValue, T1, T2> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<int, TValue, T1, T2> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<T1, T2, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> OnSet(System.Action<int, T1, T2, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<T1, T2, TValue> callback) { }
-        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<TValue, T1, T2, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<T1, T2, TValue, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Exception exception) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback) { }
-        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Func<TValue, T1, T2, System.Exception> callback) { }
+        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Func<T1, T2, TValue, System.Exception> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws<TException>()
             where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, System.Func<T> defaultValueGenerator, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
@@ -1244,19 +1250,20 @@ namespace Mockolate.Setup
         protected override bool IsMatch(object?[] parameters) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action<T1, T2, T3> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action<int, T1, T2, T3> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action<T1, T2, T3, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnGet(System.Action<int, T1, T2, T3, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<TValue> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<TValue, T1, T2, T3> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<int, TValue, T1, T2, T3> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<T1, T2, T3, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> OnSet(System.Action<int, T1, T2, T3, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<T1, T2, T3, TValue> callback) { }
-        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<TValue, T1, T2, T3, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<T1, T2, T3, TValue, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Exception exception) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback) { }
-        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<TValue, T1, T2, T3, System.Exception> callback) { }
+        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<T1, T2, T3, TValue, System.Exception> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, System.Func<T> defaultValueGenerator, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
@@ -1274,19 +1281,20 @@ namespace Mockolate.Setup
         protected override bool IsMatch(object?[] parameters) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action<T1, T2, T3, T4> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action<int, T1, T2, T3, T4> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action<T1, T2, T3, T4, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnGet(System.Action<int, T1, T2, T3, T4, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action callback) { }
         public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<TValue> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<TValue, T1, T2, T3, T4> callback) { }
-        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<int, TValue, T1, T2, T3, T4> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<T1, T2, T3, T4, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> OnSet(System.Action<int, T1, T2, T3, T4, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TValue> callback) { }
-        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<TValue, T1, T2, T3, T4, TValue> callback) { }
+        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TValue, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Exception exception) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<System.Exception> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback) { }
-        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<TValue, T1, T2, T3, T4, System.Exception> callback) { }
+        public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, TValue, System.Exception> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new () { }
         protected override bool TryGetInitialValue<T>(Mockolate.MockBehavior behavior, System.Func<T> defaultValueGenerator, object?[] parameters, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value) { }
@@ -1349,8 +1357,8 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action<T> callback) { }
         public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnGet(System.Action<int, T> callback) { }
         public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action callback) { }
-        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<T, T> callback) { }
-        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<int, T, T> callback) { }
+        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<T> callback) { }
+        public Mockolate.Setup.IPropertySetupCallbackBuilder<T> OnSet(System.Action<int, T> callback) { }
         public Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T> callback) { }
         public Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T, T> callback) { }
         public Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(T returnValue) { }
