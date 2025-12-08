@@ -40,10 +40,76 @@ public interface IInteractivePropertySetup : ISetup
 }
 
 /// <summary>
+///     Interface for setting up a property getter with fluent syntax.
+/// </summary>
+public interface IPropertyGetterSetup<T>
+{
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's getter is accessed.
+	/// </summary>
+	IPropertySetupCallbackBuilder<T> Do(Action callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's getter is accessed.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the value of the property as single parameter.
+	/// </remarks>
+	IPropertySetupCallbackBuilder<T> Do(Action<T> callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's getter is accessed.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter and the value of the property as second
+	///     parameter.
+	/// </remarks>
+	IPropertySetupCallbackBuilder<T> Do(Action<int, T> callback);
+}
+
+/// <summary>
+///     Interface for setting up a property setter with fluent syntax.
+/// </summary>
+public interface IPropertySetterSetup<T>
+{
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's value is set.
+	/// </summary>
+	IPropertySetupCallbackBuilder<T> Do(Action callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's value is set.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives the value the property is set to as single parameter.
+	/// </remarks>
+	IPropertySetupCallbackBuilder<T> Do(Action<T> callback);
+
+	/// <summary>
+	///     Registers a callback to be invoked whenever the property's value is set.
+	/// </summary>
+	/// <remarks>
+	///     The callback receives an incrementing access counter as first parameter and the value the property is set to as
+	///     second parameter.
+	/// </remarks>
+	IPropertySetupCallbackBuilder<T> Do(Action<int, T> callback);
+}
+
+/// <summary>
 ///     Interface for setting up a property with fluent syntax.
 /// </summary>
 public interface IPropertySetup<T>
 {
+	/// <summary>
+	///     Sets up callbacks on the getter.
+	/// </summary>
+	IPropertyGetterSetup<T> OnGet { get; }
+
+	/// <summary>
+	///     Sets up callbacks on the setter.
+	/// </summary>
+	IPropertySetterSetup<T> OnSet { get; }
+
 	/// <summary>
 	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
 	/// </summary>
@@ -56,48 +122,6 @@ public interface IPropertySetup<T>
 	///     Initializes the property with the given <paramref name="value" />.
 	/// </summary>
 	IPropertySetup<T> InitializeWith(T value);
-
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
-	/// </summary>
-	IPropertySetupCallbackBuilder<T> OnGet(Action callback);
-
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
-	/// </summary>
-	/// <remarks>
-	///     The callback receives the value of the property as single parameter.
-	/// </remarks>
-	IPropertySetupCallbackBuilder<T> OnGet(Action<T> callback);
-
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
-	/// </summary>
-	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter and the value of the property as second parameter.
-	/// </remarks>
-	IPropertySetupCallbackBuilder<T> OnGet(Action<int, T> callback);
-
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set.
-	/// </summary>
-	IPropertySetupCallbackBuilder<T> OnSet(Action callback);
-
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set.
-	/// </summary>
-	/// <remarks>
-	///     The callback receives the value the property is set to as single parameter.
-	/// </remarks>
-	IPropertySetupCallbackBuilder<T> OnSet(Action<T> callback);
-
-	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set.
-	/// </summary>
-	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter and the value the property is set to as second parameter.
-	/// </remarks>
-	IPropertySetupCallbackBuilder<T> OnSet(Action<int, T> callback);
 
 	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this property.
