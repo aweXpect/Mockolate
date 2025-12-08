@@ -157,6 +157,11 @@ public interface IPropertySetupCallbackBuilder<T> : IPropertySetupWhenBuilder<T>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
 	IPropertySetupWhenBuilder<T> When(Func<int, bool> predicate);
+
+	/// <summary>
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IPropertySetupWhenBuilder<T> InParallel();
 }
 
 /// <summary>
@@ -171,7 +176,16 @@ public interface IPropertySetupWhenBuilder<T> : IPropertySetup<T>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
-	IPropertySetup<T> For(int times);
+	IPropertySetupWhenBuilder<T> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	/// </remarks>
+	IPropertySetup<T> Only(int times);
 }
 
 /// <summary>
@@ -200,5 +214,14 @@ public interface IPropertySetupReturnWhenBuilder<T> : IPropertySetup<T>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertySetupReturnBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
-	IPropertySetup<T> For(int times);
+	IPropertySetupReturnWhenBuilder<T> For(int times);
+
+	/// <summary>
+	///     Deactivates the return/throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IPropertySetupReturnBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	/// </remarks>
+	IPropertySetup<T> Only(int times);
 }

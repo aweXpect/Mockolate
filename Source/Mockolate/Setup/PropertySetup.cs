@@ -128,8 +128,10 @@ public class PropertySetup<T>(string name)
 	private readonly List<Callback<Action<int, T, T>>> _setterCallbacks = [];
 	private bool? _callBaseClass;
 	private Callback? _currentCallback;
+	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private int _currentSetterCallbacksIndex;
 	private bool _isInitialized;
 	private T _value = default!;
 
@@ -143,10 +145,24 @@ public class PropertySetup<T>(string name)
 		return this;
 	}
 
+	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.InParallel()" />
+	IPropertySetupWhenBuilder<T> IPropertySetupCallbackBuilder<T>.InParallel()
+	{
+		_currentCallback?.InParallel();
+		return this;
+	}
+
 	/// <inheritdoc cref="IPropertySetupWhenBuilder{T}.For(int)" />
-	IPropertySetup<T> IPropertySetupWhenBuilder<T>.For(int times)
+	IPropertySetupWhenBuilder<T> IPropertySetupWhenBuilder<T>.For(int times)
 	{
 		_currentCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetupWhenBuilder{T}.Only(int)" />
+	IPropertySetup<T> IPropertySetupWhenBuilder<T>.Only(int times)
+	{
+		_currentCallback?.Only(times);
 		return this;
 	}
 
@@ -158,9 +174,16 @@ public class PropertySetup<T>(string name)
 	}
 
 	/// <inheritdoc cref="IPropertySetupReturnWhenBuilder{T}.For(int)" />
-	IPropertySetup<T> IPropertySetupReturnWhenBuilder<T>.For(int times)
+	IPropertySetupReturnWhenBuilder<T> IPropertySetupReturnWhenBuilder<T>.For(int times)
 	{
 		_currentReturnCallback?.For(x => x < times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetupReturnWhenBuilder{T}.Only(int)" />
+	IPropertySetup<T> IPropertySetupReturnWhenBuilder<T>.Only(int times)
+	{
+		_currentReturnCallback?.Only(times);
 		return this;
 	}
 
@@ -168,25 +191,21 @@ public class PropertySetup<T>(string name)
 	protected override bool Matches(PropertyAccess propertyAccess)
 		=> name.Equals(propertyAccess.Name);
 
-	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
-	protected override void InvokeSetter(object? value, MockBehavior behavior)
-	{
-		if (!TryCast(value, out T newValue))
-		{
-			throw new MockException(
-				$"The property value only supports '{typeof(T).FormatType()}', but is '{value.GetType().FormatType()}'.");
-		}
-
-		_setterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-			=> @delegate(invocationCount, _value, newValue)));
-		_value = newValue;
-	}
-
 	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
 	protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult>? defaultValueGenerator)
 	{
-		_getterCallbacks.ForEach(callback => callback.Invoke((invocationCount, @delegate)
-			=> @delegate(invocationCount, _value)));
+		bool wasInvoked = false;
+		int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+		for (int i = 0; i < _getterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T>> getterCallback =
+				_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+			if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, _value)))
+			{
+				wasInvoked = true;
+			}
+		}
 
 		bool foundCallback = false;
 		foreach (Callback<Func<int, T, T>> _ in _returnCallbacks)
@@ -224,6 +243,31 @@ public class PropertySetup<T>(string name)
 		}
 
 		return result;
+	}
+
+	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
+	protected override void InvokeSetter(object? value, MockBehavior behavior)
+	{
+		if (!TryCast(value, out T newValue))
+		{
+			throw new MockException(
+				$"The property value only supports '{typeof(T).FormatType()}', but is '{value.GetType().FormatType()}'.");
+		}
+
+		bool wasInvoked = false;
+		int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+		for (int i = 0; i < _setterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T, T>> setterCallback =
+				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, _value, newValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+
+		_value = newValue;
 	}
 
 	/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />

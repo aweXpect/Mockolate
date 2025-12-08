@@ -114,13 +114,19 @@ public interface IReturnMethodSetup<in TReturn>
 /// <summary>
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackBuilder<in TReturn> : IReturnMethodSetupCallbackWhenBuilder<TReturn>
+public interface IReturnMethodSetupCallbackBuilder<in TReturn>
+	: IReturnMethodSetupCallbackWhenBuilder<TReturn>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IReturnMethodSetupCallbackWhenBuilder<TReturn> When(Func<int, bool> predicate);
 }
@@ -128,7 +134,8 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn> : IReturnMethodSe
 /// <summary>
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn> : IReturnMethodSetup<TReturn>
+public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn>
+	: IReturnMethodSetup<TReturn>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -139,13 +146,25 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn> : IReturnMeth
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn> For(int times);
+	IReturnMethodSetupCallbackWhenBuilder<TReturn> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnBuilder<in TReturn> : IReturnMethodSetupReturnWhenBuilder<TReturn>
+public interface IReturnMethodSetupReturnBuilder<in TReturn>
+	: IReturnMethodSetupReturnWhenBuilder<TReturn>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
@@ -159,7 +178,8 @@ public interface IReturnMethodSetupReturnBuilder<in TReturn> : IReturnMethodSetu
 /// <summary>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnWhenBuilder<in TReturn> : IReturnMethodSetup<TReturn>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn>
+	: IReturnMethodSetup<TReturn>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
@@ -170,7 +190,18 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn> : IReturnMethod
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn> For(int times);
+	IReturnMethodSetupReturnWhenBuilder<TReturn> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn> Only(int times);
 }
 
 /// <summary>
@@ -245,10 +276,15 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1>
 	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> When(Func<int, bool> predicate);
 }
@@ -268,13 +304,25 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1> For(int times);
+	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1>
+public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1>
+	: IReturnMethodSetupReturnWhenBuilder<TReturn, T1>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
@@ -288,7 +336,8 @@ public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1> : IReturnMe
 /// <summary>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1> : IReturnMethodSetup<TReturn, T1>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1>
+	: IReturnMethodSetup<TReturn, T1>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
@@ -299,7 +348,18 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1> : IRetu
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1> For(int times);
+	IReturnMethodSetupReturnWhenBuilder<TReturn, T1> For(int times);
+
+	/// <summary>
+	///     Deactivates the return/throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn, T1}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1> Only(int times);
 }
 
 /// <summary>
@@ -371,14 +431,18 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2>
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1,
-		T2>
+	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> When(Func<int, bool> predicate);
 }
@@ -398,14 +462,25 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2> For(int times);
+	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface
-	IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2> : IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>
+public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2>
+	: IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
@@ -419,7 +494,8 @@ public interface
 /// <summary>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2> : IReturnMethodSetup<TReturn, T1, T2>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2>
+	: IReturnMethodSetup<TReturn, T1, T2>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
@@ -430,7 +506,18 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2>
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2> For(int times);
+	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2> For(int times);
+
+	/// <summary>
+	///     Deactivates the return/throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2> Only(int times);
 }
 
 /// <summary>
@@ -505,10 +592,15 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, o
 	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> When(Func<int, bool> predicate);
 }
@@ -528,16 +620,25 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3> For(int times);
+	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2, T3> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface
-	IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3> : IReturnMethodSetupReturnWhenBuilder<TReturn,
-	T1,
-	T2, T3>
+public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3>
+	: IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
@@ -551,8 +652,8 @@ public interface
 /// <summary>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface
-	IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3> : IReturnMethodSetup<TReturn, T1, T2, T3>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3>
+	: IReturnMethodSetup<TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
@@ -563,7 +664,18 @@ public interface
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3> For(int times);
+	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3> For(int times);
+
+	/// <summary>
+	///     Deactivates the return/throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2, T3> Only(int times);
 }
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
@@ -639,10 +751,15 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, o
 	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> When(Func<int, bool> predicate);
 }
@@ -662,15 +779,25 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> For(int times);
+	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a return/throw builder for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface
-	IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetupReturnWhenBuilder<
-	TReturn, T1, T2, T3, T4>
+public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3, out T4>
+	: IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for method invocations where the predicate returns true.
@@ -684,10 +811,8 @@ public interface
 /// <summary>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface
-	IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetup<TReturn, T1, T2
-	, T3
-	, T4>
+public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3, out T4>
+	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
@@ -698,7 +823,18 @@ public interface
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> For(int times);
+	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4> For(int times);
+
+	/// <summary>
+	///     Deactivates the return/throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Only(int times);
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters
 
@@ -753,10 +889,15 @@ public interface IVoidMethodSetup
 public interface IVoidMethodSetupCallbackBuilder : IVoidMethodSetupCallbackWhenBuilder
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder When(Func<int, bool> predicate);
 }
@@ -774,7 +915,17 @@ public interface IVoidMethodSetupCallbackWhenBuilder : IVoidMethodSetup
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup For(int times);
+	IVoidMethodSetupCallbackWhenBuilder For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup Only(int times);
 }
 
 /// <summary>
@@ -804,7 +955,17 @@ public interface IVoidMethodSetupReturnWhenBuilder : IVoidMethodSetup
 	///     <see cref="IVoidMethodSetupReturnBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup For(int times);
+	IVoidMethodSetupReturnWhenBuilder For(int times);
+
+	/// <summary>
+	///     Deactivates the throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupReturnBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup Only(int times);
 }
 
 /// <summary>
@@ -865,13 +1026,19 @@ public interface IVoidMethodSetup<out T1>
 /// <summary>
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupCallbackBuilder<out T1> : IVoidMethodSetupCallbackWhenBuilder<T1>
+public interface IVoidMethodSetupCallbackBuilder<out T1>
+	: IVoidMethodSetupCallbackWhenBuilder<T1>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder<T1> When(Func<int, bool> predicate);
 }
@@ -879,7 +1046,8 @@ public interface IVoidMethodSetupCallbackBuilder<out T1> : IVoidMethodSetupCallb
 /// <summary>
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupCallbackWhenBuilder<out T1> : IVoidMethodSetup<T1>
+public interface IVoidMethodSetupCallbackWhenBuilder<out T1>
+	: IVoidMethodSetup<T1>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -889,13 +1057,24 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1> : IVoidMethodSetup<
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup<T1> For(int times);
+	IVoidMethodSetupCallbackWhenBuilder<T1> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a throw builder for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupReturnBuilder<out T1> : IVoidMethodSetupReturnWhenBuilder<T1>
+public interface IVoidMethodSetupReturnBuilder<out T1>
+	: IVoidMethodSetupReturnWhenBuilder<T1>
 {
 	/// <summary>
 	///     Limits the throw to only execute for method invocations where the predicate returns true.
@@ -909,7 +1088,8 @@ public interface IVoidMethodSetupReturnBuilder<out T1> : IVoidMethodSetupReturnW
 /// <summary>
 ///     Sets up a when builder for throws for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupReturnWhenBuilder<out T1> : IVoidMethodSetup<T1>
+public interface IVoidMethodSetupReturnWhenBuilder<out T1>
+	: IVoidMethodSetup<T1>
 {
 	/// <summary>
 	///     Limits the throw to only execute for the given number of <paramref name="times" />.
@@ -919,7 +1099,17 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1> : IVoidMethodSetup<T1
 	///     <see cref="IVoidMethodSetupReturnBuilder{T1}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup<T1> For(int times);
+	IVoidMethodSetupReturnWhenBuilder<T1> For(int times);
+
+	/// <summary>
+	///     Deactivates the throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupReturnBuilder{T1}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1> Only(int times);
 }
 
 /// <summary>
@@ -980,13 +1170,19 @@ public interface IVoidMethodSetup<out T1, out T2>
 /// <summary>
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupCallbackBuilder<out T1, out T2> : IVoidMethodSetupCallbackWhenBuilder<T1, T2>
+public interface IVoidMethodSetupCallbackBuilder<out T1, out T2>
+	: IVoidMethodSetupCallbackWhenBuilder<T1, T2>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2> When(Func<int, bool> predicate);
 }
@@ -994,7 +1190,8 @@ public interface IVoidMethodSetupCallbackBuilder<out T1, out T2> : IVoidMethodSe
 /// <summary>
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2> : IVoidMethodSetup<T1, T2>
+public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2>
+	: IVoidMethodSetup<T1, T2>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -1004,13 +1201,24 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2> : IVoidMeth
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup<T1, T2> For(int times);
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a throw builder for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupReturnBuilder<out T1, out T2> : IVoidMethodSetupReturnWhenBuilder<T1, T2>
+public interface IVoidMethodSetupReturnBuilder<out T1, out T2>
+	: IVoidMethodSetupReturnWhenBuilder<T1, T2>
 {
 	/// <summary>
 	///     Limits the throw to only execute for method invocations where the predicate returns true.
@@ -1024,7 +1232,8 @@ public interface IVoidMethodSetupReturnBuilder<out T1, out T2> : IVoidMethodSetu
 /// <summary>
 ///     Sets up a when builder for throws for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2> : IVoidMethodSetup<T1, T2>
+public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2>
+	: IVoidMethodSetup<T1, T2>
 {
 	/// <summary>
 	///     Limits the throw to only execute for the given number of <paramref name="times" />.
@@ -1034,7 +1243,17 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2> : IVoidMethod
 	///     <see cref="IVoidMethodSetupReturnBuilder{T1, T2}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup<T1, T2> For(int times);
+	IVoidMethodSetupReturnWhenBuilder<T1, T2> For(int times);
+
+	/// <summary>
+	///     Deactivates the throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupReturnBuilder{T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2> Only(int times);
 }
 
 /// <summary>
@@ -1095,14 +1314,19 @@ public interface IVoidMethodSetup<out T1, out T2, out T3>
 /// <summary>
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
-public interface
-	IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3> : IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>
+public interface IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3>
+	: IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> When(Func<int, bool> predicate);
 }
@@ -1110,7 +1334,8 @@ public interface
 /// <summary>
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3> : IVoidMethodSetup<T1, T2, T3>
+public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3>
+	: IVoidMethodSetup<T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -1120,13 +1345,24 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3> : I
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup<T1, T2, T3> For(int times);
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2, T3> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a throw builder for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupReturnBuilder<out T1, out T2, out T3> : IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>
+public interface IVoidMethodSetupReturnBuilder<out T1, out T2, out T3>
+	: IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the throw to only execute for method invocations where the predicate returns true.
@@ -1140,7 +1376,8 @@ public interface IVoidMethodSetupReturnBuilder<out T1, out T2, out T3> : IVoidMe
 /// <summary>
 ///     Sets up a when builder for throws for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3> : IVoidMethodSetup<T1, T2, T3>
+public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3>
+	: IVoidMethodSetup<T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the throw to only execute for the given number of <paramref name="times" />.
@@ -1150,7 +1387,17 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3> : IVo
 	///     <see cref="IVoidMethodSetupReturnBuilder{T1, T2, T3}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup<T1, T2, T3> For(int times);
+	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> For(int times);
+
+	/// <summary>
+	///     Deactivates the throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupReturnBuilder{T1, T2, T3}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2, T3> Only(int times);
 }
 
 /// <summary>
@@ -1211,15 +1458,19 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4>
 /// <summary>
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
-public interface
-	IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3, out T4> : IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3,
-	T4>
+public interface IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3, out T4>
+	: IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> InParallel();
+
+	/// <summary>
+	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
 	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	///     Provides a zero-based counter indicating how many times the method has been invoked so far.
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> When(Func<int, bool> predicate);
 }
@@ -1227,7 +1478,8 @@ public interface
 /// <summary>
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out T4> : IVoidMethodSetup<T1, T2, T3, T4>
+public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out T4>
+	: IVoidMethodSetup<T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the callback to only execute for the given number of <paramref name="times" />.
@@ -1237,14 +1489,24 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out
 	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup<T1, T2, T3, T4> For(int times);
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2, T3, T4> Only(int times);
 }
 
 /// <summary>
 ///     Sets up a throw builder for a method returning <see langword="void" />.
 /// </summary>
-public interface
-	IVoidMethodSetupReturnBuilder<out T1, out T2, out T3, out T4> : IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>
+public interface IVoidMethodSetupReturnBuilder<out T1, out T2, out T3, out T4>
+	: IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the throw to only execute for method invocations where the predicate returns true.
@@ -1258,7 +1520,8 @@ public interface
 /// <summary>
 ///     Sets up a when builder for throws for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3, out T4> : IVoidMethodSetup<T1, T2, T3, T4>
+public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3, out T4>
+	: IVoidMethodSetup<T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the throw to only execute for the given number of <paramref name="times" />.
@@ -1268,5 +1531,15 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3, out T
 	///     <see cref="IVoidMethodSetupReturnBuilder{T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IVoidMethodSetup<T1, T2, T3, T4> For(int times);
+	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> For(int times);
+
+	/// <summary>
+	///     Deactivates the throw after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IVoidMethodSetupReturnBuilder{T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IVoidMethodSetup<T1, T2, T3, T4> Only(int times);
 }
