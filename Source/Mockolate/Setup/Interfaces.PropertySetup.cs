@@ -185,7 +185,7 @@ public interface IPropertySetupCallbackBuilder<T> : IPropertySetupWhenBuilder<T>
 public interface IPropertySetupWhenBuilder<T> : IPropertySetup<T>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -223,7 +223,7 @@ public interface IPropertySetupReturnBuilder<T> : IPropertySetupReturnWhenBuilde
 public interface IPropertySetupReturnWhenBuilder<T> : IPropertySetup<T>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (

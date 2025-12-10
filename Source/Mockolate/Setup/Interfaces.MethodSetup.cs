@@ -138,7 +138,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn>
 	: IReturnMethodSetup<TReturn>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -182,7 +182,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn>
 	: IReturnMethodSetup<TReturn>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -296,7 +296,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
 	: IReturnMethodSetup<TReturn, T1>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -340,7 +340,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1>
 	: IReturnMethodSetup<TReturn, T1>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -454,7 +454,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	: IReturnMethodSetup<TReturn, T1, T2>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -498,7 +498,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2>
 	: IReturnMethodSetup<TReturn, T1, T2>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -612,7 +612,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	: IReturnMethodSetup<TReturn, T1, T2, T3>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -656,7 +656,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 	: IReturnMethodSetup<TReturn, T1, T2, T3>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -771,7 +771,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -815,7 +815,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -908,7 +908,7 @@ public interface IVoidMethodSetupCallbackBuilder : IVoidMethodSetupCallbackWhenB
 public interface IVoidMethodSetupCallbackWhenBuilder : IVoidMethodSetup
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -948,7 +948,7 @@ public interface IVoidMethodSetupReturnBuilder : IVoidMethodSetupReturnWhenBuild
 public interface IVoidMethodSetupReturnWhenBuilder : IVoidMethodSetup
 {
 	/// <summary>
-	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1050,7 +1050,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1>
 	: IVoidMethodSetup<T1>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1092,7 +1092,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1>
 	: IVoidMethodSetup<T1>
 {
 	/// <summary>
-	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1194,7 +1194,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2>
 	: IVoidMethodSetup<T1, T2>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1236,7 +1236,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2>
 	: IVoidMethodSetup<T1, T2>
 {
 	/// <summary>
-	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1338,7 +1338,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3>
 	: IVoidMethodSetup<T1, T2, T3>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1380,7 +1380,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3>
 	: IVoidMethodSetup<T1, T2, T3>
 {
 	/// <summary>
-	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1482,7 +1482,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out
 	: IVoidMethodSetup<T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1524,7 +1524,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3, out T
 	: IVoidMethodSetup<T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Limits the throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (

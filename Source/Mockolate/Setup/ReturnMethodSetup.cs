@@ -123,7 +123,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetupCallbackWhenBuilder{TReturn}.For(int)" />
 	IReturnMethodSetupCallbackWhenBuilder<TReturn> IReturnMethodSetupCallbackWhenBuilder<TReturn>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -146,7 +146,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetupReturnWhenBuilder{TReturn}.For(int)" />
 	IReturnMethodSetupReturnWhenBuilder<TReturn> IReturnMethodSetupReturnWhenBuilder<TReturn>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -164,7 +164,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		int currentCallbacksIndex = _currentCallbacksIndex;
 		for (int i = 0; i < _callbacks.Count; i++)
 		{
-			Callback<Action<int>>? callback =
+			Callback<Action<int>> callback =
 				_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 			if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount)))
@@ -401,7 +401,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetupCallbackWhenBuilder{TReturn, T1}.For(int)" />
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -423,7 +423,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetupReturnWhenBuilder{TReturn, T1}.For(int)" />
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1> IReturnMethodSetupReturnWhenBuilder<TReturn, T1>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -443,7 +443,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			int currentCallbacksIndex = _currentCallbacksIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1>>? callback =
+				Callback<Action<int, T1>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1)))
@@ -715,7 +715,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>.
 		For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -738,7 +738,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2> IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>.
 		For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -759,7 +759,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			int currentCallbacksIndex = _currentCallbacksIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1, T2>>? callback =
+				Callback<Action<int, T1, T2>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2)))
@@ -1045,7 +1045,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>
 		IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -1068,7 +1068,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3> IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>.
 		For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -1090,7 +1090,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			int currentCallbacksIndex = _currentCallbacksIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1, T2, T3>>? callback =
+				Callback<Action<int, T1, T2, T3>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2, p3)))
@@ -1389,7 +1389,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>.
 		For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -1415,7 +1415,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>.
 		For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -1439,7 +1439,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			int currentCallbacksIndex = _currentCallbacksIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1, T2, T3, T4>>? callback =
+				Callback<Action<int, T1, T2, T3, T4>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2, p3, p4)))
