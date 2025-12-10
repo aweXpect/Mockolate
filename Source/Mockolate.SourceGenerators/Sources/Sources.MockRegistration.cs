@@ -240,6 +240,49 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine("\t\t}");
+			
+			sb.AppendLine();
+			sb.AppendLine(
+				"\t\tpartial void GenerateWrapped<T>(T instance, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups)");
+			sb.Append("\t\t{").AppendLine();
+			index = 0;
+			foreach ((string Name, MockClass MockClass) mock in mocks.Where(m => m.MockClass.AdditionalImplementations.Count == 0))
+			{
+				if (index++ > 0)
+				{
+					sb.Append("\t\t\telse ");
+				}
+				else
+				{
+					sb.Append("\t\t\t");
+				}
+
+				sb.Append("if (typeof(T) == typeof(").Append(mock.MockClass.ClassFullName).Append("))").AppendLine();
+				sb.Append("\t\t\t{").AppendLine();
+				
+				sb.Append("\t\t\t\tMockRegistration mockRegistration = new MockRegistration(mockBehavior, \"")
+					.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
+
+				if (mock.MockClass.IsInterface)
+				{
+					sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior, instance as ").Append(mock.MockClass.ClassFullName).Append(");").AppendLine();
+					sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
+					sb.Append("\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append("> setupTarget = ((IMockSubject<").Append(mock.MockClass.ClassFullName)
+						.Append(">)_value).Mock;").AppendLine();
+					sb.Append("\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append(">> setup in setups)").AppendLine();
+					sb.Append("\t\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
+					sb.Append("\t\t\t\t\t}").AppendLine();
+					sb.Append("\t\t\t\t}").AppendLine();
+				}
+				
+				sb.Append("\t\t\t}").AppendLine();
+			}
+			sb.AppendLine("\t\t}");
+			
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}

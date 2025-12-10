@@ -459,11 +459,15 @@ public class GeneralTests
 			          	{
 			          		get
 			          		{
-			          			return MockRegistrations.GetProperty<string>("MyCode.IMyService.SomeProperty", () => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!), null);
+			          			return MockRegistrations.GetProperty<string>("MyCode.IMyService.SomeProperty", () => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!), this._wrapped is null ? null : () => this._wrapped.SomeProperty);
 			          		}
 			          		set
 			          		{
 			          			MockRegistrations.SetProperty("MyCode.IMyService.SomeProperty", value);
+			          			if (this._wrapped is not null)
+			          			{
+			          				this._wrapped.SomeProperty = value;
+			          			}
 			          		}
 			          	}
 			          """).IgnoringNewlineStyle().And
@@ -473,6 +477,15 @@ public class GeneralTests
 			          	public string MyMethod(string message)
 			          	{
 			          		MethodSetupResult<string> methodExecution = MockRegistrations.InvokeMethod<string>("MyCode.IMyService.MyMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!, p), message);
+			          		if (this._wrapped is not null)
+			          		{
+			          			var baseResult = this._wrapped.MyMethod(message);
+			          			if (!methodExecution.HasSetupResult)
+			          			{
+			          				methodExecution.TriggerCallbacks(message);
+			          				return baseResult;
+			          			}
+			          		}
 			          		methodExecution.TriggerCallbacks(message);
 			          		return methodExecution.Result;
 			          	}
