@@ -355,7 +355,7 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1}.For(int)" />
 	IIndexerSetupCallbackWhenBuilder<TValue, T1> IIndexerSetupCallbackWhenBuilder<TValue, T1>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -376,7 +376,7 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1}.For(int)" />
 	IIndexerSetupReturnWhenBuilder<TValue, T1> IIndexerSetupReturnWhenBuilder<TValue, T1>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -711,7 +711,7 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2}.For(int)" />
 	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -733,7 +733,7 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2}.For(int)" />
 	IIndexerSetupReturnWhenBuilder<TValue, T1, T2> IIndexerSetupReturnWhenBuilder<TValue, T1, T2>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -1083,7 +1083,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.
 		For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -1105,7 +1105,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3}.For(int)" />
 	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -1469,7 +1469,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.
 		For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -1492,7 +1492,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.
 		For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 

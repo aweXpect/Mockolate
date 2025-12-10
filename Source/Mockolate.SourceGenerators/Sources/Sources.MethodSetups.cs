@@ -258,7 +258,7 @@ internal static partial class Sources
 		sb.Append("{").AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append(
-				"\t\t///     Limits the callback to only execute for the given number of <paramref name=\"times\" />.")
+				"\t\t///     Repeats the callback for the given number of <paramref name=\"times\" />.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\t/// <remarks>").AppendLine();
@@ -331,7 +331,7 @@ internal static partial class Sources
 		sb.Append("{").AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append(
-				"\t\t///     Limits the throw to only execute for the given number of <paramref name=\"times\" />.")
+				"\t\t///     Repeats the throw for the given number of <paramref name=\"times\" />.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\t/// <remarks>").AppendLine();
@@ -599,7 +599,7 @@ internal static partial class Sources
 			.Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_currentCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\t_currentCallback?.For(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -633,7 +633,7 @@ internal static partial class Sources
 			.Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_currentReturnCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\t_currentReturnCallback?.For(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -967,7 +967,7 @@ internal static partial class Sources
 		sb.Append("{").AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append(
-				"\t\t///     Limits the callback to only execute for the given number of <paramref name=\"times\" />.")
+				"\t\t///     Repeats the callback for the given number of <paramref name=\"times\" />.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\t/// <remarks>").AppendLine();
@@ -1039,7 +1039,7 @@ internal static partial class Sources
 		sb.Append("{").AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append(
-				"\t\t///     Limits the callback to only execute for the given number of <paramref name=\"times\" />.")
+				"\t\t///     Repeats the callback for the given number of <paramref name=\"times\" />.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		sb.Append("\t\t/// <remarks>").AppendLine();
@@ -1345,7 +1345,7 @@ internal static partial class Sources
 			.Append("> IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_currentCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\t_currentCallback?.For(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1378,7 +1378,7 @@ internal static partial class Sources
 			.Append("> IReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams)
 			.Append(">.For(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_currentReturnCallback?.For(x => x < times);").AppendLine();
+		sb.Append("\t\t\t_currentReturnCallback?.For(times);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();

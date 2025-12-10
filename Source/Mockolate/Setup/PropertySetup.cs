@@ -156,7 +156,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	/// <inheritdoc cref="IPropertySetupWhenBuilder{T}.For(int)" />
 	IPropertySetupWhenBuilder<T> IPropertySetupWhenBuilder<T>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -177,7 +177,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	/// <inheritdoc cref="IPropertySetupReturnWhenBuilder{T}.For(int)" />
 	IPropertySetupReturnWhenBuilder<T> IPropertySetupReturnWhenBuilder<T>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 

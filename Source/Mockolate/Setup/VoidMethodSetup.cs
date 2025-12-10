@@ -115,7 +115,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder.For(int)" />
 	IVoidMethodSetupCallbackWhenBuilder IVoidMethodSetupCallbackWhenBuilder.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -137,7 +137,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder IVoidMethodSetupReturnWhenBuilder.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -155,7 +155,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		int currentCallbacksIndex = _currentCallbacksIndex;
 		for (int i = 0; i < _callbacks.Count; i++)
 		{
-			Callback<Action<int>>? callback =
+			Callback<Action<int>> callback =
 				_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 			if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount)))
@@ -361,7 +361,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1}.For(int)" />
 	IVoidMethodSetupCallbackWhenBuilder<T1> IVoidMethodSetupCallbackWhenBuilder<T1>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -382,7 +382,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1}.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder<T1> IVoidMethodSetupReturnWhenBuilder<T1>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -402,7 +402,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 			int currentCallbacksIndex = _currentCallbacksIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1>>? callback =
+				Callback<Action<int, T1>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1)))
@@ -631,7 +631,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2}.For(int)" />
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2> IVoidMethodSetupCallbackWhenBuilder<T1, T2>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -652,7 +652,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2}.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder<T1, T2> IVoidMethodSetupReturnWhenBuilder<T1, T2>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -673,7 +673,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 			int currentCallbacksIndex = _currentCallbacksIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1, T2>>? callback =
+				Callback<Action<int, T1, T2>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2)))
@@ -909,7 +909,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2, T3}.For(int)" />
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>.For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -931,7 +931,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2, T3}.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -953,7 +953,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 			int currentCallbacksIndex = _currentCallbacksIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1, T2, T3>>? callback =
+				Callback<Action<int, T1, T2, T3>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2, p3)))
@@ -1194,7 +1194,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>.
 		For(int times)
 	{
-		_currentCallback?.For(x => x < times);
+		_currentCallback?.For(times);
 		return this;
 	}
 
@@ -1216,7 +1216,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2, T3, T4}.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>.For(int times)
 	{
-		_currentReturnCallback?.For(x => x < times);
+		_currentReturnCallback?.For(times);
 		return this;
 	}
 
@@ -1239,7 +1239,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 			int currentCallbacksIndex = _currentCallbacksIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1, T2, T3, T4>>? callback =
+				Callback<Action<int, T1, T2, T3, T4>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
 				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
 					    => @delegate(invocationCount, p1, p2, p3, p4)))

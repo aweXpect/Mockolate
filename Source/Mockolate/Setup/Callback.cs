@@ -8,8 +8,8 @@ namespace Mockolate.Setup;
 /// </summary>
 public class Callback
 {
+	private int? _forTimes;
 	private Func<int, bool>? _invocationPredicate;
-	private Func<int, bool>? _matchingPredicate;
 	private int _onlyTimes;
 
 	/// <summary>
@@ -20,7 +20,7 @@ public class Callback
 	/// <summary>
 	///     Check if a <see cref="For" />-predicate was specified.
 	/// </summary>
-	protected bool HasForSpecified => _matchingPredicate != null;
+	protected bool HasForSpecified => _forTimes != null;
 
 	/// <summary>
 	///     Flag indicating whether the callback is active.
@@ -45,15 +45,15 @@ public class Callback
 		=> _invocationPredicate = predicate;
 
 	/// <summary>
-	///     Limits the callback to only execute for matching property accesses where the predicate returns
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	///     <see langword="true" />.
 	/// </summary>
 	/// <remarks>
-	///     The number of times is only counted for actual executions (<see cref="When" /> evaluates to <see langword="true" />
-	///     ).
+	///     The number of times is only counted for actual executions (<see cref="When" /> evaluates
+	///     to <see langword="true" />).
 	/// </remarks>
-	public void For(Func<int, bool> predicate)
-		=> _matchingPredicate = predicate;
+	public void For(int times)
+		=> _forTimes = times;
 
 	/// <summary>
 	///     Deactivates the callback after it was invoked the given number of <paramref name="times" />.
@@ -82,10 +82,10 @@ public class Callback
 		=> _invocationPredicate?.Invoke(invocationCount) ?? true;
 
 	/// <summary>
-	///     Check if the invocation count satisfies the <see cref="For" />-predicate.
+	///     Check if the callback should be repeated (at least) once more.
 	/// </summary>
 	protected bool CheckMatching(int matchingCount)
-		=> _matchingPredicate?.Invoke(matchingCount) ?? true;
+		=> _forTimes is null || matchingCount < _forTimes;
 }
 
 /// <summary>

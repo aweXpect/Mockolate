@@ -63,7 +63,8 @@ public interface IIndexerGetterSetup<TValue, out T1>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter, the parameter of the indexer and the value of the indexer as last parameter.
+	///     The callback receives an incrementing access counter as first parameter, the parameter of the indexer and the value
+	///     of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
 }
@@ -98,7 +99,8 @@ public interface IIndexerSetterSetup<TValue, out T1>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter, the parameter of the indexer and the value the indexer is set to as last parameter.
+	///     The callback receives an incrementing access counter as first parameter, the parameter of the indexer and the value
+	///     the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
 }
@@ -221,7 +223,7 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1>
 	: IIndexerSetup<TValue, T1>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -264,7 +266,7 @@ public interface IIndexerSetupReturnWhenBuilder<TValue, out T1>
 	: IIndexerSetup<TValue, T1>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -276,14 +278,15 @@ public interface IIndexerSetupReturnWhenBuilder<TValue, out T1>
 	///     Deactivates the return/throw after the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
-	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupReturnBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	///     The number of times is only counted for actual executions
+	///     (<see cref="IIndexerSetupReturnBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
 	IIndexerSetup<TValue, T1> Only(int times);
 }
 
 /// <summary>
-///     Sets up a <typeparamref name="TValue" /> indexer getter for <typeparamref name="T1" /> and <typeparamref name="T2" />.
+///     Sets up a <typeparamref name="TValue" /> indexer getter for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
 /// </summary>
 public interface IIndexerGetterSetup<TValue, out T1, out T2>
 {
@@ -312,14 +315,15 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
+	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
-
 }
 
 /// <summary>
-///     Sets up a <typeparamref name="TValue" /> indexer setter for <typeparamref name="T1" /> and <typeparamref name="T2" />.
+///     Sets up a <typeparamref name="TValue" /> indexer setter for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
 /// </summary>
 public interface IIndexerSetterSetup<TValue, out T1, out T2>
 {
@@ -348,7 +352,8 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
+	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
 }
@@ -473,7 +478,7 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2>
 	: IIndexerSetup<TValue, T1, T2>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -518,13 +523,12 @@ public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2>
 	: IIndexerSetup<TValue, T1, T2>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
-	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupReturnBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
-	///     <see langword="true" />
-	///     ).
+	///     The number of times is only counted for actual executions
+	///     (<see cref="IIndexerSetupReturnBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
 	/// </remarks>
 	IIndexerSetupReturnWhenBuilder<TValue, T1, T2> For(int times);
 
@@ -540,7 +544,8 @@ public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2>
 }
 
 /// <summary>
-///     Sets up a <typeparamref name="TValue" /> indexer getter for <typeparamref name="T1" />, <typeparamref name="T2" /> and
+///     Sets up a <typeparamref name="TValue" /> indexer getter for <typeparamref name="T1" />, <typeparamref name="T2" />
+///     and
 ///     <typeparamref name="T3" />.
 /// </summary>
 public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
@@ -570,13 +575,15 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
+	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
 }
 
 /// <summary>
-///     Sets up a <typeparamref name="TValue" /> indexer setter for <typeparamref name="T1" />, <typeparamref name="T2" /> and
+///     Sets up a <typeparamref name="TValue" /> indexer setter for <typeparamref name="T1" />, <typeparamref name="T2" />
+///     and
 ///     <typeparamref name="T3" />.
 /// </summary>
 public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
@@ -606,7 +613,8 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
+	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
 }
@@ -732,7 +740,7 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 	: IIndexerSetup<TValue, T1, T2, T3>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -778,7 +786,7 @@ public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2, out T3>
 	: IIndexerSetup<TValue, T1, T2, T3>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -831,7 +839,8 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
+	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
 }
@@ -867,7 +876,8 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.
+	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
+	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
 }
@@ -994,7 +1004,7 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 	: IIndexerSetup<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Limits the callback to only execute for the given number of <paramref name="times" />.
+	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
@@ -1039,7 +1049,7 @@ public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2, out T3, 
 	: IIndexerSetup<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Limits the return/throw to only execute for the given number of <paramref name="times" />.
+	///     Repeats the return/throw for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
