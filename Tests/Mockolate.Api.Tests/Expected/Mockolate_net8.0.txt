@@ -48,10 +48,16 @@ namespace Mockolate
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Parameters.IVerifySpanParameter<T> IsSpan<T>(System.Func<T[], bool> predicate) { }
         public static Mockolate.Parameters.IParameter<bool> IsTrue() { }
+        public static Mockolate.It.IParameterMatches Matches(string pattern) { }
         public interface IInRangeParameter<out T> : Mockolate.Parameters.IParameter<T>
         {
             Mockolate.Parameters.IParameter<T> Exclusive();
             Mockolate.Parameters.IParameter<T> Inclusive();
+        }
+        public interface IParameterMatches : Mockolate.Parameters.IParameter<string>
+        {
+            Mockolate.It.IParameterMatches AsRegex(System.Text.RegularExpressions.RegexOptions options = 0, System.TimeSpan? timeout = default);
+            Mockolate.It.IParameterMatches IgnoringCase(bool ignoreCase = true);
         }
     }
     public class Match

@@ -83,6 +83,7 @@ public sealed partial class MatchTests
 		void DoSomething(int? value, bool flag);
 		void DoSomethingWithInt(int value);
 		void DoSomethingWithLong(int value);
+		void DoSomethingWithString(string value);
 	}
 
 	internal class AllEqualComparer : IEqualityComparer<int>
