@@ -574,7 +574,7 @@ namespace Mockolate.Setup
         protected bool RunInParallel { get; }
         protected bool CheckInvocations(int invocationCount) { }
         protected bool CheckMatching(int matchingCount) { }
-        public void For(System.Func<int, bool> predicate) { }
+        public void For(int times) { }
         public void InParallel() { }
         protected bool IsActive(int matchingCount) { }
         public void Only(int times) { }
