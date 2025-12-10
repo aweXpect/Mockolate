@@ -57,6 +57,7 @@ public partial class It
 			return this;
 		}
 
+#pragma warning disable S3218
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(string value)
 		{
@@ -73,6 +74,7 @@ public partial class It
 			};
 			return _regex.IsMatch(value);
 		}
+#pragma warning restore S3218
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\")";
@@ -81,7 +83,7 @@ public partial class It
 		{
 			string regex = Regex.Escape(value)
 				.Replace("\\?", ".")
-				.Replace("\\*", "(.|\\n)*");
+				.Replace("\\*", "(?:.|\\n)*");
 			return $"^{regex}$";
 		}
 	}
