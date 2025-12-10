@@ -340,10 +340,34 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("\t{");
-		sb.Append("\t\tadd => MockRegistrations.AddEvent(").Append(@event.GetUniqueNameString())
-			.Append(", value?.Target, value?.Method);").AppendLine();
-		sb.Append("\t\tremove => MockRegistrations.RemoveEvent(")
-			.Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
+		if (isClassInterface && !explicitInterfaceImplementation && @event.ExplicitImplementation is null)
+		{
+			sb.Append("\t\tadd").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tMockRegistrations.AddEvent(").Append(@event.GetUniqueNameString())
+				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\tif (this._wrapped is not null)").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tthis._wrapped.").Append(@event.Name).Append(" += value;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t}").AppendLine();
+			sb.Append("\t\tremove").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tMockRegistrations.RemoveEvent(").Append(@event.GetUniqueNameString())
+				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\tif (this._wrapped is not null)").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tthis._wrapped.").Append(@event.Name).Append(" -= value;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t}").AppendLine();
+		}
+		else
+		{
+			sb.Append("\t\tadd => MockRegistrations.AddEvent(").Append(@event.GetUniqueNameString())
+				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\tremove => MockRegistrations.RemoveEvent(")
+				.Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
+		}
 		sb.AppendLine("\t}");
 	}
 

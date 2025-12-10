@@ -72,16 +72,44 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.SomeEvent" />
 				          	public event System.EventHandler? SomeEvent
 				          	{
-				          		add => MockRegistrations.AddEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
-				          		remove => MockRegistrations.RemoveEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+				          		add
+				          		{
+				          			MockRegistrations.AddEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.SomeEvent += value;
+				          			}
+				          		}
+				          		remove
+				          		{
+				          			MockRegistrations.RemoveEvent("MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.SomeEvent -= value;
+				          			}
+				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          	/// <inheritdoc cref="MyCode.IMyService.SomeOtherEvent" />
 				          	public event System.EventHandler? SomeOtherEvent
 				          	{
-				          		add => MockRegistrations.AddEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
-				          		remove => MockRegistrations.RemoveEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+				          		add
+				          		{
+				          			MockRegistrations.AddEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.SomeOtherEvent += value;
+				          			}
+				          		}
+				          		remove
+				          		{
+				          			MockRegistrations.RemoveEvent("MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.SomeOtherEvent -= value;
+				          			}
+				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
 		}
@@ -129,32 +157,88 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyDirectEvent" />
 				          	public event System.EventHandler? MyDirectEvent
 				          	{
-				          		add => MockRegistrations.AddEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
-				          		remove => MockRegistrations.RemoveEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+				          		add
+				          		{
+				          			MockRegistrations.AddEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.MyDirectEvent += value;
+				          			}
+				          		}
+				          		remove
+				          		{
+				          			MockRegistrations.RemoveEvent("MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.MyDirectEvent -= value;
+				          			}
+				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseEvent1" />
 				          	public event System.EventHandler? MyBaseEvent1
 				          	{
-				          		add => MockRegistrations.AddEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
-				          		remove => MockRegistrations.RemoveEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+				          		add
+				          		{
+				          			MockRegistrations.AddEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.MyBaseEvent1 += value;
+				          			}
+				          		}
+				          		remove
+				          		{
+				          			MockRegistrations.RemoveEvent("MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.MyBaseEvent1 -= value;
+				          			}
+				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseEvent2" />
 				          	public event System.EventHandler? MyBaseEvent2
 				          	{
-				          		add => MockRegistrations.AddEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
-				          		remove => MockRegistrations.RemoveEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+				          		add
+				          		{
+				          			MockRegistrations.AddEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.MyBaseEvent2 += value;
+				          			}
+				          		}
+				          		remove
+				          		{
+				          			MockRegistrations.RemoveEvent("MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.MyBaseEvent2 -= value;
+				          			}
+				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseEvent3" />
 				          	public event System.EventHandler? MyBaseEvent3
 				          	{
-				          		add => MockRegistrations.AddEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
-				          		remove => MockRegistrations.RemoveEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+				          		add
+				          		{
+				          			MockRegistrations.AddEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.MyBaseEvent3 += value;
+				          			}
+				          		}
+				          		remove
+				          		{
+				          			MockRegistrations.RemoveEvent("MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.MyBaseEvent3 -= value;
+				          			}
+				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
 		}

@@ -8,6 +8,92 @@ public sealed partial class MockTests
 	public sealed class WrapTests
 	{
 		[Fact]
+		public async Task Wrap_Events_ForwardEventsFromWrappedInstance()
+		{
+			MyChocolateDispenser myDispenser = new();
+			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+
+			string? eventType = null;
+			int eventAmount = 0;
+
+			wrappedDispenser.ChocolateDispensed += (type, amt) =>
+			{
+				eventType = type;
+				eventAmount = amt;
+			};
+
+			myDispenser.Dispense("Milk", 3);
+
+			await That(eventType).IsEqualTo("Milk");
+			await That(eventAmount).IsEqualTo(3);
+		}
+
+		[Fact]
+		public async Task Wrap_Events_ForwardsFromWrapper()
+		{
+			MyChocolateDispenser myDispenser = new();
+			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+
+			string? eventType = null;
+			int eventAmount = 0;
+
+			myDispenser.ChocolateDispensed += (type, amt) =>
+			{
+				eventType = type;
+				eventAmount = amt;
+			};
+
+			wrappedDispenser.Dispense("Dark", 1);
+
+			await That(eventType).IsEqualTo("Dark");
+			await That(eventAmount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task Wrap_Events_Unsubscribe_ShouldRemoveSubscription()
+		{
+			MyChocolateDispenser myDispenser = new();
+			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+
+			string? eventType = null;
+			int eventAmount = -1;
+
+			wrappedDispenser.ChocolateDispensed += Handler;
+
+			myDispenser.Dispense("Milk", 3);
+
+			await That(eventType).IsEqualTo("Milk");
+			await That(eventAmount).IsEqualTo(3);
+
+			wrappedDispenser.ChocolateDispensed -= Handler;
+
+			myDispenser.Dispense("Dark", 6);
+
+			await That(eventType).IsEqualTo("Milk");
+			await That(eventAmount).IsEqualTo(3);
+
+			void Handler(string type, int amount)
+			{
+				eventType = type;
+				eventAmount = amount;
+			}
+		}
+
+		[Fact]
+		public async Task Wrap_Indexer_ShouldDelegateToWrappedInstance()
+		{
+			MyChocolateDispenser myDispenser = new();
+			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+
+			wrappedDispenser["Dark"] = 12;
+
+			await That(wrappedDispenser["Dark"]).IsEqualTo(12);
+			await That(myDispenser["Dark"]).IsEqualTo(12);
+			await That(wrappedDispenser["White"]).IsEqualTo(8);
+			await That(myDispenser["White"]).IsEqualTo(8);
+		}
+
+		[Fact]
 		public async Task Wrap_Method_ShouldDelegateToWrappedInstance()
 		{
 			MyChocolateDispenser myDispenser = new();
@@ -30,20 +116,6 @@ public sealed partial class MockTests
 
 			await That(wrappedDispenser.TotalDispensed).IsEqualTo(12);
 			await That(myDispenser.TotalDispensed).IsEqualTo(12);
-		}
-
-		[Fact]
-		public async Task Wrap_Indexer_ShouldDelegateToWrappedInstance()
-		{
-			MyChocolateDispenser myDispenser = new();
-			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
-
-			wrappedDispenser["Dark"] = 12;
-
-			await That(wrappedDispenser["Dark"]).IsEqualTo(12);
-			await That(myDispenser["Dark"]).IsEqualTo(12);
-			await That(wrappedDispenser["White"]).IsEqualTo(8);
-			await That(myDispenser["White"]).IsEqualTo(8);
 		}
 
 		[Fact]
