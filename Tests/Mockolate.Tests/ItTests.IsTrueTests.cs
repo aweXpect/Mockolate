@@ -2,9 +2,9 @@ using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
 
-public sealed partial class MatchTests
+public sealed partial class ItTests
 {
-	public sealed class TrueTests
+	public sealed class IsTrueTests
 	{
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()

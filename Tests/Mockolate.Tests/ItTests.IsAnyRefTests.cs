@@ -2,9 +2,9 @@ using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
 
-public sealed partial class MatchTests
+public sealed partial class ItTests
 {
-	public sealed class AnyOutTests
+	public sealed class IsAnyRefTests
 	{
 		[Theory]
 		[InlineData(42L, false)]
@@ -13,7 +13,7 @@ public sealed partial class MatchTests
 		[InlineData(123, true)]
 		public async Task ShouldCheckType(object? value, bool expectMatch)
 		{
-			IOutParameter<int?> sut = It.IsAnyOut<int?>();
+			IRefParameter<int?> sut = It.IsAnyRef<int?>();
 
 			bool result = ((IParameter)sut).Matches(value);
 
@@ -23,8 +23,8 @@ public sealed partial class MatchTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IOutParameter<int> sut = It.IsAnyOut<int>();
-			string expectedValue = "It.IsAnyOut<int>()";
+			IRefParameter<int> sut = It.IsAnyRef<int>();
+			string expectedValue = "It.IsAnyRef<int>()";
 
 			string? result = sut.ToString();
 
