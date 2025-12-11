@@ -2,9 +2,9 @@ using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
 
-public sealed partial class MatchTests
+public sealed partial class ItTests
 {
-	public sealed class AnyParametersTests
+	public sealed class IsAnyParametersTests
 	{
 		[Theory]
 		[InlineData(null, null)]

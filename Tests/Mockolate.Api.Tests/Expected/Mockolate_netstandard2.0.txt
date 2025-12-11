@@ -36,6 +36,7 @@ namespace Mockolate
         public static Mockolate.It.IInRangeParameter<T> IsInRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
             where T : System.IComparable<T> { }
         public static Mockolate.Parameters.IParameter<T> IsNull<T>() { }
+        public static Mockolate.Parameters.IParameter<T> IsOneOf<T>(params T[] values) { }
         public static Mockolate.Parameters.IVerifyOutParameter<T> IsOut<T>() { }
         public static Mockolate.Parameters.IOutParameter<T> IsOut<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IVerifyRefParameter<T> IsRef<T>() { }

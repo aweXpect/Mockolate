@@ -2,9 +2,9 @@ using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
 
-public sealed partial class MatchTests
+public sealed partial class ItTests
 {
-	public sealed class WithTests
+	public sealed class IsTests
 	{
 		[Fact]
 		public async Task ToString_WithPredicate_ShouldReturnExpectedValue()
@@ -107,19 +107,6 @@ public sealed partial class MatchTests
 			await That(value1.Progress).IsEqualTo(1);
 			await That(result1).IsEqualTo(3);
 			await That(mock.VerifyMock.Invoked.DoSomething(It.Is<MyOtherImplementation>(_ => true))).Never();
-		}
-
-		[Theory]
-		[InlineData(null, true)]
-		[InlineData("", false)]
-		[InlineData("foo", false)]
-		public async Task WithValue_Nullable_ShouldMatchWhenEqual(string? value, bool expectMatch)
-		{
-			IParameter<string?> sut = It.IsNull<string?>();
-
-			bool result = ((IParameter)sut).Matches(value);
-
-			await That(result).IsEqualTo(expectMatch);
 		}
 
 		[Theory]

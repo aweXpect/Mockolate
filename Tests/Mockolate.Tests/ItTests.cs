@@ -5,7 +5,7 @@ using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
 
-public sealed partial class MatchTests
+public sealed partial class ItTests
 {
 	[Fact]
 	public async Task InvokeCallbacks_WithCorrectType_ShouldInvokeCallback()
