@@ -512,10 +512,6 @@ namespace Mockolate.Monitor
         public System.IDisposable Run() { }
         protected void UpdateInteractions() { }
     }
-    public static class MockMonitorExtensions
-    {
-        public static System.IDisposable Monitor<T>(this Mockolate.Mock<T> mock, out Mockolate.Monitor.MockMonitor<T> monitor) { }
-    }
     public sealed class MockMonitor<T> : Mockolate.Monitor.MockMonitor
     {
         public MockMonitor(Mockolate.Mock<T> mock) { }
