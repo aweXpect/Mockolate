@@ -7,6 +7,7 @@ using Mockolate.Parameters;
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
+#pragma warning disable S3218 // Inner class members should not shadow outer class "static" or type members
 public partial class It
 {
 	/// <summary>
@@ -35,42 +36,33 @@ public partial class It
 		string doNotPopulateThisValue = "")
 		=> new PredicateParameterMatch<T>(predicate, doNotPopulateThisValue);
 
-	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>
+	private sealed class ParameterEqualsMatch<T>(
+		T value,
+		string valueExpression,
+		IEqualityComparer<T>? comparer = null,
+		string? comparerExpression = null)
+		: TypedMatch<T>
 	{
-		private readonly IEqualityComparer<T>? _comparer;
-		private readonly string? _comparerExpression;
-		private readonly T _value;
-		private readonly string _valueExpression;
-
-		public ParameterEqualsMatch(T value, string valueExpression, IEqualityComparer<T>? comparer = null,
-			string? comparerExpression = null)
-		{
-			_value = value;
-			_valueExpression = valueExpression;
-			_comparer = comparer;
-			_comparerExpression = comparerExpression;
-		}
-
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
-		protected override bool Matches(T value)
+		protected override bool Matches(T value1)
 		{
-			if (_comparer is not null)
+			if (comparer is not null)
 			{
-				return _comparer.Equals(value, _value);
+				return comparer.Equals(value1, value);
 			}
 
-			return EqualityComparer<T>.Default.Equals(value, _value);
+			return EqualityComparer<T>.Default.Equals(value1, value);
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string? ToString()
+		public override string ToString()
 		{
-			if (_comparer is not null)
+			if (comparer is not null)
 			{
-				return $"It.Is({_valueExpression}, {_comparerExpression})";
+				return $"It.Is({valueExpression}, {comparerExpression})";
 			}
 
-			return _valueExpression;
+			return valueExpression;
 		}
 	}
 
@@ -80,4 +72,5 @@ public partial class It
 		public override string ToString() => $"It.Is<{typeof(T).FormatType()}>({predicateExpression})";
 	}
 }
+#pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.

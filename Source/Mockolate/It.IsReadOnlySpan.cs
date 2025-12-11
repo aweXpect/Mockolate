@@ -7,6 +7,7 @@ using Mockolate.Setup;
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
+#pragma warning disable S3218 // Inner class members should not shadow outer class "static" or type members
 public partial class It
 {
 	/// <summary>
@@ -32,5 +33,6 @@ public partial class It
 			=> predicate?.Invoke(value.ReadOnlySpanValues) ?? true;
 	}
 }
+#pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.
 #endif

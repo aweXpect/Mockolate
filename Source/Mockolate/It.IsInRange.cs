@@ -5,6 +5,7 @@ using Mockolate.Parameters;
 namespace Mockolate;
 
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
+#pragma warning disable S3218 // Inner class members should not shadow outer class "static" or type members
 public partial class It
 {
 	/// <summary>
@@ -49,6 +50,7 @@ public partial class It
 			if (minimum.CompareTo(maximum) > 0)
 			{
 				throw new ArgumentOutOfRangeException(nameof(maximum),
+					// ReSharper disable once LocalizableElement
 					"The maximum value must be greater than or equal to the minimum value.");
 			}
 
@@ -88,4 +90,5 @@ public partial class It
 			: $"It.IsInRange({_minimumExpression}, {_maximumExpression}).Exclusive()";
 	}
 }
+#pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.
