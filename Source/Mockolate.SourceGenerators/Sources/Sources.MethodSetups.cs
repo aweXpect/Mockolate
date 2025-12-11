@@ -52,14 +52,14 @@ internal static partial class Sources
 
 			string xmlDocSummary = item.Item2 ? "returning void" : "returning <typeparamref name=\"TReturn\"/>";
 			string typePrefix = item.Item2
-				? "Mockolate.Setup.IVoidMethodSetupReturnBuilder"
-				: "Mockolate.Setup.IReturnMethodSetupReturnBuilder";
+				? "Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder"
+				: "Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder";
 			string setupTypePrefix = item.Item2
 				? "Mockolate.Setup.IVoidMethodSetup"
 				: "Mockolate.Setup.IReturnMethodSetup";
 			string setupCallbackPrefix = item.Item2
-				? "Mockolate.Setup.IVoidMethodSetupCallbackBuilder"
-				: "Mockolate.Setup.IReturnMethodSetupCallbackBuilder";
+				? "Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder"
+				: "Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder";
 			sb.Append($$"""
 			            		/// <summary>
 			            		///     Extensions for method callback setup {{xmlDocSummary}} with {{item.Item1}} parameters.

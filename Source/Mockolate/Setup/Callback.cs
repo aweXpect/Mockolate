@@ -27,12 +27,12 @@ public class Callback
 	/// </summary>
 	protected bool IsActive(int matchingCount)
 	{
-		if (_onlyTimes > 0 && matchingCount >= _onlyTimes)
+		if (_forTimes is not null)
 		{
-			return false;
+			matchingCount -= _forTimes.Value;
 		}
 
-		return true;
+		return _onlyTimes == 0 || matchingCount < _onlyTimes;
 	}
 
 	/// <summary>

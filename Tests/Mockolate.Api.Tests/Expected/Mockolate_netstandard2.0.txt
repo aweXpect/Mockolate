@@ -174,20 +174,20 @@ namespace Mockolate
         {
             public Mockolate.Setup.IPropertySetup<T> OnlyOnce() { }
         }
-        extension<TValue, T1>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> setup)
+        extension<TValue, T1>(Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1> setup)
             where TValue :  notnull
             where T1 :  notnull
         {
             public void Forever() { }
             public Mockolate.Setup.IIndexerSetup<TValue, T1> OnlyOnce() { }
         }
-        extension<TValue, T1>(Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> setup)
+        extension<TValue, T1>(Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1> setup)
             where TValue :  notnull
             where T1 :  notnull
         {
             public Mockolate.Setup.IIndexerSetup<TValue, T1> OnlyOnce() { }
         }
-        extension<TValue, T1, T2>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> setup)
+        extension<TValue, T1, T2>(Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2> setup)
             where TValue :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -195,14 +195,14 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IIndexerSetup<TValue, T1, T2> OnlyOnce() { }
         }
-        extension<TValue, T1, T2>(Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> setup)
+        extension<TValue, T1, T2>(Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> setup)
             where TValue :  notnull
             where T1 :  notnull
             where T2 :  notnull
         {
             public Mockolate.Setup.IIndexerSetup<TValue, T1, T2> OnlyOnce() { }
         }
-        extension<TValue, T1, T2, T3>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> setup)
+        extension<TValue, T1, T2, T3>(Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3> setup)
             where TValue :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -211,7 +211,7 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3> OnlyOnce() { }
         }
-        extension<TValue, T1, T2, T3>(Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> setup)
+        extension<TValue, T1, T2, T3>(Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> setup)
             where TValue :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -219,7 +219,7 @@ namespace Mockolate
         {
             public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3> OnlyOnce() { }
         }
-        extension<TValue, T1, T2, T3, T4>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> setup)
+        extension<TValue, T1, T2, T3, T4>(Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4> setup)
             where TValue :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -229,7 +229,7 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> OnlyOnce() { }
         }
-        extension<TValue, T1, T2, T3, T4>(Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> setup)
+        extension<TValue, T1, T2, T3, T4>(Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> setup)
             where TValue :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -238,31 +238,31 @@ namespace Mockolate
         {
             public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> OnlyOnce() { }
         }
-        extension<TReturn>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn> setup)
+        extension<TReturn>(Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn> setup)
             where TReturn :  notnull
         {
             public void Forever() { }
             public Mockolate.Setup.IReturnMethodSetup<TReturn> OnlyOnce() { }
         }
-        extension<TReturn>(Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> setup)
+        extension<TReturn>(Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn> setup)
             where TReturn :  notnull
         {
             public Mockolate.Setup.IReturnMethodSetup<TReturn> OnlyOnce() { }
         }
-        extension<TReturn, T1>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1> setup)
+        extension<TReturn, T1>(Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1> setup)
             where TReturn :  notnull
             where T1 :  notnull
         {
             public void Forever() { }
             public Mockolate.Setup.IReturnMethodSetup<TReturn, T1> OnlyOnce() { }
         }
-        extension<TReturn, T1>(Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> setup)
+        extension<TReturn, T1>(Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> setup)
             where TReturn :  notnull
             where T1 :  notnull
         {
             public Mockolate.Setup.IReturnMethodSetup<TReturn, T1> OnlyOnce() { }
         }
-        extension<TReturn, T1, T2>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2> setup)
+        extension<TReturn, T1, T2>(Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2> setup)
             where TReturn :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -270,14 +270,14 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2> OnlyOnce() { }
         }
-        extension<TReturn, T1, T2>(Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> setup)
+        extension<TReturn, T1, T2>(Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> setup)
             where TReturn :  notnull
             where T1 :  notnull
             where T2 :  notnull
         {
             public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2> OnlyOnce() { }
         }
-        extension<TReturn, T1, T2, T3>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> setup)
+        extension<TReturn, T1, T2, T3>(Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3> setup)
             where TReturn :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -286,7 +286,7 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3> OnlyOnce() { }
         }
-        extension<TReturn, T1, T2, T3>(Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> setup)
+        extension<TReturn, T1, T2, T3>(Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> setup)
             where TReturn :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -294,7 +294,7 @@ namespace Mockolate
         {
             public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3> OnlyOnce() { }
         }
-        extension<TReturn, T1, T2, T3, T4>(Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> setup)
+        extension<TReturn, T1, T2, T3, T4>(Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4> setup)
             where TReturn :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -304,7 +304,7 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4> OnlyOnce() { }
         }
-        extension<TReturn, T1, T2, T3, T4>(Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> setup)
+        extension<TReturn, T1, T2, T3, T4>(Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> setup)
             where TReturn :  notnull
             where T1 :  notnull
             where T2 :  notnull
@@ -313,40 +313,40 @@ namespace Mockolate
         {
             public Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4> OnlyOnce() { }
         }
-        extension(Mockolate.Setup.IVoidMethodSetupReturnBuilder setup)
+        extension(Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder setup)
         {
             public void Forever() { }
             public Mockolate.Setup.IVoidMethodSetup OnlyOnce() { }
         }
-        extension(Mockolate.Setup.IVoidMethodSetupCallbackBuilder setup)
+        extension(Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder setup)
         {
             public Mockolate.Setup.IVoidMethodSetup OnlyOnce() { }
         }
-        extension<T1>(Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1> setup)
+        extension<T1>(Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1> setup)
             where T1 :  notnull
         {
             public void Forever() { }
             public Mockolate.Setup.IVoidMethodSetup<T1> OnlyOnce() { }
         }
-        extension<T1>(Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1> setup)
+        extension<T1>(Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1> setup)
             where T1 :  notnull
         {
             public Mockolate.Setup.IVoidMethodSetup<T1> OnlyOnce() { }
         }
-        extension<T1, T2>(Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2> setup)
+        extension<T1, T2>(Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2> setup)
             where T1 :  notnull
             where T2 :  notnull
         {
             public void Forever() { }
             public Mockolate.Setup.IVoidMethodSetup<T1, T2> OnlyOnce() { }
         }
-        extension<T1, T2>(Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2> setup)
+        extension<T1, T2>(Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2> setup)
             where T1 :  notnull
             where T2 :  notnull
         {
             public Mockolate.Setup.IVoidMethodSetup<T1, T2> OnlyOnce() { }
         }
-        extension<T1, T2, T3>(Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3> setup)
+        extension<T1, T2, T3>(Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> setup)
             where T1 :  notnull
             where T2 :  notnull
             where T3 :  notnull
@@ -354,14 +354,14 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IVoidMethodSetup<T1, T2, T3> OnlyOnce() { }
         }
-        extension<T1, T2, T3>(Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3> setup)
+        extension<T1, T2, T3>(Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> setup)
             where T1 :  notnull
             where T2 :  notnull
             where T3 :  notnull
         {
             public Mockolate.Setup.IVoidMethodSetup<T1, T2, T3> OnlyOnce() { }
         }
-        extension<T1, T2, T3, T4>(Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> setup)
+        extension<T1, T2, T3, T4>(Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> setup)
             where T1 :  notnull
             where T2 :  notnull
             where T3 :  notnull
@@ -370,7 +370,7 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4> OnlyOnce() { }
         }
-        extension<T1, T2, T3, T4>(Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> setup)
+        extension<T1, T2, T3, T4>(Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> setup)
             where T1 :  notnull
             where T2 :  notnull
             where T3 :  notnull

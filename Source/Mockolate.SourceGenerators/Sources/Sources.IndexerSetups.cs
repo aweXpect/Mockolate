@@ -44,7 +44,7 @@ internal static partial class Sources
 			            		/// <summary>
 			            		///     Extensions for indexer callback setups with {{item}} parameters.
 			            		/// </summary>
-			            		extension<TValue, {{types}}>(Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, {{types}}> setup)
+			            		extension<TValue, {{types}}>(Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, {{types}}> setup)
 			            		{
 			            			/// <summary>
 			            			///     Executes the callback only once.
@@ -56,7 +56,7 @@ internal static partial class Sources
 			            		/// <summary>
 			            		///     Extensions for indexer setups with {{item}} parameters.
 			            		/// </summary>
-			            		extension<TValue, {{types}}>(Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, {{types}}> setup)
+			            		extension<TValue, {{types}}>(Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, {{types}}> setup)
 			            		{
 			            			/// <summary>
 			            			///     Returns/throws forever.
