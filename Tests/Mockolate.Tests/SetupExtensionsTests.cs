@@ -1,0 +1,1927 @@
+using System.Collections.Generic;
+
+namespace Mockolate.Tests;
+
+public sealed class SetupExtensionsTests
+{
+	public sealed class PropertySetupReturnWhenBuilderTests
+	{
+		[Fact]
+		public async Task Forever_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Property.MyProperty.Returns(1).Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyProperty;
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Property.MyProperty.Returns(1).Returns(2).Returns(3).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyProperty;
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Property.MyProperty.Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyProperty;
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Property.MyProperty.Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyProperty;
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+	}
+
+	public sealed class PropertySetupWhenBuilderTests
+	{
+		[Fact]
+		public async Task OnlyOnce_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Property.MyProperty.OnGet.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyProperty;
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Property.MyProperty.OnGet.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyProperty;
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+	}
+
+	public sealed class IndexerSetupReturnWhenBuilderTests
+	{
+		[Fact]
+		public async Task Forever_With1Parameter_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>()).Returns(1).Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10];
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With1Parameter_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>()).Returns(1).Returns(2).Returns(3).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10];
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With2Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).Returns(1).Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20];
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With2Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).Returns(1).Returns(2).Returns(3).When(i => i >= 2)
+				.Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20];
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With3Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).Returns(2).Returns(3)
+				.Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30];
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With3Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).Returns(2).Returns(3)
+				.When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30];
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With4Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1)
+				.Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30, 40];
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With4Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1)
+				.Returns(2).Returns(3).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30, 40];
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With5Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30, 40, 50];
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With5Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).Returns(2).Returns(3).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30, 40, 50];
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10];
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>()).Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20];
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30];
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1)
+				.OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30, 40];
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).For(3)
+				.OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30, 40];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30, 40, 50];
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut[10, 20, 30, 40, 50];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+	}
+
+	public sealed class IndexerSetupWhenBuilderTests
+	{
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>()).OnGet.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10];
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>()).OnGet.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).OnGet.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10, 20];
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).OnGet.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10, 20];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).OnGet.Do(() => values.Add(1))
+				.OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10, 20, 30];
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).OnGet.Do(() => values.Add(1))
+				.For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10, 20, 30];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).OnGet
+				.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10, 20, 30, 40];
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).OnGet
+				.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10, 20, 30, 40];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.OnGet.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10, 20, 30, 40, 50];
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.OnGet.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10, 20, 30, 40, 50];
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+	}
+
+	public sealed class ReturnMethodSetupReturnWhenBuilderTests
+	{
+		[Fact]
+		public async Task Forever_With0Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod().Returns(1).Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod();
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With0Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod().Returns(1).Returns(2).Returns(3).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod();
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With1Parameter_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>()).Returns(1).Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10);
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With1Parameter_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>()).Returns(1).Returns(2).Returns(3).When(i => i >= 2)
+				.Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10);
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With2Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>()).Returns(1).Returns(2).Returns(3)
+				.Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20);
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With2Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>()).Returns(1).Returns(2).Returns(3)
+				.When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20);
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With3Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).Returns(2)
+				.Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30);
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With3Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).Returns(2)
+				.Returns(3).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30);
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With4Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30, 40);
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With4Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).Returns(2).Returns(3).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30, 40);
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With5Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).Returns(2).Returns(3).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30, 40, 50);
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With5Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).Returns(2).Returns(3).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30, 40, 50);
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With0Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod().Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod();
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With0Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod().Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod();
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10);
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>()).Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20);
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>()).Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30);
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).For(3)
+				.OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30, 40);
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30, 40);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30, 40, 50);
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyIntMethod(10, 20, 30, 40, 50);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+	}
+
+	public sealed class ReturnMethodSetupWhenBuilderTests
+	{
+		[Fact]
+		public async Task OnlyOnce_With0Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod().Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod();
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With0Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod().Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod();
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>()).Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>()).Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>()).Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10, 20);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>()).Do(() => values.Add(1)).For(3)
+				.OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10, 20);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Do(() => values.Add(1))
+				.OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10, 20, 30);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Do(() => values.Add(1))
+				.For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10, 20, 30);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10, 20, 30, 40);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10, 20, 30, 40);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10, 20, 30, 40, 50);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyIntMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyIntMethod(10, 20, 30, 40, 50);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+	}
+
+	public sealed class VoidMethodSetupReturnWhenBuilderTests
+	{
+		[Fact]
+		public async Task Forever_With0Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod().Throws(new Exception("1")).Throws(new Exception("2"))
+				.Throws(new Exception("3")).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod();
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With0Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod().Throws(new Exception("1")).Throws(new Exception("2"))
+				.Throws(new Exception("3")).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod();
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With1Parameter_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>()).Throws(new Exception("1")).Throws(new Exception("2"))
+				.Throws(new Exception("3")).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With1Parameter_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>()).Throws(new Exception("1")).Throws(new Exception("2"))
+				.Throws(new Exception("3")).When(i => i >= 2)
+				.Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With2Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>()).Throws(new Exception("1"))
+				.Throws(new Exception("2")).Throws(new Exception("3"))
+				.Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With2Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>()).Throws(new Exception("1"))
+				.Throws(new Exception("2")).Throws(new Exception("3"))
+				.When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With3Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).Throws(new Exception("2"))
+				.Throws(new Exception("3")).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With3Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).Throws(new Exception("2"))
+				.Throws(new Exception("3")).When(i => i >= 2).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With4Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).Throws(new Exception("2")).Throws(new Exception("3")).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30, 40);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With4Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).Throws(new Exception("2")).Throws(new Exception("3")).When(i => i >= 2)
+				.Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30, 40);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With5Parameters_ShouldKeepApplyingTheSetup()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).Throws(new Exception("2")).Throws(new Exception("3")).Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30, 40, 50);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task Forever_With5Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).Throws(new Exception("2")).Throws(new Exception("3")).When(i => i >= 2)
+				.Forever();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30, 40, 50);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With0Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod().Throws(new Exception("1")).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod();
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With0Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod().Throws(new Exception("1")).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod();
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>()).Throws(new Exception("1")).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>()).Throws(new Exception("1")).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>()).Throws(new Exception("1")).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>()).Throws(new Exception("1")).For(3)
+				.OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).For(3)
+				.OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30, 40);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30, 40);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_ShouldApplySetupOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30, 40, 50);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_WithFor_ShouldApplySetupOnlyForTimes()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Throws(new Exception("1")).For(3).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				try
+				{
+					sut.MyVoidMethod(10, 20, 30, 40, 50);
+				}
+				catch (Exception ex)
+				{
+					values[i] = int.Parse(ex.Message);
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+	}
+
+	public sealed class VoidMethodSetupWhenBuilderTests
+	{
+		[Fact]
+		public async Task OnlyOnce_With0Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod().Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod();
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With0Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod().Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod();
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>()).Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>()).Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>()).Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10, 20);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>()).Do(() => values.Add(1)).For(3)
+				.OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10, 20);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Do(() => values.Add(1))
+				.OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10, 20, 30);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Do(() => values.Add(1))
+				.For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10, 20, 30);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10, 20, 30, 40);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10, 20, 30, 40);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_ShouldInvokeTheCallbackOnlyOnce()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Do(() => values.Add(1)).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10, 20, 30, 40, 50);
+			}
+
+			await That(values).IsEqualTo([1,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Method
+				.MyVoidMethod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyVoidMethod(10, 20, 30, 40, 50);
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
+	}
+
+	public interface ISetupExtensionsTestService
+	{
+		int MyProperty { get; set; }
+
+		int this[int index1] { get; set; }
+		int this[int index1, int index2] { get; set; }
+		int this[int index1, int index2, int index3] { get; set; }
+		int this[int index1, int index2, int index3, int index4] { get; set; }
+		int this[int index1, int index2, int index3, int index4, int index5] { get; set; }
+
+		int MyIntMethod();
+		int MyIntMethod(int param1);
+		int MyIntMethod(int param1, int param2);
+		int MyIntMethod(int param1, int param2, int param3);
+		int MyIntMethod(int param1, int param2, int param3, int param4);
+		int MyIntMethod(int param1, int param2, int param3, int param4, int param5);
+
+		void MyVoidMethod();
+		void MyVoidMethod(int param1);
+		void MyVoidMethod(int param1, int param2);
+		void MyVoidMethod(int param1, int param2, int param3);
+		void MyVoidMethod(int param1, int param2, int param3, int param4);
+		void MyVoidMethod(int param1, int param2, int param3, int param4, int param5);
+	}
+}
