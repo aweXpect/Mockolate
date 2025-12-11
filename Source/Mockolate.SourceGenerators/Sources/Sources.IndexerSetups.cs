@@ -87,40 +87,21 @@ internal static partial class Sources
 
 	private static void AppendIndexerSetup(StringBuilder sb, int numberOfParameters)
 	{
-		string typeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"));
-		string outTypeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"out T{i}"));
+		string typeParams = GetGenericTypeParameters(numberOfParameters);
+		string outTypeParams = GetOutGenericTypeParameters(numberOfParameters);
 		string parameters = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}"));
 		string discards = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(_ => "_"));
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a <typeparamref name=\"TValue\"/> indexer getter for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer getter for {GetTypeParametersDescription(numberOfParameters)}.");
 		sb.Append("\tinternal interface IIndexerGetterSetup<TValue, ").Append(outTypeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action callback);")
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append("\t\t///     The callback receives the parameters of the indexer.").AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
+		sb.AppendXmlRemarks("The callback receives the parameters of the indexer.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<")
 			.Append(typeParams)
 			.Append("> callback);").AppendLine();
