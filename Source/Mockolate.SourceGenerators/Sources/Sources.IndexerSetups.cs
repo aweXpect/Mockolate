@@ -39,7 +39,7 @@ internal static partial class Sources
 		          """).AppendLine();
 		foreach (int item in indexerSetups)
 		{
-			string types = string.Join(", ", Enumerable.Range(1, item).Select(i => $"T{i}"));
+			string types = GetGenericTypeParameters(item);
 			sb.Append($$"""
 			            		/// <summary>
 			            		///     Extensions for indexer callback setups with {{item}} parameters.

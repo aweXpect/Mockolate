@@ -44,7 +44,7 @@ internal static partial class Sources
 		          """).AppendLine();
 		foreach ((int, bool) item in methodSetups)
 		{
-			string genericParameters = string.Join(", ", Enumerable.Range(1, item.Item1).Select(i => $"T{i}"));
+			string genericParameters = GetGenericTypeParameters(item.Item1);
 			if (!item.Item2)
 			{
 				genericParameters = "TReturn, " + genericParameters;
