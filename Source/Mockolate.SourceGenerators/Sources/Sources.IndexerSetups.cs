@@ -173,7 +173,7 @@ internal static partial class Sources
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary("Initializes the according to the given <paramref name=\"valueGenerator\" />.", "\t\t");
+		sb.AppendXmlSummary("Initializes the indexer according to the given <paramref name=\"valueGenerator\" />.", "\t\t");
 		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(Func<")
 			.Append(typeParams).Append(", TValue> valueGenerator);").AppendLine();
 		sb.AppendLine();
