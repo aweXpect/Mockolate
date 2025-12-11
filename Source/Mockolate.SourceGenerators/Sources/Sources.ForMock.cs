@@ -150,6 +150,10 @@ internal static partial class Sources
 				.Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
 			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
 			sb.Append("\tprivate readonly Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
+			if (mockClass.IsInterface)
+			{
+				sb.Append("\tprivate readonly ").Append(mockClass.ClassFullName).Append("? _wrapped;").AppendLine();
+			}
 			sb.AppendLine();
 			if (mockClass.Constructors?.Count > 0)
 			{
@@ -182,11 +186,12 @@ internal static partial class Sources
 			if (mockClass.IsInterface)
 			{
 				sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
-				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior)").AppendLine();
+				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior, ").Append(mockClass.ClassFullName).Append("? wrapped = null)").AppendLine();
 				sb.Append("\t{").AppendLine();
 				sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
 					.Append(">(this, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
 					.Append("\"));").AppendLine();
+				sb.Append("\t\tthis._wrapped = wrapped;").AppendLine();
 				sb.Append("\t}").AppendLine();
 				sb.AppendLine();
 			}
@@ -335,10 +340,34 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("\t{");
-		sb.Append("\t\tadd => MockRegistrations.AddEvent(").Append(@event.GetUniqueNameString())
-			.Append(", value?.Target, value?.Method);").AppendLine();
-		sb.Append("\t\tremove => MockRegistrations.RemoveEvent(")
-			.Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
+		if (isClassInterface && !explicitInterfaceImplementation && @event.ExplicitImplementation is null)
+		{
+			sb.Append("\t\tadd").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tMockRegistrations.AddEvent(").Append(@event.GetUniqueNameString())
+				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\tif (this._wrapped is not null)").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tthis._wrapped.").Append(@event.Name).Append(" += value;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t}").AppendLine();
+			sb.Append("\t\tremove").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tMockRegistrations.RemoveEvent(").Append(@event.GetUniqueNameString())
+				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\tif (this._wrapped is not null)").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tthis._wrapped.").Append(@event.Name).Append(" -= value;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t}").AppendLine();
+		}
+		else
+		{
+			sb.Append("\t\tadd => MockRegistrations.AddEvent(").Append(@event.GetUniqueNameString())
+				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\tremove => MockRegistrations.RemoveEvent(")
+				.Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
+		}
 		sb.AppendLine("\t}");
 	}
 
@@ -396,7 +425,48 @@ internal static partial class Sources
 
 			sb.AppendLine("get");
 			sb.AppendLine("\t\t{");
-			if (!isClassInterface && !property.IsAbstract)
+			if (isClassInterface && !explicitInterfaceImplementation && property.ExplicitImplementation is null)
+			{
+				if (property is { IsIndexer: true, IndexerParameters: not null, })
+				{
+					string indexerResultVarName =
+						Helpers.GetUniqueLocalVariableName("indexerResult", property.IndexerParameters.Value);
+					string baseResultVarName =
+						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
+					
+					sb.Append("\t\t\tif (this._wrapped is null)").AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\treturn MockRegistrations.GetIndexer<")
+						.AppendTypeOrWrapper(property.Type).Append(">(")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.Append(").GetResult(() => ")
+						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
+						.Append(");").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+					sb.Append("\t\t\tvar ").Append(indexerResultVarName).Append(" = MockRegistrations.GetIndexer<")
+						.AppendTypeOrWrapper(property.Type).Append(">(")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.AppendLine(");");
+					sb.Append("\t\t\tvar ").Append(baseResultVarName).Append(" = this._wrapped[")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.Append("];").AppendLine();
+					sb.Append("\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
+						.Append(baseResultVarName)
+						.Append(", () => ")
+						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
+						.Append(");").AppendLine();
+				}
+				else
+				{
+					sb.Append(
+							"\t\t\treturn MockRegistrations.GetProperty<")
+						.AppendTypeOrWrapper(property.Type).Append(">(")
+						.Append(property.GetUniqueNameString()).Append(", () => ")
+						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
+						.Append(", this._wrapped is null ? null : () => this._wrapped.").Append(property.Name).Append(");").AppendLine();
+				}
+			}
+			else if (!isClassInterface && !property.IsAbstract)
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
@@ -468,7 +538,36 @@ internal static partial class Sources
 			sb.AppendLine("set");
 			sb.AppendLine("\t\t{");
 
-			if (property is { IsIndexer: true, IndexerParameters: not null, })
+			if (isClassInterface && !explicitInterfaceImplementation && property.ExplicitImplementation is null)
+			{
+				if (property is { IsIndexer: true, IndexerParameters: not null, })
+				{
+					sb.Append(
+							"\t\t\tMockRegistrations.SetIndexer<")
+						.Append(property.Type.Fullname)
+						.Append(">(value, ")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.Append(");").AppendLine();
+					
+					sb.Append("\t\t\tif (this._wrapped is not null)").AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\tthis._wrapped[")
+						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.AppendLine("] = value;");
+					sb.Append("\t\t\t}").AppendLine();
+				}
+				else
+				{
+					sb.Append(
+							"\t\t\tMockRegistrations.SetProperty(").Append(property.GetUniqueNameString())
+						.Append(", value);").AppendLine();
+					sb.Append("\t\t\tif (this._wrapped is not null)").AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\tthis._wrapped.").Append(property.Name).Append(" = value;").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+				}
+			}
+			else if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
 				if (!isClassInterface && !property.IsAbstract)
 				{
@@ -609,6 +708,80 @@ internal static partial class Sources
 
 		if (isClassInterface || method.IsAbstract)
 		{
+			if (!explicitInterfaceImplementation && isClassInterface)
+			{
+				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
+				if (method.ReturnType != Type.Void)
+				{
+					sb.Append(
+							"\t\tif (this._wrapped is not null)")
+						.AppendLine();
+					sb.Append("\t\t{").AppendLine();
+					sb.Append("\t\t\tvar ").Append(baseResultVarName).Append(" = this._wrapped").Append(".")
+						.Append(method.Name).Append('(')
+						.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+						.Append(");").AppendLine();
+				}
+				else
+				{
+					sb.Append(
+							"\t\tif (this._wrapped is not null)")
+						.AppendLine();
+					sb.Append("\t\t{").AppendLine();
+					sb.Append("\t\t\tthis._wrapped").Append(".")
+						.Append(method.Name).Append('(')
+						.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+						.Append(");").AppendLine();
+				}
+
+				foreach (MethodParameter parameter in method.Parameters)
+				{
+					if (parameter.RefKind == RefKind.Out)
+					{
+						sb.Append(
+								"\t\t\tif (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
+							.AppendLine();
+						sb.Append("\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
+							.Append(".SetOutParameter<")
+							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
+							.Append("\", () => ")
+							.AppendDefaultValueGeneratorFor(parameter.Type,
+								"MockRegistrations.Behavior.DefaultValue")
+							.Append(");").AppendLine();
+						sb.Append("\t\t\t}").AppendLine().AppendLine();
+					}
+					else if (parameter.RefKind == RefKind.Ref)
+					{
+						sb.Append(
+								"\t\t\tif (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
+							.AppendLine();
+						sb.Append("\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
+							.Append(".SetRefParameter<")
+							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
+							.Append(parameter.Name).Append(");").AppendLine();
+						sb.Append("\t\t\t}").AppendLine().AppendLine();
+					}
+				}
+
+				if (method.ReturnType != Type.Void)
+				{
+					sb.Append(
+							"\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)")
+						.AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
+						.Append(
+							string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull())))
+						.Append(");").AppendLine();
+					sb.Append("\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+				}
+				
+				sb.Append("\t\t}").AppendLine();
+			}
+
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				if (parameter.RefKind == RefKind.Out)
