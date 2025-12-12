@@ -41,7 +41,7 @@ public sealed class WrappabilityAnalyzer : DiagnosticAnalyzer
 		ITypeSymbol? typeArgumentSymbol = GetInvocationTypeArguments(invocation);
 		if (typeArgumentSymbol is not null)
 		{
-			if (typeArgumentSymbol is ITypeParameterSymbol || IsOpenGeneric(typeArgumentSymbol))
+			if (typeArgumentSymbol is ITypeParameterSymbol || AnalyzerHelpers.IsOpenGeneric(typeArgumentSymbol))
 			{
 				return;
 			}
@@ -50,7 +50,7 @@ public sealed class WrappabilityAnalyzer : DiagnosticAnalyzer
 			{
 				context.ReportDiagnostic(Diagnostic.Create(
 					Rules.WrappabilityRule,
-					GetTypeArgumentLocation(invocation.Syntax, typeArgumentSymbol) ?? invocation.Syntax.GetLocation(),
+					AnalyzerHelpers.GetTypeArgumentLocation(invocation.Syntax, typeArgumentSymbol) ?? invocation.Syntax.GetLocation(),
 					typeArgumentSymbol.ToDisplayString(),
 					reason));
 			}
@@ -58,32 +58,10 @@ public sealed class WrappabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	private static ITypeSymbol? GetInvocationTypeArguments(IInvocationOperation invocation)
-	{
-		if (invocation.TargetMethod is { IsGenericMethod: true, TypeArguments.Length: > 0, } method)
-		{
-			return method.TypeArguments[0];
-		}
-
-		return null;
-	}
+		=> AnalyzerHelpers.GetInvocationTypeArguments(invocation.TargetMethod);
 
 	private static bool IsWrapMethod(IMethodSymbol method)
-		=> method.Name == "Wrap" &&
-		   method.GetAttributes().Any(a =>
-			   a.AttributeClass is
-			   {
-				   Name: "MockGeneratorAttribute",
-				   ContainingNamespace:
-				   {
-					   Name: "Mockolate",
-					   ContainingNamespace.IsGlobalNamespace: true,
-				   },
-			   });
-
-	private static bool IsOpenGeneric(ITypeSymbol typeSymbol)
-		=> typeSymbol is INamedTypeSymbol nts &&
-		   nts.IsGenericType &&
-		   nts.TypeArguments.Any(a => a.TypeKind == TypeKind.TypeParameter);
+		=> method.Name == "Wrap" && AnalyzerHelpers.HasMockGeneratorAttribute(method);
 
 	private static bool IsWrappable(ITypeSymbol typeSymbol, [NotNullWhen(false)] out string? reason)
 	{
@@ -97,24 +75,4 @@ public sealed class WrappabilityAnalyzer : DiagnosticAnalyzer
 		return true;
 	}
 
-	private static Location? GetTypeArgumentLocation(SyntaxNode syntax, ITypeSymbol typeSymbol)
-	{
-		if (syntax is InvocationExpressionSyntax
-		    {
-			    Expression: MemberAccessExpressionSyntax
-			    {
-				    Name: GenericNameSyntax genericNameSyntax,
-			    },
-		    })
-		{
-			return genericNameSyntax.TypeArgumentList.Arguments
-				.Where(typeSyntax => string.Equals(typeSyntax.ToString(),
-					typeSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-					StringComparison.Ordinal))
-				.Select(typeSyntax => typeSyntax.GetLocation())
-				.FirstOrDefault();
-		}
-
-		return null;
-	}
 }
