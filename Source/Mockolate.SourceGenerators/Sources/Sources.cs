@@ -138,23 +138,11 @@ internal static partial class Sources
 		sb.AppendLine();
 		for (int numberOfArguments = 1; numberOfArguments < maxNumberOfArguments; numberOfArguments++)
 		{
-			string types = string.Join(", ", Enumerable.Range(2, numberOfArguments).Select(n => $"T{n}"));
-			sb.AppendLine("\t/// <summary>");
-			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
-				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
-				.Append(string.Join(", ",
-					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(numberOfArguments > 1 ? " and " : "")
-				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />")
-				.Append(" with the default <see cref=\"MockBehavior\" />.").AppendLine();
-			sb.AppendLine("\t/// </summary>");
+			string types = GetGenericTypeParameters(numberOfArguments, 2);
+			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the default <see cref=\"MockBehavior\" />.");
 			sb.AppendLine(
 				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			for (int i = 2; i <= numberOfArguments + 1; i++)
-			{
-				sb.Append("\t/// <typeparam name=\"T").Append(i)
-					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
-			}
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", startIndex: 2);
 
 			sb.AppendLine($$"""
 			                	/// <remarks>
@@ -172,22 +160,10 @@ internal static partial class Sources
 			                """);
 			sb.AppendLine();
 
-			sb.AppendLine("\t/// <summary>");
-			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
-				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
-				.Append(string.Join(", ",
-					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(numberOfArguments > 1 ? " and " : "")
-				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />")
-				.Append(" with the default <see cref=\"MockBehavior\" />.").AppendLine();
-			sb.AppendLine("\t/// </summary>");
+			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the default <see cref=\"MockBehavior\" />.");
 			sb.AppendLine(
 				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			for (int i = 2; i <= numberOfArguments + 1; i++)
-			{
-				sb.Append("\t/// <typeparam name=\"T").Append(i)
-					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
-			}
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", startIndex: 2);
 
 			sb.AppendLine($$"""
 			                	/// <remarks>
@@ -238,22 +214,10 @@ internal static partial class Sources
 			                """);
 			sb.AppendLine();
 
-			sb.Append("\t/// <summary>").AppendLine();
-			sb.Append("\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
-				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
-				.Append(string.Join(", ",
-					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(numberOfArguments > 1 ? " and " : "")
-				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />")
-				.Append(" with the given <paramref name=\"mockBehavior\" />.").AppendLine();
-			sb.Append("\t/// </summary>").AppendLine();
-			sb.Append("\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>")
-				.AppendLine();
-			for (int i = 2; i <= numberOfArguments + 1; i++)
-			{
-				sb.Append("\t/// <typeparam name=\"T").Append(i)
-					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
-			}
+			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the given <paramref name=\"mockBehavior\" />.");
+			sb.AppendLine(
+				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", startIndex: 2);
 
 			sb.AppendLine($$"""
 			                	/// <remarks>
@@ -326,23 +290,12 @@ internal static partial class Sources
 		              """);
 		for (int numberOfArguments = 1; numberOfArguments < maxNumberOfArguments; numberOfArguments++)
 		{
-			string types = string.Join(", ", Enumerable.Range(2, numberOfArguments).Select(n => $"T{n}"));
+			string types = GetGenericTypeParameters(numberOfArguments, 2);
 			sb.AppendLine();
-			sb.AppendLine("\t\t/// <summary>");
-			sb.Append("\t\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
-				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
-				.Append(string.Join(", ",
-					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(numberOfArguments > 1 ? " and " : "")
-				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />.").AppendLine();
-			sb.AppendLine("\t\t/// </summary>");
+			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.");
 			sb.AppendLine(
 				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			for (int i = 2; i <= numberOfArguments + 1; i++)
-			{
-				sb.Append("\t\t/// <typeparam name=\"T").Append(i)
-					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
-			}
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t", 2);
 
 			sb.AppendLine($$"""
 			                		/// <remarks>
@@ -360,21 +313,10 @@ internal static partial class Sources
 			                """);
 
 			sb.AppendLine();
-			sb.AppendLine("\t\t/// <summary>");
-			sb.Append("\t\t///     Create a new mock for <typeparamref name=\"T\" /> that also implements ")
-				.Append(numberOfArguments > 1 ? "interfaces " : "interface ")
-				.Append(string.Join(", ",
-					Enumerable.Range(2, numberOfArguments - 1).Select(n => $"<typeparamref name=\"T{n}\" />")))
-				.Append(numberOfArguments > 1 ? " and " : "")
-				.Append("<typeparamref name=\"T").Append(numberOfArguments + 1).Append("\" />.").AppendLine();
-			sb.AppendLine("\t\t/// </summary>");
+			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.");
 			sb.AppendLine(
 				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			for (int i = 2; i <= numberOfArguments + 1; i++)
-			{
-				sb.Append("\t\t/// <typeparam name=\"T").Append(i)
-					.Append("\">Additional interface that is implemented by the mock.</typeparam>").AppendLine();
-			}
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t", 2);
 
 			sb.AppendLine($$"""
 			                		/// <remarks>
@@ -574,7 +516,99 @@ internal static partial class Sources
 			_ => "",
 		};
 
-	internal static string EscapeForXmlDoc(this string value)
+	private static string EscapeForXmlDoc(this string value)
 		=> value.Replace('<', '{').Replace('>', '}');
+
+	/// <summary>
+	///     Generates a comma-separated list of generic type parameters (e.g., "T1, T2, T3").
+	/// </summary>
+	private static string GetGenericTypeParameters(int count, int startIndex = 1)
+		=> string.Join(", ", Enumerable.Range(startIndex, count).Select(i => $"T{i}"));
+
+	/// <summary>
+	///     Generates a comma-separated list of generic type parameters with 'out' variance (e.g., "out T1, out T2").
+	/// </summary>
+	private static string GetOutGenericTypeParameters(int count, int startIndex = 1)
+		=> string.Join(", ", Enumerable.Range(startIndex, count).Select(i => $"out T{i}"));
+
+	/// <summary>
+	///     Appends XML documentation summary tags with the given text.
+	/// </summary>
+	private static StringBuilder AppendXmlSummary(this StringBuilder sb, string summaryText, string indent = "\t\t")
+	{
+		sb.Append(indent).Append("/// <summary>").AppendLine();
+		sb.Append(indent).Append("///     ").Append(summaryText).AppendLine();
+		sb.Append(indent).Append("/// </summary>").AppendLine();
+		return sb;
+	}
+
+	/// <summary>
+	///     Appends XML documentation remarks tags with the given text.
+	/// </summary>
+	private static StringBuilder AppendXmlRemarks(this StringBuilder sb, string remarksText, string indent = "\t\t")
+	{
+		sb.Append(indent).Append("/// <remarks>").AppendLine();
+		sb.Append(indent).Append("///     ").Append(remarksText).AppendLine();
+		sb.Append(indent).Append("/// </remarks>").AppendLine();
+		return sb;
+	}
+
+	/// <summary>
+	///     Generates a descriptive text listing type parameters (e.g., "T1, T2 and T3" or just "T1").
+	/// </summary>
+	private static string GetTypeParametersDescription(int numberOfParameters, int startIndex = 1)
+	{
+		if (numberOfParameters == 1)
+		{
+			return $"<typeparamref name=\"T{startIndex}\" />";
+		}
+
+		StringBuilder sb = new();
+		for (int i = startIndex; i < startIndex + numberOfParameters - 1; i++)
+		{
+			if (i > startIndex)
+			{
+				sb.Append(", ");
+			}
+			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />");
+		}
+		sb.Append(" and <typeparamref name=\"T").Append(startIndex + numberOfParameters - 1).Append("\" />");
+		return sb.ToString();
+	}
+
+	/// <summary>
+	///     Appends type parameter XML documentation for generic parameters.
+	/// </summary>
+	private static StringBuilder AppendTypeParamDocs(this StringBuilder sb, int count, string description, string indent = "\t", int startIndex = 1)
+	{
+		for (int i = startIndex; i < startIndex + count; i++)
+		{
+			sb.Append(indent).Append("/// <typeparam name=\"T").Append(i).Append("\">").Append(description).AppendLine("</typeparam>");
+		}
+		return sb;
+	}
+
+	/// <summary>
+	///     Generates description text for additional interfaces (e.g., "interface T2" or "interfaces T2, T3 and T4").
+	/// </summary>
+	private static string GetAdditionalInterfacesDescription(int numberOfArguments, int startIndex = 2)
+	{
+		if (numberOfArguments == 1)
+		{
+			return $"interface <typeparamref name=\"T{startIndex}\" />";
+		}
+
+		StringBuilder sb = new("interfaces ");
+		for (int i = startIndex; i < startIndex + numberOfArguments - 1; i++)
+		{
+			if (i > startIndex)
+			{
+				sb.Append(", ");
+			}
+			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />");
+		}
+		sb.Append(" and <typeparamref name=\"T").Append(startIndex + numberOfArguments - 1).Append("\" />");
+		return sb.ToString();
+	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

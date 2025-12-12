@@ -39,7 +39,7 @@ internal static partial class Sources
 		          """).AppendLine();
 		foreach (int item in indexerSetups)
 		{
-			string types = string.Join(", ", Enumerable.Range(1, item).Select(i => $"T{i}"));
+			string types = GetGenericTypeParameters(item);
 			sb.Append($$"""
 			            		/// <summary>
 			            		///     Extensions for indexer callback setups with {{item}} parameters.
@@ -87,447 +87,211 @@ internal static partial class Sources
 
 	private static void AppendIndexerSetup(StringBuilder sb, int numberOfParameters)
 	{
-		string typeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"));
-		string outTypeParams = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"out T{i}"));
+		string typeParams = GetGenericTypeParameters(numberOfParameters);
+		string outTypeParams = GetOutGenericTypeParameters(numberOfParameters);
 		string parameters = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}"));
 		string discards = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(_ => "_"));
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a <typeparamref name=\"TValue\"/> indexer getter for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer getter for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerGetterSetup<TValue, ").Append(outTypeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action callback);")
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append("\t\t///     The callback receives the parameters of the indexer.").AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
+		sb.AppendXmlRemarks("The callback receives the parameters of the indexer.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<")
 			.Append(typeParams)
 			.Append("> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
+		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value of the indexer as last parameter.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<")
 			.Append(typeParams)
 			.Append(", TValue> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
+		sb.AppendXmlRemarks("The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<int, ")
 			.Append(typeParams)
 			.Append(", TValue> callback);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a <typeparamref name=\"TValue\"/> indexer setter for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer setter for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetterSetup<TValue, ").Append(outTypeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action callback);")
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append("\t\t///     The callback receives the value the indexer is set to as single parameter.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.");
+		sb.AppendXmlRemarks("The callback receives the value the indexer is set to as single parameter.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> Do(Action<TValue> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.");
+		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<")
 			.Append(typeParams).Append(", TValue> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.");
+		sb.AppendXmlRemarks("The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<int, ")
 			.Append(typeParams).Append(", TValue> callback);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a <typeparamref name=\"TValue\"/> indexer for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetup<TValue, ").Append(outTypeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Sets up callbacks on the getter.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Sets up callbacks on the getter.");
 		sb.Append("\t\tIIndexerGetterSetup<TValue, ").Append(typeParams)
 			.Append("> OnGet { get; }").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Sets up callbacks on the setter.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Sets up callbacks on the setter.");
 		sb.Append("\t\tIIndexerSetterSetup<TValue, ").Append(typeParams)
 			.Append("> OnSet { get; }").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Flag indicating if the base class implementation should be called, and its return values used as default values.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append("\t\t///     If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.").AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Flag indicating if the base class implementation should be called, and its return values used as default values.");
+		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.");
 		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams)
 			.Append("> CallingBaseClass(bool callBaseClass = true);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Initializes the indexer with the given <paramref name=\"value\" />.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Initializes the indexer with the given <paramref name=\"value\" />.");
 		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(TValue value);")
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Initializes the according to the given <paramref name=\"valueGenerator\" />.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Initializes the indexer according to the given <paramref name=\"valueGenerator\" />.");
 		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(Func<")
 			.Append(typeParams).Append(", TValue> valueGenerator);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Registers the <paramref name=\"returnValue\" /> for this indexer.").AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Registers the <paramref name=\"returnValue\" /> for this indexer.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(TValue returnValue);")
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
 			.Append("> Returns(Func<TValue> callback);")
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append("\t\t///     The callback receives the parameters of the indexer.").AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.");
+		sb.AppendXmlRemarks("The callback receives the parameters of the indexer.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<")
 			.Append(typeParams)
 			.Append(", TValue> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.");
+		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value of the indexer as last parameter.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<")
 			.Append(typeParams).Append(", TValue, TValue> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Registers an <typeparamref name=\"TException\" /> to throw when the indexer is read.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Registers an <typeparamref name=\"TException\" /> to throw when the indexer is read.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
 		sb.Append("\t\t\twhere TException : Exception, new();").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Registers an <paramref name=\"exception\" /> to throw when the indexer is read.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Registers an <paramref name=\"exception\" /> to throw when the indexer is read.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Exception exception);")
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
 			.Append("> Throws(Func<Exception> callback);")
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append("\t\t///     The callback receives the parameters of the indexer.").AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.");
+		sb.AppendXmlRemarks("The callback receives the parameters of the indexer.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<")
 			.Append(typeParams)
 			.Append(", Exception> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.");
+		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value of the indexer as last parameter.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<")
 			.Append(typeParams).Append(", TValue, Exception> callback);").AppendLine();
 
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a callback for a <typeparamref name=\"TValue\"/> indexer for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetupCallbackBuilder<TValue, ").Append(outTypeParams)
 			.Append("> : IIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Runs the callback in parallel to the other callbacks.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary("Runs the callback in parallel to the other callbacks.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> InParallel();")
 			.AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Limits the callback to only execute for indexer accesses where the predicate returns true.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Limits the callback to only execute for indexer accesses where the predicate returns true.");
+		sb.AppendXmlRemarks("Provides a zero-based counter indicating how many times the indexer has been accessed so far.");
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
 			.Append("> When(Func<int, bool> predicate);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a when callback for a <typeparamref name=\"TValue\"/> indexer for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a when callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetupCallbackWhenBuilder<TValue, ").Append(outTypeParams)
 			.Append("> : IIndexerSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Repeats the callback for the given number of <paramref name=\"times\" />.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{TValue, ")
-			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		
+		sb.AppendXmlSummary("Repeats the callback for the given number of <paramref name=\"times\" />.");
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams).Append("> For(int times);")
 			.AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Deactivates the callback after the given number of <paramref name=\"times\" />.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{TValue, ")
-			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Deactivates the callback after the given number of <paramref name=\"times\" />.");
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a callback for a <typeparamref name=\"TValue\"/> indexer for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a return/throw callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetupReturnBuilder<TValue, ").Append(outTypeParams)
 			.Append("> : IIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Limits the callback to only execute for indexer accesses where the predicate returns true.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Limits the return/throw callback to only execute for indexer accesses where the predicate returns true.");
+		sb.AppendXmlRemarks("Provides a zero-based counter indicating how many times the indexer has been accessed so far.");
 		sb.Append("\t\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams)
 			.Append("> When(Func<int, bool> predicate);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a when callback for a <typeparamref name=\"TValue\"/> indexer for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a when return/throw callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetupReturnWhenBuilder<TValue, ").Append(outTypeParams)
 			.Append("> : IIndexerSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Repeats the callback for the given number of <paramref name=\"times\" />.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{TValue, ")
-			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Repeats the return/throw callback for the given number of <paramref name=\"times\" />.");
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{{TValue, {typeParams}}}.When(Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams).Append("> For(int times);")
 			.AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append(
-				"\t\t///     Deactivates the return/throw after the given number of <paramref name=\"times\" />.")
-			.AppendLine();
-		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\t/// <remarks>").AppendLine();
-		sb.Append(
-				"\t\t///     The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{TValue, ")
-			.Append(typeParams).Append("}.When(Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
-			.AppendLine();
-		sb.Append("\t\t/// </remarks>").AppendLine();
+		sb.AppendXmlSummary("Deactivates the return/throw after the given number of <paramref name=\"times\" />.");
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{{TValue, {typeParams}}}.When(Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t/// <summary>").AppendLine();
-		sb.Append("\t///     Sets up a <typeparamref name=\"TValue\"/> indexer for ");
-		for (int i = 1; i < numberOfParameters - 1; i++)
-		{
-			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />, ");
-		}
-
-		sb.Append("<typeparamref name=\"T").Append(numberOfParameters - 1).Append("\" /> and <typeparamref name=\"T")
-			.Append(numberOfParameters).Append("\" />.").AppendLine();
-		sb.Append("\t/// </summary>").AppendLine();
+		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
 			.Append(
 				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"IParameter match{i}")))
