@@ -21,6 +21,12 @@ public static class Rules
 	public static readonly DiagnosticDescriptor MockabilityRule =
 		CreateDescriptor("Mockolate0002", UsageCategory, DiagnosticSeverity.Error);
 
+	/// <summary>
+	///     Wrap arguments must be wrappable.
+	/// </summary>
+	public static readonly DiagnosticDescriptor WrappabilityRule =
+		CreateDescriptor("Mockolate0003", UsageCategory, DiagnosticSeverity.Error);
+
 	private static DiagnosticDescriptor CreateDescriptor(string diagnosticId, string category,
 		DiagnosticSeverity severity) => new(
 		diagnosticId,
