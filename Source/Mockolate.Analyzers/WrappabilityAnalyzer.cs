@@ -61,7 +61,17 @@ public sealed class WrappabilityAnalyzer : DiagnosticAnalyzer
 		=> AnalyzerHelpers.GetInvocationTypeArguments(invocation.TargetMethod);
 
 	private static bool IsWrapMethod(IMethodSymbol method)
-		=> method.Name == "Wrap" && AnalyzerHelpers.HasMockGeneratorAttribute(method);
+		=> method.Name == "Wrap" &&
+		   method.ContainingType is
+		   {
+			   Name: "Mock",
+			   ContainingNamespace:
+			   {
+				   Name: "Mockolate",
+				   ContainingNamespace.IsGlobalNamespace: true,
+			   },
+		   } &&
+		   AnalyzerHelpers.HasMockGeneratorAttribute(method);
 
 	private static bool IsWrappable(ITypeSymbol typeSymbol, [NotNullWhen(false)] out string? reason)
 	{
