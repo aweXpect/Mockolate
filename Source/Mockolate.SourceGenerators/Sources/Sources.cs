@@ -400,7 +400,7 @@ internal static partial class Sources
 		              	///     Wraps a concrete instance with a mock proxy that intercepts and delegates method calls,
 		              	///     supporting setup and verification on the wrapped instance.
 		              	/// </summary>
-		              	/// <typeparam name="T">Type to wrap, which can be an interface or a class.</typeparam>
+		              	/// <typeparam name="T">Type to wrap, which must be an interface.</typeparam>
 		              	/// <param name="instance">The concrete instance to wrap.</param>
 		              	/// <param name="setups">Optional setup actions to configure the mock.</param>
 		              	/// <remarks>
@@ -416,7 +416,7 @@ internal static partial class Sources
 		              			throw new ArgumentNullException(nameof(instance));
 		              		}
 		              	
-		              		ThrowIfNotMockable(typeof(T));
+		              		ThrowIfNotWrappable(typeof(T));
 		              	
 		              		return new MockGenerator().GetWrapped<T>(instance, MockBehavior.Default, setups)
 		              			?? throw new MockException("Could not generate wrapped Mock<T>. Did the source generator run correctly?");
@@ -429,7 +429,7 @@ internal static partial class Sources
 		              	///     Wraps a concrete instance with a mock proxy that intercepts and delegates method calls,
 		              	///     supporting setup and verification on the wrapped instance.
 		              	/// </summary>
-		              	/// <typeparam name="T">Type to wrap, which can be an interface or a class.</typeparam>
+		              	/// <typeparam name="T">Type to wrap, which must be an interface.</typeparam>
 		              	/// <param name="instance">The concrete instance to wrap.</param>
 		              	/// <param name="mockBehavior">The behavior settings for the mock.</param>
 		              	/// <param name="setups">Optional setup actions to configure the mock.</param>
@@ -446,7 +446,7 @@ internal static partial class Sources
 		              			throw new ArgumentNullException(nameof(instance));
 		              		}
 		              	
-		              		ThrowIfNotMockable(typeof(T));
+		              		ThrowIfNotWrappable(typeof(T));
 		              	
 		              		return new MockGenerator().GetWrapped<T>(instance, mockBehavior, setups)
 		              			?? throw new MockException("Could not generate wrapped Mock<T>. Did the source generator run correctly?");
@@ -457,9 +457,27 @@ internal static partial class Sources
 		sb.AppendLine("""
 		              	private static void ThrowIfNotMockable(Type type)
 		              	{
+		              		if (type.IsEnum)
+		              		{
+		              			throw new MockException($"Unable to mock type '{type.FullName ?? type.Name}'. Enums cannot be mocked.");
+		              		}
+		              		
+		              		if (type.IsValueType)
+		              		{
+		              			throw new MockException($"Unable to mock type '{type.FullName ?? type.Name}'. Structs and value types cannot be mocked.");
+		              		}
+		              		
 		              		if (type.IsSealed && type.BaseType != typeof(MulticastDelegate))
 		              		{
-		              			throw new MockException($"The type '{type}' is sealed and therefore not mockable.");
+		              			throw new MockException($"Unable to mock type '{type.FullName ?? type.Name}'. The type is sealed and therefore not mockable.");
+		              		}
+		              	}
+		              	
+		              	private static void ThrowIfNotWrappable(Type type)
+		              	{
+		              		if (!type.IsInterface)
+		              		{
+		              			throw new MockException($"Unable to wrap type '{type.FullName ?? type.Name}'. When wrapping a concrete instance, only interfaces can be mocked.");
 		              		}
 		              	}
 		              """);
