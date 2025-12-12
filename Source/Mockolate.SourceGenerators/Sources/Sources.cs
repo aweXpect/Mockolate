@@ -457,16 +457,6 @@ internal static partial class Sources
 		sb.AppendLine("""
 		              	private static void ThrowIfNotMockable(Type type)
 		              	{
-		              		if (type.IsEnum)
-		              		{
-		              			throw new MockException($"Unable to mock type '{type.FullName ?? type.Name}'. Enums cannot be mocked.");
-		              		}
-		              		
-		              		if (type.IsValueType)
-		              		{
-		              			throw new MockException($"Unable to mock type '{type.FullName ?? type.Name}'. Structs and value types cannot be mocked.");
-		              		}
-		              		
 		              		if (type.IsSealed && type.BaseType != typeof(MulticastDelegate))
 		              		{
 		              			throw new MockException($"Unable to mock type '{type.FullName ?? type.Name}'. The type is sealed and therefore not mockable.");

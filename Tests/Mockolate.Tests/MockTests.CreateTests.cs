@@ -644,6 +644,5 @@ public sealed partial class MockTests
 				.WithMessage(
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
-
 	}
 }
