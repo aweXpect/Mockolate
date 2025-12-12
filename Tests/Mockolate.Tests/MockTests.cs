@@ -80,7 +80,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -95,7 +95,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -110,7 +110,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -125,7 +125,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -140,7 +140,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -155,7 +155,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -170,7 +170,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -186,7 +186,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -202,7 +202,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -217,7 +217,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]
@@ -267,7 +267,7 @@ public sealed partial class MockTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"The type 'Mockolate.Tests.MockTests+MySealedClass' is sealed and therefore not mockable.");
+				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
 	[Fact]

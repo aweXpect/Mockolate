@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mockolate.Exceptions;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
@@ -119,6 +120,36 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task Wrap_WithClass_ShouldThrowMockException()
+		{
+			MyChocolateDispenser instance = new();
+
+			void Act()
+			{
+				_ = Mock.Wrap(instance);
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage(
+					"Unable to wrap type 'Mockolate.Tests.MockTests+WrapTests+MyChocolateDispenser'. When wrapping a concrete instance, only interfaces can be mocked.");
+		}
+
+		[Fact]
+		public async Task Wrap_WithDelegate_ShouldThrowMockException()
+		{
+			MyDelegate instance = () => { };
+
+			void Act()
+			{
+				_ = Mock.Wrap(instance);
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage(
+					"Unable to wrap type 'Mockolate.Tests.MockTests+WrapTests+MyDelegate'. When wrapping a concrete instance, only interfaces can be mocked.");
+		}
+
+		[Fact]
 		public async Task Wrap_WithSetup_ShouldOverrideMethod()
 		{
 			MyChocolateDispenser myDispenser = new();
@@ -170,5 +201,7 @@ public sealed partial class MockTests
 
 			public event ChocolateDispensedDelegate? ChocolateDispensed;
 		}
+
+		public delegate void MyDelegate();
 	}
 }
