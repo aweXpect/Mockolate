@@ -803,10 +803,7 @@ internal static partial class Sources
 						.Append(parameter.Name).Append(");").AppendLine();
 				}
 
-				sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
-					.Append(string.Join(", ",
-						method.Parameters.Select(p => p.ToNameOrNull())))
-					.Append(");").AppendLine();
+				AppendTriggerCallbacks(sb, "\t\t", methodExecutionVarName, method.Parameters);
 			}
 		}
 
@@ -814,15 +811,6 @@ internal static partial class Sources
 	}
 
 	#region Helper Methods
-
-	/// <summary>
-	/// Appends an XML inheritdoc comment for a member.
-	/// </summary>
-	private static void AppendInheritdocComment(StringBuilder sb, string containingType, string memberSignature)
-	{
-		sb.Append("\t/// <inheritdoc cref=\"").Append(containingType.EscapeForXmlDoc()).Append('.')
-			.Append(memberSignature.EscapeForXmlDoc()).AppendLine("\" />");
-	}
 
 	/// <summary>
 	/// Generates code to set an out parameter.
