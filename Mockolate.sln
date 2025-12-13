@@ -82,8 +82,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{998DB807-8
 		Docs\pages\02-setup.md = Docs\pages\02-setup.md
 		Docs\pages\03-mock-events.md = Docs\pages\03-mock-events.md
 		Docs\pages\04-verify-interactions.md = Docs\pages\04-verify-interactions.md
-		Docs\pages\05-comparison.md = Docs\pages\05-comparison.md
-		Docs\pages\06-analyzers.md = Docs\pages\06-analyzers.md
+		Docs\pages\05-analyzers.md = Docs\pages\05-analyzers.md
+		Docs\pages\06-comparison.md = Docs\pages\06-comparison.md
 	EndProjectSection
 EndProject
 Global
