@@ -52,7 +52,8 @@ public partial class MockRegistration
 		else
 		{
 			((IInteractivePropertySetup)matchingSetup).InitializeWith(
-				defaultValueGenerator(((IInteractivePropertySetup)matchingSetup).CallBaseClass() ?? Behavior.CallBaseClass));
+				defaultValueGenerator(((IInteractivePropertySetup)matchingSetup).CallBaseClass() ??
+				                      Behavior.CallBaseClass));
 		}
 
 		return matchingSetup;
@@ -119,9 +120,8 @@ public partial class MockRegistration
 				return [];
 			}
 
-			return _storage.Where(methodSetup => interactions.Interactions.All(interaction
-				=> interaction is not MethodInvocation methodInvocation
-				   || !((IInteractiveMethodSetup)methodSetup).Matches(methodInvocation)));
+			return _storage.Where(methodSetup => interactions.Interactions.OfType<MethodInvocation>()
+				.All(methodInvocation => !((IInteractiveMethodSetup)methodSetup).Matches(methodInvocation)));
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -135,7 +135,7 @@ public partial class MockRegistration
 
 			StringBuilder sb = new();
 			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " method:" : " methods:").AppendLine();
-			foreach (IInteractiveMethodSetup methodSetup in _storage)
+			foreach (MethodSetup methodSetup in _storage)
 			{
 				sb.Append(methodSetup).AppendLine();
 			}
@@ -172,9 +172,8 @@ public partial class MockRegistration
 				return [];
 			}
 
-			return _storage.Values.Where(propertySetup => interactions.Interactions.All(interaction
-				=> interaction is not PropertyAccess propertyAccess
-				   || !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)));
+			return _storage.Values.Where(propertySetup => interactions.Interactions.OfType<PropertyAccess>()
+				.All(propertyAccess => !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)));
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -289,15 +288,14 @@ public partial class MockRegistration
 				return [];
 			}
 
-			return _storage.Where(indexerSetup => interactions.Interactions.All(interaction
-				=> interaction is not IndexerAccess indexerAccess
-				   || !((IInteractiveIndexerSetup)indexerSetup).Matches(indexerAccess)));
+			return _storage.Where(indexerSetup => interactions.Interactions.OfType<IndexerAccess>()
+				.All(indexerAccess => !((IInteractiveIndexerSetup)indexerSetup).Matches(indexerAccess)));
 		}
 
 		private sealed class ValueStorage
 		{
 			private ValueStorage? _nullStorage;
-			private ConcurrentDictionary<object, ValueStorage>? _storage = [];
+			private ConcurrentDictionary<object, ValueStorage>? _storage;
 
 			public object? Value { get; set; }
 

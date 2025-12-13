@@ -20,10 +20,11 @@ public partial class MockRegistration
 			Interactions,
 			Interactions.Interactions
 				.OfType<MethodInvocation>()
-				.Where(method =>
-					method.Name.Equals(methodName) &&
-					method.Parameters.Length == parameters.Length &&
-					!parameters.Where((parameter, i) => !parameter.Parameter.Matches(method.Parameters[i])).Any())
+				.Where(method => method.Name.Equals(methodName) &&
+				                 method.Parameters.Length == parameters.Length &&
+				                 !parameters
+					                 .Where((parameter, i) => !parameter.Parameter.Matches(method.Parameters[i]))
+					                 .Any())
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.Parameter.ToString()))})");
@@ -36,9 +37,8 @@ public partial class MockRegistration
 		Interactions,
 		Interactions.Interactions
 			.OfType<MethodInvocation>()
-			.Where(method =>
-				method.Name.Equals(methodName) &&
-				parameters.Matches(method.Parameters))
+			.Where(method => method.Name.Equals(methodName) &&
+			                 parameters.Matches(method.Parameters))
 			.Cast<IInteraction>()
 			.ToArray(),
 		$"invoked method {methodName.SubstringAfterLast('.')}({parameters})");
@@ -65,7 +65,8 @@ public partial class MockRegistration
 			Interactions,
 			Interactions.Interactions
 				.OfType<PropertySetterAccess>()
-				.Where(property => property.Name.Equals(propertyName) && value.Matches(property.Value))
+				.Where(property => property.Name.Equals(propertyName) &&
+				                   value.Matches(property.Value))
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"set property {propertyName.SubstringAfterLast('.')} to value {value}");
@@ -81,7 +82,9 @@ public partial class MockRegistration
 			Interactions.Interactions
 				.OfType<IndexerGetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
-				                  !parameters.Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i])).Any())
+				                  !parameters
+					                  .Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i]))
+					                  .Any())
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"got indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}]");
@@ -98,7 +101,9 @@ public partial class MockRegistration
 				.OfType<IndexerSetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
-				                  !parameters.Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i])).Any())
+				                  !parameters
+					                  .Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i]))
+					                  .Any())
 				.Cast<IInteraction>()
 				.ToArray(),
 			$"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}] to value {value?.ToString() ?? "null"}");
