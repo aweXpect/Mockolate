@@ -399,11 +399,9 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task TriggerCallbacks_ArrayLengthDoesNotMatch_ShouldNotThrow()
 	{
-		MyMethodSetup sut = new();
-
 		void Act()
 		{
-			sut.DoTriggerCallbacks([null, null,], [null,]);
+			MyMethodSetup.DoTriggerCallbacks([null, null,], [null,]);
 		}
 
 		await That(Act).DoesNotThrow();
@@ -929,7 +927,7 @@ public sealed partial class SetupMethodTests
 
 	public class MyMethodSetup : MethodSetup
 	{
-		public void DoTriggerCallbacks(NamedParameter?[] namedParameters, object?[] values)
+		public static void DoTriggerCallbacks(NamedParameter?[] namedParameters, object?[] values)
 			=> TriggerCallbacks(namedParameters, values);
 
 		protected override bool? GetCallBaseClass()
