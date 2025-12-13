@@ -75,37 +75,33 @@ public partial class MockRegistration
 	///     <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Indexer<T>(T subject,
-		params NamedParameter?[] parameters)
+		params NamedParameter[] parameters)
 		=> new(subject,
 			Interactions,
 			Interactions.Interactions
 				.OfType<IndexerGetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
-				                  !parameters.Where((parameter, i) => parameter is null
-					                  ? indexer.Parameters[i] is not null
-					                  : !parameter.Parameter.Matches(indexer.Parameters[i])).Any())
+				                  !parameters.Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i])).Any())
 				.Cast<IInteraction>()
 				.ToArray(),
-			$"got indexer {string.Join(", ", parameters.Select(x => x?.Parameter.ToString() ?? "null"))}");
+			$"got indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}]");
 
 	/// <summary>
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Indexer<T>(T subject, IParameter? value,
-		params NamedParameter?[] parameters)
+		params NamedParameter[] parameters)
 		=> new(subject,
 			Interactions,
 			Interactions.Interactions
 				.OfType<IndexerSetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
-				                  !parameters.Where((parameter, i) => parameter is null
-					                  ? indexer.Parameters[i] is not null
-					                  : !parameter.Parameter.Matches(indexer.Parameters[i])).Any())
+				                  !parameters.Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i])).Any())
 				.Cast<IInteraction>()
 				.ToArray(),
-			$"set indexer {string.Join(", ", parameters.Select(x => x?.Parameter.ToString() ?? "null"))} to value {value?.ToString() ?? "null"}");
+			$"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}] to value {value?.ToString() ?? "null"}");
 
 	/// <summary>
 	///     Counts the subscriptions to the event <paramref name="eventName" /> on the <paramref name="subject" />.

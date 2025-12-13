@@ -111,8 +111,8 @@ namespace Mockolate
         public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
-        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Parameters.NamedParameter?[] parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Parameters.NamedParameter[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params object?[]? parameters) { }
         public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, params object?[]? parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, Mockolate.Parameters.IParameters parameters) { }
@@ -142,12 +142,12 @@ namespace Mockolate
     public class Mock<T> : Mockolate.MockSetup<T>, Mockolate.IInteractiveMock<T>, Mockolate.Raise.IMockRaises<T>, Mockolate.Raise.IProtectedMockRaises<T>, Mockolate.Verify.IMockVerifyGotIndexerProtected<T>, Mockolate.Verify.IMockVerifyGotIndexer<T>, Mockolate.Verify.IMockVerifyGotProtected<T>, Mockolate.Verify.IMockVerifyGot<T>, Mockolate.Verify.IMockVerifyInvokedProtected<T>, Mockolate.Verify.IMockVerifyInvokedWithEqualsWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithEqualsWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToString<T>, Mockolate.Verify.IMockVerifyInvoked<T>, Mockolate.Verify.IMockVerifySetIndexerProtected<T>, Mockolate.Verify.IMockVerifySetIndexer<T>, Mockolate.Verify.IMockVerifySetProtected<T>, Mockolate.Verify.IMockVerifySet<T>, Mockolate.Verify.IMockVerifySubscribedToProtected<T>, Mockolate.Verify.IMockVerifySubscribedTo<T>, Mockolate.Verify.IMockVerifyUnsubscribedFromProtected<T>, Mockolate.Verify.IMockVerifyUnsubscribedFrom<T>, Mockolate.Verify.IMockVerify<T>
     {
         public Mock(T subject, Mockolate.MockRegistration mockRegistration) { }
-        public Mockolate.Verify.VerificationResult<T> GotIndexer(params Mockolate.Parameters.NamedParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> GotIndexer(params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method(string methodName, Mockolate.Parameters.IParameters parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method(string methodName, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Property(string propertyName) { }
         public Mockolate.Verify.VerificationResult<T> Property(string propertyName, Mockolate.Parameters.IParameter value) { }
-        public Mockolate.Verify.VerificationResult<T> SetIndexer(Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter?[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> SetIndexer(Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo(string eventName) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom(string eventName) { }
     }
