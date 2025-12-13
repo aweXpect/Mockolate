@@ -26,13 +26,7 @@ internal static partial class Sources
 			sb.Append("/// <summary>").AppendLine();
 			sb.Append("///     A mock implementing <see cref=\"")
 				.Append(mockClass.ClassFullName.EscapeForXmlDoc())
-				.Append("\" />");
-			foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
-			{
-				sb.Append(" and <see cref=\"").Append(additional.ClassFullName.EscapeForXmlDoc()).Append("\" />");
-			}
-
-			sb.AppendLine(".");
+				.Append("\" />.");
 			sb.Append("/// </summary>").AppendLine();
 			sb.Append("internal class MockFor").Append(name).Append(" : IMockSubject<").Append(mockClass.ClassFullName)
 				.Append(">").AppendLine();

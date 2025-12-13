@@ -38,4 +38,41 @@ public sealed class MockClassTests
 					$"public static T Create<T, {types}>(BaseClass.ConstructorParameters constructorParameters, MockBehavior mockBehavior, params Action<IMockSetup<T>>[] setups)");
 		}
 	}
+
+	[Fact]
+	public async Task ShouldSupportSpecialTypes()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<IMyService>();
+			         }
+			     }
+
+			     public interface IMyService
+			     {
+			         void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15);
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+			.Contains("""
+			          	public void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15)
+			          	{
+			          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod", v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
+			          		if (this._wrapped is not null)
+			          		{
+			          			this._wrapped.MyMethod(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
+			          		}
+			          		methodExecution.TriggerCallbacks(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
+			          	}
+			          """).IgnoringNewlineStyle();
+	}
 }

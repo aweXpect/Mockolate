@@ -33,13 +33,4 @@ internal record MockClass : Class
 
 	public IEnumerable<Class> DistinctAdditionalImplementations()
 		=> AdditionalImplementations.Distinct().Where(x => x.ClassFullName != ClassFullName);
-
-	internal IEnumerable<Class> GetAllClasses()
-	{
-		yield return this;
-		foreach (Class implementation in DistinctAdditionalImplementations())
-		{
-			yield return implementation;
-		}
-	}
 }
