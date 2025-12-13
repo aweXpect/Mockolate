@@ -24,7 +24,18 @@ public class VerificationResultTests
 		VerificationResult<IChocolateDispenser> result
 			= sut.VerifyMock.GotIndexer(It.IsAny<string>());
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer It.IsAny<string>()");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer [It.IsAny<string>()]");
+	}
+
+	[Fact]
+	public async Task VerificationResult_GotIndexerWithMultipleParameters_ShouldHaveExpectedValue()
+	{
+		IIndexerVerificationService sut = Mock.Create<IIndexerVerificationService>();
+
+		VerificationResult<IIndexerVerificationService> result
+			= sut.VerifyMock.GotIndexer(It.IsAny<string>(), null);
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer [It.IsAny<string>(), It.IsNull<int?>()]");
 	}
 
 	[Fact]
@@ -77,7 +88,18 @@ public class VerificationResultTests
 			= sut.VerifyMock.SetIndexer(It.IsAny<string>(), It.Is(5));
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("set indexer It.IsAny<string>() to value 5");
+			.IsEqualTo("set indexer [It.IsAny<string>()] to value 5");
+	}
+
+	[Fact]
+	public async Task VerificationResult_SetIndexerWithMultipleParameters_ShouldHaveExpectedValue()
+	{
+		IIndexerVerificationService sut = Mock.Create<IIndexerVerificationService>();
+
+		VerificationResult<IIndexerVerificationService> result
+			= sut.VerifyMock.SetIndexer(It.Is("foo"), null, It.Is(5));
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("set indexer [\"foo\", It.IsNull<int?>()] to value 5");
 	}
 
 	[Fact]
@@ -100,5 +122,10 @@ public class VerificationResultTests
 			= sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed();
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event ChocolateDispensed");
+	}
+	
+	internal interface IIndexerVerificationService
+	{
+		int this[string p1, int? p2] { get; set; }
 	}
 }

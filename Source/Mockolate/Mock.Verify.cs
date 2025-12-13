@@ -63,14 +63,14 @@ public partial class Mock<T> : IMockVerify<T>,
 	/// <summary>
 	///     Counts the getter accesses of the indexer with matching <paramref name="parameters" />.
 	/// </summary>
-	public VerificationResult<T> GotIndexer(params NamedParameter?[] parameters)
+	public VerificationResult<T> GotIndexer(params NamedParameter[] parameters)
 		=> Registrations.Indexer(Subject, parameters);
 
 	/// <summary>
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<T> SetIndexer(IParameter? value, params NamedParameter?[] parameters)
+	public VerificationResult<T> SetIndexer(IParameter? value, params NamedParameter[] parameters)
 		=> Registrations.Indexer(Subject, value, parameters);
 
 	/// <summary>
