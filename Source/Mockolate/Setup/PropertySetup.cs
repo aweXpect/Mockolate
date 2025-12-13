@@ -66,7 +66,6 @@ public abstract class PropertySetup : IInteractivePropertySetup
 
 	internal class Default(string name, object? initialValue) : PropertySetup
 	{
-		private bool _isInitialized = true;
 		private object? _value = initialValue;
 
 		/// <inheritdoc cref="PropertySetup.Name" />
@@ -74,13 +73,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 
 		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
 		protected override void InitializeValue(object? value)
-		{
-			if (!_isInitialized)
-			{
-				_isInitialized = true;
-				_value = value;
-			}
-		}
+		{}
 
 		/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
 		protected override bool? GetCallBaseClass()
@@ -93,7 +86,6 @@ public abstract class PropertySetup : IInteractivePropertySetup
 		/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 		protected override void InvokeSetter(object? value, MockBehavior behavior)
 		{
-			_isInitialized = true;
 			_value = value;
 		}
 
@@ -140,28 +132,28 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	public override string Name => name;
 
 	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" />
-	IPropertySetupWhenBuilder<T> IPropertySetupCallbackBuilder<T>.When(Func<int, bool> predicate)
+	IPropertySetupCallbackWhenBuilder<T> IPropertySetupCallbackBuilder<T>.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.InParallel()" />
-	IPropertySetupWhenBuilder<T> IPropertySetupCallbackBuilder<T>.InParallel()
+	IPropertySetupCallbackWhenBuilder<T> IPropertySetupCallbackBuilder<T>.InParallel()
 	{
 		_currentCallback?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetupWhenBuilder{T}.For(int)" />
-	IPropertySetupWhenBuilder<T> IPropertySetupWhenBuilder<T>.For(int times)
+	/// <inheritdoc cref="IPropertySetupCallbackWhenBuilder{T}.For(int)" />
+	IPropertySetupCallbackWhenBuilder<T> IPropertySetupCallbackWhenBuilder<T>.For(int times)
 	{
 		_currentCallback?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetupWhenBuilder{T}.Only(int)" />
-	IPropertySetup<T> IPropertySetupWhenBuilder<T>.Only(int times)
+	/// <inheritdoc cref="IPropertySetupCallbackWhenBuilder{T}.Only(int)" />
+	IPropertySetup<T> IPropertySetupCallbackWhenBuilder<T>.Only(int times)
 	{
 		_currentCallback?.Only(times);
 		return this;

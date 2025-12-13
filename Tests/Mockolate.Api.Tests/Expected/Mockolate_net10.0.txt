@@ -196,7 +196,7 @@ namespace Mockolate
             public void Forever() { }
             public Mockolate.Setup.IPropertySetup<T> OnlyOnce() { }
         }
-        extension<T>(Mockolate.Setup.IPropertySetupWhenBuilder<T> setup)
+        extension<T>(Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T> setup)
             where T :  notnull
         {
             public Mockolate.Setup.IPropertySetup<T> OnlyOnce() { }
@@ -863,10 +863,15 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
     }
-    public interface IPropertySetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetupWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
+    public interface IPropertySetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
-        Mockolate.Setup.IPropertySetupWhenBuilder<T> InParallel();
-        Mockolate.Setup.IPropertySetupWhenBuilder<T> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T> InParallel();
+        Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T> When(System.Func<int, bool> predicate);
+    }
+    public interface IPropertySetupCallbackWhenBuilder<T> : Mockolate.Setup.IPropertySetup<T>
+    {
+        Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T> For(int times);
+        Mockolate.Setup.IPropertySetup<T> Only(int times);
     }
     public interface IPropertySetupReturnBuilder<T> : Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
@@ -875,11 +880,6 @@ namespace Mockolate.Setup
     public interface IPropertySetupReturnWhenBuilder<T> : Mockolate.Setup.IPropertySetup<T>
     {
         Mockolate.Setup.IPropertySetupReturnWhenBuilder<T> For(int times);
-        Mockolate.Setup.IPropertySetup<T> Only(int times);
-    }
-    public interface IPropertySetupWhenBuilder<T> : Mockolate.Setup.IPropertySetup<T>
-    {
-        Mockolate.Setup.IPropertySetupWhenBuilder<T> For(int times);
         Mockolate.Setup.IPropertySetup<T> Only(int times);
     }
     public interface IPropertySetup<T>
@@ -1247,7 +1247,7 @@ namespace Mockolate.Setup
     {
         public IndexerSetupResult(Mockolate.Setup.IInteractiveIndexerSetup? setup, Mockolate.Interactions.IndexerGetterAccess indexerAccess, Mockolate.MockBehavior behavior, System.Func<Mockolate.Setup.IInteractiveIndexerSetup?, System.Func<TResult>, object?[], TResult> getIndexerValue, System.Action<object?[], TResult> setIndexerValue) { }
         public TResult GetResult(System.Func<TResult> defaultValueGenerator) { }
-        public TResult GetResult(TResult baseValue, System.Func<TResult> defaultValueGenerator) { }
+        public TResult GetResult(TResult baseValue) { }
     }
     public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
@@ -1392,7 +1392,7 @@ namespace Mockolate.Setup
         protected abstract void InvokeSetter(object? value, Mockolate.MockBehavior behavior);
         protected abstract bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
-    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetupWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
+    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
         public PropertySetup(string name) { }
         public override string Name { get; }

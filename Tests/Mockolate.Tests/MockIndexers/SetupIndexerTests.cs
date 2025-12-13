@@ -43,7 +43,8 @@ public sealed partial class SetupIndexerTests
 	{
 		List<string> capturedValues = [];
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)).InitializeWith(42);
+		mock.SetupMock.Indexer(It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2))
+			.InitializeWith(42);
 
 		_ = mock["foo", 1, 2];
 		_ = mock["bar", 1, 2];
@@ -56,7 +57,8 @@ public sealed partial class SetupIndexerTests
 	{
 		List<string> capturedValues = [];
 		IIndexerService mock = Mock.Create<IIndexerService>();
-		mock.SetupMock.Indexer(It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)).InitializeWith(42);
+		mock.SetupMock.Indexer(It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2))
+			.InitializeWith(42);
 
 		_ = mock["foo", 1, 2];
 		_ = mock["bar", 2, 2];

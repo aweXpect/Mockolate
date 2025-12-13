@@ -6,7 +6,7 @@ using Mockolate.Interactions;
 namespace Mockolate.Setup;
 
 /// <summary>
-///     A result of a method setup invocation.
+///     A result of an indexer setup.
 /// </summary>
 public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior behavior)
 {
@@ -19,7 +19,7 @@ public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior be
 }
 
 /// <summary>
-///     A result of a method setup invocation with return type <typeparamref name="TResult" />.
+///     A result of an indexer setup with return type <typeparamref name="TResult" />.
 /// </summary>
 public class IndexerSetupResult<TResult>(
 	IInteractiveIndexerSetup? setup,
@@ -35,23 +35,17 @@ public class IndexerSetupResult<TResult>(
 	/// <summary>
 	///     The return value of the setup method.
 	/// </summary>
-	public TResult GetResult(TResult baseValue, Func<TResult> defaultValueGenerator)
+	public TResult GetResult(TResult baseValue)
 	{
 		TResult value;
 		if (_setup is IndexerSetup indexerSetup)
 		{
-			value = indexerSetup.InvokeGetter(indexerAccess, baseValue ?? defaultValueGenerator(),
-				_behavior);
+			value = indexerSetup.InvokeGetter(indexerAccess, baseValue, _behavior);
 			setIndexerValue(indexerAccess.Parameters, value);
-		}
-		else if (_behavior.ThrowWhenNotSetup)
-		{
-			throw new MockNotSetupException(
-				$"The indexer [{string.Join(", ", indexerAccess.Parameters.Select(p => p?.ToString() ?? "null"))}] was accessed without prior setup.");
 		}
 		else
 		{
-			value = baseValue ?? defaultValueGenerator();
+			value = baseValue;
 		}
 
 		return getIndexerValue(_setup, () => value, indexerAccess.Parameters);

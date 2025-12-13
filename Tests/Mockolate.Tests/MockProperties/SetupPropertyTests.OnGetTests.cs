@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockProperties;
 
@@ -143,6 +144,23 @@ public sealed partial class SetupPropertyTests
 			await That(callCount2).IsEqualTo(6);
 		}
 
+		[Theory]
+		[InlineData(-2)]
+		[InlineData(0)]
+		public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			void Act()
+			{
+				sut.SetupMock.Property.MyProperty
+					.OnGet.Do(() => { }).Only(times);
+			}
+
+			await That(Act).Throws<ArgumentOutOfRangeException>()
+				.WithMessage("Times must be greater than zero.").AsPrefix();
+		}
+
 		[Fact]
 		public async Task ShouldExecuteWhenPropertyIsRead()
 		{
@@ -155,6 +173,22 @@ public sealed partial class SetupPropertyTests
 			_ = sut.MyProperty;
 
 			await That(callCount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task ShouldIncludeIncrementingAccessCounter()
+		{
+			List<int> invocations = [];
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyProperty
+				.OnGet.Do((i, _) => { invocations.Add(i); });
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut.MyProperty;
+			}
+
+			await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
 		}
 
 		[Fact]
@@ -178,15 +212,64 @@ public sealed partial class SetupPropertyTests
 			List<int> invocations = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 			sut.SetupMock.Property.MyProperty
-				.OnGet.Do((i, _) => { invocations.Add(i); })
+				.OnGet.Do(p => { invocations.Add(p); })
 				.When(x => x is > 3 and < 9);
 
 			for (int i = 0; i < 20; i++)
 			{
+				sut.MyProperty = 10 * i;
 				_ = sut.MyProperty;
 			}
 
-			await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			await That(invocations).IsEqualTo([40, 50, 60, 70, 80,]);
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IPropertySetupCallbackBuilder_ShouldNotThrow()
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertySetupCallbackBuilder<int> setup =
+				(IPropertySetupCallbackBuilder<int>)sut.SetupMock.Property.MyProperty;
+
+			void ActWhen()
+			{
+				setup.When(_ => true);
+			}
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			void ActInParallel()
+			{
+				setup.InParallel();
+			}
+
+			await That(ActWhen).DoesNotThrow();
+			await That(ActFor).DoesNotThrow();
+			await That(ActInParallel).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IPropertySetupWhenBuilder_ShouldNotThrow()
+		{
+			IPropertyService mock = Mock.Create<IPropertyService>();
+			IPropertySetupCallbackWhenBuilder<int> setup =
+				(IPropertySetupCallbackWhenBuilder<int>)mock.SetupMock.Property.MyProperty;
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			void ActOnly()
+			{
+				setup.Only(2);
+			}
+
+			await That(ActFor).DoesNotThrow();
+			await That(ActOnly).DoesNotThrow();
 		}
 
 		[Fact]
