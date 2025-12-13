@@ -10,7 +10,7 @@ public sealed partial class SetupMethodTests
 		public async Task Memory_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(It.Is<Memory<int>>(v => v.Length == 2)).Returns(4);
+			mock.SetupMock.Method.MyMethod(It.Satisfies<Memory<int>>(v => v.Length == 2)).Returns(4);
 
 			int result = mock.MyMethod(new Memory<int>([1, 2, 3,]));
 
@@ -21,7 +21,7 @@ public sealed partial class SetupMethodTests
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Method.MyMethod(It.Is<Memory<int>>(v => v.Length == 3)).Returns(42);
+			mock.SetupMock.Method.MyMethod(It.Satisfies<Memory<int>>(v => v.Length == 3)).Returns(42);
 
 			int result = mock.MyMethod(new Memory<int>([1, 2, 3,]));
 

@@ -67,7 +67,7 @@ public sealed partial class ItTests
 		public async Task WithValue_ShouldSupportCovarianceInVerify()
 		{
 			IMyService mock = Mock.Create<IMyService>();
-			mock.SetupMock.Method.DoSomething(It.Is<MyImplementation>(_ => true))
+			mock.SetupMock.Method.DoSomething(It.Satisfies<MyImplementation>(_ => true))
 				.Do(d => d.DoWork())
 				.Returns(3);
 			MyImplementation value1 = new();

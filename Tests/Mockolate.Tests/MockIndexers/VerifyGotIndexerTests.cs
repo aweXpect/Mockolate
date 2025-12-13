@@ -31,7 +31,7 @@ public sealed partial class VerifyGotIndexerTests
 		_ = mock[1, 2];
 
 		await That(mock.VerifyMock.GotIndexer(It.Is(1), It.Is(2))).Once();
-		await That(mock.VerifyMock.GotIndexer(It.Is<int>(i => i != 1), It.Is(2))).Never();
-		await That(mock.VerifyMock.GotIndexer(It.Is(1), It.Is<int>(i => i != 2))).Never();
+		await That(mock.VerifyMock.GotIndexer(It.Satisfies<int>(i => i != 1), It.Is(2))).Never();
+		await That(mock.VerifyMock.GotIndexer(It.Is(1), It.Satisfies<int>(i => i != 2))).Never();
 	}
 }

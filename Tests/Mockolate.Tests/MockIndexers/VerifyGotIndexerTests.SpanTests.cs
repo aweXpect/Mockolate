@@ -13,9 +13,9 @@ public sealed partial class VerifyGotIndexerTests
 
 			_ = mock[new Memory<int>([1, 2, 3,])];
 
-			await That(mock.VerifyMock.GotIndexer(It.Is<Memory<int>>(v => v.Length == 2))).Never();
-			await That(mock.VerifyMock.GotIndexer(It.Is<Memory<int>>(v => v.Length == 3))).Once();
-			await That(mock.VerifyMock.GotIndexer(It.Is<Memory<int>>(v => v.Length == 4))).Never();
+			await That(mock.VerifyMock.GotIndexer(It.Satisfies<Memory<int>>(v => v.Length == 2))).Never();
+			await That(mock.VerifyMock.GotIndexer(It.Satisfies<Memory<int>>(v => v.Length == 3))).Once();
+			await That(mock.VerifyMock.GotIndexer(It.Satisfies<Memory<int>>(v => v.Length == 4))).Never();
 		}
 
 		[Fact]

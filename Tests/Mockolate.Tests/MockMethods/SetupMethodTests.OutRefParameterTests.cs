@@ -213,7 +213,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyReturnMethodSetup<T1>(string name)
-				: ReturnMethodSetup<int, T1>(name, new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)))
+				: ReturnMethodSetup<int, T1>(name, new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -420,8 +420,8 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2>(string name)
 				: ReturnMethodSetup<int, T1, T2>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)),
-					new NamedParameter("p2", (IParameter)It.Is<T2>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)It.Satisfies<T2>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -665,9 +665,9 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)),
-					new NamedParameter("p2", (IParameter)It.Is<T2>(_ => false)),
-					new NamedParameter("p3", (IParameter)It.Is<T3>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)It.Satisfies<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)It.Satisfies<T3>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -948,10 +948,10 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3, T4>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3, T4>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)),
-					new NamedParameter("p2", (IParameter)It.Is<T2>(_ => false)),
-					new NamedParameter("p3", (IParameter)It.Is<T3>(_ => false)),
-					new NamedParameter("p4", (IParameter)It.Is<T4>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)It.Satisfies<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)It.Satisfies<T3>(_ => false)),
+					new NamedParameter("p4", (IParameter)It.Satisfies<T4>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -1270,11 +1270,11 @@ public sealed partial class SetupMethodTests
 
 			private class MyReturnMethodSetup<T1, T2, T3, T4, T5>(string name)
 				: ReturnMethodSetup<int, T1, T2, T3, T4, T5>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)),
-					new NamedParameter("p2", (IParameter)It.Is<T2>(_ => false)),
-					new NamedParameter("p3", (IParameter)It.Is<T3>(_ => false)),
-					new NamedParameter("p4", (IParameter)It.Is<T4>(_ => false)),
-					new NamedParameter("p5", (IParameter)It.Is<T5>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)It.Satisfies<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)It.Satisfies<T3>(_ => false)),
+					new NamedParameter("p4", (IParameter)It.Satisfies<T4>(_ => false)),
+					new NamedParameter("p5", (IParameter)It.Satisfies<T5>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -1440,7 +1440,7 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1>(string name)
 				: VoidMethodSetup<T1>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -1588,8 +1588,8 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2>(string name)
 				: VoidMethodSetup<T1, T2>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)),
-					new NamedParameter("p2", (IParameter)It.Is<T2>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)It.Satisfies<T2>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -1756,9 +1756,9 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3>(string name)
 				: VoidMethodSetup<T1, T2, T3>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)),
-					new NamedParameter("p2", (IParameter)It.Is<T2>(_ => false)),
-					new NamedParameter("p3", (IParameter)It.Is<T3>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)It.Satisfies<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)It.Satisfies<T3>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -1944,10 +1944,10 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3, T4>(string name)
 				: VoidMethodSetup<T1, T2, T3, T4>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)),
-					new NamedParameter("p2", (IParameter)It.Is<T2>(_ => false)),
-					new NamedParameter("p3", (IParameter)It.Is<T3>(_ => false)),
-					new NamedParameter("p4", (IParameter)It.Is<T4>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)It.Satisfies<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)It.Satisfies<T3>(_ => false)),
+					new NamedParameter("p4", (IParameter)It.Satisfies<T4>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);
@@ -2153,11 +2153,11 @@ public sealed partial class SetupMethodTests
 
 			private class MyVoidMethodSetup<T1, T2, T3, T4, T5>(string name)
 				: VoidMethodSetup<T1, T2, T3, T4, T5>(name,
-					new NamedParameter("p1", (IParameter)It.Is<T1>(_ => false)),
-					new NamedParameter("p2", (IParameter)It.Is<T2>(_ => false)),
-					new NamedParameter("p3", (IParameter)It.Is<T3>(_ => false)),
-					new NamedParameter("p4", (IParameter)It.Is<T4>(_ => false)),
-					new NamedParameter("p5", (IParameter)It.Is<T5>(_ => false)))
+					new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)),
+					new NamedParameter("p2", (IParameter)It.Satisfies<T2>(_ => false)),
+					new NamedParameter("p3", (IParameter)It.Satisfies<T3>(_ => false)),
+					new NamedParameter("p4", (IParameter)It.Satisfies<T4>(_ => false)),
+					new NamedParameter("p5", (IParameter)It.Satisfies<T5>(_ => false)))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);

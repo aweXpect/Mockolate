@@ -10,10 +10,10 @@ public sealed partial class MockBehaviorTests
 		public async Task Initialize_DirectSetupsTakePrecedence()
 		{
 			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>((counter, setup)
-				=> setup.Indexer(It.Is<string>(s => s.StartsWith("da"))).InitializeWith(5));
+				=> setup.Indexer(It.Satisfies<string>(s => s.StartsWith("da"))).InitializeWith(5));
 
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(behavior,
-				setup => setup.Indexer(It.Is<string>(s => s.EndsWith("rk"))).InitializeWith(16));
+				setup => setup.Indexer(It.Satisfies<string>(s => s.EndsWith("rk"))).InitializeWith(16));
 
 			int bothMatchResult = mock["dark"];
 			int directMatchResult = mock["--rk"];
