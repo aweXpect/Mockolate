@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
+using Mockolate.SourceGenerators.Internals;
 using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Sources;
@@ -86,25 +87,8 @@ internal static partial class Sources
 				sb.AppendLine(");");
 			}
 
-			foreach (MethodParameter parameter in mockClass.Delegate.Parameters)
-			{
-				if (parameter.RefKind == RefKind.Out)
-				{
-					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(resultVarName)
-						.Append(".SetOutParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-						.Append("\", () => ")
-						.AppendDefaultValueGeneratorFor(parameter.Type, "_mock.Registrations.Behavior.DefaultValue")
-						.Append(");").AppendLine();
-				}
-				else if (parameter.RefKind == RefKind.Ref)
-				{
-					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(resultVarName)
-						.Append(".SetRefParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-						.Append("\", ").Append(parameter.Name).Append(");").AppendLine();
-				}
-			}
+			AppendOutRefParameterHandling(sb, "\t\t", mockClass.Delegate.Parameters, resultVarName,
+				"_mock.Registrations.Behavior.DefaultValue");
 
 			sb.Append("\t\t").Append(resultVarName).Append(".TriggerCallbacks(")
 				.Append(string.Join(", ", mockClass.Delegate.Parameters.Select(p => p.Name)))
@@ -148,6 +132,7 @@ internal static partial class Sources
 			{
 				sb.Append("\tprivate readonly ").Append(mockClass.ClassFullName).Append("? _wrapped;").AppendLine();
 			}
+
 			sb.AppendLine();
 			if (mockClass.Constructors?.Count > 0)
 			{
@@ -180,7 +165,8 @@ internal static partial class Sources
 			if (mockClass.IsInterface)
 			{
 				sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
-				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior, ").Append(mockClass.ClassFullName).Append("? wrapped = null)").AppendLine();
+				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior, ")
+					.Append(mockClass.ClassFullName).Append("? wrapped = null)").AppendLine();
 				sb.Append("\t{").AppendLine();
 				sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
 					.Append(">(this, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
@@ -362,6 +348,7 @@ internal static partial class Sources
 			sb.Append("\t\tremove => MockRegistrations.RemoveEvent(")
 				.Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
 		}
+
 		sb.AppendLine("\t}");
 	}
 
@@ -427,22 +414,22 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("indexerResult", property.IndexerParameters.Value);
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
-					
+
 					sb.Append("\t\t\tif (this._wrapped is null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\treturn MockRegistrations.GetIndexer<")
 						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.Append(").GetResult(() => ")
 						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
 						.Append(");").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 					sb.Append("\t\t\tvar ").Append(indexerResultVarName).Append(" = MockRegistrations.GetIndexer<")
 						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.AppendLine(");");
 					sb.Append("\t\t\tvar ").Append(baseResultVarName).Append(" = this._wrapped[")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 						.Append("];").AppendLine();
 					sb.Append("\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
 						.Append(baseResultVarName)
@@ -457,7 +444,8 @@ internal static partial class Sources
 						.AppendTypeOrWrapper(property.Type).Append(">(")
 						.Append(property.GetUniqueNameString()).Append(", () => ")
 						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
-						.Append(", this._wrapped is null ? null : () => this._wrapped.").Append(property.Name).Append(");").AppendLine();
+						.Append(", this._wrapped is null ? null : () => this._wrapped.").Append(property.Name)
+						.Append(");").AppendLine();
 				}
 			}
 			else if (!isClassInterface && !property.IsAbstract)
@@ -470,14 +458,14 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
 					sb.Append("\t\t\tvar ").Append(indexerResultVarName).Append(" = MockRegistrations.GetIndexer<")
 						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.AppendLine(");");
 					sb.Append(
 							"\t\t\tif (").Append(indexerResultVarName).Append(".CallBaseClass)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base[")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 						.Append("];").AppendLine();
 					sb.Append("\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
 						.Append(baseResultVarName)
@@ -504,7 +492,7 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t\treturn MockRegistrations.GetIndexer<")
 					.AppendTypeOrWrapper(property.Type).Append(">(")
-					.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+					.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 					.Append(").GetResult(() => ")
 					.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
 					.Append(");").AppendLine();
@@ -540,13 +528,13 @@ internal static partial class Sources
 							"\t\t\tMockRegistrations.SetIndexer<")
 						.Append(property.Type.Fullname)
 						.Append(">(value, ")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.Append(");").AppendLine();
-					
+
 					sb.Append("\t\t\tif (this._wrapped is not null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tthis._wrapped[")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 						.AppendLine("] = value;");
 					sb.Append("\t\t\t}").AppendLine();
 				}
@@ -569,11 +557,11 @@ internal static partial class Sources
 							"\t\t\tif (MockRegistrations.SetIndexer<")
 						.Append(property.Type.Fullname)
 						.Append(">(value, ")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.Append("))").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tbase[")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name)))
+						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 						.AppendLine("] = value;");
 					sb.Append("\t\t\t}").AppendLine();
 				}
@@ -582,7 +570,7 @@ internal static partial class Sources
 					sb.Append("\t\t\tMockRegistrations.SetIndexer<")
 						.Append(property.Type.Fullname)
 						.Append(">(value, ")
-						.Append(string.Join(", ", property.IndexerParameters.Value.Select(p => p.ToNameOrWrapper())))
+						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.AppendLine(");");
 				}
 			}
@@ -713,7 +701,7 @@ internal static partial class Sources
 					sb.Append("\t\t{").AppendLine();
 					sb.Append("\t\t\tvar ").Append(baseResultVarName).Append(" = this._wrapped").Append(".")
 						.Append(method.Name).Append('(')
-						.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+						.Append(FormatMethodParametersWithRefKind(method.Parameters))
 						.Append(");").AppendLine();
 				}
 				else
@@ -724,40 +712,12 @@ internal static partial class Sources
 					sb.Append("\t\t{").AppendLine();
 					sb.Append("\t\t\tthis._wrapped").Append(".")
 						.Append(method.Name).Append('(')
-						.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+						.Append(FormatMethodParametersWithRefKind(method.Parameters))
 						.Append(");").AppendLine();
 				}
 
-				foreach (MethodParameter parameter in method.Parameters)
-				{
-					if (parameter.RefKind == RefKind.Out)
-					{
-						sb.Append(
-								"\t\t\tif (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
-							.AppendLine();
-						sb.Append("\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-							.Append(".SetOutParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-							.Append("\", () => ")
-							.AppendDefaultValueGeneratorFor(parameter.Type,
-								"MockRegistrations.Behavior.DefaultValue")
-							.Append(");").AppendLine();
-						sb.Append("\t\t\t}").AppendLine().AppendLine();
-					}
-					else if (parameter.RefKind == RefKind.Ref)
-					{
-						sb.Append(
-								"\t\t\tif (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
-							.AppendLine();
-						sb.Append("\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-							.Append(".SetRefParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
-							.Append(parameter.Name).Append(");").AppendLine();
-						sb.Append("\t\t\t}").AppendLine().AppendLine();
-					}
-				}
+				AppendConditionalOutRefParameterHandling(sb, "\t\t\t", method.Parameters, methodExecutionVarName,
+					"MockRegistrations.Behavior.DefaultValue");
 
 				if (method.ReturnType != Type.Void)
 				{
@@ -765,41 +725,18 @@ internal static partial class Sources
 							"\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
-						.Append(
-							string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull())))
-						.Append(");").AppendLine();
+					AppendTriggerCallbacks(sb, "\t\t\t\t", methodExecutionVarName, method.Parameters);
 					sb.Append("\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 				}
-				
+
 				sb.Append("\t\t}").AppendLine();
 			}
 
-			foreach (MethodParameter parameter in method.Parameters)
-			{
-				if (parameter.RefKind == RefKind.Out)
-				{
-					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-						.Append(".SetOutParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-						.Append("\", () => ")
-						.AppendDefaultValueGeneratorFor(parameter.Type, "MockRegistrations.Behavior.DefaultValue")
-						.Append(");").AppendLine();
-				}
-				else if (parameter.RefKind == RefKind.Ref)
-				{
-					sb.Append("\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-						.Append(".SetRefParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
-						.Append(parameter.Name).Append(");").AppendLine();
-				}
-			}
+			AppendOutRefParameterHandling(sb, "\t\t", method.Parameters, methodExecutionVarName,
+				"MockRegistrations.Behavior.DefaultValue");
 
-			sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
-				.Append(
-					string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull())))
-				.Append(");").AppendLine();
+			AppendTriggerCallbacks(sb, "\t\t", methodExecutionVarName, method.Parameters);
 			if (method.ReturnType != Type.Void)
 			{
 				sb.Append("\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
@@ -813,46 +750,16 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name).Append('(')
-				.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+				.Append(FormatMethodParametersWithRefKind(method.Parameters))
 				.Append(");").AppendLine();
-			foreach (MethodParameter parameter in method.Parameters)
-			{
-				if (parameter.RefKind == RefKind.Out)
-				{
-					sb.Append(
-							"\t\t\tif (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
-						.AppendLine();
-					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-						.Append(".SetOutParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-						.Append("\", () => ")
-						.AppendDefaultValueGeneratorFor(parameter.Type, "MockRegistrations.Behavior.DefaultValue")
-						.Append(");").AppendLine();
-					sb.Append("\t\t\t}").AppendLine().AppendLine();
-				}
-				else if (parameter.RefKind == RefKind.Ref)
-				{
-					sb.Append(
-							"\t\t\tif (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
-						.AppendLine();
-					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-						.Append(".SetRefParameter<")
-						.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
-						.Append(parameter.Name).Append(");").AppendLine();
-					sb.Append("\t\t\t}").AppendLine().AppendLine();
-				}
-			}
+			AppendConditionalOutRefParameterHandling(sb, "\t\t\t", method.Parameters, methodExecutionVarName,
+				"MockRegistrations.Behavior.DefaultValue");
 
 			sb.Append(
 					"\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)")
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
-				.Append(
-					string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull())))
-				.Append(");").AppendLine();
+			AppendTriggerCallbacks(sb, "\t\t\t\t", methodExecutionVarName, method.Parameters);
 			sb.Append("\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
@@ -860,34 +767,13 @@ internal static partial class Sources
 			{
 				sb.Append("\t\telse").AppendLine();
 				sb.Append("\t\t{").AppendLine();
-				foreach (MethodParameter parameter in method.Parameters)
-				{
-					if (parameter.RefKind == RefKind.Out)
-					{
-						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-							.Append(".SetOutParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-							.Append("\", () => ")
-							.AppendDefaultValueGeneratorFor(parameter.Type, "MockRegistrations.Behavior.DefaultValue")
-							.Append(");").AppendLine();
-					}
-					else if (parameter.RefKind == RefKind.Ref)
-					{
-						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-							.Append(".SetRefParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
-							.Append(parameter.Name).Append(");").AppendLine();
-					}
-				}
-
+				AppendOutRefParameterHandling(sb, "\t\t\t", method.Parameters, methodExecutionVarName,
+					"MockRegistrations.Behavior.DefaultValue");
 				sb.Append("\t\t}").AppendLine();
 			}
 
 			sb.AppendLine();
-			sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
-				.Append(
-					string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull())))
-				.Append(");").AppendLine();
+			AppendTriggerCallbacks(sb, "\t\t", methodExecutionVarName, method.Parameters);
 			sb.Append("\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
 		}
 		else
@@ -897,7 +783,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tbase.").Append(method.Name).Append('(')
-				.Append(string.Join(", ", method.Parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}")))
+				.Append(FormatMethodParametersWithRefKind(method.Parameters))
 				.Append(");").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			foreach (MethodParameter parameter in method.Parameters)
@@ -921,14 +807,133 @@ internal static partial class Sources
 						.Append(parameter.Name).Append(");").AppendLine();
 				}
 
-				sb.Append("\t\t").Append(methodExecutionVarName).Append(".TriggerCallbacks(")
-					.Append(string.Join(", ",
-						method.Parameters.Select(p => p.ToNameOrNull())))
-					.Append(");").AppendLine();
+				AppendTriggerCallbacks(sb, "\t\t", methodExecutionVarName, method.Parameters);
 			}
 		}
 
 		sb.AppendLine("\t}");
+	}
+
+	/// <summary>
+	///     Generates code to set an out parameter.
+	/// </summary>
+	private static void AppendSetOutParameter(StringBuilder sb, string indent, MethodParameter parameter,
+		string varName, string defaultValueBehavior)
+		=> sb.Append(indent).Append(parameter.Name).Append(" = ").Append(varName)
+			.Append(".SetOutParameter<")
+			.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
+			.Append("\", () => ")
+			.AppendDefaultValueGeneratorFor(parameter.Type, defaultValueBehavior)
+			.Append(");").AppendLine();
+
+	/// <summary>
+	///     Generates code to set a ref parameter.
+	/// </summary>
+	private static void AppendSetRefParameter(StringBuilder sb, string indent, MethodParameter parameter,
+		string varName)
+		=> sb.Append(indent).Append(parameter.Name).Append(" = ").Append(varName)
+			.Append(".SetRefParameter<")
+			.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
+			.Append(parameter.Name).Append(");").AppendLine();
+
+	/// <summary>
+	///     Handles out and ref parameters for a method.
+	/// </summary>
+	private static void AppendOutRefParameterHandling(StringBuilder sb, string indent,
+		IEnumerable<MethodParameter> parameters, string methodExecutionVarName, string defaultValueBehavior)
+	{
+		foreach (MethodParameter parameter in parameters)
+		{
+			if (parameter.RefKind == RefKind.Out)
+			{
+				AppendSetOutParameter(sb, indent, parameter, methodExecutionVarName, defaultValueBehavior);
+			}
+			else if (parameter.RefKind == RefKind.Ref)
+			{
+				AppendSetRefParameter(sb, indent, parameter, methodExecutionVarName);
+			}
+		}
+	}
+
+	/// <summary>
+	///     Handles out and ref parameters conditionally (when HasSetupResult == true).
+	/// </summary>
+	private static void AppendConditionalOutRefParameterHandling(StringBuilder sb, string indent,
+		IEnumerable<MethodParameter> parameters, string methodExecutionVarName, string defaultValueBehavior)
+	{
+		foreach (MethodParameter parameter in parameters)
+		{
+			if (parameter.RefKind == RefKind.Out)
+			{
+				sb.Append(indent).Append("if (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
+					.AppendLine();
+				sb.Append(indent).Append("{").AppendLine();
+				AppendSetOutParameter(sb, indent + "\t", parameter, methodExecutionVarName, defaultValueBehavior);
+				sb.Append(indent).Append("}").AppendLine().AppendLine();
+			}
+			else if (parameter.RefKind == RefKind.Ref)
+			{
+				sb.Append(indent).Append("if (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
+					.AppendLine();
+				sb.Append(indent).Append("{").AppendLine();
+				AppendSetRefParameter(sb, indent + "\t", parameter, methodExecutionVarName);
+				sb.Append(indent).Append("}").AppendLine().AppendLine();
+			}
+		}
+	}
+
+	/// <summary>
+	///     Appends a TriggerCallbacks invocation.
+	/// </summary>
+	private static void AppendTriggerCallbacks(StringBuilder sb, string indent, string varName,
+		IEnumerable<MethodParameter> parameters)
+		=> sb.Append(indent).Append(varName).Append(".TriggerCallbacks(")
+			.Append(string.Join(", ", parameters.Select(p => p.ToNameOrNull())))
+			.Append(");").AppendLine();
+
+	/// <summary>
+	///     Formats method parameters with ref/out keywords and names for method invocations.
+	/// </summary>
+	private static string FormatMethodParametersWithRefKind(IEnumerable<MethodParameter> parameters)
+		=> string.Join(", ", parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}"));
+
+	/// <summary>
+	///     Formats indexer parameters as comma-separated names or wrappers.
+	/// </summary>
+	private static string FormatIndexerParametersAsNameOrWrapper(EquatableArray<MethodParameter> parameters)
+		=> string.Join(", ", parameters.Select(p => p.ToNameOrWrapper()));
+
+	/// <summary>
+	///     Formats indexer parameters as comma-separated names.
+	/// </summary>
+	private static string FormatIndexerParametersAsNames(EquatableArray<MethodParameter> parameters)
+		=> string.Join(", ", parameters.Select(p => p.Name));
+
+	/// <summary>
+	///     Formats parameters with type and name (e.g., "int value, string name").
+	/// </summary>
+	private static string FormatParametersWithTypeAndName(IEnumerable<MethodParameter> parameters)
+		=> string.Join(", ", parameters.Select(p => $"{p.Type.Fullname} {p.Name}"));
+
+	/// <summary>
+	///     Formats parameters as names only (e.g., "value1, value2").
+	/// </summary>
+	private static string FormatParametersAsNames(IEnumerable<MethodParameter> parameters)
+		=> string.Join(", ", parameters.Select(p => p.Name));
+
+	/// <summary>
+	///     Appends a NamedParameter with nullable handling.
+	/// </summary>
+	private static void AppendNamedParameter(StringBuilder sb, MethodParameter parameter)
+	{
+		sb.Append("new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(");
+		sb.Append(parameter.Name);
+		if (parameter.IsNullable())
+		{
+			sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname).Append(">()");
+		}
+
+		sb.Append("))");
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
