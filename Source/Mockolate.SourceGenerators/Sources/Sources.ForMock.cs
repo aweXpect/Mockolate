@@ -132,6 +132,7 @@ internal static partial class Sources
 			{
 				sb.Append("\tprivate readonly ").Append(mockClass.ClassFullName).Append("? _wrapped;").AppendLine();
 			}
+
 			sb.AppendLine();
 			if (mockClass.Constructors?.Count > 0)
 			{
@@ -164,7 +165,8 @@ internal static partial class Sources
 			if (mockClass.IsInterface)
 			{
 				sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
-				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior, ").Append(mockClass.ClassFullName).Append("? wrapped = null)").AppendLine();
+				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior, ")
+					.Append(mockClass.ClassFullName).Append("? wrapped = null)").AppendLine();
 				sb.Append("\t{").AppendLine();
 				sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
 					.Append(">(this, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
@@ -346,6 +348,7 @@ internal static partial class Sources
 			sb.Append("\t\tremove => MockRegistrations.RemoveEvent(")
 				.Append(@event.GetUniqueNameString()).Append(", value?.Target, value?.Method);").AppendLine();
 		}
+
 		sb.AppendLine("\t}");
 	}
 
@@ -411,7 +414,7 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("indexerResult", property.IndexerParameters.Value);
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
-					
+
 					sb.Append("\t\t\tif (this._wrapped is null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\treturn MockRegistrations.GetIndexer<")
@@ -441,7 +444,8 @@ internal static partial class Sources
 						.AppendTypeOrWrapper(property.Type).Append(">(")
 						.Append(property.GetUniqueNameString()).Append(", () => ")
 						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
-						.Append(", this._wrapped is null ? null : () => this._wrapped.").Append(property.Name).Append(");").AppendLine();
+						.Append(", this._wrapped is null ? null : () => this._wrapped.").Append(property.Name)
+						.Append(");").AppendLine();
 				}
 			}
 			else if (!isClassInterface && !property.IsAbstract)
@@ -526,7 +530,7 @@ internal static partial class Sources
 						.Append(">(value, ")
 						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.Append(");").AppendLine();
-					
+
 					sb.Append("\t\t\tif (this._wrapped is not null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tthis._wrapped[")
@@ -725,7 +729,7 @@ internal static partial class Sources
 					sb.Append("\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 				}
-				
+
 				sb.Append("\t\t}").AppendLine();
 			}
 
@@ -810,36 +814,30 @@ internal static partial class Sources
 		sb.AppendLine("\t}");
 	}
 
-	#region Helper Methods
-
 	/// <summary>
-	/// Generates code to set an out parameter.
+	///     Generates code to set an out parameter.
 	/// </summary>
 	private static void AppendSetOutParameter(StringBuilder sb, string indent, MethodParameter parameter,
 		string varName, string defaultValueBehavior)
-	{
-		sb.Append(indent).Append(parameter.Name).Append(" = ").Append(varName)
+		=> sb.Append(indent).Append(parameter.Name).Append(" = ").Append(varName)
 			.Append(".SetOutParameter<")
 			.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
 			.Append("\", () => ")
 			.AppendDefaultValueGeneratorFor(parameter.Type, defaultValueBehavior)
 			.Append(");").AppendLine();
-	}
 
 	/// <summary>
-	/// Generates code to set a ref parameter.
+	///     Generates code to set a ref parameter.
 	/// </summary>
 	private static void AppendSetRefParameter(StringBuilder sb, string indent, MethodParameter parameter,
 		string varName)
-	{
-		sb.Append(indent).Append(parameter.Name).Append(" = ").Append(varName)
+		=> sb.Append(indent).Append(parameter.Name).Append(" = ").Append(varName)
 			.Append(".SetRefParameter<")
 			.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
 			.Append(parameter.Name).Append(");").AppendLine();
-	}
 
 	/// <summary>
-	/// Handles out and ref parameters for a method.
+	///     Handles out and ref parameters for a method.
 	/// </summary>
 	private static void AppendOutRefParameterHandling(StringBuilder sb, string indent,
 		IEnumerable<MethodParameter> parameters, string methodExecutionVarName, string defaultValueBehavior)
@@ -858,7 +856,7 @@ internal static partial class Sources
 	}
 
 	/// <summary>
-	/// Handles out and ref parameters conditionally (when HasSetupResult == true).
+	///     Handles out and ref parameters conditionally (when HasSetupResult == true).
 	/// </summary>
 	private static void AppendConditionalOutRefParameterHandling(StringBuilder sb, string indent,
 		IEnumerable<MethodParameter> parameters, string methodExecutionVarName, string defaultValueBehavior)
@@ -885,34 +883,30 @@ internal static partial class Sources
 	}
 
 	/// <summary>
-	/// Appends a TriggerCallbacks invocation.
+	///     Appends a TriggerCallbacks invocation.
 	/// </summary>
 	private static void AppendTriggerCallbacks(StringBuilder sb, string indent, string varName,
 		IEnumerable<MethodParameter> parameters)
-	{
-		sb.Append(indent).Append(varName).Append(".TriggerCallbacks(")
+		=> sb.Append(indent).Append(varName).Append(".TriggerCallbacks(")
 			.Append(string.Join(", ", parameters.Select(p => p.ToNameOrNull())))
 			.Append(");").AppendLine();
-	}
 
 	/// <summary>
-	/// Formats method parameters with ref/out keywords and names for method invocations.
+	///     Formats method parameters with ref/out keywords and names for method invocations.
 	/// </summary>
 	private static string FormatMethodParametersWithRefKind(IEnumerable<MethodParameter> parameters)
 		=> string.Join(", ", parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}"));
 
 	/// <summary>
-	/// Formats indexer parameters as comma-separated names or wrappers.
+	///     Formats indexer parameters as comma-separated names or wrappers.
 	/// </summary>
 	private static string FormatIndexerParametersAsNameOrWrapper(EquatableArray<MethodParameter> parameters)
 		=> string.Join(", ", parameters.Select(p => p.ToNameOrWrapper()));
 
 	/// <summary>
-	/// Formats indexer parameters as comma-separated names.
+	///     Formats indexer parameters as comma-separated names.
 	/// </summary>
 	private static string FormatIndexerParametersAsNames(EquatableArray<MethodParameter> parameters)
 		=> string.Join(", ", parameters.Select(p => p.Name));
-
-	#endregion
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
