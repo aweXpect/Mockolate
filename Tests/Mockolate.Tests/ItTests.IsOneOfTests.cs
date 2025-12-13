@@ -6,28 +6,6 @@ public sealed partial class ItTests
 {
 	public sealed class IsOneOfTests
 	{
-		[Fact]
-		public async Task ToString_WithNullableIntValues_ShouldReturnExpectedValue()
-		{
-			IParameter<int?> sut = It.IsOneOf<int?>(3, null, 5);
-			string expectedValue = "It.IsOneOf(3, null, 5)";
-
-			string? result = sut.ToString();
-
-			await That(result).IsEqualTo(expectedValue);
-		}
-
-		[Fact]
-		public async Task ToString_WithStringValues_ShouldReturnExpectedValue()
-		{
-			IParameter<string> sut = It.IsOneOf("foo", "bar");
-			string expectedValue = "It.IsOneOf(\"foo\", \"bar\")";
-
-			string? result = sut.ToString();
-
-			await That(result).IsEqualTo(expectedValue);
-		}
-
 		[Theory]
 		[InlineData(1, false)]
 		[InlineData(4, false)]
@@ -81,6 +59,39 @@ public sealed partial class ItTests
 			await That(value1.Progress).IsEqualTo(1);
 			await That(result1).IsEqualTo(3);
 			await That(mock.VerifyMock.Invoked.DoSomething(It.IsOneOf(other1, other2))).Never();
+		}
+
+		[Fact]
+		public async Task ToString_Using_ShouldReturnExpectedValue()
+		{
+			IParameter<int> sut = It.IsOneOf(3, 5).Using(new AllEqualComparer());
+			string expectedValue = "It.IsOneOf(3, 5).Using(new AllEqualComparer())";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task ToString_WithNullableIntValues_ShouldReturnExpectedValue()
+		{
+			IParameter<int?> sut = It.IsOneOf<int?>(3, null, 5);
+			string expectedValue = "It.IsOneOf(3, null, 5)";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task ToString_WithStringValues_ShouldReturnExpectedValue()
+		{
+			IParameter<string> sut = It.IsOneOf("foo", "bar");
+			string expectedValue = "It.IsOneOf(\"foo\", \"bar\")";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
 		}
 
 		[Theory]
