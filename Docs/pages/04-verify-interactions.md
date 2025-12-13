@@ -35,12 +35,20 @@ sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Exactly(2);
 
 You can use argument matchers from the `Match` class to verify calls with flexible conditions:
 
-- `It.IsAny<T>()`: matches any value of type `T`
-- `It.IsNull<T>()`: matches `null`
-- `It.Is<T>(predicate)`: matches values satisfying a predicate
-- `It.Is(value)`: matches a specific value
-- `It.IsOut<T>()`: matches any out parameter of type `T`
-- `It.IsRef<T>()`: matches any ref parameter of type `T`
+- `It.IsAny<T>()`: Matches any value of type `T`.
+- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
+  comparer.
+- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
+  provide a custom equality comparer.
+- `It.IsNull<T>()`: Matches null.
+- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
+- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
+  minimum and maximum value.
+- `It.IsOut<T>()`: Matches any out parameter of type `T`
+- `It.IsRef<T>()`: Matches any ref parameter of type `T`
+- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
+  regular expressions instead.
+- `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
 **Example:**
 
