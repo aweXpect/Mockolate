@@ -54,7 +54,7 @@ public class MockGenerator : IIncrementalGenerator
 			{
 				context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
 					SourceText.From(
-						Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass),
+						Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass, mockToGenerate.MockClass.DistinctAdditionalImplementations()),
 						Encoding.UTF8));
 			}
 		}

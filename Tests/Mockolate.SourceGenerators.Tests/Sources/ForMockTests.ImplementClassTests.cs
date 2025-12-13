@@ -5,6 +5,44 @@ public sealed partial class ForMockTests
 	public sealed class ImplementClassTests
 	{
 		[Fact]
+		public async Task BaseClassMethodWithParameterNamedBaseResult_ShouldGenerateUniqueLocalVariableName()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<MyService>();
+				         }
+				     }
+
+				     public class MyService
+				     {
+				         public virtual int ProcessData(int baseResult) => baseResult;
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForMyService.g.cs").WhoseValue
+				.Contains("MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>(")
+				.IgnoringNewlineStyle().And
+				.Contains("if (methodExecution.CallBaseClass)")
+				.IgnoringNewlineStyle().And
+				.Contains("var baseResult1 = base.ProcessData(baseResult);")
+				.IgnoringNewlineStyle().And
+				.Contains("return methodExecution.GetResult(baseResult1);")
+				.Or
+				.Contains("if (!methodExecution.HasSetupResult)")
+				.IgnoringNewlineStyle().And
+				.Contains("return baseResult1;")
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
 		public async Task Events_MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 		{
 			GeneratorResult result = Generator
@@ -264,6 +302,7 @@ public sealed partial class ForMockTests
 				     {
 				         public virtual event EventHandler SomeEvent;
 				         public event EventHandler? SomeOtherEvent;
+				         protected virtual event EventHandler SomeProtectedEvent;
 				     }
 
 				     public interface IMyOtherService
@@ -473,6 +512,101 @@ public sealed partial class ForMockTests
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task InterfaceIndexerWithParameterNamedIndexerResult_ShouldGenerateUniqueLocalVariableName()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         int this[int indexerResult] { get; set; }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+				.Contains(
+					"return MockRegistrations.GetIndexer<int>(indexerResult).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));")
+				.IgnoringNewlineStyle().And
+				.Contains("MockRegistrations.SetIndexer<int>(value, indexerResult);")
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task InterfaceMethodWithParameterNamedMethodExecution_ShouldGenerateUniqueLocalVariableName()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         int ProcessData(int methodExecution);
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+				.Contains("MethodSetupResult<int> methodExecution1 = MockRegistrations.InvokeMethod<int>(")
+				.IgnoringNewlineStyle().And
+				.Contains("methodExecution1.TriggerCallbacks(methodExecution)")
+				.IgnoringNewlineStyle().And
+				.Contains("return methodExecution1.Result;")
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task InterfaceMethodWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         int ProcessResult(int result);
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+				.Contains("MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>(")
+				.IgnoringNewlineStyle().And
+				.Contains("methodExecution.TriggerCallbacks(result)")
+				.IgnoringNewlineStyle().And
+				.Contains("return methodExecution.Result;")
+				.IgnoringNewlineStyle();
 		}
 
 		[Theory]
@@ -802,8 +936,14 @@ public sealed partial class ForMockTests
 
 				     public class MyService
 				     {
-				         public virtual void MyMethod1(int index);
-				         protected virtual bool MyMethod2(int index, bool isReadOnly);
+				         public virtual void MyMethod1(int index, ref int value1, out bool flag)
+				         {
+				             flag = true;
+				         }
+				         protected virtual bool MyMethod2(int index, bool isReadOnly, ref int value1, out bool flag)
+				         {
+				             flag = true;
+				         }
 				         public void MyNonVirtualMethod();
 				     }
 
@@ -815,32 +955,54 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("MockForMyService_IMyOtherService.g.cs").WhoseValue
 				.Contains("""
-				          	public override void MyMethod1(int index)
+				          	/// <inheritdoc cref="MyCode.MyService.MyMethod1(int, ref int, out bool)" />
+				          	public override void MyMethod1(int index, ref int value1, out bool flag)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", index);
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", index, value1, null);
 				          		if (methodExecution.CallBaseClass)
 				          		{
-				          			base.MyMethod1(index);
+				          			base.MyMethod1(index, ref value1, out flag);
 				          		}
-				          		methodExecution.TriggerCallbacks(index);
+				          		methodExecution.TriggerCallbacks(index, value1, flag);
+
+				          		value1 = methodExecution.SetRefParameter<int>("value1", value1);
+				          		methodExecution.TriggerCallbacks(index, value1, flag);
+
+				          		flag = methodExecution.SetOutParameter<bool>("flag", () => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!));
+				          		methodExecution.TriggerCallbacks(index, value1, flag);
 				          	}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          	/// <inheritdoc cref="MyCode.MyService.MyMethod2(int, bool)" />
-				          	protected override bool MyMethod2(int index, bool isReadOnly)
+				          	/// <inheritdoc cref="MyCode.MyService.MyMethod2(int, bool, ref int, out bool)" />
+				          	protected override bool MyMethod2(int index, bool isReadOnly, ref int value1, out bool flag)
 				          	{
-				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), index, isReadOnly);
+				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), index, isReadOnly, value1, null);
 				          		if (methodExecution.CallBaseClass)
 				          		{
-				          			var baseResult = base.MyMethod2(index, isReadOnly);
+				          			var baseResult = base.MyMethod2(index, isReadOnly, ref value1, out flag);
+				          			if (methodExecution.HasSetupResult == true)
+				          			{
+				          				value1 = methodExecution.SetRefParameter<int>("value1", value1);
+				          			}
+
+				          			if (methodExecution.HasSetupResult == true)
+				          			{
+				          				flag = methodExecution.SetOutParameter<bool>("flag", () => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!));
+				          			}
+
 				          			if (!methodExecution.HasSetupResult)
 				          			{
-				          				methodExecution.TriggerCallbacks(index, isReadOnly);
+				          				methodExecution.TriggerCallbacks(index, isReadOnly, value1, flag);
 				          				return baseResult;
 				          			}
 				          		}
+				          		else
+				          		{
+				          			value1 = methodExecution.SetRefParameter<int>("value1", value1);
+				          			flag = methodExecution.SetOutParameter<bool>("flag", () => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!));
+				          		}
 
-				          		methodExecution.TriggerCallbacks(index, isReadOnly);
+				          		methodExecution.TriggerCallbacks(index, isReadOnly, value1, flag);
 				          		return methodExecution.Result;
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -893,7 +1055,7 @@ public sealed partial class ForMockTests
 				          			{
 				          				index = methodExecution.SetRefParameter<int>("index", index);
 				          			}
-				          
+
 				          		}
 				          		index = methodExecution.SetRefParameter<int>("index", index);
 				          		methodExecution.TriggerCallbacks(index);
@@ -911,7 +1073,7 @@ public sealed partial class ForMockTests
 				          			{
 				          				isReadOnly = methodExecution.SetOutParameter<bool>("isReadOnly", () => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!));
 				          			}
-				          
+
 				          			if (!methodExecution.HasSetupResult)
 				          			{
 				          				methodExecution.TriggerCallbacks(index, isReadOnly);
@@ -922,6 +1084,57 @@ public sealed partial class ForMockTests
 				          		methodExecution.TriggerCallbacks(index, isReadOnly);
 				          		return methodExecution.Result;
 				          	}
+				          """).IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task Methods_ShouldSupportSpanParameters()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         void MyMethod1(Span<char> buffer);
+				         bool MyMethod2(ReadOnlySpan<int> values);
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyServiceExtensions.g.cs").WhoseValue
+				.Contains("""
+				          		public IVoidMethodSetup<SpanWrapper<char>> MyMethod1(ISpanParameter<char> buffer)
+				          		{
+				          			var methodSetup = new VoidMethodSetup<SpanWrapper<char>>("MyCode.IMyService.MyMethod1", new NamedParameter("buffer", (IParameter)(buffer)));
+				          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
+				          			return methodSetup;
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		public IReturnMethodSetup<bool, ReadOnlySpanWrapper<int>> MyMethod2(IReadOnlySpanParameter<int> values)
+				          		{
+				          			var methodSetup = new ReturnMethodSetup<bool, ReadOnlySpanWrapper<int>>("MyCode.IMyService.MyMethod2", new NamedParameter("values", (IParameter)(values)));
+				          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
+				          			return methodSetup;
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		public VerificationResult<MyCode.IMyService> MyMethod1(IVerifySpanParameter<char> buffer)
+				          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.MyMethod1", new NamedParameter("buffer", (IParameter)(buffer)));
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		public VerificationResult<MyCode.IMyService> MyMethod2(IVerifyReadOnlySpanParameter<int> values)
+				          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.MyMethod2", new NamedParameter("values", (IParameter)(values)));
 				          """).IgnoringNewlineStyle();
 		}
 
@@ -1253,138 +1466,6 @@ public sealed partial class ForMockTests
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
-		}
-
-		[Fact]
-		public async Task InterfaceMethodWithParameterNamedMethodExecution_ShouldGenerateUniqueLocalVariableName()
-		{
-			GeneratorResult result = Generator
-				.Run("""
-				     using Mockolate;
-
-				     namespace MyCode;
-
-				     public class Program
-				     {
-				         public static void Main(string[] args)
-				         {
-				     		_ = Mock.Create<IMyService>();
-				         }
-				     }
-
-				     public interface IMyService
-				     {
-				         int ProcessData(int methodExecution);
-				     }
-				     """);
-
-			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
-				.Contains("MethodSetupResult<int> methodExecution1 = MockRegistrations.InvokeMethod<int>(")
-				.IgnoringNewlineStyle().And
-				.Contains("methodExecution1.TriggerCallbacks(methodExecution)")
-				.IgnoringNewlineStyle().And
-				.Contains("return methodExecution1.Result;")
-				.IgnoringNewlineStyle();
-		}
-
-		[Fact]
-		public async Task InterfaceMethodWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
-		{
-			GeneratorResult result = Generator
-				.Run("""
-				     using Mockolate;
-
-				     namespace MyCode;
-
-				     public class Program
-				     {
-				         public static void Main(string[] args)
-				         {
-				     		_ = Mock.Create<IMyService>();
-				         }
-				     }
-
-				     public interface IMyService
-				     {
-				         int ProcessResult(int result);
-				     }
-				     """);
-
-			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
-				.Contains("MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>(")
-				.IgnoringNewlineStyle().And
-				.Contains("methodExecution.TriggerCallbacks(result)")
-				.IgnoringNewlineStyle().And
-				.Contains("return methodExecution.Result;")
-				.IgnoringNewlineStyle();
-		}
-
-		[Fact]
-		public async Task InterfaceIndexerWithParameterNamedIndexerResult_ShouldGenerateUniqueLocalVariableName()
-		{
-			GeneratorResult result = Generator
-				.Run("""
-				     using Mockolate;
-
-				     namespace MyCode;
-
-				     public class Program
-				     {
-				         public static void Main(string[] args)
-				         {
-				     		_ = Mock.Create<IMyService>();
-				         }
-				     }
-
-				     public interface IMyService
-				     {
-				         int this[int indexerResult] { get; set; }
-				     }
-				     """);
-
-			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
-				.Contains("return MockRegistrations.GetIndexer<int>(indexerResult).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));")
-				.IgnoringNewlineStyle().And
-				.Contains("MockRegistrations.SetIndexer<int>(value, indexerResult);")
-				.IgnoringNewlineStyle();
-		}
-
-		[Fact]
-		public async Task BaseClassMethodWithParameterNamedBaseResult_ShouldGenerateUniqueLocalVariableName()
-		{
-			GeneratorResult result = Generator
-				.Run("""
-				     using Mockolate;
-
-				     namespace MyCode;
-
-				     public class Program
-				     {
-				         public static void Main(string[] args)
-				         {
-				     		_ = Mock.Create<MyService>();
-				         }
-				     }
-
-				     public class MyService
-				     {
-				         public virtual int ProcessData(int baseResult) => baseResult;
-				     }
-				     """);
-
-			await That(result.Sources).ContainsKey("MockForMyService.g.cs").WhoseValue
-				.Contains("MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>(")
-				.IgnoringNewlineStyle().And
-				.Contains("if (methodExecution.CallBaseClass)")
-				.IgnoringNewlineStyle().And
-				.Contains("var baseResult1 = base.ProcessData(baseResult);")
-				.IgnoringNewlineStyle().And
-				.Contains("return methodExecution.GetResult(baseResult1);")
-				.Or
-				.Contains("if (!methodExecution.HasSetupResult)")
-				.IgnoringNewlineStyle().And
-				.Contains("return baseResult1;")
-				.IgnoringNewlineStyle();
 		}
 	}
 }
