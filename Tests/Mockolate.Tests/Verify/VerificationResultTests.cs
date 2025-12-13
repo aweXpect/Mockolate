@@ -27,7 +27,7 @@ public class VerificationResultTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer [It.IsAny<string>()]");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_GotIndexerWithMultipleParameters_ShouldHaveExpectedValue()
 	{
 		IIndexerVerificationService sut = Mock.Create<IIndexerVerificationService>();
@@ -50,7 +50,7 @@ public class VerificationResultTests
 			.IsEqualTo("invoked method Dispense(It.IsAny<string>(), It.IsAny<int>())");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_MockInteractions_HasAllInteractions()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -91,7 +91,7 @@ public class VerificationResultTests
 			.IsEqualTo("set indexer [It.IsAny<string>()] to value 5");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VerificationResult_SetIndexerWithMultipleParameters_ShouldHaveExpectedValue()
 	{
 		IIndexerVerificationService sut = Mock.Create<IIndexerVerificationService>();

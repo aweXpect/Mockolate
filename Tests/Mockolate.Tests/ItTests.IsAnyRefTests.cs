@@ -6,11 +6,11 @@ public sealed partial class ItTests
 {
 	public sealed class IsAnyRefTests
 	{
-		[Theory]
-		[InlineData(42L, false)]
-		[InlineData("foo", false)]
-		[InlineData(null, true)]
-		[InlineData(123, true)]
+		[Test]
+		[Arguments(42L, false)]
+		[Arguments("foo", false)]
+		[Arguments(null, true)]
+		[Arguments(123, true)]
 		public async Task ShouldCheckType(object? value, bool expectMatch)
 		{
 			IRefParameter<int?> sut = It.IsAnyRef<int?>();
@@ -20,7 +20,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectMatch);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IRefParameter<int> sut = It.IsAnyRef<int>();

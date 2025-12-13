@@ -113,7 +113,7 @@ public sealed partial class RaiseTests
 		await That(callCount).IsEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenUsingRaise_WithoutRegistration_ShouldNotThrow()
 	{
 		IRaiseEvent mock = Mock.Create<IRaiseEvent>();
