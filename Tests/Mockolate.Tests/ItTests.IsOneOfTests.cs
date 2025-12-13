@@ -37,7 +37,7 @@ public sealed partial class ItTests
 		[InlineData(8, false)]
 		[InlineData(-5, false)]
 		[InlineData(42, false)]
-		public async Task WithValue_ShouldMatchWhenEqualToAny(int value, bool expectMatch)
+		public async Task ShouldMatchWhenEqualToAny(int value, bool expectMatch)
 		{
 			IParameter<int> sut = It.IsOneOf(5, 6, 7);
 
@@ -47,7 +47,7 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
-		public async Task WithValue_ShouldSupportCovarianceInSetup()
+		public async Task ShouldSupportCovarianceInSetup()
 		{
 			IMyService mock = Mock.Create<IMyService>();
 			MyImplementation value1 = new();
@@ -64,7 +64,7 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
-		public async Task WithValue_ShouldSupportCovarianceInVerify()
+		public async Task ShouldSupportCovarianceInVerify()
 		{
 			IMyService mock = Mock.Create<IMyService>();
 			mock.SetupMock.Method.DoSomething(It.Satisfies<MyImplementation>(_ => true))
@@ -81,6 +81,19 @@ public sealed partial class ItTests
 			await That(value1.Progress).IsEqualTo(1);
 			await That(result1).IsEqualTo(3);
 			await That(mock.VerifyMock.Invoked.DoSomething(It.IsOneOf(other1, other2))).Never();
+		}
+
+		[Theory]
+		[InlineData(1)]
+		[InlineData(5)]
+		[InlineData(-42)]
+		public async Task WithComparer_ShouldUseComparer(int value)
+		{
+			IParameter<int> sut = It.IsOneOf(4, 5, 6).Using(new AllEqualComparer());
+
+			bool result = ((IParameter)sut).Matches(value);
+
+			await That(result).IsTrue();
 		}
 
 		public interface IMyBase

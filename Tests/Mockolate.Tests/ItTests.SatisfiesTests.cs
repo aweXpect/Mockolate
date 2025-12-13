@@ -7,7 +7,7 @@ public sealed partial class ItTests
 	public sealed class SatisfiesTests
 	{
 		[Fact]
-		public async Task ToString_WithPredicate_ShouldReturnExpectedValue()
+		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Satisfies<string>(x => x.Length == 3);
 			string expectedValue = "It.Satisfies<string>(x => x.Length == 3)";
@@ -20,7 +20,7 @@ public sealed partial class ItTests
 		[Theory]
 		[InlineData(null, true)]
 		[InlineData(1, false)]
-		public async Task WithMatching_CheckForNull_ShouldMatchForExpectedResult(int? value, bool expectedResult)
+		public async Task CheckForNull_ShouldMatchForExpectedResult(int? value, bool expectedResult)
 		{
 			IParameter<int?> sut = It.Satisfies<int?>(v => v is null);
 
@@ -32,7 +32,7 @@ public sealed partial class ItTests
 		[Theory]
 		[InlineData(42L)]
 		[InlineData("foo")]
-		public async Task WithMatching_DifferentType_ShouldNotMatch(object? value)
+		public async Task DifferentType_ShouldNotMatch(object? value)
 		{
 			IParameter<int?> sut = It.Satisfies<int?>(_ => true);
 
@@ -44,7 +44,7 @@ public sealed partial class ItTests
 		[Theory]
 		[InlineData(true)]
 		[InlineData(false)]
-		public async Task WithMatching_ShouldMatchForExpectedResult(bool predicateValue)
+		public async Task ShouldMatchForExpectedResult(bool predicateValue)
 		{
 			IParameter<string> sut = It.Satisfies<string>(_ => predicateValue);
 
@@ -54,7 +54,7 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
-		public async Task WithPredicate_ShouldSupportCovarianceInSetup()
+		public async Task ShouldSupportCovarianceInSetup()
 		{
 			IMyService mock = Mock.Create<IMyService>();
 			mock.SetupMock.Method.DoSomething(It.Satisfies<MyImplementation>(_ => true))
@@ -70,7 +70,7 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
-		public async Task WithPredicate_ShouldSupportCovarianceInVerify()
+		public async Task ShouldSupportCovarianceInVerify()
 		{
 			IMyService mock = Mock.Create<IMyService>();
 			mock.SetupMock.Method.DoSomething(It.Satisfies<MyImplementation>(_ => true))

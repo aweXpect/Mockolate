@@ -7,7 +7,7 @@ public sealed partial class ItTests
 	public sealed class IsTests
 	{
 		[Fact]
-		public async Task ToString_WithValue_ShouldReturnExpectedValue()
+		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Is("foo");
 			string expectedValue = "\"foo\"";
@@ -18,7 +18,7 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
-		public async Task ToString_WithValueWithComparer_ShouldReturnExpectedValue()
+		public async Task ToString_WithComparer_ShouldReturnExpectedValue()
 		{
 			IParameter<int> sut = It.Is(4).Using(new AllEqualComparer());
 			string expectedValue = "It.Is(4).Using(new AllEqualComparer())";
@@ -33,7 +33,7 @@ public sealed partial class ItTests
 		[InlineData(5, true)]
 		[InlineData(-5, false)]
 		[InlineData(42, false)]
-		public async Task WithValue_ShouldMatchWhenEqual(int value, bool expectMatch)
+		public async Task ShouldMatchWhenEqual(int value, bool expectMatch)
 		{
 			IParameter<int> sut = It.Is(5);
 
@@ -43,7 +43,7 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
-		public async Task WithValue_ShouldSupportCovarianceInSetup()
+		public async Task ShouldSupportCovarianceInSetup()
 		{
 			IMyService mock = Mock.Create<IMyService>();
 			MyImplementation value1 = new();
@@ -62,7 +62,7 @@ public sealed partial class ItTests
 		[InlineData(1)]
 		[InlineData(5)]
 		[InlineData(-42)]
-		public async Task WithValue_WithComparer_ShouldUseComparer(int value)
+		public async Task WithComparer_ShouldUseComparer(int value)
 		{
 			IParameter<int> sut = It.Is(5).Using(new AllEqualComparer());
 
