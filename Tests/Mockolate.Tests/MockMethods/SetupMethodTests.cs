@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
@@ -396,6 +397,17 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task TriggerCallbacks_ArrayLengthDoesNotMatch_ShouldNotThrow()
+	{
+		void Act()
+		{
+			MyMethodSetup.DoTriggerCallbacks([null, null,], [null,]);
+		}
+
+		await That(Act).DoesNotThrow();
+	}
+
+	[Fact]
 	public async Task VoidMethod_Callback_ShouldExecuteWhenInvoked()
 	{
 		int callCount = 0;
@@ -426,7 +438,8 @@ public sealed partial class SetupMethodTests
 		sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>());
 		sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 		sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
-		sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+		sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+			It.IsAny<int>());
 
 		void Act()
 		{
@@ -465,7 +478,8 @@ public sealed partial class SetupMethodTests
 		void Act()
 		{
 			registration.InvokeMethod(
-				"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters", _ => 0, 1, 2);
+				"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters", _ => 0,
+				1, 2);
 		}
 
 		await That(Act).Throws<MockException>()
@@ -574,7 +588,8 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string> setup = new("Foo", new NamedParameter("bar", (IParameter)It.IsAny<string>()));
+			ReturnMethodSetup<int, string> setup = new("Foo",
+				new NamedParameter("bar", (IParameter)It.IsAny<string>()));
 
 			string result = setup.ToString();
 
@@ -908,6 +923,37 @@ public sealed partial class SetupMethodTests
 				.IsEqualTo(
 					"void Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())");
 		}
+	}
+
+	public class MyMethodSetup : MethodSetup
+	{
+		public static void DoTriggerCallbacks(NamedParameter?[] namedParameters, object?[] values)
+			=> TriggerCallbacks(namedParameters, values);
+
+		protected override bool? GetCallBaseClass()
+			=> throw new NotSupportedException();
+
+		protected override bool HasReturnCalls()
+			=> throw new NotSupportedException();
+
+		protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+			=> throw new NotSupportedException();
+
+		protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+			=> throw new NotSupportedException();
+
+		protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
+			=> throw new NotSupportedException();
+
+		protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+			Func<TResult> defaultValueGenerator)
+			=> throw new NotSupportedException();
+
+		protected override bool IsMatch(MethodInvocation invocation)
+			=> throw new NotSupportedException();
+
+		protected override void TriggerParameterCallbacks(object?[] parameters)
+			=> throw new NotSupportedException();
 	}
 
 	public interface IVoidMethodSetupWithParametersTest

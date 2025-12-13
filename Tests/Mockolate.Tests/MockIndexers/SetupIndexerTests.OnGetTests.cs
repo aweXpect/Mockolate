@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockIndexers;
 
@@ -140,6 +141,22 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
+		public async Task ShouldIncludeIncrementingAccessCounter()
+		{
+			List<int> invocations = [];
+			IIndexerService sut = Mock.Create<IIndexerService>();
+			sut.SetupMock.Indexer(It.IsAny<int>())
+				.OnGet.Do((i, _, _) => { invocations.Add(i); });
+
+			for (int i = 0; i < 10; i++)
+			{
+				_ = sut[10 * i];
+			}
+
+			await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+		}
+
+		[Fact]
 		public async Task ShouldInvokeCallbacksInSequence()
 		{
 			int callCount1 = 0;
@@ -189,6 +206,54 @@ public sealed partial class SetupIndexerTests
 			_ = mock[3, 3, 3];
 
 			await That(callCount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+		{
+			IIndexerService mock = Mock.Create<IIndexerService>();
+			IIndexerSetupCallbackBuilder<string, int> setup =
+				(IIndexerSetupCallbackBuilder<string, int>)mock.SetupMock.Indexer(It.IsAny<int>());
+
+			void ActWhen()
+			{
+				setup.When(_ => true);
+			}
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			void ActInParallel()
+			{
+				setup.InParallel();
+			}
+
+			await That(ActWhen).DoesNotThrow();
+			await That(ActFor).DoesNotThrow();
+			await That(ActInParallel).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+		{
+			IIndexerService mock = Mock.Create<IIndexerService>();
+			IIndexerSetupCallbackWhenBuilder<string, int> setup =
+				(IIndexerSetupCallbackWhenBuilder<string, int>)mock.SetupMock.Indexer(It.IsAny<int>());
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			void ActOnly()
+			{
+				setup.Only(2);
+			}
+
+			await That(ActFor).DoesNotThrow();
+			await That(ActOnly).DoesNotThrow();
 		}
 
 		public sealed class With2Levels
@@ -343,6 +408,22 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldIncludeIncrementingAccessCounter()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _, _) => { invocations.Add(i); });
+
+				for (int i = 0; i < 10; i++)
+				{
+					_ = sut[10 * i, 20 * i];
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -377,6 +458,56 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupCallbackBuilder<string, int, int> setup =
+					(IIndexerSetupCallbackBuilder<string, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupCallbackWhenBuilder<string, int, int> setup =
+					(IIndexerSetupCallbackWhenBuilder<string, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -537,6 +668,22 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldIncludeIncrementingAccessCounter()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _, _, _) => { invocations.Add(i); });
+
+				for (int i = 0; i < 10; i++)
+				{
+					_ = sut[10 * i, 20 * i, 30 * i];
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -571,6 +718,56 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupCallbackBuilder<string, int, int, int> setup =
+					(IIndexerSetupCallbackBuilder<string, int, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupCallbackWhenBuilder<string, int, int, int> setup =
+					(IIndexerSetupCallbackWhenBuilder<string, int, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -732,6 +929,22 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldIncludeIncrementingAccessCounter()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _, _, _, _) => { invocations.Add(i); });
+
+				for (int i = 0; i < 10; i++)
+				{
+					_ = sut[10 * i, 20 * i, 30 * i, 40 * i];
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -766,6 +979,56 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupCallbackBuilder<string, int, int, int, int> setup =
+					(IIndexerSetupCallbackBuilder<string, int, int, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupCallbackWhenBuilder<string, int, int, int, int> setup =
+					(IIndexerSetupCallbackWhenBuilder<string, int, int, int, int>)mock.SetupMock.Indexer(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -935,6 +1198,23 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldIncludeIncrementingAccessCounter()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.OnGet.Do((i, _, _, _, _, _, _) => { invocations.Add(i); });
+
+				for (int i = 0; i < 10; i++)
+				{
+					_ = sut[10 * i, 20 * i, 30 * i, 40 * i, 50 * i];
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -962,7 +1242,7 @@ public sealed partial class SetupIndexerTests
 				IIndexerService sut = Mock.Create<IIndexerService>();
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
-					.OnGet.Do((i, _, _, _, _, _) => { invocations.Add(i); })
+					.OnGet.Do((p1, _, _, _, _, _) => { invocations.Add(p1); })
 					.When(x => x is > 3 and < 9);
 
 				for (int i = 0; i < 20; i++)
@@ -971,6 +1251,56 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupCallbackBuilder<string, int, int, int, int, int> setup =
+					(IIndexerSetupCallbackBuilder<string, int, int, int, int, int>)mock.SetupMock.Indexer(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupCallbackWhenBuilder<string, int, int, int, int, int> setup =
+					(IIndexerSetupCallbackWhenBuilder<string, int, int, int, int, int>)mock.SetupMock.Indexer(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 	}

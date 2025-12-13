@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockProperties;
 
@@ -55,6 +56,48 @@ public sealed partial class SetupPropertyTests
 			int result = sut.MyProperty;
 
 			await That(result).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IPropertySetupReturnBuilder_ShouldNotThrow()
+		{
+			IPropertyService mock = Mock.Create<IPropertyService>();
+			IPropertySetupReturnBuilder<int> setup =
+				(IPropertySetupReturnBuilder<int>)mock.SetupMock.Property.MyProperty;
+
+			void ActWhen()
+			{
+				setup.When(_ => true);
+			}
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			await That(ActWhen).DoesNotThrow();
+			await That(ActFor).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IPropertySetupReturnWhenBuilder_ShouldNotThrow()
+		{
+			IPropertyService mock = Mock.Create<IPropertyService>();
+			IPropertySetupReturnWhenBuilder<int> setup =
+				(IPropertySetupReturnWhenBuilder<int>)mock.SetupMock.Property.MyProperty;
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			void ActOnly()
+			{
+				setup.Only(2);
+			}
+
+			await That(ActFor).DoesNotThrow();
+			await That(ActOnly).DoesNotThrow();
 		}
 
 		[Fact]

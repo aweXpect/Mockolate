@@ -369,7 +369,7 @@ public sealed partial class ForMockTests
 				          			}
 				          			var indexerResult = MockRegistrations.GetIndexer<int>(index);
 				          			var baseResult = this._wrapped[index];
-				          			return indexerResult.GetResult(baseResult, () => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          			return indexerResult.GetResult(baseResult);
 				          		}
 				          		set
 				          		{
@@ -393,7 +393,7 @@ public sealed partial class ForMockTests
 				          			}
 				          			var indexerResult = MockRegistrations.GetIndexer<int>(index, isReadOnly);
 				          			var baseResult = this._wrapped[index, isReadOnly];
-				          			return indexerResult.GetResult(baseResult, () => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          			return indexerResult.GetResult(baseResult);
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle().And
@@ -455,7 +455,7 @@ public sealed partial class ForMockTests
 				          			if (indexerResult.CallBaseClass)
 				          			{
 				          				var baseResult = base[index];
-				          				return indexerResult.GetResult(baseResult, () => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          				return indexerResult.GetResult(baseResult);
 				          			}
 				          			return indexerResult.GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
 				          		}
@@ -478,7 +478,7 @@ public sealed partial class ForMockTests
 				          			if (indexerResult.CallBaseClass)
 				          			{
 				          				var baseResult = base[index, isReadOnly];
-				          				return indexerResult.GetResult(baseResult, () => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          				return indexerResult.GetResult(baseResult);
 				          			}
 				          			return indexerResult.GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
 				          		}

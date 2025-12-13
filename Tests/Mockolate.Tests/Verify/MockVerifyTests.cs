@@ -135,6 +135,16 @@ public class MockVerifyTests
 		await That(sut.VerifyMock.ThatAllSetupsAreUsed()).IsTrue();
 	}
 
+	[Fact]
+	public async Task ThatAllSetupsAreUsed_WithoutSetup_ShouldReturnTrue()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+		sut.TotalDispensed = 0;
+
+		await That(sut.VerifyMock.ThatAllSetupsAreUsed()).IsTrue();
+	}
+
 	[Theory]
 	[InlineData(0)]
 	[InlineData(1)]

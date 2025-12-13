@@ -28,7 +28,7 @@ public static class SetupExtensions
 	/// <summary>
 	///     Extensions for property callback setups.
 	/// </summary>
-	extension<T>(IPropertySetupWhenBuilder<T> setup)
+	extension<T>(IPropertySetupCallbackWhenBuilder<T> setup)
 	{
 		/// <summary>
 		///     Executes the callback only once.

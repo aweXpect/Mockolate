@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockMethods;
 
@@ -172,6 +173,54 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackBuilder<string> setup =
+					(IReturnMethodSetupCallbackBuilder<string>)mock.SetupMock.Method.Method0();
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackWhenBuilder<string> setup =
+					(IReturnMethodSetupCallbackWhenBuilder<string>)mock.SetupMock.Method.Method0();
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -403,6 +452,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackBuilder<string, int> setup =
+					(IReturnMethodSetupCallbackBuilder<string, int>)mock.SetupMock.Method.Method1(
+						It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackWhenBuilder<string, int> setup =
+					(IReturnMethodSetupCallbackWhenBuilder<string, int>)mock.SetupMock.Method.Method1(
+						It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -644,6 +743,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackBuilder<string, int, int> setup =
+					(IReturnMethodSetupCallbackBuilder<string, int, int>)mock.SetupMock.Method.Method2(
+						It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackWhenBuilder<string, int, int> setup =
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int>)mock.SetupMock.Method.Method2(
+						It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -894,6 +1043,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackBuilder<string, int, int, int> setup =
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int>)mock.SetupMock.Method.Method3(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int> setup =
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int>)mock.SetupMock.Method.Method3(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -1149,6 +1348,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackBuilder<string, int, int, int, int> setup =
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int>)mock.SetupMock.Method.Method4(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int> setup =
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int>)mock.SetupMock.Method.Method4(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -1423,6 +1672,57 @@ public sealed partial class SetupMethodTests
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackBuilder<string, int, int, int, int, int> setup =
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int, int>)mock.SetupMock.Method.Method5(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int, int> setup =
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int, int>)mock.SetupMock.Method
+						.Method5(
+							It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
+			}
 		}
 
 		public class VoidMethodWith0Parameters
@@ -1589,6 +1889,54 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackBuilder setup =
+					(IVoidMethodSetupCallbackBuilder)mock.SetupMock.Method.Method0();
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackWhenBuilder setup =
+					(IVoidMethodSetupCallbackWhenBuilder)mock.SetupMock.Method.Method0();
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -1819,6 +2167,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackBuilder<int> setup =
+					(IVoidMethodSetupCallbackBuilder<int>)mock.SetupMock.Method.Method1(
+						It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackWhenBuilder<int> setup =
+					(IVoidMethodSetupCallbackWhenBuilder<int>)mock.SetupMock.Method.Method1(
+						It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -2059,6 +2457,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackBuilder<int, int> setup =
+					(IVoidMethodSetupCallbackBuilder<int, int>)mock.SetupMock.Method.Method2(
+						It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackWhenBuilder<int, int> setup =
+					(IVoidMethodSetupCallbackWhenBuilder<int, int>)mock.SetupMock.Method.Method2(
+						It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -2308,6 +2756,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackBuilder<int, int, int> setup =
+					(IVoidMethodSetupCallbackBuilder<int, int, int>)mock.SetupMock.Method.Method3(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackWhenBuilder<int, int, int> setup =
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int>)mock.SetupMock.Method.Method3(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -2562,6 +3060,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackBuilder<int, int, int, int> setup =
+					(IVoidMethodSetupCallbackBuilder<int, int, int, int>)mock.SetupMock.Method.Method4(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackWhenBuilder<int, int, int, int> setup =
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int>)mock.SetupMock.Method.Method4(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -2834,6 +3382,56 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackBuilder<int, int, int, int, int> setup =
+					(IVoidMethodSetupCallbackBuilder<int, int, int, int, int>)mock.SetupMock.Method.Method5(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActInParallel()
+				{
+					setup.InParallel();
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+				await That(ActInParallel).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
+			{
+				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupCallbackWhenBuilder<int, int, int, int, int> setup =
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int, int>)mock.SetupMock.Method.Method5(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 	}

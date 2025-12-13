@@ -142,6 +142,22 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
+		public async Task ShouldIncludeIncrementingAccessCounter()
+		{
+			List<int> invocations = [];
+			IIndexerService sut = Mock.Create<IIndexerService>();
+			sut.SetupMock.Indexer(It.IsAny<int>())
+				.OnSet.Do((i, _, _) => { invocations.Add(i); });
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut[10 * i] = $"{i}";
+			}
+
+			await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+		}
+
+		[Fact]
 		public async Task ShouldInvokeCallbacksInSequence()
 		{
 			int callCount1 = 0;
@@ -167,7 +183,7 @@ public sealed partial class SetupIndexerTests
 			List<int> invocations = [];
 			IIndexerService sut = Mock.Create<IIndexerService>();
 			sut.SetupMock.Indexer(It.IsAny<int>())
-				.OnSet.Do((i, _, _) => { invocations.Add(i); })
+				.OnSet.Do((i, _) => { invocations.Add(i); })
 				.When(x => x is > 3 and < 9);
 
 			for (int i = 0; i < 20; i++)
@@ -320,6 +336,22 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldIncludeIncrementingAccessCounter()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnSet.Do((i, _, _, _) => { invocations.Add(i); });
+
+				for (int i = 0; i < 10; i++)
+				{
+					sut[10 * i, 20 * i] = $"{i}";
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -345,7 +377,7 @@ public sealed partial class SetupIndexerTests
 				List<int> invocations = [];
 				IIndexerService sut = Mock.Create<IIndexerService>();
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
-					.OnSet.Do((i, _, _, _) => { invocations.Add(i); })
+					.OnSet.Do((i, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
 				for (int i = 0; i < 20; i++)
@@ -502,6 +534,22 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldIncludeIncrementingAccessCounter()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnSet.Do((i, _, _, _, _) => { invocations.Add(i); });
+
+				for (int i = 0; i < 10; i++)
+				{
+					sut[10 * i, 20 * i, 30 * i] = $"{i}";
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -527,7 +575,7 @@ public sealed partial class SetupIndexerTests
 				List<int> invocations = [];
 				IIndexerService sut = Mock.Create<IIndexerService>();
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnSet.Do((i, _, _, _, _) => { invocations.Add(i); })
+					.OnSet.Do((i, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
 				for (int i = 0; i < 20; i++)
@@ -684,6 +732,22 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldIncludeIncrementingAccessCounter()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnSet.Do((i, _, _, _, _, _) => { invocations.Add(i); });
+
+				for (int i = 0; i < 10; i++)
+				{
+					sut[10 * i, 20 * i, 30 * i, 40 * i] = $"{i}";
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -709,7 +773,7 @@ public sealed partial class SetupIndexerTests
 				List<int> invocations = [];
 				IIndexerService sut = Mock.Create<IIndexerService>();
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnSet.Do((i, _, _, _, _, _) => { invocations.Add(i); })
+					.OnSet.Do((p1, _, _, _, _) => { invocations.Add(p1); })
 					.When(x => x is > 3 and < 9);
 
 				for (int i = 0; i < 20; i++)
@@ -871,6 +935,23 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task ShouldIncludeIncrementingAccessCounter()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.OnSet.Do((i, _, _, _, _, _, _) => { invocations.Add(i); });
+
+				for (int i = 0; i < 10; i++)
+				{
+					sut[10 * i, 20 * i, 30 * i, 40 * i, 50 * i] = $"{i}";
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -898,7 +979,7 @@ public sealed partial class SetupIndexerTests
 				IIndexerService sut = Mock.Create<IIndexerService>();
 				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
-					.OnSet.Do((i, _, _, _, _, _, _) => { invocations.Add(i); })
+					.OnSet.Do((p1, _, _, _, _, _) => { invocations.Add(p1); })
 					.When(x => x is > 3 and < 9);
 
 				for (int i = 0; i < 20; i++)

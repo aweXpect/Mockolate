@@ -433,8 +433,6 @@ internal static partial class Sources
 						.Append("];").AppendLine();
 					sb.Append("\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
 						.Append(baseResultVarName)
-						.Append(", () => ")
-						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
 						.Append(");").AppendLine();
 				}
 				else
@@ -469,8 +467,6 @@ internal static partial class Sources
 						.Append("];").AppendLine();
 					sb.Append("\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
 						.Append(baseResultVarName)
-						.Append(", () => ")
-						.AppendDefaultValueGeneratorFor(property.Type, "MockRegistrations.Behavior.DefaultValue")
 						.Append(");").AppendLine();
 					sb.Append("\t\t\t}").AppendLine();
 					sb.Append("\t\t\treturn ").Append(indexerResultVarName)

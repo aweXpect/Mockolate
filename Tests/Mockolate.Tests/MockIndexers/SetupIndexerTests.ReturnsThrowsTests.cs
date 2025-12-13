@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockIndexers;
 
@@ -286,6 +287,48 @@ public sealed partial class SetupIndexerTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
+		[Fact]
+		public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
+		{
+			IIndexerService mock = Mock.Create<IIndexerService>();
+			IIndexerSetupReturnBuilder<string, int> setup =
+				(IIndexerSetupReturnBuilder<string, int>)mock.SetupMock.Indexer(It.IsAny<int>());
+
+			void ActWhen()
+			{
+				setup.When(_ => true);
+			}
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			await That(ActWhen).DoesNotThrow();
+			await That(ActFor).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
+		{
+			IIndexerService mock = Mock.Create<IIndexerService>();
+			IIndexerSetupReturnWhenBuilder<string, int> setup =
+				(IIndexerSetupReturnWhenBuilder<string, int>)mock.SetupMock.Indexer(It.IsAny<int>());
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			void ActOnly()
+			{
+				setup.Only(2);
+			}
+
+			await That(ActFor).DoesNotThrow();
+			await That(ActOnly).DoesNotThrow();
+		}
+
 		public sealed class With2Levels
 		{
 			[Fact]
@@ -566,6 +609,50 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnBuilder<string, int, int> setup =
+					(IIndexerSetupReturnBuilder<string, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnWhenBuilder<string, int, int> setup =
+					(IIndexerSetupReturnWhenBuilder<string, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -850,6 +937,50 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnBuilder<string, int, int, int> setup =
+					(IIndexerSetupReturnBuilder<string, int, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnWhenBuilder<string, int, int, int> setup =
+					(IIndexerSetupReturnWhenBuilder<string, int, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 
@@ -1136,6 +1267,50 @@ public sealed partial class SetupIndexerTests
 
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnBuilder<string, int, int, int, int> setup =
+					(IIndexerSetupReturnBuilder<string, int, int, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnWhenBuilder<string, int, int, int, int> setup =
+					(IIndexerSetupReturnWhenBuilder<string, int, int, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
+			}
 		}
 
 		public sealed class With5Levels
@@ -1168,7 +1343,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Returns("a")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -1187,7 +1363,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Returns("a")
 					.Returns(() => "b")
 					.Returns((p1, p2, p3, p4, p5) => $"foo-{p1}-{p2}-{p3}-{p4}-{p5}");
@@ -1208,7 +1385,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Returns(() => "foo");
 
 				string result = sut[1, 2, 3, 4, 5];
@@ -1221,7 +1399,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.InitializeWith("a")
 					.Returns((p1, p2, p3, p4, p5) => $"foo-{p1}-{p2}-{p3}-{p4}-{p5}");
 
@@ -1235,7 +1414,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.InitializeWith("init")
 					.Returns((p1, p2, p3, p4, p5, v) => $"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}");
 
@@ -1249,7 +1429,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -1267,7 +1448,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -1286,7 +1468,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Returns("foo");
 
 				string result = sut[1, 2, 3, 4, 5];
@@ -1299,7 +1482,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut[3, 2, 3, 4, 5];
@@ -1316,7 +1500,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3);
@@ -1345,7 +1530,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1361,7 +1547,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((p1, p2, p3, p4, p5) => new Exception($"foo-{p1}-{p2}-{p3}-{p4}-{p5}"));
 
@@ -1378,7 +1565,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.InitializeWith("init")
 					.Throws((p1, p2, p3, p4, p5, v) => new Exception($"foo-{v}-{p1}-{p2}-{p3}-{p4}-{p5}"));
 
@@ -1395,7 +1583,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -1411,7 +1600,8 @@ public sealed partial class SetupIndexerTests
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
 
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -1420,6 +1610,50 @@ public sealed partial class SetupIndexerTests
 				}
 
 				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnBuilder<string, int, int, int, int, int> setup =
+					(IIndexerSetupReturnBuilder<string, int, int, int, int, int>)mock.SetupMock.Indexer(It.IsAny<int>(),
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnWhenBuilder<string, int, int, int, int, int> setup =
+					(IIndexerSetupReturnWhenBuilder<string, int, int, int, int, int>)mock.SetupMock.Indexer(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
 			}
 		}
 	}
