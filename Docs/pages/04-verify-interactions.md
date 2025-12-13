@@ -44,8 +44,8 @@ You can use argument matchers from the `Match` class to verify calls with flexib
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
   minimum and maximum value.
-- `It.IsOut<T>()`: matches any out parameter of type `T`
-- `It.IsRef<T>()`: matches any ref parameter of type `T`
+- `It.IsOut<T>()`: Matches any out parameter of type `T`
+- `It.IsRef<T>()`: Matches any ref parameter of type `T`
 - `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
   regular expressions instead.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
