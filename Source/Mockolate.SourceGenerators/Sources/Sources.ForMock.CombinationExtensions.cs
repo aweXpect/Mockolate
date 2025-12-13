@@ -81,7 +81,8 @@ internal static partial class Sources
 			name = $"{@class.ClassName.Replace('.', '_')}__{++nameSuffix}";
 		}
 
-		string mockExpression = $"new Mock<{@class.ClassFullName}>(({@class.ClassFullName})subject, GetMockOrThrow(subject).Registrations);";
+		string mockExpression =
+			$"new Mock<{@class.ClassFullName}>(({@class.ClassFullName})subject, GetMockOrThrow(subject).Registrations);";
 
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())

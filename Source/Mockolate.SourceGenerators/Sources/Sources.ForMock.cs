@@ -938,6 +938,7 @@ internal static partial class Sources
 		{
 			sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname).Append(">()");
 		}
+
 		sb.Append("))");
 	}
 
@@ -953,6 +954,7 @@ internal static partial class Sources
 			{
 				sb.Append(", ");
 			}
+
 			first = false;
 			AppendNamedParameter(sb, parameter);
 		}
