@@ -6,7 +6,7 @@ public sealed class SetupExtensionsTests
 {
 	public sealed class PropertySetupReturnWhenBuilderTests
 	{
-		[Fact]
+		[Test]
 		public async Task Forever_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -21,7 +21,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -36,7 +36,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -51,7 +51,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -69,7 +69,7 @@ public sealed class SetupExtensionsTests
 
 	public sealed class PropertySetupWhenBuilderTests
 	{
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -84,7 +84,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -102,7 +102,7 @@ public sealed class SetupExtensionsTests
 
 	public sealed class IndexerSetupReturnWhenBuilderTests
 	{
-		[Fact]
+		[Test]
 		public async Task Forever_With1Parameter_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -117,7 +117,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With1Parameter_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -132,7 +132,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With2Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -147,7 +147,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With2Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -163,7 +163,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With3Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -179,7 +179,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With3Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -195,7 +195,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With4Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -211,7 +211,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With4Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -227,7 +227,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With5Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -243,7 +243,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With5Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -259,7 +259,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -274,7 +274,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -289,7 +289,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -304,7 +304,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -319,7 +319,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -334,7 +334,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -349,7 +349,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -365,7 +365,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -381,7 +381,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -397,7 +397,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -416,7 +416,7 @@ public sealed class SetupExtensionsTests
 
 	public sealed class IndexerSetupWhenBuilderTests
 	{
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -431,7 +431,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -446,7 +446,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -461,7 +461,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -476,7 +476,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -492,7 +492,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -508,7 +508,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -524,7 +524,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -540,7 +540,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -556,7 +556,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -575,7 +575,7 @@ public sealed class SetupExtensionsTests
 
 	public sealed class ReturnMethodSetupReturnWhenBuilderTests
 	{
-		[Fact]
+		[Test]
 		public async Task Forever_With0Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -590,7 +590,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With0Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -605,7 +605,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With1Parameter_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -620,7 +620,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With1Parameter_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -636,7 +636,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With2Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -652,7 +652,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With2Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -668,7 +668,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With3Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -684,7 +684,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With3Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -700,7 +700,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With4Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -716,7 +716,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With4Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -732,7 +732,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With5Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -749,7 +749,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With5Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -766,7 +766,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With0Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -781,7 +781,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With0Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -796,7 +796,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -811,7 +811,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -826,7 +826,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -841,7 +841,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -856,7 +856,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -871,7 +871,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -887,7 +887,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -903,7 +903,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -919,7 +919,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -936,7 +936,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -956,7 +956,7 @@ public sealed class SetupExtensionsTests
 
 	public sealed class ReturnMethodSetupWhenBuilderTests
 	{
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With0Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -971,7 +971,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With0Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -986,7 +986,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1001,7 +1001,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1016,7 +1016,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1031,7 +1031,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1047,7 +1047,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1063,7 +1063,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1079,7 +1079,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1095,7 +1095,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1111,7 +1111,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1128,7 +1128,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1148,7 +1148,7 @@ public sealed class SetupExtensionsTests
 
 	public sealed class VoidMethodSetupReturnWhenBuilderTests
 	{
-		[Fact]
+		[Test]
 		public async Task Forever_With0Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1171,7 +1171,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With0Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1194,7 +1194,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With1Parameter_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1217,7 +1217,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With1Parameter_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1241,7 +1241,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With2Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1265,7 +1265,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With2Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1289,7 +1289,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With3Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1313,7 +1313,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With3Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1337,7 +1337,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With4Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1360,7 +1360,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With4Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1384,7 +1384,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With5Parameters_ShouldKeepApplyingTheSetup()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1408,7 +1408,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 3, 3, 3, 3, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Forever_With5Parameters_When_ShouldKeepApplyingTheSetupWhenThePredicateMatches()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1433,7 +1433,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 2, 1, 2, 1, 2, 3, 3, 3, 3,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With0Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1455,7 +1455,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With0Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1477,7 +1477,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1499,7 +1499,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1521,7 +1521,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1543,7 +1543,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1566,7 +1566,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1589,7 +1589,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1613,7 +1613,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1636,7 +1636,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1659,7 +1659,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_ShouldApplySetupOnlyOnce()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1683,7 +1683,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_WithFor_ShouldApplySetupOnlyForTimes()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
@@ -1710,7 +1710,7 @@ public sealed class SetupExtensionsTests
 
 	public sealed class VoidMethodSetupWhenBuilderTests
 	{
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With0Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1725,7 +1725,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With0Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1740,7 +1740,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1755,7 +1755,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With1Parameter_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1770,7 +1770,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1785,7 +1785,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With2Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1801,7 +1801,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1817,7 +1817,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With3Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1833,7 +1833,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1849,7 +1849,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With4Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];
@@ -1865,7 +1865,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_ShouldInvokeTheCallbackOnlyOnce()
 		{
 			List<int> values = [];
@@ -1882,7 +1882,7 @@ public sealed class SetupExtensionsTests
 			await That(values).IsEqualTo([1,]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task OnlyOnce_With5Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
 		{
 			List<int> values = [];

@@ -39,7 +39,7 @@ public sealed class MockClassTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldSupportSpecialTypes()
 	{
 		GeneratorResult result = Generator

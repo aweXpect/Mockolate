@@ -5,7 +5,7 @@ namespace Mockolate.Tests;
 
 public sealed partial class MockTests
 {
-	[Fact]
+	[Test]
 	public async Task Create_BaseClassWithMultipleConstructors()
 	{
 		void Act()
@@ -16,7 +16,7 @@ public sealed partial class MockTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_BaseClassWithoutConstructor_ShouldThrowMockException()
 	{
 		void Act()
@@ -29,7 +29,7 @@ public sealed partial class MockTests
 				"Could not find any constructor at all for the base type 'Mockolate.Tests.MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_BaseClassWithVirtualCallsInConstructor_AllowExplicitSetup()
 	{
 		MyServiceBaseWithVirtualCallsInConstructor mock =
@@ -42,7 +42,7 @@ public sealed partial class MockTests
 		await That(value).IsEqualTo(5);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		Create_BaseClassWithVirtualCallsInConstructor_DirectSubjectAccessInCreateSetups_ShouldThrowMockException()
 	{
@@ -55,7 +55,7 @@ public sealed partial class MockTests
 			.WithMessage("Subject is not yet available. You can only access the subject in callbacks!");
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		Create_BaseClassWithVirtualCallsInConstructor_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
 	{
@@ -68,7 +68,7 @@ public sealed partial class MockTests
 		await That(value).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_ShouldThrowMockException()
 	{
 		void Act()
@@ -83,7 +83,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_With1AdditionalInterface_ShouldThrowMockException()
 	{
 		void Act()
@@ -98,7 +98,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_With2AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
@@ -113,7 +113,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_With3AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
@@ -128,7 +128,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_With4AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
@@ -143,7 +143,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_With5AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
@@ -158,7 +158,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_With6AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
@@ -173,7 +173,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_With7AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
@@ -189,7 +189,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_SealedClass_With8AdditionalInterfaces_ShouldThrowMockException()
 	{
 		void Act()
@@ -205,7 +205,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithConstructorParameters_SealedClass_ShouldThrowMockException()
 	{
 		void Act()
@@ -220,7 +220,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithConstructorParametersAndSetups_ShouldApplySetups()
 	{
 		MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor>(
@@ -232,7 +232,7 @@ public sealed partial class MockTests
 		await That(result).IsEqualTo("bar");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
 	{
 		MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor>(
@@ -244,7 +244,7 @@ public sealed partial class MockTests
 		await That(result).IsEqualTo("bar");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithMatchingParameters_ShouldCreateMock()
 	{
 		MyBaseClassWithConstructor Act()
@@ -255,7 +255,7 @@ public sealed partial class MockTests
 		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithMockBehavior_SealedClass_ShouldThrowMockException()
 	{
 		void Act()
@@ -270,7 +270,7 @@ public sealed partial class MockTests
 				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithRequiredParameters_WithEmptyParameters_ShouldThrowMockException()
 	{
 		void Act()
@@ -283,7 +283,7 @@ public sealed partial class MockTests
 				"No parameterless constructor found for 'Mockolate.Tests.MockTests.MyBaseClassWithConstructor'. Please provide constructor parameters.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithRequiredParameters_WithoutParameters_ShouldThrowMockException()
 	{
 		void Act()
@@ -296,7 +296,7 @@ public sealed partial class MockTests
 				"No parameterless constructor found for 'Mockolate.Tests.MockTests.MyBaseClassWithConstructor'. Please provide constructor parameters.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithSetups_ShouldAllowChangingTheSetupSubjectInCallback()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(setup => setup.Method
@@ -310,7 +310,7 @@ public sealed partial class MockTests
 		await That(remaining).IsEqualTo(7);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithSetups_ShouldApplySetups()
 	{
 		IMyService mock = Mock.Create<IMyService>(
@@ -327,7 +327,7 @@ public sealed partial class MockTests
 		await That(result3).IsEqualTo(8);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_WithTooManyParameters_ShouldThrowMockException()
 	{
 		void Act()
@@ -340,7 +340,7 @@ public sealed partial class MockTests
 				"Could not find any constructor for 'Mockolate.Tests.MockTests.MyBaseClassWithConstructor' that matches the 3 given parameters (foo, 1, 2).");
 	}
 
-	[Fact]
+	[Test]
 	public async Task DoubleNestedInterfaces_ShouldStillWork()
 	{
 		Nested.Nested2.IMyDoubleNestedService mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
