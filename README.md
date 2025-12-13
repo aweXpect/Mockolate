@@ -499,5 +499,5 @@ This rule will prevent you from using unsupported types (e.g. sealed classes) wh
 
 ### Mockolate0003
 
-Wrap arguments must be interfaces.
-This rule will prevent you from using any other type when using `Mock.Wrap<T>(T instance)`.
+Wrap type arguments must be interfaces.
+This rule will prevent you from using non-interface types as the type parameter when using `Mock.Wrap<T>(T instance)`.
