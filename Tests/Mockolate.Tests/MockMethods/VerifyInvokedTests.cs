@@ -5,7 +5,7 @@ namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class VerifyInvokedTests
 {
-	[Fact]
+	[Test]
 	public async Task Equals_ShouldWork()
 	{
 		object obj = new();
@@ -16,7 +16,7 @@ public sealed partial class VerifyInvokedTests
 		await That(mock.VerifyMock.Invoked.Equals(It.Is(obj))).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetHashCode_ShouldWork()
 	{
 		IMethodService mock = Mock.Create<IMethodService>();
@@ -26,9 +26,9 @@ public sealed partial class VerifyInvokedTests
 		await That(mock.VerifyMock.Invoked.GetHashCode()).Once();
 	}
 
-	[Theory]
-	[InlineData(2)]
-	[InlineData(42)]
+	[Test]
+	[Arguments(2)]
+	[Arguments(42)]
 	public async Task MethodWithReturnValue_ShouldBeRegistered(int numberOfInvocations)
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
@@ -42,7 +42,7 @@ public sealed partial class VerifyInvokedTests
 		await That(sut.VerifyMock.Invoked.Multiply(It.IsAny<int>(), It.IsAny<int?>())).Exactly(numberOfInvocations);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldWork()
 	{
 		IMethodService mock = Mock.Create<IMethodService>();
@@ -52,9 +52,9 @@ public sealed partial class VerifyInvokedTests
 		await That(mock.VerifyMock.Invoked.ToString()).Once();
 	}
 
-	[Theory]
-	[InlineData(2)]
-	[InlineData(42)]
+	[Test]
+	[Arguments(2)]
+	[Arguments(42)]
 	public async Task VoidMethod_ShouldBeRegistered(int numberOfInvocations)
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
@@ -69,9 +69,9 @@ public sealed partial class VerifyInvokedTests
 			.Exactly(numberOfInvocations);
 	}
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
 	public async Task VoidMethod_ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(
 		bool throwWhenNotSetup)
 	{
@@ -91,7 +91,7 @@ public sealed partial class VerifyInvokedTests
 			             """);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenBehaviorIsSetToThrow_ShouldThrowMockNotSetupException()
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
@@ -110,7 +110,7 @@ public sealed partial class VerifyInvokedTests
 			             """);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenNotSetup_ShouldReturnDefaultValue()
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();

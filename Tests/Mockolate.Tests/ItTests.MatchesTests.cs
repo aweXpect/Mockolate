@@ -7,11 +7,11 @@ public sealed partial class ItTests
 {
 	public sealed class MatchesTests
 	{
-		[Theory]
-		[InlineData("foo", "g[aeiou]+o", 0)]
-		[InlineData("foo", "F[aeiou]+o", 1)]
-		[InlineData("foobar", "f[aeiou]*baz", 0)]
-		[InlineData("foobar", "f[aeiou]*BAR", 1)]
+		[Test]
+		[Arguments("foo", "g[aeiou]+o", 0)]
+		[Arguments("foo", "F[aeiou]+o", 1)]
+		[Arguments("foobar", "f[aeiou]*baz", 0)]
+		[Arguments("foobar", "f[aeiou]*BAR", 1)]
 		public async Task AsRegex_IgnoringCase_ShouldMatchRegexCaseInsensitive(
 			string value, string regex, int expectedCount)
 		{
@@ -23,11 +23,11 @@ public sealed partial class ItTests
 				.Exactly(expectedCount);
 		}
 
-		[Theory]
-		[InlineData("foo", "F[aeiou]+o", 0)]
-		[InlineData("foo", "f[aeiou]+o", 1)]
-		[InlineData("foobar", "f[aeiou]*BAR", 0)]
-		[InlineData("foobar", "f[aeiou]*bar", 1)]
+		[Test]
+		[Arguments("foo", "F[aeiou]+o", 0)]
+		[Arguments("foo", "f[aeiou]+o", 1)]
+		[Arguments("foobar", "f[aeiou]*BAR", 0)]
+		[Arguments("foobar", "f[aeiou]*bar", 1)]
 		public async Task AsRegex_ShouldMatchRegexCaseSensitive(string value, string regex, int expectedCount)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
@@ -38,7 +38,7 @@ public sealed partial class ItTests
 				.Exactly(expectedCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task AsRegex_WithRegexOptions_ShouldUseRegexOption()
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
@@ -50,7 +50,7 @@ public sealed partial class ItTests
 				.Exactly(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task AsRegex_WithTimeout_ShouldApplyTimeoutToRegex()
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
@@ -67,13 +67,13 @@ public sealed partial class ItTests
 				.WithParamName("matchTimeout");
 		}
 
-		[Theory]
-		[InlineData("foo", "g?o", 0)]
-		[InlineData("foo", "F?o", 1)]
-		[InlineData("foobar", "f*baz", 0)]
-		[InlineData("foobar", "f*BAR", 1)]
-		[InlineData("foobar", "f??baz", 0)]
-		[InlineData("foobar", "f??bar", 1)]
+		[Test]
+		[Arguments("foo", "g?o", 0)]
+		[Arguments("foo", "F?o", 1)]
+		[Arguments("foobar", "f*baz", 0)]
+		[Arguments("foobar", "f*BAR", 1)]
+		[Arguments("foobar", "f??baz", 0)]
+		[Arguments("foobar", "f??bar", 1)]
 		public async Task IgnoringCase_ShouldMatchWildcardCaseInsensitive(
 			string value, string wildcard, int expectedCount)
 		{
@@ -85,13 +85,13 @@ public sealed partial class ItTests
 				.Exactly(expectedCount);
 		}
 
-		[Theory]
-		[InlineData("foo", "F?o", 0)]
-		[InlineData("foo", "f?o", 1)]
-		[InlineData("foobar", "f*BAR", 0)]
-		[InlineData("foobar", "f*bar", 1)]
-		[InlineData("foobar", "f?bar", 0)]
-		[InlineData("foobar", "f??bar", 1)]
+		[Test]
+		[Arguments("foo", "F?o", 0)]
+		[Arguments("foo", "f?o", 1)]
+		[Arguments("foobar", "f*BAR", 0)]
+		[Arguments("foobar", "f*bar", 1)]
+		[Arguments("foobar", "f?bar", 0)]
+		[Arguments("foobar", "f??bar", 1)]
 		public async Task ShouldMatchWildcardCaseSensitive(string value, string wildcard, int expectedCount)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
@@ -101,7 +101,7 @@ public sealed partial class ItTests
 			await That(mock.VerifyMock.Invoked.DoSomethingWithString(It.Matches(wildcard))).Exactly(expectedCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AsRegex_IgnoringCase_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex().IgnoringCase();
@@ -112,7 +112,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AsRegex_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex();
@@ -123,7 +123,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AsRegex_WithOptions_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex(RegexOptions.Compiled | RegexOptions.ECMAScript);
@@ -135,7 +135,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AsRegex_WithOptionsAndTimeout_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("F[aeiou]+o")
@@ -148,7 +148,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AsRegex_WithTimeout_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex(timeout: TimeSpan.FromSeconds(2));
@@ -159,7 +159,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_IgnoringCase_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("f*\"oo").IgnoringCase();
@@ -170,7 +170,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("f*\"oo");

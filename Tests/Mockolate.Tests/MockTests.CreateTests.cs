@@ -7,7 +7,7 @@ public sealed partial class MockTests
 {
 	public sealed class CreateTests
 	{
-		[Fact]
+		[Test]
 		public async Task With2Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -17,7 +17,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With2Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
@@ -30,7 +30,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With2Arguments_WithConstructorParametersAndSetups_ShouldApplySetups()
 		{
 			MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor, IMyService>(
@@ -42,7 +42,7 @@ public sealed partial class MockTests
 			await That(result).IsEqualTo("bar");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With2Arguments_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
 		{
 			MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor, IMyService>(
@@ -54,7 +54,7 @@ public sealed partial class MockTests
 			await That(result).IsEqualTo("bar");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With2Arguments_WithSetups_ShouldApplySetups()
 		{
 			IMyService mock = Mock.Create<IMyService, IMyService>(
@@ -71,7 +71,7 @@ public sealed partial class MockTests
 			await That(result3).IsEqualTo(8);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With3Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -81,7 +81,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With3Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
@@ -94,7 +94,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With3Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
@@ -107,7 +107,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With4Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -120,7 +120,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With4Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -130,7 +130,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With4Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
@@ -143,7 +143,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With4Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
@@ -156,7 +156,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With5Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -169,7 +169,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With5Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -182,7 +182,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With5Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -192,7 +192,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With5Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
@@ -205,7 +205,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With5Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
@@ -218,7 +218,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With6Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -231,7 +231,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With6Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -244,7 +244,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With6Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -255,7 +255,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With6Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
@@ -268,7 +268,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With6Arguments_SixthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -281,7 +281,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With6Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
@@ -294,7 +294,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With7Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -309,7 +309,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With7Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -324,7 +324,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With7Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -336,7 +336,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With7Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
@@ -351,7 +351,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With7Arguments_SeventhIsClass_ShouldThrow()
 		{
 			void Act()
@@ -366,7 +366,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With7Arguments_SixthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -381,7 +381,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With7Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
@@ -396,7 +396,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With8Arguments_EighthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -411,7 +411,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With8Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -426,7 +426,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With8Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -441,7 +441,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With8Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -453,7 +453,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With8Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
@@ -468,7 +468,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With8Arguments_SeventhIsClass_ShouldThrow()
 		{
 			void Act()
@@ -483,7 +483,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With8Arguments_SixthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -498,7 +498,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With8Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()
@@ -513,7 +513,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_EighthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -528,7 +528,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_FifthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -543,7 +543,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_FourthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -558,7 +558,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_NinthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -573,7 +573,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -585,7 +585,7 @@ public sealed partial class MockTests
 			await That(((IHasMockRegistration)sut).Registrations.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()
@@ -600,7 +600,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_SeventhIsClass_ShouldThrow()
 		{
 			void Act()
@@ -615,7 +615,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_SixthIsClass_ShouldThrow()
 		{
 			void Act()
@@ -630,7 +630,7 @@ public sealed partial class MockTests
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With9Arguments_ThirdIsClass_ShouldThrow()
 		{
 			void Act()

@@ -2,7 +2,7 @@
 
 public sealed partial class ForMockTests
 {
-	[Fact]
+	[Test]
 	public async Task CustomDelegates_ShouldOnlyCreateTwoExtensions()
 	{
 		GeneratorResult result = Generator
@@ -39,7 +39,7 @@ public sealed partial class ForMockTests
 			          """).IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task CustomVoidDelegates_ShouldOnlyCreateTwoExtensions()
 	{
 		GeneratorResult result = Generator
@@ -76,7 +76,7 @@ public sealed partial class ForMockTests
 			          """).IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Delegates_ShouldCreateDelegateInsteadOfMockSubject()
 	{
 		GeneratorResult result = Generator
@@ -101,7 +101,7 @@ public sealed partial class ForMockTests
 			.Contains("System.Func<int,bool> Object").IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task DelegateWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
 	{
 		GeneratorResult result = Generator
@@ -131,7 +131,7 @@ public sealed partial class ForMockTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task VoidDelegateWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
 	{
 		GeneratorResult result = Generator
