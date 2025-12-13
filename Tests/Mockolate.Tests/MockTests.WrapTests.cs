@@ -126,7 +126,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0003
 				_ = Mock.Wrap(instance);
+#pragma warning restore Mockolate0003
 			}
 
 			await That(Act).Throws<MockException>()
@@ -141,7 +143,9 @@ public sealed partial class MockTests
 
 			void Act()
 			{
+#pragma warning disable Mockolate0003
 				_ = Mock.Wrap(instance);
+#pragma warning restore Mockolate0003
 			}
 
 			await That(Act).Throws<MockException>()

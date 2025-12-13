@@ -191,8 +191,10 @@ sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
 Mockolate provides flexible parameter matching for method setups and verifications:
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
-- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality comparer.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality comparer.
+- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
+  comparer.
+- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
+  provide a custom equality comparer.
 - `It.IsNull<T>()`: Matches null.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
@@ -201,7 +203,8 @@ Mockolate provides flexible parameter matching for method setups and verificatio
   predicates.
 - `It.IsRef<T>(…)`/`It.IsAnyRef<T>(…)`: Matches and sets ref parameters, supports value setting and
   predicates.
-- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use regular expressions instead.
+- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
+  regular expressions instead.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
 #### Parameter Interaction
@@ -463,3 +466,38 @@ If the order is incorrect or a call is missing, a `MockVerificationException` wi
 
    This is useful for ensuring that your test setup and test execution match.
    If any setup was not used, this method returns `false`.
+
+## Analyzers
+
+Mockolate ships with some Roslyn analyzers to help you adopt best practices and catch issues early, at compile time.
+All rules provide actionable messages and link to identifiers for easy filtering.
+
+### Mockolate0001
+
+`Verify` methods only return a `VerificationResult` and do not directly throw. You have to specify how often you expect
+the call to happen, e.g. `.AtLeastOnce()`, `.Exactly(n)`, etc. or use the verification result in any other way.
+
+**Example:**
+
+```csharp
+var sut = Mock.Create<IChocolateDispenser>();
+sut.Dispense("Dark", 1);
+// Analyzer Mockolate0001: Add a count assertion like .AtLeastOnce() or use the result.
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>());
+```
+
+The included code fixer suggests to add the `.AtLeastOnce()` count assertion:
+
+```csharp
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
+```
+
+### Mockolate0002
+
+Mock arguments must be mockable (interfaces or supported classes).
+This rule will prevent you from using unsupported types (e.g. sealed classes) when using `Mock.Create<T>()`.
+
+### Mockolate0003
+
+Wrap type arguments must be interfaces.
+This rule will prevent you from using non-interface types as the type parameter when using `Mock.Wrap<T>(T instance)`.

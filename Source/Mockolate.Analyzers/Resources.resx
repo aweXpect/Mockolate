@@ -145,4 +145,13 @@
 	<data name="Mockolate0002Title" xml:space="preserve">
     <value>Mock arguments must be mockable</value>
   </data>
+	<data name="Mockolate0003Description" xml:space="preserve">
+		<value>Only interface types can be wrapped with Mock.Wrap.</value>
+	</data>
+	<data name="Mockolate0003MessageFormat" xml:space="preserve">
+		<value>Type '{0}' cannot be wrapped: {1}</value>
+	</data>
+	<data name="Mockolate0003Title" xml:space="preserve">
+    <value>Wrap arguments must be wrappable</value>
+  </data>
 </root>

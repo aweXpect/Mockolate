@@ -7,6 +7,27 @@ namespace Mockolate.Analyzers.Tests;
 public class MockabilityAnalyzerTests
 {
 	[Fact]
+	public async Task WhenMockingADelegate_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  using System;
+
+			  {{GeneratedPrefix}}
+			    
+			  namespace MyNamespace
+			  {
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			Mock.Create<System.Action>();
+			  		}
+			  	}
+			  }
+			  """
+		);
+
+	[Fact]
 	public async Task WhenMockingClass_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""

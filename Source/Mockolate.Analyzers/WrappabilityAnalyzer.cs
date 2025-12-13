@@ -7,15 +7,15 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Mockolate.Analyzers;
 
 /// <summary>
-///     Analyzer that ensures all generic arguments to Mock.Create&lt;T&gt; invocations are mockable.
+///     Analyzer that ensures all generic arguments to Mock.Wrap&lt;T&gt; invocations are wrappable.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
+public sealed class WrappabilityAnalyzer : DiagnosticAnalyzer
 {
 	/// <inheritdoc cref="DiagnosticAnalyzer.SupportedDiagnostics" />
 	public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
 	[
-		Rules.MockabilityRule,
+		Rules.WrappabilityRule,
 	];
 
 	/// <inheritdoc cref="DiagnosticAnalyzer.Initialize(AnalysisContext)" />
@@ -30,7 +30,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	private static void AnalyzeInvocation(OperationAnalysisContext context)
 	{
 		if (context.Operation is not IInvocationOperation invocation ||
-		    !HasMockGeneratorAttribute(invocation.TargetMethod))
+		    !IsWrapMethod(invocation.TargetMethod))
 		{
 			return;
 		}
@@ -43,10 +43,10 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 				return;
 			}
 
-			if (!IsMockable(typeArgumentSymbol, out string? reason))
+			if (!IsWrappable(typeArgumentSymbol, out string? reason))
 			{
 				context.ReportDiagnostic(Diagnostic.Create(
-					Rules.MockabilityRule,
+					Rules.WrappabilityRule,
 					AnalyzerHelpers.GetTypeArgumentLocation(invocation.Syntax, typeArgumentSymbol) ??
 					invocation.Syntax.GetLocation(),
 					typeArgumentSymbol.ToDisplayString(),
@@ -58,52 +58,24 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	private static ITypeSymbol? GetInvocationTypeArguments(IInvocationOperation invocation)
 		=> AnalyzerHelpers.GetSingleInvocationTypeArgumentOrNull(invocation.TargetMethod);
 
-	private static bool HasMockGeneratorAttribute(IMethodSymbol method)
-		=> AnalyzerHelpers.HasMockGeneratorAttribute(method);
+	private static bool IsWrapMethod(IMethodSymbol method)
+		=> method.Name == "Wrap" &&
+		   method.ContainingType is
+		   {
+			   Name: "Mock",
+			   ContainingNamespace:
+			   {
+				   Name: "Mockolate",
+				   ContainingNamespace.IsGlobalNamespace: true,
+			   },
+		   } &&
+		   AnalyzerHelpers.HasMockGeneratorAttribute(method);
 
-	private static bool IsMockable(ITypeSymbol typeSymbol, [NotNullWhen(false)] out string? reason)
+	private static bool IsWrappable(ITypeSymbol typeSymbol, [NotNullWhen(false)] out string? reason)
 	{
-		if (typeSymbol.TypeKind == TypeKind.Struct)
+		if (typeSymbol.TypeKind != TypeKind.Interface)
 		{
-			reason = "type is a struct";
-			return false;
-		}
-
-		if (typeSymbol.TypeKind == TypeKind.Enum)
-		{
-			reason = "type is an enum";
-			return false;
-		}
-
-		if (typeSymbol.IsRecord)
-		{
-			reason = "type is a record";
-			return false;
-		}
-
-		if (typeSymbol.IsSealed && typeSymbol.TypeKind != TypeKind.Delegate)
-		{
-			reason = "type is sealed";
-			return false;
-		}
-
-		if (typeSymbol.ContainingNamespace?.IsGlobalNamespace == true)
-		{
-			reason = "type is declared in the global namespace";
-			return false;
-		}
-
-		if (typeSymbol.IsStatic)
-		{
-			reason = "type is static";
-			return false;
-		}
-
-		if (typeSymbol.TypeKind != TypeKind.Interface &&
-		    typeSymbol.TypeKind != TypeKind.Class &&
-		    typeSymbol.TypeKind != TypeKind.Delegate)
-		{
-			reason = $"type kind '{typeSymbol.TypeKind}' is not supported";
+			reason = "only interface types can be wrapped";
 			return false;
 		}
 
