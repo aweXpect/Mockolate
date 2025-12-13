@@ -116,15 +116,7 @@ internal static partial class Sources
 			foreach (MethodParameter parameter in @delegate.Parameters)
 			{
 				sb.Append(", ");
-				sb.Append("new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(");
-				sb.Append(parameter.Name);
-				if (parameter.IsNullable())
-				{
-					sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
-						.Append(">()");
-				}
-
-				sb.Append("))");
+				AppendNamedParameter(sb, parameter);
 			}
 
 			sb.AppendLine(");");
@@ -475,15 +467,8 @@ internal static partial class Sources
 			sb.Append("(").Append(method.GetUniqueNameString());
 			foreach (MethodParameter parameter in method.Parameters)
 			{
-				sb.Append(", new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(")
-					.Append(parameter.Name);
-				if (parameter.IsNullable())
-				{
-					sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
-						.Append(">()");
-				}
-
-				sb.Append("))");
+				sb.Append(", ");
+				AppendNamedParameter(sb, parameter);
 			}
 
 			sb.Append(");").AppendLine();
@@ -524,13 +509,13 @@ internal static partial class Sources
 				.Append(".").Append(@event.Name.EscapeForXmlDoc())
 				.Append("\"/> event.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(").Append(string.Join(", ",
-					@event.Delegate.Parameters.Select(p => p.Type.Fullname + " " + p.Name)))
+			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(")
+				.Append(FormatParametersWithTypeAndName(@event.Delegate.Parameters))
 				.Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tCastToMockRegistrationOrThrow(mockRaises).Raise(").Append(@event.GetUniqueNameString())
 				.Append(", ")
-				.Append(string.Join(", ", @event.Delegate.Parameters.Select(p => p.Name))).Append(");").AppendLine();
+				.Append(FormatParametersAsNames(@event.Delegate.Parameters)).Append(");").AppendLine();
 			sb.AppendLine("\t\t}");
 		}
 
@@ -930,15 +915,7 @@ internal static partial class Sources
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ");
-				sb.Append("new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(");
-				sb.Append(parameter.Name);
-				if (parameter.IsNullable())
-				{
-					sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname)
-						.Append(">()");
-				}
-
-				sb.Append("))");
+				AppendNamedParameter(sb, parameter);
 			}
 
 			sb.AppendLine(");");
