@@ -121,5 +121,32 @@ namespace Mockolate.Analyzers {
                 return ResourceManager.GetString("Mockolate0002Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only interface types can be wrapped with Mock.Wrap..
+        /// </summary>
+        internal static string Mockolate0003Description {
+            get {
+                return ResourceManager.GetString("Mockolate0003Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; cannot be wrapped: {1}.
+        /// </summary>
+        internal static string Mockolate0003MessageFormat {
+            get {
+                return ResourceManager.GetString("Mockolate0003MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrap arguments must be wrappable.
+        /// </summary>
+        internal static string Mockolate0003Title {
+            get {
+                return ResourceManager.GetString("Mockolate0003Title", resourceCulture);
+            }
+        }
     }
 }
