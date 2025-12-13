@@ -13,9 +13,9 @@ public sealed partial class VerifySetIndexerTests
 
 			mock[new Memory<int>([1, 2, 3,])] = 3;
 
-			await That(mock.VerifyMock.SetIndexer(It.Is<Memory<int>>(v => v.Length == 2), It.IsAny<int>())).Never();
-			await That(mock.VerifyMock.SetIndexer(It.Is<Memory<int>>(v => v.Length == 3), It.IsAny<int>())).Once();
-			await That(mock.VerifyMock.SetIndexer(It.Is<Memory<int>>(v => v.Length == 4), It.IsAny<int>())).Never();
+			await That(mock.VerifyMock.SetIndexer(It.Satisfies<Memory<int>>(v => v.Length == 2), It.IsAny<int>())).Never();
+			await That(mock.VerifyMock.SetIndexer(It.Satisfies<Memory<int>>(v => v.Length == 3), It.IsAny<int>())).Once();
+			await That(mock.VerifyMock.SetIndexer(It.Satisfies<Memory<int>>(v => v.Length == 4), It.IsAny<int>())).Never();
 		}
 
 		[Fact]

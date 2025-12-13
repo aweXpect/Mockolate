@@ -26,9 +26,7 @@ namespace Mockolate
     }
     public class It
     {
-        public static Mockolate.Parameters.IParameter<T> Is<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IParameter<T> Is<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IParameter<T> Is<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.It.IIsParameter<T> Is<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IParameter<T> IsAny<T>() { }
         public static Mockolate.Parameters.IOutParameter<T> IsAnyOut<T>() { }
         public static Mockolate.Parameters.IRefParameter<T> IsAnyRef<T>() { }
@@ -36,7 +34,7 @@ namespace Mockolate
         public static Mockolate.It.IInRangeParameter<T> IsInRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
             where T : System.IComparable<T> { }
         public static Mockolate.Parameters.IParameter<T> IsNull<T>() { }
-        public static Mockolate.Parameters.IParameter<T> IsOneOf<T>(params T[] values) { }
+        public static Mockolate.It.IIsOneOfParameter<T> IsOneOf<T>(params T[] values) { }
         public static Mockolate.Parameters.IVerifyOutParameter<T> IsOut<T>() { }
         public static Mockolate.Parameters.IOutParameter<T> IsOut<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IVerifyRefParameter<T> IsRef<T>() { }
@@ -45,10 +43,19 @@ namespace Mockolate
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Parameters.IParameter<bool> IsTrue() { }
         public static Mockolate.It.IParameterMatches Matches(string pattern) { }
+        public static Mockolate.Parameters.IParameter<T> Satisfies<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public interface IInRangeParameter<out T> : Mockolate.Parameters.IParameter<T>
         {
             Mockolate.Parameters.IParameter<T> Exclusive();
             Mockolate.Parameters.IParameter<T> Inclusive();
+        }
+        public interface IIsOneOfParameter<out T> : Mockolate.Parameters.IParameter<T>
+        {
+            Mockolate.It.IIsOneOfParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
+        }
+        public interface IIsParameter<out T> : Mockolate.Parameters.IParameter<T>
+        {
+            Mockolate.It.IIsParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
         }
         public interface IParameterMatches : Mockolate.Parameters.IParameter<string>
         {

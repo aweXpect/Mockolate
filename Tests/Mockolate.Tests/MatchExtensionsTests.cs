@@ -72,7 +72,7 @@ public sealed class MatchExtensionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		mock.SetupMock.Method.Dispense(It.IsAny<string>(),
-			It.Is<int>(x => x > 4).Monitor(out IParameterMonitor<int> monitor));
+			It.Satisfies<int>(x => x > 4).Monitor(out IParameterMonitor<int> monitor));
 
 		mock.Dispense("Dark", 3);
 		mock.Dispense("White", 5);

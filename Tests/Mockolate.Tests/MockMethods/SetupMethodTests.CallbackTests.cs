@@ -213,7 +213,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1(It.Is<int>(v => v != 1))
+				sut.SetupMock.Method.Method1(It.Satisfies<int>(v => v != 1))
 					.Do(() => { callCount++; });
 
 				sut.Method1(1);
@@ -262,7 +262,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1(It.Is<int>(v => v != 1))
+				sut.SetupMock.Method.Method1(It.Satisfies<int>(v => v != 1))
 					.Do(_ => { callCount++; });
 
 				sut.Method1(1);
@@ -432,7 +432,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2))
+				sut.SetupMock.Method.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
 					.Do(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -488,7 +488,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2))
+				sut.SetupMock.Method.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
 					.Do((_, _) => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -675,8 +675,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3))
+				sut.SetupMock.Method.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3))
 					.Do(() => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -737,8 +737,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3))
+				sut.SetupMock.Method.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3))
 					.Do((_, _, _) => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -926,8 +926,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3), It.Is<int>(_ => isMatch4))
+				sut.SetupMock.Method.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4))
 					.Do(() => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
@@ -992,8 +992,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3), It.Is<int>(_ => isMatch4))
+				sut.SetupMock.Method.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4))
 					.Do((_, _, _, _) => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
@@ -1183,9 +1183,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3), It.Is<int>(_ => isMatch4),
-						It.Is<int>(_ => isMatch5))
+				sut.SetupMock.Method.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4),
+						It.Satisfies<int>(_ => isMatch5))
 					.Do(() => { callCount++; });
 
 				sut.Method5(1, 2, 3, 4, 5);
@@ -1256,9 +1256,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3), It.Is<int>(_ => isMatch4),
-						It.Is<int>(_ => isMatch5))
+				sut.SetupMock.Method.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4),
+						It.Satisfies<int>(_ => isMatch5))
 					.Do((_, _, _, _, _) => { callCount++; });
 
 				sut.Method5(1, 2, 3, 4, 5);
@@ -1629,7 +1629,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1(It.Is<int>(v => v != 1))
+				sut.SetupMock.Method.Method1(It.Satisfies<int>(v => v != 1))
 					.Do(() => { callCount++; });
 
 				sut.Method1(1);
@@ -1678,7 +1678,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method1(It.Is<int>(v => v != 1))
+				sut.SetupMock.Method.Method1(It.Satisfies<int>(v => v != 1))
 					.Do(_ => { callCount++; });
 
 				sut.Method1(1);
@@ -1847,7 +1847,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2))
+				sut.SetupMock.Method.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
 					.Do(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -1903,7 +1903,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method2(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2))
+				sut.SetupMock.Method.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
 					.Do((_, _) => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -2089,8 +2089,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3))
+				sut.SetupMock.Method.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3))
 					.Do(() => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -2151,8 +2151,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method3(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3))
+				sut.SetupMock.Method.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3))
 					.Do((_, _, _) => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -2339,8 +2339,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3), It.Is<int>(_ => isMatch4))
+				sut.SetupMock.Method.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4))
 					.Do(() => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
@@ -2405,8 +2405,8 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method4(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3), It.Is<int>(_ => isMatch4))
+				sut.SetupMock.Method.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4))
 					.Do((_, _, _, _) => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
@@ -2595,9 +2595,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3), It.Is<int>(_ => isMatch4),
-						It.Is<int>(_ => isMatch5))
+				sut.SetupMock.Method.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4),
+						It.Satisfies<int>(_ => isMatch5))
 					.Do(() => { callCount++; });
 
 				sut.Method5(1, 2, 3, 4, 5);
@@ -2668,9 +2668,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
 
-				sut.SetupMock.Method.Method5(It.Is<int>(_ => isMatch1), It.Is<int>(_ => isMatch2),
-						It.Is<int>(_ => isMatch3), It.Is<int>(_ => isMatch4),
-						It.Is<int>(_ => isMatch5))
+				sut.SetupMock.Method.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4),
+						It.Satisfies<int>(_ => isMatch5))
 					.Do((_, _, _, _, _) => { callCount++; });
 
 				sut.Method5(1, 2, 3, 4, 5);

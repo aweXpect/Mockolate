@@ -173,7 +173,7 @@ public class ExampleTests
 		IExampleRepository mock = Mock.Create<IExampleRepository>();
 
 		mock.SetupMock.Method.AddUser(
-				It.Is<string>(x => x == "Alice"))
+				It.Satisfies<string>(x => x == "Alice"))
 			.Returns(new User(id, "Alice"));
 
 		User result = mock.AddUser(name);

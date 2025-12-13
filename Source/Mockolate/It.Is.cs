@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Mockolate.Internals;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -13,43 +11,43 @@ public partial class It
 	/// <summary>
 	///     Matches a parameter that is equal to <paramref name="value" />.
 	/// </summary>
-	public static IParameter<T> Is<T>(T value,
+	public static IIsParameter<T> Is<T>(T value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
 		=> new ParameterEqualsMatch<T>(value, doNotPopulateThisValue);
 
 	/// <summary>
-	///     Matches a parameter that is equal to <paramref name="value" /> according to the <paramref name="comparer" />.
+	///     An <see cref="IParameter{T}" /> used for equality comparison.
 	/// </summary>
-	public static IParameter<T> Is<T>(T value, IEqualityComparer<T> comparer,
-		[CallerArgumentExpression(nameof(value))]
-		string doNotPopulateThisValue1 = "",
-		[CallerArgumentExpression(nameof(comparer))]
-		string doNotPopulateThisValue2 = "")
-		=> new ParameterEqualsMatch<T>(value, doNotPopulateThisValue1, comparer, doNotPopulateThisValue2);
-
-	/// <summary>
-	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
-	/// </summary>
-	public static IParameter<T> Is<T>(Func<T, bool> predicate,
-		[CallerArgumentExpression("predicate")]
-		string doNotPopulateThisValue = "")
-		=> new PredicateParameterMatch<T>(predicate, doNotPopulateThisValue);
-
-	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>
+	public interface IIsParameter<out T> : IParameter<T>
 	{
-		private readonly IEqualityComparer<T>? _comparer;
-		private readonly string? _comparerExpression;
+		/// <summary>
+		///     Use the specified comparer to determine equality.
+		/// </summary>
+		IIsParameter<T> Using(IEqualityComparer<T> comparer,
+			[CallerArgumentExpression(nameof(comparer))]
+			string doNotPopulateThisValue = "");
+	}
+
+	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>
+	{
 		private readonly T _value;
 		private readonly string _valueExpression;
+		private IEqualityComparer<T>? _comparer;
+		private string? _comparerExpression;
 
-		public ParameterEqualsMatch(T value, string valueExpression, IEqualityComparer<T>? comparer = null,
-			string? comparerExpression = null)
+		public ParameterEqualsMatch(T value, string valueExpression)
 		{
 			_value = value;
 			_valueExpression = valueExpression;
+		}
+
+		/// <inheritdoc cref="IIsParameter{T}.Using(IEqualityComparer{T}, string)" />
+		public IIsParameter<T> Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue = "")
+		{
 			_comparer = comparer;
-			_comparerExpression = comparerExpression;
+			_comparerExpression = doNotPopulateThisValue;
+			return this;
 		}
 
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
@@ -68,17 +66,11 @@ public partial class It
 		{
 			if (_comparer is not null)
 			{
-				return $"It.Is({_valueExpression}, {_comparerExpression})";
+				return $"It.Is({_valueExpression}).Using({_comparerExpression})";
 			}
 
 			return _valueExpression;
 		}
-	}
-
-	private sealed class PredicateParameterMatch<T>(Func<T, bool> predicate, string predicateExpression) : TypedMatch<T>
-	{
-		protected override bool Matches(T value) => predicate(value);
-		public override string ToString() => $"It.Is<{typeof(T).FormatType()}>({predicateExpression})";
 	}
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members

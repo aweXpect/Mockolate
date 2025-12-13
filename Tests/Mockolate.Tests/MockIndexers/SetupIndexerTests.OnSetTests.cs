@@ -111,7 +111,7 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount = 0;
 			IIndexerService mock = Mock.Create<IIndexerService>();
-			mock.SetupMock.Indexer(It.Is<int>(i => i < 4))
+			mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4))
 				.OnSet.Do(_ => { callCount++; });
 
 			mock[1] = "";
@@ -129,7 +129,7 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount = 0;
 			IIndexerService mock = Mock.Create<IIndexerService>();
-			mock.SetupMock.Indexer(It.Is<int>(i => i < 4))
+			mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4))
 				.OnSet.Do(() => { callCount++; });
 
 			mock[1] = "";
@@ -285,7 +285,7 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Is<int>(i => i < 4), It.Is<int>(i => i < 4))
+				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4))
 					.OnSet.Do(v => { callCount += v.Length; });
 
 				mock[1, 1] = "a"; // yes (1)
@@ -306,7 +306,7 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Is<int>(i => i < 4), It.Is<int>(i => i < 4))
+				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4))
 					.OnSet.Do(() => { callCount++; });
 
 				mock[1, 1] = ""; // yes
@@ -464,8 +464,8 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Is<int>(i => i < 4), It.Is<int>(i => i < 4),
-						It.Is<int>(i => i < 4))
+				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
+						It.Satisfies<int>(i => i < 4))
 					.OnSet.Do(v => { callCount += v.Length; });
 
 				mock[1, 1, 1] = "a"; // yes (1)
@@ -486,8 +486,8 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Is<int>(i => i < 4), It.Is<int>(i => i < 4),
-						It.Is<int>(i => i < 4))
+				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
+						It.Satisfies<int>(i => i < 4))
 					.OnSet.Do(() => { callCount++; });
 
 				mock[1, 1, 1] = ""; // yes
@@ -646,8 +646,8 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Is<int>(i => i < 5), It.Is<int>(i => i < 5),
-						It.Is<int>(i => i < 5), It.Is<int>(i => i < 5))
+				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
+						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5))
 					.OnSet.Do(v => { callCount += v.Length; });
 
 				mock[1, 1, 1, 1] = "a"; // yes (1)
@@ -668,8 +668,8 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Is<int>(i => i < 5), It.Is<int>(i => i < 5),
-						It.Is<int>(i => i < 5), It.Is<int>(i => i < 5))
+				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
+						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5))
 					.OnSet.Do(() => { callCount++; });
 
 				mock[1, 1, 1, 1] = ""; // yes
@@ -833,8 +833,8 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Is<int>(i => i < 6), It.Is<int>(i => i < 6),
-						It.Is<int>(i => i < 6), It.Is<int>(i => i < 6), It.Is<int>(i => i < 6))
+				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
+						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6))
 					.OnSet.Do(v => { callCount += v.Length; });
 
 				mock[1, 1, 1, 1, 1] = "a"; // yes (1)
@@ -855,8 +855,8 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Is<int>(i => i < 6), It.Is<int>(i => i < 6),
-						It.Is<int>(i => i < 6), It.Is<int>(i => i < 6), It.Is<int>(i => i < 6))
+				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
+						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6))
 					.OnSet.Do(() => { callCount++; });
 
 				mock[1, 1, 1, 1, 1] = ""; // yes

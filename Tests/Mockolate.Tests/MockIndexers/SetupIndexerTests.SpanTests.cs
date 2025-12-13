@@ -10,7 +10,7 @@ public sealed partial class SetupIndexerTests
 		public async Task Memory_WhenPredicateDoesNotMatch_ShouldUseDefaultValue()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(It.Is<Memory<int>>(v => v.Length == 2)).Returns(4);
+			mock.SetupMock.Indexer(It.Satisfies<Memory<int>>(v => v.Length == 2)).Returns(4);
 
 			int result = mock[new Memory<int>([1, 2, 3,])];
 
@@ -21,7 +21,7 @@ public sealed partial class SetupIndexerTests
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
-			mock.SetupMock.Indexer(It.Is<Memory<int>>(v => v.Length == 3)).Returns(42);
+			mock.SetupMock.Indexer(It.Satisfies<Memory<int>>(v => v.Length == 3)).Returns(42);
 
 			int result = mock[new Memory<int>([1, 2, 3,])];
 
@@ -115,8 +115,8 @@ public sealed partial class SetupIndexerTests
 				30, 40, 50,
 			];
 
-			mock.SetupMock.Indexer(It.Is<int>(k => k == 1)).Returns(new Span<int>(key1Data));
-			mock.SetupMock.Indexer(It.Is<int>(k => k == 2)).Returns(new Span<int>(key2Data));
+			mock.SetupMock.Indexer(It.Satisfies<int>(k => k == 1)).Returns(new Span<int>(key1Data));
+			mock.SetupMock.Indexer(It.Satisfies<int>(k => k == 2)).Returns(new Span<int>(key2Data));
 
 			int[] result1 = mock[1].ToArray();
 			int[] result2 = mock[2].ToArray();

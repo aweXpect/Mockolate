@@ -113,7 +113,7 @@ public sealed partial class SetupMethodTests
 		List<int> capturedValues = [];
 		IMethodService mock = Mock.Create<IMethodService>();
 		mock.SetupMock.Method.MyIntMethodWithParameters(It.IsAny<int>().Do(v => capturedValues.Add(v)),
-			It.Is<string>(s => s.Length == 3));
+			It.Satisfies<string>(s => s.Length == 3));
 
 		mock.MyIntMethodWithParameters(1, "foo");
 		mock.MyIntMethodWithParameters(2, "foobar");
