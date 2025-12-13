@@ -73,7 +73,9 @@ public abstract class PropertySetup : IInteractivePropertySetup
 
 		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
 		protected override void InitializeValue(object? value)
-		{}
+		{
+			// Is always initialized from the constructor
+		}
 
 		/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
 		protected override bool? GetCallBaseClass()
@@ -85,9 +87,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 
 		/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
 		protected override void InvokeSetter(object? value, MockBehavior behavior)
-		{
-			_value = value;
-		}
+			=> _value = value;
 
 		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
 		protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult>? defaultValueGenerator)
