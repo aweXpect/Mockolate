@@ -463,3 +463,20 @@ If the order is incorrect or a call is missing, a `MockVerificationException` wi
 
    This is useful for ensuring that your test setup and test execution match.
    If any setup was not used, this method returns `false`.
+
+## Analyzers
+
+Mockolate ships with some Roslyn analyzers to help you adopt best practices and catch issues early, at compile time.
+All rules provide actionable messages and link to identifiers for easy filtering.
+
+### Mockolate0001
+`Verify` methods only return a `VerificationResult` and do not directly throw. You have to specify how often you expect the call to happen, e.g. `.Once()`, `.Exactly(n)`, etc. or use the verification result in any other way.
+
+### Mockolate0002
+Mock arguments must be mockable (interfaces or supported classes).
+This rule will prevent you from using unsupported types (e.g. sealed classes) when using `Mock.Create<T>()`.
+
+### Mockolate0003
+Wrap arguments must be interfaces.
+This rule will prevent you from using any other type when using `Mock.Wrap<T>(T instance)`.
+
