@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Mockolate.Parameters;
 
@@ -27,7 +28,11 @@ public partial class It
 		/// <summary>
 		///     Matches the pattern directly as a regular expression.
 		/// </summary>
-		IParameterMatches AsRegex(RegexOptions options = RegexOptions.None, TimeSpan? timeout = null);
+		IParameterMatches AsRegex(
+			RegexOptions options = RegexOptions.None,
+			TimeSpan? timeout = null,
+			[CallerArgumentExpression("options")] string doNotPopulateThisValue1 = "",
+			[CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "");
 	}
 
 	private sealed class MatchesAsWildcardMatch(string pattern) : TypedMatch<string>, IParameterMatches
@@ -36,7 +41,9 @@ public partial class It
 		private bool _isRegex;
 		private Regex? _regex;
 		private RegexOptions _regexOptions = RegexOptions.None;
+		private string? _regexOptionsExpression;
 		private TimeSpan _timeout = Regex.InfiniteMatchTimeout;
+		private string _timeoutExpression = "";
 
 		/// <inheritdoc cref="IParameterMatches.IgnoringCase(bool)" />
 		public IParameterMatches IgnoringCase(bool ignoreCase = true)
@@ -45,14 +52,19 @@ public partial class It
 			return this;
 		}
 
-		/// <inheritdoc cref="IParameterMatches.AsRegex(RegexOptions, TimeSpan?)" />
-		public IParameterMatches AsRegex(RegexOptions options = RegexOptions.None, TimeSpan? timeout = null)
+		/// <inheritdoc cref="IParameterMatches.AsRegex(RegexOptions, TimeSpan?, string, string)" />
+		public IParameterMatches AsRegex(RegexOptions options = RegexOptions.None,
+			TimeSpan? timeout = null,
+			[CallerArgumentExpression("options")] string doNotPopulateThisValue1 = "",
+			[CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "")
 		{
 			_isRegex = true;
 			_regexOptions = options;
+			_regexOptionsExpression = doNotPopulateThisValue1;
 			if (timeout is not null)
 			{
 				_timeout = timeout.Value;
+				_timeoutExpression = doNotPopulateThisValue2;
 			}
 
 			return this;
@@ -78,7 +90,31 @@ public partial class It
 #pragma warning restore S3218
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\")";
+		public override string ToString()
+			=> (_isRegex, _ignoreCase) switch
+			{
+				(true, true) =>
+					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString()}).IgnoringCase()",
+				(true, false) =>
+					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString()})",
+				(false, true) => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").IgnoringCase()",
+				(false, false) => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\")",
+			};
+
+		private string RegexParameterToString()
+		{
+			if (_timeout == Regex.InfiniteMatchTimeout)
+			{
+				return string.IsNullOrEmpty(_regexOptionsExpression) ? "" : _regexOptionsExpression;
+			}
+
+			if (string.IsNullOrEmpty(_regexOptionsExpression))
+			{
+				return $"timeout: {_timeoutExpression}";
+			}
+
+			return $"{_regexOptionsExpression}, {_timeoutExpression}";
+		}
 
 		private static string WildcardToRegularExpression(string value)
 		{

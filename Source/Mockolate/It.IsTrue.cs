@@ -14,6 +14,7 @@ public partial class It
 
 	private sealed class TrueParameterMatch : TypedMatch<bool>
 	{
+		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(bool value) => value;
 
 		/// <inheritdoc cref="object.ToString()" />

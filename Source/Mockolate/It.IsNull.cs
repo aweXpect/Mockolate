@@ -15,6 +15,7 @@ public partial class It
 
 	private sealed class NullParameterMatch<T> : TypedMatch<T>
 	{
+		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(T value) => value is null;
 
 		/// <inheritdoc cref="object.ToString()" />
