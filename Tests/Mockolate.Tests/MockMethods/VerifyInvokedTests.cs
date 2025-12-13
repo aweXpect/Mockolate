@@ -26,6 +26,17 @@ public sealed partial class VerifyInvokedTests
 		await That(mock.VerifyMock.Invoked.GetHashCode()).Once();
 	}
 
+	[Fact]
+	public async Task MethodWithDifferentName_ShouldNotMatch()
+	{
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+
+		sut.Multiply(1, 4);
+		sut.Multiply(2, 4);
+
+		await That(sut.VerifyMock.Invoked.Subtract(It.IsAny<int>(), It.IsAny<int?>())).Never();
+	}
+
 	[Theory]
 	[InlineData(2)]
 	[InlineData(42)]

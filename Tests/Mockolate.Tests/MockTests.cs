@@ -386,6 +386,8 @@ public sealed partial class MockTests
 
 		int Multiply(int value, int? multiplier);
 
+		int Subtract(int minuend, int? subtrahend);
+
 		void SetIsValid(bool isValid, Func<bool>? predicate);
 	}
 
