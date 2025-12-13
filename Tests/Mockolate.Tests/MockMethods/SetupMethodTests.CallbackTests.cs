@@ -175,7 +175,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -202,7 +202,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -454,7 +454,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -482,7 +482,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -745,7 +745,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -773,7 +773,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -1045,7 +1045,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -1073,7 +1073,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -1350,7 +1350,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -1378,7 +1378,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -1673,7 +1673,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -1701,7 +1701,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
@@ -1891,7 +1891,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -1918,7 +1918,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -2169,7 +2169,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -2197,7 +2197,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -2459,7 +2459,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -2487,7 +2487,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -2758,7 +2758,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -2786,7 +2786,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -3062,7 +3062,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -3090,7 +3090,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -3384,7 +3384,7 @@ public sealed partial class SetupMethodTests
 				await That(invocations).IsEqualTo([4, 5, 6, 7, 8,]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
@@ -3412,7 +3412,7 @@ public sealed partial class SetupMethodTests
 				await That(ActInParallel).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();

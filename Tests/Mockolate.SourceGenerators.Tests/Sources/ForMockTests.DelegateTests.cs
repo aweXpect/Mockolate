@@ -2,7 +2,7 @@
 
 public sealed partial class ForMockTests
 {
-	[Fact]
+	[Test]
 	public async Task CustomDelegates_ShouldOnlyCreateTwoExtensions()
 	{
 		GeneratorResult result = Generator
@@ -39,7 +39,7 @@ public sealed partial class ForMockTests
 			          """).IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task CustomVoidDelegates_ShouldOnlyCreateTwoExtensions()
 	{
 		GeneratorResult result = Generator
@@ -76,7 +76,7 @@ public sealed partial class ForMockTests
 			          """).IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task CustomDelegates_ShouldSupportSpanAndReadOnlySpanParameters()
 	{
 		GeneratorResult result = Generator
@@ -123,7 +123,7 @@ public sealed partial class ForMockTests
 			          """).IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Delegates_ShouldCreateDelegateInsteadOfMockSubject()
 	{
 		GeneratorResult result = Generator

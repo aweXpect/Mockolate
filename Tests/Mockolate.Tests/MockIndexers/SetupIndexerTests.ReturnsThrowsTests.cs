@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Mockolate.Setup;
+using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests.MockIndexers;
 
@@ -7,7 +8,7 @@ public sealed partial class SetupIndexerTests
 {
 	public sealed class ReturnsThrowsTests
 	{
-		[Fact]
+		[Test]
 		public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 		{
 			IIndexerService mock = Mock.Create<IIndexerService>();
@@ -30,7 +31,7 @@ public sealed partial class SetupIndexerTests
 			await That(result15).IsEqualTo("a");
 		}
 
-		[Fact]
+		[Test]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -49,7 +50,7 @@ public sealed partial class SetupIndexerTests
 			await That(result3).IsEqualTo("b");
 		}
 
-		[Fact]
+		[Test]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -68,7 +69,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(["a", "b", "foo-2", "a", "b", "foo-5", "a", "b", "foo-8", "a",]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -81,7 +82,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo("foo");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_CallbackWithParameters_ShouldReturnExpectedValue()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -95,7 +96,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo("foo-3");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -109,7 +110,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo("foo-init-3");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -127,7 +128,7 @@ public sealed partial class SetupIndexerTests
 			await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_Forever_ShouldUseTheLastValueForever()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -146,7 +147,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -159,7 +160,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEqualTo("foo");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -176,7 +177,7 @@ public sealed partial class SetupIndexerTests
 			await That(result3).IsEqualTo("foo");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -195,7 +196,7 @@ public sealed partial class SetupIndexerTests
 			await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -205,7 +206,7 @@ public sealed partial class SetupIndexerTests
 			await That(result).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Throws_Callback_ShouldThrowException()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -221,7 +222,7 @@ public sealed partial class SetupIndexerTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Throws_CallbackWithParameters_ShouldThrowException()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -238,7 +239,7 @@ public sealed partial class SetupIndexerTests
 			await That(Act).ThrowsException().WithMessage("foo-3");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -255,7 +256,7 @@ public sealed partial class SetupIndexerTests
 			await That(Act).ThrowsException().WithMessage("foo-init-3");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Throws_Generic_ShouldThrowException()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -271,7 +272,7 @@ public sealed partial class SetupIndexerTests
 			await That(Act).ThrowsExactly<ArgumentNullException>();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Throws_ShouldThrowException()
 		{
 			IIndexerService sut = Mock.Create<IIndexerService>();
@@ -287,7 +288,7 @@ public sealed partial class SetupIndexerTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
 		{
 			IIndexerService mock = Mock.Create<IIndexerService>();
@@ -308,7 +309,7 @@ public sealed partial class SetupIndexerTests
 			await That(ActFor).DoesNotThrow();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
 		{
 			IIndexerService mock = Mock.Create<IIndexerService>();
@@ -331,7 +332,7 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With2Levels
 		{
-			[Fact]
+			[Test]
 			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -354,7 +355,7 @@ public sealed partial class SetupIndexerTests
 				await That(result15).IsEqualTo("a");
 			}
 
-			[Fact]
+			[Test]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -373,7 +374,7 @@ public sealed partial class SetupIndexerTests
 				await That(result3).IsEqualTo("b");
 			}
 
-			[Fact]
+			[Test]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -392,7 +393,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo(["a", "b", "foo-2-4", "a", "b", "foo-5-25", "a", "b", "foo-8-64", "a",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -405,7 +406,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_CallbackWithParameters_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -419,7 +420,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo-3-4");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -433,7 +434,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo-init-3-4");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -451,7 +452,7 @@ public sealed partial class SetupIndexerTests
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -470,7 +471,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -483,7 +484,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -500,7 +501,7 @@ public sealed partial class SetupIndexerTests
 				await That(result3).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -519,7 +520,7 @@ public sealed partial class SetupIndexerTests
 				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -529,7 +530,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -545,7 +546,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_CallbackWithParameters_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -562,7 +563,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo-1-2");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -579,7 +580,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo-init-1-2");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -595,7 +596,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsExactly<ArgumentNullException>();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -611,7 +612,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -633,7 +634,7 @@ public sealed partial class SetupIndexerTests
 				await That(ActFor).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -658,7 +659,7 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With3Levels
 		{
-			[Fact]
+			[Test]
 			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -681,7 +682,7 @@ public sealed partial class SetupIndexerTests
 				await That(result15).IsEqualTo("a");
 			}
 
-			[Fact]
+			[Test]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -700,7 +701,7 @@ public sealed partial class SetupIndexerTests
 				await That(result3).IsEqualTo("b");
 			}
 
-			[Fact]
+			[Test]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -720,7 +721,7 @@ public sealed partial class SetupIndexerTests
 					.IsEqualTo(["a", "b", "foo-2-4-6", "a", "b", "foo-5-25-30", "a", "b", "foo-8-64-72", "a",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -733,7 +734,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_CallbackWithParameters_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -747,7 +748,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo-3-4-5");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -761,7 +762,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo-init-3-4-5");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -779,7 +780,7 @@ public sealed partial class SetupIndexerTests
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -798,7 +799,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -811,7 +812,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -828,7 +829,7 @@ public sealed partial class SetupIndexerTests
 				await That(result3).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -847,7 +848,7 @@ public sealed partial class SetupIndexerTests
 				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -857,7 +858,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -873,7 +874,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_CallbackWithParameters_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -890,7 +891,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -907,7 +908,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo-init-1-2-3");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -923,7 +924,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsExactly<ArgumentNullException>();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -939,7 +940,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -961,7 +962,7 @@ public sealed partial class SetupIndexerTests
 				await That(ActFor).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -986,7 +987,7 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With4Levels
 		{
-			[Fact]
+			[Test]
 			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -1009,7 +1010,7 @@ public sealed partial class SetupIndexerTests
 				await That(result15).IsEqualTo("a");
 			}
 
-			[Fact]
+			[Test]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1028,7 +1029,7 @@ public sealed partial class SetupIndexerTests
 				await That(result3).IsEqualTo("b");
 			}
 
-			[Fact]
+			[Test]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1049,7 +1050,7 @@ public sealed partial class SetupIndexerTests
 				]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1062,7 +1063,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_CallbackWithParameters_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1076,7 +1077,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo-3-4-5-6");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1090,7 +1091,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo-init-3-4-5-6");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1108,7 +1109,7 @@ public sealed partial class SetupIndexerTests
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1127,7 +1128,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1140,7 +1141,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1157,7 +1158,7 @@ public sealed partial class SetupIndexerTests
 				await That(result3).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1176,7 +1177,7 @@ public sealed partial class SetupIndexerTests
 				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1186,7 +1187,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1202,7 +1203,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_CallbackWithParameters_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1219,7 +1220,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3-4");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1236,7 +1237,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo-init-1-2-3-4");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1252,7 +1253,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsExactly<ArgumentNullException>();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1268,7 +1269,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -1290,7 +1291,7 @@ public sealed partial class SetupIndexerTests
 				await That(ActFor).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -1315,7 +1316,7 @@ public sealed partial class SetupIndexerTests
 
 		public sealed class With5Levels
 		{
-			[Fact]
+			[Test]
 			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -1338,7 +1339,7 @@ public sealed partial class SetupIndexerTests
 				await That(result15).IsEqualTo("a");
 			}
 
-			[Fact]
+			[Test]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1358,7 +1359,7 @@ public sealed partial class SetupIndexerTests
 				await That(result3).IsEqualTo("b");
 			}
 
-			[Fact]
+			[Test]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1380,7 +1381,7 @@ public sealed partial class SetupIndexerTests
 				]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1394,7 +1395,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_CallbackWithParameters_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1409,7 +1410,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo-3-4-5-6-7");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1424,7 +1425,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo-init-3-4-5-6-7");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1443,7 +1444,7 @@ public sealed partial class SetupIndexerTests
 				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1463,7 +1464,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1477,7 +1478,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1495,7 +1496,7 @@ public sealed partial class SetupIndexerTests
 				await That(result3).IsEqualTo("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1515,7 +1516,7 @@ public sealed partial class SetupIndexerTests
 				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1525,7 +1526,7 @@ public sealed partial class SetupIndexerTests
 				await That(result).IsEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1542,7 +1543,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_CallbackWithParameters_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1560,7 +1561,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo-1-2-3-4-5");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1578,7 +1579,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo-init-1-2-3-4-5");
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1595,7 +1596,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsExactly<ArgumentNullException>();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Throws_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1612,7 +1613,7 @@ public sealed partial class SetupIndexerTests
 				await That(Act).ThrowsException().WithMessage("foo");
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
@@ -1634,7 +1635,7 @@ public sealed partial class SetupIndexerTests
 				await That(ActFor).DoesNotThrow();
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
 			{
 				IIndexerService mock = Mock.Create<IIndexerService>();
