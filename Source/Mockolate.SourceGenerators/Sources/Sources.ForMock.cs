@@ -922,12 +922,6 @@ internal static partial class Sources
 		=> string.Join(", ", parameters.Select(p => p.Name));
 
 	/// <summary>
-	///     Formats parameters for XML documentation with ref/out keywords.
-	/// </summary>
-	private static string FormatParametersForXmlDoc(IEnumerable<MethodParameter> parameters)
-		=> string.Join(", ", parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname));
-
-	/// <summary>
 	///     Appends a NamedParameter with nullable handling.
 	/// </summary>
 	private static void AppendNamedParameter(StringBuilder sb, MethodParameter parameter)
@@ -940,24 +934,6 @@ internal static partial class Sources
 		}
 
 		sb.Append("))");
-	}
-
-	/// <summary>
-	///     Appends multiple NamedParameters as a comma-separated list with nullable handling.
-	/// </summary>
-	private static void AppendNamedParameters(StringBuilder sb, IEnumerable<MethodParameter> parameters)
-	{
-		bool first = true;
-		foreach (MethodParameter parameter in parameters)
-		{
-			if (!first)
-			{
-				sb.Append(", ");
-			}
-
-			first = false;
-			AppendNamedParameter(sb, parameter);
-		}
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
