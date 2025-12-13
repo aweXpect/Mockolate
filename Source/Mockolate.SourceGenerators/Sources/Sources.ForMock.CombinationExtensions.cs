@@ -81,6 +81,8 @@ internal static partial class Sources
 			name = $"{@class.ClassName.Replace('.', '_')}__{++nameSuffix}";
 		}
 
+		string mockExpression = $"new Mock<{@class.ClassFullName}>(({@class.ClassFullName})subject, GetMockOrThrow(subject).Registrations);";
+
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
 			.Append("\" />")
@@ -89,9 +91,8 @@ internal static partial class Sources
 		sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).Append("> Setup").Append(name)
 			.Append("Mock")
 			.AppendLine();
-		sb.Append("\t\t\t=> new Mock<").Append(@class.ClassFullName).Append(">((").Append(@class.ClassFullName)
-			.Append(")subject, GetMockOrThrow(subject).Registrations);")
-			.AppendLine();
+		sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
+
 		if (@class.AllEvents().Any())
 		{
 			sb.AppendLine();
@@ -102,9 +103,7 @@ internal static partial class Sources
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic IMockRaises<").Append(@class.ClassFullName).Append("> RaiseOn")
 				.Append(name).Append("Mock").AppendLine();
-			sb.Append("\t\t\t=> new Mock<").Append(@class.ClassFullName).Append(">((").Append(@class.ClassFullName)
-				.Append(")subject, GetMockOrThrow(subject).Registrations);")
-				.AppendLine();
+			sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
 		}
 
 		sb.AppendLine();
@@ -115,9 +114,7 @@ internal static partial class Sources
 		sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).Append("> VerifyOn").Append(name)
 			.Append("Mock")
 			.AppendLine();
-		sb.Append("\t\t\t=> new Mock<").Append(@class.ClassFullName).Append(">((").Append(@class.ClassFullName)
-			.Append(")subject, GetMockOrThrow(subject).Registrations);")
-			.AppendLine();
+		sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
