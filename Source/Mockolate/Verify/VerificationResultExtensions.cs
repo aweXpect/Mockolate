@@ -278,11 +278,6 @@ public static class VerificationResultExtensions
 					return mockSubject.Mock;
 				}
 
-				if (subject is IHasMockRegistration hasMockRegistration)
-				{
-					return new Mock<TMock>(subject, hasMockRegistration.Registrations);
-				}
-
 				throw new MockException("The subject is no mock subject.");
 			}
 
