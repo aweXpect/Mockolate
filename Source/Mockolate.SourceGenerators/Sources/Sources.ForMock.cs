@@ -912,25 +912,25 @@ internal static partial class Sources
 	/// <summary>
 	///     Formats parameters with type and name (e.g., "int value, string name").
 	/// </summary>
-	internal static string FormatParametersWithTypeAndName(IEnumerable<MethodParameter> parameters)
+	private static string FormatParametersWithTypeAndName(IEnumerable<MethodParameter> parameters)
 		=> string.Join(", ", parameters.Select(p => $"{p.Type.Fullname} {p.Name}"));
 
 	/// <summary>
 	///     Formats parameters as names only (e.g., "value1, value2").
 	/// </summary>
-	internal static string FormatParametersAsNames(IEnumerable<MethodParameter> parameters)
+	private static string FormatParametersAsNames(IEnumerable<MethodParameter> parameters)
 		=> string.Join(", ", parameters.Select(p => p.Name));
 
 	/// <summary>
 	///     Formats parameters for XML documentation with ref/out keywords.
 	/// </summary>
-	internal static string FormatParametersForXmlDoc(IEnumerable<MethodParameter> parameters)
+	private static string FormatParametersForXmlDoc(IEnumerable<MethodParameter> parameters)
 		=> string.Join(", ", parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname));
 
 	/// <summary>
 	///     Appends a NamedParameter with nullable handling.
 	/// </summary>
-	internal static void AppendNamedParameter(StringBuilder sb, MethodParameter parameter)
+	private static void AppendNamedParameter(StringBuilder sb, MethodParameter parameter)
 	{
 		sb.Append("new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(");
 		sb.Append(parameter.Name);
@@ -944,7 +944,7 @@ internal static partial class Sources
 	/// <summary>
 	///     Appends multiple NamedParameters as a comma-separated list with nullable handling.
 	/// </summary>
-	internal static void AppendNamedParameters(StringBuilder sb, IEnumerable<MethodParameter> parameters)
+	private static void AppendNamedParameters(StringBuilder sb, IEnumerable<MethodParameter> parameters)
 	{
 		bool first = true;
 		foreach (MethodParameter parameter in parameters)
