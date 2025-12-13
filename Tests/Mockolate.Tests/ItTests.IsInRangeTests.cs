@@ -33,6 +33,27 @@ public sealed partial class ItTests
 		[InlineData(5, 6, true)]
 		[InlineData(4, 6, true)]
 		[InlineData(6, 7, false)]
+		public async Task ExecuteWith5_Inclusive_ShouldMatchWhenRangeContains5(int minimum, int maximum,
+			bool expectFound)
+		{
+			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
+			It.IInRangeParameter<int> range = It.IsInRange(minimum, maximum);
+			range.Exclusive();
+
+			mock.DoSomethingWithInt(5);
+
+			await That(mock.VerifyMock.Invoked.DoSomethingWithInt(range.Inclusive()))
+				.Exactly(expectFound ? 1 : 0);
+		}
+
+		[Theory]
+		[InlineData(3, 5, true)]
+		[InlineData(3, 6, true)]
+		[InlineData(2, 4, false)]
+		[InlineData(5, 5, true)]
+		[InlineData(5, 6, true)]
+		[InlineData(4, 6, true)]
+		[InlineData(6, 7, false)]
 		public async Task ExecuteWith5_ShouldMatchWhenRangeContains5(int minimum, int maximum, bool expectFound)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();

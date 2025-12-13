@@ -40,6 +40,23 @@ public class VerificationResultTests
 	}
 
 	[Fact]
+	public async Task VerificationResult_MockInteractions_HasAllInteractions()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+		sut.Dispense("Dark", 2);
+		_ = sut.TotalDispensed;
+		sut["Dark"] = 5;
+		sut.TotalDispensed = 10;
+		_ = sut["Milk"];
+
+		VerificationResult<IChocolateDispenser> result
+			= sut.VerifyMock.Got.TotalDispensed();
+
+		await That(((IVerificationResult)result).MockInteractions.Count).IsEqualTo(5);
+	}
+
+	[Fact]
 	public async Task VerificationResult_Set_ShouldHaveExpectedValue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();

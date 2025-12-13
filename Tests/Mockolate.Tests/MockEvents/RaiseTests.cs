@@ -113,6 +113,19 @@ public sealed partial class RaiseTests
 		await That(callCount).IsEqualTo(2);
 	}
 
+	[Fact]
+	public async Task WhenUsingRaise_WithoutRegistration_ShouldNotThrow()
+	{
+		IRaiseEvent mock = Mock.Create<IRaiseEvent>();
+
+		void Act()
+		{
+			mock.RaiseOnMock.SomeEvent(this, EventArgs.Empty);
+		}
+
+		await That(Act).DoesNotThrow();
+	}
+
 	public interface IMyEventService : IMyEventServiceBase1
 	{
 		new event EventHandler<string> SomeEvent;

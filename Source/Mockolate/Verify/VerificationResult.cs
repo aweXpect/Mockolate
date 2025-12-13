@@ -8,6 +8,7 @@ namespace Mockolate.Verify;
 /// </summary>
 public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult
 {
+	private readonly string _expectation;
 	private readonly MockInteractions _interactions;
 	private readonly IInteraction[] _matchingInteractions;
 	private readonly TVerify _verify;
@@ -19,11 +20,8 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		_verify = verify;
 		_interactions = interactions;
 		_matchingInteractions = matchingInteractions;
-		Expectation = expectation;
+		_expectation = expectation;
 	}
-
-	/// <inheritdoc cref="IVerificationResult.Expectation" />
-	public string Expectation { get; }
 
 	#region IVerificationResult<TVerify>
 
@@ -33,18 +31,11 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	#endregion
 
-	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
-	public bool Verify(Func<IInteraction[], bool> predicate)
-	{
-		_interactions.Verified(_matchingInteractions);
-		return predicate(_matchingInteractions);
-	}
-
 	#region IVerificationResult
 
 	/// <inheritdoc cref="IVerificationResult.Expectation" />
 	string IVerificationResult.Expectation
-		=> Expectation;
+		=> _expectation;
 
 	/// <inheritdoc cref="IVerificationResult.MockInteractions" />
 	MockInteractions IVerificationResult.MockInteractions
