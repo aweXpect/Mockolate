@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -11,6 +12,10 @@ namespace Mockolate;
 /// </summary>
 public partial class It
 {
+	/// <summary>
+	///     This class is intentionally not static to allow adding static extension methods on <see cref="It" />.
+	/// </summary>
+	[ExcludeFromCodeCoverage]
 	private It()
 	{
 		// Prevent instantiation.
