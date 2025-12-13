@@ -56,7 +56,7 @@ public sealed class WrappabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	private static ITypeSymbol? GetInvocationTypeArguments(IInvocationOperation invocation)
-		=> AnalyzerHelpers.GetInvocationTypeArguments(invocation.TargetMethod);
+		=> AnalyzerHelpers.GetSingleInvocationTypeArgumentOrNull(invocation.TargetMethod);
 
 	private static bool IsWrapMethod(IMethodSymbol method)
 		=> method.Name == "Wrap" &&

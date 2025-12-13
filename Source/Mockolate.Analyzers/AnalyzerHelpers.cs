@@ -11,9 +11,9 @@ namespace Mockolate.Analyzers;
 internal static class AnalyzerHelpers
 {
 	/// <summary>
-	///     Gets the type argument from an invocation operation.
+	///     Get the type argument from an invocation operation.
 	/// </summary>
-	public static ITypeSymbol? GetInvocationTypeArguments(IMethodSymbol method)
+	public static ITypeSymbol? GetSingleInvocationTypeArgumentOrNull(IMethodSymbol method)
 	{
 		if (method is { IsGenericMethod: true, TypeArguments.Length: > 0, })
 		{
@@ -24,7 +24,7 @@ internal static class AnalyzerHelpers
 	}
 
 	/// <summary>
-	///     Checks if a method has the MockGeneratorAttribute.
+	///     Check if a method has the MockGeneratorAttribute.
 	/// </summary>
 	public static bool HasMockGeneratorAttribute(IMethodSymbol method)
 		=> method.GetAttributes().Any(a =>
@@ -39,7 +39,7 @@ internal static class AnalyzerHelpers
 			});
 
 	/// <summary>
-	///     Checks if a type is an open generic.
+	///     Check if a type is an open generic.
 	/// </summary>
 	public static bool IsOpenGeneric(ITypeSymbol typeSymbol)
 		=> typeSymbol is INamedTypeSymbol nts &&
@@ -47,7 +47,7 @@ internal static class AnalyzerHelpers
 		   nts.TypeArguments.Any(a => a.TypeKind == TypeKind.TypeParameter);
 
 	/// <summary>
-	///     Gets the location of a type argument in an invocation expression.
+	///     Get the location of a type argument in an invocation expression.
 	/// </summary>
 	public static Location? GetTypeArgumentLocation(SyntaxNode syntax, ITypeSymbol typeSymbol)
 	{
@@ -55,7 +55,7 @@ internal static class AnalyzerHelpers
 		    {
 			    Expression: MemberAccessExpressionSyntax
 			    {
-			    	Name: GenericNameSyntax genericNameSyntax,
+				    Name: GenericNameSyntax genericNameSyntax,
 			    },
 		    })
 		{

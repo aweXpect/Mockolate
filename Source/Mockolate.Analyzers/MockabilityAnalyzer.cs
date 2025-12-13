@@ -56,7 +56,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	private static ITypeSymbol? GetInvocationTypeArguments(IInvocationOperation invocation)
-		=> AnalyzerHelpers.GetInvocationTypeArguments(invocation.TargetMethod);
+		=> AnalyzerHelpers.GetSingleInvocationTypeArgumentOrNull(invocation.TargetMethod);
 
 	private static bool HasMockGeneratorAttribute(IMethodSymbol method)
 		=> AnalyzerHelpers.HasMockGeneratorAttribute(method);
