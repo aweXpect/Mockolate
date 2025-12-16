@@ -62,6 +62,16 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task HasReturnCalls_ShouldDefaultToFalse()
+	{
+		MyMethodSetup sut = new();
+
+		bool result = sut.GetHasReturnCalls();
+
+		await That(result).IsFalse();
+	}
+
+	[Fact]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
 		IMethodService mock = Mock.Create<IMethodService>();
@@ -950,10 +960,10 @@ public sealed partial class SetupMethodTests
 		public static void DoTriggerCallbacks(NamedParameter?[] namedParameters, object?[] values)
 			=> TriggerCallbacks(namedParameters, values);
 
-		protected override bool? GetCallBaseClass()
-			=> throw new NotSupportedException();
+		public bool GetHasReturnCalls()
+			=> base.HasReturnCalls();
 
-		protected override bool HasReturnCalls()
+		protected override bool? GetCallBaseClass()
 			=> throw new NotSupportedException();
 
 		protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
