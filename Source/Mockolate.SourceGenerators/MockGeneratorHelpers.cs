@@ -103,7 +103,11 @@ internal static class MockGeneratorHelpers
 				    processedTypes.Add(typeToCheck))
 				{
 					yield return new MockClass([typeToCheck,]);
-					typesToProcess.Enqueue((typeToCheck, currentDepth + 1));
+					// Only enqueue for further processing if we haven't reached max depth
+					if (currentDepth + 1 < maxDepth)
+					{
+						typesToProcess.Enqueue((typeToCheck, currentDepth + 1));
+					}
 				}
 			}
 		}
