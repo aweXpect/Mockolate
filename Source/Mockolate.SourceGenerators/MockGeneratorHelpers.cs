@@ -62,37 +62,44 @@ internal static class MockGeneratorHelpers
 
 	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes)
 	{
-		Queue<ITypeSymbol> typesToProcess = new(initialTypes);
+		// Depth limit to prevent excessive traversal of nested types
+		const int maxDepth = 1;
+		
+		Queue<(ITypeSymbol Type, int Depth)> typesToProcess = new();
+		foreach (ITypeSymbol initialType in initialTypes)
+		{
+			typesToProcess.Enqueue((initialType, 0));
+		}
+		
 		HashSet<ITypeSymbol> processedTypes = new(SymbolEqualityComparer.Default);
 
 		while (typesToProcess.Count > 0)
 		{
-			ITypeSymbol currentType = typesToProcess.Dequeue();
+			(ITypeSymbol currentType, int currentDepth) = typesToProcess.Dequeue();
 
-			foreach (ITypeSymbol propertyType in currentType.GetMembers()
-				         .OfType<IPropertySymbol>()
-				         .Select(p => p.Type))
+			// Stop traversal if we've reached the maximum depth
+			if (currentDepth >= maxDepth)
 			{
-				if (propertyType.TypeKind == TypeKind.Interface &&
-				    IsMockable(propertyType) &&
-				    processedTypes.Add(propertyType))
-				{
-					yield return new MockClass([propertyType,]);
-					typesToProcess.Enqueue(propertyType);
-				}
+				continue;
 			}
 
-			foreach (ITypeSymbol methodType in currentType.GetMembers()
-				         .OfType<IMethodSymbol>()
-				         .Where(m => !m.ReturnsVoid)
-				         .Select(m => m.ReturnType))
+			// Process all members in a single pass
+			foreach (ISymbol member in currentType.GetMembers())
 			{
-				if (methodType.TypeKind == TypeKind.Interface &&
-				    IsMockable(methodType) &&
-				    processedTypes.Add(methodType))
+				ITypeSymbol? typeToCheck = member switch
 				{
-					yield return new MockClass([methodType,]);
-					typesToProcess.Enqueue(methodType);
+					IPropertySymbol property => property.Type,
+					IMethodSymbol method when !method.ReturnsVoid => method.ReturnType,
+					_ => null
+				};
+
+				if (typeToCheck != null &&
+				    typeToCheck.TypeKind == TypeKind.Interface &&
+				    IsMockable(typeToCheck) &&
+				    processedTypes.Add(typeToCheck))
+				{
+					yield return new MockClass([typeToCheck,]);
+					typesToProcess.Enqueue((typeToCheck, currentDepth + 1));
 				}
 			}
 		}
