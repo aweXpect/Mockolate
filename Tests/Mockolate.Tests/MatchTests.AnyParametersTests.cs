@@ -23,7 +23,7 @@ public sealed partial class MatchTests
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameters sut = Match.AnyParameters();
-			string expectedValue = "AnyParameters()";
+			string expectedValue = "Match.AnyParameters()";
 
 			string? result = sut.ToString();
 

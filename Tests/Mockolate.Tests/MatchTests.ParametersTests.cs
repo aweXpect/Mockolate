@@ -26,7 +26,7 @@ public sealed partial class MatchTests
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameters sut = Match.Parameters(_ => true);
-			string expectedValue = "Parameters(_ => true)";
+			string expectedValue = "Match.Parameters(_ => true)";
 
 			string? result = sut.ToString();
 

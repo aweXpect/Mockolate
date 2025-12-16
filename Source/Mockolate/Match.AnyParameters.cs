@@ -18,7 +18,7 @@ public partial class Match
 			=> true;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => "AnyParameters()";
+		public override string ToString() => "Match.AnyParameters()";
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

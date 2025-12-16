@@ -21,7 +21,7 @@ public partial class Match
 			=> predicate(values);
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"Parameters({predicateExpression})";
+		public override string ToString() => $"Match.Parameters({predicateExpression})";
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

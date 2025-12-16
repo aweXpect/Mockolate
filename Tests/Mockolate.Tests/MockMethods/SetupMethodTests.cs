@@ -586,6 +586,16 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith1Parameters
 	{
 		[Fact]
+		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			ReturnMethodSetup<int, string> setup = new("Foo", Match.AnyParameters());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string> setup = new("Foo",
@@ -622,7 +632,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(AnyParameters())");
+			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
 		[Fact]
@@ -663,7 +673,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(AnyParameters())");
+			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
 		[Fact]
@@ -705,7 +715,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(AnyParameters())");
+			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
 		[Fact]
@@ -750,7 +760,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("int Foo(AnyParameters())");
+			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
 		[Fact]
@@ -804,6 +814,16 @@ public sealed partial class SetupMethodTests
 	public class VoidMethodWith1Parameters
 	{
 		[Fact]
+		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		{
+			VoidMethodSetup<string> setup = new("Foo", Match.AnyParameters());
+
+			string result = setup.ToString();
+
+			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string> setup = new("Foo",
@@ -824,7 +844,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(AnyParameters())");
+			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
 		[Fact]
@@ -849,7 +869,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(AnyParameters())");
+			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
 		[Fact]
@@ -875,7 +895,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(AnyParameters())");
+			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
 		[Fact]
@@ -904,7 +924,7 @@ public sealed partial class SetupMethodTests
 
 			string result = setup.ToString();
 
-			await That(result).IsEqualTo("void Foo(AnyParameters())");
+			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
 		[Fact]
