@@ -14,7 +14,7 @@ public partial class Match
 	private sealed class DefaultEventParameters : IDefaultEventParameters
 	{
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => "WithDefaultParameters()";
+		public override string ToString() => "Match.WithDefaultParameters()";
 	}
 }
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

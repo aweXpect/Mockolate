@@ -224,16 +224,6 @@ public sealed partial class SetupMethodTests
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
-
-			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
-			}
 		}
 
 		public class ReturnMethodWith2Parameters
@@ -431,16 +421,6 @@ public sealed partial class SetupMethodTests
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
-			}
-
-			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -677,16 +657,6 @@ public sealed partial class SetupMethodTests
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
-			}
-
-			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -961,16 +931,6 @@ public sealed partial class SetupMethodTests
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
-			}
-
-			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int, int>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -1284,16 +1244,6 @@ public sealed partial class SetupMethodTests
 
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
-			}
-
-			private class MyReturnMethodSetupAnyParameterCombination<T>(string name)
-				: ReturnMethodSetup<Task, string, long, int, int, int>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 

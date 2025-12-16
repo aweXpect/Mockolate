@@ -10,7 +10,7 @@ public sealed partial class MatchTests
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IDefaultEventParameters sut = Match.WithDefaultParameters();
-			string expectedValue = "WithDefaultParameters()";
+			string expectedValue = "Match.WithDefaultParameters()";
 
 			string? result = sut.ToString();
 
