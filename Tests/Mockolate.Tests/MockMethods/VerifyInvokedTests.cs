@@ -17,6 +17,17 @@ public sealed partial class VerifyInvokedTests
 	}
 
 	[Fact]
+	public async Task Equals_ShouldWorkWithNull()
+	{
+		object? obj = null;
+		IMethodService mock = Mock.Create<IMethodService>();
+
+		_ = mock.Equals(null);
+
+		await That(mock.VerifyMock.Invoked.Equals(It.Is(obj))).Once();
+	}
+
+	[Fact]
 	public async Task GetHashCode_ShouldWork()
 	{
 		IMethodService mock = Mock.Create<IMethodService>();
@@ -33,6 +44,17 @@ public sealed partial class VerifyInvokedTests
 
 		sut.Multiply(1, 4);
 		sut.Multiply(2, 4);
+
+		await That(sut.VerifyMock.Invoked.Subtract(It.IsAny<int>(), It.IsAny<int?>())).Never();
+	}
+
+	[Fact]
+	public async Task MethodWithDifferentOverload_ShouldNotMatch()
+	{
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+
+		sut.Subtract(1, 4, false);
+		sut.Subtract(2, 4, true);
 
 		await That(sut.VerifyMock.Invoked.Subtract(It.IsAny<int>(), It.IsAny<int?>())).Never();
 	}

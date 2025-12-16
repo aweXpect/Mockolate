@@ -388,6 +388,8 @@ public sealed partial class MockTests
 
 		int Subtract(int minuend, int? subtrahend);
 
+		int Subtract(int minuend, int? subtrahend, bool flag);
+
 		void SetIsValid(bool isValid, Func<bool>? predicate);
 	}
 

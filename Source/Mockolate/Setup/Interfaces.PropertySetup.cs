@@ -17,7 +17,7 @@ public interface IInteractivePropertySetup : ISetup
 	///     Invokes the getter logic for the <paramref name="invocation" /> and returns the value of type
 	///     <typeparamref name="TResult" />.
 	/// </summary>
-	TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior, Func<TResult>? defaultValueGenerator);
+	TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
 	/// <summary>
 	///     Checks if the <paramref name="propertyAccess" /> matches the setup.

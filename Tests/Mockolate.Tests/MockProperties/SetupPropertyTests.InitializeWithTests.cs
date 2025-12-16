@@ -16,6 +16,17 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
+		public async Task WithNull_ShouldReturnNull()
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyStringProperty.InitializeWith(null);
+
+			string? result = sut.MyStringProperty;
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
 		public async Task WhenSet_ShouldUpdateValue_ShouldReturnInitializedValue()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();

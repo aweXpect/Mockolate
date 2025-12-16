@@ -120,7 +120,7 @@ public partial class MockRegistration
 				? baseValueAccessor.Invoke()
 				: defaultValueGenerator());
 		return matchingSetup.InvokeGetter(interaction, Behavior,
-			matchingSetup.CallBaseClass() ?? (Behavior.CallBaseClass && baseValueAccessor is not null)
+			(matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass) && baseValueAccessor is not null
 				? baseValueAccessor
 				: defaultValueGenerator);
 	}
