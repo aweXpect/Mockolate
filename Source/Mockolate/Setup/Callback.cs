@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Mockolate.Setup;
@@ -172,7 +173,8 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	/// <summary>
 	///     Invokes the callback if the predicates are satisfied, providing the invocation count.
 	/// </summary>
-	public bool Invoke<TReturn>(ref int index, Func<int, TDelegate, TReturn> callback, out TReturn? returnValue)
+	public bool Invoke<TReturn>(ref int index, Func<int, TDelegate, TReturn> callback,
+		[NotNullWhen(true)] out TReturn? returnValue)
 	{
 		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
 		{

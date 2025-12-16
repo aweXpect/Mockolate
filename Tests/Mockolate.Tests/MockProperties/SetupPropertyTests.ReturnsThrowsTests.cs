@@ -59,6 +59,21 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
+		public async Task Returns_CallbackWithWhen_ShouldReturnDefaultValueWhenPredicateIsFalse()
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyProperty
+				.Returns(() => 4).When(i => i > 0);
+
+			int result1 = sut.MyProperty;
+			int result2 = sut.MyProperty;
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(4);
+		}
+
+		[Fact]
 		public async Task WithoutCallback_IPropertySetupReturnBuilder_ShouldNotThrow()
 		{
 			IPropertyService mock = Mock.Create<IPropertyService>();
@@ -123,7 +138,7 @@ public sealed partial class SetupPropertyTests
 				.Returns("foo").For(2)
 				.Returns("bar").For(3);
 
-			List<string> values = [];
+			List<string?> values = [];
 			for (int i = 0; i < 10; i++)
 			{
 				values.Add(sut.MyStringProperty);
@@ -172,9 +187,9 @@ public sealed partial class SetupPropertyTests
 			sut.SetupMock.Property.MyStringProperty
 				.Returns("foo").When(i => i > 0);
 
-			string result1 = sut.MyStringProperty;
-			string result2 = sut.MyStringProperty;
-			string result3 = sut.MyStringProperty;
+			string? result1 = sut.MyStringProperty;
+			string? result2 = sut.MyStringProperty;
+			string? result3 = sut.MyStringProperty;
 
 			await That(result1).IsEqualTo("");
 			await That(result2).IsEqualTo("foo");
@@ -191,7 +206,7 @@ public sealed partial class SetupPropertyTests
 				.Returns("baz")
 				.Returns("bar").For(3);
 
-			List<string> values = [];
+			List<string?> values = [];
 			for (int i = 0; i < 10; i++)
 			{
 				values.Add(sut.MyStringProperty);

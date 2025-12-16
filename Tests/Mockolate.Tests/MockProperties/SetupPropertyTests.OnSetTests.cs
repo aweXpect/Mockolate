@@ -175,6 +175,29 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
+		public async Task WithIndexAndValue_ShouldExecuteWhenPropertyIsWrittenTo()
+		{
+			List<int> receivedIndexes = [];
+			List<int> receivedValues = [];
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyProperty
+				.InitializeWith(4)
+				.OnSet.Do((i, v) =>
+				{
+					receivedIndexes.Add(i);
+					receivedValues.Add(v);
+				});
+
+			sut.MyProperty = 6;
+			sut.MyProperty = 8;
+			sut.MyProperty = 10;
+
+			await That(receivedIndexes).IsEqualTo([0, 1, 2,]);
+			await That(receivedValues).IsEqualTo([6, 8, 10,]);
+		}
+
+		[Fact]
 		public async Task WithValue_ShouldExecuteWhenPropertyIsWrittenTo()
 		{
 			int receivedNewValue = 0;
@@ -183,7 +206,7 @@ public sealed partial class SetupPropertyTests
 
 			sut.SetupMock.Property.MyProperty
 				.InitializeWith(4)
-				.OnSet.Do((_, v) =>
+				.OnSet.Do(v =>
 				{
 					callCount++;
 					receivedNewValue = v;
