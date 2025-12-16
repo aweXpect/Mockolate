@@ -586,7 +586,7 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith1Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string> setup = new("Foo", Match.AnyParameters());
 
@@ -626,7 +626,7 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith2Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long> setup = new("Foo", Match.AnyParameters());
 
@@ -667,7 +667,7 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith3Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int> setup = new("Foo", Match.AnyParameters());
 
@@ -709,7 +709,7 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith4Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo", Match.AnyParameters());
 
@@ -754,7 +754,7 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith5Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo", Match.AnyParameters());
 
@@ -814,7 +814,7 @@ public sealed partial class SetupMethodTests
 	public class VoidMethodWith1Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string> setup = new("Foo", Match.AnyParameters());
 
@@ -838,7 +838,7 @@ public sealed partial class SetupMethodTests
 	public class VoidMethodWith2Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long> setup = new("Foo", Match.AnyParameters());
 
@@ -863,7 +863,7 @@ public sealed partial class SetupMethodTests
 	public class VoidMethodWith3Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int> setup = new("Foo", Match.AnyParameters());
 
@@ -889,7 +889,7 @@ public sealed partial class SetupMethodTests
 	public class VoidMethodWith4Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int> setup = new("Foo", Match.AnyParameters());
 
@@ -918,7 +918,7 @@ public sealed partial class SetupMethodTests
 	public class VoidMethodWith5Parameters
 	{
 		[Fact]
-		public async Task ToString_AnyParameterCombination_ShouldReturnMethodSignature()
+		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int, int> setup = new("Foo", Match.AnyParameters());
 
