@@ -57,7 +57,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 	/// <summary>
 	///     Gets a value indicating whether this setup has return calls configured.
 	/// </summary>
-	protected abstract bool HasReturnCalls();
+	protected virtual bool HasReturnCalls() => false;
 
 	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type

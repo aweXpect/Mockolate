@@ -186,11 +186,6 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount), out TReturn? newValue))
 			{
-				if (newValue is null)
-				{
-					return default!;
-				}
-
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
 					throw new MockException(
@@ -477,11 +472,6 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1), out TReturn? newValue))
 			{
-				if (newValue is null)
-				{
-					return default!;
-				}
-
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
 					throw new MockException(
@@ -799,11 +789,6 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2), out TReturn? newValue))
 			{
-				if (newValue is null)
-				{
-					return default!;
-				}
-
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
 					throw new MockException(
@@ -1136,11 +1121,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2, p3), out TReturn? newValue))
 			{
-				if (newValue is null)
-				{
-					return default!;
-				}
-
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
 					throw new MockException(
@@ -1491,11 +1471,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, p1, p2, p3, p4), out TReturn? newValue))
 			{
-				if (newValue is null)
-				{
-					return default!;
-				}
-
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
 					throw new MockException(

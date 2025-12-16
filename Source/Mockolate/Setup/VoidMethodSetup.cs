@@ -196,10 +196,6 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
 
-	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
-
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 		=> defaultValueGenerator();
@@ -443,10 +439,6 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
@@ -714,10 +706,6 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
@@ -994,10 +982,6 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
@@ -1280,10 +1264,6 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
 	protected override bool? GetCallBaseClass()
 		=> _callBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
