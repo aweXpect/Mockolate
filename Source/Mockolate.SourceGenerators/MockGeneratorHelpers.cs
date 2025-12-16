@@ -63,7 +63,11 @@ internal static class MockGeneratorHelpers
 	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes)
 	{
 		// Depth limit to prevent excessive traversal of nested types
-		const int maxDepth = 1;
+		// Depth 2 allows discovering types up to 2 levels deep:
+		// Level 0: Explicitly mocked type (e.g., IMyInterface1)
+		// Level 1: Types from properties/methods (e.g., IMyInterface2)
+		// Level 2: Types from properties/methods of Level 1 types (e.g., IMyInterface3)
+		const int maxDepth = 2;
 		
 		Queue<(ITypeSymbol Type, int Depth)> typesToProcess = new();
 		foreach (ITypeSymbol initialType in initialTypes)
