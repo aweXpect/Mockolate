@@ -596,7 +596,7 @@ namespace Mockolate.Setup
         public Callback(TDelegate @delegate) { }
         public bool Invoke(ref int index, System.Action<int, TDelegate> callback) { }
         public bool Invoke(bool wasInvoked, ref int index, System.Action<int, TDelegate> callback) { }
-        public bool Invoke<TReturn>(ref int index, System.Func<int, TDelegate, TReturn> callback, out TReturn? returnValue) { }
+        public bool Invoke<TReturn>(ref int index, System.Func<int, TDelegate, TReturn> callback, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TReturn? returnValue) { }
     }
     public interface IIndexerGetterSetup<TValue, out T1>
     {
@@ -824,7 +824,7 @@ namespace Mockolate.Setup
     {
         bool? CallBaseClass();
         void InitializeWith(object? value);
-        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction invocation, Mockolate.MockBehavior behavior, System.Func<TResult>? defaultValueGenerator);
+        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction invocation, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
         void InvokeSetter(Mockolate.Interactions.IInteraction invocation, object? value, Mockolate.MockBehavior behavior);
         bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
@@ -1387,7 +1387,7 @@ namespace Mockolate.Setup
         public abstract string Name { get; }
         protected abstract bool? GetCallBaseClass();
         protected abstract void InitializeValue(object? value);
-        protected abstract TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior, System.Func<TResult>? defaultValueGenerator);
+        protected abstract TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
         protected abstract void InvokeSetter(object? value, Mockolate.MockBehavior behavior);
         protected abstract bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
@@ -1401,7 +1401,7 @@ namespace Mockolate.Setup
         protected override bool? GetCallBaseClass() { }
         protected override void InitializeValue(object? value) { }
         public Mockolate.Setup.IPropertySetup<T> InitializeWith(T value) { }
-        protected override TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior, System.Func<TResult>? defaultValueGenerator) { }
+        protected override TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
         protected override void InvokeSetter(object? value, Mockolate.MockBehavior behavior) { }
         protected override bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess) { }
         public Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T> callback) { }
