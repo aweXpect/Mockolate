@@ -16,7 +16,7 @@ var classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
 );
 
 // Specify up to 8 additional interfaces for the mock:
-var sut2 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
+var sut2 = Mock.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**
@@ -47,8 +47,16 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- If `false` (default), the mock will not call any base class implementations.
 	- If `true`, the mock will call the base class implementation and use its return values as default values, if no
 	  explicit setup is defined.
+- `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
+	- Automatically initialize all mocks of type T with the given setups when they are created.
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
+	- The default implementation provides sensible defaults for the most common use cases:
+		- Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
+		- Empty string for `string`
+		- Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
+		- Tuples with recursively defaulted values
+		- `null` for other reference types
 
 ## Using a factory for shared behavior
 
@@ -61,3 +69,6 @@ var factory = new Mock.Factory(behavior);
 var sut1 = factory.Create<IChocolateDispenser>();
 var sut2 = factory.Create<ILemonadeDispenser>();
 ```
+
+Using a factory allows you to create multiple mocks with identical, centrally configured behavior. This is especially
+useful when you need consistent mock setups across multiple tests or for different types.
