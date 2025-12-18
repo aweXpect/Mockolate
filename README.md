@@ -145,6 +145,9 @@ var sut1 = factory.Create<IChocolateDispenser>();
 var sut2 = factory.Create<ILemonadeDispenser>();
 ```
 
+Using a factory allows you to create multiple mocks with identical, centrally configured behavior. This is especially
+useful when you need consistent mock setups across multiple tests or for different types.
+
 ## Setup
 
 Set up return values or behaviors for methods, properties, and indexers on your mock. Control how the mock responds to

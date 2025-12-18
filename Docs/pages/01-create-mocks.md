@@ -51,12 +51,12 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- Automatically initialize all mocks of type T with the given setups when they are created.
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
-    - The default implementation provides sensible defaults for the most common use cases:
-      - Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
-      - Empty string for `string`
-      - Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
-      - Tuples with recursively defaulted values
-      - `null` for other reference types
+	- The default implementation provides sensible defaults for the most common use cases:
+		- Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
+		- Empty string for `string`
+		- Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
+		- Tuples with recursively defaulted values
+		- `null` for other reference types
 
 ## Using a factory for shared behavior
 
@@ -69,3 +69,6 @@ var factory = new Mock.Factory(behavior);
 var sut1 = factory.Create<IChocolateDispenser>();
 var sut2 = factory.Create<ILemonadeDispenser>();
 ```
+
+Using a factory allows you to create multiple mocks with identical, centrally configured behavior. This is especially
+useful when you need consistent mock setups across multiple tests or for different types.
