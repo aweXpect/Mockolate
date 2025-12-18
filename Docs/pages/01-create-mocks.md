@@ -16,7 +16,7 @@ var classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
 );
 
 // Specify up to 8 additional interfaces for the mock:
-var sut2 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
+var sut2 = Mock.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**

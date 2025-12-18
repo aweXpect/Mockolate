@@ -26,6 +26,15 @@ Framework 4.8.
    ```csharp
    using Mockolate;
 
+   public delegate void ChocolateDispensedDelegate(string type, int amount);
+   public interface IChocolateDispenser
+   {
+       int this[string type] { get; set; }
+       int TotalDispensed { get; set; }
+       bool Dispense(string type, int amount);
+       event ChocolateDispensedDelegate ChocolateDispensed;
+   }
+   
    // Create a mock for IChocolateDispenser
    var sut = Mock.Create<IChocolateDispenser>();
    
@@ -47,7 +56,10 @@ Framework 4.8.
    
    // Track dispensed amount via event
    int dispensedAmount = 0;
-   sut.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
+   sut.ChocolateDispensed += (type, amount)
+   {
+       dispensedAmount += amount;
+   }
    
    // Act: Try to dispense chocolates
    bool gotChoc1 = sut.Dispense("Dark", 4); // true
@@ -59,15 +71,6 @@ Framework 4.8.
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
-
-   public delegate void ChocolateDispensedDelegate(string type, int amount);
-   public interface IChocolateDispenser
-   {
-       int this[string type] { get; set; }
-       int TotalDispensed { get; set; }
-       bool Dispense(string type, int amount);
-       event ChocolateDispensedDelegate ChocolateDispensed;
-   }
    ```
 
 ## Create mocks
@@ -88,7 +91,7 @@ var classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
 );
 
 // Specify up to 8 additional interfaces for the mock:
-var sut2 = factory.Create<MyChocolateDispenser, ILemonadeDispenser>();
+var sut2 = Mock.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**
