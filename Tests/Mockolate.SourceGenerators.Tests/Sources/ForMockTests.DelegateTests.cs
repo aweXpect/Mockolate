@@ -19,23 +19,23 @@ public sealed partial class ForMockTests
 			     		_ = Mock.Create<DoSomething>();
 			         }
 
-			         public delegate int DoSomething(int x, int y);
+			         public delegate int DoSomething(int x, int y, out bool success);
 			     }
 			     """);
 
 		await That(result.Sources)
 			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public IReturnMethodSetup<int, int, int> Delegate(IParameter<int>? x, IParameter<int>? y)
+			          		public IReturnMethodSetup<int, int, int, bool> Delegate(IParameter<int>? x, IParameter<int>? y, IOutParameter<bool> success)
 			          		{
-			          			var methodSetup = new ReturnMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y ?? It.IsNull<int>())));
+			          			var methodSetup = new ReturnMethodSetup<int, int, int, bool>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y ?? It.IsNull<int>())), new NamedParameter("success", (IParameter)(success)));
 			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<MyCode.Program.DoSomething> Invoked(IParameter<int>? x, IParameter<int>? y)
-			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y ?? It.IsNull<int>())));
+			          		public VerificationResult<MyCode.Program.DoSomething> Invoked(IParameter<int>? x, IParameter<int>? y, IVerifyOutParameter<bool> success)
+			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y ?? It.IsNull<int>())), new NamedParameter("success", (IParameter)(success)));
 			          """).IgnoringNewlineStyle();
 	}
 

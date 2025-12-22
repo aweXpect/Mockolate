@@ -100,16 +100,7 @@ internal static partial class Sources
 				sb.Append(' ').Append(parameter.Name);
 			}
 
-			sb.Append(")");
-			if (@delegate.GenericParameters is not null && @delegate.GenericParameters.Value.Count > 0)
-			{
-				foreach (GenericParameter gp in @delegate.GenericParameters.Value)
-				{
-					gp.AppendWhereConstraint(sb, "\t\t\t");
-				}
-			}
-
-			sb.AppendLine();
+			sb.Append(")").AppendLine();
 
 			sb.Append("\t\t\t=> CastToMockOrThrow(verify).Method(").Append(@delegate.GetUniqueNameString());
 
@@ -134,16 +125,7 @@ internal static partial class Sources
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> Invoked")
-					.Append("(IParameters parameters)");
-				if (@delegate.GenericParameters is not null && @delegate.GenericParameters.Value.Count > 0)
-				{
-					foreach (GenericParameter gp in @delegate.GenericParameters.Value)
-					{
-						gp.AppendWhereConstraint(sb, "\t\t\t");
-					}
-				}
-
-				sb.AppendLine();
+					.Append("(IParameters parameters)").AppendLine();
 
 				sb.Append("\t\t\t=> CastToMockOrThrow(verify).Method(").Append(@delegate.GetUniqueNameString());
 				sb.AppendLine(", parameters);");
@@ -607,10 +589,7 @@ internal static partial class Sources
 					.Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic IPropertySetup<").Append(property.Type.Fullname).Append("> ")
-					.Append(property.IndexerParameters is not null
-						? property.Name.Replace("[]",
-							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"IParameter<{p.Type.Fullname}> {p.Name}"))}]")
-						: property.Name).AppendLine();
+					.Append(property.Name).AppendLine();
 
 				sb.AppendLine("\t\t{");
 				sb.AppendLine("\t\t\tget");

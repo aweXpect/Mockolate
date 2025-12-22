@@ -175,7 +175,7 @@ internal static partial class Sources
 				sb.Append("\t}").AppendLine();
 				sb.AppendLine();
 			}
-			else if (mockClass.Constructors?.Count > 0)
+			else if (mockClass.Constructors is not null)
 			{
 				foreach (Method constructor in mockClass.Constructors)
 				{
