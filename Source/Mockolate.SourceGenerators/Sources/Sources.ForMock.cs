@@ -396,7 +396,7 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("\t{");
-		if (property.Getter != null && property.Getter.Accessibility != Accessibility.Private)
+		if (property.Getter != null)
 		{
 			sb.Append("\t\t");
 			if (property.Getter.Accessibility != property.Accessibility)
@@ -505,7 +505,7 @@ internal static partial class Sources
 			sb.AppendLine("\t\t}");
 		}
 
-		if (property.Setter != null && property.Setter.Accessibility != Accessibility.Private)
+		if (property.Setter != null)
 		{
 			sb.Append("\t\t");
 			if (property.Setter.Accessibility != property.Accessibility)
@@ -891,7 +891,7 @@ internal static partial class Sources
 	///     Formats method parameters with ref/out keywords and names for method invocations.
 	/// </summary>
 	private static string FormatMethodParametersWithRefKind(IEnumerable<MethodParameter> parameters)
-		=> string.Join(", ", parameters.Select(p => $"{p.RefKind.GetString()}{p.Name}"));
+		=> string.Join(", ", parameters.Select(p => $"{p.RefKind.GetString(true)}{p.Name}"));
 
 	/// <summary>
 	///     Formats indexer parameters as comma-separated names or wrappers.

@@ -153,6 +153,7 @@ internal static class Helpers
 		{
 			(RefKind.Ref, _) => $"IRefParameter<{GetType(parameter)}>",
 			(RefKind.Out, _) => $"IOutParameter<{GetType(parameter)}>",
+			(RefKind.RefReadOnlyParameter, _) => $"IRefParameter<{GetType(parameter)}>",
 			(_, SpecialGenericType.Span) => $"ISpanParameter<{GetType(parameter)}>",
 			(_, SpecialGenericType.ReadOnlySpan) => $"IReadOnlySpanParameter<{GetType(parameter)}>",
 			(_, _) => $"IParameter<{GetType(parameter)}>",
@@ -170,7 +171,7 @@ internal static class Helpers
 	}
 
 	public static bool IsNullable(this MethodParameter parameter)
-		=> parameter.RefKind is not RefKind.Ref and not RefKind.Out &&
+		=> parameter.RefKind is not RefKind.Ref and not RefKind.Out and not RefKind.RefReadOnlyParameter &&
 		   parameter.Type.SpecialGenericType is not (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
 
 

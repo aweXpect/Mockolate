@@ -564,6 +564,32 @@ public sealed partial class SetupMethodTests
 				"The method 'Mockolate.Tests.MockMethods.SetupMethodTests.IMethodService.MyIntMethodWithoutParameters()' was invoked without prior setup.");
 	}
 
+	[Fact]
+	public async Task WithInParameter_ShouldUseSetup()
+	{
+		IMethodSetupWithInAndRefReadonlyParameter sut = Mock.Create<IMethodSetupWithInAndRefReadonlyParameter>();
+		MyReadonlyStruct value = new(3);
+		sut.SetupMock.Method.MethodWithInParameter(It.IsAny<MyReadonlyStruct>())
+			.Returns(p1 => p1.Value);
+
+		int result = sut.MethodWithInParameter(in value);
+
+		await That(result).IsEqualTo(3);
+	}
+
+	[Fact]
+	public async Task WithRefReadonlyParameter_ShouldUseSetup()
+	{
+		IMethodSetupWithInAndRefReadonlyParameter sut = Mock.Create<IMethodSetupWithInAndRefReadonlyParameter>();
+		MyReadonlyStruct value = new(3);
+		sut.SetupMock.Method.MethodWithRefReadonlyParameter(It.IsAnyRef<MyReadonlyStruct>())
+			.Returns(p1 => p1.Value);
+
+		int result = sut.MethodWithRefReadonlyParameter(in value);
+
+		await That(result).IsEqualTo(3);
+	}
+
 	public class ReturnMethodWith0Parameters
 	{
 		[Fact]
@@ -994,6 +1020,17 @@ public sealed partial class SetupMethodTests
 		void MethodWithRefParameter(int p1, ref int p2);
 		void MethodWithoutOtherOverloads(int p1, int p2, int p3);
 		void MethodWithSingleParameter(int p1);
+	}
+
+	public interface IMethodSetupWithInAndRefReadonlyParameter
+	{
+		int MethodWithInParameter(in MyReadonlyStruct p1);
+		int MethodWithRefReadonlyParameter(ref readonly MyReadonlyStruct p1);
+	}
+
+	public readonly struct MyReadonlyStruct(int value)
+	{
+		public int Value { get; } = value;
 	}
 
 	public interface IReturnMethodSetupWithParametersTest

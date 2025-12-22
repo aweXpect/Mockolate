@@ -1019,7 +1019,7 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
-		public async Task Methods_ShouldSupportRefAndOutParameters()
+		public async Task Methods_ShouldSupportRefInAndOutParameters()
 		{
 			GeneratorResult result = Generator
 				.Run("""
@@ -1039,6 +1039,8 @@ public sealed partial class ForMockTests
 				     {
 				         void MyMethod1(ref int index);
 				         bool MyMethod2(int index, out bool isReadOnly);
+				         void MyMethod3(in MyReadonlyStruct p1);
+				         void MyMethod4(ref readonly MyReadonlyStruct p1);
 				     }
 				     """);
 
@@ -1083,6 +1085,30 @@ public sealed partial class ForMockTests
 				          		isReadOnly = methodExecution.SetOutParameter<bool>("isReadOnly", () => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!));
 				          		methodExecution.TriggerCallbacks(index, isReadOnly);
 				          		return methodExecution.Result;
+				          	}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod3(in MyReadonlyStruct)" />
+				          	public void MyMethod3(in MyReadonlyStruct p1)
+				          	{
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod3", p1);
+				          		if (this._wrapped is not null)
+				          		{
+				          			this._wrapped.MyMethod3(in p1);
+				          		}
+				          		methodExecution.TriggerCallbacks(p1);
+				          	}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod4(ref readonly MyReadonlyStruct)" />
+				          	public void MyMethod4(ref readonly MyReadonlyStruct p1)
+				          	{
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod4", p1);
+				          		if (this._wrapped is not null)
+				          		{
+				          			this._wrapped.MyMethod4(in p1);
+				          		}
+				          		methodExecution.TriggerCallbacks(p1);
 				          	}
 				          """).IgnoringNewlineStyle();
 		}
@@ -1199,6 +1225,9 @@ public sealed partial class ForMockTests
 				         int SomeProperty { get; set; }
 				         bool? SomeReadOnlyProperty { get; }
 				         bool? SomeWriteOnlyProperty { set; }
+				         internal int SomeInternalProperty { get; set; }
+				         private int SomePrivateProperty { get; set; }
+				         private protected int SomePrivateProtectedProperty { get; set; }
 				     }
 				     """);
 
@@ -1241,6 +1270,60 @@ public sealed partial class ForMockTests
 				          			if (this._wrapped is not null)
 				          			{
 				          				this._wrapped.SomeWriteOnlyProperty = value;
+				          			}
+				          		}
+				          	}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          	/// <inheritdoc cref="MyCode.IMyService.SomeInternalProperty" />
+				          	internal int SomeInternalProperty
+				          	{
+				          		get
+				          		{
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyService.SomeInternalProperty", () => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!), this._wrapped is null ? null : () => this._wrapped.SomeInternalProperty);
+				          		}
+				          		set
+				          		{
+				          			MockRegistrations.SetProperty("MyCode.IMyService.SomeInternalProperty", value);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.SomeInternalProperty = value;
+				          			}
+				          		}
+				          	}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          	/// <inheritdoc cref="MyCode.IMyService.SomePrivateProperty" />
+				          	private int SomePrivateProperty
+				          	{
+				          		get
+				          		{
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyService.SomePrivateProperty", () => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!), this._wrapped is null ? null : () => this._wrapped.SomePrivateProperty);
+				          		}
+				          		set
+				          		{
+				          			MockRegistrations.SetProperty("MyCode.IMyService.SomePrivateProperty", value);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.SomePrivateProperty = value;
+				          			}
+				          		}
+				          	}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          	/// <inheritdoc cref="MyCode.IMyService.SomePrivateProtectedProperty" />
+				          	private protected int SomePrivateProtectedProperty
+				          	{
+				          		get
+				          		{
+				          			return MockRegistrations.GetProperty<int>("MyCode.IMyService.SomePrivateProtectedProperty", () => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!), this._wrapped is null ? null : () => this._wrapped.SomePrivateProtectedProperty);
+				          		}
+				          		set
+				          		{
+				          			MockRegistrations.SetProperty("MyCode.IMyService.SomePrivateProtectedProperty", value);
+				          			if (this._wrapped is not null)
+				          			{
+				          				this._wrapped.SomePrivateProtectedProperty = value;
 				          			}
 				          		}
 				          	}

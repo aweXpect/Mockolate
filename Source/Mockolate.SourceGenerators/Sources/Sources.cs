@@ -496,23 +496,21 @@ internal static partial class Sources
 	internal static string ToVisibilityString(this Accessibility accessibility)
 		=> accessibility switch
 		{
-			Accessibility.Private => "private",
 			Accessibility.Protected => "protected",
 			Accessibility.Internal => "internal",
 			Accessibility.ProtectedOrInternal => "protected",
 			Accessibility.Public => "public",
 			Accessibility.ProtectedAndInternal => "private protected",
-			_ => throw new ArgumentOutOfRangeException(nameof(accessibility), accessibility, null),
+			_ => "private",
 		};
 
-	internal static string GetString(this RefKind refKind)
+	internal static string GetString(this RefKind refKind, bool replaceRefReadonlyWithIn = false)
 		=> refKind switch
 		{
-			RefKind.None => "",
 			RefKind.In => "in ",
 			RefKind.Out => "out ",
 			RefKind.Ref => "ref ",
-			RefKind.RefReadOnlyParameter => "ref readonly ",
+			RefKind.RefReadOnlyParameter => replaceRefReadonlyWithIn ? "in " : "ref readonly ",
 			_ => "",
 		};
 
@@ -558,11 +556,6 @@ internal static partial class Sources
 	/// </summary>
 	private static string GetTypeParametersDescription(int numberOfParameters, int startIndex = 1)
 	{
-		if (numberOfParameters == 1)
-		{
-			return $"<typeparamref name=\"T{startIndex}\" />";
-		}
-
 		StringBuilder sb = new();
 		for (int i = startIndex; i < startIndex + numberOfParameters - 1; i++)
 		{
