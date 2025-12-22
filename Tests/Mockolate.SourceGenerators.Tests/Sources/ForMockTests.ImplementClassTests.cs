@@ -626,6 +626,7 @@ public sealed partial class ForMockTests
 		[InlineData("struct")]
 		[InlineData("class")]
 		[InlineData("class, notnull")]
+		[InlineData("notnull")]
 		[InlineData("unmanaged")]
 		[InlineData("class?")]
 		[InlineData("MyCode.IMyInterface")]

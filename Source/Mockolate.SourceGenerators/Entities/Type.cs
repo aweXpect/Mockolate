@@ -40,4 +40,5 @@ internal record Type
 	internal static Type Void { get; } = new("void");
 
 	public string Fullname { get; }
+	public override string ToString() => Fullname;
 }
