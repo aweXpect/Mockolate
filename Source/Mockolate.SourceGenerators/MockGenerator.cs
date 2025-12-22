@@ -50,7 +50,7 @@ public class MockGenerator : IIncrementalGenerator
 
 			context.AddSource($"MockFor{mockToGenerate.Name}.g.cs",
 				SourceText.From(Sources.Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
-			if (mockToGenerate.MockClass.AdditionalImplementations.Any())
+			if (mockToGenerate.MockClass.AdditionalImplementations.Any() && mockToGenerate.MockClass.Delegate is null)
 			{
 				context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
 					SourceText.From(
