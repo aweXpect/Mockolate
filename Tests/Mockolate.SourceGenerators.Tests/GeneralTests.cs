@@ -196,7 +196,7 @@ public class GeneralTests
 
 			         public interface IMyInterface
 			         {
-			             new void MyMethod(int v1);
+			             void MyMethod(int v1);
 			         }
 			     }
 
@@ -204,7 +204,7 @@ public class GeneralTests
 			     {
 			         public interface IMyInterface
 			         {
-			             new void MyMethod(int v1);
+			             void MyMethod(int v1);
 			         }
 			     }
 
@@ -212,7 +212,7 @@ public class GeneralTests
 			     {
 			         public interface IMyInterface
 			         {
-			             new void MyMethod(int v1);
+			             void MyMethod(int v1);
 			         }
 			     }
 

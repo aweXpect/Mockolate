@@ -16,7 +16,6 @@ public static class Generator
 		"CS1061" /* 'type' does not contain a definition for 'name' and no accessible extension method 'name' accepting a first argument of type 'type' could be found (are you missing a using directive or an assembly reference?). */,
 		// TODO: Remove the following errors when tests work with extension syntax
 		"CS0106" /* The modifier 'public' is not valid for this item */,
-		"CS0109" /* The member 'member' does not hide an inherited member. The new keyword is not required */,
 		"CS0116" /* A namespace cannot directly contain members such as fields or methods */,
 		"CS1520" /* Method must have a return type */,
 		"CS0710" /* Static classes cannot have instance constructors */,
