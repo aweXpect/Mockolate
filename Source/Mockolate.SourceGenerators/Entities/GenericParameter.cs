@@ -9,10 +9,10 @@ internal readonly record struct GenericParameter
 	public GenericParameter(ITypeParameterSymbol typeSymbol)
 	{
 		Name = typeSymbol.Name;
+		IsUnmanaged = typeSymbol.HasUnmanagedTypeConstraint;
 		IsClass = typeSymbol.HasReferenceTypeConstraint;
 		IsStruct = typeSymbol.HasValueTypeConstraint;
 		IsNotNull = typeSymbol.HasNotNullConstraint;
-		IsUnmanaged = typeSymbol.HasUnmanagedTypeConstraint;
 		HasConstructor = typeSymbol.HasConstructorConstraint;
 		AllowsRefStruct = typeSymbol.AllowsRefLikeType;
 		NullableAnnotation = typeSymbol.ReferenceTypeConstraintNullableAnnotation;
@@ -43,23 +43,20 @@ internal readonly record struct GenericParameter
 
 		int count = 0;
 		sb.AppendLine().Append(prefix).Append("where ").Append(Name).Append(" : ");
-		if (IsStruct)
-		{
-			if (count++ > 0)
-			{
-				sb.Append(", ");
-			}
 
+		if (IsUnmanaged)
+		{
+			count++;
+			sb.Append("unmanaged");
+		}
+		else if (IsStruct)
+		{
+			count++;
 			sb.Append("struct");
 		}
-
-		if (IsClass)
+		else if (IsClass)
 		{
-			if (count++ > 0)
-			{
-				sb.Append(", ");
-			}
-
+			count++;
 			sb.Append("class");
 			if (NullableAnnotation == NullableAnnotation.Annotated)
 			{
@@ -75,16 +72,6 @@ internal readonly record struct GenericParameter
 			}
 
 			sb.Append("notnull");
-		}
-
-		if (IsUnmanaged)
-		{
-			if (count++ > 0)
-			{
-				sb.Append(", ");
-			}
-
-			sb.Append("unmanaged");
 		}
 
 		if (AllowsRefStruct)
@@ -105,10 +92,6 @@ internal readonly record struct GenericParameter
 			}
 
 			sb.Append(constraintType.Fullname);
-			if (NullableAnnotation == NullableAnnotation.Annotated)
-			{
-				sb.Append('?');
-			}
 		}
 
 		if (HasConstructor)

@@ -77,6 +77,53 @@ public sealed partial class ForMockTests
 	}
 
 	[Fact]
+	public async Task CustomDelegates_ShouldSupportSpanAndReadOnlySpanParameters()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<DoSomething1>();
+			     		_ = Mock.Create<DoSomething2>();
+			         }
+			     
+			         public delegate Span<char> DoSomething1(int x);
+			         public delegate ReadOnlySpan<char> DoSomething2(int x);
+			     }
+			     """);
+
+		await That(result.Sources)
+			.ContainsKey("MockForProgramDoSomething1.g.cs").WhoseValue
+			.Contains("""
+			          	public MyCode.Program.DoSomething1 Object => new(Invoke);
+			          	private System.Span<char> Invoke(int x)
+			          	{
+			          		var result = _mock.Registrations.InvokeMethod<System.Span<char>>("MyCode.Program.DoSomething1.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(SpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), x);
+			          		result.TriggerCallbacks(x);
+			          		return result.Result;
+			          	}
+			          """).IgnoringNewlineStyle();
+		await That(result.Sources)
+			.ContainsKey("MockForProgramDoSomething2.g.cs").WhoseValue
+			.Contains("""
+			          	public MyCode.Program.DoSomething2 Object => new(Invoke);
+			          	private System.ReadOnlySpan<char> Invoke(int x)
+			          	{
+			          		var result = _mock.Registrations.InvokeMethod<System.ReadOnlySpan<char>>("MyCode.Program.DoSomething2.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(ReadOnlySpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), x);
+			          		result.TriggerCallbacks(x);
+			          		return result.Result;
+			          	}
+			          """).IgnoringNewlineStyle();
+	}
+
+	[Fact]
 	public async Task Delegates_ShouldCreateDelegateInsteadOfMockSubject()
 	{
 		GeneratorResult result = Generator

@@ -96,6 +96,65 @@ public class GeneralTests
 	}
 
 	[Fact]
+	public async Task MockOfGenericTypes_ShouldHandleSpecialGenericParameters()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mockolate.Mock.Create<IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             IEnumerable<object> EnumerableOfObject { get; }
+			             IEnumerable<bool> EnumerableOfBool { get; }
+			             IEnumerable<string> EnumerableOfString { get; }
+			             IEnumerable<char> EnumerableOfChar { get; }
+			             IEnumerable<byte> EnumerableOfByte { get; }
+			             IEnumerable<sbyte> EnumerableOfSbyte { get; }
+			             IEnumerable<short> EnumerableOfShort { get; }
+			             IEnumerable<ushort> EnumerableOfUshort { get; }
+			             IEnumerable<int> EnumerableOfInt { get; }
+			             IEnumerable<uint> EnumerableOfUint { get; }
+			             IEnumerable<long> EnumerableOfLong { get; }
+			             IEnumerable<ulong> EnumerableOfUlong { get; }
+			             IEnumerable<float> EnumerableOfFloat { get; }
+			             IEnumerable<double> EnumerableOfDouble { get; }
+			             IEnumerable<decimal> EnumerableOfDecimal { get; }
+			         }
+			     }
+
+			     """, typeof(IEnumerable<>));
+
+		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<object> EnumerableOfObject").And
+			.Contains("public System.Collections.Generic.IEnumerable<bool> EnumerableOfBool").And
+			.Contains("public System.Collections.Generic.IEnumerable<string> EnumerableOfString").And
+			.Contains("public System.Collections.Generic.IEnumerable<char> EnumerableOfChar").And
+			.Contains("public System.Collections.Generic.IEnumerable<byte> EnumerableOfByte").And
+			.Contains("public System.Collections.Generic.IEnumerable<sbyte> EnumerableOfSbyte").And
+			.Contains("public System.Collections.Generic.IEnumerable<short> EnumerableOfShort").And
+			.Contains("public System.Collections.Generic.IEnumerable<ushort> EnumerableOfUshort").And
+			.Contains("public System.Collections.Generic.IEnumerable<int> EnumerableOfInt").And
+			.Contains("public System.Collections.Generic.IEnumerable<uint> EnumerableOfUint").And
+			.Contains("public System.Collections.Generic.IEnumerable<long> EnumerableOfLong").And
+			.Contains("public System.Collections.Generic.IEnumerable<ulong> EnumerableOfUlong").And
+			.Contains("public System.Collections.Generic.IEnumerable<float> EnumerableOfFloat").And
+			.Contains("public System.Collections.Generic.IEnumerable<double> EnumerableOfDouble").And
+			.Contains("public System.Collections.Generic.IEnumerable<decimal> EnumerableOfDecimal");
+	}
+
+	[Fact]
 	public async Task MockOfHttpMessageHandler_ShouldContainGetEnumeratorFromIEnumerableAndIEnumerableOfT()
 	{
 		GeneratorResult result = Generator
@@ -405,7 +464,7 @@ public class GeneralTests
 			         string SomeProperty { get; set; }
 			         [Localizable(false)]
 			         string MyMethod(string message);
-			         [CustomAttribute(
+			         [CustomAttributeWithWrongName(
 			             true,
 			             (byte)42,
 			             'X',
@@ -422,6 +481,7 @@ public class GeneralTests
 			             typeof(string),
 			             MyEnum.Value2,
 			             new int[] { 1, 2, 3 },
+			             null,
 			             BoolParam = false,
 			             ByteParam = (byte)99,
 			             CharParam = 'Y',
@@ -438,7 +498,8 @@ public class GeneralTests
 			             ObjectParam = 42,
 			             TypeParam = typeof(int),
 			             EnumParam = MyFlagEnum.Value1 | MyFlagEnum.Value2,
-			             ArrayParam = new string[] { "a", "b" }
+			             ArrayParam = new string[] { "a", "b" },
+			             OptionalIntParam = null
 			         )]
 			         event EventHandler<int> MyEvent;
 			     }
@@ -457,7 +518,7 @@ public class GeneralTests
 			     }
 
 			     [AttributeUsage(AttributeTargets.All)]
-			     public class CustomAttribute : Attribute
+			     public class CustomAttributeWithWrongName : Attribute
 			     {
 			         public CustomAttribute(
 			             bool boolArg,
@@ -475,7 +536,8 @@ public class GeneralTests
 			             ushort ushortArg,
 			             Type typeArg,
 			             MyEnum enumArg,
-			             int[] arrayArg)
+			             int[] arrayArg,
+			             int? optionalIntArg)
 			         {
 			         }
 
@@ -496,6 +558,7 @@ public class GeneralTests
 			         public Type TypeParam { get; set; }
 			         public MyFlagEnum EnumParam { get; set; }
 			         public string[] ArrayParam { get; set; }
+			         public int? OptionalIntParam { get; set; }
 			     }
 			     """, typeof(AllowNullAttribute), typeof(IDataParameter), typeof(LocalizableAttribute),
 				typeof(AttributeUsageAttribute));
@@ -541,7 +604,7 @@ public class GeneralTests
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          	/// <inheritdoc cref="MyCode.IMyService.MyEvent" />
-			          	[MyCode.Custom(true, (byte)42, 'X', 3.14, 2.71F, 100, 999L, (sbyte)-10, (short)500, "test", 123u, 456uL, (ushort)789, typeof(string), (MyCode.MyEnum)2, new int[]{1, 2, 3}, BoolParam = false, ByteParam = (byte)99, CharParam = 'Y', DoubleParam = 1.23, FloatParam = 4.56F, IntParam = 200, LongParam = 888L, SByteParam = (sbyte)-5, ShortParam = (short)300, StringParam = "named", UIntParam = 111u, ULongParam = 222uL, UShortParam = (ushort)333, ObjectParam = 42, TypeParam = typeof(int), EnumParam = (MyCode.MyFlagEnum)3, ArrayParam = new string[]{"a", "b"})]
+			          	[MyCode.CustomAttributeWithWrongName(true, (byte)42, 'X', 3.14, 2.71F, 100, 999L, (sbyte)-10, (short)500, "test", 123u, 456uL, (ushort)789, typeof(string), (MyCode.MyEnum)2, new int[]{1, 2, 3}, null, BoolParam = false, ByteParam = (byte)99, CharParam = 'Y', DoubleParam = 1.23, FloatParam = 4.56F, IntParam = 200, LongParam = 888L, SByteParam = (sbyte)-5, ShortParam = (short)300, StringParam = "named", UIntParam = 111u, ULongParam = 222uL, UShortParam = (ushort)333, ObjectParam = 42, TypeParam = typeof(int), EnumParam = (MyCode.MyFlagEnum)3, ArrayParam = new string[]{"a", "b"}, OptionalIntParam = null)]
 			          	public event System.EventHandler<int>? MyEvent
 			          	{
 			          		add

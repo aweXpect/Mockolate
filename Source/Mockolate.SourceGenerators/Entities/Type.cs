@@ -15,13 +15,6 @@ internal record Type
 		// Removes '*' from multi-dimensional array types
 		Fullname = typeSymbol.ToDisplayString().Replace("*", "");
 		Namespace = typeSymbol.ContainingNamespace?.ToString();
-		IsArray = typeSymbol.TypeKind == TypeKind.Array;
-		if (typeSymbol is IArrayTypeSymbol arrayType)
-		{
-			ElementType = new Type(arrayType.ElementType);
-		}
-
-		IsTypeParameter = typeSymbol.TypeKind == TypeKind.TypeParameter;
 		if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
 		{
 			if (typeSymbol.IsTupleType)
@@ -40,9 +33,6 @@ internal record Type
 	}
 
 	public SpecialGenericType SpecialGenericType { get; }
-
-	public bool IsArray { get; }
-	public bool IsTypeParameter { get; }
 	public EquatableArray<Type>? TupleTypes { get; }
 	public EquatableArray<Type>? GenericTypeParameters { get; }
 	public string? Namespace { get; }
@@ -50,7 +40,5 @@ internal record Type
 	internal static Type Void { get; } = new("void");
 
 	public string Fullname { get; }
-	public Type? ElementType { get; }
-
 	public override string ToString() => Fullname;
 }
