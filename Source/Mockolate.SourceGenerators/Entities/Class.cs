@@ -48,9 +48,9 @@ internal record Class
 		List<Event> events = ToListExcept(type.GetMembers().OfType<IEventSymbol>()
 			.Where(x => !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-			.Select(x => (x, (x.Type as INamedTypeSymbol)?.DelegateInvokeMethod))
-			.Where(x => x.DelegateInvokeMethod is not null)
-			.Select(x => new Event(x.x, x.DelegateInvokeMethod!, alreadyDefinedEvents))
+			.Select(x => (x, x.Type as INamedTypeSymbol))
+			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
+			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, alreadyDefinedEvents))
 			.Distinct(), exceptEvents, Event.ContainingTypeIndependentEqualityComparer);
 		Events = new EquatableArray<Event>(events.ToArray());
 
@@ -66,9 +66,9 @@ internal record Class
 			.ToList();
 		exceptEvents ??= type.GetMembers().OfType<IEventSymbol>()
 			.Where(x => x.IsSealed)
-			.Select(x => (x, (x.Type as INamedTypeSymbol)?.DelegateInvokeMethod))
-			.Where(x => x.DelegateInvokeMethod is not null)
-			.Select(x => new Event(x.x, x.DelegateInvokeMethod!, null))
+			.Select(x => (x, x.Type as INamedTypeSymbol))
+			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
+			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, null))
 			.Distinct()
 			.ToList();
 
@@ -146,7 +146,6 @@ internal record Class
 	{
 		(specialName, bool hasSpecialType) = namedType.SpecialType switch
 		{
-			SpecialType.System_Void => ("void", true),
 			SpecialType.System_Object => ("object", true),
 			SpecialType.System_Boolean => ("bool", true),
 			SpecialType.System_String => ("string", true),

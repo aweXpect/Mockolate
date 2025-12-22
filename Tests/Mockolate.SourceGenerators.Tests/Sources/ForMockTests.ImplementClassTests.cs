@@ -625,12 +625,14 @@ public sealed partial class ForMockTests
 		[InlineData("class, T")]
 		[InlineData("struct")]
 		[InlineData("class")]
-		[InlineData("notnull")]
+		[InlineData("class, notnull")]
+		[InlineData("unmanaged")]
 		[InlineData("class?")]
 		[InlineData("MyCode.IMyInterface")]
 		[InlineData("new()")]
 		[InlineData("MyCode.IMyInterface?")]
 		[InlineData("allows ref struct")]
+		[InlineData("class, allows ref struct")]
 		[InlineData("MyCode.IMyInterface, new()")]
 		public async Task Methods_Generic_ShouldApplyAllConstraints(string constraint)
 		{
