@@ -295,13 +295,19 @@ public sealed partial class ForMockTests
 				         public static void Main(string[] args)
 				         {
 				     		_ = Mock.Create<MyService, IMyOtherService>();
+				     		_ = Mock.Create<MyProtectedService>();
 				         }
 				     }
-
+				     
 				     public class MyService
 				     {
 				         public virtual event EventHandler SomeEvent;
 				         public event EventHandler? SomeOtherEvent;
+				         protected virtual event EventHandler SomeProtectedEvent;
+				     }
+				     
+				     public class MyProtectedService
+				     {
 				         protected virtual event EventHandler SomeProtectedEvent;
 				     }
 
@@ -351,7 +357,7 @@ public sealed partial class ForMockTests
 				     public interface IMyService
 				     {
 				         int this[int index] { get; set; }
-				         int this[int index, bool isReadOnly] { get; }
+				         int this[int index, bool? isReadOnly] { get; }
 				         int this[int index, string isWriteOnly] { set; }
 				     }
 				     """);
@@ -382,8 +388,8 @@ public sealed partial class ForMockTests
 				          	}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          	/// <inheritdoc cref="MyCode.IMyService.this[int, bool]" />
-				          	public int this[int index, bool isReadOnly]
+				          	/// <inheritdoc cref="MyCode.IMyService.this[int, bool?]" />
+				          	public int this[int index, bool? isReadOnly]
 				          	{
 				          		get
 				          		{
@@ -427,15 +433,21 @@ public sealed partial class ForMockTests
 				         public static void Main(string[] args)
 				         {
 				     		_ = Mock.Create<MyService, IMyOtherService>();
+				     		_ = Mock.Create<MyProtectedService>();
 				         }
 				     }
-
+				     
 				     public class MyService
 				     {
 				         public virtual int this[int index] { get; set; }
 				         protected virtual int this[int index, bool isReadOnly] { get; }
 				         protected virtual int this[int index, string isWriteOnly] { set; }
 				         public int this[int index, long isNotVirtual] { get; set; }
+				     }
+				     
+				     public class MyProtectedService
+				     {
+				         protected virtual int this[int index, bool? isReadOnly] { get; set; }
 				     }
 
 				     public interface IMyOtherService
@@ -931,9 +943,10 @@ public sealed partial class ForMockTests
 				         public static void Main(string[] args)
 				         {
 				     		_ = Mock.Create<MyService, IMyOtherService>();
+				     		_ = Mock.Create<MyProtectedService>();
 				         }
 				     }
-
+				     
 				     public class MyService
 				     {
 				         public virtual void MyMethod1(int index, ref int value1, out bool flag)
@@ -945,6 +958,14 @@ public sealed partial class ForMockTests
 				             flag = true;
 				         }
 				         public void MyNonVirtualMethod();
+				     }
+				     
+				     public class MyProtectedService
+				     {
+				         protected virtual bool MyMethod(int index, bool isReadOnly, ref int value1, out bool flag)
+				         {
+				             flag = true;
+				         }
 				     }
 
 				     public interface IMyOtherService
@@ -1458,9 +1479,10 @@ public sealed partial class ForMockTests
 				         public static void Main(string[] args)
 				         {
 				     		_ = Mock.Create<MyService, IMyOtherService>();
+				     		_ = Mock.Create<MyProtectedService>();
 				         }
 				     }
-
+				     
 				     public class MyService
 				     {
 				         public virtual int SomeProperty1 { protected get; set; }
@@ -1468,6 +1490,11 @@ public sealed partial class ForMockTests
 				         protected virtual bool? SomeReadOnlyProperty { get; }
 				         protected virtual bool? SomeWriteOnlyProperty { set; }
 				         public bool? SomeNonVirtualProperty { get; set; }
+				     }
+				     
+				     public class MyProtectedService
+				     {
+				         protected virtual bool? SomeProperty { get; set; }
 				     }
 
 				     public interface IMyOtherService

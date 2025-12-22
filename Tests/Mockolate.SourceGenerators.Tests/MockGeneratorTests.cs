@@ -160,7 +160,7 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
-	public async Task WhenUsingMockCreateFromOtherNamespace_ShouldNotBeIncluded()
+	public async Task WhenUsingCustomMockGeneratorAttribute_ShouldNotBeIncluded()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -182,10 +182,59 @@ public class MockGeneratorTests
 
 			         public class Mock
 			         {
-			     		public static Mock<T> Create<T>() => new Mock<T>();
+			     		[Mockolate.MockGenerator]
+			     		public static T Create<T>() => default(T)!;
+			         }
+			     }
+			     """);
+
+		await ThatAll(
+			That(result.Sources.Keys).IsEqualTo([
+				"Mock.g.cs",
+				"MockBehaviorExtensions.g.cs",
+				"MockForIMyInterface.g.cs",
+				"MockForIMyInterfaceExtensions.g.cs",
+				"MockGeneratorAttribute.g.cs",
+				"MockRegistration.g.cs",
+			]).InAnyOrder().IgnoringCase(),
+			That(result.Diagnostics).IsEmpty()
+		);
+	}
+
+	[Fact]
+	public async Task WhenUsingIncorrectMockGeneratorAttribute_ShouldNotBeIncluded()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyInterface>();
+			             }
 			         }
 
-			         public class Mock<T>{ }
+			         public interface IMyInterface { }
+
+			         public class Mock
+			         {
+			     		[Mockolate.Incorrect.MockGenerator]
+			     		public static T Create<T>() => default(T)!;
+			         }
+			     }
+
+			     namespace Mockolate.Incorrect
+			     {
+			         [AttributeUsage(AttributeTargets.Method)]
+			         internal class MockGeneratorAttribute : Attribute
+			         {
+			         }
 			     }
 			     """);
 
@@ -293,13 +342,13 @@ public class MockGeneratorTests
 			     """);
 
 		await That(result.Sources.Keys).IsEqualTo([
-				"Mock.g.cs",
-				"MockBehaviorExtensions.g.cs",
-				"MockGeneratorAttribute.g.cs",
-				"MockForIMyInterface1Extensions.g.cs",
-				"MockForIMyInterface2Extensions.g.cs",
-				"MockRegistration.g.cs",
-			]).InAnyOrder();
+			"Mock.g.cs",
+			"MockBehaviorExtensions.g.cs",
+			"MockGeneratorAttribute.g.cs",
+			"MockForIMyInterface1Extensions.g.cs",
+			"MockForIMyInterface2Extensions.g.cs",
+			"MockRegistration.g.cs",
+		]).InAnyOrder();
 	}
 
 	[Fact]

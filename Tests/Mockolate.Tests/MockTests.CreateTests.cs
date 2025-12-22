@@ -82,6 +82,19 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task With3Arguments_SecondAndThirdAreClasses_ShouldThrow()
+		{
+			void Act()
+			{
+				_ = Mock.Create<IMyService, MyServiceBase, MyServiceBase>();
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage(
+					"The mock declaration has 2 additional implementations that are not interfaces: Mockolate.Tests.TestHelpers.MyServiceBase, Mockolate.Tests.TestHelpers.MyServiceBase");
+		}
+
+		[Fact]
 		public async Task With3Arguments_SecondIsClass_ShouldThrow()
 		{
 			void Act()

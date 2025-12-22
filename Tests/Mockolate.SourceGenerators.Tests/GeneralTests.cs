@@ -178,6 +178,54 @@ public class GeneralTests
 	}
 
 	[Fact]
+	public async Task MultipleInterfacesWithSameName_ShouldAddSuffixToSetupAndVerifyMethods()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			var x = Mockolate.Mock.Create<IMyInterface, MyCode.N1.IMyInterface, MyCode.N2.IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             void MyMethod(int v1);
+			         }
+			     }
+
+			     namespace MyCode.N1
+			     {
+			         public interface IMyInterface
+			         {
+			             void MyMethod(int v1);
+			         }
+			     }
+
+			     namespace MyCode.N2
+			     {
+			         public interface IMyInterface
+			         {
+			             void MyMethod(int v1);
+			         }
+			     }
+
+			     """, typeof(IList<>));
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources).ContainsKey("MockForIMyInterface_IMyInterface_IMyInterfaceExtensions.g.cs")
+			.WhoseValue
+			.Contains("public IMockSetup<MyCode.N2.IMyInterface> SetupIMyInterface__2Mock");
+	}
+
+	[Fact]
 	public async Task ObsoleteAttributes_ShouldBeRepeatedInMock()
 	{
 		GeneratorResult result = Generator
@@ -394,13 +442,13 @@ public class GeneralTests
 			         )]
 			         event EventHandler<int> MyEvent;
 			     }
-			     
+
 			     public enum MyEnum
 			     {
 			         Value1 = 1,
 			         Value2 = 2
 			     }
-			     
+
 			     [Flags]
 			     public enum MyFlagEnum
 			     {
@@ -449,7 +497,8 @@ public class GeneralTests
 			         public MyFlagEnum EnumParam { get; set; }
 			         public string[] ArrayParam { get; set; }
 			     }
-			     """, typeof(AllowNullAttribute), typeof(IDataParameter), typeof(LocalizableAttribute), typeof(AttributeUsageAttribute));
+			     """, typeof(AllowNullAttribute), typeof(IDataParameter), typeof(LocalizableAttribute),
+				typeof(AttributeUsageAttribute));
 
 		await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
 			.Contains("""
