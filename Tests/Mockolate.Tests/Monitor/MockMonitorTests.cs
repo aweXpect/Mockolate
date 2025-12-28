@@ -5,7 +5,7 @@ namespace Mockolate.Tests.Monitor;
 
 public sealed class MockMonitorTests
 {
-	[Fact]
+	[Test]
 	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
 	{
 		IMyService sut = Mock.Create<IMyService>();
@@ -34,7 +34,7 @@ public sealed class MockMonitorTests
 		await That(monitor.Verify.Invoked.IsValid(It.Is(8))).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task MultipleRun_ShouldMonitorInvocationsDuringTheRun()
 	{
 		IMyService sut = Mock.Create<IMyService>();
@@ -72,7 +72,7 @@ public sealed class MockMonitorTests
 		await That(monitor.Verify.Invoked.IsValid(It.Is(10))).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task NestedRun_ShouldThrowInvalidOperationException()
 	{
 		IMyService sut = Mock.Create<IMyService>();
@@ -94,7 +94,7 @@ public sealed class MockMonitorTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Run_ShouldMonitorInvocationsDuringTheRun()
 	{
 		IMyService sut = Mock.Create<IMyService>();

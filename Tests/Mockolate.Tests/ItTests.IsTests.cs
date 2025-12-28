@@ -6,7 +6,7 @@ public sealed partial class ItTests
 {
 	public sealed class IsTests
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Is("foo");
@@ -17,7 +17,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_WithComparer_ShouldReturnExpectedValue()
 		{
 			IParameter<int> sut = It.Is(4).Using(new AllEqualComparer());
@@ -28,11 +28,11 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Theory]
-		[InlineData(1, false)]
-		[InlineData(5, true)]
-		[InlineData(-5, false)]
-		[InlineData(42, false)]
+		[Test]
+		[Arguments(1, false)]
+		[Arguments(5, true)]
+		[Arguments(-5, false)]
+		[Arguments(42, false)]
 		public async Task ShouldMatchWhenEqual(int value, bool expectMatch)
 		{
 			IParameter<int> sut = It.Is(5);
@@ -42,7 +42,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectMatch);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldSupportCovarianceInSetup()
 		{
 			IMyService mock = Mock.Create<IMyService>();
@@ -58,10 +58,10 @@ public sealed partial class ItTests
 			await That(result2).IsEqualTo(0);
 		}
 
-		[Theory]
-		[InlineData(1)]
-		[InlineData(5)]
-		[InlineData(-42)]
+		[Test]
+		[Arguments(1)]
+		[Arguments(5)]
+		[Arguments(-42)]
 		public async Task WithComparer_ShouldUseComparer(int value)
 		{
 			IParameter<int> sut = It.Is(5).Using(new AllEqualComparer());

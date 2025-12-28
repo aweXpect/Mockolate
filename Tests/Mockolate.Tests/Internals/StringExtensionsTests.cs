@@ -4,7 +4,7 @@ namespace Mockolate.Tests.Internals;
 
 public sealed class StringExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task SubstringAfterLast_WhenNameContainsNoDot_ShouldIncludeFullName()
 	{
 		MockRegistration registration = new(MockBehavior.Default, "");
@@ -15,7 +15,7 @@ public sealed class StringExtensionsTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property SomeNameWithoutADot");
 	}
 
-	[Fact]
+	[Test]
 	public async Task SubstringAfterLast_WhenNameStartsWithDot_ShouldOmitDot()
 	{
 		MockRegistration registration = new(MockBehavior.Default, "");

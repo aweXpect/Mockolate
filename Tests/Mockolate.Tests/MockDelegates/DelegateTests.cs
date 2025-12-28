@@ -2,7 +2,7 @@
 
 public class DelegateTests
 {
-	[Fact]
+	[Test]
 	public async Task Action_ShouldBeTreatedAsVoidDelegate()
 	{
 		bool isCalled = false;
@@ -12,10 +12,10 @@ public class DelegateTests
 		mock.Invoke();
 
 		await That(mock.VerifyMock.Invoked()).Once();
-		Assert.True(isCalled);
+		await That(isCalled).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Func_ShouldBeTreatedAsReturnDelegate()
 	{
 		bool isCalled = false;
@@ -25,11 +25,11 @@ public class DelegateTests
 		int result = mock();
 
 		await That(mock.VerifyMock.Invoked()).Once();
-		Assert.True(isCalled);
-		Assert.Equal(3, result);
+		await That(isCalled).IsTrue();
+		await That(result).IsEqualTo(3);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithCustomDelegate_SetupShouldWork()
 	{
 		DoSomething mock = Mock.Create<DoSomething>();
@@ -46,7 +46,7 @@ public class DelegateTests
 		await That(result3).IsEqualTo(3);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithCustomDelegate_VerifyShouldWork()
 	{
 		DoSomething mock = Mock.Create<DoSomething>();
@@ -57,7 +57,7 @@ public class DelegateTests
 		await That(mock.VerifyMock.Invoked(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>())).Twice();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithCustomDelegateWithRefAndOut_SetupShouldWork()
 	{
 		DoSomethingWithRefAndOut mock = Mock.Create<DoSomethingWithRefAndOut>();
@@ -71,7 +71,7 @@ public class DelegateTests
 		await That(value2).IsEqualTo(10);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithCustomDelegateWithRefAndOut_VerifyShouldWork()
 	{
 		DoSomethingWithRefAndOut mock = Mock.Create<DoSomethingWithRefAndOut>();
@@ -83,7 +83,7 @@ public class DelegateTests
 		await That(value).IsEqualTo(5);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithCustomGenericDelegate_SetupShouldWork()
 	{
 		DoGeneric<long, string> mock = Mock.Create<DoGeneric<long, string>>();
@@ -100,7 +100,7 @@ public class DelegateTests
 		await That(result3).IsEqualTo(3);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithCustomGenericDelegate_VerifyShouldWork()
 	{
 		DoGeneric<short, string> mock = Mock.Create<DoGeneric<short, string>>();

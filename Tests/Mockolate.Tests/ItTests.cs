@@ -7,7 +7,7 @@ namespace Mockolate.Tests;
 
 public sealed partial class ItTests
 {
-	[Fact]
+	[Test]
 	public async Task InvokeCallbacks_WithCorrectType_ShouldInvokeCallback()
 	{
 		int isCalled = 0;
@@ -19,7 +19,7 @@ public sealed partial class ItTests
 		await That(isCalled).IsEqualTo(5);
 	}
 
-	[Fact]
+	[Test]
 	public async Task InvokeCallbacks_WithDifferentType_ShouldNotInvokeCallback()
 	{
 		int isCalled = 0;
@@ -31,7 +31,7 @@ public sealed partial class ItTests
 		await That(isCalled).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task InvokeCallbacks_WithNull_WhenTypeIsNotNullable_ShouldNotInvokeCallback()
 	{
 		int isCalled = 0;
@@ -43,7 +43,7 @@ public sealed partial class ItTests
 		await That(isCalled).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task InvokeCallbacks_WithNull_WhenTypeIsNullable_ShouldInvokeCallback()
 	{
 		int isCalled = 0;
@@ -55,7 +55,7 @@ public sealed partial class ItTests
 		await That(isCalled).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldOnlyHaveOneParameterlessPrivateConstructor()
 	{
 		ConstructorInfo[] constructors = typeof(Match)
@@ -67,7 +67,7 @@ public sealed partial class ItTests
 		_ = constructors.Single().Invoke([]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_NamedParameter_ShouldReturnExpectedValue()
 	{
 		NamedParameter sut = new("foo", (IParameter)It.IsOut<int>());
