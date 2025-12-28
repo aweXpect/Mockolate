@@ -29,7 +29,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="BenchmarkDotNet" Version="0.14.0"/>
-		<PackageVersion Include="TUnit.Engine" Version="1.6.28"/>
+		<PackageVersion Include="TUnit" Version="1.6.28"/>
 		<PackageVersion Include="Polyfill" Version="9.1.0"/>
 		<PackageVersion Include="PublicApiGenerator" Version="11.5.4"/>
 		<PackageVersion Include="aweXpect" Version="2.29.0"/>
