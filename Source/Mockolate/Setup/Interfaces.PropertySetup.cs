@@ -119,6 +119,14 @@ public interface IPropertySetup<T>
 	IPropertySetup<T> CallingBaseClass(bool callBaseClass = true);
 
 	/// <summary>
+	///     Register the property to have a setup without a specific value.
+	/// </summary>
+	/// <remarks>
+	///     This is necessary when the mock uses <see cref="MockBehavior.ThrowWhenNotSetup" />.
+	/// </remarks>
+	IPropertySetup<T> Register();
+
+	/// <summary>
 	///     Initializes the property with the given <paramref name="value" />.
 	/// </summary>
 	IPropertySetup<T> InitializeWith(T value);
