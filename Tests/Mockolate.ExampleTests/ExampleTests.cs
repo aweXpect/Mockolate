@@ -1,7 +1,6 @@
 using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
@@ -74,17 +73,6 @@ public class ExampleTests
 		char result = mock.Path.DirectorySeparatorChar;
 
 		await That(result).IsEqualTo('a');
-	}
-
-	[Fact]
-	public async Task ShouldBeAbleToCreateAFlowDocument()
-	{
-		void Act()
-		{
-			_ = Mock.Create<FlowDocument>();
-		}
-
-		await That(Act).DoesNotThrow();
 	}
 
 	[Fact]

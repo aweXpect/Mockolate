@@ -1,10 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<UseWPF>true</UseWPF>
-		<TargetFrameworks>net10.0-windows;net8.0-windows;net48</TargetFrameworks>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\..\Source\Mockolate.SourceGenerators\Mockolate.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
 		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj"/>
