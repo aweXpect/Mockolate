@@ -497,4 +497,49 @@ public sealed partial class ForMockTests
 		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
 			.DoesNotContain("override int SomeProperty");
 	}
+
+	[Fact]
+	public async Task ShouldHandleComplexInheritanceWithSealedAndInternalMembers()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyDerivedClass>();
+			         }
+			     }
+
+			     public class MyDerivedClass : MyMiddleClass
+			     {
+			     }
+
+			     public class MyMiddleClass : MyBaseClass
+			     {
+			     	public sealed override void SealedMethod() { }
+			     	protected internal override void ProtectedInternalMethod() { }
+			     }
+
+			     public class MyBaseClass
+			     {
+			     	public virtual void SealedMethod() { }
+			     	public virtual void NormalMethod() { }
+			     	protected internal virtual void ProtectedInternalMethod() { }
+			     	internal virtual void InternalMethod() { }
+			     	protected virtual void ProtectedMethod() { }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
+			.DoesNotContain("override void SealedMethod").And
+			.DoesNotContain("ProtectedInternalMethod").And
+			.DoesNotContain("InternalMethod").And
+			.Contains("override void NormalMethod").And
+			.Contains("override void ProtectedMethod");
+	}
 }
