@@ -101,11 +101,53 @@ internal record Method
 	private sealed class ContainingTypeIndependentMethodEqualityComparer : IEqualityComparer<Method>
 	{
 		public bool Equals(Method? x, Method? y)
-			=> (x is null && y is null) ||
-			   (x is not null && y is not null &&
-			    x.Name.Equals(y.Name) &&
-			    x.Parameters.Count == y.Parameters.Count &&
-			    x.Parameters.SequenceEqual(y.Parameters));
+		{
+			if (x is null && y is null)
+			{
+				return true;
+			}
+
+			if (x is null || y is null)
+			{
+				return false;
+			}
+
+			if (!x.Name.Equals(y.Name) || x.Parameters.Count != y.Parameters.Count)
+			{
+				return false;
+			}
+
+			// Compare parameters ignoring nullability annotations
+			MethodParameter[]? xParams = x.Parameters.AsArray();
+			MethodParameter[]? yParams = y.Parameters.AsArray();
+
+			if (xParams is null || yParams is null)
+			{
+				return xParams is null && yParams is null;
+			}
+
+			for (int i = 0; i < xParams.Length; i++)
+			{
+				MethodParameter xParam = xParams[i];
+				MethodParameter yParam = yParams[i];
+
+				if (xParam.RefKind != yParam.RefKind)
+				{
+					return false;
+				}
+
+				// Normalize type names by removing nullable annotation
+				string xTypeName = xParam.Type.Fullname.TrimEnd('?');
+				string yTypeName = yParam.Type.Fullname.TrimEnd('?');
+
+				if (!xTypeName.Equals(yTypeName))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 
 		public int GetHashCode(Method obj) => obj.Name.GetHashCode();
 	}

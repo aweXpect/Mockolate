@@ -542,4 +542,82 @@ public sealed partial class ForMockTests
 			.Contains("override void NormalMethod").And
 			.Contains("override void ProtectedMethod");
 	}
+
+	[Fact]
+	public async Task ShouldNotIncludeSealedOverrideSpecialMethods()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyDerivedClass>();
+			         }
+			     }
+
+			     public class MyDerivedClass : MyMiddleClass
+			     {
+			     }
+
+			     public class MyMiddleClass : MyBaseClass
+			     {
+			     	public sealed override bool Equals(object? obj) => base.Equals(obj);
+			     	public sealed override int GetHashCode() => base.GetHashCode();
+			     	public sealed override string? ToString() => base.ToString();
+			     }
+
+			     public class MyBaseClass
+			     {
+			     	public virtual void SomeMethod() { }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
+			.DoesNotContain("override bool Equals").And
+			.DoesNotContain("override int GetHashCode").And
+			.DoesNotContain("override string ToString");
+	}
+
+	[Fact]
+	public async Task ShouldNotIncludeSealedOverrideSpecialMethodsWithNonNullableParameters()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyDerivedClass>();
+			         }
+			     }
+
+			     public class MyDerivedClass : MyMiddleClass
+			     {
+			     }
+
+			     public class MyMiddleClass : MyBaseClass
+			     {
+			     	public sealed override bool Equals(object obj) => base.Equals(obj);
+			     }
+
+			     public class MyBaseClass
+			     {
+			     	public virtual void SomeMethod() { }
+			     }
+			     """);
+
+		// Even though MyMiddleClass.Equals has non-nullable parameter (object),
+		// it should still match and filter out object.Equals with nullable parameter (object?)
+		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
+			.DoesNotContain("override bool Equals");
+	}
 }
