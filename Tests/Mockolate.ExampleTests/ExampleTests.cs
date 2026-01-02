@@ -15,12 +15,6 @@ namespace Mockolate.ExampleTests;
 public class ExampleTests
 {
 	[Fact]
-	public async Task SealedOverride_ShouldWorkForProperties()
-	{
-		FlowDocument mock = Mock.Create<FlowDocument>();
-	}
-	
-	[Fact]
 	public async Task Any_ShouldAlwaysMatch()
 	{
 		Guid id = Guid.NewGuid();
@@ -80,6 +74,17 @@ public class ExampleTests
 		char result = mock.Path.DirectorySeparatorChar;
 
 		await That(result).IsEqualTo('a');
+	}
+
+	[Fact]
+	public async Task ShouldBeAbleToCreateAFlowDocument()
+	{
+		void Act()
+		{
+			_ = Mock.Create<FlowDocument>();
+		}
+
+		await That(Act).DoesNotThrow();
 	}
 
 	[Fact]
