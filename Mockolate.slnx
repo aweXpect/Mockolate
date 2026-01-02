@@ -1,0 +1,61 @@
+<Solution>
+  <Folder Name="/Benchmarks/">
+    <Project Path="Benchmarks/Mockolate.Benchmarks/Mockolate.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/Pipeline/">
+    <Project Path="Pipeline/Build.csproj">
+      <Build Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tests/">
+    <File Path="Tests/Directory.Build.props" />
+    <Project Path="Tests/Mockolate.Analyzers.Tests/Mockolate.Analyzers.Tests.csproj" />
+    <Project Path="Tests/Mockolate.Api.Tests/Mockolate.Api.Tests.csproj" />
+    <Project Path="Tests/Mockolate.ExampleTests/Mockolate.ExampleTests.csproj" />
+    <Project Path="Tests/Mockolate.SourceGenerators.Tests/Mockolate.SourceGenerators.Tests.csproj" />
+    <Project Path="Tests/Mockolate.Tests/Mockolate.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Aot/">
+    <File Path="Tests/Aot/Directory.Build.props" />
+    <Project Path="Tests/Aot/Mockolate.AotCompatibility.TestApp/Mockolate.AotCompatibility.TestApp.csproj" />
+  </Folder>
+  <Folder Name="/_/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="CODE_OF_CONDUCT.md" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="Mockolate.sln.DotSettings" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/_/.github/" />
+  <Folder Name="/_/.github/workflows/">
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/ci-analysis.yml" />
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/_/Docs/">
+    <File Path="Docs/pages/00-index.md" />
+    <File Path="Docs/pages/01-create-mocks.md" />
+    <File Path="Docs/pages/02-setup.md" />
+    <File Path="Docs/pages/03-mock-events.md" />
+    <File Path="Docs/pages/04-verify-interactions.md" />
+    <File Path="Docs/pages/05-analyzers.md" />
+    <File Path="Docs/pages/06-comparison.md" />
+  </Folder>
+  <Folder Name="/_/Source/">
+    <File Path="Source/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/_/Tests/">
+    <File Path="Tests/Directory.Build.props" />
+  </Folder>
+  <Project Path="Source/Mockolate.Analyzers.CodeFixers/Mockolate.Analyzers.CodeFixers.csproj" />
+  <Project Path="Source/Mockolate.Analyzers/Mockolate.Analyzers.csproj" />
+  <Project Path="Source/Mockolate.SourceGenerators/Mockolate.SourceGenerators.csproj" />
+  <Project Path="Source/Mockolate/Mockolate.csproj" />
+</Solution>
