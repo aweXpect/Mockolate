@@ -39,6 +39,7 @@ internal static class MockGeneratorHelpers
 		MemberAccessExpressionSyntax memberAccessExpressionSyntax =
 			(MemberAccessExpressionSyntax)invocationSyntax.Expression;
 		GenericNameSyntax genericNameSyntax = (GenericNameSyntax)memberAccessExpressionSyntax.Name;
+		IAssemblySymbol sourceAssembly = semanticModel.Compilation.Assembly;
 		if (semanticModel.GetSymbolInfo(syntaxNode).IsCreateInvocationOnMockOrMockFactory())
 		{
 			ITypeSymbol[] genericTypes = genericNameSyntax.TypeArgumentList.Arguments
@@ -50,9 +51,9 @@ internal static class MockGeneratorHelpers
 			    // Ignore types from the global namespace, as they are not generated correctly.
 			    genericTypes.All(x => !x.ContainingNamespace.IsGlobalNamespace))
 			{
-				yield return new MockClass(genericTypes);
+				yield return new MockClass(genericTypes, sourceAssembly);
 
-				foreach (MockClass? additionalMockClass in DiscoverMockableTypes(genericTypes))
+				foreach (MockClass? additionalMockClass in DiscoverMockableTypes(genericTypes, sourceAssembly))
 				{
 					yield return additionalMockClass;
 				}
@@ -60,7 +61,7 @@ internal static class MockGeneratorHelpers
 		}
 	}
 
-	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes)
+	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes, IAssemblySymbol sourceAssembly)
 	{
 		Queue<ITypeSymbol> typesToProcess = new(initialTypes);
 		HashSet<ITypeSymbol> processedTypes = new(SymbolEqualityComparer.Default);
@@ -70,28 +71,28 @@ internal static class MockGeneratorHelpers
 			ITypeSymbol currentType = typesToProcess.Dequeue();
 
 			foreach (ITypeSymbol propertyType in currentType.GetMembers()
-				         .OfType<IPropertySymbol>()
-				         .Select(p => p.Type))
+			         .OfType<IPropertySymbol>()
+			         .Select(p => p.Type))
 			{
 				if (propertyType.TypeKind == TypeKind.Interface &&
 				    IsMockable(propertyType) &&
 				    processedTypes.Add(propertyType))
 				{
-					yield return new MockClass([propertyType,]);
+					yield return new MockClass([propertyType,], sourceAssembly);
 					typesToProcess.Enqueue(propertyType);
 				}
 			}
 
 			foreach (ITypeSymbol methodType in currentType.GetMembers()
-				         .OfType<IMethodSymbol>()
-				         .Where(m => !m.ReturnsVoid)
-				         .Select(m => m.ReturnType))
+			         .OfType<IMethodSymbol>()
+			         .Where(m => !m.ReturnsVoid)
+			         .Select(m => m.ReturnType))
 			{
 				if (methodType.TypeKind == TypeKind.Interface &&
 				    IsMockable(methodType) &&
 				    processedTypes.Add(methodType))
 				{
-					yield return new MockClass([methodType,]);
+					yield return new MockClass([methodType,], sourceAssembly);
 					typesToProcess.Enqueue(methodType);
 				}
 			}

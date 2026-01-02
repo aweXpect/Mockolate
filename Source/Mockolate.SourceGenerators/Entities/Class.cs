@@ -6,7 +6,10 @@ namespace Mockolate.SourceGenerators.Entities;
 
 internal record Class
 {
+	private readonly IAssemblySymbol _sourceAssembly;
+
 	public Class(ITypeSymbol type,
+		IAssemblySymbol sourceAssembly,
 		List<Method>? alreadyDefinedMethods = null,
 		List<Property>? alreadyDefinedProperties = null,
 		List<Event>? alreadyDefinedEvents = null,
@@ -14,6 +17,7 @@ internal record Class
 		List<Property>? exceptProperties = null,
 		List<Event>? exceptEvents = null)
 	{
+		_sourceAssembly = sourceAssembly;
 		Namespace = type.ContainingNamespace.ToString();
 		DisplayString = type.ToDisplayString();
 		ClassName = GetTypeName(type);
@@ -34,6 +38,7 @@ internal record Class
 			// Exclude getter/setter methods
 			.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Where(x => ShouldIncludeMember(x))
 			.Select(x => new Method(x, alreadyDefinedMethods))
 			.Distinct(), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);
 		Methods = new EquatableArray<Method>(methods.ToArray());
@@ -41,6 +46,7 @@ internal record Class
 		List<Property> properties = ToListExcept(type.GetMembers().OfType<IPropertySymbol>()
 			.Where(x => !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Where(x => ShouldIncludeMember(x))
 			.Select(x => new Property(x, alreadyDefinedProperties))
 			.Distinct(), exceptProperties, Property.ContainingTypeIndependentEqualityComparer);
 		Properties = new EquatableArray<Property>(properties.ToArray());
@@ -48,34 +54,55 @@ internal record Class
 		List<Event> events = ToListExcept(type.GetMembers().OfType<IEventSymbol>()
 			.Where(x => !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Where(x => ShouldIncludeMember(x))
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
 			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, alreadyDefinedEvents))
 			.Distinct(), exceptEvents, Event.ContainingTypeIndependentEqualityComparer);
 		Events = new EquatableArray<Event>(events.ToArray());
 
-		exceptProperties ??= type.GetMembers().OfType<IPropertySymbol>()
+		exceptProperties ??= new List<Property>();
+		exceptProperties.AddRange(type.GetMembers().OfType<IPropertySymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => new Property(x, null))
-			.Distinct()
-			.ToList();
-		exceptMethods ??= type.GetMembers().OfType<IMethodSymbol>()
+			.Distinct());
+
+		exceptMethods ??= new List<Method>();
+		exceptMethods.AddRange(type.GetMembers().OfType<IMethodSymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => new Method(x, null))
-			.Distinct()
-			.ToList();
-		exceptEvents ??= type.GetMembers().OfType<IEventSymbol>()
+			.Distinct());
+
+		exceptEvents ??= new List<Event>();
+		exceptEvents.AddRange(type.GetMembers().OfType<IEventSymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
 			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, null))
-			.Distinct()
-			.ToList();
+			.Distinct());
 
 		InheritedTypes = new EquatableArray<Class>(
 			GetInheritedTypes(type).Select(t
-					=> new Class(t, methods, properties, events, exceptMethods, exceptProperties, exceptEvents))
+					=> new Class(t, sourceAssembly, methods, properties, events, exceptMethods, exceptProperties,
+						exceptEvents))
 				.ToArray());
+
+		bool ShouldIncludeMember(ISymbol member)
+		{
+			if (IsInterface || member.IsAbstract)
+			{
+				return true;
+			}
+
+			if ((member.DeclaredAccessibility == Accessibility.Internal ||
+			     member.DeclaredAccessibility == Accessibility.ProtectedOrInternal) &&
+			    !SymbolEqualityComparer.Default.Equals(member.ContainingAssembly, _sourceAssembly))
+			{
+				return false;
+			}
+
+			return true;
+		}
 	}
 
 	public EquatableArray<Method> Methods { get; }
