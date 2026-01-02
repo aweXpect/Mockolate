@@ -864,6 +864,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertySetterSetup<T> OnSet { get; }
         Mockolate.Setup.IPropertySetup<T> CallingBaseClass(bool callBaseClass = true);
         Mockolate.Setup.IPropertySetup<T> InitializeWith(T value);
+        Mockolate.Setup.IPropertySetup<T> Register();
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T> callback);
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T, T> callback);
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(T returnValue);
@@ -1381,6 +1382,7 @@ namespace Mockolate.Setup
         protected override TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
         protected override void InvokeSetter(object? value, Mockolate.MockBehavior behavior) { }
         protected override bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess) { }
+        public Mockolate.Setup.IPropertySetup<T> Register() { }
         public Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T> callback) { }
         public Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T, T> callback) { }
         public Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(T returnValue) { }
