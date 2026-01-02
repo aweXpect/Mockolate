@@ -137,8 +137,18 @@ internal record Method
 				}
 
 				// Normalize type names by removing nullable annotation
-				string xTypeName = xParam.Type.Fullname.TrimEnd('?');
-				string yTypeName = yParam.Type.Fullname.TrimEnd('?');
+				string xTypeName = xParam.Type.Fullname;
+				string yTypeName = yParam.Type.Fullname;
+
+				if (xTypeName.EndsWith("?"))
+				{
+					xTypeName = xTypeName.Substring(0, xTypeName.Length - 1);
+				}
+
+				if (yTypeName.EndsWith("?"))
+				{
+					yTypeName = yTypeName.Substring(0, yTypeName.Length - 1);
+				}
 
 				if (!xTypeName.Equals(yTypeName))
 				{
