@@ -298,6 +298,10 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IPropertySetup{T}.Register" />
+	public IPropertySetup<T> Register()
+		=> this;
+
 	/// <inheritdoc cref="IPropertySetup{T}.InitializeWith(T)" />
 	public IPropertySetup<T> InitializeWith(T value)
 	{
