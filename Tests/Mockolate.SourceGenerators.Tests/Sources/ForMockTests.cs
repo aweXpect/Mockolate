@@ -425,4 +425,76 @@ public sealed partial class ForMockTests
 			.DoesNotContain("ProtectedInternalMethod").And
 			.Contains("ProtectedMethod");
 	}
+
+	[Fact]
+	public async Task ShouldNotIncludeSealedOverrideMethodsFromBaseClass()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyDerivedClass>();
+			         }
+			     }
+
+			     public class MyDerivedClass : MyMiddleClass
+			     {
+			     }
+
+			     public class MyMiddleClass : MyBaseClass
+			     {
+			     	public sealed override void SomeMethod() { }
+			     }
+
+			     public class MyBaseClass
+			     {
+			     	public virtual void SomeMethod() { }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
+			.DoesNotContain("override void SomeMethod");
+	}
+
+	[Fact]
+	public async Task ShouldNotIncludeSealedOverridePropertiesFromBaseClass()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyDerivedClass>();
+			         }
+			     }
+
+			     public class MyDerivedClass : MyMiddleClass
+			     {
+			     }
+
+			     public class MyMiddleClass : MyBaseClass
+			     {
+			     	public sealed override int SomeProperty { get; set; }
+			     }
+
+			     public class MyBaseClass
+			     {
+			     	public virtual int SomeProperty { get; set; }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
+			.DoesNotContain("override int SomeProperty");
+	}
 }

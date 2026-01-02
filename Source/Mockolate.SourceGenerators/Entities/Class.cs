@@ -63,23 +63,34 @@ internal record Class
 			.Distinct(), exceptEvents, Event.ContainingTypeIndependentEqualityComparer);
 		Events = new EquatableArray<Event>(events.ToArray());
 
-		exceptProperties ??= type.GetMembers().OfType<IPropertySymbol>()
+		if (exceptProperties is null)
+		{
+			exceptProperties = new List<Property>();
+		}
+		exceptProperties.AddRange(type.GetMembers().OfType<IPropertySymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => new Property(x, null))
-			.Distinct()
-			.ToList();
-		exceptMethods ??= type.GetMembers().OfType<IMethodSymbol>()
+			.Distinct());
+
+		if (exceptMethods is null)
+		{
+			exceptMethods = new List<Method>();
+		}
+		exceptMethods.AddRange(type.GetMembers().OfType<IMethodSymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => new Method(x, null))
-			.Distinct()
-			.ToList();
-		exceptEvents ??= type.GetMembers().OfType<IEventSymbol>()
+			.Distinct());
+
+		if (exceptEvents is null)
+		{
+			exceptEvents = new List<Event>();
+		}
+		exceptEvents.AddRange(type.GetMembers().OfType<IEventSymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
 			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, null))
-			.Distinct()
-			.ToList();
+			.Distinct());
 
 		InheritedTypes = new EquatableArray<Class>(
 			GetInheritedTypes(type).Select(t
