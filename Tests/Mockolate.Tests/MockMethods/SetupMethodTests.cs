@@ -72,6 +72,28 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task MultipleOnlyOnceCallbacks_ShouldExecuteInOrder()
+	{
+		List<int> receivedCalls = [];
+		IMethodService sut = Mock.Create<IMethodService>();
+
+		sut.SetupMock.Method.MyVoidMethodWithoutParameters()
+			.Do(() => receivedCalls.Add(1)).OnlyOnce()
+			.Do(() => receivedCalls.Add(2)).OnlyOnce()
+			.Do(() => receivedCalls.Add(3)).OnlyOnce()
+			.Do(() => receivedCalls.Add(4)).OnlyOnce()
+			.Do(() => receivedCalls.Add(5)).OnlyOnce();
+
+		sut.MyVoidMethodWithoutParameters();
+		sut.MyVoidMethodWithoutParameters();
+		sut.MyVoidMethodWithoutParameters();
+		sut.MyVoidMethodWithoutParameters();
+		sut.MyVoidMethodWithoutParameters();
+
+		await That(receivedCalls).IsEqualTo([1, 2, 3, 4, 5,]);
+	}
+
+	[Fact]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
 		IMethodService mock = Mock.Create<IMethodService>();
