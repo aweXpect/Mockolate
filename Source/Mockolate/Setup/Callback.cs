@@ -137,7 +137,6 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 		}
 
 		_invocationCount++;
-		Interlocked.Increment(ref index);
 		return false;
 	}
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
