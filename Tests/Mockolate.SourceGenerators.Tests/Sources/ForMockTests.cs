@@ -326,4 +326,103 @@ public sealed partial class ForMockTests
 			.DoesNotContain("using MyCode.Services;").And
 			.DoesNotContain("using MyCode.Models;");
 	}
+
+	[Fact]
+	public async Task ShouldNotIncludeInternalMethodsFromBaseClass()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyDerivedClass>();
+			         }
+			     }
+
+			     public class MyDerivedClass : MyBaseClass
+			     {
+			     }
+
+			     public class MyBaseClass
+			     {
+			     	internal virtual void InternalMethod() { }
+			     	public virtual void PublicMethod() { }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
+			.DoesNotContain("InternalMethod").And
+			.Contains("PublicMethod");
+	}
+
+	[Fact]
+	public async Task ShouldNotIncludeInternalPropertiesFromBaseClass()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyDerivedClass>();
+			         }
+			     }
+
+			     public class MyDerivedClass : MyBaseClass
+			     {
+			     }
+
+			     public class MyBaseClass
+			     {
+			     	internal virtual int InternalProperty { get; set; }
+			     	public virtual int PublicProperty { get; set; }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
+			.DoesNotContain("InternalProperty").And
+			.Contains("PublicProperty");
+	}
+
+	[Fact]
+	public async Task ShouldNotIncludeProtectedInternalMethodsFromBaseClass()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<MyDerivedClass>();
+			         }
+			     }
+
+			     public class MyDerivedClass : MyBaseClass
+			     {
+			     }
+
+			     public class MyBaseClass
+			     {
+			     	protected internal virtual void ProtectedInternalMethod() { }
+			     	protected virtual void ProtectedMethod() { }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
+			.DoesNotContain("ProtectedInternalMethod").And
+			.Contains("ProtectedMethod");
+	}
 }
