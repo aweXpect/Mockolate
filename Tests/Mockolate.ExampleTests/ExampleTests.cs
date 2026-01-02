@@ -1,6 +1,7 @@
 using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
@@ -13,6 +14,12 @@ namespace Mockolate.ExampleTests;
 
 public class ExampleTests
 {
+	[Fact]
+	public async Task SealedOverride_ShouldWorkForProperties()
+	{
+		FlowDocument mock = Mock.Create<FlowDocument>();
+	}
+	
 	[Fact]
 	public async Task Any_ShouldAlwaysMatch()
 	{

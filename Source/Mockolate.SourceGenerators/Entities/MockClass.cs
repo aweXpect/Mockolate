@@ -5,10 +5,10 @@ namespace Mockolate.SourceGenerators.Entities;
 
 internal record MockClass : Class
 {
-	public MockClass(ITypeSymbol[] types) : base(types[0])
+	public MockClass(ITypeSymbol[] types, IAssemblySymbol sourceAssembly) : base(types[0], sourceAssembly)
 	{
 		AdditionalImplementations = new EquatableArray<Class>(
-			types.Skip(1).Select(x => new Class(x)).ToArray());
+			types.Skip(1).Select(x => new Class(x, sourceAssembly)).ToArray());
 
 		if (!IsInterface && types[0] is INamedTypeSymbol namedTypeSymbol)
 		{

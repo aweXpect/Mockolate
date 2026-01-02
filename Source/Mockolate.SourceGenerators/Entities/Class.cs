@@ -6,7 +6,10 @@ namespace Mockolate.SourceGenerators.Entities;
 
 internal record Class
 {
+	private readonly IAssemblySymbol _sourceAssembly;
+
 	public Class(ITypeSymbol type,
+		IAssemblySymbol sourceAssembly,
 		List<Method>? alreadyDefinedMethods = null,
 		List<Property>? alreadyDefinedProperties = null,
 		List<Event>? alreadyDefinedEvents = null,
@@ -14,6 +17,7 @@ internal record Class
 		List<Property>? exceptProperties = null,
 		List<Event>? exceptEvents = null)
 	{
+		_sourceAssembly = sourceAssembly;
 		Namespace = type.ContainingNamespace.ToString();
 		DisplayString = type.ToDisplayString();
 		ClassName = GetTypeName(type);
@@ -79,13 +83,26 @@ internal record Class
 
 		InheritedTypes = new EquatableArray<Class>(
 			GetInheritedTypes(type).Select(t
-					=> new Class(t, methods, properties, events, exceptMethods, exceptProperties, exceptEvents))
+					=> new Class(t, sourceAssembly, methods, properties, events, exceptMethods, exceptProperties,
+						exceptEvents))
 				.ToArray());
 
 		bool ShouldIncludeMember(ISymbol member)
-			=> IsInterface || member.IsAbstract ||
-			   (member.DeclaredAccessibility != Accessibility.Internal &&
-			    member.DeclaredAccessibility != Accessibility.ProtectedOrInternal);
+		{
+			if (IsInterface || member.IsAbstract)
+			{
+				return true;
+			}
+
+			if ((member.DeclaredAccessibility == Accessibility.Internal ||
+			     member.DeclaredAccessibility == Accessibility.ProtectedOrInternal) &&
+			    !SymbolEqualityComparer.Default.Equals(member.ContainingAssembly, _sourceAssembly))
+			{
+				return false;
+			}
+
+			return true;
+		}
 	}
 
 	public EquatableArray<Method> Methods { get; }

@@ -328,7 +328,7 @@ public sealed partial class ForMockTests
 	}
 
 	[Fact]
-	public async Task ShouldNotIncludeInternalMethodsFromBaseClass()
+	public async Task ShouldIncludeInternalMethodsFromBaseClass()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -356,12 +356,12 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
-			.DoesNotContain("InternalMethod").And
+			.Contains("InternalMethod").And
 			.Contains("PublicMethod");
 	}
 
 	[Fact]
-	public async Task ShouldNotIncludeInternalPropertiesFromBaseClass()
+	public async Task ShouldIncludeInternalPropertiesFromBaseClass()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -389,12 +389,12 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
-			.DoesNotContain("InternalProperty").And
+			.Contains("InternalProperty").And
 			.Contains("PublicProperty");
 	}
 
 	[Fact]
-	public async Task ShouldNotIncludeProtectedInternalMethodsFromBaseClass()
+	public async Task ShouldIncludeProtectedInternalMethodsFromBaseClass()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -422,7 +422,7 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
-			.DoesNotContain("ProtectedInternalMethod").And
+			.Contains("ProtectedInternalMethod").And
 			.Contains("ProtectedMethod");
 	}
 
@@ -537,8 +537,8 @@ public sealed partial class ForMockTests
 
 		await That(result.Sources).ContainsKey("MockForMyDerivedClass.g.cs").WhoseValue
 			.DoesNotContain("override void SealedMethod").And
-			.DoesNotContain("ProtectedInternalMethod").And
-			.DoesNotContain("InternalMethod").And
+			.Contains("ProtectedInternalMethod").And
+			.Contains("InternalMethod").And
 			.Contains("override void NormalMethod").And
 			.Contains("override void ProtectedMethod");
 	}
