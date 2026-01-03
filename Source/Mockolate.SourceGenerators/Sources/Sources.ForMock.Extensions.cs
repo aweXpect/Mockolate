@@ -404,9 +404,43 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
 
+		if (@class is { ClassName: "HttpClient", ClassFullName: "System.Net.Http.HttpClient", } &&
+		    method.Name.StartsWith("Send"))
+		{
+			sb.Append("\t\t\tif (setup is Mock<System.Net.Http.HttpClient> httpClientMock &&").AppendLine();
+			sb.Append(
+					"\t\t\t    httpClientMock.ConstructorParameters[0] is IMockSubject<System.Net.Http.HttpMessageHandler> httpMessageHandlerMock &&")
+				.AppendLine();
+			sb.Append(
+					"\t\t\t    httpMessageHandlerMock.Mock is IMockMethodSetup<System.Net.Http.HttpMessageHandler> httpMessageHandlerSetup)")
+				.AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			AppendMethodSetupBody(sb, method, useParameters,
+				"\t\t\t\t",
+				method.GetUniqueNameString().Replace("System.Net.Http.HttpMessageInvoker",
+					"System.Net.Http.HttpMessageHandler"),
+				"httpMessageHandlerSetup");
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t\telse").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			AppendMethodSetupBody(sb, method, useParameters, "\t\t\t\t");
+			sb.Append("\t\t\t}").AppendLine();
+		}
+		else
+		{
+			AppendMethodSetupBody(sb, method, useParameters);
+		}
+
+		sb.AppendLine("\t\t}");
+	}
+
+	private static void AppendMethodSetupBody(StringBuilder sb, Method method, bool useParameters,
+		string indentation = "\t\t\t", string? methodNameOverride = null, string setupVariableName = "setup")
+	{
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\t\tvar methodSetup = new ReturnMethodSetup<").AppendTypeOrWrapper(method.ReturnType);
+			sb.Append(indentation).Append("var methodSetup = new ReturnMethodSetup<")
+				.AppendTypeOrWrapper(method.ReturnType);
 
 			foreach (MethodParameter parameter in method.Parameters)
 			{
@@ -417,7 +451,7 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tvar methodSetup = new VoidMethodSetup");
+			sb.Append(indentation).Append("var methodSetup = new VoidMethodSetup");
 
 			if (method.Parameters.Count > 0)
 			{
@@ -439,14 +473,15 @@ internal static partial class Sources
 
 		if (useParameters)
 		{
-			sb.Append("(").Append(method.GetUniqueNameString()).Append(", parameters);").AppendLine();
-			sb.AppendLine("\t\t\tCastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);");
-			sb.AppendLine("\t\t\treturn methodSetup;");
-			sb.AppendLine("\t\t}");
+			sb.Append("(").Append(methodNameOverride ?? method.GetUniqueNameString()).Append(", parameters);")
+				.AppendLine();
+			sb.Append(indentation).Append("CastToMockRegistrationOrThrow(").Append(setupVariableName)
+				.Append(").SetupMethod(methodSetup);").AppendLine();
+			sb.Append(indentation).Append("return methodSetup;").AppendLine();
 		}
 		else
 		{
-			sb.Append("(").Append(method.GetUniqueNameString());
+			sb.Append("(").Append(methodNameOverride ?? method.GetUniqueNameString());
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ");
@@ -454,9 +489,9 @@ internal static partial class Sources
 			}
 
 			sb.Append(");").AppendLine();
-			sb.AppendLine("\t\t\tCastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);");
-			sb.AppendLine("\t\t\treturn methodSetup;");
-			sb.AppendLine("\t\t}");
+			sb.Append(indentation).Append("CastToMockRegistrationOrThrow(").Append(setupVariableName)
+				.Append(").SetupMethod(methodSetup);").AppendLine();
+			sb.Append(indentation).Append("return methodSetup;").AppendLine();
 		}
 	}
 

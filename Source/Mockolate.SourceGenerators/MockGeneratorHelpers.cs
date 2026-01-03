@@ -61,6 +61,7 @@ internal static class MockGeneratorHelpers
 		}
 	}
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes,
 		IAssemblySymbol sourceAssembly)
 	{
@@ -97,8 +98,22 @@ internal static class MockGeneratorHelpers
 					typesToProcess.Enqueue(methodType);
 				}
 			}
+
+			// When using HttpClient as a mock, we also have to create a mock for the HttpMessageHandler, that can be used as constructor parameter.
+			if (currentType.Name == "HttpClient" && currentType.ToDisplayString() == "System.Net.Http.HttpClient")
+			{
+				ITypeSymbol httpMessageHandlerType = currentType.GetMembers()
+					.OfType<IMethodSymbol>()
+					.Where(m => m.MethodKind == MethodKind.Constructor)
+					.SelectMany(c => c.Parameters)
+					.Select(p => p.Type)
+					.First(t => t.Name == "HttpMessageHandler");
+				yield return new MockClass([httpMessageHandlerType,], sourceAssembly);
+				typesToProcess.Enqueue(httpMessageHandlerType);
+			}
 		}
 	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	private static bool IsMockable(ITypeSymbol typeSymbol)
 		=> typeSymbol is

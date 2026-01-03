@@ -9,7 +9,18 @@ internal static partial class Sources
 {
 	public static string MockBehaviorExtensions(ImmutableArray<MockClass> mockClasses)
 	{
-		StringBuilder sb = InitializeBuilder([
+		bool includeHttpClient = mockClasses.Any(m => m.ClassFullName == "System.Net.Http.HttpClient");
+		StringBuilder sb = InitializeBuilder(includeHttpClient ? [
+			"System",
+			"System.Collections.Generic",
+			"System.Collections.Concurrent",
+			"System.Diagnostics",
+			"System.Linq",
+			"System.Net.Http",
+			"System.Threading",
+			"System.Threading.Tasks",
+			"Mockolate",
+		] : [
 			"System",
 			"System.Collections.Generic",
 			"System.Collections.Concurrent",
@@ -34,7 +45,20 @@ internal static partial class Sources
 		          	
 		          	static Mock()
 		          	{
-		          		_default = new MockBehavior(new DefaultValueGenerator());
+		          		_default = new MockBehavior(new DefaultValueGenerator())
+		          """);
+		if (includeHttpClient)
+		{
+			sb.AppendLine()
+				.Append("""
+				        			.UseConstructorParametersFor<HttpClient>(() => new object[] { Mock.Create<HttpMessageHandler>() });
+				        """).AppendLine();
+		}
+		else
+		{
+			sb.Append(";").AppendLine();
+		}
+		sb.Append("""
 		          	}
 		          	
 		          	extension(MockBehavior)

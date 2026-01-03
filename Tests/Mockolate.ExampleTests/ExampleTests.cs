@@ -50,12 +50,10 @@ public class ExampleTests
 	[InlineData(HttpStatusCode.ServiceUnavailable)]
 	public async Task HttpClientTest(HttpStatusCode statusCode)
 	{
-		HttpMessageHandler httpMessageHandler = Mock.Create<HttpMessageHandler>();
-		httpMessageHandler.SetupMock.Protected.Method
+		HttpClient httpClient = Mock.Create<HttpClient>();
+		httpClient.SetupMock.Method
 			.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
-
-		HttpClient httpClient = new(httpMessageHandler);
 
 		HttpResponseMessage result = await httpClient.GetAsync("https://www.example.com");
 
