@@ -28,14 +28,22 @@ public class ExampleTests
 		await That(result).IsEqualTo(new User(id, "Alice"));
 		mock.VerifyOnIExampleRepositoryMock.Invoked.AddUser(It.Is("Bob")).Once();
 	}
-	
+
 	[Fact]
-	public async Task HttpClient()
+	public async Task BaseClassWithConstructorParameters()
 	{
-		var mock = Mock.Create<HttpClient>();
+		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
+
+		mock.SetupMock.Method.MyMethod(It.IsAny<int>()).Returns(5);
+
+		int result = mock.MyMethod(3);
+
+		VerificationResult<MyClass> check = mock.VerifyMock.Invoked.MyMethod(It.IsAny<int>());
+		await That(result).IsEqualTo(5);
+		check.Once();
 	}
 
-#if FALSE && NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER
 	[Theory]
 	[InlineData(HttpStatusCode.OK)]
 	[InlineData(HttpStatusCode.NotFound)]
@@ -54,20 +62,6 @@ public class ExampleTests
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
 #endif
-
-	[Fact]
-	public async Task BaseClassWithConstructorParameters()
-	{
-		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
-
-		mock.SetupMock.Method.MyMethod(It.IsAny<int>()).Returns(5);
-
-		int result = mock.MyMethod(3);
-
-		VerificationResult<MyClass> check = mock.VerifyMock.Invoked.MyMethod(It.IsAny<int>());
-		await That(result).IsEqualTo(5);
-		check.Once();
-	}
 
 	[Fact]
 	public async Task MockIFileSystem_ShouldWork()
