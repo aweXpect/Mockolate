@@ -349,6 +349,12 @@ public sealed class MockRegistrationTests
 			          					setups = additionalSetups;
 			          				}
 			          			}
+			          
+			          			if (constructorParameters is null && mockBehavior.TryGetConstructorParameters<T>(out object?[]? parameters))
+			          			{
+			          				constructorParameters = new BaseClass.ConstructorParameters(parameters);
+			          			}
+			          
 			          			if (types.Length == 1 &&
 			          			    types[0] == typeof(MyCode.IMyInterface))
 			          			{

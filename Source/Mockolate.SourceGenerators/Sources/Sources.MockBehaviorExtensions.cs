@@ -1,11 +1,13 @@
+using System.Collections.Immutable;
 using System.Text;
+using Mockolate.SourceGenerators.Entities;
 
 namespace Mockolate.SourceGenerators.Sources;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
-	public static string MockBehaviorExtensions()
+	public static string MockBehaviorExtensions(ImmutableArray<MockClass> mockClasses)
 	{
 		StringBuilder sb = InitializeBuilder([
 			"System",
@@ -28,7 +30,12 @@ internal static partial class Sources
 		          /// </summary>
 		          internal static partial class Mock
 		          {
-		          	private static MockBehavior _default = new MockBehavior(new DefaultValueGenerator());
+		          	private static readonly MockBehavior _default;
+		          	
+		          	static Mock()
+		          	{
+		          		_default = new MockBehavior(new DefaultValueGenerator());
+		          	}
 		          	
 		          	extension(MockBehavior)
 		          	{

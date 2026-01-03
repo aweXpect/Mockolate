@@ -1,11 +1,11 @@
 using System;
 using System.IO.Abstractions;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 #endif
 

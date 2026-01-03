@@ -77,7 +77,10 @@ namespace Mockolate
         public bool ThrowWhenNotSetup { get; init; }
         public Mockolate.MockBehavior Initialize<T>(params System.Action<Mockolate.Setup.IMockSetup<T>>[] setups) { }
         public Mockolate.MockBehavior Initialize<T>(params System.Action<int, Mockolate.Setup.IMockSetup<T>>[] setups) { }
+        public bool TryGetConstructorParameters<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object?[]? parameters) { }
         public bool TryInitialize<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Action<Mockolate.Setup.IMockSetup<T>>[]? setups) { }
+        public Mockolate.MockBehavior UseConstructorParametersFor<T>(System.Func<object?[]> parameters) { }
+        public Mockolate.MockBehavior UseConstructorParametersFor<T>(params object?[] parameters) { }
     }
     public static class MockBehaviorExtensions
     {

@@ -58,6 +58,13 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t\tsetups = additionalSetups;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
+			sb.AppendLine();
+			sb.Append("\t\t\tif (constructorParameters is null && mockBehavior.TryGetConstructorParameters<T>(out object?[]? parameters))")
+				.AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tconstructorParameters = new BaseClass.ConstructorParameters(parameters);").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.AppendLine();
 			int index = 0;
 			foreach ((string Name, MockClass MockClass) mock in mocks)
 			{

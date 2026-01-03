@@ -1,4 +1,6 @@
-﻿namespace Mockolate.SourceGenerators.Tests;
+﻿using System.Net.Http;
+
+namespace Mockolate.SourceGenerators.Tests;
 
 public class MockGeneratorTests
 {

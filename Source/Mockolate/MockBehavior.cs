@@ -12,6 +12,7 @@ namespace Mockolate;
 /// </summary>
 public record MockBehavior
 {
+	private ConcurrentStack<IConstructorParameters> _constructorParameters = [];
 	private ConcurrentStack<IInitializer>? _initializers;
 
 	/// <inheritdoc cref="MockBehavior" />
@@ -75,6 +76,38 @@ public record MockBehavior
 	}
 
 	/// <summary>
+	///     Initialize all mocks of type <typeparamref name="T" /> to use the given constructor <paramref name="parameters" />.
+	/// </summary>
+	/// <remarks>
+	///     These parameters are only used when no explicit constructor parameters are provided when creating the mock.
+	/// </remarks>
+	public MockBehavior UseConstructorParametersFor<T>(Func<object?[]> parameters)
+	{
+		MockBehavior behavior = this with
+		{
+			_constructorParameters = new ConcurrentStack<IConstructorParameters>(_constructorParameters),
+		};
+		behavior._constructorParameters.Push(new ConstructorParameters<T>(parameters));
+		return behavior;
+	}
+
+	/// <summary>
+	///     Initialize all mocks of type <typeparamref name="T" /> to use the given constructor <paramref name="parameters" />.
+	/// </summary>
+	/// <remarks>
+	///     These parameters are only used when no explicit constructor parameters are provided when creating the mock.
+	/// </remarks>
+	public MockBehavior UseConstructorParametersFor<T>(params object?[] parameters)
+	{
+		MockBehavior behavior = this with
+		{
+			_constructorParameters = new ConcurrentStack<IConstructorParameters>(_constructorParameters),
+		};
+		behavior._constructorParameters.Push(new ConstructorParameters<T>(() => parameters));
+		return behavior;
+	}
+
+	/// <summary>
 	///     Tries to get the initialization setups for a mock of type <typeparamref name="T" />.
 	/// </summary>
 	/// <remarks>
@@ -82,8 +115,8 @@ public record MockBehavior
 	/// </remarks>
 	public bool TryInitialize<T>([NotNullWhen(true)] out Action<IMockSetup<T>>[]? setups)
 	{
-		if (_initializers?
-			    .FirstOrDefault(i => i is IInitializer<T>) is not IInitializer<T> initializer)
+		if (_initializers?.FirstOrDefault(i => i is IInitializer<T>)
+		    is not IInitializer<T> initializer)
 		{
 			setups = null;
 			return false;
@@ -93,12 +126,41 @@ public record MockBehavior
 		return true;
 	}
 
+	/// <summary>
+	///     Tries to get the constructor parameters for a mock of type <typeparamref name="T" />.
+	/// </summary>
+	/// <remarks>
+	///     Returns <see langword="false" />, when no matching constructor parameters are found.
+	/// </remarks>
+	public bool TryGetConstructorParameters<T>([NotNullWhen(true)] out object?[]? parameters)
+	{
+		if (_constructorParameters.FirstOrDefault(i => i is ConstructorParameters<T>)
+		    is not ConstructorParameters<T> constructorParameters)
+		{
+			parameters = null;
+			return false;
+		}
+
+		parameters = constructorParameters.GetParameters();
+		return true;
+	}
+
 	private interface IInitializer;
 
 	private interface IInitializer<in T> : IInitializer
 	{
 		Action<IMockSetup<T>>[] GetSetups();
 	}
+
+	private interface IConstructorParameters;
+
+#pragma warning disable S2326
+	// ReSharper disable once UnusedTypeParameter
+	private sealed class ConstructorParameters<T>(Func<object?[]> parameters) : IConstructorParameters
+	{
+		public object?[] GetParameters() => parameters();
+	}
+#pragma warning restore S2326
 
 	private sealed class SimpleInitializer<T>(Action<IMockSetup<T>>[] setups) : IInitializer<T>
 	{
