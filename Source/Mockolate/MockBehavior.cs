@@ -154,10 +154,13 @@ public record MockBehavior
 
 	private interface IConstructorParameters;
 
-	private class ConstructorParameters<T>(Func<object?[]> parameters) : IConstructorParameters
+#pragma warning disable S2326
+	// ReSharper disable once UnusedTypeParameter
+	private sealed class ConstructorParameters<T>(Func<object?[]> parameters) : IConstructorParameters
 	{
 		public object?[] GetParameters() => parameters();
 	}
+#pragma warning restore S2326
 
 	private sealed class SimpleInitializer<T>(Action<IMockSetup<T>>[] setups) : IInitializer<T>
 	{
