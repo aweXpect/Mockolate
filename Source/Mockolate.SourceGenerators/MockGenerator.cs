@@ -116,7 +116,7 @@ public class MockGenerator : IIncrementalGenerator
 					namedMocksToGenerate.Any(x => IsValidMockDeclaration(x.MockClass))), Encoding.UTF8));
 
 		context.AddSource("MockBehaviorExtensions.g.cs",
-			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate.Any(m => m.ClassFullName == "System.Net.Http.HttpClient")), Encoding.UTF8));
+			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate), Encoding.UTF8));
 	}
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)

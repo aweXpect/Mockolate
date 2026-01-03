@@ -64,6 +64,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tconstructorParameters = new BaseClass.ConstructorParameters(parameters);").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
+			sb.AppendLine();
 			int index = 0;
 			foreach ((string Name, MockClass MockClass) mock in mocks)
 			{

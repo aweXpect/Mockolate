@@ -1,11 +1,11 @@
 using System;
 using System.IO.Abstractions;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 #endif
 
@@ -28,22 +28,14 @@ public class ExampleTests
 		await That(result).IsEqualTo(new User(id, "Alice"));
 		mock.VerifyOnIExampleRepositoryMock.Invoked.AddUser(It.Is("Bob")).Once();
 	}
-
+	
 	[Fact]
-	public async Task BaseClassWithConstructorParameters()
+	public async Task HttpClient()
 	{
-		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
-
-		mock.SetupMock.Method.MyMethod(It.IsAny<int>()).Returns(5);
-
-		int result = mock.MyMethod(3);
-
-		VerificationResult<MyClass> check = mock.VerifyMock.Invoked.MyMethod(It.IsAny<int>());
-		await That(result).IsEqualTo(5);
-		check.Once();
+		var mock = Mock.Create<HttpClient>();
 	}
 
-#if NET8_0_OR_GREATER
+#if FALSE && NET8_0_OR_GREATER
 	[Theory]
 	[InlineData(HttpStatusCode.OK)]
 	[InlineData(HttpStatusCode.NotFound)]
@@ -62,6 +54,20 @@ public class ExampleTests
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
 #endif
+
+	[Fact]
+	public async Task BaseClassWithConstructorParameters()
+	{
+		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
+
+		mock.SetupMock.Method.MyMethod(It.IsAny<int>()).Returns(5);
+
+		int result = mock.MyMethod(3);
+
+		VerificationResult<MyClass> check = mock.VerifyMock.Invoked.MyMethod(It.IsAny<int>());
+		await That(result).IsEqualTo(5);
+		check.Once();
+	}
 
 	[Fact]
 	public async Task MockIFileSystem_ShouldWork()

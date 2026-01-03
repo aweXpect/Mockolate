@@ -1,4 +1,6 @@
-﻿namespace Mockolate.SourceGenerators.Tests;
+﻿using System.Net.Http;
+
+namespace Mockolate.SourceGenerators.Tests;
 
 public class MockGeneratorTests
 {
@@ -391,5 +393,33 @@ public class MockGeneratorTests
 		await That(result.Sources).HasCount().AtLeast(5);
 		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs");
 		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs");
+	}
+
+	[Fact]
+	public async Task WithHttpClient_ShouldAlsoGenerateMockForHttpMessageHandler()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Net.Http;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<HttpClient>();
+			             }
+			         }
+			     }
+			     """, typeof(HttpClient));
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("MockForHttpMessageHandler.g.cs").And
+			.ContainsKey("MockForHttpClient.g.cs");
 	}
 }

@@ -61,7 +61,8 @@ internal static class MockGeneratorHelpers
 		}
 	}
 
-	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes, IAssemblySymbol sourceAssembly)
+	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes,
+		IAssemblySymbol sourceAssembly)
 	{
 		Queue<ITypeSymbol> typesToProcess = new(initialTypes);
 		HashSet<ITypeSymbol> processedTypes = new(SymbolEqualityComparer.Default);
@@ -71,8 +72,8 @@ internal static class MockGeneratorHelpers
 			ITypeSymbol currentType = typesToProcess.Dequeue();
 
 			foreach (ITypeSymbol propertyType in currentType.GetMembers()
-			         .OfType<IPropertySymbol>()
-			         .Select(p => p.Type))
+				         .OfType<IPropertySymbol>()
+				         .Select(p => p.Type))
 			{
 				if (propertyType.TypeKind == TypeKind.Interface &&
 				    IsMockable(propertyType) &&
@@ -84,9 +85,9 @@ internal static class MockGeneratorHelpers
 			}
 
 			foreach (ITypeSymbol methodType in currentType.GetMembers()
-			         .OfType<IMethodSymbol>()
-			         .Where(m => !m.ReturnsVoid)
-			         .Select(m => m.ReturnType))
+				         .OfType<IMethodSymbol>()
+				         .Where(m => !m.ReturnsVoid)
+				         .Select(m => m.ReturnType))
 			{
 				if (methodType.TypeKind == TypeKind.Interface &&
 				    IsMockable(methodType) &&
@@ -95,6 +96,19 @@ internal static class MockGeneratorHelpers
 					yield return new MockClass([methodType,], sourceAssembly);
 					typesToProcess.Enqueue(methodType);
 				}
+			}
+
+			// When using HttpClient as a mock, we also have to create a mock for the HttpMessageHandler, that can be used as constructor parameter.
+			if (currentType.Name == "HttpClient" && currentType.ToDisplayString() == "System.Net.Http.HttpClient")
+			{
+				ITypeSymbol httpMessageHandlerType = currentType.GetMembers()
+					.OfType<IMethodSymbol>()
+					.Where(m => m.MethodKind == MethodKind.Constructor)
+					.SelectMany(c => c.Parameters)
+					.Select(p => p.Type)
+					.First(t => t.Name == "HttpMessageHandler");
+				yield return new MockClass([httpMessageHandlerType,], sourceAssembly);
+				typesToProcess.Enqueue(httpMessageHandlerType);
 			}
 		}
 	}
