@@ -23,10 +23,6 @@ public class MockGenerator : IIncrementalGenerator
 			"Mock.g.cs",
 			SourceText.From(Sources.Sources.MockClass(), Encoding.UTF8)));
 
-		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-			"MockBehaviorExtensions.g.cs",
-			SourceText.From(Sources.Sources.MockBehaviorExtensions(), Encoding.UTF8)));
-
 		IncrementalValueProvider<ImmutableArray<MockClass>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
 				static (s, _) => s.IsCreateMethodInvocation(),
@@ -118,6 +114,9 @@ public class MockGenerator : IIncrementalGenerator
 			SourceText.From(
 				Sources.Sources.MockRegistration(namedMocksToGenerate,
 					namedMocksToGenerate.Any(x => IsValidMockDeclaration(x.MockClass))), Encoding.UTF8));
+
+		context.AddSource("MockBehaviorExtensions.g.cs",
+			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate.Any(m => m.ClassFullName == "System.Net.Http.HttpClient")), Encoding.UTF8));
 	}
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)

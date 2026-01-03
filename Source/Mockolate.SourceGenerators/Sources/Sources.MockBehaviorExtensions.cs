@@ -5,9 +5,19 @@ namespace Mockolate.SourceGenerators.Sources;
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
-	public static string MockBehaviorExtensions()
+	public static string MockBehaviorExtensions(bool includeHttpClient)
 	{
-		StringBuilder sb = InitializeBuilder([
+		StringBuilder sb = InitializeBuilder(includeHttpClient ? [
+			"System",
+			"System.Collections.Generic",
+			"System.Collections.Concurrent",
+			"System.Diagnostics",
+			"System.Linq",
+			"System.Net.Http",
+			"System.Threading",
+			"System.Threading.Tasks",
+			"Mockolate",
+		] : [
 			"System",
 			"System.Collections.Generic",
 			"System.Collections.Concurrent",
@@ -28,7 +38,24 @@ internal static partial class Sources
 		          /// </summary>
 		          internal static partial class Mock
 		          {
-		          	private static MockBehavior _default = new MockBehavior(new DefaultValueGenerator());
+		          	private static readonly MockBehavior _default;
+		          	
+		          	static Mock()
+		          	{
+		          		_default = new MockBehavior(new DefaultValueGenerator())
+		          """);
+		if (includeHttpClient)
+		{
+			sb.AppendLine().Append("""
+			                       			.UseConstructorParametersFor<HttpClient>(() => new object[]{ Mock.Create<HttpClientHandler>() });
+			                       """).AppendLine();
+		}
+		else
+		{
+			sb.Append(";").AppendLine();
+		}
+		sb.Append("""
+		          	}
 		          	
 		          	extension(MockBehavior)
 		          	{
