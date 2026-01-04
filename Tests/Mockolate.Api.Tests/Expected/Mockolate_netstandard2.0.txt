@@ -138,7 +138,8 @@ namespace Mockolate
     }
     public class Mock<T> : Mockolate.MockSetup<T>, Mockolate.IInteractiveMock<T>, Mockolate.Raise.IMockRaises<T>, Mockolate.Raise.IProtectedMockRaises<T>, Mockolate.Verify.IMockVerifyGotIndexerProtected<T>, Mockolate.Verify.IMockVerifyGotIndexer<T>, Mockolate.Verify.IMockVerifyGotProtected<T>, Mockolate.Verify.IMockVerifyGot<T>, Mockolate.Verify.IMockVerifyInvokedProtected<T>, Mockolate.Verify.IMockVerifyInvokedWithEqualsWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithEqualsWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithEquals<T>, Mockolate.Verify.IMockVerifyInvokedWithToStringWithGetHashCode<T>, Mockolate.Verify.IMockVerifyInvokedWithToString<T>, Mockolate.Verify.IMockVerifyInvoked<T>, Mockolate.Verify.IMockVerifySetIndexerProtected<T>, Mockolate.Verify.IMockVerifySetIndexer<T>, Mockolate.Verify.IMockVerifySetProtected<T>, Mockolate.Verify.IMockVerifySet<T>, Mockolate.Verify.IMockVerifySubscribedToProtected<T>, Mockolate.Verify.IMockVerifySubscribedTo<T>, Mockolate.Verify.IMockVerifyUnsubscribedFromProtected<T>, Mockolate.Verify.IMockVerifyUnsubscribedFrom<T>, Mockolate.Verify.IMockVerify<T>
     {
-        public Mock(T subject, Mockolate.MockRegistration mockRegistration) { }
+        public Mock(T subject, Mockolate.MockRegistration mockRegistration, object?[]? constructorParameters = null) { }
+        public object?[] ConstructorParameters { get; }
         public Mockolate.Verify.VerificationResult<T> GotIndexer(params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method(string methodName, Mockolate.Parameters.IParameters parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method(string methodName, params Mockolate.Parameters.NamedParameter[] parameters) { }

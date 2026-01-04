@@ -224,8 +224,18 @@ internal static partial class Sources
 
 		sb.Append(')').AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName).Append(">(this, mockRegistration);")
-			.AppendLine();
+		sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName).Append(">(this, mockRegistration, new object?[] { ");
+		index = 0;
+		foreach (MethodParameter parameter in constructor.Parameters)
+		{
+			if (index++ > 0)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append(parameter.Name);
+		}
+		sb.Append(" });").AppendLine();
 		sb.Append("\t\t_mockRegistrations = mockRegistration;").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();

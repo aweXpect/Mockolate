@@ -351,6 +351,28 @@ public sealed partial class MockTests
 		await That(result).IsTrue();
 	}
 
+	[Fact]
+	public async Task WithConstructorParameters_ShouldBeAccessibleViaMock()
+	{
+		MyBaseClassWithConstructor sut = Mock.Create<MyBaseClassWithConstructor>(
+			BaseClass.WithConstructorParameters("foo"));
+
+		Mock<MyBaseClassWithConstructor> mock
+			= ((IMockSubject<MyBaseClassWithConstructor>)sut).Mock;
+
+		await That(mock.ConstructorParameters).HasCount(1).And.Contains("foo");
+	}
+
+	[Fact]
+	public async Task WithoutConstructorParameters_MockConstructorParametersShouldBeEmpty()
+	{
+		MyServiceBase sut = Mock.Create<MyServiceBase>();
+
+		Mock<MyServiceBase> mock = ((IMockSubject<MyServiceBase>)sut).Mock;
+
+		await That(mock.ConstructorParameters).IsEmpty();
+	}
+
 	public class MyServiceBaseWithVirtualCallsInConstructor
 	{
 		// ReSharper disable VirtualMemberCallInConstructor

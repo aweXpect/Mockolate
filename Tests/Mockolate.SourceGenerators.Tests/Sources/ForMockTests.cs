@@ -111,7 +111,7 @@ public sealed partial class ForMockTests
 			          	public MockForMyBaseClass(int value, MockRegistration mockRegistration)
 			          			: base(value)
 			          	{
-			          		_mock = new Mock<MyCode.MyBaseClass>(this, mockRegistration);
+			          		_mock = new Mock<MyCode.MyBaseClass>(this, mockRegistration, new object?[] { value });
 			          		_mockRegistrations = mockRegistration;
 			          	}
 			          """).IgnoringNewlineStyle().And
@@ -119,7 +119,7 @@ public sealed partial class ForMockTests
 			          	public MockForMyBaseClass(int value, bool flag, MockRegistration mockRegistration)
 			          			: base(value, flag)
 			          	{
-			          		_mock = new Mock<MyCode.MyBaseClass>(this, mockRegistration);
+			          		_mock = new Mock<MyCode.MyBaseClass>(this, mockRegistration, new object?[] { value, flag });
 			          		_mockRegistrations = mockRegistration;
 			          	}
 			          """).IgnoringNewlineStyle();

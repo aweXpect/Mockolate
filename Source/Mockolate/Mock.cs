@@ -6,7 +6,14 @@ namespace Mockolate;
 public partial class Mock<T> : MockSetup<T>
 {
 	/// <inheritdoc cref="Mock{T}" />
-	public Mock(T subject, MockRegistration mockRegistration) : base(subject, mockRegistration)
+	public Mock(T subject, MockRegistration mockRegistration, object?[]? constructorParameters = null)
+		: base(subject, mockRegistration)
 	{
+		ConstructorParameters = constructorParameters ?? [];
 	}
+
+	/// <summary>
+	///     The constructor parameters provided when creating the mock.
+	/// </summary>
+	public object?[] ConstructorParameters { get; }
 }
