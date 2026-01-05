@@ -22,7 +22,7 @@ namespace Build;
 
 partial class Build
 {
-	private static bool DisableMutationTests = true;
+	private static readonly bool DisableMutationTests = false;
 	static string MutationCommentBody = "";
 
 	Target MutationTests => _ => _
@@ -42,7 +42,7 @@ partial class Build
 
 			DotNetToolInstall(_ => _
 				.SetPackageName("dotnet-stryker")
-				.SetVersion("4.7.0")
+				.SetVersion("4.10.0")
 				.SetToolInstallationPath(toolPath));
 
 			Dictionary<Project, Project[]> projects = new()
