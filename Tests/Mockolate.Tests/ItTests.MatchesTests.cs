@@ -85,6 +85,23 @@ public sealed partial class ItTests
 				.Exactly(expectedCount);
 		}
 
+		[Fact]
+		public async Task ShouldFreezeValuesOnFirstMatch()
+		{
+			It.IParameterMatches match = It.Matches("F*o");
+			match.IgnoringCase();
+			IParameter parameter = (IParameter)match;
+
+			bool result1 = parameter.Matches("foo");
+
+			match.IgnoringCase(false);
+
+			bool result2 = parameter.Matches("foo");
+
+			await That(result1).IsTrue();
+			await That(result2).IsTrue();
+		}
+
 		[Theory]
 		[InlineData("foo", "F?o", 0)]
 		[InlineData("foo", "f?o", 1)]
@@ -104,8 +121,8 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_IgnoringCase_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex().IgnoringCase();
-			string expectedValue = "It.Matches(\"F[aeiou]+o\").AsRegex().IgnoringCase()";
+			IParameter<string> sut = It.Matches("F\"[aeiou]+o").AsRegex().IgnoringCase();
+			string expectedValue = "It.Matches(\"F\\\"[aeiou]+o\").AsRegex().IgnoringCase()";
 
 			string? result = sut.ToString();
 
@@ -116,6 +133,17 @@ public sealed partial class ItTests
 		public async Task ToString_AsRegex_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex();
+			string expectedValue = "It.Matches(\"F[aeiou]+o\").AsRegex()";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task ToString_AsRegex_WithInfiniteMatchTimeout_ShouldReturnExpectedValue()
+		{
+			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex(timeout: Regex.InfiniteMatchTimeout);
 			string expectedValue = "It.Matches(\"F[aeiou]+o\").AsRegex()";
 
 			string? result = sut.ToString();
