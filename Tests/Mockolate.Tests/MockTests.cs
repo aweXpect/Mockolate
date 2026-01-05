@@ -366,9 +366,9 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task WithoutConstructorParameters_MockConstructorParametersShouldBeEmpty()
 	{
-		MyServiceBase sut = Mock.Create<MyServiceBase>();
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 
-		Mock<MyServiceBase> mock = ((IMockSubject<MyServiceBase>)sut).Mock;
+		Mock<IChocolateDispenser> mock = ((IMockSubject<IChocolateDispenser>)sut).Mock;
 
 		await That(mock.ConstructorParameters).IsEmpty();
 	}

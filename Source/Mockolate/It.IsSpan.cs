@@ -1,5 +1,6 @@
 #if NET8_0_OR_GREATER
 using System;
+using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 using Mockolate.Setup;
@@ -20,14 +21,19 @@ public partial class It
 	///     Matches any parameter of type <see cref="System.Span{T}" /> of <typeparamref name="T" /> that matches the
 	///     <paramref name="predicate" />.
 	/// </summary>
-	public static IVerifySpanParameter<T> IsSpan<T>(Func<T[], bool> predicate)
-		=> new SpanParameterMatch<T>(predicate);
+	public static IVerifySpanParameter<T> IsSpan<T>(Func<T[], bool> predicate,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue = "")
+		=> new SpanParameterMatch<T>(predicate, doNotPopulateThisValue);
 
-	private sealed class SpanParameterMatch<T>(Func<T[], bool>? predicate)
+	private sealed class SpanParameterMatch<T>(Func<T[], bool>? predicate, string? predicateExpression = null)
 		: TypedMatch<SpanWrapper<T>>, IVerifySpanParameter<T>
 	{
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"It.IsSpan<{typeof(T).FormatType()}>()";
+		public override string ToString()
+			=> predicate is null
+				? $"It.IsAnySpan<{typeof(T).FormatType()}>()"
+				: $"It.IsSpan<{typeof(T).FormatType()}>({predicateExpression})";
 
 		protected override bool Matches(SpanWrapper<T> value)
 			=> predicate?.Invoke(value.SpanValues) ?? true;

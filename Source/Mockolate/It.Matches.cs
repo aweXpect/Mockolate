@@ -41,9 +41,9 @@ public partial class It
 		private bool _isRegex;
 		private Regex? _regex;
 		private RegexOptions _regexOptions = RegexOptions.None;
-		private string? _regexOptionsExpression;
+		private string _regexOptionsExpression = "";
 		private TimeSpan _timeout = Regex.InfiniteMatchTimeout;
-		private string _timeoutExpression = "";
+		private string? _timeoutExpression;
 
 		/// <inheritdoc cref="IParameterMatches.IgnoringCase(bool)" />
 		public IParameterMatches IgnoringCase(bool ignoreCase = true)
@@ -105,7 +105,7 @@ public partial class It
 		{
 			if (_timeout == Regex.InfiniteMatchTimeout)
 			{
-				return string.IsNullOrEmpty(_regexOptionsExpression) ? "" : _regexOptionsExpression;
+				return _regexOptionsExpression;
 			}
 
 			if (string.IsNullOrEmpty(_regexOptionsExpression))
