@@ -7,6 +7,29 @@ namespace Mockolate.Tests.MockIndexers;
 public sealed partial class SetupIndexerTests
 {
 	[Fact]
+	public async Task MultipleValues_ShouldAllStoreValues()
+	{
+		IIndexerService mock = Mock.Create<IIndexerService>();
+
+		mock[1] = "a";
+		mock[2] = "b";
+
+		string result1A = mock[1];
+		string result2A = mock[2];
+
+		mock[1] = "x";
+		mock[2] = "y";
+
+		string result1B = mock[1];
+		string result2B = mock[2];
+
+		await That(result1A).IsEqualTo("a");
+		await That(result2A).IsEqualTo("b");
+		await That(result1B).IsEqualTo("x");
+		await That(result2B).IsEqualTo("y");
+	}
+
+	[Fact]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();

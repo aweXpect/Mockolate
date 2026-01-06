@@ -97,6 +97,30 @@ public sealed partial class RaiseTests
 	}
 
 	[Fact]
+	public async Task WhenUnsubscribedFromOtherEvent_ShouldNotAffectOtherSubscriptions()
+	{
+		int callCount = 0;
+		int otherCallCount = 0;
+		IRaiseEvent mock = Mock.Create<IRaiseEvent>();
+		EventHandler handler = (_, _) => { callCount++; };
+		EventHandler otherHandler = (_, _) => { otherCallCount++; };
+
+		mock.SomeEvent += handler;
+		mock.SomeOtherEvent += otherHandler;
+		mock.RaiseOnMock.SomeEvent(Match.WithDefaultParameters());
+		mock.RaiseOnMock.SomeOtherEvent(Match.WithDefaultParameters());
+		mock.SomeOtherEvent -= otherHandler;
+		mock.RaiseOnMock.SomeEvent(Match.WithDefaultParameters());
+		mock.RaiseOnMock.SomeOtherEvent(Match.WithDefaultParameters());
+		mock.SomeEvent -= handler;
+		mock.RaiseOnMock.SomeEvent(Match.WithDefaultParameters());
+		mock.RaiseOnMock.SomeOtherEvent(Match.WithDefaultParameters());
+
+		await That(callCount).IsEqualTo(2);
+		await That(otherCallCount).IsEqualTo(1);
+	}
+
+	[Fact]
 	public async Task WhenUsingRaise_AnyParameters_ShouldInvokeEvent()
 	{
 		int callCount = 0;
