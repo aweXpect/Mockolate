@@ -66,38 +66,11 @@ internal static class MockGeneratorHelpers
 		IAssemblySymbol sourceAssembly)
 	{
 		Queue<ITypeSymbol> typesToProcess = new(initialTypes);
-		HashSet<ITypeSymbol> processedTypes = new(SymbolEqualityComparer.Default);
+		HashSet<ITypeSymbol> processedTypes = new(typesToProcess, SymbolEqualityComparer.Default);
 
 		while (typesToProcess.Count > 0)
 		{
 			ITypeSymbol currentType = typesToProcess.Dequeue();
-
-			foreach (ITypeSymbol propertyType in currentType.GetMembers()
-				         .OfType<IPropertySymbol>()
-				         .Select(p => p.Type))
-			{
-				if (propertyType.TypeKind == TypeKind.Interface &&
-				    IsMockable(propertyType) &&
-				    processedTypes.Add(propertyType))
-				{
-					yield return new MockClass([propertyType,], sourceAssembly);
-					typesToProcess.Enqueue(propertyType);
-				}
-			}
-
-			foreach (ITypeSymbol methodType in currentType.GetMembers()
-				         .OfType<IMethodSymbol>()
-				         .Where(m => !m.ReturnsVoid)
-				         .Select(m => m.ReturnType))
-			{
-				if (methodType.TypeKind == TypeKind.Interface &&
-				    IsMockable(methodType) &&
-				    processedTypes.Add(methodType))
-				{
-					yield return new MockClass([methodType,], sourceAssembly);
-					typesToProcess.Enqueue(methodType);
-				}
-			}
 
 			// When using HttpClient as a mock, we also have to create a mock for the HttpMessageHandler, that can be used as constructor parameter.
 			if (currentType.Name == "HttpClient" && currentType.ToDisplayString() == "System.Net.Http.HttpClient")
@@ -108,8 +81,11 @@ internal static class MockGeneratorHelpers
 					.SelectMany(c => c.Parameters)
 					.Select(p => p.Type)
 					.First(t => t.Name == "HttpMessageHandler");
-				yield return new MockClass([httpMessageHandlerType,], sourceAssembly);
-				typesToProcess.Enqueue(httpMessageHandlerType);
+				if (processedTypes.Add(httpMessageHandlerType))
+				{
+					yield return new MockClass([httpMessageHandlerType,], sourceAssembly);
+					typesToProcess.Enqueue(httpMessageHandlerType);
+				}
 			}
 		}
 	}

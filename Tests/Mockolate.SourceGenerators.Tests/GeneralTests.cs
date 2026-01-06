@@ -53,7 +53,7 @@ public class GeneralTests
 	}
 
 	[Fact]
-	public async Task InterfaceProperty_ShouldRecursivelyCreateMocks()
+	public async Task InterfaceProperty_ShouldNotRecursivelyCreateMocks()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -91,8 +91,8 @@ public class GeneralTests
 
 		await That(result.Sources)
 			.ContainsKey("MockForIMyInterface1.g.cs").And
-			.ContainsKey("MockForIMyInterface2.g.cs").And
-			.ContainsKey("MockForIMyInterface3.g.cs");
+			.DoesNotContainKey("MockForIMyInterface2.g.cs").And
+			.DoesNotContainKey("MockForIMyInterface3.g.cs");
 	}
 
 	[Fact]
