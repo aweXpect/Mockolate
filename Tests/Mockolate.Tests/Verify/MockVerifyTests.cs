@@ -1,9 +1,60 @@
-﻿using Mockolate.Tests.TestHelpers;
+﻿using System.Collections.Generic;
+using Mockolate.Interactions;
+using Mockolate.Tests.TestHelpers;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.Verify;
 
 public class MockVerifyTests
 {
+	[Fact]
+	public async Task GetUnverifiedInteractions_ShouldBeSorted()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+		MockInteractions interactions = ((IMockSubject<IChocolateDispenser>)sut).Mock.Interactions;
+
+		sut.Dispense("Dark", 1);
+		sut.Dispense("Dark", 2);
+		IReadOnlyCollection<IInteraction> result1 = interactions.GetUnverifiedInteractions();
+
+		sut.Dispense("Dark", 3);
+		sut.Dispense("Dark", 4);
+		IReadOnlyCollection<IInteraction> result2 = interactions.GetUnverifiedInteractions();
+
+		await That(result1).IsInAscendingOrder(x => x.Index);
+		await That(result2).IsInAscendingOrder(x => x.Index);
+	}
+
+	[Fact]
+	public async Task GetUnverifiedInteractions_WhenVerified_ShouldBeSorted()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+		MockInteractions interactions = ((IMockSubject<IChocolateDispenser>)sut).Mock.Interactions;
+
+		sut.Dispense("Dark", 1);
+		sut.Dispense("Dark", 2);
+		sut.Dispense("Dark", 3);
+		sut.Dispense("Dark", 4);
+
+		sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.Is(5)).Never();
+		IReadOnlyCollection<IInteraction> result = interactions.GetUnverifiedInteractions();
+
+		await That(result).IsInAscendingOrder(x => x.Index);
+	}
+
+	[Fact]
+	public async Task ThatAllInteractionsAreVerified_MultipleCalls_ShouldRepresentLatestValue()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+		bool result1 = sut.VerifyMock.ThatAllInteractionsAreVerified();
+		sut.Dispense("Dark", 1);
+		bool result2 = sut.VerifyMock.ThatAllInteractionsAreVerified();
+
+		await That(result1).IsTrue();
+		await That(result2).IsFalse();
+	}
+
 	[Fact]
 	public async Task ThatAllInteractionsAreVerified_WithoutInteractions_ShouldReturnTrue()
 	{
