@@ -80,6 +80,23 @@ public sealed partial class RaiseTests
 	}
 
 	[Fact]
+	public async Task WhenSubscribedToOtherEvent_ShouldNotTrigger()
+	{
+		int callCount = 0;
+		IRaiseEvent mock = Mock.Create<IRaiseEvent>();
+		EventHandler handler = (_, _) => { callCount++; };
+
+		mock.SomeOtherEvent += handler;
+		mock.RaiseOnMock.SomeEvent(Match.WithDefaultParameters());
+		mock.RaiseOnMock.SomeEvent(Match.WithDefaultParameters());
+		mock.SomeOtherEvent -= handler;
+		mock.RaiseOnMock.SomeEvent(Match.WithDefaultParameters());
+		mock.RaiseOnMock.SomeEvent(Match.WithDefaultParameters());
+
+		await That(callCount).IsEqualTo(0);
+	}
+
+	[Fact]
 	public async Task WhenUsingRaise_AnyParameters_ShouldInvokeEvent()
 	{
 		int callCount = 0;
@@ -139,5 +156,6 @@ public sealed partial class RaiseTests
 	public interface IRaiseEvent
 	{
 		event EventHandler? SomeEvent;
+		event EventHandler? SomeOtherEvent;
 	}
 }

@@ -38,10 +38,9 @@ public partial class It
 	private sealed class MatchesAsWildcardMatch(string pattern) : TypedMatch<string>, IParameterMatches
 	{
 		private bool _ignoreCase;
-		private bool _isRegex;
 		private Regex? _regex;
 		private RegexOptions _regexOptions = RegexOptions.None;
-		private string _regexOptionsExpression = "";
+		private string? _regexOptionsExpression;
 		private TimeSpan _timeout = Regex.InfiniteMatchTimeout;
 		private string? _timeoutExpression;
 
@@ -58,7 +57,6 @@ public partial class It
 			[CallerArgumentExpression("options")] string doNotPopulateThisValue1 = "",
 			[CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "")
 		{
-			_isRegex = true;
 			_regexOptions = options;
 			_regexOptionsExpression = doNotPopulateThisValue1;
 			if (timeout is not null)
@@ -74,7 +72,7 @@ public partial class It
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(string value)
 		{
-			_regex ??= (_isRegex, _ignoreCase) switch
+			_regex ??= (_regexOptionsExpression is not null, _ignoreCase) switch
 			{
 				(false, true) => new Regex(WildcardToRegularExpression(pattern),
 					RegexOptions.Multiline | RegexOptions.IgnoreCase, _timeout),
@@ -91,29 +89,30 @@ public partial class It
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> (_isRegex, _ignoreCase) switch
+			=> (_regexOptionsExpression is not null, _ignoreCase) switch
 			{
 				(true, true) =>
-					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString()}).IgnoringCase()",
+					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString(_timeout, _timeoutExpression, _regexOptionsExpression!)}).IgnoringCase()",
 				(true, false) =>
-					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString()})",
+					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString(_timeout, _timeoutExpression, _regexOptionsExpression!)})",
 				(false, true) => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").IgnoringCase()",
 				(false, false) => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\")",
 			};
 
-		private string RegexParameterToString()
+		private static string RegexParameterToString(TimeSpan timeout, string? timeoutExpression,
+			string regexOptionsExpression)
 		{
-			if (_timeout == Regex.InfiniteMatchTimeout)
+			if (timeout == Regex.InfiniteMatchTimeout)
 			{
-				return _regexOptionsExpression;
+				return regexOptionsExpression;
 			}
 
-			if (string.IsNullOrEmpty(_regexOptionsExpression))
+			if (string.IsNullOrEmpty(regexOptionsExpression))
 			{
-				return $"timeout: {_timeoutExpression}";
+				return $"timeout: {timeoutExpression}";
 			}
 
-			return $"{_regexOptionsExpression}, {_timeoutExpression}";
+			return $"{regexOptionsExpression}, {timeoutExpression}";
 		}
 
 		private static string WildcardToRegularExpression(string value)

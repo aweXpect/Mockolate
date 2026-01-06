@@ -132,8 +132,8 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex();
-			string expectedValue = "It.Matches(\"F[aeiou]+o\").AsRegex()";
+			IParameter<string> sut = It.Matches("F\"[aeiou]+o").AsRegex();
+			string expectedValue = "It.Matches(\"F\\\"[aeiou]+o\").AsRegex()";
 
 			string? result = sut.ToString();
 

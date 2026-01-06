@@ -17,6 +17,17 @@ public sealed partial class VerifyInvokedTests
 	}
 
 	[Fact]
+	public async Task Equals_WithOtherOverload_ShouldWork()
+	{
+		object obj = new();
+		IMethodService mock = Mock.Create<IMethodService>();
+
+		_ = mock.Equals(3);
+
+		await That(mock.VerifyMock.Invoked.Equals(It.Is(obj))).Never();
+	}
+
+	[Fact]
 	public async Task Equals_ShouldWorkWithNull()
 	{
 		object? obj = null;

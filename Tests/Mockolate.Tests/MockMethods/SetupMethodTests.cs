@@ -1077,6 +1077,7 @@ public sealed partial class SetupMethodTests
 		void MyMethodWithOutParameter(out int value);
 		string ToString();
 		bool Equals(object? obj);
+		bool Equals(int other);
 		int GetHashCode();
 	}
 

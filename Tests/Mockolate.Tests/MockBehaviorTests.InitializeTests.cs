@@ -9,7 +9,7 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task Initialize_DirectSetupsTakePrecedence()
 		{
-			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>((counter, setup)
+			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>((_, setup)
 				=> setup.Indexer(It.Satisfies<string>(s => s.StartsWith("da"))).InitializeWith(5));
 
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(behavior,
@@ -24,6 +24,21 @@ public sealed partial class MockBehaviorTests
 			await That(directMatchResult).IsEqualTo(16);
 			await That(behaviorMatchResult).IsEqualTo(5);
 			await That(noneMatchResult).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task Initialize_OtherType_ShouldIgnoreInitializations()
+		{
+			MockBehavior behavior =
+				MockBehavior.Default.Initialize<IChocolateDispenser>(setup
+					=> setup.Indexer(It.Is("Dark")).InitializeWith(15));
+
+			void Act()
+			{
+				_ = Mock.Create<IMyService>(behavior);
+			}
+
+			await That(Act).DoesNotThrow();
 		}
 
 		[Fact]
