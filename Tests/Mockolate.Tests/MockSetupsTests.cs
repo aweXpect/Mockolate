@@ -1,4 +1,7 @@
-﻿using Mockolate.Parameters;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Mockolate.Interactions;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
 
@@ -6,6 +9,23 @@ namespace Mockolate.Tests;
 
 public sealed class MockSetupsTests
 {
+	[Fact]
+	public async Task ClearAllInteractions_ShouldResetIndex()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+		MockInteractions interactions = ((IMockSubject<IChocolateDispenser>)sut).Mock.Interactions;
+
+		sut.Dispense("Dark", 1);
+		sut.Dispense("Light", 2);
+		sut.SetupMock.ClearAllInteractions();
+		sut.Dispense("Dark", 3);
+		sut.Dispense("Light", 4);
+		sut.Dispense("Milk", 5);
+		IReadOnlyCollection<IInteraction> result = interactions.GetUnverifiedInteractions();
+
+		await That(result.Select(x => x.Index)).IsEqualTo([0, 1, 2,]);
+	}
+
 	[Theory]
 	[InlineData(0, 0, 0, 0, "(none)")]
 	[InlineData(1, 0, 0, 0, "1 method")]
