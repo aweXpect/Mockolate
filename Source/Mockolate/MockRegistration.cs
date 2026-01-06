@@ -119,10 +119,7 @@ public partial class MockRegistration
 			callBase => callBase && baseValueAccessor is not null
 				? baseValueAccessor.Invoke()
 				: defaultValueGenerator());
-		return matchingSetup.InvokeGetter(interaction, Behavior,
-			(matchingSetup.CallBaseClass() ?? Behavior.CallBaseClass) && baseValueAccessor is not null
-				? baseValueAccessor
-				: defaultValueGenerator);
+		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
 	}
 
 	/// <summary>
@@ -234,7 +231,7 @@ public partial class MockRegistration
 			sb.Append(_indexerSetups.Count).Append(_indexerSetups.Count == 1 ? " indexer, " : " indexers, ");
 		}
 
-		if (sb.Length < 2)
+		if (sb.Length == 0)
 		{
 			return "(none)";
 		}

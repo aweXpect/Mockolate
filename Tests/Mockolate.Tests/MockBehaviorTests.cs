@@ -16,6 +16,17 @@ public sealed partial class MockBehaviorTests
 	}
 
 	[Fact]
+	public async Task ShouldSupportCustomDefaultValueGenerator()
+	{
+		MockBehavior sut = new(new MyDefaultValueGenerator());
+
+		await That(sut.CallBaseClass).IsFalse();
+		await That(sut.ThrowWhenNotSetup).IsFalse();
+		await That(sut.DefaultValue.Generate("")).IsEqualTo("foo");
+		await That(sut.DefaultValue.Generate(0)).IsEqualTo(0);
+	}
+
+	[Fact]
 	public async Task ShouldSupportWithSyntax()
 	{
 		MockBehavior sut = MockBehavior.Default with
