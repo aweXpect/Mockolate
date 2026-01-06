@@ -65,6 +65,7 @@ public class ExampleTests
 	public async Task MockIFileSystem_ShouldWork()
 	{
 		IFileSystem mock = Mock.Create<IFileSystem>(MockBehavior.Default.CallingBaseClass());
+		mock.SetupMock.Property.Path.Returns(Mock.Create<IPath>());
 
 		mock.Path.SetupMock.Property.DirectorySeparatorChar.Returns('a');
 

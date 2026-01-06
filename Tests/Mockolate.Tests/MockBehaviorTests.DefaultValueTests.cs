@@ -9,13 +9,13 @@ public sealed partial class MockBehaviorTests
 	public sealed class DefaultValueTests
 	{
 		[Fact]
-		public async Task Recursive_ShouldReturnMock()
+		public async Task Recursive_ShouldReturnNull()
 		{
 			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
 
 			IMyRecursiveService result = mock.RecursiveService;
 
-			await That(result).IsNotNull();
+			await That(result).IsNull();
 		}
 
 		[Fact]
