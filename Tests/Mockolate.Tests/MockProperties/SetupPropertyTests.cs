@@ -54,6 +54,29 @@ public sealed partial class SetupPropertyTests
 	}
 
 	[Fact]
+	public async Task Register_MultipleProperties_ShouldAllStoreValues()
+	{
+		IPropertyService mock = Mock.Create<IPropertyService>();
+
+		mock.MyProperty = 1;
+		mock.MyOtherProperty = 2;
+
+		int myResult1 = mock.MyProperty;
+		int myOtherResult1 = mock.MyOtherProperty;
+
+		mock.MyProperty = 10;
+		mock.MyOtherProperty = 20;
+
+		int myResult2 = mock.MyProperty;
+		int myOtherResult2 = mock.MyOtherProperty;
+
+		await That(myResult1).IsEqualTo(1);
+		await That(myOtherResult1).IsEqualTo(2);
+		await That(myResult2).IsEqualTo(10);
+		await That(myOtherResult2).IsEqualTo(20);
+	}
+
+	[Fact]
 	public async Task Register_SamePropertyTwice_ShouldOverwritePreviousSetup()
 	{
 		IPropertyService mock = Mock.Create<IPropertyService>();

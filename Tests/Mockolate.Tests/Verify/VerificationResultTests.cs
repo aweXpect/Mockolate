@@ -35,7 +35,20 @@ public class VerificationResultTests
 		VerificationResult<IIndexerVerificationService> result
 			= sut.VerifyMock.GotIndexer(It.IsAny<string>(), null);
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer [It.IsAny<string>(), It.IsNull<int?>()]");
+		await That(((IVerificationResult)result).Expectation)
+			.IsEqualTo("got indexer [It.IsAny<string>(), It.IsNull<int?>()]");
+	}
+
+	[Fact]
+	public async Task VerificationResult_Invoked_AnyParameters_ShouldHaveExpectedValue()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+		VerificationResult<IChocolateDispenser> result
+			= sut.VerifyMock.Invoked.Dispense(Match.AnyParameters());
+
+		await That(((IVerificationResult)result).Expectation)
+			.IsEqualTo("invoked method Dispense(Match.AnyParameters())");
 	}
 
 	[Fact]
@@ -97,9 +110,22 @@ public class VerificationResultTests
 		IIndexerVerificationService sut = Mock.Create<IIndexerVerificationService>();
 
 		VerificationResult<IIndexerVerificationService> result
-			= sut.VerifyMock.SetIndexer(It.Is("foo"), null, It.Is(5));
+			= sut.VerifyMock.SetIndexer(It.Is("foo"), null, It.Is<int?>(5));
 
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("set indexer [\"foo\", It.IsNull<int?>()] to value 5");
+		await That(((IVerificationResult)result).Expectation)
+			.IsEqualTo("set indexer [\"foo\", It.IsNull<int?>()] to value 5");
+	}
+
+	[Fact]
+	public async Task VerificationResult_SetIndexerWithMultipleParametersToNull_ShouldHaveExpectedValue()
+	{
+		IIndexerVerificationService sut = Mock.Create<IIndexerVerificationService>();
+
+		VerificationResult<IIndexerVerificationService> result
+			= sut.VerifyMock.SetIndexer(It.Is("foo"), null, null);
+
+		await That(((IVerificationResult)result).Expectation)
+			.IsEqualTo("set indexer [\"foo\", It.IsNull<int?>()] to value null");
 	}
 
 	[Fact]
@@ -123,9 +149,9 @@ public class VerificationResultTests
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event ChocolateDispensed");
 	}
-	
+
 	internal interface IIndexerVerificationService
 	{
-		int this[string p1, int? p2] { get; set; }
+		int? this[string p1, int? p2] { get; set; }
 	}
 }

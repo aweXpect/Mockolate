@@ -320,6 +320,12 @@ public partial class MockRegistration
 	[DebuggerDisplay("{ToString()}")]
 	private sealed class EventSetups
 	{
+		/// <summary>
+		///     This value is only needed, to use the <see cref="ConcurrentDictionary{TKey, TValue}" /> as a
+		///     thread-safe collection of keys, because .NET does not have a thread-safe <see cref="HashSet{T}" />.
+		/// </summary>
+		private const bool Value = true;
+
 		private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _storage;
 
 		public int Count
@@ -341,7 +347,7 @@ public partial class MockRegistration
 		public void Add(object? target, MethodInfo method, string eventName)
 		{
 			_storage ??= new ConcurrentDictionary<(object?, MethodInfo, string), bool>();
-			_storage.TryAdd((target, method, eventName), true);
+			_storage.TryAdd((target, method, eventName), Value);
 		}
 
 		public void Remove(object? target, MethodInfo method, string eventName)
