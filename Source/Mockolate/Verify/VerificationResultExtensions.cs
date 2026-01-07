@@ -254,7 +254,8 @@ public static class VerificationResultExtensions
 			{
 				expectations.Add(result.Expectation);
 				IVerificationResult currentResult = result;
-				result.Verify(interactions => VerifyInteractions(interactions, currentResult));
+				// In case of an error, `after` is set to int.MaxValue and all following verifications will fail
+				_ = result.Verify(interactions => VerifyInteractions(interactions, currentResult));
 				result = check(mockVerify);
 			}
 
