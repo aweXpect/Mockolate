@@ -274,6 +274,45 @@ public class VerificationResultExtensionsTests
 			.Then(m => m.Invoked.Dispense(It.IsAny<string>(), It.Is(2)));
 	}
 
+	[Theory]
+	[InlineData(false, 1, 2, 3, 4)]
+	[InlineData(true, 1, 2, 2, 4)]
+	[InlineData(true, 1, 2, 3, 2, 4)]
+	public async Task Then_TwiceSame_ShouldOnlyCountOnce(bool expectMatch, params int[] values)
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		foreach (int value in values)
+		{
+			mock.Dispense("Dark", value);
+		}
+
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.Is(2))
+				.Then(m => m.Invoked.Dispense(It.IsAny<string>(), It.Is(2)));
+		}
+
+		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectMatch);
+	}
+
+	[Fact]
+	public async Task Then_WhenOnlyPartlyMatch_ShouldFail()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		mock.Dispense("Dark", 1);
+		mock.Dispense("Dark", 2);
+		mock.Dispense("Dark", 3);
+		mock.Dispense("Dark", 4);
+
+		await That(void () => mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.Is(2))
+				.Then(m => m.Invoked.Dispense(It.IsAny<string>(), It.Is(1)),
+					m => m.Invoked.Dispense(It.IsAny<string>(), It.Is(4))))
+			.Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), 2), then invoked method Dispense(It.IsAny<string>(), 1), then invoked method Dispense(It.IsAny<string>(), 4) in order, but it invoked method Dispense(It.IsAny<string>(), 1) too early.");
+	}
+
 	[Fact]
 	public async Task Then_WhenNoMatch_ShouldFail()
 	{
