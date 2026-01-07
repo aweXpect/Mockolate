@@ -246,7 +246,6 @@ public static class VerificationResultExtensions
 		public void Then(params Func<IMockVerify<TMock>, VerificationResult<TMock>>[] orderedChecks)
 		{
 			string? error = null;
-			bool flag = true;
 			List<string> expectations = [];
 			IVerificationResult result = verificationResult;
 			IMockVerify<TMock> mockVerify = GetMockVerify(((IVerificationResult<TMock>)verificationResult).Object);
@@ -255,16 +254,12 @@ public static class VerificationResultExtensions
 			{
 				expectations.Add(result.Expectation);
 				IVerificationResult currentResult = result;
-				if (!result.Verify(interactions => VerifyInteractions(interactions, currentResult)))
-				{
-					flag = false;
-				}
-
+				result.Verify(interactions => VerifyInteractions(interactions, currentResult));
 				result = check(mockVerify);
 			}
 
 			expectations.Add(result.Expectation);
-			if (!result.Verify(interactions => VerifyInteractions(interactions, result)) || !flag)
+			if (!result.Verify(interactions => VerifyInteractions(interactions, result)))
 			{
 				string separator = ", then ";
 				throw new MockVerificationException(

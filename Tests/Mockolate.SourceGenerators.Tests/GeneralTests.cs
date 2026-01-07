@@ -110,48 +110,62 @@ public class GeneralTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mockolate.Mock.Create<IMyInterface>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<object>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<bool>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<string>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<char>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<byte>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<sbyte>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<short>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<ushort>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<int>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<uint>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<long>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<ulong>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<float>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<double>>();
+			                 _ = Mockolate.Mock.Create<IMyInterface<decimal>>();
 			             }
 			         }
 
-			         public interface IMyInterface
+			         public interface IMyInterface<T>
 			         {
-			             IEnumerable<object> EnumerableOfObject { get; }
-			             IEnumerable<bool> EnumerableOfBool { get; }
-			             IEnumerable<string> EnumerableOfString { get; }
-			             IEnumerable<char> EnumerableOfChar { get; }
-			             IEnumerable<byte> EnumerableOfByte { get; }
-			             IEnumerable<sbyte> EnumerableOfSbyte { get; }
-			             IEnumerable<short> EnumerableOfShort { get; }
-			             IEnumerable<ushort> EnumerableOfUshort { get; }
-			             IEnumerable<int> EnumerableOfInt { get; }
-			             IEnumerable<uint> EnumerableOfUint { get; }
-			             IEnumerable<long> EnumerableOfLong { get; }
-			             IEnumerable<ulong> EnumerableOfUlong { get; }
-			             IEnumerable<float> EnumerableOfFloat { get; }
-			             IEnumerable<double> EnumerableOfDouble { get; }
-			             IEnumerable<decimal> EnumerableOfDecimal { get; }
+			             IEnumerable<T> MyEnumerable { get; }
 			         }
 			     }
 
 			     """, typeof(IEnumerable<>));
 
-		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs").WhoseValue
-			.Contains("public System.Collections.Generic.IEnumerable<object> EnumerableOfObject").And
-			.Contains("public System.Collections.Generic.IEnumerable<bool> EnumerableOfBool").And
-			.Contains("public System.Collections.Generic.IEnumerable<string> EnumerableOfString").And
-			.Contains("public System.Collections.Generic.IEnumerable<char> EnumerableOfChar").And
-			.Contains("public System.Collections.Generic.IEnumerable<byte> EnumerableOfByte").And
-			.Contains("public System.Collections.Generic.IEnumerable<sbyte> EnumerableOfSbyte").And
-			.Contains("public System.Collections.Generic.IEnumerable<short> EnumerableOfShort").And
-			.Contains("public System.Collections.Generic.IEnumerable<ushort> EnumerableOfUshort").And
-			.Contains("public System.Collections.Generic.IEnumerable<int> EnumerableOfInt").And
-			.Contains("public System.Collections.Generic.IEnumerable<uint> EnumerableOfUint").And
-			.Contains("public System.Collections.Generic.IEnumerable<long> EnumerableOfLong").And
-			.Contains("public System.Collections.Generic.IEnumerable<ulong> EnumerableOfUlong").And
-			.Contains("public System.Collections.Generic.IEnumerable<float> EnumerableOfFloat").And
-			.Contains("public System.Collections.Generic.IEnumerable<double> EnumerableOfDouble").And
-			.Contains("public System.Collections.Generic.IEnumerable<decimal> EnumerableOfDecimal");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceobject.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<object> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacebool.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<bool> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacestring.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<string> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacechar.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<char> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacebyte.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<byte> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacesbyte.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<sbyte> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceshort.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<short> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceushort.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<ushort> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceint.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<int> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceuint.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<uint> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacelong.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<long> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfaceulong.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<ulong> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacefloat.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<float> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacedouble.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<double> MyEnumerable");
+		await That(result.Sources).ContainsKey("MockForIMyInterfacedecimal.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<decimal> MyEnumerable");
 	}
 
 	[Fact]
@@ -234,6 +248,65 @@ public class GeneralTests
 
 		await That(result.Sources).ContainsKey("MockForIListMyRecord.g.cs").WhoseValue
 			.Contains("internal class MockForIListMyRecord : System.Collections.Generic.IList<MyOtherCode.MyRecord>");
+	}
+
+	[Fact]
+	public async Task MockOfTypesWithGenericTypes_ShouldHandleSpecialGenericParameters()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mockolate.Mock.Create<IMyInterface>();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             IEnumerable<object> EnumerableOfObject { get; }
+			             IEnumerable<bool> EnumerableOfBool { get; }
+			             IEnumerable<string> EnumerableOfString { get; }
+			             IEnumerable<char> EnumerableOfChar { get; }
+			             IEnumerable<byte> EnumerableOfByte { get; }
+			             IEnumerable<sbyte> EnumerableOfSbyte { get; }
+			             IEnumerable<short> EnumerableOfShort { get; }
+			             IEnumerable<ushort> EnumerableOfUshort { get; }
+			             IEnumerable<int> EnumerableOfInt { get; }
+			             IEnumerable<uint> EnumerableOfUint { get; }
+			             IEnumerable<long> EnumerableOfLong { get; }
+			             IEnumerable<ulong> EnumerableOfUlong { get; }
+			             IEnumerable<float> EnumerableOfFloat { get; }
+			             IEnumerable<double> EnumerableOfDouble { get; }
+			             IEnumerable<decimal> EnumerableOfDecimal { get; }
+			         }
+			     }
+
+			     """, typeof(IEnumerable<>));
+
+		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs").WhoseValue
+			.Contains("public System.Collections.Generic.IEnumerable<object> EnumerableOfObject").And
+			.Contains("public System.Collections.Generic.IEnumerable<bool> EnumerableOfBool").And
+			.Contains("public System.Collections.Generic.IEnumerable<string> EnumerableOfString").And
+			.Contains("public System.Collections.Generic.IEnumerable<char> EnumerableOfChar").And
+			.Contains("public System.Collections.Generic.IEnumerable<byte> EnumerableOfByte").And
+			.Contains("public System.Collections.Generic.IEnumerable<sbyte> EnumerableOfSbyte").And
+			.Contains("public System.Collections.Generic.IEnumerable<short> EnumerableOfShort").And
+			.Contains("public System.Collections.Generic.IEnumerable<ushort> EnumerableOfUshort").And
+			.Contains("public System.Collections.Generic.IEnumerable<int> EnumerableOfInt").And
+			.Contains("public System.Collections.Generic.IEnumerable<uint> EnumerableOfUint").And
+			.Contains("public System.Collections.Generic.IEnumerable<long> EnumerableOfLong").And
+			.Contains("public System.Collections.Generic.IEnumerable<ulong> EnumerableOfUlong").And
+			.Contains("public System.Collections.Generic.IEnumerable<float> EnumerableOfFloat").And
+			.Contains("public System.Collections.Generic.IEnumerable<double> EnumerableOfDouble").And
+			.Contains("public System.Collections.Generic.IEnumerable<decimal> EnumerableOfDecimal");
 	}
 
 	[Fact]
