@@ -150,7 +150,7 @@ public class MockGeneratorTests
 
 			         public interface IMy<T> { }
 			     }
-			     """);
+			     """, typeof(HttpResponseMessage));
 
 		await ThatAll(
 			That(result.Sources.Keys).Contains([
@@ -308,7 +308,7 @@ public class MockGeneratorTests
 			             int MyMethod();
 			         }
 			     }
-			     """, typeof(DateTime), typeof(Task));
+			     """, typeof(DateTime), typeof(Task), typeof(HttpResponseMessage));
 
 		await That(result.Diagnostics).IsEmpty();
 		await That(result.Sources).HasCount().AtLeast(5);

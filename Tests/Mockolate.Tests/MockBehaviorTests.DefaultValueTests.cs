@@ -53,14 +53,18 @@ public sealed partial class MockBehaviorTests
 		}
 
 		[Fact]
-		public async Task WithHttpResponseMessage_ShouldReturnNotImplementedStatusCode()
+		public async Task WithHttpResponseMessage_ShouldReturnEmptyResponseWithNotImplementedStatusCode()
 		{
 			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
 
 			HttpResponseMessage result = mock.HttpResponseMessage;
 
 			await That(result.StatusCode).IsEqualTo(HttpStatusCode.NotImplemented);
+#if NET8_0_OR_GREATER
+			await That(result.Content.ReadAsStringAsync()).IsEmpty();
+#else
 			await That(result.Content).IsNull();
+#endif
 		}
 
 		[Fact]

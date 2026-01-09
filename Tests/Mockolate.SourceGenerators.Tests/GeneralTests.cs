@@ -348,7 +348,7 @@ public class GeneralTests
 			         }
 			     }
 
-			     """, typeof(IList<>));
+			     """, typeof(IList<>), typeof(HttpResponseMessage));
 
 		await That(result.Diagnostics).IsEmpty();
 

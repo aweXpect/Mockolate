@@ -97,7 +97,7 @@ internal static partial class Sources
 		          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="HttpResponseMessage" /> with the specified
 		          	///     <paramref name="statusCode" />.
 		          	/// </summary>
-		          	internal class HttpResponseMessageFactory(HttpStatusCode statusCode) : IDefaultValueFactory
+		          	private sealed class HttpResponseMessageFactory(HttpStatusCode statusCode) : IDefaultValueFactory
 		          	{
 		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(Type)" />
 		          		public bool IsMatch(Type type)
