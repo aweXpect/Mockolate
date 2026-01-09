@@ -1011,7 +1011,7 @@ public sealed partial class SetupMethodTests
 		public bool GetHasReturnCalls()
 			=> base.HasReturnCalls();
 
-		protected override bool? GetCallBaseClass()
+		protected override bool? GetSkipBaseClass()
 			=> throw new NotSupportedException();
 
 		protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)

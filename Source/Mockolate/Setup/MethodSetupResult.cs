@@ -14,11 +14,10 @@ public class MethodSetupResult(IInteractiveMethodSetup? setup, MockBehavior beha
 		=> setup is not null && setup.HasReturnCalls();
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values
-	///     used as default values.
+	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	public bool CallBaseClass
-		=> setup?.CallBaseClass() ?? behavior.CallBaseClass;
+	public bool SkipBaseClass
+		=> setup?.SkipBaseClass() ?? behavior.SkipBaseClass;
 
 	/// <summary>
 	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type

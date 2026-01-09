@@ -14,16 +14,16 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 {
 	private readonly List<Callback<Action<int>>> _callbacks = [];
 	private readonly List<Callback<Func<int, TReturn>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.CallingBaseClass(bool)" />
-	public IReturnMethodSetup<TReturn> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.SkippingBaseClass(bool)" />
+	public IReturnMethodSetup<TReturn> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -209,9 +209,9 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		// No parameters to trigger
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()
@@ -240,7 +240,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, TReturn>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -260,10 +260,10 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		_matches = matches;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.CallingBaseClass(bool)" />
-	public IReturnMethodSetup<TReturn, T1> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.SkippingBaseClass(bool)" />
+	public IReturnMethodSetup<TReturn, T1> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -495,9 +495,9 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1,], parameters);
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()
@@ -547,7 +547,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, TReturn>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -568,10 +568,10 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		_matches = matches;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.CallingBaseClass(bool)" />
-	public IReturnMethodSetup<TReturn, T1, T2> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.SkippingBaseClass(bool)" />
+	public IReturnMethodSetup<TReturn, T1, T2> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -812,9 +812,9 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1, _match2,], parameters);
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()
@@ -865,7 +865,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, T3, TReturn>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -891,10 +891,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		_matches = matches;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.CallingBaseClass(bool)" />
-	public IReturnMethodSetup<TReturn, T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.SkippingBaseClass(bool)" />
+	public IReturnMethodSetup<TReturn, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -1144,9 +1144,9 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1, _match2, _match3,], parameters);
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()
@@ -1199,7 +1199,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, T3, T4, TReturn>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -1227,10 +1227,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		_matches = matches;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.CallingBaseClass(bool)" />
-	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.SkippingBaseClass(bool)" />
+	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -1494,9 +1494,9 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1, _match2, _match3, _match4,], parameters);
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()

@@ -14,10 +14,9 @@ public interface IInteractiveMethodSetup : ISetup
 	bool Matches(MethodInvocation methodInvocation);
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values
-	///     used as default values.
+	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	bool? CallBaseClass();
+	bool? SkipBaseClass();
 
 	/// <summary>
 	///     Gets a value indicating whether this setup has return calls configured.
@@ -67,12 +66,15 @@ public interface IInteractiveMethodSetup : ISetup
 public interface IReturnMethodSetup<in TReturn>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TReturn> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -210,12 +212,15 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn>
 public interface IReturnMethodSetup<in TReturn, out T1>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TReturn, T1> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -368,12 +373,15 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1>
 public interface IReturnMethodSetup<in TReturn, out T1, out T2>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TReturn, T1, T2> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -526,12 +534,15 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2>
 public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TReturn, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -685,12 +696,15 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true);
+	IReturnMethodSetup<TReturn, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -844,12 +858,15 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 public interface IVoidMethodSetup
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IVoidMethodSetup CallingBaseClass(bool callBaseClass = true);
+	IVoidMethodSetup SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -974,12 +991,15 @@ public interface IVoidMethodSetupReturnWhenBuilder : IVoidMethodSetup
 public interface IVoidMethodSetup<out T1>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IVoidMethodSetup<T1> CallingBaseClass(bool callBaseClass = true);
+	IVoidMethodSetup<T1> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -1118,12 +1138,15 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1>
 public interface IVoidMethodSetup<out T1, out T2>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IVoidMethodSetup<T1, T2> CallingBaseClass(bool callBaseClass = true);
+	IVoidMethodSetup<T1, T2> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -1262,12 +1285,15 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2>
 public interface IVoidMethodSetup<out T1, out T2, out T3>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IVoidMethodSetup<T1, T2, T3> CallingBaseClass(bool callBaseClass = true);
+	IVoidMethodSetup<T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.
@@ -1406,12 +1432,15 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3>
 public interface IVoidMethodSetup<out T1, out T2, out T3, out T4>
 {
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IVoidMethodSetup<T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true);
+	IVoidMethodSetup<T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute when the method is called.

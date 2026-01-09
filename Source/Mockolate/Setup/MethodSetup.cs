@@ -27,9 +27,9 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 	bool IInteractiveMethodSetup.Matches(MethodInvocation methodInvocation)
 		=> IsMatch(methodInvocation);
 
-	/// <inheritdoc cref="IInteractiveMethodSetup.CallBaseClass()" />
-	bool? IInteractiveMethodSetup.CallBaseClass()
-		=> GetCallBaseClass();
+	/// <inheritdoc cref="IInteractiveMethodSetup.SkipBaseClass()" />
+	bool? IInteractiveMethodSetup.SkipBaseClass()
+		=> GetSkipBaseClass();
 
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
@@ -49,10 +49,9 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 		=> TriggerParameterCallbacks(parameters);
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default
-	///     values.
+	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	protected abstract bool? GetCallBaseClass();
+	protected abstract bool? GetSkipBaseClass();
 
 	/// <summary>
 	///     Gets a value indicating whether this setup has return calls configured.

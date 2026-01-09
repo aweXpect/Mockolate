@@ -9,16 +9,18 @@ public static class MockBehaviorExtensions
 	extension(MockBehavior mockBehavior)
 	{
 		/// <summary>
-		///     Specifies if the base class implementation should be called, and
-		///     its return values used as default values.
+		///     Specifies if calling the base class implementation should be skipped.
 		/// </summary>
 		/// <remarks>
-		///     Sets the <see cref="MockBehavior.CallBaseClass" /> to <paramref name="callBaseClass" />.
+		///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+		///     its return values are used as default values.
+		///     <para />
+		///     Sets the <see cref="MockBehavior.SkipBaseClass" /> to <paramref name="skipBaseClass" />.
 		/// </remarks>
-		public MockBehavior CallingBaseClass(bool callBaseClass = true)
+		public MockBehavior SkippingBaseClass(bool skipBaseClass = true)
 			=> mockBehavior with
 			{
-				CallBaseClass = callBaseClass,
+				SkipBaseClass = skipBaseClass,
 			};
 
 		/// <summary>

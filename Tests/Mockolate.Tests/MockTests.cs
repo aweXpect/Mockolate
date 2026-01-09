@@ -60,7 +60,7 @@ public sealed partial class MockTests
 		Create_BaseClassWithVirtualCallsInConstructor_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
 	{
 		MyServiceBaseWithVirtualCallsInConstructor mock =
-			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(MockBehavior.Default.CallingBaseClass());
+			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(MockBehavior.Default.SkippingBaseClass());
 
 		int value = mock.VirtualProperty;
 

@@ -30,9 +30,9 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	bool IInteractivePropertySetup.Matches(PropertyAccess propertyAccess)
 		=> Matches(propertyAccess);
 
-	/// <inheritdoc cref="IInteractivePropertySetup.CallBaseClass()" />
-	bool? IInteractivePropertySetup.CallBaseClass()
-		=> GetCallBaseClass();
+	/// <inheritdoc cref="IInteractivePropertySetup.SkipBaseClass()" />
+	bool? IInteractivePropertySetup.SkipBaseClass()
+		=> GetSkipBaseClass();
 
 	/// <inheritdoc cref="IInteractivePropertySetup.InitializeWith(object?)" />
 	void IInteractivePropertySetup.InitializeWith(object? value)
@@ -44,10 +44,9 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	protected abstract void InitializeValue(object? value);
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values
-	///     used as default values.
+	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	protected abstract bool? GetCallBaseClass();
+	protected abstract bool? GetSkipBaseClass();
 
 	/// <summary>
 	///     Checks if the <paramref name="propertyAccess" /> matches the setup.
@@ -77,8 +76,8 @@ public abstract class PropertySetup : IInteractivePropertySetup
 			// Is always initialized from the constructor
 		}
 
-		/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
-		protected override bool? GetCallBaseClass()
+		/// <inheritdoc cref="PropertySetup.GetSkipBaseClass()" />
+		protected override bool? GetSkipBaseClass()
 			=> null;
 
 		/// <inheritdoc cref="PropertySetup.Matches(PropertyAccess)" />
@@ -114,7 +113,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T, T>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T>>> _setterCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -269,9 +268,9 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		}
 	}
 
-	/// <inheritdoc cref="PropertySetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="PropertySetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
@@ -291,10 +290,10 @@ public class PropertySetup<T>(string name) : PropertySetup,
 
 	#region IPropertySetup<T>
 
-	/// <inheritdoc cref="IPropertySetup{T}.CallingBaseClass(bool)" />
-	public IPropertySetup<T> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IPropertySetup{T}.SkippingBaseClass(bool)" />
+	public IPropertySetup<T> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
