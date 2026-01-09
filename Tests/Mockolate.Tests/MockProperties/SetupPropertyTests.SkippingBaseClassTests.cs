@@ -7,7 +7,7 @@ public sealed partial class SetupPropertyTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyProperty_Getter_ShouldCallBaseWhenRequested(bool skipBaseClass, int expectedCallCount)
+		public async Task MyProperty_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass, int expectedCallCount)
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();
 			mock.SetupMock.Property.MyProperty.SkippingBaseClass(skipBaseClass);
@@ -20,7 +20,7 @@ public sealed partial class SetupPropertyTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyProperty_Setter_ShouldCallBaseWhenRequested(bool skipBaseClass, int expectedCallCount)
+		public async Task MyProperty_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass, int expectedCallCount)
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();
 			mock.SetupMock.Property.MyProperty.SkippingBaseClass(skipBaseClass);

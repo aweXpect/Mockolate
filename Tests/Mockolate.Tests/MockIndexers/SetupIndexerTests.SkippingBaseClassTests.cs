@@ -7,7 +7,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith1Key_Getter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith1Key_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -21,7 +21,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith1Key_Setter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith1Key_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -35,7 +35,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith2Keys_Getter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith2Keys_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -49,7 +49,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith2Keys_Setter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith2Keys_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -63,7 +63,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith3Keys_Getter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith3Keys_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -77,7 +77,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith3Keys_Setter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith3Keys_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -91,7 +91,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith4Keys_Getter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith4Keys_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -105,7 +105,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith4Keys_Setter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith4Keys_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -119,7 +119,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith5Keys_Getter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith5Keys_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();
@@ -134,7 +134,7 @@ public sealed partial class SetupIndexerTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task IndexerWith5Keys_Setter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task IndexerWith5Keys_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyIndexerService mock = Mock.Create<MyIndexerService>();

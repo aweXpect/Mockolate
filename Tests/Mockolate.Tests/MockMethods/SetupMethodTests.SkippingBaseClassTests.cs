@@ -7,7 +7,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyReturnMethodWith1Parameter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyReturnMethodWith1Parameter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -21,7 +21,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyReturnMethodWith2Parameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyReturnMethodWith2Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -35,7 +35,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyReturnMethodWith3Parameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyReturnMethodWith3Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -50,7 +50,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyReturnMethodWith4Parameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyReturnMethodWith4Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -65,7 +65,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyReturnMethodWith5Parameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyReturnMethodWith5Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -81,7 +81,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyReturnMethodWithoutParameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyReturnMethodWithoutParameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -95,7 +95,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyVoidMethodWith1Parameter_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyVoidMethodWith1Parameter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -109,7 +109,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyVoidMethodWith2Parameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyVoidMethodWith2Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -123,7 +123,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyVoidMethodWith3Parameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyVoidMethodWith3Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -138,7 +138,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyVoidMethodWith4Parameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyVoidMethodWith4Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -153,7 +153,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyVoidMethodWith5Parameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyVoidMethodWith5Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
@@ -169,7 +169,7 @@ public sealed partial class SetupMethodTests
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]
-		public async Task MyVoidMethodWithoutParameters_ShouldCallBaseWhenRequested(bool skipBaseClass,
+		public async Task MyVoidMethodWithoutParameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
 			MyMethodService mock = Mock.Create<MyMethodService>();
