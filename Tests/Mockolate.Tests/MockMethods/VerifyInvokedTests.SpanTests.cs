@@ -9,7 +9,7 @@ public sealed partial class VerifyInvokedTests
 		[Fact]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.SkippingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			mock.MyMethod(new Memory<int>([1, 2, 3,]));
 
@@ -21,7 +21,7 @@ public sealed partial class VerifyInvokedTests
 		[Fact]
 		public async Task Memory_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.SkippingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			mock.MyMethod(new Memory<int>());
 			mock.MyMethod(new Span<int>([1, 2, 3,]));
@@ -33,7 +33,7 @@ public sealed partial class VerifyInvokedTests
 		[Fact]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.SkippingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
 
@@ -45,7 +45,7 @@ public sealed partial class VerifyInvokedTests
 		[Fact]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.SkippingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			mock.MyMethod(new ReadOnlySpan<int>());
 			mock.MyMethod(new Span<int>([1, 2, 3,]));
@@ -57,7 +57,7 @@ public sealed partial class VerifyInvokedTests
 		[Fact]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.SkippingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			mock.MyMethod(new Span<int>([1, 2, 3,]));
 
@@ -69,7 +69,7 @@ public sealed partial class VerifyInvokedTests
 		[Fact]
 		public async Task Span_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.SkippingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			mock.MyMethod(new Span<int>());
 			mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
