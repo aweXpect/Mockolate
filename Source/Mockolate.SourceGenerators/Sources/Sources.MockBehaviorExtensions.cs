@@ -105,7 +105,7 @@ internal static partial class Sources
 		          	
 		          		/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
 		          		public object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
-		          			=> new HttpResponseMessage(statusCode);
+		          			=> new HttpResponseMessage(statusCode) { Content = new StringContent(string.Empty) };
 		          	}
 		          	
 		          	/// <summary>

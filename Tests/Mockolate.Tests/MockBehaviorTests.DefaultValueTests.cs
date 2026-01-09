@@ -60,11 +60,7 @@ public sealed partial class MockBehaviorTests
 			HttpResponseMessage result = mock.HttpResponseMessage;
 
 			await That(result.StatusCode).IsEqualTo(HttpStatusCode.NotImplemented);
-#if NET8_0_OR_GREATER
 			await That(result.Content.ReadAsStringAsync()).IsEmpty();
-#else
-			await That(result.Content).IsNull();
-#endif
 		}
 
 		[Fact]
