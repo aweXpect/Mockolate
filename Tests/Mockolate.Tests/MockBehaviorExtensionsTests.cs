@@ -3,24 +3,24 @@ namespace Mockolate.Tests;
 public sealed class MockBehaviorExtensionsTests
 {
 	[Fact]
-	public async Task CallingBaseClass_ShouldSetCallBaseClass()
+	public async Task SkippingBaseClass_ShouldSetSkipBaseClass()
 	{
 		MockBehavior sut = MockBehavior.Default;
 
-		MockBehavior result = sut.CallingBaseClass();
+		MockBehavior result = sut.SkippingBaseClass();
 
-		await That(result.CallBaseClass).IsTrue();
+		await That(result.SkipBaseClass).IsTrue();
 	}
 
 	[Fact]
-	public async Task CallingBaseClass_WithFalse_ShouldUpdateCallBaseClass()
+	public async Task SkippingBaseClass_WithFalse_ShouldUpdateSkipBaseClass()
 	{
 		bool initializedValue = true;
-		MockBehavior sut = MockBehavior.Default.CallingBaseClass(initializedValue);
+		MockBehavior sut = MockBehavior.Default.SkippingBaseClass(initializedValue);
 
-		MockBehavior result = sut.CallingBaseClass(false);
+		MockBehavior result = sut.SkippingBaseClass(false);
 
-		await That(result.CallBaseClass).IsFalse();
+		await That(result.SkipBaseClass).IsFalse();
 	}
 
 	[Fact]

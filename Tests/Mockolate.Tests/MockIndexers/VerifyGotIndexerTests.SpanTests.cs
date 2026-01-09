@@ -9,7 +9,7 @@ public sealed partial class VerifyGotIndexerTests
 		[Fact]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			_ = mock[new Memory<int>([1, 2, 3,])];
 
@@ -21,7 +21,7 @@ public sealed partial class VerifyGotIndexerTests
 		[Fact]
 		public async Task Memory_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			_ = mock[new Memory<int>()];
 			_ = mock[new Span<int>([1, 2, 3,])];
@@ -33,7 +33,7 @@ public sealed partial class VerifyGotIndexerTests
 		[Fact]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			_ = mock[new ReadOnlySpan<int>([1, 2, 3,])];
 
@@ -45,7 +45,7 @@ public sealed partial class VerifyGotIndexerTests
 		[Fact]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			_ = mock[new ReadOnlySpan<int>()];
 			_ = mock[new Span<int>([1, 2, 3,])];
@@ -57,7 +57,7 @@ public sealed partial class VerifyGotIndexerTests
 		[Fact]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			_ = mock[new Span<int>([1, 2, 3,])];
 
@@ -69,7 +69,7 @@ public sealed partial class VerifyGotIndexerTests
 		[Fact]
 		public async Task Span_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = Mock.Create<SpanMock>(MockBehavior.Default.CallingBaseClass());
+			SpanMock mock = Mock.Create<SpanMock>();
 
 			_ = mock[new Span<int>()];
 			_ = mock[new ReadOnlySpan<int>([1, 2, 3,])];

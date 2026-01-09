@@ -25,13 +25,12 @@ public interface IInteractivePropertySetup : ISetup
 	bool Matches(PropertyAccess propertyAccess);
 
 	/// <summary>
-	///     Gets a flag indicating if the base class implementation should be called, and its return values used as default
-	///     values.
+	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
 	///     When not explicitly set on the <see cref="IPropertySetup{T}" />, returns <see langword="null" />.
 	/// </remarks>
-	bool? CallBaseClass();
+	bool? SkipBaseClass();
 
 	/// <summary>
 	///     Initialize the <see cref="IPropertySetup{T}" /> with the <paramref name="value" />.
@@ -111,12 +110,15 @@ public interface IPropertySetup<T>
 	IPropertySetterSetup<T> OnSet { get; }
 
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IPropertySetup<T> CallingBaseClass(bool callBaseClass = true);
+	IPropertySetup<T> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Register the property to have a setup without a specific value.

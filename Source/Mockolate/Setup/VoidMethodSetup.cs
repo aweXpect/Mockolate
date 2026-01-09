@@ -13,27 +13,20 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 {
 	private readonly List<Callback<Action<int>>> _callbacks = [];
 	private readonly List<Callback<Action<int>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public IVoidMethodSetup CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IVoidMethodSetup.SkippingBaseClass(bool)" />
+	public IVoidMethodSetup SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder Do(Action callback)
 	{
 		Callback<Action<int>> currentCallback = new(_ => callback());
@@ -42,9 +35,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup.Do(Action{int})" />
 	public IVoidMethodSetupCallbackBuilder Do(Action<int> callback)
 	{
 		Callback<Action<int>> currentCallback = new(callback);
@@ -53,9 +44,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup.DoesNotThrow()" />
 	public IVoidMethodSetup DoesNotThrow()
 	{
 		Callback<Action<int>> currentCallback = new(_ => { });
@@ -64,9 +53,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -76,9 +63,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder Throws(Exception exception)
 	{
 		Callback<Action<int>> currentCallback = new(_ => throw exception);
@@ -87,9 +72,7 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder Throws(Func<Exception> callback)
 	{
 		Callback<Action<int>> currentCallback = new(_ => throw callback());
@@ -192,9 +175,9 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		// No parameters to trigger
 	}
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
@@ -219,7 +202,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -239,21 +222,14 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		_matches = matches;
 	}
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public IVoidMethodSetup<T1> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.SkippingBaseClass(bool)" />
+	public IVoidMethodSetup<T1> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder<T1> Do(Action callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, _) => callback());
@@ -262,9 +238,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action{T1})" />
 	public IVoidMethodSetupCallbackBuilder<T1> Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback(p1));
@@ -273,9 +247,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action{int, T1})" />
 	public IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
@@ -284,9 +256,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.DoesNotThrow()" />
 	public IVoidMethodSetup<T1> DoesNotThrow()
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, _) => { });
@@ -295,9 +265,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder<T1> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -307,9 +275,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder<T1> Throws(Exception exception)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, _) => throw exception);
@@ -318,9 +284,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1> Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, _) => throw callback());
@@ -329,9 +293,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Func{T1, Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1> Throws(Func<T1, Exception> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, p1) => throw callback(p1));
@@ -436,9 +398,9 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1,], parameters);
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
@@ -484,7 +446,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -505,21 +467,14 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		_matches = matches;
 	}
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public IVoidMethodSetup<T1, T2> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.SkippingBaseClass(bool)" />
+	public IVoidMethodSetup<T1, T2> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => callback());
@@ -528,9 +483,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action{T1, T2})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => callback(p1, p2));
@@ -539,9 +492,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action{int, T1, T2})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(callback);
@@ -550,9 +501,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.DoesNotThrow()" />
 	public IVoidMethodSetup<T1, T2> DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => { });
@@ -561,9 +510,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder<T1, T2> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -573,9 +520,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => throw exception);
@@ -584,9 +529,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => throw callback());
@@ -595,9 +538,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Func{T1, T2, Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => throw callback(p1, p2));
@@ -703,9 +644,9 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1, _match2,], parameters);
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
@@ -752,7 +693,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -778,21 +719,14 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		_matches = matches;
 	}
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public IVoidMethodSetup<T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.SkippingBaseClass(bool)" />
+	public IVoidMethodSetup<T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => callback());
@@ -801,9 +735,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action{T1, T2, T3})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
@@ -812,9 +744,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<int, T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(callback);
@@ -823,9 +753,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.DoesNotThrow()" />
 	public IVoidMethodSetup<T1, T2, T3> DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => { });
@@ -834,9 +762,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -846,9 +772,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => throw exception);
@@ -857,9 +781,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => throw callback());
@@ -868,9 +790,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => throw callback(p1, p2, p3));
@@ -979,9 +899,9 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1, _match2, _match3,], parameters);
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
@@ -1029,7 +949,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _returnCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -1057,21 +977,14 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		_matches = matches;
 	}
 
-	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
-	/// </summary>
-	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
-	/// </remarks>
-	public IVoidMethodSetup<T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.SkippingBaseClass(bool)" />
+	public IVoidMethodSetup<T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => callback());
@@ -1080,9 +993,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
@@ -1091,9 +1002,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
@@ -1102,9 +1011,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.DoesNotThrow()" />
 	public IVoidMethodSetup<T1, T2, T3, T4> DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => { });
@@ -1113,9 +1020,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -1125,9 +1030,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => throw exception);
@@ -1136,9 +1039,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => throw callback());
@@ -1147,9 +1048,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback =
@@ -1261,9 +1160,9 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1, _match2, _match3, _match4,], parameters);
 
-	/// <inheritdoc cref="MethodSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)

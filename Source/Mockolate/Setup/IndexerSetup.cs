@@ -27,9 +27,9 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 		[NotNullWhen(true)] out TValue value)
 		=> TryGetInitialValue(behavior, defaultValueGenerator, parameters, out value);
 
-	/// <inheritdoc cref="IInteractiveIndexerSetup.CallBaseClass()" />
-	bool? IInteractiveIndexerSetup.CallBaseClass()
-		=> GetCallBaseClass();
+	/// <inheritdoc cref="IInteractiveIndexerSetup.SkipBaseClass()" />
+	bool? IInteractiveIndexerSetup.SkipBaseClass()
+		=> GetSkipBaseClass();
 
 	internal TValue InvokeGetter<TValue>(IndexerGetterAccess getterAccess, TValue value, MockBehavior behavior)
 		=> ExecuteGetterCallback(getterAccess, value, behavior);
@@ -107,10 +107,9 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	}
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default
-	///     values.
+	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	protected abstract bool? GetCallBaseClass();
+	protected abstract bool? GetSkipBaseClass();
 
 	/// <summary>
 	///     Gets a value indicating whether this setup has return calls configured.
@@ -136,7 +135,7 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 	private readonly List<Callback<Action<int, T1, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, TValue, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T1, TValue>>> _setterCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -216,10 +215,10 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.CallingBaseClass(bool)" />
-	public IIndexerSetup<TValue, T1> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.SkippingBaseClass(bool)" />
+	public IIndexerSetup<TValue, T1> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -387,9 +386,9 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 		return this;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()
@@ -488,7 +487,7 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 	private readonly List<Callback<Action<int, T1, T2, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, TValue, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T1, T2, TValue>>> _setterCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -570,10 +569,10 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.CallingBaseClass(bool)" />
-	public IIndexerSetup<TValue, T1, T2> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.SkippingBaseClass(bool)" />
+	public IIndexerSetup<TValue, T1, T2> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -744,9 +743,9 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 		return this;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()
@@ -852,7 +851,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private readonly List<Callback<Action<int, T1, T2, T3, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, TValue, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T1, T2, T3, TValue>>> _setterCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -937,10 +936,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.CallingBaseClass(bool)" />
-	public IIndexerSetup<TValue, T1, T2, T3> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.SkippingBaseClass(bool)" />
+	public IIndexerSetup<TValue, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -1116,9 +1115,9 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()
@@ -1230,7 +1229,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private readonly List<Callback<Action<int, T1, T2, T3, T4, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, T4, TValue, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T1, T2, T3, T4, TValue>>> _setterCallbacks = [];
-	private bool? _callBaseClass;
+	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -1319,10 +1318,10 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.CallingBaseClass(bool)" />
-	public IIndexerSetup<TValue, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true)
+	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.SkippingBaseClass(bool)" />
+	public IIndexerSetup<TValue, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true)
 	{
-		_callBaseClass = callBaseClass;
+		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
@@ -1503,9 +1502,9 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetCallBaseClass()" />
-	protected override bool? GetCallBaseClass()
-		=> _callBaseClass;
+	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
+	protected override bool? GetSkipBaseClass()
+		=> _skipBaseClass;
 
 	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
 	protected override bool HasReturnCalls()

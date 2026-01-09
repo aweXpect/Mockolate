@@ -2,15 +2,15 @@
 
 public sealed partial class SetupPropertyTests
 {
-	public sealed class CallingBaseClassTests
+	public sealed class SkippingBaseClassTests
 	{
 		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
-		public async Task MyProperty_Getter_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		[InlineData(false, 1)]
+		[InlineData(true, 0)]
+		public async Task MyProperty_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass, int expectedCallCount)
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();
-			mock.SetupMock.Property.MyProperty.CallingBaseClass(callBaseClass);
+			mock.SetupMock.Property.MyProperty.SkippingBaseClass(skipBaseClass);
 
 			_ = mock.MyProperty;
 
@@ -18,12 +18,12 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Theory]
-		[InlineData(false, 0)]
-		[InlineData(true, 1)]
-		public async Task MyProperty_Setter_ShouldCallBaseWhenRequested(bool callBaseClass, int expectedCallCount)
+		[InlineData(false, 1)]
+		[InlineData(true, 0)]
+		public async Task MyProperty_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass, int expectedCallCount)
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();
-			mock.SetupMock.Property.MyProperty.CallingBaseClass(callBaseClass);
+			mock.SetupMock.Property.MyProperty.SkippingBaseClass(skipBaseClass);
 
 			mock.MyProperty = 1;
 
@@ -31,14 +31,14 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task SetupCallingBaseClassWithoutReturn_ShouldReturnBaseValue()
+		public async Task SetupSkippingBaseClassWithoutParameter_ShouldReturnDefaultValue()
 		{
 			MyPropertyService mock = Mock.Create<MyPropertyService>();
-			mock.SetupMock.Property.MyPropertyReturning2.CallingBaseClass();
+			mock.SetupMock.Property.MyPropertyReturning2.SkippingBaseClass();
 
 			int result = mock.MyPropertyReturning2;
 
-			await That(result).IsEqualTo(2);
+			await That(result).IsEqualTo(0);
 		}
 
 		public class MyPropertyService

@@ -10,10 +10,9 @@ namespace Mockolate.Setup;
 public interface IInteractiveIndexerSetup : ISetup
 {
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values
-	///     used as default values.
+	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	bool? CallBaseClass();
+	bool? SkipBaseClass();
 
 	/// <summary>
 	///     Gets a value indicating whether this setup has return calls configured.
@@ -121,12 +120,15 @@ public interface IIndexerSetup<TValue, out T1>
 	IIndexerSetterSetup<TValue, T1> OnSet { get; }
 
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IIndexerSetup<TValue, T1> CallingBaseClass(bool callBaseClass = true);
+	IIndexerSetup<TValue, T1> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Initializes the indexer with the given <paramref name="value" />.
@@ -374,12 +376,15 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	IIndexerSetterSetup<TValue, T1, T2> OnSet { get; }
 
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IIndexerSetup<TValue, T1, T2> CallingBaseClass(bool callBaseClass = true);
+	IIndexerSetup<TValue, T1, T2> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Initializes the indexer with the given <paramref name="value" />.
@@ -636,12 +641,15 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	IIndexerSetterSetup<TValue, T1, T2, T3> OnSet { get; }
 
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IIndexerSetup<TValue, T1, T2, T3> CallingBaseClass(bool callBaseClass = true);
+	IIndexerSetup<TValue, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Initializes the indexer with the given <paramref name="value" />.
@@ -899,12 +907,15 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	IIndexerSetterSetup<TValue, T1, T2, T3, T4> OnSet { get; }
 
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Specifies if calling the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     If not specified, use <see cref="MockBehavior.CallBaseClass" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
+	///     <para />
+	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
 	/// </remarks>
-	IIndexerSetup<TValue, T1, T2, T3, T4> CallingBaseClass(bool callBaseClass = true);
+	IIndexerSetup<TValue, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
 	///     Initializes the indexer with the given <paramref name="value" />.

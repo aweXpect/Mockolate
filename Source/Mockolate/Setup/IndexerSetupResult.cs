@@ -11,11 +11,10 @@ namespace Mockolate.Setup;
 public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior behavior)
 {
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be called, and its return values used as default
-	///     values.
+	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	public bool CallBaseClass
-		=> setup?.CallBaseClass() ?? behavior.CallBaseClass;
+	public bool SkipBaseClass
+		=> setup?.SkipBaseClass() ?? behavior.SkipBaseClass;
 }
 
 /// <summary>

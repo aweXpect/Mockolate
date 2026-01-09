@@ -46,14 +46,14 @@ public partial class MockRegistration
 			}
 
 			matchingSetup =
-				new PropertySetup.Default(propertyName, defaultValueGenerator.Invoke(Behavior.CallBaseClass));
+				new PropertySetup.Default(propertyName, defaultValueGenerator.Invoke(Behavior.SkipBaseClass));
 			_propertySetups.Add(matchingSetup);
 		}
 		else
 		{
 			((IInteractivePropertySetup)matchingSetup).InitializeWith(
-				defaultValueGenerator(((IInteractivePropertySetup)matchingSetup).CallBaseClass() ??
-				                      Behavior.CallBaseClass));
+				defaultValueGenerator(((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ??
+				                      Behavior.SkipBaseClass));
 		}
 
 		return matchingSetup;

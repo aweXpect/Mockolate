@@ -471,7 +471,7 @@ internal static partial class Sources
 						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.AppendLine(");");
 					sb.Append(
-							"\t\t\tif (").Append(indexerResultVarName).Append(".CallBaseClass)")
+							"\t\t\tif (!").Append(indexerResultVarName).Append(".SkipBaseClass)")
 						.AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base[")
@@ -562,7 +562,7 @@ internal static partial class Sources
 				if (!isClassInterface && !property.IsAbstract)
 				{
 					sb.Append(
-							"\t\t\tif (MockRegistrations.SetIndexer<")
+							"\t\t\tif (!MockRegistrations.SetIndexer<")
 						.Append(property.Type.Fullname)
 						.Append(">(value, ")
 						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
@@ -587,7 +587,7 @@ internal static partial class Sources
 				if (!isClassInterface && !property.IsAbstract)
 				{
 					sb.Append(
-							"\t\t\tif (MockRegistrations.SetProperty(").Append(property.GetUniqueNameString())
+							"\t\t\tif (!MockRegistrations.SetProperty(").Append(property.GetUniqueNameString())
 						.Append(", value))").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
@@ -752,16 +752,7 @@ internal static partial class Sources
 		}
 		else
 		{
-			bool isHttpClientSendMethod = className == "System.Net.Http.HttpClient" && method.Name.StartsWith("Send");
-			if (isHttpClientSendMethod)
-			{
-				sb.Append("\t\tif (true) // HttpClient.Send should always trigger base call").AppendLine();
-			}
-			else
-			{
-				sb.Append("\t\tif (").Append(methodExecutionVarName).Append(".CallBaseClass)").AppendLine();
-			}
-
+			sb.Append("\t\tif (!").Append(methodExecutionVarName).Append(".SkipBaseClass)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{

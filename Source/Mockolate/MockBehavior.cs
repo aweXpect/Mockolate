@@ -31,12 +31,13 @@ public record MockBehavior
 	public bool ThrowWhenNotSetup { get; init; }
 
 	/// <summary>
-	///     Flag indicating if the base class implementation should be called, and its return values used as default values.
+	///     Flag indicating if the base class implementation should be skipped.
 	/// </summary>
 	/// <remarks>
-	///     Defaults to <see langword="false" />.
+	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
+	///     its return values are used as default values.
 	/// </remarks>
-	public bool CallBaseClass { get; init; }
+	public bool SkipBaseClass { get; init; }
 
 	/// <summary>
 	///     The generator for default values when not specified by a setup.

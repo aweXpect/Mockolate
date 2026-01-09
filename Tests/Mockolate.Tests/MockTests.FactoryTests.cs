@@ -224,7 +224,7 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task WithSetups_ShouldApplySetups()
 		{
-			MockBehavior behavior = MockBehavior.Default.CallingBaseClass();
+			MockBehavior behavior = MockBehavior.Default.SkippingBaseClass();
 			Mock.Factory factory = new(behavior);
 
 			IMyService mock1 =

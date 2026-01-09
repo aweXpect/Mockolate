@@ -113,9 +113,9 @@ internal static partial class Sources
 		sb.AppendXmlSummary($"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <see langword=\"void\" />.", "\t");
 		sb.Append("\tinternal interface IVoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.AppendXmlSummary("Flag indicating if the base class implementation should be called, and its return values used as default values.");
-		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.");
-		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> CallingBaseClass(bool callBaseClass = true);")
+		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.SkipBaseClass\" />.");
+		sb.Append("\t\tIVoidMethodSetup<").Append(typeParams).Append("> SkippingBaseClass(bool skipBaseClass = true);")
 			.AppendLine();
 		sb.AppendLine();
 
@@ -254,7 +254,7 @@ internal static partial class Sources
 			sb.Append("\t\tprivate readonly NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
 
-		sb.Append("\t\tprivate bool? _callBaseClass;").AppendLine();
+		sb.Append("\t\tprivate bool? _skipBaseClass;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentCallback;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentReturnCallback;").AppendLine();
 		sb.Append("\t\tprivate int _currentCallbacksIndex;").AppendLine();
@@ -292,12 +292,12 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		
-		sb.AppendXmlSummary("Flag indicating if the base class implementation should be called, and its return values used as default values.");
-		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.");
+		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.SkipBaseClass\" />.");
 		sb.Append("\t\tpublic IVoidMethodSetup<").Append(typeParams)
-			.Append("> CallingBaseClass(bool callBaseClass = true)").AppendLine();
+			.Append("> SkippingBaseClass(bool skipBaseClass = true)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_callBaseClass = callBaseClass;").AppendLine();
+		sb.Append("\t\t\t_skipBaseClass = skipBaseClass;").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -566,9 +566,9 @@ internal static partial class Sources
 			.Append("], parameters);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.GetCallBaseClass()\" />").AppendLine();
-		sb.Append("\t\tprotected override bool? GetCallBaseClass()").AppendLine();
-		sb.Append("\t\t\t=> _callBaseClass;").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.GetSkipBaseClass()\" />").AppendLine();
+		sb.Append("\t\tprotected override bool? GetSkipBaseClass()").AppendLine();
+		sb.Append("\t\t\t=> _skipBaseClass;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.HasReturnCalls()\" />").AppendLine();
@@ -639,10 +639,10 @@ internal static partial class Sources
 		sb.Append("\tinternal interface IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.AppendXmlSummary("Flag indicating if the base class implementation should be called, and its return values used as default values.");
-		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.");
+		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.SkipBaseClass\" />.");
 		sb.Append("\t\tIReturnMethodSetup<TReturn, ").Append(typeParams)
-			.Append("> CallingBaseClass(bool callBaseClass = true);").AppendLine();
+			.Append("> SkippingBaseClass(bool skipBaseClass = true);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to execute when the method is called.");
@@ -783,7 +783,7 @@ internal static partial class Sources
 			sb.Append("\t\tprivate readonly NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
 
-		sb.Append("\t\tprivate bool? _callBaseClass;").AppendLine();
+		sb.Append("\t\tprivate bool? _skipBaseClass;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentCallback;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentReturnCallback;").AppendLine();
 		sb.Append("\t\tprivate int _currentCallbacksIndex;").AppendLine();
@@ -821,13 +821,13 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary("Flag indicating if the base class implementation should be called, and its return values used as default values.");
-		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.");
+		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.SkipBaseClass\" />.");
 		sb.Append("\t\tpublic IReturnMethodSetup<TReturn, ").Append(typeParams)
-			.Append("> CallingBaseClass(bool callBaseClass = true)")
+			.Append("> SkippingBaseClass(bool skipBaseClass = true)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_callBaseClass = callBaseClass;").AppendLine();
+		sb.Append("\t\t\t_skipBaseClass = skipBaseClass;").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1152,9 +1152,9 @@ internal static partial class Sources
 			.Append("], parameters);").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.GetCallBaseClass()\" />").AppendLine();
-		sb.Append("\t\tprotected override bool? GetCallBaseClass()").AppendLine();
-		sb.Append("\t\t\t=> _callBaseClass;").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.GetSkipBaseClass()\" />").AppendLine();
+		sb.Append("\t\tprotected override bool? GetSkipBaseClass()").AppendLine();
+		sb.Append("\t\t\t=> _skipBaseClass;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.HasReturnCalls()\" />").AppendLine();

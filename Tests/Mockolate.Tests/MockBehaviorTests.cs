@@ -10,7 +10,7 @@ public sealed partial class MockBehaviorTests
 		IMyService mock = Mock.Create<IMyService>();
 		MockBehavior sut = ((IHasMockRegistration)mock).Registrations.Behavior;
 
-		await That(sut.CallBaseClass).IsFalse();
+		await That(sut.SkipBaseClass).IsFalse();
 		await That(sut.ThrowWhenNotSetup).IsFalse();
 		await That(sut.DefaultValue).IsNotNull();
 	}
@@ -20,7 +20,7 @@ public sealed partial class MockBehaviorTests
 	{
 		MockBehavior sut = new(new MyDefaultValueGenerator());
 
-		await That(sut.CallBaseClass).IsFalse();
+		await That(sut.SkipBaseClass).IsFalse();
 		await That(sut.ThrowWhenNotSetup).IsFalse();
 		await That(sut.DefaultValue.Generate("")).IsEqualTo("foo");
 		await That(sut.DefaultValue.Generate(0)).IsEqualTo(0);
@@ -31,12 +31,12 @@ public sealed partial class MockBehaviorTests
 	{
 		MockBehavior sut = MockBehavior.Default with
 		{
-			CallBaseClass = true,
+			SkipBaseClass = true,
 			ThrowWhenNotSetup = true,
 			DefaultValue = new MyDefaultValueGenerator(),
 		};
 
-		await That(sut.CallBaseClass).IsTrue();
+		await That(sut.SkipBaseClass).IsTrue();
 		await That(sut.ThrowWhenNotSetup).IsTrue();
 		await That(sut.DefaultValue.Generate("")).IsEqualTo("foo");
 		await That(sut.DefaultValue.Generate(0)).IsEqualTo(0);

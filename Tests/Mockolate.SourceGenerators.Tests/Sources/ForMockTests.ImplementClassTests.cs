@@ -30,7 +30,7 @@ public sealed partial class ForMockTests
 			await That(result.Sources).ContainsKey("MockForMyService.g.cs").WhoseValue
 				.Contains("MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>(")
 				.IgnoringNewlineStyle().And
-				.Contains("if (methodExecution.CallBaseClass)")
+				.Contains("if (methodExecution.SkipBaseClass)")
 				.IgnoringNewlineStyle().And
 				.Contains("var baseResult1 = base.ProcessData(baseResult);")
 				.IgnoringNewlineStyle().And
@@ -464,7 +464,7 @@ public sealed partial class ForMockTests
 				          		get
 				          		{
 				          			var indexerResult = MockRegistrations.GetIndexer<int>(index);
-				          			if (indexerResult.CallBaseClass)
+				          			if (!indexerResult.SkipBaseClass)
 				          			{
 				          				var baseResult = base[index];
 				          				return indexerResult.GetResult(baseResult);
@@ -473,7 +473,7 @@ public sealed partial class ForMockTests
 				          		}
 				          		set
 				          		{
-				          			if (MockRegistrations.SetIndexer<int>(value, index))
+				          			if (!MockRegistrations.SetIndexer<int>(value, index))
 				          			{
 				          				base[index] = value;
 				          			}
@@ -487,7 +487,7 @@ public sealed partial class ForMockTests
 				          		get
 				          		{
 				          			var indexerResult = MockRegistrations.GetIndexer<int>(index, isReadOnly);
-				          			if (indexerResult.CallBaseClass)
+				          			if (!indexerResult.SkipBaseClass)
 				          			{
 				          				var baseResult = base[index, isReadOnly];
 				          				return indexerResult.GetResult(baseResult);
@@ -502,7 +502,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			if (MockRegistrations.SetIndexer<int>(value, index, isWriteOnly))
+				          			if (!MockRegistrations.SetIndexer<int>(value, index, isWriteOnly))
 				          			{
 				          				base[index, isWriteOnly] = value;
 				          			}
@@ -983,7 +983,7 @@ public sealed partial class ForMockTests
 				          	public override void MyMethod1(int index, ref int value1, out bool flag)
 				          	{
 				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", index, value1, null);
-				          		if (methodExecution.CallBaseClass)
+				          		if (!methodExecution.SkipBaseClass)
 				          		{
 				          			base.MyMethod1(index, ref value1, out flag);
 				          		}
@@ -1001,7 +1001,7 @@ public sealed partial class ForMockTests
 				          	protected override bool MyMethod2(int index, bool isReadOnly, ref int value1, out bool flag)
 				          	{
 				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), index, isReadOnly, value1, null);
-				          		if (methodExecution.CallBaseClass)
+				          		if (!methodExecution.SkipBaseClass)
 				          		{
 				          			var baseResult = base.MyMethod2(index, isReadOnly, ref value1, out flag);
 				          			if (methodExecution.HasSetupResult == true)
@@ -1517,7 +1517,7 @@ public sealed partial class ForMockTests
 				          		}
 				          		set
 				          		{
-				          			if (MockRegistrations.SetProperty("MyCode.MyService.SomeProperty1", value))
+				          			if (!MockRegistrations.SetProperty("MyCode.MyService.SomeProperty1", value))
 				          			{
 				          				base.SomeProperty1 = value;
 				          			}
@@ -1534,7 +1534,7 @@ public sealed partial class ForMockTests
 				          		}
 				          		protected set
 				          		{
-				          			if (MockRegistrations.SetProperty("MyCode.MyService.SomeProperty2", value))
+				          			if (!MockRegistrations.SetProperty("MyCode.MyService.SomeProperty2", value))
 				          			{
 				          				base.SomeProperty2 = value;
 				          			}
@@ -1557,7 +1557,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			if (MockRegistrations.SetProperty("MyCode.MyService.SomeWriteOnlyProperty", value))
+				          			if (!MockRegistrations.SetProperty("MyCode.MyService.SomeWriteOnlyProperty", value))
 				          			{
 				          				base.SomeWriteOnlyProperty = value;
 				          			}

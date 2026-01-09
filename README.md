@@ -8,7 +8,7 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=aweXpect_Mockolate&metric=coverage)](https://sonarcloud.io/summary/overall?id=aweXpect_Mockolate)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/main)
 
-**Mockolate** is a modern, strongly-typed mocking library for .NET, powered by source generators. It enables fast,
+**Mockolate** is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators. It enables fast,
 compile-time validated mocks for interfaces and classes, supporting .NET Standard 2.0, .NET 8, .NET 10, and .NET
 Framework 4.8.
 
@@ -119,10 +119,10 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 - `ThrowWhenNotSetup` (bool):
 	- If `false` (default), the mock will return a default value (see `DefaultValue`).
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
-- `CallBaseClass` (bool):
-	- If `false` (default), the mock will not call any base class implementations.
-	- If `true`, the mock will call the base class implementation and use its return values as default values, if no
+- `SkipBaseClass` (bool):
+	- If `false` (default), the mock will call the base class implementation and use its return values as default values, if no
 	  explicit setup is defined.
+	- If `true`, the mock will not call any base class implementations.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
 	- Automatically initialize all mocks of type T with the given setups when they are created.
 - `DefaultValue` (IDefaultValueGenerator):
@@ -189,7 +189,7 @@ sut.SetupMock.Method.Dispense(It.Is("Green"), It.IsAny<int>())
   parameters.
 - Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each
   call).
-- Use `.CallingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
+- Use `.SkippingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
 **Async Methods**
@@ -301,7 +301,7 @@ sut.SetupMock.Indexer(It.Is("Dark"))
 - `.OnGet(…)` and `.OnSet(…)` support callbacks with or without parameters.
 - `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each
   call.
-- Use `.CallingBaseClass(…)` to override the base class behavior for a specific indexer (only for class mocks).
+- Use `.SkippingBaseClass(…)` to override the base class behavior for a specific indexer (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
 **Note**:

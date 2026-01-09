@@ -162,10 +162,10 @@ internal static partial class Sources
 			.Append("> OnSet { get; }").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary("Flag indicating if the base class implementation should be called, and its return values used as default values.");
-		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.CallBaseClass\" />.");
+		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.SkipBaseClass\" />.");
 		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams)
-			.Append("> CallingBaseClass(bool callBaseClass = true);").AppendLine();
+			.Append("> SkippingBaseClass(bool skipBaseClass = true);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Initializes the indexer with the given <paramref name=\"value\" />.");
@@ -311,7 +311,7 @@ internal static partial class Sources
 		sb.Append("\t\tprivate readonly List<Callback<Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>> _returnCallbacks = [];")
 			.AppendLine();
-		sb.Append("\t\tprivate bool? _callBaseClass;").AppendLine();
+		sb.Append("\t\tprivate bool? _skipBaseClass;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentCallback;").AppendLine();
 		sb.Append("\t\tprivate Callback? _currentReturnCallback;").AppendLine();
 		sb.Append("\t\tprivate int _currentGetterCallbacksIndex;").AppendLine();
@@ -321,12 +321,12 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams)
-			.Append("}.CallingBaseClass(bool)\" />").AppendLine();
+			.Append("}.SkippingBaseClass(bool)\" />").AppendLine();
 		sb.Append("\t\tpublic IIndexerSetup<TValue, ").Append(typeParams)
-			.Append("> CallingBaseClass(bool callBaseClass = true)")
+			.Append("> SkippingBaseClass(bool skipBaseClass = true)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\t_callBaseClass = callBaseClass;").AppendLine();
+		sb.Append("\t\t\t_skipBaseClass = skipBaseClass;").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -769,9 +769,9 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IndexerSetup.GetCallBaseClass()\" />").AppendLine();
-		sb.Append("\t\tprotected override bool? GetCallBaseClass()").AppendLine();
-		sb.Append("\t\t\t=> _callBaseClass;").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"IndexerSetup.GetSkipBaseClass()\" />").AppendLine();
+		sb.Append("\t\tprotected override bool? GetSkipBaseClass()").AppendLine();
+		sb.Append("\t\t\t=> _skipBaseClass;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IndexerSetup.HasReturnCalls()\" />").AppendLine();
