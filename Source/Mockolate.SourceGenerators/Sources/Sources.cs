@@ -57,41 +57,41 @@ internal static partial class Sources
 		              {
 		              """);
 		sb.AppendLine("""
-		              /// <summary>
-		              ///     Create a new mock for <typeparamref name="T" /> with the default <see cref="MockBehavior" />.
-		              /// </summary>
-		              /// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
-		              /// <remarks>
-		              ///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-		              /// </remarks>
-		              [MockGenerator]
-		              public static T Create<T>(params Action<IMockSetup<T>>[] setups)
-		              	where T : class
-		              {
-		              	ThrowIfNotMockable(typeof(T));
+		              	/// <summary>
+		              	///     Create a new mock for <typeparamref name="T" /> with the default <see cref="MockBehavior" />.
+		              	/// </summary>
+		              	/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              	/// <remarks>
+		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              	/// </remarks>
+		              	[MockGenerator]
+		              	public static T Create<T>(params Action<IMockSetup<T>>[] setups)
+		              		where T : class
+		              	{
+		              		ThrowIfNotMockable(typeof(T));
 
-		              	return new MockGenerator().Get<T>(null, MockBehavior.Default, setups)
-		              		?? throw new MockException("Could not generate Mock<T>. Did the source generator run correctly?");
-		              }
+		              		return new MockGenerator().Get<T>(null, MockBehavior.Default, setups)
+		              			?? throw new MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              	}
 		              """);
 		sb.AppendLine();
 		sb.AppendLine("""
-		              /// <summary>
-		              ///     Create a new mock for <typeparamref name="T" /> with the default <see cref="MockBehavior" />.
-		              /// </summary>
-		              /// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
-		              /// <remarks>
-		              ///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-		              /// </remarks>
-		              [MockGenerator]
-		              public static T Create<T>(BaseClass.ConstructorParameters constructorParameters, params Action<IMockSetup<T>>[] setups)
-		              	where T : class
-		              {
-		              	ThrowIfNotMockable(typeof(T));
+		              	/// <summary>
+		              	///     Create a new mock for <typeparamref name="T" /> with the default <see cref="MockBehavior" />.
+		              	/// </summary>
+		              	/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              	/// <remarks>
+		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              	/// </remarks>
+		              	[MockGenerator]
+		              	public static T Create<T>(BaseClass.ConstructorParameters constructorParameters, params Action<IMockSetup<T>>[] setups)
+		              		where T : class
+		              	{
+		              		ThrowIfNotMockable(typeof(T));
 
-		              	return new MockGenerator().Get<T>(constructorParameters, MockBehavior.Default, setups)
-		              		?? throw new MockException("Could not generate Mock<T>. Did the source generator run correctly?");
-		              }
+		              		return new MockGenerator().Get<T>(constructorParameters, MockBehavior.Default, setups)
+		              			?? throw new MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              	}
 		              """);
 		sb.AppendLine();
 		sb.AppendLine("""
@@ -139,10 +139,12 @@ internal static partial class Sources
 		for (int numberOfArguments = 1; numberOfArguments < maxNumberOfArguments; numberOfArguments++)
 		{
 			string types = GetGenericTypeParameters(numberOfArguments, 2);
-			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the default <see cref=\"MockBehavior\" />.");
+			sb.AppendXmlSummary(
+				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the default <see cref=\"MockBehavior\" />.", "\t");
 			sb.AppendLine(
 				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", startIndex: 2);
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.",
+				startIndex: 2);
 
 			sb.AppendLine($$"""
 			                	/// <remarks>
@@ -160,10 +162,12 @@ internal static partial class Sources
 			                """);
 			sb.AppendLine();
 
-			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the default <see cref=\"MockBehavior\" />.");
+			sb.AppendXmlSummary(
+				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the default <see cref=\"MockBehavior\" />.", "\t");
 			sb.AppendLine(
 				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", startIndex: 2);
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.",
+				startIndex: 2);
 
 			sb.AppendLine($$"""
 			                	/// <remarks>
@@ -214,10 +218,12 @@ internal static partial class Sources
 			                """);
 			sb.AppendLine();
 
-			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the given <paramref name=\"mockBehavior\" />.");
+			sb.AppendXmlSummary(
+				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)} with the given <paramref name=\"mockBehavior\" />.", "\t");
 			sb.AppendLine(
 				"\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", startIndex: 2);
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.",
+				startIndex: 2);
 
 			sb.AppendLine($$"""
 			                	/// <remarks>
@@ -292,10 +298,12 @@ internal static partial class Sources
 		{
 			string types = GetGenericTypeParameters(numberOfArguments, 2);
 			sb.AppendLine();
-			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.");
+			sb.AppendXmlSummary(
+				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.", "\t\t");
 			sb.AppendLine(
 				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t", 2);
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t",
+				2);
 
 			sb.AppendLine($$"""
 			                		/// <remarks>
@@ -313,10 +321,12 @@ internal static partial class Sources
 			                """);
 
 			sb.AppendLine();
-			sb.AppendXmlSummary($"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.");
+			sb.AppendXmlSummary(
+				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.", "\t\t");
 			sb.AppendLine(
 				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t", 2);
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t",
+				2);
 
 			sb.AppendLine($$"""
 			                		/// <remarks>
@@ -563,8 +573,10 @@ internal static partial class Sources
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />");
 		}
+
 		sb.Append(" and <typeparamref name=\"T").Append(startIndex + numberOfParameters - 1).Append("\" />");
 		return sb.ToString();
 	}
@@ -572,12 +584,15 @@ internal static partial class Sources
 	/// <summary>
 	///     Appends type parameter XML documentation for generic parameters.
 	/// </summary>
-	private static StringBuilder AppendTypeParamDocs(this StringBuilder sb, int count, string description, string indent = "\t", int startIndex = 1)
+	private static StringBuilder AppendTypeParamDocs(this StringBuilder sb, int count, string description,
+		string indent = "\t", int startIndex = 1)
 	{
 		for (int i = startIndex; i < startIndex + count; i++)
 		{
-			sb.Append(indent).Append("/// <typeparam name=\"T").Append(i).Append("\">").Append(description).AppendLine("</typeparam>");
+			sb.Append(indent).Append("/// <typeparam name=\"T").Append(i).Append("\">").Append(description)
+				.AppendLine("</typeparam>");
 		}
+
 		return sb;
 	}
 
@@ -598,8 +613,10 @@ internal static partial class Sources
 			{
 				sb.Append(", ");
 			}
+
 			sb.Append("<typeparamref name=\"T").Append(i).Append("\" />");
 		}
+
 		sb.Append(" and <typeparamref name=\"T").Append(startIndex + numberOfArguments - 1).Append("\" />");
 		return sb.ToString();
 	}

@@ -10,22 +10,14 @@ internal static partial class Sources
 	public static string MockBehaviorExtensions(ImmutableArray<MockClass> mockClasses)
 	{
 		bool includeHttpClient = mockClasses.Any(m => m.ClassFullName == "System.Net.Http.HttpClient");
-		StringBuilder sb = InitializeBuilder(includeHttpClient ? [
+		StringBuilder sb = InitializeBuilder([
 			"System",
 			"System.Collections.Generic",
 			"System.Collections.Concurrent",
 			"System.Diagnostics",
 			"System.Linq",
+			"System.Net",
 			"System.Net.Http",
-			"System.Threading",
-			"System.Threading.Tasks",
-			"Mockolate",
-		] : [
-			"System",
-			"System.Collections.Generic",
-			"System.Collections.Concurrent",
-			"System.Diagnostics",
-			"System.Linq",
 			"System.Threading",
 			"System.Threading.Tasks",
 			"Mockolate",
@@ -58,6 +50,7 @@ internal static partial class Sources
 		{
 			sb.Append(";").AppendLine();
 		}
+
 		sb.Append("""
 		          	}
 		          	
@@ -101,12 +94,28 @@ internal static partial class Sources
 		          	}
 		          	
 		          	/// <summary>
+		          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="HttpResponseMessage" /> with the specified
+		          	///     <paramref name="statusCode" />.
+		          	/// </summary>
+		          	internal class HttpResponseMessageFactory(HttpStatusCode statusCode) : IDefaultValueFactory
+		          	{
+		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(Type)" />
+		          		public bool IsMatch(Type type)
+		          			=> type == typeof(HttpResponseMessage);
+		          	
+		          		/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
+		          		public object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+		          			=> new HttpResponseMessage(statusCode);
+		          	}
+		          	
+		          	/// <summary>
 		          	///     Provides default values for common types used in mocking scenarios.
 		          	/// </summary>
 		          	private class DefaultValueGenerator : IDefaultValueGenerator
 		          	{
 		          		private static readonly ConcurrentQueue<IDefaultValueFactory> _factories = new([
 		          			new TypedDefaultValueFactory<string>(""),
+		          			new HttpResponseMessageFactory(HttpStatusCode.NotImplemented),
 		          			new CancellableTaskFactory(),
 		          	#if NET8_0_OR_GREATER
 		          			new CancellableValueTaskFactory(),
