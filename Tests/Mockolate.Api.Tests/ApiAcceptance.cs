@@ -11,6 +11,7 @@ public sealed class ApiAcceptance
 		string[] assemblyNames =
 		[
 			"Mockolate",
+			"Mockolate.Web",
 		];
 
 		foreach (string assemblyName in assemblyNames)

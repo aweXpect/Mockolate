@@ -50,6 +50,9 @@ partial class Build
 				{
 					Solution.Mockolate, [Solution.Tests.Mockolate_Tests,]
 				},
+				{
+					Solution.Mockolate_Web, [Solution.Tests.Mockolate_Web_Tests,]
+				},
 			};
 
 			foreach (KeyValuePair<Project, Project[]> project in projects)

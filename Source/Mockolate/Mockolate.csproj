@@ -9,11 +9,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Remove="Legacy\**\*.cs"/>
-		<None Include="Legacy\**\*.cs"/>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="IsExternalInit">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

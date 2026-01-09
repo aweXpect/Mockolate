@@ -87,6 +87,7 @@ partial class Build
 			foreach (Project project in new[]
 			         {
 				         Solution.Mockolate,
+				         Solution.Mockolate_Web,
 			         })
 			{
 				foreach (string package in
