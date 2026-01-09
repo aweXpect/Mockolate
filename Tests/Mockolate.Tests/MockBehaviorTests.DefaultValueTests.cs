@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 
 namespace Mockolate.Tests;
@@ -48,6 +50,17 @@ public sealed partial class MockBehaviorTests
 			await That(result.Item1).IsEqualTo(0);
 			await That(result.Item2).IsEmpty();
 			await That(result.Item3).IsEqualTo("");
+		}
+
+		[Fact]
+		public async Task WithHttpResponseMessage_ShouldReturnEmptyResponseWithNotImplementedStatusCode()
+		{
+			IDefaultValueGeneratorProperties mock = Mock.Create<IDefaultValueGeneratorProperties>();
+
+			HttpResponseMessage result = mock.HttpResponseMessage;
+
+			await That(result.StatusCode).IsEqualTo(HttpStatusCode.NotImplemented);
+			await That(result.Content.ReadAsStringAsync()).IsEmpty();
 		}
 
 		[Fact]
@@ -232,6 +245,7 @@ public sealed partial class MockBehaviorTests
 			ValueTask<int> IntValueTask { get; }
 			ValueTask<int[]> IntArrayValueTask { get; }
 			IMyRecursiveService RecursiveService { get; }
+			HttpResponseMessage HttpResponseMessage { get; }
 
 			Task<(int, int[], string)> ComplexTask();
 			Type GetMyType();
