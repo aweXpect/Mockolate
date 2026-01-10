@@ -60,7 +60,7 @@ namespace Mockolate
         public interface IParameterMatches : Mockolate.Parameters.IParameter<string>
         {
             Mockolate.It.IParameterMatches AsRegex(System.Text.RegularExpressions.RegexOptions options = 0, System.TimeSpan? timeout = default, [System.Runtime.CompilerServices.CallerArgumentExpression("options")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "");
-            Mockolate.It.IParameterMatches IgnoringCase(bool ignoreCase = true);
+            Mockolate.It.IParameterMatches CaseSensitive(bool ignoreCase = true);
         }
     }
     public class Match
