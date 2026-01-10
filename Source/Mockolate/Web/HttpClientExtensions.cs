@@ -24,7 +24,7 @@ public static partial class HttpClientExtensions
 
 	private sealed class HttpRequestMessageParameters(
 		HttpMethod method,
-		params HttpRequestMessageParameter[] parameters)
+		params IHttpRequestMessageParameter[] parameters)
 		: IParameter<HttpRequestMessage>, IParameter
 	{
 		private List<Action<HttpRequestMessage>>? _callbacks;
@@ -45,7 +45,7 @@ public static partial class HttpClientExtensions
 			if (TryCast(value, out HttpRequestMessage typedValue))
 			{
 				_callbacks?.ForEach(a => a.Invoke(typedValue));
-				foreach (HttpRequestMessageParameter parameter in parameters)
+				foreach (IHttpRequestMessageParameter parameter in parameters)
 				{
 					parameter.InvokeCallbacks(typedValue);
 				}
@@ -79,21 +79,23 @@ public static partial class HttpClientExtensions
 	}
 
 
-	private abstract class HttpRequestMessageParameter
+	private interface IHttpRequestMessageParameter
 	{
-		public abstract bool Matches(HttpRequestMessage value);
+		bool Matches(HttpRequestMessage value);
 
-		public abstract void InvokeCallbacks(HttpRequestMessage value);
+		void InvokeCallbacks(HttpRequestMessage value);
 	}
 
-	private class HttpRequestMessageParameter<T>(Func<HttpRequestMessage, T> valueSelector, IParameter<T>? parameter)
-		: HttpRequestMessageParameter
+	private sealed class HttpRequestMessageParameter<T>(
+		Func<HttpRequestMessage, T> valueSelector,
+		IParameter<T>? parameter)
+		: IHttpRequestMessageParameter
 	{
-		public override bool Matches(HttpRequestMessage value)
+		public bool Matches(HttpRequestMessage value)
 			=> parameter is null ||
 			   ((IParameter)parameter).Matches(valueSelector(value));
 
-		public override void InvokeCallbacks(HttpRequestMessage value)
+		public void InvokeCallbacks(HttpRequestMessage value)
 		{
 			if (parameter is IParameter invokableParameter)
 			{
@@ -102,10 +104,10 @@ public static partial class HttpClientExtensions
 		}
 	}
 
-	private class HttpStringUriParameter(IParameter<string?>? parameter)
-		: HttpRequestMessageParameter
+	private sealed class HttpStringUriParameter(IParameter<string?>? parameter)
+		: IHttpRequestMessageParameter
 	{
-		public override bool Matches(HttpRequestMessage value)
+		public bool Matches(HttpRequestMessage value)
 		{
 			if (parameter is not IParameter invokableParameter)
 			{
@@ -126,7 +128,7 @@ public static partial class HttpClientExtensions
 			       invokableParameter.Matches(requestUri2);
 		}
 
-		public override void InvokeCallbacks(HttpRequestMessage value)
+		public void InvokeCallbacks(HttpRequestMessage value)
 		{
 			if (parameter is IParameter invokableParameter)
 			{
