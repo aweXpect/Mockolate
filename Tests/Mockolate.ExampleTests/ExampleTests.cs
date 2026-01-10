@@ -1,12 +1,13 @@
 using System;
 using System.IO.Abstractions;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
 using System.Net;
-using System.Threading;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Mockolate.Web;
 #endif
 
 namespace Mockolate.ExampleTests;
@@ -52,10 +53,10 @@ public class ExampleTests
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>();
 		httpClient.SetupMock.Method
-			.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>())
+			.PostAsync(It.Matches("*example.com*"), It.HasJsonContent())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 
-		HttpResponseMessage result = await httpClient.GetAsync("https://www.example.com");
+		HttpResponseMessage result = await httpClient.PostAsync("https://www.example.com", new StringContent("", mediaType: new MediaTypeHeaderValue("application/json")));
 
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
