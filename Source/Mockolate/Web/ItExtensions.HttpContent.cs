@@ -21,7 +21,7 @@ public static partial class ItExtensions
 		public static IParameter<HttpContent?> HasJsonContent(string? json = null)
 			=> new ExpressionParameter<HttpContent?>(c =>
 				c is { Headers.ContentType.MediaType: "application/json", } &&
-				(json is null || c.ReadAsStringAsync().Result == json));
+				(json is null || c.ReadAsStringAsync().GetAwaiter().GetResult() == json));
 	}
 
 	private sealed class ExpressionParameter<T>(Func<T, bool> predicate) : IParameter<HttpContent?>, IParameter
