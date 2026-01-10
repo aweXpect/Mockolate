@@ -1764,7 +1764,7 @@ namespace Mockolate.Web
     public static class ItExtensions
     {
         public interface IUriParameter : Mockolate.Parameters.IParameter<System.Uri?> { }
-        extension(Mockolate.It _)
+        extension(Mockolate.It? _)
         {
             Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?> HasJsonContent(string? json = null);
             Mockolate.Web.ItExtensions.IUriParameter IsUri(string? pattern = null);

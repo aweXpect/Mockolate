@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Mockolate.Internals;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -78,10 +79,7 @@ public partial class It
 		{
 			_regex ??= (_regexOptionsExpression is not null, _caseSensitive) switch
 			{
-				(false, false) => new Regex(WildcardToRegularExpression(pattern),
-					RegexOptions.Multiline | RegexOptions.IgnoreCase, _timeout),
-				(false, true) => new Regex(WildcardToRegularExpression(pattern),
-					RegexOptions.Multiline, _timeout),
+				(false, _) => Wildcard.Pattern(pattern, !_caseSensitive, _timeout).Regex,
 				(true, false) => new Regex(pattern,
 					_regexOptions | RegexOptions.IgnoreCase, _timeout),
 				(true, true) => new Regex(pattern,
@@ -117,14 +115,6 @@ public partial class It
 			}
 
 			return $"{regexOptionsExpression}, {timeoutExpression}";
-		}
-
-		private static string WildcardToRegularExpression(string value)
-		{
-			string regex = Regex.Escape(value)
-				.Replace("\\?", ".")
-				.Replace("\\*", "(?:.|\\n)*");
-			return $"^{regex}$";
 		}
 	}
 }
