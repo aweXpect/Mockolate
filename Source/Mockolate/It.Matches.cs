@@ -12,6 +12,10 @@ public partial class It
 	/// <summary>
 	///     Matches a <see langword="string" /> parameter against the given wildcard <paramref name="pattern" />.
 	/// </summary>
+	/// <remarks>
+	///     Default comparison is case-insensitive.
+	///     Use <see cref="IParameterMatches.CaseSensitive(bool)" /> to change this behavior.
+	/// </remarks>
 	public static IParameterMatches Matches(string pattern)
 		=> new MatchesAsWildcardMatch(pattern);
 
@@ -21,9 +25,9 @@ public partial class It
 	public interface IParameterMatches : IParameter<string>
 	{
 		/// <summary>
-		///     Ignores casing when matching the pattern.
+		///     Enables case-sensitive matching of the pattern when specified.
 		/// </summary>
-		IParameterMatches IgnoringCase(bool ignoreCase = true);
+		IParameterMatches CaseSensitive(bool caseSensitive = true);
 
 		/// <summary>
 		///     Matches the pattern directly as a regular expression.
@@ -37,17 +41,17 @@ public partial class It
 
 	private sealed class MatchesAsWildcardMatch(string pattern) : TypedMatch<string>, IParameterMatches
 	{
-		private bool _ignoreCase;
+		private bool _caseSensitive;
 		private Regex? _regex;
 		private RegexOptions _regexOptions = RegexOptions.None;
 		private string? _regexOptionsExpression;
 		private TimeSpan _timeout = Regex.InfiniteMatchTimeout;
 		private string? _timeoutExpression;
 
-		/// <inheritdoc cref="IParameterMatches.IgnoringCase(bool)" />
-		public IParameterMatches IgnoringCase(bool ignoreCase = true)
+		/// <inheritdoc cref="IParameterMatches.CaseSensitive" />
+		public IParameterMatches CaseSensitive(bool caseSensitive = true)
 		{
-			_ignoreCase = ignoreCase;
+			_caseSensitive = caseSensitive;
 			return this;
 		}
 
@@ -72,15 +76,15 @@ public partial class It
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(string value)
 		{
-			_regex ??= (_regexOptionsExpression is not null, _ignoreCase) switch
+			_regex ??= (_regexOptionsExpression is not null, _caseSensitive) switch
 			{
-				(false, true) => new Regex(WildcardToRegularExpression(pattern),
-					RegexOptions.Multiline | RegexOptions.IgnoreCase, _timeout),
 				(false, false) => new Regex(WildcardToRegularExpression(pattern),
+					RegexOptions.Multiline | RegexOptions.IgnoreCase, _timeout),
+				(false, true) => new Regex(WildcardToRegularExpression(pattern),
 					RegexOptions.Multiline, _timeout),
-				(true, true) => new Regex(pattern,
-					_regexOptions | RegexOptions.IgnoreCase, _timeout),
 				(true, false) => new Regex(pattern,
+					_regexOptions | RegexOptions.IgnoreCase, _timeout),
+				(true, true) => new Regex(pattern,
 					_regexOptions, _timeout),
 			};
 			return _regex.IsMatch(value);
@@ -89,14 +93,14 @@ public partial class It
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> (_regexOptionsExpression is not null, _ignoreCase) switch
+			=> (_regexOptionsExpression is not null, _caseSensitive) switch
 			{
-				(true, true) =>
-					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString(_timeout, _timeoutExpression, _regexOptionsExpression!)}).IgnoringCase()",
 				(true, false) =>
 					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString(_timeout, _timeoutExpression, _regexOptionsExpression!)})",
-				(false, true) => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").IgnoringCase()",
+				(true, true) =>
+					$"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").AsRegex({RegexParameterToString(_timeout, _timeoutExpression, _regexOptionsExpression!)}).CaseSensitive()",
 				(false, false) => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\")",
+				(false, true) => $"It.Matches(\"{pattern.Replace("\"", "\\\"")}\").CaseSensitive()",
 			};
 
 		private static string RegexParameterToString(TimeSpan timeout, string? timeoutExpression,
