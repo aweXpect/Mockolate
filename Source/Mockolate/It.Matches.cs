@@ -25,9 +25,9 @@ public partial class It
 	public interface IParameterMatches : IParameter<string>
 	{
 		/// <summary>
-		///     Considers casing when matching the pattern.
+		///     Enables case-sensitive matching of the pattern when specified.
 		/// </summary>
-		IParameterMatches CaseSensitive(bool ignoreCase = true);
+		IParameterMatches CaseSensitive(bool caseSensitive = true);
 
 		/// <summary>
 		///     Matches the pattern directly as a regular expression.
