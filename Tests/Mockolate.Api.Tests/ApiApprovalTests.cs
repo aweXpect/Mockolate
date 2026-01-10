@@ -19,18 +19,6 @@ public sealed class ApiApprovalTests
 		await That(publicApi).IsEqualTo(expectedApi);
 	}
 
-	[Theory]
-	[MemberData(nameof(TargetFrameworksTheoryData))]
-	public async Task VerifyPublicApiForMockolateWeb(string framework)
-	{
-		const string assemblyName = "Mockolate.Web";
-
-		string publicApi = Helper.CreatePublicApi(framework, assemblyName);
-		string expectedApi = Helper.GetExpectedApi(framework, assemblyName);
-
-		await That(publicApi).IsEqualTo(expectedApi);
-	}
-
 	public static TheoryData<string> TargetFrameworksTheoryData()
 	{
 		TheoryData<string> theoryData = new();

@@ -7,7 +7,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj"/>
-		<ProjectReference Include="..\..\Source\Mockolate.Web\Mockolate.Web.csproj"/>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -6,8 +5,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using Mockolate.Parameters;
+using Mockolate.Web;
 
-namespace Mockolate.Web.Tests;
+namespace Mockolate.Tests.Web;
 
 public sealed partial class ItExtensionsTests
 {

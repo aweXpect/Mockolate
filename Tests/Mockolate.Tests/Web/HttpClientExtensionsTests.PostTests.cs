@@ -1,10 +1,10 @@
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using Mockolate.Web;
 
-namespace Mockolate.Web.Tests;
+namespace Mockolate.Tests.Web;
 
 public sealed partial class HttpClientExtensionsTests
 {
