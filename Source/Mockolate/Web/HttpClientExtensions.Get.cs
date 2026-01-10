@@ -7,6 +7,7 @@ using Mockolate.Setup;
 
 namespace Mockolate.Web;
 
+#pragma warning disable S2325 // Methods and properties that don't access instance data should be static
 /// <summary>
 ///     Extensions for mocking <see cref="HttpClient" />.
 /// </summary>
@@ -100,3 +101,4 @@ public static partial class HttpClientExtensions
 		}
 	}
 }
+#pragma warning restore S2325 // Methods and properties that don't access instance data should be static

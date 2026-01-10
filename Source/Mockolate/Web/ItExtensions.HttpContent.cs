@@ -5,6 +5,7 @@ using Mockolate.Parameters;
 
 namespace Mockolate.Web;
 
+#pragma warning disable S2325 // Methods and properties that don't access instance data should be static
 /// <summary>
 ///     Extensions for parameter matchers for HTTP-related types.
 /// </summary>
@@ -46,3 +47,4 @@ public static partial class ItExtensions
 		}
 	}
 }
+#pragma warning restore S2325 // Methods and properties that don't access instance data should be static
