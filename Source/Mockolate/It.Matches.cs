@@ -12,6 +12,10 @@ public partial class It
 	/// <summary>
 	///     Matches a <see langword="string" /> parameter against the given wildcard <paramref name="pattern" />.
 	/// </summary>
+	/// <remarks>
+	///     Default comparison is case-insensitive.
+	///     Use <see cref="IParameterMatches.CaseSensitive(bool)" /> to change this behavior.
+	/// </remarks>
 	public static IParameterMatches Matches(string pattern)
 		=> new MatchesAsWildcardMatch(pattern);
 
@@ -21,7 +25,7 @@ public partial class It
 	public interface IParameterMatches : IParameter<string>
 	{
 		/// <summary>
-		///     Ignores casing when matching the pattern.
+		///     Considers casing when matching the pattern.
 		/// </summary>
 		IParameterMatches CaseSensitive(bool ignoreCase = true);
 
