@@ -1,5 +1,3 @@
 namespace Mockolate.Tests.Web;
 
-public sealed partial class ItExtensionsTests
-{
-}
+public sealed partial class ItExtensionsTests;

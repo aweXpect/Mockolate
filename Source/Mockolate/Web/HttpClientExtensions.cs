@@ -4,6 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using Mockolate.Exceptions;
 using Mockolate.Parameters;
+#if NETSTANDARD2_0
+using Mockolate.Internals.Polyfills;
+#endif
 
 namespace Mockolate.Web;
 
@@ -120,9 +123,9 @@ public static partial class HttpClientExtensions
 			}
 
 			string requestUri1 = value.RequestUri.ToString();
-			string requestUri2 = requestUri1.EndsWith("/")
+			string requestUri2 = requestUri1.EndsWith('/')
 				? requestUri1.Substring(0, requestUri1.Length - 1)
-				: requestUri1 + "/";
+				: requestUri1 + '/';
 
 			return invokableParameter.Matches(requestUri1) ||
 			       invokableParameter.Matches(requestUri2);
