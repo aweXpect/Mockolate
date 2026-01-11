@@ -53,10 +53,10 @@ public class ExampleTests
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>();
 		httpClient.SetupMock.Method
-			.PostAsync(It.Matches("*example.com*"), It.IsStringContent("application/json"))
+			.PostAsync(It.Matches("*example.com*"), It.IsStringContent())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 
-		HttpResponseMessage result = await httpClient.PostAsync("https://www.example.com", new StringContent("", mediaType: new MediaTypeHeaderValue("application/json")));
+		HttpResponseMessage result = await httpClient.PostAsync("https://www.example.com", new StringContent(""));
 
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
