@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Mockolate.Parameters;
 using Mockolate.Web;
@@ -130,6 +131,43 @@ public sealed partial class ItExtensionsTests
 				CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+		}
+
+		[Fact]
+		public async Task IsStringContent_WithBodyMatching_AsRegex_ShouldUseProvidedOptions()
+		{
+			HttpClient httpClient = Mock.Create<HttpClient>();
+			httpClient.SetupMock.Method
+				.PostAsync(It.IsAny<Uri>(),
+					It.IsStringContent().WithBodyMatching("F[A-Z]*").AsRegex(RegexOptions.IgnoreCase))
+				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+			HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				new StringContent("foo"),
+				CancellationToken.None);
+
+			await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+		}
+
+		[Fact]
+		public async Task IsStringContent_WithBodyMatching_AsRegex_ShouldUseTimeout()
+		{
+			HttpClient httpClient = Mock.Create<HttpClient>();
+			httpClient.SetupMock.Method
+				.PostAsync(It.IsAny<Uri>(),
+					It.IsStringContent().WithBodyMatching("F[A-Z]*").AsRegex(timeout: TimeSpan.FromSeconds(0)))
+				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+			Task Act()
+			{
+				return httpClient.PostAsync("https://www.aweXpect.com",
+					new StringContent("foo"),
+					CancellationToken.None);
+			}
+
+			await That(Act)
+				.Throws<ArgumentOutOfRangeException>()
+				.WithParamName("matchTimeout");
 		}
 
 		[Theory]

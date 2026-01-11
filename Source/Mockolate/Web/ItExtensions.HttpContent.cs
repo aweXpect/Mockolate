@@ -60,7 +60,9 @@ public static partial class ItExtensions
 		/// <summary>
 		///     Expects the body match pattern to be a <see cref="Regex" />.
 		/// </summary>
-		IStringContentBodyParameter AsRegex();
+		IStringContentBodyParameter AsRegex(
+			RegexOptions options = RegexOptions.None,
+			TimeSpan? timeout = null);
 	}
 
 	/// <summary>
@@ -82,6 +84,8 @@ public static partial class ItExtensions
 		private List<Action<HttpContent?>>? _callbacks;
 		private bool _ignoringCase;
 		private string? _mediaType = mediaType;
+		private RegexOptions _regexOptions;
+		private TimeSpan? _timeout;
 
 		public bool Matches(object? value)
 			=> value is StringContent typedValue && Matches(typedValue);
@@ -94,9 +98,13 @@ public static partial class ItExtensions
 			}
 		}
 
-		/// <inheritdoc cref="IStringContentBodyMatchingParameter.AsRegex()" />
-		public IStringContentBodyParameter AsRegex()
+		/// <inheritdoc cref="IStringContentBodyMatchingParameter.AsRegex(RegexOptions, TimeSpan?)" />
+		public IStringContentBodyParameter AsRegex(
+			RegexOptions options = RegexOptions.None,
+			TimeSpan? timeout = null)
 		{
+			_regexOptions = options;
+			_timeout = timeout;
 			_bodyMatchType = BodyMatchType.Regex;
 			return this;
 		}
@@ -148,7 +156,7 @@ public static partial class ItExtensions
 
 			if (_body is not null)
 			{
-				string content = value.ReadAsStringAsync().GetAwaiter().GetResult();
+				string content = value.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 				switch (_bodyMatchType)
 				{
 					case BodyMatchType.Exact when
@@ -161,7 +169,9 @@ public static partial class ItExtensions
 						return false;
 					case BodyMatchType.Regex:
 						{
-							Regex regex = new(_body, _ignoringCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+							Regex regex = new(_body,
+								_ignoringCase ? _regexOptions | RegexOptions.IgnoreCase : _regexOptions,
+								_timeout ?? Regex.InfiniteMatchTimeout);
 							if (!regex.IsMatch(content))
 							{
 								return false;

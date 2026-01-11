@@ -1736,7 +1736,7 @@ namespace Mockolate.Web
     {
         public interface IStringContentBodyMatchingParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IStringContentBodyParameter, Mockolate.Web.ItExtensions.IStringContentParameter
         {
-            Mockolate.Web.ItExtensions.IStringContentBodyParameter AsRegex();
+            Mockolate.Web.ItExtensions.IStringContentBodyParameter AsRegex(System.Text.RegularExpressions.RegexOptions options = 0, System.TimeSpan? timeout = default);
         }
         public interface IStringContentBodyParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IStringContentParameter
         {
