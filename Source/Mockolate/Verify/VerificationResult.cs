@@ -31,6 +31,9 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	#endregion
 
+	internal VerificationResult<T> Map<T>(T mock)
+		=> new(mock, _interactions, _matchingInteractions, _expectation);
+
 	#region IVerificationResult
 
 	/// <inheritdoc cref="IVerificationResult.Expectation" />
