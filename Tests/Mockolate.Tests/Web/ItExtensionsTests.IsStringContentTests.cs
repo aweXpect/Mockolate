@@ -12,11 +12,11 @@ namespace Mockolate.Tests.Web;
 
 public sealed partial class ItExtensionsTests
 {
-	public sealed class HttpContentTests
+	public sealed class IsStringContentTests
 	{
 #if !NETFRAMEWORK
 		[Fact]
-		public async Task IsStringContent_ShouldSupportMonitoring()
+		public async Task ShouldSupportMonitoring()
 		{
 			List<StringContent> responses =
 			[
@@ -42,7 +42,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("application/json", true)]
 		[InlineData("text/plain", false)]
 		[InlineData("application/txt", false)]
-		public async Task IsStringContent_ShouldVerifyMediaType(string mediaType, bool expectSuccess)
+		public async Task ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
@@ -60,7 +60,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("foo", "foo", true)]
 		[InlineData("foo", "FOO", true)]
 		[InlineData("foo", "bar", false)]
-		public async Task IsStringContent_WithBody_IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
+		public async Task WithBody_IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
 			string expected, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -79,7 +79,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("foo", "foo", true)]
 		[InlineData("foo", "FOO", false)]
 		[InlineData("foo", "bar", false)]
-		public async Task IsStringContent_WithBody_ShouldCheckForEquality(string body, string expected,
+		public async Task WithBody_ShouldCheckForEquality(string body, string expected,
 			bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -99,7 +99,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("foo", "F[aeiou]*", true)]
 		[InlineData("foo", ".a.", false)]
 		public async Task
-			IsStringContent_WithBodyMatching_AsRegex_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
+			WithBodyMatching_AsRegex_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -118,7 +118,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("foo", "f[aeiou]*", true)]
 		[InlineData("foo", "F[aeiou]*", false)]
 		[InlineData("foo", ".a.", false)]
-		public async Task IsStringContent_WithBodyMatching_AsRegex_ShouldCheckForMatchingWildcard(
+		public async Task WithBodyMatching_AsRegex_ShouldCheckForMatchingWildcard(
 			string body, string pattern, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -134,7 +134,7 @@ public sealed partial class ItExtensionsTests
 		}
 
 		[Fact]
-		public async Task IsStringContent_WithBodyMatching_AsRegex_ShouldUseProvidedOptions()
+		public async Task WithBodyMatching_AsRegex_ShouldUseProvidedOptions()
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
@@ -150,7 +150,7 @@ public sealed partial class ItExtensionsTests
 		}
 
 		[Fact]
-		public async Task IsStringContent_WithBodyMatching_AsRegex_ShouldUseTimeout()
+		public async Task WithBodyMatching_AsRegex_ShouldUseTimeout()
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
@@ -177,7 +177,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("foo", "*", true)]
 		[InlineData("foo", "F*", true)]
 		[InlineData("foo", "*a*", false)]
-		public async Task IsStringContent_WithBodyMatching_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
+		public async Task WithBodyMatching_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 			string body, string pattern, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -199,7 +199,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("foo", "*", true)]
 		[InlineData("foo", "F*", false)]
 		[InlineData("foo", "*a*", false)]
-		public async Task IsStringContent_WithBodyMatching_ShouldCheckForMatchingWildcard(
+		public async Task WithBodyMatching_ShouldCheckForMatchingWildcard(
 			string body, string pattern, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -218,7 +218,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("application/json", true)]
 		[InlineData("text/plain", false)]
 		[InlineData("application/txt", false)]
-		public async Task IsStringContent_WithMediaType_ShouldVerifyMediaType(string mediaType, bool expectSuccess)
+		public async Task WithMediaType_ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
