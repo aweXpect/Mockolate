@@ -89,7 +89,6 @@ public sealed partial class HttpClientExtensionsTests
 
 				await httpClient.DeleteAsync("https://www.aweXpect.com", CancellationToken.None);
 
-
 				await That(httpClient.VerifyMock.Invoked.DeleteAsync(
 						It.IsUri(pattern)))
 					.Exactly(expected);
@@ -103,7 +102,6 @@ public sealed partial class HttpClientExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 
 				await httpClient.DeleteAsync("https://www.aweXpect.com", CancellationToken.None);
-
 
 				await That(httpClient.VerifyMock.Invoked.DeleteAsync(
 						It.IsUri("*aweXpect.com*"),
