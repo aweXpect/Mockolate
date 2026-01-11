@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using Mockolate.Parameters;
+#if !NET8_0_OR_GREATER
+using System.Linq;
+#endif
 
 namespace Mockolate.Web;
 
@@ -123,6 +125,9 @@ public static partial class ItExtensions
 
 		private static bool Contains(byte[] data, byte[] otherData)
 		{
+#if NET8_0_OR_GREATER
+			return data.AsSpan().IndexOf(otherData) >= 0;
+#else
 			int dataLength = data.Length;
 			int otherDataLength = otherData.Length;
 
@@ -150,6 +155,7 @@ public static partial class ItExtensions
 			}
 
 			return false;
+#endif
 		}
 
 		private enum BodyMatchType
