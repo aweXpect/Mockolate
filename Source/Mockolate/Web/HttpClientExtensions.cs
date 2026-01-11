@@ -25,6 +25,16 @@ public static partial class HttpClientExtensions
 		throw new MockException("The subject is no mock.");
 	}
 
+	private static Mock<T> CastToMockOrThrow<T>(IInteractiveMock<T> subject)
+	{
+		if (subject is Mock<T> mock)
+		{
+			return mock;
+		}
+
+		throw new MockException("The subject is no mock.");
+	}
+
 	private sealed class HttpRequestMessageParameters(
 		HttpMethod method,
 		params IHttpRequestMessageParameter[] parameters)

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Mockolate.Parameters;
 using Mockolate.Setup;
+using Mockolate.Verify;
 
 namespace Mockolate.Web;
 
