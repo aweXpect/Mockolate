@@ -37,6 +37,7 @@ public static partial class ItExtensions
 			return GetThis;
 		}
 
+		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
 		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
 		{
 			_callbacks ??= [];
@@ -44,9 +45,11 @@ public static partial class ItExtensions
 			return this;
 		}
 
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value)
 			=> value is HttpContent typedValue && Matches(typedValue);
 
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 		{
 			if (value is HttpContent httpContent)
