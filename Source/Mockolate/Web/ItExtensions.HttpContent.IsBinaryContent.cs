@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using Mockolate.Parameters;
 #if !NET8_0_OR_GREATER
 using System.Linq;
+#else
+using System;
 #endif
 
 namespace Mockolate.Web;
@@ -18,26 +17,21 @@ public static partial class ItExtensions
 		///     Expects the <see cref="HttpContent" /> parameter to have a binary content.
 		/// </summary>
 		public static IBinaryContentParameter IsBinaryContent()
-			=> new BinaryContentParameter(null);
+			=> new BinaryContentParameter();
 
 		/// <summary>
 		///     Expects the <see cref="HttpContent" /> parameter to have a binary content
 		///     with the given <paramref name="mediaType" />.
 		/// </summary>
 		public static IBinaryContentParameter IsBinaryContent(string mediaType)
-			=> new BinaryContentParameter(mediaType);
+			=> new BinaryContentParameter().WithMediaType(mediaType);
 	}
 
 	/// <summary>
 	///     Further expectations on the binary <see cref="HttpContent" />.
 	/// </summary>
-	public interface IBinaryContentParameter : IParameter<HttpContent?>
+	public interface IBinaryContentParameter : IHttpContentParameter<IBinaryContentParameter>
 	{
-		/// <summary>
-		///     Expects the binary content to have the given <paramref name="mediaType" />.
-		/// </summary>
-		IBinaryContentParameter WithMediaType(string? mediaType);
-
 		/// <summary>
 		///     Expects the binary content to be equal to the given <paramref name="bytes" />.
 		/// </summary>
@@ -49,27 +43,13 @@ public static partial class ItExtensions
 		IBinaryContentParameter Containing(byte[] bytes);
 	}
 
-	private sealed class BinaryContentParameter(string? mediaType)
-		: IBinaryContentParameter, IParameter
+	private sealed class BinaryContentParameter : HttpContentParameter<IBinaryContentParameter>, IBinaryContentParameter
 	{
 		private byte[]? _body;
 		private BodyMatchType _bodyMatchType = BodyMatchType.Exact;
-		private List<Action<HttpContent?>>? _callbacks;
-		private string? _mediaType = mediaType;
 
-		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
-		{
-			_callbacks ??= [];
-			_callbacks.Add(callback);
-			return this;
-		}
-
-		/// <inheritdoc cref="IBinaryContentParameter.WithMediaType(string?)" />
-		public IBinaryContentParameter WithMediaType(string? mediaType)
-		{
-			_mediaType = mediaType;
-			return this;
-		}
+		/// <inheritdoc cref="HttpContentParameter{TParameter}.GetThis" />
+		protected override IBinaryContentParameter GetThis => this;
 
 		/// <inheritdoc cref="IBinaryContentParameter.EqualTo(byte[])" />
 		public IBinaryContentParameter EqualTo(byte[] bytes)
@@ -87,21 +67,10 @@ public static partial class ItExtensions
 			return this;
 		}
 
-		public bool Matches(object? value)
-			=> value is HttpContent typedValue && Matches(typedValue);
-
-		public void InvokeCallbacks(object? value)
+		/// <inheritdoc cref="HttpContentParameter{TParameter}.Matches(HttpContent)" />
+		protected override bool Matches(HttpContent value)
 		{
-			if (value is HttpContent httpContent)
-			{
-				_callbacks?.ForEach(a => a.Invoke(httpContent));
-			}
-		}
-
-		private bool Matches(HttpContent value)
-		{
-			if (_mediaType is not null &&
-			    value.Headers.ContentType?.MediaType?.Equals(_mediaType, StringComparison.OrdinalIgnoreCase) != true)
+			if (!base.Matches(value))
 			{
 				return false;
 			}

@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using Mockolate.Internals;
-using Mockolate.Parameters;
 
 namespace Mockolate.Web;
 
@@ -17,26 +15,21 @@ public static partial class ItExtensions
 		///     Expects the <see cref="HttpContent" /> parameter to be a <see cref="StringContent" />.
 		/// </summary>
 		public static IStringContentParameter IsStringContent()
-			=> new StringContentParameter(null);
+			=> new StringContentParameter();
 
 		/// <summary>
 		///     Expects the <see cref="HttpContent" /> parameter to be a <see cref="StringContent" />
 		///     with the given <paramref name="mediaType" />.
 		/// </summary>
 		public static IStringContentParameter IsStringContent(string mediaType)
-			=> new StringContentParameter(mediaType);
+			=> new StringContentParameter().WithMediaType(mediaType);
 	}
 
 	/// <summary>
 	///     Further expectations on the <see cref="StringContent" />.
 	/// </summary>
-	public interface IStringContentParameter : IParameter<HttpContent?>
+	public interface IStringContentParameter : IHttpContentParameter<IStringContentParameter>
 	{
-		/// <summary>
-		///     Expects the <see cref="StringContent" /> to have the given <paramref name="mediaType" />.
-		/// </summary>
-		IStringContentParameter WithMediaType(string? mediaType);
-
 		/// <summary>
 		///     Expects the <see cref="StringContent" /> to have a body equal to the given <paramref name="value" />.
 		/// </summary>
@@ -73,27 +66,17 @@ public static partial class ItExtensions
 		IStringContentBodyParameter IgnoringCase();
 	}
 
-	private sealed class StringContentParameter(string? mediaType)
-		: IStringContentBodyMatchingParameter, IParameter
+	private sealed class StringContentParameter
+		: HttpContentParameter<IStringContentParameter>, IStringContentBodyMatchingParameter
 	{
 		private string? _body;
 		private BodyMatchType _bodyMatchType = BodyMatchType.Exact;
-		private List<Action<HttpContent?>>? _callbacks;
 		private bool _ignoringCase;
-		private string? _mediaType = mediaType;
 		private RegexOptions _regexOptions;
 		private TimeSpan? _timeout;
 
-		public bool Matches(object? value)
-			=> value is StringContent typedValue && Matches(typedValue);
-
-		public void InvokeCallbacks(object? value)
-		{
-			if (value is HttpContent httpContent)
-			{
-				_callbacks?.ForEach(a => a.Invoke(httpContent));
-			}
-		}
+		/// <inheritdoc cref="HttpContentParameter{TParameter}.GetThis" />
+		protected override IStringContentParameter GetThis => this;
 
 		/// <inheritdoc cref="IStringContentBodyMatchingParameter.AsRegex(RegexOptions, TimeSpan?)" />
 		public IStringContentBodyParameter AsRegex(
@@ -103,20 +86,6 @@ public static partial class ItExtensions
 			_regexOptions = options;
 			_timeout = timeout;
 			_bodyMatchType = BodyMatchType.Regex;
-			return this;
-		}
-
-		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
-		{
-			_callbacks ??= [];
-			_callbacks.Add(callback);
-			return this;
-		}
-
-		/// <inheritdoc cref="IStringContentParameter.WithMediaType(string?)" />
-		public IStringContentParameter WithMediaType(string? mediaType)
-		{
-			_mediaType = mediaType;
 			return this;
 		}
 
@@ -143,10 +112,15 @@ public static partial class ItExtensions
 			return this;
 		}
 
-		private bool Matches(StringContent value)
+		/// <inheritdoc cref="HttpContentParameter{TParameter}.Matches(HttpContent)" />
+		protected override bool Matches(HttpContent value)
 		{
-			if (_mediaType is not null &&
-			    value.Headers.ContentType?.MediaType?.Equals(_mediaType, StringComparison.OrdinalIgnoreCase) != true)
+			if (!base.Matches(value))
+			{
+				return false;
+			}
+
+			if (value is not StringContent)
 			{
 				return false;
 			}
