@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 #if NETSTANDARD2_0
@@ -26,11 +27,45 @@ public static partial class ItExtensions
 	/// </summary>
 	public interface IUriParameter : IParameter<Uri?>
 	{
+		/// <summary>
+		///     Expects the <see cref="Uri.Scheme" /> to be "http".
+		/// </summary>
+		IUriParameter ForHttp();
+
+		/// <summary>
+		///     Expects the <see cref="Uri.Scheme" /> to be "https".
+		/// </summary>
+		IUriParameter ForHttps();
+
+		/// <summary>
+		///     Expects the <see cref="Uri.Host" /> to match the given <paramref name="hostPattern" /> supporting wildcards.
+		/// </summary>
+		IUriParameter WithHost(string hostPattern);
+
+		/// <summary>
+		///     Expects the <see cref="Uri.Port" /> to be equal to the given <paramref name="port" />.
+		/// </summary>
+		IUriParameter WithPort(int port);
+
+		/// <summary>
+		///     Expects the <see cref="Uri.AbsolutePath" /> to match the given <paramref name="pathPattern" /> supporting wildcards.
+		/// </summary>
+		IUriParameter WithPath(string pathPattern);
+
+		/// <summary>
+		///     Expects the <see cref="Uri.Query" /> to match the given <paramref name="queryPattern" /> supporting wildcards.
+		/// </summary>
+		IUriParameter WithQuery(string queryPattern);
 	}
 
 	private sealed class UriParameter(string? pattern) : IUriParameter, IParameter
 	{
 		private List<Action<Uri?>>? _callbacks;
+		private string? _hostPattern;
+		private string? _pathPattern;
+		private Func<int, bool>? _portPredicate;
+		private string? _queryPattern;
+		private string? _scheme;
 
 		public bool Matches(object? value)
 		{
@@ -53,6 +88,35 @@ public static partial class ItExtensions
 				}
 			}
 
+			if (_scheme is not null &&
+			    !string.Equals(_scheme, uri.Scheme, StringComparison.OrdinalIgnoreCase))
+			{
+				return false;
+			}
+
+			if (_portPredicate?.Invoke(uri.Port) == false)
+			{
+				return false;
+			}
+
+			if (_hostPattern is not null &&
+			    !Wildcard.Pattern(_hostPattern, true).Matches(uri.Host))
+			{
+				return false;
+			}
+
+			if (_pathPattern is not null &&
+			    !Wildcard.Pattern(_pathPattern, true).Matches(WebUtility.UrlDecode(uri.AbsolutePath)))
+			{
+				return false;
+			}
+
+			if (_queryPattern is not null &&
+			    !Wildcard.Pattern(_queryPattern, true).Matches(WebUtility.UrlDecode(uri.Query)))
+			{
+				return false;
+			}
+
 			return true;
 		}
 
@@ -68,6 +132,42 @@ public static partial class ItExtensions
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);
+			return this;
+		}
+
+		public IUriParameter ForHttp()
+		{
+			_scheme = "http";
+			return this;
+		}
+
+		public IUriParameter ForHttps()
+		{
+			_scheme = "https";
+			return this;
+		}
+
+		public IUriParameter WithHost(string hostPattern)
+		{
+			_hostPattern = hostPattern;
+			return this;
+		}
+
+		public IUriParameter WithPort(int port)
+		{
+			_portPredicate = p => p == port;
+			return this;
+		}
+
+		public IUriParameter WithPath(string pathPattern)
+		{
+			_pathPattern = pathPattern;
+			return this;
+		}
+
+		public IUriParameter WithQuery(string queryPattern)
+		{
+			_queryPattern = queryPattern;
 			return this;
 		}
 	}

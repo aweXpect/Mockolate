@@ -1821,7 +1821,15 @@ namespace Mockolate.Web
             Mockolate.Web.ItExtensions.IStringContentBodyParameter WithBody(string value);
             Mockolate.Web.ItExtensions.IStringContentBodyMatchingParameter WithBodyMatching(string pattern);
         }
-        public interface IUriParameter : Mockolate.Parameters.IParameter<System.Uri?> { }
+        public interface IUriParameter : Mockolate.Parameters.IParameter<System.Uri?>
+        {
+            Mockolate.Web.ItExtensions.IUriParameter ForHttp();
+            Mockolate.Web.ItExtensions.IUriParameter ForHttps();
+            Mockolate.Web.ItExtensions.IUriParameter WithHost(string hostPattern);
+            Mockolate.Web.ItExtensions.IUriParameter WithPath(string pathPattern);
+            Mockolate.Web.ItExtensions.IUriParameter WithPort(int port);
+            Mockolate.Web.ItExtensions.IUriParameter WithQuery(string queryPattern);
+        }
         extension(Mockolate.It _)
         {
             Mockolate.Web.ItExtensions.IBinaryContentParameter IsBinaryContent();
