@@ -48,7 +48,8 @@ public static partial class ItExtensions
 		IUriParameter WithPort(int port);
 
 		/// <summary>
-		///     Expects the <see cref="Uri.AbsolutePath" /> to match the given <paramref name="pathPattern" /> supporting wildcards.
+		///     Expects the <see cref="Uri.AbsolutePath" /> to match the given <paramref name="pathPattern" /> supporting
+		///     wildcards.
 		/// </summary>
 		IUriParameter WithPath(string pathPattern);
 
@@ -67,6 +68,7 @@ public static partial class ItExtensions
 		private string? _queryPattern;
 		private string? _scheme;
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 		public bool Matches(object? value)
 		{
 			if (value is not Uri uri)
@@ -119,6 +121,7 @@ public static partial class ItExtensions
 
 			return true;
 		}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 		public void InvokeCallbacks(object? value)
 		{
