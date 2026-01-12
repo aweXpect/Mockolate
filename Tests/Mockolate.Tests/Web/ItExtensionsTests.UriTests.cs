@@ -105,7 +105,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*foo*", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*bar*", true)]
 		[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "*baz*", false)]
-		public async Task WithPath_ShouldVerifyHost(string uri, string pathPattern, bool expectMatch)
+		public async Task WithPath_ShouldVerifyPath(string uri, string pathPattern, bool expectMatch)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
@@ -140,7 +140,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*123*", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*x=*y=*", true)]
 		[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "*z=*", false)]
-		public async Task WithQuery_ShouldVerifyHost(string uri, string queryPattern, bool expectMatch)
+		public async Task WithQuery_ShouldVerifyQuery(string uri, string queryPattern, bool expectMatch)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
