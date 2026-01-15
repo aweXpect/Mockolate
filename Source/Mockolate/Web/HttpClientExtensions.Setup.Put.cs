@@ -48,8 +48,7 @@ public static partial class HttpClientExtensions
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock &&
-			    httpMessageHandlerMock.Mock is IMockMethodSetup<HttpMessageHandler> httpMessageHandlerSetup)
+			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 					new("System.Net.Http.HttpMessageHandler.SendAsync",
@@ -57,7 +56,7 @@ public static partial class HttpClientExtensions
 							new HttpStringUriParameter(requestUri),
 							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
 						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				CastToMockRegistrationOrThrow(httpMessageHandlerSetup).SetupMethod(methodSetup);
+				httpMessageHandlerMock.Mock.Registrations.SetupMethod(methodSetup);
 				return methodSetup;
 			}
 
@@ -75,8 +74,7 @@ public static partial class HttpClientExtensions
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock &&
-			    httpMessageHandlerMock.Mock is IMockMethodSetup<HttpMessageHandler> httpMessageHandlerSetup)
+			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 					new("System.Net.Http.HttpMessageHandler.SendAsync",
@@ -84,7 +82,7 @@ public static partial class HttpClientExtensions
 							new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),
 							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
 						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				CastToMockRegistrationOrThrow(httpMessageHandlerSetup).SetupMethod(methodSetup);
+				httpMessageHandlerMock.Mock.Registrations.SetupMethod(methodSetup);
 				return methodSetup;
 			}
 
