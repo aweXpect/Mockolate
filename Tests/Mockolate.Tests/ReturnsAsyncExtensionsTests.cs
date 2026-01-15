@@ -38,6 +38,21 @@ public sealed class ReturnsAsyncExtensionsTests
 		}
 
 		[Fact]
+		public async Task ReturnsAsync_1Parameter_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method1(It.IsAny<int>()).ReturnsAsync(() => 42).When(i => i > 0).Only(1);
+
+			int result1 = await sut.Method1(1);
+			int result2 = await sut.Method1(1);
+			int result3 = await sut.Method1(1);
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task ReturnsAsync_2Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -68,6 +83,22 @@ public sealed class ReturnsAsyncExtensionsTests
 			int result = await sut.Method2(1, 2);
 
 			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task ReturnsAsync_2Parameters_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>()).ReturnsAsync(() => 42).When(i => i > 0)
+				.Only(1);
+
+			int result1 = await sut.Method2(1, 2);
+			int result2 = await sut.Method2(1, 2);
+			int result3 = await sut.Method2(1, 2);
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
 		}
 
 		[Fact]
@@ -102,6 +133,22 @@ public sealed class ReturnsAsyncExtensionsTests
 			int result = await sut.Method3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task ReturnsAsync_3Parameters_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).ReturnsAsync(() => 42)
+				.When(i => i > 0).Only(1);
+
+			int result1 = await sut.Method3(1, 2, 3);
+			int result2 = await sut.Method3(1, 2, 3);
+			int result3 = await sut.Method3(1, 2, 3);
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
 		}
 
 		[Fact]
@@ -141,6 +188,22 @@ public sealed class ReturnsAsyncExtensionsTests
 		}
 
 		[Fact]
+		public async Task ReturnsAsync_4Parameters_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.ReturnsAsync(() => 42).When(i => i > 0).Only(1);
+
+			int result1 = await sut.Method4(1, 2, 3, 4);
+			int result2 = await sut.Method4(1, 2, 3, 4);
+			int result3 = await sut.Method4(1, 2, 3, 4);
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task ReturnsAsync_NoParameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -160,6 +223,21 @@ public sealed class ReturnsAsyncExtensionsTests
 			int result = await sut.Method0();
 
 			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task ReturnsAsync_NoParameters_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.Method0().ReturnsAsync(() => 42).When(i => i > 0).Only(1);
+
+			int result1 = await sut.Method0();
+			int result2 = await sut.Method0();
+			int result3 = await sut.Method0();
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
 		}
 
 		[Fact]
@@ -222,6 +300,21 @@ public sealed class ReturnsAsyncExtensionsTests
 		}
 
 		[Fact]
+		public async Task ReturnsAsync_1Parameter_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT1(It.IsAny<int>()).ReturnsAsync(() => 42).When(i => i > 0).Only(1);
+
+			int result1 = await sut.MethodVT1(1);
+			int result2 = await sut.MethodVT1(1);
+			int result3 = await sut.MethodVT1(1);
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task ReturnsAsync_2Parameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -252,6 +345,22 @@ public sealed class ReturnsAsyncExtensionsTests
 			int result = await sut.MethodVT2(1, 2);
 
 			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task ReturnsAsync_2Parameters_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT2(It.IsAny<int>(), It.IsAny<int>()).ReturnsAsync(() => 42).When(i => i > 0)
+				.Only(1);
+
+			int result1 = await sut.MethodVT2(1, 2);
+			int result2 = await sut.MethodVT2(1, 2);
+			int result3 = await sut.MethodVT2(1, 2);
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
 		}
 
 		[Fact]
@@ -286,6 +395,22 @@ public sealed class ReturnsAsyncExtensionsTests
 			int result = await sut.MethodVT3(1, 2, 3);
 
 			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task ReturnsAsync_3Parameters_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).ReturnsAsync(() => 42)
+				.When(i => i > 0).Only(1);
+
+			int result1 = await sut.MethodVT3(1, 2, 3);
+			int result2 = await sut.MethodVT3(1, 2, 3);
+			int result3 = await sut.MethodVT3(1, 2, 3);
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
 		}
 
 		[Fact]
@@ -325,6 +450,22 @@ public sealed class ReturnsAsyncExtensionsTests
 		}
 
 		[Fact]
+		public async Task ReturnsAsync_4Parameters_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.ReturnsAsync(() => 42).When(i => i > 0).Only(1);
+
+			int result1 = await sut.MethodVT4(1, 2, 3, 4);
+			int result2 = await sut.MethodVT4(1, 2, 3, 4);
+			int result3 = await sut.MethodVT4(1, 2, 3, 4);
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task ReturnsAsync_NoParameters_Callback_ReturnsConfiguredValue()
 		{
 			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
@@ -344,6 +485,21 @@ public sealed class ReturnsAsyncExtensionsTests
 			int result = await sut.MethodVT0();
 
 			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task ReturnsAsync_NoParameters_ShouldSupportWhenAndFor()
+		{
+			IReturnsAsyncExtensionsSetupTest sut = Mock.Create<IReturnsAsyncExtensionsSetupTest>();
+			sut.SetupMock.Method.MethodVT0().ReturnsAsync(() => 42).When(i => i > 0).Only(1);
+
+			int result1 = await sut.MethodVT0();
+			int result2 = await sut.MethodVT0();
+			int result3 = await sut.MethodVT0();
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(42);
+			await That(result3).IsEqualTo(0);
 		}
 
 		[Fact]
