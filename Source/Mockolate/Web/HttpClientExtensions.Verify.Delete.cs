@@ -53,7 +53,7 @@ public static partial class HttpClientExtensions
 					.Map(httpClientMock.Subject);
 			}
 
-			throw new MockException("Cannot verify HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 
 		/// <summary>
@@ -75,7 +75,7 @@ public static partial class HttpClientExtensions
 					.Map(httpClientMock.Subject);
 			}
 
-			throw new MockException("Cannot verify HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 }

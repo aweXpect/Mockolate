@@ -61,7 +61,7 @@ public static partial class HttpClientExtensions
 				return methodSetup;
 			}
 
-			throw new MockException("Cannot setup HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException("Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 
 		/// <summary>
@@ -88,7 +88,7 @@ public static partial class HttpClientExtensions
 				return methodSetup;
 			}
 
-			throw new MockException("Cannot setup HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException("Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 }

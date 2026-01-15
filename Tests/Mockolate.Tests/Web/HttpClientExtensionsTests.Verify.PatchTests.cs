@@ -99,7 +99,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				await That(Act).Throws<MockException>()
 					.WithMessage(
-						"Cannot verify HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
+						"Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 			}
 
 			[Theory]
@@ -186,7 +186,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				await That(Act).Throws<MockException>()
 					.WithMessage(
-						"Cannot verify HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
+						"Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 			}
 		}
 	}
