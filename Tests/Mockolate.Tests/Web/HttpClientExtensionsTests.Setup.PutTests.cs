@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using Mockolate.Exceptions;
 using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
@@ -92,6 +93,23 @@ public sealed partial class HttpClientExtensionsTests
 					.IsEqualTo(tokenMatches ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
+			[Fact]
+			public async Task StringUri_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+
+				void Act()
+				{
+					httpClient.SetupMock.Method
+						.PutAsync(It.Matches("*aweXpect.com*"), It.IsAny<HttpContent>())
+						.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				}
+
+				await That(Act).Throws<MockException>()
+					.WithMessage(
+						"Cannot setup HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
+			}
+
 			[Theory]
 			[InlineData("application/json", true)]
 			[InlineData("text/plain", false)]
@@ -170,6 +188,23 @@ public sealed partial class HttpClientExtensionsTests
 
 				await That(result.StatusCode)
 					.IsEqualTo(tokenMatches ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Fact]
+			public async Task Uri_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+
+				void Act()
+				{
+					httpClient.SetupMock.Method
+						.PutAsync(It.IsUri("*aweXpect.com*"), It.IsAny<HttpContent>())
+						.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				}
+
+				await That(Act).Throws<MockException>()
+					.WithMessage(
+						"Cannot setup HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
 			}
 		}
 	}

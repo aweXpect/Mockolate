@@ -1,5 +1,7 @@
 using System.Net.Http;
 using System.Threading;
+using Mockolate.Exceptions;
+using Mockolate.Verify;
 using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
@@ -60,6 +62,22 @@ public sealed partial class HttpClientExtensionsTests
 					.Exactly(tokenMatches ? 1 : 0);
 			}
 
+			[Fact]
+			public async Task StringUri_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+
+				void Act()
+				{
+					httpClient.VerifyMock.Invoked
+						.DeleteAsync(It.Matches("*aweXpect.com*")).Never();
+				}
+
+				await That(Act).Throws<MockException>()
+					.WithMessage(
+						"Cannot verify HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
+			}
+
 			[Theory]
 			[InlineData(nameof(HttpMethod.Delete), 1)]
 			[InlineData(nameof(HttpMethod.Get), 0)]
@@ -107,6 +125,22 @@ public sealed partial class HttpClientExtensionsTests
 						It.IsUri("*aweXpect.com*"),
 						It.Satisfies<CancellationToken>(_ => tokenMatches)))
 					.Exactly(tokenMatches ? 1 : 0);
+			}
+
+			[Fact]
+			public async Task Uri_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+
+				void Act()
+				{
+					httpClient.VerifyMock.Invoked
+						.DeleteAsync(It.IsUri("*aweXpect.com*")).Never();
+				}
+
+				await That(Act).Throws<MockException>()
+					.WithMessage(
+						"Cannot verify HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
 			}
 		}
 	}

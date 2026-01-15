@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading;
+using Mockolate.Exceptions;
 using Mockolate.Parameters;
 using Mockolate.Verify;
 
@@ -45,7 +46,7 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?>? content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (verifyInvoked is Mock<HttpClient> httpClientMock &&
+			if (verifyInvoked is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
 			{
 				return httpMessageHandlerMock.Mock.Method("System.Net.Http.HttpMessageHandler.SendAsync",
@@ -56,11 +57,7 @@ public static partial class HttpClientExtensions
 					.Map(httpClientMock.Subject);
 			}
 
-			return CastToMockOrThrow(verifyInvoked).Method("System.Net.Http.HttpMessageInvoker.SendAsync",
-				new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Post,
-					new HttpStringUriParameter(requestUri),
-					new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
-				new NamedParameter("cancellationToken", (IParameter)cancellationToken));
+			throw new MockException("Cannot verify HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
 		}
 
 		/// <summary>
@@ -73,7 +70,7 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?>? content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (verifyInvoked is Mock<HttpClient> httpClientMock &&
+			if (verifyInvoked is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
 			{
 				return httpMessageHandlerMock.Mock.Method("System.Net.Http.HttpMessageHandler.SendAsync",
@@ -84,11 +81,7 @@ public static partial class HttpClientExtensions
 					.Map(httpClientMock.Subject);
 			}
 
-			return CastToMockOrThrow(verifyInvoked).Method("System.Net.Http.HttpMessageInvoker.SendAsync",
-				new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Post,
-					new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),
-					new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
-				new NamedParameter("cancellationToken", (IParameter)cancellationToken));
+			throw new MockException("Cannot verify HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 }

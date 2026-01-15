@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Mockolate.Exceptions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
@@ -43,7 +44,7 @@ public static partial class HttpClientExtensions
 			IParameter<string?>? requestUri,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (setup is Mock<HttpClient> httpClientMock &&
+			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock &&
 			    httpMessageHandlerMock.Mock is IMockMethodSetup<HttpMessageHandler> httpMessageHandlerSetup)
 			{
@@ -55,16 +56,8 @@ public static partial class HttpClientExtensions
 				CastToMockRegistrationOrThrow(httpMessageHandlerSetup).SetupMethod(methodSetup);
 				return methodSetup;
 			}
-			else
-			{
-				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
-					new("System.Net.Http.HttpMessageInvoker.SendAsync",
-						new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Get,
-							new HttpStringUriParameter(requestUri))),
-						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
-				return methodSetup;
-			}
+
+			throw new MockException("Cannot setup HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
 		}
 
 		/// <summary>
@@ -76,7 +69,7 @@ public static partial class HttpClientExtensions
 			IParameter<Uri?>? requestUri,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (setup is Mock<HttpClient> httpClientMock &&
+			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock &&
 			    httpMessageHandlerMock.Mock is IMockMethodSetup<HttpMessageHandler> httpMessageHandlerSetup)
 			{
@@ -88,16 +81,8 @@ public static partial class HttpClientExtensions
 				CastToMockRegistrationOrThrow(httpMessageHandlerSetup).SetupMethod(methodSetup);
 				return methodSetup;
 			}
-			else
-			{
-				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
-					new("System.Net.Http.HttpMessageInvoker.SendAsync",
-						new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Get,
-							new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri))),
-						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
-				return methodSetup;
-			}
+
+			throw new MockException("Cannot setup HttpClient when HttpClient is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 }
