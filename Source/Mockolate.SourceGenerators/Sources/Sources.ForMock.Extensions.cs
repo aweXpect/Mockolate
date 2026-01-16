@@ -120,7 +120,7 @@ internal static partial class Sources
 					.Append(@class.ClassFullName.EscapeForXmlDoc())
 					.Append(".").Append(@delegate.Name.EscapeForXmlDoc()).Append("(")
 					.Append(string.Join(", ",
-						@delegate.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+						@delegate.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
 					.Append(")\"/> with the given <paramref name=\"parameters\"/>..")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
@@ -311,7 +311,7 @@ internal static partial class Sources
 				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
 				.Append(method.Name.EscapeForXmlDoc()).Append("(")
 				.Append(string.Join(", ",
-					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
 				.Append(")\"/>");
 		}
 		else
@@ -889,7 +889,7 @@ internal static partial class Sources
 				.Append(@class.ClassFullName.EscapeForXmlDoc())
 				.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
 				.Append(string.Join(", ",
-					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
 				.Append(")\"/>").Append(method.Parameters.Count > 0 ? " with the given " : "")
 				.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".")
 				.AppendLine();
@@ -952,7 +952,7 @@ internal static partial class Sources
 				.Append(@class.ClassFullName.EscapeForXmlDoc())
 				.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
 				.Append(string.Join(", ",
-					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname)))
+					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
 				.Append(")\"/> with the given <paramref name=\"parameters\"/>..")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
