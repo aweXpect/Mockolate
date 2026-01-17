@@ -54,7 +54,15 @@ public class Callback
 	///     to <see langword="true" />).
 	/// </remarks>
 	public void For(int times)
-		=> _forTimes = times;
+	{
+		if (times <= 0)
+		{
+			// ReSharper disable once LocalizableElement
+			throw new ArgumentOutOfRangeException(nameof(times), "Times must be greater than zero.");
+		}
+
+		_forTimes = times;
+	}
 
 	/// <summary>
 	///     Deactivates the callback after it was invoked the given number of <paramref name="times" />.

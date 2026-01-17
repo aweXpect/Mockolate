@@ -24,6 +24,23 @@ public sealed partial class SetupPropertyTests
 			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
 		}
 
+		[Theory]
+		[InlineData(-2)]
+		[InlineData(0)]
+		public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			void Act()
+			{
+				sut.SetupMock.Property.MyProperty
+					.OnGet.Do(() => { }).For(times);
+			}
+
+			await That(Act).Throws<ArgumentOutOfRangeException>()
+				.WithMessage("Times must be greater than zero.").AsPrefix();
+		}
+
 		[Fact]
 		public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
