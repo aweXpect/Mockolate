@@ -612,7 +612,6 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(3);
 	}
 
-*/
 	public class ReturnMethodWith0Parameters
 	{
 		[Fact]
@@ -810,6 +809,7 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
+*/
 	public class ReturnMethodWith5Parameters
 	{
 		[Fact]
