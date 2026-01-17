@@ -10,7 +10,6 @@ namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class SetupMethodTests
 {
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task Equals_ShouldWork()
 	{
@@ -22,6 +21,7 @@ public sealed partial class SetupMethodTests
 
 		await That(result).IsEqualTo(true);
 	}
+	
 	[Fact]
 	public async Task GenericMethod_SetupShouldWork()
 	{
@@ -93,7 +93,6 @@ public sealed partial class SetupMethodTests
 		await That(receivedCalls).IsEqualTo([1, 2, 3, 4, 5,]);
 	}
 
-	*/
 	[Fact]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
@@ -126,7 +125,6 @@ public sealed partial class SetupMethodTests
 		await That(result3).IsEqualTo(1);
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task Parameter_Do_ShouldExecuteCallback()
 	{
@@ -157,6 +155,7 @@ public sealed partial class SetupMethodTests
 		await That(capturedValues).IsEqualTo([1, 3,]);
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
