@@ -500,7 +500,6 @@ public sealed partial class SetupMethodTests
 		await That(sut.VerifyMock.Invoked.MethodWithoutOtherOverloads(Match.AnyParameters())).Once();
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
 	{
@@ -520,6 +519,7 @@ public sealed partial class SetupMethodTests
 			.WithMessage("The method setup does not support return values.");
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task VoidMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
@@ -557,6 +557,7 @@ public sealed partial class SetupMethodTests
 
 		await That(isCalled).IsEqualTo(1);
 	}
+	*/
 
 	[Fact]
 	public async Task WhenNotSetup_ShouldReturnDefaultValue()
@@ -613,7 +614,6 @@ public sealed partial class SetupMethodTests
 
 		await That(result).IsEqualTo(3);
 	}
-*/
 	
 	public class ReturnMethodWith0Parameters
 	{
