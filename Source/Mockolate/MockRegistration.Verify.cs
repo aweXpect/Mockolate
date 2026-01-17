@@ -24,11 +24,7 @@ public partial class MockRegistration
 				.Where(method => method.Name.Equals(methodName) &&
 				                 method.Parameters.Length == parameters.Length &&
 				                 !parameters
-					                 .Where((parameter, i)
-						                 => (!string.IsNullOrEmpty(method.Parameters[i].Name) &&
-						                     !parameter.Name.Equals(method.Parameters[i].Name,
-							                     StringComparison.Ordinal)) ||
-						                    !parameter.Parameter.Matches(method.Parameters[i].Value))
+					                 .Where((parameter, i) => !parameter.Matches(method.Parameters[i]))
 					                 .Any())
 				.Cast<IInteraction>()
 				.ToArray(),
@@ -88,11 +84,7 @@ public partial class MockRegistration
 				.OfType<IndexerGetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  !parameters
-					                  .Where((parameter, i)
-						                  => (!string.IsNullOrEmpty(indexer.Parameters[i].Name) &&
-						                      !parameter.Name.Equals(indexer.Parameters[i].Name,
-							                      StringComparison.Ordinal)) ||
-						                     !parameter.Parameter.Matches(indexer.Parameters[i].Value))
+					                  .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
 					                  .Any())
 				.Cast<IInteraction>()
 				.ToArray(),
@@ -111,11 +103,7 @@ public partial class MockRegistration
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
 				                  !parameters
-					                  .Where((parameter, i)
-						                  => (!string.IsNullOrEmpty(indexer.Parameters[i].Name) &&
-						                      !parameter.Name.Equals(indexer.Parameters[i].Name,
-							                      StringComparison.Ordinal)) ||
-						                     !parameter.Parameter.Matches(indexer.Parameters[i].Value))
+					                  .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
 					                  .Any())
 				.Cast<IInteraction>()
 				.ToArray(),

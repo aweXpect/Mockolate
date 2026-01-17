@@ -571,6 +571,7 @@ namespace Mockolate.Parameters
         public NamedParameter(string Name, Mockolate.Parameters.IParameter Parameter) { }
         public string Name { get; init; }
         public Mockolate.Parameters.IParameter Parameter { get; init; }
+        public bool Matches(Mockolate.Parameters.NamedParameterValue value) { }
         public override string? ToString() { }
     }
     public struct NamedParameterValue : System.IEquatable<Mockolate.Parameters.NamedParameterValue>

@@ -92,8 +92,7 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 
 		for (int i = 0; i < namedParameters.Length; i++)
 		{
-			if ((!string.IsNullOrEmpty(values[i].Name) && !namedParameters[i].Name.Equals(values[i].Name, StringComparison.Ordinal)) ||
-				!namedParameters[i].Parameter.Matches(values[i].Value))
+			if (!namedParameters[i].Matches(values[i]))
 			{
 				return false;
 			}
