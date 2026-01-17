@@ -6,9 +6,5 @@
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers\Mockolate.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0"/>
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers.CodeFixers\Mockolate.Analyzers.CodeFixers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0"/>
 	</ItemGroup>
-	
-	<ItemGroup>
-		<Compile Remove="MockMethods\VerifyInvokedTests.cs" />
-	</ItemGroup>
 
 </Project>
