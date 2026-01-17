@@ -429,7 +429,6 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task TriggerCallbacks_ArrayLengthDoesNotMatch_ShouldNotThrow()
 	{
@@ -455,6 +454,7 @@ public sealed partial class SetupMethodTests
 		await That(callCount).IsEqualTo(1);
 	}
 
+	/* TODO: Re-Enable
 	[Theory]
 	[InlineData("Method0")]
 	[InlineData("Method1", 1)]
