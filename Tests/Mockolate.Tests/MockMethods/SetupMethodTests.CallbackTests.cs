@@ -319,6 +319,23 @@ public sealed partial class SetupMethodTests
 				await That(callCount).IsEqualTo(0);
 			}
 
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method1(It.IsAny<int>())
+						.Returns("").For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
@@ -375,6 +392,23 @@ public sealed partial class SetupMethodTests
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(10);
 				await That(callCount3).IsEqualTo(6);
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method1(It.IsAny<int>())
+						.Returns("").Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Theory]
