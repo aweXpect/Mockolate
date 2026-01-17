@@ -454,7 +454,6 @@ public sealed partial class SetupMethodTests
 		await That(callCount).IsEqualTo(1);
 	}
 
-	/* TODO: Re-Enable
 	[Theory]
 	[InlineData("Method0")]
 	[InlineData("Method1", 1)]
@@ -501,6 +500,7 @@ public sealed partial class SetupMethodTests
 		await That(sut.VerifyMock.Invoked.MethodWithoutOtherOverloads(Match.AnyParameters())).Once();
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
 	{
