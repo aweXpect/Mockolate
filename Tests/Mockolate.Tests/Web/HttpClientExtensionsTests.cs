@@ -21,7 +21,10 @@ public sealed partial class HttpClientExtensionsTests
 		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
 
 		bool result = interactiveSetup.Matches(new MethodInvocation(0, "System.Net.Http.HttpMessageHandler.SendAsync",
-			[new HttpRequestMessage(), CancellationToken.None,]));
+		[
+			new NamedParameterValue("request", new HttpRequestMessage()),
+			new NamedParameterValue("cancellationToken", CancellationToken.None),
+		]));
 
 		await That(result).IsTrue();
 	}
@@ -37,7 +40,10 @@ public sealed partial class HttpClientExtensionsTests
 		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
 
 		bool result = interactiveSetup.Matches(new MethodInvocation(0, "System.Net.Http.HttpMessageHandler.SendAsync",
-			[new HttpRequestMessage(), CancellationToken.None,]));
+		[
+			new NamedParameterValue("request", new HttpRequestMessage()),
+			new NamedParameterValue("cancellationToken", CancellationToken.None),
+		]));
 
 		await That(result).IsFalse();
 	}

@@ -9,6 +9,23 @@ public sealed partial class SetupMethodTests
 	{
 		public class ReturnMethodWith0Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method0()
+						.Returns("").For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -45,6 +62,23 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(result).IsEqualTo(["d", "c", "b", "d", "c", "b", "d", "c", "b", "d",]);
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method0()
+						.Returns("").Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -244,6 +278,23 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith1Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method1(It.IsAny<int>())
+						.Returns("").For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -280,6 +331,23 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(result).IsEqualTo(["d", "c", "foo-2", "d", "c", "foo-5", "d", "c", "foo-8", "d",]);
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method1(It.IsAny<int>())
+						.Returns("").Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -526,6 +594,23 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith2Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+						.Returns("").For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -562,6 +647,23 @@ public sealed partial class SetupMethodTests
 				}
 
 				await That(result).IsEqualTo(["d", "c", "foo-2-4", "d", "c", "foo-5-10", "d", "c", "foo-8-16", "d",]);
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+						.Returns("").Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -810,6 +912,23 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith3Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+						.Returns("").For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -847,6 +966,23 @@ public sealed partial class SetupMethodTests
 
 				await That(result)
 					.IsEqualTo(["d", "c", "foo-2-4-6", "d", "c", "foo-5-10-15", "d", "c", "foo-8-16-24", "d",]);
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+						.Returns("").Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -1098,6 +1234,23 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith4Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+						.Returns("").For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -1136,6 +1289,23 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo([
 					"d", "c", "foo-2-4-6-8", "d", "c", "foo-5-10-15-20", "d", "c", "foo-8-16-24-32", "d",
 				]);
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+						.Returns("").Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -1387,6 +1557,24 @@ public sealed partial class SetupMethodTests
 
 		public class ReturnMethodWith5Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+							It.IsAny<int>())
+						.Returns("").For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
@@ -1427,6 +1615,24 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo([
 					"d", "c", "foo-2-4-6-8-10", "d", "c", "foo-5-10-15-20-25", "d", "c", "foo-8-16-24-32-40", "d",
 				]);
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+							It.IsAny<int>())
+						.Returns("").Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -1691,6 +1897,23 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith0Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method0()
+						.Throws<Exception>().For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
@@ -1710,6 +1933,23 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method0()
+						.Throws<Exception>().Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -1895,6 +2135,23 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith1Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method1(It.IsAny<int>())
+						.Throws<Exception>().For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
@@ -1914,6 +2171,23 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method1(It.IsAny<int>())
+						.Throws<Exception>().Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -2116,6 +2390,23 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith2Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+						.Throws<Exception>().For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
@@ -2135,6 +2426,23 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+						.Throws<Exception>().Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -2341,6 +2649,23 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith3Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+						.Throws<Exception>().For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
@@ -2360,6 +2685,23 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+						.Throws<Exception>().Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -2566,6 +2908,23 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith4Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+						.Throws<Exception>().For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
@@ -2585,6 +2944,23 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+						.Throws<Exception>().Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
@@ -2791,6 +3167,24 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith5Parameters
 		{
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+							It.IsAny<int>())
+						.Throws<Exception>().For(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
@@ -2811,6 +3205,24 @@ public sealed partial class SetupMethodTests
 
 				await That(result1).HasMessage("foo");
 				await That(result2).HasMessage("foo");
+			}
+
+			[Theory]
+			[InlineData(-2)]
+			[InlineData(0)]
+			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				void Act()
+				{
+					sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+							It.IsAny<int>())
+						.Throws<Exception>().Only(times);
+				}
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithMessage("Times must be greater than zero.").AsPrefix();
 			}
 
 			[Fact]
