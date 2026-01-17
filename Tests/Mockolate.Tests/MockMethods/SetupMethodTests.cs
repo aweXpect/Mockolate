@@ -681,7 +681,6 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
-	/* TODO: Re-Enable
 	public class ReturnMethodWith2Parameters
 	{
 		[Fact]
@@ -810,6 +809,7 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
+	/* TODO: Re-Enable
 	public class ReturnMethodWith5Parameters
 	{
 		[Fact]
