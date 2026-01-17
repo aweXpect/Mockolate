@@ -312,7 +312,6 @@ public sealed partial class SetupMethodTests
 		await That(value).IsEqualTo(4);
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task Setup_WithRefParameter_WithoutPredicateOrCallback_ShouldNotChangeValue()
 	{
@@ -337,6 +336,7 @@ public sealed partial class SetupMethodTests
 		await That(value).IsEqualTo(2);
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task Setup_WithRefParameter_WithPredicateAndCallback_ShouldUseCallbackToSetValueWhenPredicateMatches()
 	{
