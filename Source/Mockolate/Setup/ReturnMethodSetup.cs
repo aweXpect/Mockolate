@@ -432,7 +432,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast(invocation.Parameters[0], out T1 p1, behavior))
+		if (TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			bool wasInvoked = false;
 			int currentCallbacksIndex = _currentCallbacksIndex;
@@ -459,10 +459,10 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			return defaultValueGenerator();
 		}
 
-		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
+		if (!TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			throw new MockException(
-				$"The input parameter only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]!.GetType())}'.");
+				$"The input parameter only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0].Value!.GetType())}'.");
 		}
 
 		foreach (Callback<Func<int, T1, TReturn>> _ in _returnCallbacks)
@@ -742,8 +742,8 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(invocation.Parameters[1], out T2 p2, behavior))
+		if (TryCast(invocation.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1].Value, out T2 p2, behavior))
 		{
 			bool wasInvoked = false;
 			int currentCallbacksIndex = _currentCallbacksIndex;
@@ -770,16 +770,16 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			return defaultValueGenerator();
 		}
 
-		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
+		if (!TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]!.GetType())}'.");
+				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0].Value!.GetType())}'.");
 		}
 
-		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
+		if (!TryCast(invocation.Parameters[1].Value, out T2 p2, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]!.GetType())}'.");
+				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1].Value!.GetType())}'.");
 		}
 
 		foreach (Callback<Func<int, T1, T2, TReturn>> _ in _returnCallbacks)
@@ -1067,9 +1067,9 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(invocation.Parameters[1], out T2 p2, behavior) &&
-		    TryCast(invocation.Parameters[2], out T3 p3, behavior))
+		if (TryCast(invocation.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1].Value, out T2 p2, behavior) &&
+		    TryCast(invocation.Parameters[2].Value, out T3 p3, behavior))
 		{
 			bool wasInvoked = false;
 			int currentCallbacksIndex = _currentCallbacksIndex;
@@ -1096,22 +1096,22 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			return defaultValueGenerator();
 		}
 
-		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
+		if (!TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]!.GetType())}'.");
+				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0].Value!.GetType())}'.");
 		}
 
-		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
+		if (!TryCast(invocation.Parameters[1].Value, out T2 p2, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]!.GetType())}'.");
+				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1].Value!.GetType())}'.");
 		}
 
-		if (!TryCast(invocation.Parameters[2], out T3 p3, behavior))
+		if (!TryCast(invocation.Parameters[2].Value, out T3 p3, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 3 only supports '{FormatType(typeof(T3))}', but is '{FormatType(invocation.Parameters[2]!.GetType())}'.");
+				$"The input parameter 3 only supports '{FormatType(typeof(T3))}', but is '{FormatType(invocation.Parameters[2].Value!.GetType())}'.");
 		}
 
 		foreach (Callback<Func<int, T1, T2, T3, TReturn>> _ in _returnCallbacks)
@@ -1410,10 +1410,10 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast(invocation.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(invocation.Parameters[1], out T2 p2, behavior) &&
-		    TryCast(invocation.Parameters[2], out T3 p3, behavior) &&
-		    TryCast(invocation.Parameters[3], out T4 p4, behavior))
+		if (TryCast(invocation.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(invocation.Parameters[1].Value, out T2 p2, behavior) &&
+		    TryCast(invocation.Parameters[2].Value, out T3 p3, behavior) &&
+		    TryCast(invocation.Parameters[3].Value, out T4 p4, behavior))
 		{
 			bool wasInvoked = false;
 			int currentCallbacksIndex = _currentCallbacksIndex;
@@ -1440,28 +1440,28 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			return defaultValueGenerator();
 		}
 
-		if (!TryCast(invocation.Parameters[0], out T1 p1, behavior))
+		if (!TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0]!.GetType())}'.");
+				$"The input parameter 1 only supports '{FormatType(typeof(T1))}', but is '{FormatType(invocation.Parameters[0].Value!.GetType())}'.");
 		}
 
-		if (!TryCast(invocation.Parameters[1], out T2 p2, behavior))
+		if (!TryCast(invocation.Parameters[1].Value, out T2 p2, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1]!.GetType())}'.");
+				$"The input parameter 2 only supports '{FormatType(typeof(T2))}', but is '{FormatType(invocation.Parameters[1].Value!.GetType())}'.");
 		}
 
-		if (!TryCast(invocation.Parameters[2], out T3 p3, behavior))
+		if (!TryCast(invocation.Parameters[2].Value, out T3 p3, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 3 only supports '{FormatType(typeof(T3))}', but is '{FormatType(invocation.Parameters[2]!.GetType())}'.");
+				$"The input parameter 3 only supports '{FormatType(typeof(T3))}', but is '{FormatType(invocation.Parameters[2].Value!.GetType())}'.");
 		}
 
-		if (!TryCast(invocation.Parameters[3], out T4 p4, behavior))
+		if (!TryCast(invocation.Parameters[3].Value, out T4 p4, behavior))
 		{
 			throw new MockException(
-				$"The input parameter 4 only supports '{FormatType(typeof(T4))}', but is '{FormatType(invocation.Parameters[3]!.GetType())}'.");
+				$"The input parameter 4 only supports '{FormatType(typeof(T4))}', but is '{FormatType(invocation.Parameters[3].Value!.GetType())}'.");
 		}
 
 		foreach (Callback<Func<int, T1, T2, T3, T4, TReturn>> _ in _returnCallbacks)

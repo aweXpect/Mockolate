@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Linq;
+using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
 
@@ -7,7 +8,7 @@ namespace Mockolate.Interactions;
 ///     An access of an indexer setter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
-public class IndexerSetterAccess(int index, object?[] parameters, object? value) : IndexerAccess(index, parameters)
+public class IndexerSetterAccess(int index, NamedParameterValue[] parameters, object? value) : IndexerAccess(index, parameters)
 {
 	/// <summary>
 	///     The value the indexer was being set to.
@@ -16,5 +17,5 @@ public class IndexerSetterAccess(int index, object?[] parameters, object? value)
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"[{Index}] set indexer [{string.Join(", ", Parameters.Select(p => p?.ToString() ?? "null"))}] to {Value ?? "null"}";
+		=> $"[{Index}] set indexer [{string.Join(", ", Parameters.Select(p => p.Value?.ToString() ?? "null"))}] to {Value ?? "null"}";
 }

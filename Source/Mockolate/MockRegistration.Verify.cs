@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Interactions;
@@ -23,7 +24,7 @@ public partial class MockRegistration
 				.Where(method => method.Name.Equals(methodName) &&
 				                 method.Parameters.Length == parameters.Length &&
 				                 !parameters
-					                 .Where((parameter, i) => !parameter.Parameter.Matches(method.Parameters[i]))
+					                 .Where((parameter, i) => !parameter.Matches(method.Parameters[i]))
 					                 .Any())
 				.Cast<IInteraction>()
 				.ToArray(),
@@ -83,7 +84,7 @@ public partial class MockRegistration
 				.OfType<IndexerGetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  !parameters
-					                  .Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i]))
+					                  .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
 					                  .Any())
 				.Cast<IInteraction>()
 				.ToArray(),
@@ -102,7 +103,7 @@ public partial class MockRegistration
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
 				                  !parameters
-					                  .Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i]))
+					                  .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
 					                  .Any())
 				.Cast<IInteraction>()
 				.ToArray(),

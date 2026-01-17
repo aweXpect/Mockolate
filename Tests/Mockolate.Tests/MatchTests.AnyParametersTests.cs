@@ -1,3 +1,4 @@
+using System.Linq;
 using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
@@ -14,7 +15,7 @@ public sealed partial class MatchTests
 		{
 			IParameters sut = Match.AnyParameters();
 
-			bool result = sut.Matches(values);
+			bool result = sut.Matches(values.Select(x => new NamedParameterValue(null, x)).ToArray());
 
 			await That(result).IsTrue();
 		}

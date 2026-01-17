@@ -494,13 +494,13 @@ internal static partial class Sources
 		sb.Append("\t\t\tif (");
 		for (int i = 1; i < numberOfParameters; i++)
 		{
-			sb.Append("TryCast(invocation.Parameters[").Append(i - 1).Append("], out T").Append(i).Append(" p")
+			sb.Append("TryCast(invocation.Parameters[").Append(i - 1).Append("].Value, out T").Append(i).Append(" p")
 				.Append(i).Append(", behavior) &&");
 			sb.AppendLine().Append("\t\t    ");
 		}
 
 		sb.Append("TryCast(invocation.Parameters[")
-			.Append(numberOfParameters - 1).Append("], out T").Append(numberOfParameters).Append(" p")
+			.Append(numberOfParameters - 1).Append("].Value, out T").Append(numberOfParameters).Append(" p")
 			.Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
@@ -1053,13 +1053,13 @@ internal static partial class Sources
 		sb.Append("\t\t\tif (");
 		for (int i = 1; i < numberOfParameters; i++)
 		{
-			sb.Append("TryCast(invocation.Parameters[").Append(i - 1).Append("], out T").Append(i).Append(" p")
+			sb.Append("TryCast(invocation.Parameters[").Append(i - 1).Append("].Value, out T").Append(i).Append(" p")
 				.Append(i).Append(", behavior) &&");
 			sb.AppendLine().Append("\t\t    ");
 		}
 
 		sb.Append("TryCast(invocation.Parameters[")
-			.Append(numberOfParameters - 1).Append("], out T").Append(numberOfParameters).Append(" p")
+			.Append(numberOfParameters - 1).Append("].Value, out T").Append(numberOfParameters).Append(" p")
 			.Append(numberOfParameters).Append(", behavior))")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
@@ -1093,12 +1093,12 @@ internal static partial class Sources
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append("\t\t\tif (!TryCast(invocation.Parameters[").Append(i - 1)
-				.Append("], out T").Append(i).Append(" p").Append(i).Append(", behavior))").AppendLine();
+				.Append("].Value, out T").Append(i).Append(" p").Append(i).Append(", behavior))").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tthrow new MockException($\"The input parameter ").Append(i)
 				.Append(" only supports '{FormatType(typeof(T").Append(i)
 				.Append("))}', but is '{FormatType(invocation.Parameters[")
-				.Append(i - 1).Append("]!.GetType())}'.\");").AppendLine();
+				.Append(i - 1).Append("].Value!.GetType())}'.\");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.AppendLine();
 		}

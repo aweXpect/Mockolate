@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Mockolate.Exceptions;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockIndexers;
@@ -148,7 +149,10 @@ public sealed partial class SetupIndexerTests
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
 		int? result0 = mock["foo", 1, 2];
-		registration.SetIndexer(42, "foo", 1, 2);
+		registration.SetIndexer(42,
+			new NamedParameterValue("index1", "foo"),
+			new NamedParameterValue("index2", 1),
+			new NamedParameterValue("index3", 2));
 		int? result1 = mock["foo", 1, 2];
 		int? result2 = mock["bar", 1, 2];
 		int? result3 = mock["foo", 2, 2];
@@ -190,14 +194,28 @@ public sealed partial class SetupIndexerTests
 	}
 
 	[Fact]
+	public async Task WhenNameOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
+	{
+		IIndexerService mock = Mock.Create<IIndexerService>();
+		mock.SetupMock.Indexer(It.IsAny<int>()).Returns("foo");
+		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+
+		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue("index", 1));
+		IndexerSetupResult<string> result2 = registration.GetIndexer<string>(new NamedParameterValue("other", 1));
+
+		await That(result1.GetResult(() => "")).IsEqualTo("foo");
+		await That(result2.GetResult(() => "")).IsEqualTo("");
+	}
+
+	[Fact]
 	public async Task WhenTypeOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
 		IIndexerService mock = Mock.Create<IIndexerService>();
 		mock.SetupMock.Indexer(It.IsAny<int>()).Returns("foo");
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
 
-		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(1);
-		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(1);
+		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue("index", 1));
+		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(new NamedParameterValue("index", 1));
 
 		await That(result1.GetResult(() => "")).IsEqualTo("foo");
 		await That(result2.GetResult(() => 0)).IsEqualTo(0);

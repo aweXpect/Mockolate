@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -70,7 +71,7 @@ public partial class MockRegistration
 	///     Gets the indexer value for the given <paramref name="parameters" />.
 	/// </summary>
 	private TValue GetIndexerValue<TValue>(IInteractiveIndexerSetup? setup, Func<TValue> defaultValueGenerator,
-		object?[] parameters)
+		NamedParameterValue[] parameters)
 		=> _indexerSetups.GetOrAddValue(parameters, defaultValueGenerator);
 
 	/// <summary>
@@ -250,11 +251,11 @@ public partial class MockRegistration
 			_storage.Push(setup);
 		}
 
-		internal TValue GetOrAddValue<TValue>(object?[] parameters, Func<TValue> valueGenerator)
+		internal TValue GetOrAddValue<TValue>(NamedParameterValue[] parameters, Func<TValue> valueGenerator)
 		{
 			_valueStorage ??= new ValueStorage();
 			ValueStorage? storage = _valueStorage;
-			foreach (object? parameter in parameters)
+			foreach (NamedParameterValue parameter in parameters)
 			{
 				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
 			}
@@ -269,11 +270,11 @@ public partial class MockRegistration
 			return value;
 		}
 
-		internal void UpdateValue<TValue>(object?[] parameters, TValue value)
+		internal void UpdateValue<TValue>(NamedParameterValue[] parameters, TValue value)
 		{
 			_valueStorage ??= new ValueStorage();
 			ValueStorage? storage = _valueStorage;
-			foreach (object? parameter in parameters)
+			foreach (NamedParameterValue parameter in parameters)
 			{
 				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
 			}
@@ -294,25 +295,32 @@ public partial class MockRegistration
 
 		private sealed class ValueStorage
 		{
-			private ValueStorage? _nullStorage;
-			private ConcurrentDictionary<object, ValueStorage>? _storage;
+			private ConcurrentDictionary<NamedParameterValue, ValueStorage>? _storage;
 
 			public object? Value { get; set; }
 
-			public ValueStorage GetOrAdd(object? key, Func<ValueStorage> valueGenerator)
+			public ValueStorage GetOrAdd(NamedParameterValue key, Func<ValueStorage> valueGenerator)
 			{
-				if (key is null)
-				{
-					if (_nullStorage is null)
-					{
-						_nullStorage = valueGenerator();
-					}
-
-					return _nullStorage;
-				}
-
-				_storage ??= new ConcurrentDictionary<object, ValueStorage>();
+				_storage ??=
+					new ConcurrentDictionary<NamedParameterValue, ValueStorage>(NamedParameterValueComparer.Instance);
 				return _storage.GetOrAdd(key, _ => valueGenerator());
+			}
+		}
+
+		private sealed class NamedParameterValueComparer : IEqualityComparer<NamedParameterValue>
+		{
+			public static readonly NamedParameterValueComparer Instance = new();
+
+			public bool Equals(NamedParameterValue x, NamedParameterValue y)
+				=> string.Equals(x.Name, y.Name, StringComparison.Ordinal)
+				   && (ReferenceEquals(x.Value, y.Value) || (x.Value?.Equals(y.Value) ?? y.Value is null));
+
+			public int GetHashCode(NamedParameterValue obj)
+			{
+				int hash = 17;
+				hash = (hash * 31) + (obj.Name is not null ? StringComparer.Ordinal.GetHashCode(obj.Name) : 0);
+				hash = (hash * 31) + (obj.Value?.GetHashCode() ?? 0);
+				return hash;
 			}
 		}
 	}

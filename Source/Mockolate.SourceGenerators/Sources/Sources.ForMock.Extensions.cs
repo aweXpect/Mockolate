@@ -699,10 +699,9 @@ internal static partial class Sources
 				{
 					sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
 				}
-
 				sb.Append(">(").Append(string.Join(", ",
-						indexer.IndexerParameters.Value.Select((p, i) => $"(IParameter)(parameter{i + 1}{
-							(p.IsNullable() ? $" ?? It.IsNull<{p.Type.Fullname}>()" : "")})")))
+						indexer.IndexerParameters.Value.Select((p, i) => $"new NamedParameter(\"{p.Name}\", (IParameter)(parameter{i + 1}{
+							(p.IsNullable() ? $" ?? It.IsNull<{p.Type.Fullname}>()" : "")}))")))
 					.Append(");").AppendLine();
 				sb.Append("\t\t\tCastToMockRegistrationOrThrow(setup).SetupIndexer(indexerSetup);").AppendLine();
 				sb.Append("\t\t\treturn indexerSetup;").AppendLine();

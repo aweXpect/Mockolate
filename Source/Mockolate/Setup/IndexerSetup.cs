@@ -21,9 +21,9 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 		=> IsMatch(indexerAccess.Parameters);
 
 	/// <inheritdoc
-	///     cref="IInteractiveIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, object?[], out TValue)" />
+	///     cref="IInteractiveIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, NamedParameterValue[], out TValue)" />
 	bool IInteractiveIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
-		object?[] parameters,
+		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out TValue value)
 		=> TryGetInitialValue(behavior, defaultValueGenerator, parameters, out value);
 
@@ -52,7 +52,7 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	/// <summary>
 	///     Checks if the <paramref name="parameters" /> match the setup.
 	/// </summary>
-	protected abstract bool IsMatch(object?[] parameters);
+	protected abstract bool IsMatch(NamedParameterValue[] parameters);
 
 	/// <summary>
 	///     Attempts to cast the specified value to the type parameter <typeparamref name="T" />,
@@ -83,24 +83,24 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	///     The method returns false if the lengths of the parameters and values arrays do not match.
 	///     Each value is compared to its corresponding parameter using the parameter's matching logic.
 	/// </remarks>
-	protected static bool Matches(IParameter[] parameters, object?[] values)
+	protected static bool Matches(NamedParameter[] namedParameters, NamedParameterValue[] values)
 	{
-		if (parameters.Length != values.Length)
+		if (namedParameters.Length != values.Length)
 		{
 			return false;
 		}
 
-		for (int i = 0; i < parameters.Length; i++)
+		for (int i = 0; i < namedParameters.Length; i++)
 		{
-			if (!parameters[i].Matches(values[i]))
+			if (!namedParameters[i].Matches(values[i]))
 			{
 				return false;
 			}
 		}
 
-		for (int i = 0; i < parameters.Length; i++)
+		for (int i = 0; i < namedParameters.Length; i++)
 		{
-			parameters[i].InvokeCallbacks(values[i]);
+			namedParameters[i].Parameter.InvokeCallbacks(values[i].Value);
 		}
 
 		return true;
@@ -121,14 +121,14 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	///     initialization is set up.
 	/// </summary>
 	protected abstract bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		object?[] parameters,
+		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value);
 }
 
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
-public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
+public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>,
 	IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
 {
@@ -400,7 +400,7 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
 		    indexerGetterAccess.Parameters.Length == 1 &&
-		    TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior))
+		    TryCast(indexerGetterAccess.Parameters[0].Value, out T1 p1, behavior))
 		{
 			bool wasInvoked = false;
 			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
@@ -437,7 +437,7 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
 		    indexerSetterAccess.Parameters.Length == 1 &&
-		    TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior))
+		    TryCast(indexerSetterAccess.Parameters[0].Value, out T1 p1, behavior))
 		{
 			bool wasInvoked = false;
 			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
@@ -454,18 +454,18 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IsMatch(object?[])" />
-	protected override bool IsMatch(object?[] parameters)
+	/// <inheritdoc cref="IsMatch(NamedParameterValue[])" />
+	protected override bool IsMatch(NamedParameterValue[] parameters)
 		=> Matches([match1,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)" />
 	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		object?[] parameters,
+		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
 		    parameters.Length == 1 &&
-		    TryCast(parameters[0], out T1 p1, behavior) &&
+		    TryCast(parameters[0].Value, out T1 p1, behavior) &&
 		    _initialization.Invoke(p1) is T initialValue)
 		{
 			value = initialValue;
@@ -480,7 +480,7 @@ public class IndexerSetup<TValue, T1>(IParameter match1) : IndexerSetup,
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
 /// </summary>
-public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) : IndexerSetup
+public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter match2) : IndexerSetup
 	, IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>,
 	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>
 {
@@ -757,8 +757,8 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
 		    indexerGetterAccess.Parameters.Length == 2 &&
-		    TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior))
+		    TryCast(indexerGetterAccess.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(indexerGetterAccess.Parameters[1].Value, out T2 p2, behavior))
 		{
 			bool wasInvoked = false;
 			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
@@ -795,8 +795,8 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
 		    indexerSetterAccess.Parameters.Length == 2 &&
-		    TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior))
+		    TryCast(indexerSetterAccess.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(indexerSetterAccess.Parameters[1].Value, out T2 p2, behavior))
 		{
 			bool wasInvoked = false;
 			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
@@ -813,19 +813,19 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 		}
 	}
 
-	/// <inheritdoc cref="IsMatch(object?[])" />
-	protected override bool IsMatch(object?[] parameters)
+	/// <inheritdoc cref="IsMatch(NamedParameterValue[])" />
+	protected override bool IsMatch(NamedParameterValue[] parameters)
 		=> Matches([match1, match2,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)" />
 	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		object?[] parameters,
+		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
 		    parameters.Length == 2 &&
-		    TryCast(parameters[0], out T1 p1, behavior) &&
-		    TryCast(parameters[1], out T2 p2, behavior) &&
+		    TryCast(parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(parameters[1].Value, out T2 p2, behavior) &&
 		    _initialization.Invoke(p1, p2) is T initialValue)
 		{
 			value = initialValue;
@@ -842,9 +842,9 @@ public class IndexerSetup<TValue, T1, T2>(IParameter match1, IParameter match2) 
 ///     <typeparamref name="T3" />.
 /// </summary>
 public class IndexerSetup<TValue, T1, T2, T3>(
-	IParameter match1,
-	IParameter match2,
-	IParameter match3) : IndexerSetup,
+	NamedParameter match1,
+	NamedParameter match2,
+	NamedParameter match3) : IndexerSetup,
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
 	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>
 {
@@ -1129,9 +1129,9 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
 		    indexerGetterAccess.Parameters.Length == 3 &&
-		    TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior) &&
-		    TryCast(indexerGetterAccess.Parameters[2], out T3 p3, behavior))
+		    TryCast(indexerGetterAccess.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(indexerGetterAccess.Parameters[1].Value, out T2 p2, behavior) &&
+		    TryCast(indexerGetterAccess.Parameters[2].Value, out T3 p3, behavior))
 		{
 			bool wasInvoked = false;
 			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
@@ -1168,9 +1168,9 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
 		    indexerSetterAccess.Parameters.Length == 3 &&
-		    TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior) &&
-		    TryCast(indexerSetterAccess.Parameters[2], out T3 p3, behavior))
+		    TryCast(indexerSetterAccess.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(indexerSetterAccess.Parameters[1].Value, out T2 p2, behavior) &&
+		    TryCast(indexerSetterAccess.Parameters[2].Value, out T3 p3, behavior))
 		{
 			bool wasInvoked = false;
 			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
@@ -1187,20 +1187,20 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IsMatch(object?[])" />
-	protected override bool IsMatch(object?[] parameters)
+	/// <inheritdoc cref="IsMatch(NamedParameterValue[])" />
+	protected override bool IsMatch(NamedParameterValue[] parameters)
 		=> Matches([match1, match2, match3,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)" />
 	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		object?[] parameters,
+		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
 		    parameters.Length == 3 &&
-		    TryCast(parameters[0], out T1 p1, behavior) &&
-		    TryCast(parameters[1], out T2 p2, behavior) &&
-		    TryCast(parameters[2], out T3 p3, behavior) &&
+		    TryCast(parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(parameters[1].Value, out T2 p2, behavior) &&
+		    TryCast(parameters[2].Value, out T3 p3, behavior) &&
 		    _initialization.Invoke(p1, p2, p3) is T initialValue)
 		{
 			value = initialValue;
@@ -1218,10 +1218,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public class IndexerSetup<TValue, T1, T2, T3, T4>(
-	IParameter match1,
-	IParameter match2,
-	IParameter match3,
-	IParameter match4)
+	NamedParameter match1,
+	NamedParameter match2,
+	NamedParameter match3,
+	NamedParameter match4)
 	: IndexerSetup,
 		IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
 		IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>
@@ -1516,10 +1516,10 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
 		    indexerGetterAccess.Parameters.Length == 4 &&
-		    TryCast(indexerGetterAccess.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(indexerGetterAccess.Parameters[1], out T2 p2, behavior) &&
-		    TryCast(indexerGetterAccess.Parameters[2], out T3 p3, behavior) &&
-		    TryCast(indexerGetterAccess.Parameters[3], out T4 p4, behavior))
+		    TryCast(indexerGetterAccess.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(indexerGetterAccess.Parameters[1].Value, out T2 p2, behavior) &&
+		    TryCast(indexerGetterAccess.Parameters[2].Value, out T3 p3, behavior) &&
+		    TryCast(indexerGetterAccess.Parameters[3].Value, out T4 p4, behavior))
 		{
 			bool wasInvoked = false;
 			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
@@ -1556,10 +1556,10 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	{
 		if (TryCast(value, out TValue resultValue, behavior) &&
 		    indexerSetterAccess.Parameters.Length == 4 &&
-		    TryCast(indexerSetterAccess.Parameters[0], out T1 p1, behavior) &&
-		    TryCast(indexerSetterAccess.Parameters[1], out T2 p2, behavior) &&
-		    TryCast(indexerSetterAccess.Parameters[2], out T3 p3, behavior) &&
-		    TryCast(indexerSetterAccess.Parameters[3], out T4 p4, behavior))
+		    TryCast(indexerSetterAccess.Parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(indexerSetterAccess.Parameters[1].Value, out T2 p2, behavior) &&
+		    TryCast(indexerSetterAccess.Parameters[2].Value, out T3 p3, behavior) &&
+		    TryCast(indexerSetterAccess.Parameters[3].Value, out T4 p4, behavior))
 		{
 			bool wasInvoked = false;
 			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
@@ -1576,21 +1576,21 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IsMatch(object?[])" />
-	protected override bool IsMatch(object?[] parameters)
+	/// <inheritdoc cref="IsMatch(NamedParameterValue[])" />
+	protected override bool IsMatch(NamedParameterValue[] parameters)
 		=> Matches([match1, match2, match3, match4,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)" />
+	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)" />
 	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		object?[] parameters,
+		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
 		if (_initialization is not null &&
 		    parameters.Length == 4 &&
-		    TryCast(parameters[0], out T1 p1, behavior) &&
-		    TryCast(parameters[1], out T2 p2, behavior) &&
-		    TryCast(parameters[2], out T3 p3, behavior) &&
-		    TryCast(parameters[3], out T4 p4, behavior) &&
+		    TryCast(parameters[0].Value, out T1 p1, behavior) &&
+		    TryCast(parameters[1].Value, out T2 p2, behavior) &&
+		    TryCast(parameters[2].Value, out T3 p3, behavior) &&
+		    TryCast(parameters[3].Value, out T4 p4, behavior) &&
 		    _initialization.Invoke(p1, p2, p3, p4) is T initialValue)
 		{
 			value = initialValue;

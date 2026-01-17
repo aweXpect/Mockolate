@@ -66,7 +66,7 @@ public sealed class MockClassTests
 			.Contains("""
 			          	public void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15)
 			          	{
-			          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod", v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
+			          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod", new NamedParameterValue("v1", v1), new NamedParameterValue("v2", v2), new NamedParameterValue("v3", v3), new NamedParameterValue("v4", v4), new NamedParameterValue("v5", v5), new NamedParameterValue("v6", v6), new NamedParameterValue("v7", v7), new NamedParameterValue("v8", v8), new NamedParameterValue("v9", v9), new NamedParameterValue("v10", v10), new NamedParameterValue("v11", v11), new NamedParameterValue("v12", v12), new NamedParameterValue("v13", v13), new NamedParameterValue("v14", v14), new NamedParameterValue("v15", v15));
 			          		if (this._wrapped is not null)
 			          		{
 			          			this._wrapped.MyMethod(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);

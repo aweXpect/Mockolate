@@ -149,7 +149,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 	///     The method returns false if the lengths of the namedParameters and values arrays do not match.
 	///     Each value is compared to its corresponding named parameter using the parameter's matching logic.
 	/// </remarks>
-	protected static bool Matches(NamedParameter[] namedParameters, object?[] values)
+	protected static bool Matches(NamedParameter[] namedParameters, NamedParameterValue[] values)
 	{
 		if (namedParameters.Length != values.Length)
 		{
@@ -158,7 +158,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 
 		for (int i = 0; i < namedParameters.Length; i++)
 		{
-			if (!namedParameters[i].Parameter.Matches(values[i]))
+			if (!namedParameters[i].Matches(values[i]))
 			{
 				return false;
 			}

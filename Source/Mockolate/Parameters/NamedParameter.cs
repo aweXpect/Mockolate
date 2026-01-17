@@ -1,3 +1,5 @@
+using System;
+
 namespace Mockolate.Parameters;
 
 /// <summary>
@@ -9,4 +11,11 @@ public record NamedParameter(string Name, IParameter Parameter)
 {
 	/// <inheritdoc cref="object.ToString()" />
 	public override string? ToString() => Parameter.ToString();
+
+	/// <summary>
+	///     Checks if the name and value of the given <see cref="NamedParameterValue" /> matches this named parameter.
+	/// </summary>
+	public bool Matches(NamedParameterValue value)
+		=> (string.IsNullOrEmpty(value.Name) || Name.Equals(value.Name, StringComparison.Ordinal)) &&
+		   Parameter.Matches(value.Value);
 }

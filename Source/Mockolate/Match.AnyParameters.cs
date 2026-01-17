@@ -13,8 +13,8 @@ public partial class Match
 
 	private sealed class AnyParametersMatch : IParameters
 	{
-		/// <inheritdoc cref="IParameters.Matches(object?[])" />
-		public bool Matches(object?[] values)
+		/// <inheritdoc cref="IParameters.Matches" />
+		public bool Matches(NamedParameterValue[] values)
 			=> true;
 
 		/// <inheritdoc cref="object.ToString()" />

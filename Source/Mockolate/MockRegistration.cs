@@ -8,6 +8,7 @@ using System.Text;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -60,10 +61,10 @@ public partial class MockRegistration
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, Func<object?[], TResult> defaultValue,
-		params object?[]? parameters)
+	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName,
+		Func<object?[], TResult> defaultValue,
+		params NamedParameterValue[] parameters)
 	{
-		parameters ??= [null,];
 		MethodInvocation methodInvocation =
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
@@ -74,23 +75,22 @@ public partial class MockRegistration
 			if (Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x.Value?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
-			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters.Select(x => x.Value).ToArray()));
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters.Select(x => x.Value).ToArray())));
 	}
 
 	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> returning
 	///     <see langword="void" />.
 	/// </summary>
-	public MethodSetupResult InvokeMethod(string methodName, params object?[]? parameters)
+	public MethodSetupResult InvokeMethod(string methodName, params NamedParameterValue[] parameters)
 	{
-		parameters ??= [null,];
 		MethodInvocation methodInvocation =
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
@@ -99,7 +99,7 @@ public partial class MockRegistration
 		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x.Value?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 		}
 
 		matchingSetup?.Invoke(methodInvocation, Behavior);
@@ -142,7 +142,7 @@ public partial class MockRegistration
 	/// <summary>
 	///     Gets the value from the indexer with the given parameters.
 	/// </summary>
-	public IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters)
+	public IndexerSetupResult<TResult> GetIndexer<TResult>(params NamedParameterValue[] parameters)
 	{
 		IndexerGetterAccess interaction = new(Interactions.GetNextIndex(), parameters);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
@@ -158,7 +158,7 @@ public partial class MockRegistration
 	/// <remarks>
 	///     Returns a flag, indicating whether the base class implementation should be skipped.
 	/// </remarks>
-	public bool SetIndexer<TResult>(TResult value, params object?[] parameters)
+	public bool SetIndexer<TResult>(TResult value, params NamedParameterValue[] parameters)
 	{
 		IndexerSetterAccess interaction = new(Interactions.GetNextIndex(), parameters, value);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
