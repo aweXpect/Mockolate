@@ -142,7 +142,7 @@ public partial class MockRegistration
 	/// <summary>
 	///     Gets the value from the indexer with the given parameters.
 	/// </summary>
-	public IndexerSetupResult<TResult> GetIndexer<TResult>(params object?[] parameters)
+	public IndexerSetupResult<TResult> GetIndexer<TResult>(params NamedParameterValue[] parameters)
 	{
 		IndexerGetterAccess interaction = new(Interactions.GetNextIndex(), parameters);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
@@ -158,7 +158,7 @@ public partial class MockRegistration
 	/// <remarks>
 	///     Returns a flag, indicating whether the base class implementation should be skipped.
 	/// </remarks>
-	public bool SetIndexer<TResult>(TResult value, params object?[] parameters)
+	public bool SetIndexer<TResult>(TResult value, params NamedParameterValue[] parameters)
 	{
 		IndexerSetterAccess interaction = new(Interactions.GetNextIndex(), parameters, value);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);

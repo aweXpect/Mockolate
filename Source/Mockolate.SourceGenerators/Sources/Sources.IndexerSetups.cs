@@ -294,7 +294,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
 			.Append(
-				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"IParameter match{i}")))
+				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"NamedParameter match{i}")))
 			.Append(") : IndexerSetup,")
 			.AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();
@@ -722,7 +722,7 @@ internal static partial class Sources
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(" &&").AppendLine();
-			sb.Append("\t\t\t    TryCast(indexerGetterAccess.Parameters[").Append(i - 1).Append("], out T").Append(i)
+			sb.Append("\t\t\t    TryCast(indexerGetterAccess.Parameters[").Append(i - 1).Append("].Value, out T").Append(i)
 				.Append(" p")
 				.Append(i).Append(", behavior)");
 		}
@@ -791,7 +791,7 @@ internal static partial class Sources
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(" &&").AppendLine();
-			sb.Append("\t\t\t    TryCast(indexerSetterAccess.Parameters[").Append(i - 1).Append("], out T").Append(i)
+			sb.Append("\t\t\t    TryCast(indexerSetterAccess.Parameters[").Append(i - 1).Append("].Value, out T").Append(i)
 				.Append(" p")
 				.Append(i).Append(", behavior)");
 		}
@@ -819,26 +819,26 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IsMatch(object?[])\" />").AppendLine();
-		sb.Append("\t\tprotected override bool IsMatch(object?[] parameters)").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"IsMatch(NamedParameterValue[])\" />").AppendLine();
+		sb.Append("\t\tprotected override bool IsMatch(NamedParameterValue[] parameters)").AppendLine();
 		sb.Append("\t\t\t=> Matches([")
 			.Append(string.Join(", ",
-				Enumerable.Range(1, numberOfParameters).Select(i => $"(IParameter)match{i}")))
+				Enumerable.Range(1, numberOfParameters).Select(i => $"match{i}")))
 			.Append("], parameters);").AppendLine();
 		sb.AppendLine();
 
 		sb.Append(
-				"\t\t/// <inheritdoc cref=\"IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, object?[], out T)\" />")
+				"\t\t/// <inheritdoc cref=\"IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)\" />")
 			.AppendLine();
 		sb.Append(
-				"\t\tprotected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, object?[] parameters, [NotNullWhen(true)] out T value)")
+				"\t\tprotected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, NamedParameterValue[] parameters, [NotNullWhen(true)] out T value)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (_initialization is not null &&").AppendLine();
 		sb.Append("\t\t\t    parameters.Length == ").Append(numberOfParameters).Append(" &&").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\t\t    TryCast(parameters[").Append(i - 1).Append("], out T").Append(i).Append(" p")
+			sb.Append("\t\t\t    TryCast(parameters[").Append(i - 1).Append("].Value, out T").Append(i).Append(" p")
 				.Append(i).Append(", behavior)").Append(" &&").AppendLine();
 		}
 

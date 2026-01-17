@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Interactions;
+using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
 
@@ -28,7 +29,7 @@ public interface IInteractiveIndexerSetup : ISetup
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
-	bool TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator, object?[] parameters,
+	bool TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator, NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out TValue value);
 }
 

@@ -906,7 +906,7 @@ internal static partial class Sources
 	///     Formats indexer parameters as comma-separated names or wrappers.
 	/// </summary>
 	private static string FormatIndexerParametersAsNameOrWrapper(EquatableArray<MethodParameter> parameters)
-		=> string.Join(", ", parameters.Select(p => p.ToNameOrWrapper()));
+		=> string.Join(", ", parameters.Select(p => $"new NamedParameterValue(\"{p.Name}\", {p.ToNameOrWrapper()})"));
 
 	/// <summary>
 	///     Formats indexer parameters as comma-separated names.

@@ -61,7 +61,8 @@ public sealed class MockSetupsTests
 
 		for (int i = 0; i < indexerCount; i++)
 		{
-			sut.Registrations.SetupIndexer(new IndexerSetup<string, int>((IParameter)It.IsAny<int>()));
+			sut.Registrations.SetupIndexer(new IndexerSetup<string, int>(
+				new NamedParameter("index1", (IParameter)It.IsAny<int>())));
 		}
 
 		string result = sut.Registrations.ToString();

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
 
@@ -24,8 +25,8 @@ public class IndexerSetupResult<TResult>(
 	IInteractiveIndexerSetup? setup,
 	IndexerGetterAccess indexerAccess,
 	MockBehavior behavior,
-	Func<IInteractiveIndexerSetup?, Func<TResult>, object?[], TResult> getIndexerValue,
-	Action<object?[], TResult> setIndexerValue)
+	Func<IInteractiveIndexerSetup?, Func<TResult>, NamedParameterValue[], TResult> getIndexerValue,
+	Action<NamedParameterValue[], TResult> setIndexerValue)
 	: IndexerSetupResult(setup, behavior)
 {
 	private readonly MockBehavior _behavior = behavior;
@@ -76,7 +77,7 @@ public class IndexerSetupResult<TResult>(
 		else if (_behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
-				$"The indexer [{string.Join(", ", indexerAccess.Parameters.Select(p => p?.ToString() ?? "null"))}] was accessed without prior setup.");
+				$"The indexer [{string.Join(", ", indexerAccess.Parameters.Select(p => p.Value?.ToString() ?? "null"))}] was accessed without prior setup.");
 		}
 		else
 		{

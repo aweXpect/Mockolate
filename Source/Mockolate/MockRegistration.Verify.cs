@@ -88,7 +88,11 @@ public partial class MockRegistration
 				.OfType<IndexerGetterAccess>()
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  !parameters
-					                  .Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i]))
+					                  .Where((parameter, i)
+						                  => (!string.IsNullOrEmpty(indexer.Parameters[i].Name) &&
+						                      !parameter.Name.Equals(indexer.Parameters[i].Name,
+							                      StringComparison.Ordinal)) ||
+						                     !parameter.Parameter.Matches(indexer.Parameters[i].Value))
 					                  .Any())
 				.Cast<IInteraction>()
 				.ToArray(),
@@ -107,7 +111,11 @@ public partial class MockRegistration
 				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
 				                  (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
 				                  !parameters
-					                  .Where((parameter, i) => !parameter.Parameter.Matches(indexer.Parameters[i]))
+					                  .Where((parameter, i)
+						                  => (!string.IsNullOrEmpty(indexer.Parameters[i].Name) &&
+						                      !parameter.Name.Equals(indexer.Parameters[i].Name,
+							                      StringComparison.Ordinal)) ||
+						                     !parameter.Parameter.Matches(indexer.Parameters[i].Value))
 					                  .Any())
 				.Cast<IInteraction>()
 				.ToArray(),

@@ -371,15 +371,15 @@ public sealed partial class ForMockTests
 				          		{
 				          			if (this._wrapped is null)
 				          			{
-				          				return MockRegistrations.GetIndexer<int>(index).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          				return MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
 				          			}
-				          			var indexerResult = MockRegistrations.GetIndexer<int>(index);
+				          			var indexerResult = MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index));
 				          			var baseResult = this._wrapped[index];
 				          			return indexerResult.GetResult(baseResult);
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.SetIndexer<int>(value, index);
+				          			MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("index", index));
 				          			if (this._wrapped is not null)
 				          			{
 				          				this._wrapped[index] = value;
@@ -395,9 +395,9 @@ public sealed partial class ForMockTests
 				          		{
 				          			if (this._wrapped is null)
 				          			{
-				          				return MockRegistrations.GetIndexer<int>(index, isReadOnly).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          				return MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
 				          			}
-				          			var indexerResult = MockRegistrations.GetIndexer<int>(index, isReadOnly);
+				          			var indexerResult = MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly));
 				          			var baseResult = this._wrapped[index, isReadOnly];
 				          			return indexerResult.GetResult(baseResult);
 				          		}
@@ -409,7 +409,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			MockRegistrations.SetIndexer<int>(value, index, isWriteOnly);
+				          			MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("index", index), new NamedParameterValue("isWriteOnly", isWriteOnly));
 				          			if (this._wrapped is not null)
 				          			{
 				          				this._wrapped[index, isWriteOnly] = value;
@@ -463,7 +463,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			var indexerResult = MockRegistrations.GetIndexer<int>(index);
+				          			var indexerResult = MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index));
 				          			if (!indexerResult.SkipBaseClass)
 				          			{
 				          				var baseResult = base[index];
@@ -473,7 +473,7 @@ public sealed partial class ForMockTests
 				          		}
 				          		set
 				          		{
-				          			if (!MockRegistrations.SetIndexer<int>(value, index))
+				          			if (!MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("index", index)))
 				          			{
 				          				base[index] = value;
 				          			}
@@ -486,7 +486,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			var indexerResult = MockRegistrations.GetIndexer<int>(index, isReadOnly);
+				          			var indexerResult = MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly));
 				          			if (!indexerResult.SkipBaseClass)
 				          			{
 				          				var baseResult = base[index, isReadOnly];
@@ -502,7 +502,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			if (!MockRegistrations.SetIndexer<int>(value, index, isWriteOnly))
+				          			if (!MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("index", index), new NamedParameterValue("isWriteOnly", isWriteOnly)))
 				          			{
 				          				base[index, isWriteOnly] = value;
 				          			}
@@ -516,11 +516,11 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.GetIndexer<int>(someAdditionalIndex).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          			return MockRegistrations.GetIndexer<int>(new NamedParameterValue("someAdditionalIndex", someAdditionalIndex)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.SetIndexer<int>(value, someAdditionalIndex);
+				          			MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("someAdditionalIndex", someAdditionalIndex));
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
@@ -551,9 +551,9 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
 				.Contains(
-					"return MockRegistrations.GetIndexer<int>(indexerResult).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));")
+					"return MockRegistrations.GetIndexer<int>(new NamedParameterValue(\"indexerResult\", indexerResult)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));")
 				.IgnoringNewlineStyle().And
-				.Contains("MockRegistrations.SetIndexer<int>(value, indexerResult);")
+				.Contains("MockRegistrations.SetIndexer<int>(value, new NamedParameterValue(\"indexerResult\", indexerResult));")
 				.IgnoringNewlineStyle();
 		}
 
