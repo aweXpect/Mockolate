@@ -3,6 +3,7 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Mockolate.Exceptions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
@@ -47,9 +48,8 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?>? content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (setup is Mock<HttpClient> httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock &&
-			    httpMessageHandlerMock.Mock is IMockMethodSetup<HttpMessageHandler> httpMessageHandlerSetup)
+			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 					new("System.Net.Http.HttpMessageHandler.SendAsync",
@@ -57,20 +57,11 @@ public static partial class HttpClientExtensions
 							new HttpStringUriParameter(requestUri),
 							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
 						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				CastToMockRegistrationOrThrow(httpMessageHandlerSetup).SetupMethod(methodSetup);
+				httpMessageHandlerMock.Mock.Registrations.SetupMethod(methodSetup);
 				return methodSetup;
 			}
-			else
-			{
-				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
-					new("System.Net.Http.HttpMessageInvoker.SendAsync",
-						new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Patch,
-							new HttpStringUriParameter(requestUri),
-							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
-						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
-				return methodSetup;
-			}
+
+			throw new MockException("Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 
 		/// <summary>
@@ -83,9 +74,8 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?>? content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (setup is Mock<HttpClient> httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock &&
-			    httpMessageHandlerMock.Mock is IMockMethodSetup<HttpMessageHandler> httpMessageHandlerSetup)
+			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 					new("System.Net.Http.HttpMessageHandler.SendAsync",
@@ -93,20 +83,11 @@ public static partial class HttpClientExtensions
 							new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),
 							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
 						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				CastToMockRegistrationOrThrow(httpMessageHandlerSetup).SetupMethod(methodSetup);
+				httpMessageHandlerMock.Mock.Registrations.SetupMethod(methodSetup);
 				return methodSetup;
 			}
-			else
-			{
-				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
-					new("System.Net.Http.HttpMessageInvoker.SendAsync",
-						new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Patch,
-							new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),
-							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
-						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
-				return methodSetup;
-			}
+
+			throw new MockException("Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 }
