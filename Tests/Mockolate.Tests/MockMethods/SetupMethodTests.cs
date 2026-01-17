@@ -220,7 +220,6 @@ public sealed partial class SetupMethodTests
 		await That(result).IsNull();
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
@@ -265,6 +264,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(171);
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task Setup_ShouldUseNewestMatchingSetup()
 	{
