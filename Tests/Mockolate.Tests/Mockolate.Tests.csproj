@@ -6,9 +6,16 @@
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers\Mockolate.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0"/>
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers.CodeFixers\Mockolate.Analyzers.CodeFixers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0"/>
 	</ItemGroup>
-
+	
 	<ItemGroup>
-	  <Compile Remove="MockMethods\SetupMethodTests.cs" />
+		<Compile Remove="MockMethods\VerifyInvokedTests.cs" />
+		<Compile Remove="MockMethods\VerifyInvokedTests.SpanTests.cs" />
+		<Compile Remove="MockMethods\SetupMethodTests.SpanTests.cs" />
+		<Compile Remove="MockMethods\SetupMethodTests.OutRefParameterTests.cs" />
+		<Compile Remove="MockMethods\SetupMethodTests.CallbackTests.cs" />
+		<Compile Remove="MockMethods\SetupMethodTests.SkippingBaseClassTests.cs" />
+		<Compile Remove="MockMethods\SetupMethodTests.ReturnsThrowsTests.cs" />
+		<Compile Remove="MockMethods\SetupMethodTests.cs" />
 	</ItemGroup>
 
 </Project>
