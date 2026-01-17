@@ -9,7 +9,6 @@
 	
 	<ItemGroup>
 		<Compile Remove="MockMethods\VerifyInvokedTests.cs" />
-		<Compile Remove="MockMethods\SetupMethodTests.OutRefParameterTests.cs" />
 	</ItemGroup>
 
 </Project>
