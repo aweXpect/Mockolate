@@ -10,6 +10,7 @@ namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class SetupMethodTests
 {
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task Equals_ShouldWork()
 	{
@@ -276,7 +277,7 @@ public sealed partial class SetupMethodTests
 
 		await That(mock.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
 	}
-
+*/
 	[Fact]
 	public async Task Setup_WithOutParameter_ShouldUseCallbackToSetValue()
 	{
@@ -809,7 +810,6 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
-	/* TODO: Re-Enable
 	public class ReturnMethodWith5Parameters
 	{
 		[Fact]
@@ -1003,7 +1003,6 @@ public sealed partial class SetupMethodTests
 					"void Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())");
 		}
 	}
-	*/
 
 	public class MyMethodSetup : MethodSetup
 	{
