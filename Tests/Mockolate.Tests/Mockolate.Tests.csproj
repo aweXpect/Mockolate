@@ -13,6 +13,7 @@
 	  <Compile Remove="MockMethods\VerifyInvokedTests.cs" />
 	  <Compile Remove="MockMethods\VerifyInvokedTests.SpanTests.cs" />
 	  <Compile Remove="MockMethods\SetupMethodTests.SpanTests.cs" />
+	  <Compile Remove="MockMethods\SetupMethodTests.OutRefParameterTests.cs" />
 	</ItemGroup>
 
 </Project>
