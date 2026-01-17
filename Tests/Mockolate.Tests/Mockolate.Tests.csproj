@@ -18,6 +18,7 @@
 	  <Compile Remove="MockIndexers\**" />
 	  <Compile Remove="MockMethods\**" />
 	  <Compile Remove="MockProperties\**" />
+	  <Compile Remove="Verify\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,6 +32,7 @@
 	  <EmbeddedResource Remove="MockIndexers\**" />
 	  <EmbeddedResource Remove="MockMethods\**" />
 	  <EmbeddedResource Remove="MockProperties\**" />
+	  <EmbeddedResource Remove="Verify\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -44,6 +46,7 @@
 	  <None Remove="MockIndexers\**" />
 	  <None Remove="MockMethods\**" />
 	  <None Remove="MockProperties\**" />
+	  <None Remove="Verify\**" />
 	</ItemGroup>
 
 </Project>
