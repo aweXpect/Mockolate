@@ -337,23 +337,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_NegativeOrNull_ShouldThrowArgumentOutOfRangeException()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
-					.Do((i, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method1(i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
 			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
