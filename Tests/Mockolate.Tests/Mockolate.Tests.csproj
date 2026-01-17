@@ -19,6 +19,46 @@
 	  <Compile Remove="MockMethods\**" />
 	  <Compile Remove="MockProperties\**" />
 	  <Compile Remove="Verify\**" />
+	  <Compile Remove="BaseClassTests.cs" />
+	  <Compile Remove="ItTests.cs" />
+	  <Compile Remove="ItTests.IsAnyOutTests.cs" />
+	  <Compile Remove="ItTests.IsAnyReadOnlySpanTests.cs" />
+	  <Compile Remove="ItTests.IsAnyRefTests.cs" />
+	  <Compile Remove="ItTests.IsAnySpanTests.cs" />
+	  <Compile Remove="ItTests.IsAnyTests.cs" />
+	  <Compile Remove="ItTests.IsFalseTests.cs" />
+	  <Compile Remove="ItTests.IsInRangeTests.cs" />
+	  <Compile Remove="ItTests.IsNullTests.cs" />
+	  <Compile Remove="ItTests.IsOneOfTests.cs" />
+	  <Compile Remove="ItTests.IsOutTests.cs" />
+	  <Compile Remove="ItTests.IsReadOnlySpanTests.cs" />
+	  <Compile Remove="ItTests.IsRefTests.cs" />
+	  <Compile Remove="ItTests.IsSpanTests.cs" />
+	  <Compile Remove="ItTests.IsTests.cs" />
+	  <Compile Remove="ItTests.IsTrueTests.cs" />
+	  <Compile Remove="ItTests.MatchesTests.cs" />
+	  <Compile Remove="ItTests.SatisfiesTests.cs" />
+	  <Compile Remove="MatchExtensionsTests.cs" />
+	  <Compile Remove="MatchTests.AnyParametersTests.cs" />
+	  <Compile Remove="MatchTests.ParametersTests.cs" />
+	  <Compile Remove="MatchTests.WithDefaultParametersTests.cs" />
+	  <Compile Remove="MockBehaviorExtensionsTests.cs" />
+	  <Compile Remove="MockBehaviorTests.cs" />
+	  <Compile Remove="MockBehaviorTests.DefaultValueTests.cs" />
+	  <Compile Remove="MockBehaviorTests.InitializeTests.cs" />
+	  <Compile Remove="MockBehaviorTests.SkippingBaseClassTests.cs" />
+	  <Compile Remove="MockBehaviorTests.ThrowWhenNotSetupTests.cs" />
+	  <Compile Remove="MockBehaviorTests.UseConstructorParametersForTests.cs" />
+	  <Compile Remove="MockExtensionsTests.cs" />
+	  <Compile Remove="MockGeneratorAttributeTests.cs" />
+	  <Compile Remove="MockRegistrationTests.cs" />
+	  <Compile Remove="MockSetupsTests.cs" />
+	  <Compile Remove="MockTests.cs" />
+	  <Compile Remove="MockTests.CreateTests.cs" />
+	  <Compile Remove="MockTests.FactoryTests.cs" />
+	  <Compile Remove="MockTests.WrapTests.cs" />
+	  <Compile Remove="ReturnsAsyncExtensionsTests.cs" />
+	  <Compile Remove="SetupExtensionsTests.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
