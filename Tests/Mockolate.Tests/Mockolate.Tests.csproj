@@ -12,6 +12,7 @@
 	  <Compile Remove="Internals\**" />
 	  <Compile Remove="Exceptions\**" />
 	  <Compile Remove="Monitor\**" />
+	  <Compile Remove="Protected\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -19,6 +20,7 @@
 	  <EmbeddedResource Remove="Internals\**" />
 	  <EmbeddedResource Remove="Exceptions\**" />
 	  <EmbeddedResource Remove="Monitor\**" />
+	  <EmbeddedResource Remove="Protected\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,6 +28,7 @@
 	  <None Remove="Internals\**" />
 	  <None Remove="Exceptions\**" />
 	  <None Remove="Monitor\**" />
+	  <None Remove="Protected\**" />
 	</ItemGroup>
 
 </Project>
