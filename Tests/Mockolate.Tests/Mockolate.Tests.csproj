@@ -9,14 +9,17 @@
 
 	<ItemGroup>
 	  <Compile Remove="Web\**" />
+	  <Compile Remove="Internals\**" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Remove="Web\**" />
+	  <EmbeddedResource Remove="Internals\**" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <None Remove="Web\**" />
+	  <None Remove="Internals\**" />
 	</ItemGroup>
 
 </Project>
