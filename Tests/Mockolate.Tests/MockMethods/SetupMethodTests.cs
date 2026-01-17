@@ -277,7 +277,6 @@ public sealed partial class SetupMethodTests
 
 		await That(mock.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
 	}
-*/
 	[Fact]
 	public async Task Setup_WithOutParameter_ShouldUseCallbackToSetValue()
 	{
@@ -613,6 +612,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(3);
 	}
 
+*/
 	public class ReturnMethodWith0Parameters
 	{
 		[Fact]
