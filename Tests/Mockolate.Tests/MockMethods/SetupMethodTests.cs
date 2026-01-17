@@ -220,7 +220,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsNull();
 	}
 
-	/* TODO: Re-Enable after https://github.com/actions/runner-images/issues/13544 is fixed
+	/* TODO: re-enable after https://github.com/actions/runner-images/issues/13544 is fixed
 	[Fact]
 	public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
@@ -278,6 +278,7 @@ public sealed partial class SetupMethodTests
 
 		await That(mock.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
 	}
+
 	[Fact]
 	public async Task Setup_WithOutParameter_ShouldUseCallbackToSetValue()
 	{
@@ -519,7 +520,7 @@ public sealed partial class SetupMethodTests
 			.WithMessage("The method setup does not support return values.");
 	}
 
-	/* TODO: Re-Enable after https://github.com/actions/runner-images/issues/13544 is fixed
+	/* TODO: re-enable after https://github.com/actions/runner-images/issues/13544 is fixed
 	[Fact]
 	public async Task VoidMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
