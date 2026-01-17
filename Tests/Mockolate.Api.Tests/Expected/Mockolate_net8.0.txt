@@ -119,10 +119,10 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
                 "Name",
-                "Value"})] params System.ValueTuple<string?, object?>[]? parameters) { }
+                "Value"})] params System.ValueTuple<string?, object?>[] parameters) { }
         public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
                 "Name",
-                "Value"})] params System.ValueTuple<string?, object?>[]? parameters) { }
+                "Value"})] params System.ValueTuple<string?, object?>[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, Mockolate.Parameters.IParameters parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName) { }

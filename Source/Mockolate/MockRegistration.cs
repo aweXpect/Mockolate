@@ -62,9 +62,8 @@ public partial class MockRegistration
 	/// </summary>
 	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName,
 		Func<object?[], TResult> defaultValue,
-		params (string? Name, object? Value)[]? parameters)
+		params (string? Name, object? Value)[] parameters)
 	{
-		parameters ??= [("", null),];
 		MethodInvocation methodInvocation =
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
@@ -89,9 +88,8 @@ public partial class MockRegistration
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> returning
 	///     <see langword="void" />.
 	/// </summary>
-	public MethodSetupResult InvokeMethod(string methodName, params (string? Name, object? Value)[]? parameters)
+	public MethodSetupResult InvokeMethod(string methodName, params (string? Name, object? Value)[] parameters)
 	{
-		parameters ??= [("", null),];
 		MethodInvocation methodInvocation =
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));

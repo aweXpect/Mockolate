@@ -15,7 +15,7 @@ public class MethodInvocation(int index, string name, (string? Name, object? Val
 	public string Name { get; } = name;
 
 	/// <summary>
-	///     The namaed parameters of the method.
+	///     The named parameters of the method.
 	/// </summary>
 	public (string? Name, object? Value)[] Parameters { get; } = parameters;
 
