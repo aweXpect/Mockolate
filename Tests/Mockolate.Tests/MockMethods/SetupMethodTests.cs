@@ -10,7 +10,6 @@ namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class SetupMethodTests
 {
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task Equals_ShouldWork()
 	{
@@ -278,6 +277,7 @@ public sealed partial class SetupMethodTests
 		await That(mock.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task Setup_WithOutParameter_ShouldUseCallbackToSetValue()
 	{
