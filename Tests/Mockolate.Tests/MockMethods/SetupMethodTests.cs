@@ -155,7 +155,6 @@ public sealed partial class SetupMethodTests
 		await That(capturedValues).IsEqualTo([1, 3,]);
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
@@ -188,6 +187,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo("foo");
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task ReturnMethod_Verify_ShouldMatchAnyParameters()
 	{
