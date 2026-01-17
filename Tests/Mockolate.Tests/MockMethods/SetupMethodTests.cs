@@ -60,7 +60,6 @@ public sealed partial class SetupMethodTests
 
 		await That(result).IsEqualTo(expectedResult);
 	}
-	*/
 
 	[Fact]
 	public async Task HasReturnCalls_ShouldDefaultToFalse()
@@ -94,7 +93,7 @@ public sealed partial class SetupMethodTests
 		await That(receivedCalls).IsEqualTo([1, 2, 3, 4, 5,]);
 	}
 
-	/* TODO: Re-Enable
+	*/
 	[Fact]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
@@ -127,6 +126,7 @@ public sealed partial class SetupMethodTests
 		await That(result3).IsEqualTo(1);
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task Parameter_Do_ShouldExecuteCallback()
 	{
