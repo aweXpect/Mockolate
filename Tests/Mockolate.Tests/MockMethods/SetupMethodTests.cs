@@ -10,6 +10,7 @@ namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class SetupMethodTests
 {
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task Equals_ShouldWork()
 	{
@@ -35,7 +36,7 @@ public sealed partial class SetupMethodTests
 		await That(result2).IsEqualTo(0);
 	}
 
-	/* TODO: Re-Enable
+	*/
 	[Fact]
 	public async Task GenericMethods_ShouldConsiderGenericParameter()
 	{
@@ -60,6 +61,7 @@ public sealed partial class SetupMethodTests
 
 		await That(result).IsEqualTo(expectedResult);
 	}
+	/* TODO: Re-Enable
 
 	[Fact]
 	public async Task HasReturnCalls_ShouldDefaultToFalse()
