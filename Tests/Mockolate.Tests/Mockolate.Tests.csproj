@@ -14,6 +14,7 @@
 	  <Compile Remove="Monitor\**" />
 	  <Compile Remove="Protected\**" />
 	  <Compile Remove="MockDelegates\**" />
+	  <Compile Remove="MockEvents\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -23,6 +24,7 @@
 	  <EmbeddedResource Remove="Monitor\**" />
 	  <EmbeddedResource Remove="Protected\**" />
 	  <EmbeddedResource Remove="MockDelegates\**" />
+	  <EmbeddedResource Remove="MockEvents\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -32,6 +34,7 @@
 	  <None Remove="Monitor\**" />
 	  <None Remove="Protected\**" />
 	  <None Remove="MockDelegates\**" />
+	  <None Remove="MockEvents\**" />
 	</ItemGroup>
 
 </Project>
