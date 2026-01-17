@@ -8,15 +8,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="MockMethods\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Remove="MockMethods\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="MockMethods\**" />
+	  <Compile Remove="MockMethods\InteractionsTests.cs" />
+	  <Compile Remove="MockMethods\InteractionsTests.CancellationTokenTests.cs" />
 	</ItemGroup>
 
 </Project>
