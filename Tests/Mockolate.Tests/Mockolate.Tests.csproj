@@ -10,16 +10,19 @@
 	<ItemGroup>
 	  <Compile Remove="Web\**" />
 	  <Compile Remove="Internals\**" />
+	  <Compile Remove="Exceptions\**" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Remove="Web\**" />
 	  <EmbeddedResource Remove="Internals\**" />
+	  <EmbeddedResource Remove="Exceptions\**" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <None Remove="Web\**" />
 	  <None Remove="Internals\**" />
+	  <None Remove="Exceptions\**" />
 	</ItemGroup>
 
 </Project>
