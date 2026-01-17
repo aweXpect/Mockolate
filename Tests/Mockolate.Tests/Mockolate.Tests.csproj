@@ -15,6 +15,7 @@
 	  <Compile Remove="MockMethods\SetupMethodTests.SpanTests.cs" />
 	  <Compile Remove="MockMethods\SetupMethodTests.OutRefParameterTests.cs" />
 	  <Compile Remove="MockMethods\SetupMethodTests.CallbackTests.cs" />
+	  <Compile Remove="MockMethods\SetupMethodTests.SkippingBaseClassTests.cs" />
 	</ItemGroup>
 
 </Project>
