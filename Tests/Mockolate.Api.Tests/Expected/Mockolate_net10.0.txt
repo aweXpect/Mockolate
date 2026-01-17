@@ -575,11 +575,11 @@ namespace Mockolate.Parameters
         public bool Matches(Mockolate.Parameters.NamedParameterValue value) { }
         public override string? ToString() { }
     }
-    public struct NamedParameterValue : System.IEquatable<Mockolate.Parameters.NamedParameterValue>
+    public readonly struct NamedParameterValue : System.IEquatable<Mockolate.Parameters.NamedParameterValue>
     {
         public NamedParameterValue(string? Name, object? Value) { }
-        public string? Name { get; set; }
-        public object? Value { get; set; }
+        public string? Name { get; init; }
+        public object? Value { get; init; }
     }
 }
 namespace Mockolate.Raise

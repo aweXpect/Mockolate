@@ -301,8 +301,26 @@ public partial class MockRegistration
 
 			public ValueStorage GetOrAdd(NamedParameterValue key, Func<ValueStorage> valueGenerator)
 			{
-				_storage ??= new ConcurrentDictionary<NamedParameterValue, ValueStorage>();
+				_storage ??=
+					new ConcurrentDictionary<NamedParameterValue, ValueStorage>(NamedParameterValueComparer.Instance);
 				return _storage.GetOrAdd(key, _ => valueGenerator());
+			}
+		}
+
+		private sealed class NamedParameterValueComparer : IEqualityComparer<NamedParameterValue>
+		{
+			public static readonly NamedParameterValueComparer Instance = new();
+
+			public bool Equals(NamedParameterValue x, NamedParameterValue y)
+				=> string.Equals(x.Name, y.Name, StringComparison.Ordinal)
+				   && (ReferenceEquals(x.Value, y.Value) || (x.Value?.Equals(y.Value) ?? y.Value is null));
+
+			public int GetHashCode(NamedParameterValue obj)
+			{
+				int hash = 17;
+				hash = (hash * 31) + (obj.Name is not null ? StringComparer.Ordinal.GetHashCode(obj.Name) : 0);
+				hash = (hash * 31) + (obj.Value?.GetHashCode() ?? 0);
+				return hash;
 			}
 		}
 	}
