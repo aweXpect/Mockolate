@@ -187,7 +187,6 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo("foo");
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task ReturnMethod_Verify_ShouldMatchAnyParameters()
 	{
@@ -221,6 +220,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsNull();
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
