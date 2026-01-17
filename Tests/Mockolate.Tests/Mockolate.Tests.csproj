@@ -8,8 +8,8 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<Compile Remove="MockMethods\VerifyInvokedTests.cs" />
-		<Compile Remove="MockMethods\VerifyInvokedTests.SpanTests.cs" />
+		<Compile Remove="MockMethods\InteractionsTests.cs" />
+		<Compile Remove="MockMethods\InteractionsTests.CancellationTokenTests.cs" />
 		<Compile Remove="MockMethods\SetupMethodTests.SpanTests.cs" />
 		<Compile Remove="MockMethods\SetupMethodTests.OutRefParameterTests.cs" />
 		<Compile Remove="MockMethods\SetupMethodTests.CallbackTests.cs" />
