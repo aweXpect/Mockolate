@@ -362,7 +362,6 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task ToString_OutParameter_WithCallback_ShouldReturnExpectedValue()
 	{
@@ -385,6 +384,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task ToString_RefParameter_WithCallback_ShouldReturnExpectedValue()
 	{
