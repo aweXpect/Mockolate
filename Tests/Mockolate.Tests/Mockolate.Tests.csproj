@@ -11,18 +11,21 @@
 	  <Compile Remove="Web\**" />
 	  <Compile Remove="Internals\**" />
 	  <Compile Remove="Exceptions\**" />
+	  <Compile Remove="Monitor\**" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Remove="Web\**" />
 	  <EmbeddedResource Remove="Internals\**" />
 	  <EmbeddedResource Remove="Exceptions\**" />
+	  <EmbeddedResource Remove="Monitor\**" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <None Remove="Web\**" />
 	  <None Remove="Internals\**" />
 	  <None Remove="Exceptions\**" />
+	  <None Remove="Monitor\**" />
 	</ItemGroup>
 
 </Project>
