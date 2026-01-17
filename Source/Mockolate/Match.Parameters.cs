@@ -10,14 +10,14 @@ public partial class Match
 	/// <summary>
 	///     Matches the parameters against the <paramref name="predicate"/>.
 	/// </summary>
-	public static IParameters Parameters(Func<(string? Name, object? Value)[], bool> predicate,
+	public static IParameters Parameters(Func<NamedParameterValue[], bool> predicate,
 		[CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
 		=> new ParametersMatch(predicate, doNotPopulateThisValue);
 
-	private sealed class ParametersMatch(Func<(string? Name, object? Value)[], bool> predicate, string predicateExpression) : IParameters
+	private sealed class ParametersMatch(Func<NamedParameterValue[], bool> predicate, string predicateExpression) : IParameters
 	{
 		/// <inheritdoc cref="IParameters.Matches" />
-		public bool Matches((string? Name, object? Value)[] values)
+		public bool Matches(NamedParameterValue[] values)
 			=> predicate(values);
 
 		/// <inheritdoc cref="object.ToString()" />

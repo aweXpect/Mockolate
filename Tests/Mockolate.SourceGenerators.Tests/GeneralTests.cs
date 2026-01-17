@@ -661,7 +661,7 @@ public class GeneralTests
 			          	[System.ComponentModel.Localizable(false)]
 			          	public string MyMethod(string message)
 			          	{
-			          		MethodSetupResult<string> methodExecution = MockRegistrations.InvokeMethod<string>("MyCode.IMyService.MyMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!, p), ("message", message));
+			          		MethodSetupResult<string> methodExecution = MockRegistrations.InvokeMethod<string>("MyCode.IMyService.MyMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!, p), new NamedParameterValue("message", message));
 			          		if (this._wrapped is not null)
 			          		{
 			          			var baseResult = this._wrapped.MyMethod(message);

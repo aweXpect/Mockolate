@@ -105,7 +105,7 @@ public sealed partial class ForMockTests
 			          	public MyCode.Program.DoSomething1 Object => new(Invoke);
 			          	private System.Span<char> Invoke(int x)
 			          	{
-			          		var result = _mock.Registrations.InvokeMethod<System.Span<char>>("MyCode.Program.DoSomething1.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(SpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), ("x", x));
+			          		var result = _mock.Registrations.InvokeMethod<System.Span<char>>("MyCode.Program.DoSomething1.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(SpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), new NamedParameterValue("x", x));
 			          		result.TriggerCallbacks(x);
 			          		return result.Result;
 			          	}
@@ -116,7 +116,7 @@ public sealed partial class ForMockTests
 			          	public MyCode.Program.DoSomething2 Object => new(Invoke);
 			          	private System.ReadOnlySpan<char> Invoke(int x)
 			          	{
-			          		var result = _mock.Registrations.InvokeMethod<System.ReadOnlySpan<char>>("MyCode.Program.DoSomething2.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(ReadOnlySpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), ("x", x));
+			          		var result = _mock.Registrations.InvokeMethod<System.ReadOnlySpan<char>>("MyCode.Program.DoSomething2.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(ReadOnlySpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), new NamedParameterValue("x", x));
 			          		result.TriggerCallbacks(x);
 			          		return result.Result;
 			          	}
@@ -143,7 +143,7 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources).ContainsKey("MockForFuncintbool.g.cs").WhoseValue
-			.Contains("_mock.Registrations.InvokeMethod<bool>(\"System.Func<int, bool>.Invoke\", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(bool)!, p), (\"arg\", arg))")
+			.Contains("_mock.Registrations.InvokeMethod<bool>(\"System.Func<int, bool>.Invoke\", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(bool)!, p), new NamedParameterValue(\"arg\", arg))")
 			.IgnoringNewlineStyle().And
 			.Contains("System.Func<int,bool> Object").IgnoringNewlineStyle();
 	}

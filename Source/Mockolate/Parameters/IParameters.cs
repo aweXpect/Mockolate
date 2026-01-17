@@ -1,3 +1,5 @@
+using Mockolate.Interactions;
+
 namespace Mockolate.Parameters;
 
 /// <summary>
@@ -8,5 +10,5 @@ public interface IParameters
 	/// <summary>
 	///     Checks if the <paramref name="values" /> match the expectations.
 	/// </summary>
-	bool Matches((string? Name, object? Value)[] values);
+	bool Matches(NamedParameterValue[] values);
 }

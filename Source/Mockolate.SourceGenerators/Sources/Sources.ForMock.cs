@@ -13,6 +13,7 @@ internal static partial class Sources
 	{
 		StringBuilder sb = InitializeBuilder([
 			"System.Diagnostics",
+			"Mockolate.Parameters",
 			"Mockolate.Setup",
 		]);
 
@@ -77,7 +78,7 @@ internal static partial class Sources
 			
 			foreach (MethodParameter p in mockClass.Delegate.Parameters)
 			{
-				sb.Append(", (\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
+				sb.Append(", new NamedParameterValue(\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
 				{
 					RefKind.Out => "null",
 					_ => p.ToNameOrWrapper(),
@@ -686,7 +687,7 @@ internal static partial class Sources
 
 		foreach (MethodParameter p in method.Parameters)
 		{
-			sb.Append(", (\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
+			sb.Append(", new NamedParameterValue(\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
 			{
 				RefKind.Out => "null",
 				_ => p.ToNameOrWrapper(),

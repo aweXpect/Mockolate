@@ -12,7 +12,7 @@ public sealed partial class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.InvokeMethod("foo.bar", ("p1", 4));
+		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
 			registration.Method(mock, "foo.bar", new NamedParameter("p1", (IParameter)It.IsAny<int>()));
@@ -25,7 +25,7 @@ public sealed partial class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.InvokeMethod("foo.bar", ("p1", 4));
+		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
 			registration.Method(mock, "foo.bar", new NamedParameter("p1", (IParameter)It.IsAny<string>()));
@@ -38,7 +38,7 @@ public sealed partial class InteractionsTests
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
-		registration.InvokeMethod("foo.bar", ("p1", 4));
+		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
 			registration.Method(mock, "baz.bar", new NamedParameter("p1", (IParameter)It.IsAny<int>()));
@@ -62,7 +62,11 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task MethodInvocation_ToString_ShouldReturnExpectedValue()
 	{
-		MethodInvocation interaction = new(3, "SomeMethod", [("p1", 1), ("p2", null), ("p3", TimeSpan.FromSeconds(90)),]);
+		MethodInvocation interaction = new(3, "SomeMethod", [
+			new NamedParameterValue("p1", 1),
+			new NamedParameterValue("p2", null),
+			new NamedParameterValue("p3", TimeSpan.FromSeconds(90)),
+		]);
 		string expectedValue = "[3] invoke method SomeMethod(1, null, 00:01:30)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);

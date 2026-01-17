@@ -66,9 +66,7 @@ namespace Mockolate
     public class Match
     {
         public static Mockolate.Parameters.IParameters AnyParameters() { }
-        public static Mockolate.Parameters.IParameters Parameters([System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "Name",
-                "Value"})] System.Func<System.ValueTuple<string?, object?>[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IParameters Parameters(System.Func<Mockolate.Parameters.NamedParameterValue[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IDefaultEventParameters WithDefaultParameters() { }
     }
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
@@ -112,12 +110,8 @@ namespace Mockolate
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter[] parameters) { }
-        public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "Name",
-                "Value"})] params System.ValueTuple<string?, object?>[] parameters) { }
-        public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "Name",
-                "Value"})] params System.ValueTuple<string?, object?>[] parameters) { }
+        public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params Mockolate.Parameters.NamedParameterValue[] parameters) { }
+        public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, params Mockolate.Parameters.NamedParameterValue[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, Mockolate.Parameters.IParameters parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName) { }
@@ -467,15 +461,10 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation : Mockolate.Interactions.IInteraction
     {
-        public MethodInvocation(int index, string name, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "Name",
-                "Value"})] System.ValueTuple<string?, object?>[] parameters) { }
+        public MethodInvocation(int index, string name, Mockolate.Parameters.NamedParameterValue[] parameters) { }
         public int Index { get; }
         public string Name { get; }
-        [System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "Name",
-                "Value"})]
-        public System.ValueTuple<string?, object?>[] Parameters { get; }
+        public Mockolate.Parameters.NamedParameterValue[] Parameters { get; }
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{_interactions}")]
@@ -545,9 +534,7 @@ namespace Mockolate.Parameters
     }
     public interface IParameters
     {
-        bool Matches([System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "Name",
-                "Value"})] System.ValueTuple<string?, object?>[] values);
+        bool Matches(Mockolate.Parameters.NamedParameterValue[] values);
     }
     public interface IRefParameter<T>
     {
@@ -562,6 +549,12 @@ namespace Mockolate.Parameters
         public string Name { get; init; }
         public Mockolate.Parameters.IParameter Parameter { get; init; }
         public override string? ToString() { }
+    }
+    public struct NamedParameterValue : System.IEquatable<Mockolate.Parameters.NamedParameterValue>
+    {
+        public NamedParameterValue(string? Name, object? Value) { }
+        public string? Name { get; set; }
+        public object? Value { get; set; }
     }
 }
 namespace Mockolate.Raise
@@ -1358,9 +1351,7 @@ namespace Mockolate.Setup
         protected static string FormatType(System.Type type) { }
         protected static bool HasOutParameter<T>(Mockolate.Parameters.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IOutParameter<T>? parameter) { }
         protected static bool HasRefParameter<T>(Mockolate.Parameters.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IRefParameter<T>? parameter) { }
-        protected static bool Matches(Mockolate.Parameters.NamedParameter[] namedParameters, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "Name",
-                "Value"})] System.ValueTuple<string?, object?>[] values) { }
+        protected static bool Matches(Mockolate.Parameters.NamedParameter[] namedParameters, Mockolate.Parameters.NamedParameterValue[] values) { }
         protected static void TriggerCallbacks(Mockolate.Parameters.NamedParameter?[] namedParameters, object?[] values) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }

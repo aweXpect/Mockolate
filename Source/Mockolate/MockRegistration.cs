@@ -8,6 +8,7 @@ using System.Text;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -62,7 +63,7 @@ public partial class MockRegistration
 	/// </summary>
 	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName,
 		Func<object?[], TResult> defaultValue,
-		params (string? Name, object? Value)[] parameters)
+		params NamedParameterValue[] parameters)
 	{
 		MethodInvocation methodInvocation =
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
@@ -88,7 +89,7 @@ public partial class MockRegistration
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> returning
 	///     <see langword="void" />.
 	/// </summary>
-	public MethodSetupResult InvokeMethod(string methodName, params (string? Name, object? Value)[] parameters)
+	public MethodSetupResult InvokeMethod(string methodName, params NamedParameterValue[] parameters)
 	{
 		MethodInvocation methodInvocation =
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),

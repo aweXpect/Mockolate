@@ -15,7 +15,7 @@ public sealed partial class MatchTests
 		{
 			IParameters sut = Match.AnyParameters();
 
-			bool result = sut.Matches(values.Select(x => ((string?)null, x)).ToArray());
+			bool result = sut.Matches(values.Select(x => new NamedParameterValue(null, x)).ToArray());
 
 			await That(result).IsTrue();
 		}

@@ -791,7 +791,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod1(int)" />
 				          	public bool MyMethod1(int index)
 				          	{
-				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod1", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), ("index", index));
+				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod1", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new NamedParameterValue("index", index));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyMethod1(index);
@@ -809,7 +809,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, bool)" />
 				          	public void MyMethod2(int index, bool isReadOnly)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod2", ("index", index), ("isReadOnly", isReadOnly));
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod2", new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly));
 				          		if (this._wrapped is not null)
 				          		{
 				          			this._wrapped.MyMethod2(index, isReadOnly);
@@ -862,7 +862,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyDirectMethod(int)" />
 				          	public int MyDirectMethod(int value)
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyService.MyDirectMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), ("value", value));
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyService.MyDirectMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new NamedParameterValue("value", value));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyDirectMethod(value);
@@ -880,7 +880,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseMethod1(int)" />
 				          	public int MyBaseMethod1(int value)
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase1.MyBaseMethod1", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), ("value", value));
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase1.MyBaseMethod1", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new NamedParameterValue("value", value));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyBaseMethod1(value);
@@ -898,7 +898,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseMethod2(int)" />
 				          	public int MyBaseMethod2(int value)
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase2.MyBaseMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), ("value", value));
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase2.MyBaseMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new NamedParameterValue("value", value));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyBaseMethod2(value);
@@ -916,7 +916,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseMethod3(int)" />
 				          	public int MyBaseMethod3(int value)
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase3.MyBaseMethod3", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), ("value", value));
+				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase3.MyBaseMethod3", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new NamedParameterValue("value", value));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyBaseMethod3(value);
@@ -982,7 +982,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.MyService.MyMethod1(int, ref int, out bool)" />
 				          	public override void MyMethod1(int index, ref int value1, out bool flag)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", ("index", index), ("value1", value1), ("flag", null));
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", new NamedParameterValue("index", index), new NamedParameterValue("value1", value1), new NamedParameterValue("flag", null));
 				          		if (!methodExecution.SkipBaseClass)
 				          		{
 				          			base.MyMethod1(index, ref value1, out flag);
@@ -1000,7 +1000,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.MyService.MyMethod2(int, bool, ref int, out bool)" />
 				          	protected override bool MyMethod2(int index, bool isReadOnly, ref int value1, out bool flag)
 				          	{
-				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), ("index", index), ("isReadOnly", isReadOnly), ("value1", value1), ("flag", null));
+				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly), new NamedParameterValue("value1", value1), new NamedParameterValue("flag", null));
 				          		if (!methodExecution.SkipBaseClass)
 				          		{
 				          			var baseResult = base.MyMethod2(index, isReadOnly, ref value1, out flag);
@@ -1073,7 +1073,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod1(ref int)" />
 				          	public void MyMethod1(ref int index)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod1", ("index", index));
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod1", new NamedParameterValue("index", index));
 				          		if (this._wrapped is not null)
 				          		{
 				          			this._wrapped.MyMethod1(ref index);
@@ -1091,7 +1091,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, out bool)" />
 				          	public bool MyMethod2(int index, out bool isReadOnly)
 				          	{
-				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), ("index", index), ("isReadOnly", null));
+				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", null));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyMethod2(index, out isReadOnly);
@@ -1115,7 +1115,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod3(in MyReadonlyStruct)" />
 				          	public void MyMethod3(in MyReadonlyStruct p1)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod3", ("p1", p1));
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod3", new NamedParameterValue("p1", p1));
 				          		if (this._wrapped is not null)
 				          		{
 				          			this._wrapped.MyMethod3(in p1);
@@ -1127,7 +1127,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod4(ref readonly MyReadonlyStruct)" />
 				          	public void MyMethod4(ref readonly MyReadonlyStruct p1)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod4", ("p1", p1));
+				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod4", new NamedParameterValue("p1", p1));
 				          		if (this._wrapped is not null)
 				          		{
 				          			this._wrapped.MyMethod4(in p1);
