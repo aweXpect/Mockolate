@@ -329,7 +329,7 @@ public sealed partial class SetupMethodTests
 				void Act()
 				{
 					sut.SetupMock.Method.Method1(It.IsAny<int>())
-						.Returns("").For(times);
+						.Do(() => { }).For(times);
 				}
 
 				await That(Act).Throws<ArgumentOutOfRangeException>()
@@ -404,7 +404,7 @@ public sealed partial class SetupMethodTests
 				void Act()
 				{
 					sut.SetupMock.Method.Method1(It.IsAny<int>())
-						.Returns("").Only(times);
+						.Do(() => { }).Only(times);
 				}
 
 				await That(Act).Throws<ArgumentOutOfRangeException>()
