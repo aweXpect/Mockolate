@@ -17,6 +17,11 @@
 	  <Compile Remove="MockMethods\SetupMethodTests.CallbackTests.cs" />
 	  <Compile Remove="MockMethods\SetupMethodTests.SkippingBaseClassTests.cs" />
 	  <Compile Remove="MockMethods\SetupMethodTests.ReturnsThrowsTests.cs" />
+	  <Compile Remove="MockMethods\SetupMethodTests.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="MockMethods\" />
 	</ItemGroup>
 
 </Project>
