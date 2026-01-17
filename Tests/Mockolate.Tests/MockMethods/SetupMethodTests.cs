@@ -336,7 +336,6 @@ public sealed partial class SetupMethodTests
 		await That(value).IsEqualTo(2);
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task Setup_WithRefParameter_WithPredicateAndCallback_ShouldUseCallbackToSetValueWhenPredicateMatches()
 	{
@@ -363,6 +362,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
+	/* TODO: Re-Enable
 	[Fact]
 	public async Task ToString_OutParameter_WithCallback_ShouldReturnExpectedValue()
 	{
