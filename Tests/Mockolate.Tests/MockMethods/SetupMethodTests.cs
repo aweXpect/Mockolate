@@ -479,7 +479,7 @@ public sealed partial class SetupMethodTests
 		{
 			registration.InvokeMethod(
 				$"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.{methodName}", _ => 0,
-				parameters.Select(x => (object?)x).ToArray());
+				parameters.Select(x => ((string?)null, (object?)x)).ToArray());
 		}
 
 		await That(Act).Throws<MockException>()
@@ -513,7 +513,7 @@ public sealed partial class SetupMethodTests
 		{
 			registration.InvokeMethod(
 				"Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters", _ => 0,
-				1, 2);
+				("p1", 1), ("p2", 2));
 		}
 
 		await That(Act).Throws<MockException>()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Interactions;
@@ -23,7 +24,11 @@ public partial class MockRegistration
 				.Where(method => method.Name.Equals(methodName) &&
 				                 method.Parameters.Length == parameters.Length &&
 				                 !parameters
-					                 .Where((parameter, i) => !parameter.Parameter.Matches(method.Parameters[i]))
+					                 .Where((parameter, i)
+						                 => (!string.IsNullOrEmpty(method.Parameters[i].Name) &&
+						                     !parameter.Name.Equals(method.Parameters[i].Name,
+							                     StringComparison.Ordinal)) ||
+						                    !parameter.Parameter.Matches(method.Parameters[i].Value))
 					                 .Any())
 				.Cast<IInteraction>()
 				.ToArray(),

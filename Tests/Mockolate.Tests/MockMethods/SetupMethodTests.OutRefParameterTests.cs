@@ -18,7 +18,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo", Array.Empty<object?>());
+				MethodInvocation invocation = new(0, "foo", Array.Empty<(string?, object?)>());
 
 				void Act()
 				{
@@ -72,7 +72,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int> setup = new("foo");
 				setup.Returns(x => 3 * x);
-				MethodInvocation invocation = new(0, "foo", ["b",]);
+				MethodInvocation invocation = new(0, "foo", [("p1", "b"),]);
 
 				void Act()
 				{
@@ -91,7 +91,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(x => 3 * x);
-				MethodInvocation invocation = new(0, "foo", [2,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 2),]);
 
 				void Act()
 				{
@@ -233,7 +233,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
 				setup.Returns((x, y) => 3 * x);
-				MethodInvocation invocation = new(0, "foo", ["a", 2,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", "a"), ("p2", 2),]);
 
 				void Act()
 				{
@@ -251,7 +251,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
 				setup.Returns((x, y) => 3 * x);
-				MethodInvocation invocation = new(0, "foo", [1, "b",]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", "b"),]);
 
 				void Act()
 				{
@@ -270,7 +270,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int, int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo", [2, 3,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 2), ("p2", 3),]);
 
 				void Act()
 				{
@@ -431,7 +431,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
 				setup.Returns((x, y, z) => 3 * x);
-				MethodInvocation invocation = new(0, "foo", ["a", 2, 3,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", "a"), ("p2", 2), ("p3", 3),]);
 
 				void Act()
 				{
@@ -449,7 +449,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
 				setup.Returns((x, y, z) => 3 * x);
-				MethodInvocation invocation = new(0, "foo", [1, "b", 3,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", "b"), ("p3", 3),]);
 
 				void Act()
 				{
@@ -467,7 +467,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
 				setup.Returns((x, y, z) => 3 * x);
-				MethodInvocation invocation = new(0, "foo", [1, 2, "c",]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", "c"),]);
 
 				void Act()
 				{
@@ -486,7 +486,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo", [1, 2, 3,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", 3),]);
 
 				void Act()
 				{
@@ -667,7 +667,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-				MethodInvocation invocation = new(0, "foo", ["a", 2, 3, 4,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", "a"), ("p2", 2), ("p3", 3), ("p4", 4),]);
 
 				void Act()
 				{
@@ -685,7 +685,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-				MethodInvocation invocation = new(0, "foo", [1, "b", 3, 4,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", "b"), ("p3", 3), ("p4", 4),]);
 
 				void Act()
 				{
@@ -703,7 +703,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-				MethodInvocation invocation = new(0, "foo", [1, 2, "c", 4,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", "c"), ("p4", 4),]);
 
 				void Act()
 				{
@@ -721,7 +721,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-				MethodInvocation invocation = new(0, "foo", [1, 2, 3, "d",]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", 3), ("p4", "d"),]);
 
 				void Act()
 				{
@@ -740,7 +740,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", 3), ("p4", 4),]);
 
 				void Act()
 				{
@@ -941,7 +941,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo", ["a", 2, 3, 4, 5,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", "a"), ("p2", 2), ("p3", 3), ("p4", 4), ("p5", 5),]);
 
 				void Act()
 				{
@@ -959,7 +959,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo", [1, "b", 3, 4, 5,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", "b"), ("p3", 3), ("p4", 4), ("p5", 5),]);
 
 				void Act()
 				{
@@ -977,7 +977,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo", [1, 2, "c", 4, 5,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", "c"), ("p4", 4), ("p5", 5),]);
 
 				void Act()
 				{
@@ -995,7 +995,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo", [1, 2, 3, "d", 5,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", 3), ("p4", "d"), ("p5", 5),]);
 
 				void Act()
 				{
@@ -1013,7 +1013,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, "e",]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", 3), ("p4", 4), ("p5", "e"),]);
 
 				void Act()
 				{
@@ -1032,7 +1032,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo", [1, 2, 3, 4, 5,]);
+				MethodInvocation invocation = new(0, "foo", [("p1", 1), ("p2", 2), ("p3", 3), ("p4", 4), ("p5", 5),]);
 
 				void Act()
 				{

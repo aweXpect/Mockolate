@@ -68,24 +68,23 @@ internal static partial class Sources
 				sb.Append(", ").Append(parameterVarName).Append(" => ")
 					.AppendDefaultValueGeneratorFor(mockClass.Delegate.ReturnType,
 						"_mock.Registrations.Behavior.DefaultValue", $", {parameterVarName}");
-				foreach (MethodParameter p in mockClass.Delegate.Parameters)
-				{
-					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
-				}
-
-				sb.AppendLine(");");
 			}
 			else
 			{
 				sb.Append("\t\tvar ").Append(resultVarName).Append(" = _mock.Registrations.InvokeMethod(")
 					.Append(mockClass.Delegate.GetUniqueNameString());
-				foreach (MethodParameter p in mockClass.Delegate.Parameters)
-				{
-					sb.Append(", ").Append(p.RefKind == RefKind.Out ? "null" : p.Name);
-				}
-
-				sb.AppendLine(");");
 			}
+			
+			foreach (MethodParameter p in mockClass.Delegate.Parameters)
+			{
+				sb.Append(", (\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
+				{
+					RefKind.Out => "null",
+					_ => p.ToNameOrWrapper(),
+				}).Append(')');
+			}
+
+			sb.AppendLine(");");
 
 			AppendOutRefParameterHandling(sb, "\t\t", mockClass.Delegate.Parameters, resultVarName,
 				"_mock.Registrations.Behavior.DefaultValue");
@@ -687,11 +686,11 @@ internal static partial class Sources
 
 		foreach (MethodParameter p in method.Parameters)
 		{
-			sb.Append(", ").Append(p.RefKind switch
+			sb.Append(", (\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
 			{
 				RefKind.Out => "null",
 				_ => p.ToNameOrWrapper(),
-			});
+			}).Append(')');
 		}
 
 		sb.AppendLine(");");

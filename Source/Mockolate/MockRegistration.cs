@@ -60,10 +60,11 @@ public partial class MockRegistration
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, Func<object?[], TResult> defaultValue,
-		params object?[]? parameters)
+	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName,
+		Func<object?[], TResult> defaultValue,
+		params (string? Name, object? Value)[]? parameters)
 	{
-		parameters ??= [null,];
+		parameters ??= [("", null),];
 		MethodInvocation methodInvocation =
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
@@ -74,23 +75,23 @@ public partial class MockRegistration
 			if (Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x.Value?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
-			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters.Select(x => x.Value).ToArray()));
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters.Select(x => x.Value).ToArray())));
 	}
 
 	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> returning
 	///     <see langword="void" />.
 	/// </summary>
-	public MethodSetupResult InvokeMethod(string methodName, params object?[]? parameters)
+	public MethodSetupResult InvokeMethod(string methodName, params (string? Name, object? Value)[]? parameters)
 	{
-		parameters ??= [null,];
+		parameters ??= [("", null),];
 		MethodInvocation methodInvocation =
 			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
 				methodName, parameters));
@@ -99,7 +100,7 @@ public partial class MockRegistration
 		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x.Value?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 		}
 
 		matchingSetup?.Invoke(methodInvocation, Behavior);

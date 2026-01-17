@@ -71,7 +71,9 @@ namespace Mockolate
     public class Match
     {
         public static Mockolate.Parameters.IParameters AnyParameters() { }
-        public static Mockolate.Parameters.IParameters Parameters(System.Func<object?[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IParameters Parameters([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                "Name",
+                "Value"})] System.Func<System.ValueTuple<string?, object?>[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IDefaultEventParameters WithDefaultParameters() { }
     }
     public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
@@ -115,8 +117,12 @@ namespace Mockolate
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter[] parameters) { }
-        public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params object?[]? parameters) { }
-        public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, params object?[]? parameters) { }
+        public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                "Name",
+                "Value"})] params System.ValueTuple<string?, object?>[]? parameters) { }
+        public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                "Name",
+                "Value"})] params System.ValueTuple<string?, object?>[]? parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, Mockolate.Parameters.IParameters parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName) { }
@@ -480,10 +486,15 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation : Mockolate.Interactions.IInteraction
     {
-        public MethodInvocation(int index, string name, object?[] parameters) { }
+        public MethodInvocation(int index, string name, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                "Name",
+                "Value"})] System.ValueTuple<string?, object?>[] parameters) { }
         public int Index { get; }
         public string Name { get; }
-        public object?[] Parameters { get; }
+        [System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                "Name",
+                "Value"})]
+        public System.ValueTuple<string?, object?>[] Parameters { get; }
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{_interactions}")]
@@ -553,7 +564,9 @@ namespace Mockolate.Parameters
     }
     public interface IParameters
     {
-        bool Matches(object?[] values);
+        bool Matches([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                "Name",
+                "Value"})] System.ValueTuple<string?, object?>[] values);
     }
     public interface IReadOnlySpanParameter<T> : Mockolate.Parameters.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> { }
     public interface IRefParameter<T>
@@ -1368,7 +1381,9 @@ namespace Mockolate.Setup
         protected static string FormatType(System.Type type) { }
         protected static bool HasOutParameter<T>(Mockolate.Parameters.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IOutParameter<T>? parameter) { }
         protected static bool HasRefParameter<T>(Mockolate.Parameters.NamedParameter[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IRefParameter<T>? parameter) { }
-        protected static bool Matches(Mockolate.Parameters.NamedParameter[] namedParameters, object?[] values) { }
+        protected static bool Matches(Mockolate.Parameters.NamedParameter[] namedParameters, [System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                "Name",
+                "Value"})] System.ValueTuple<string?, object?>[] values) { }
         protected static void TriggerCallbacks(Mockolate.Parameters.NamedParameter?[] namedParameters, object?[] values) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
