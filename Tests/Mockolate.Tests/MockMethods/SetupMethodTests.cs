@@ -537,7 +537,6 @@ public sealed partial class SetupMethodTests
 		await That(isCalled).IsEqualTo(1);
 	}
 
-	/* TODO: Re-Enable
 	[Fact]
 	public async Task VoidMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
 	{
@@ -682,6 +681,7 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
+	/* TODO: Re-Enable
 	public class ReturnMethodWith2Parameters
 	{
 		[Fact]
