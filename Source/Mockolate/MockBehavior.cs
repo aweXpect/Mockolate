@@ -121,6 +121,26 @@ public record MockBehavior : IMockBehaviorAccess
 	}
 
 	/// <summary>
+	///     Uses the given <paramref name="factory" /> to create default values for <typeparamref name="T" />.
+	/// </summary>
+	public MockBehavior WithDefaultValueFor<T>(Func<T> factory)
+		=> WithDefaultValueFor(new DefaultValueFactory(
+			t => t == typeof(T),
+			(_, _) => factory()));
+
+	/// <summary>
+	///     Uses the given <paramref name="factories" /> to create default values for supported types.
+	/// </summary>
+	public MockBehavior WithDefaultValueFor(params DefaultValueFactory[] factories)
+	{
+		MockBehavior behavior = this with
+		{
+			DefaultValue = new DefaultValueGeneratorWithFactories(DefaultValue, factories),
+		};
+		return behavior;
+	}
+
+	/// <summary>
 	///     Initialize all mocks of type <typeparamref name="T" /> to use the given constructor <paramref name="parameters" />.
 	/// </summary>
 	/// <remarks>
@@ -167,6 +187,25 @@ public record MockBehavior : IMockBehaviorAccess
 		{
 			int index = Interlocked.Increment(ref _counter);
 			return setups.Select(a => new Action<IMockSetup<T>>(s => a(index, s))).ToArray();
+		}
+	}
+
+	private sealed class DefaultValueGeneratorWithFactories(
+		IDefaultValueGenerator inner,
+		DefaultValueFactory[] factories)
+		: IDefaultValueGenerator
+	{
+		public object? GenerateValue(Type type, params object?[] parameters)
+		{
+			foreach (DefaultValueFactory factory in factories)
+			{
+				if (factory.CanGenerateValue(type))
+				{
+					return factory.GenerateValue(type, parameters);
+				}
+			}
+
+			return inner.GenerateValue(type, parameters);
 		}
 	}
 }
