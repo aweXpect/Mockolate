@@ -136,6 +136,18 @@ public record MockBehavior : IMockBehaviorAccess
 		return behavior;
 	}
 
+	/// <summary>
+	///     Uses the given <paramref name="defaultValueFactories" /> to create default values for supported types.
+	/// </summary>
+	public MockBehavior WithDefaultValueFor(params DefaultValueFactory[] defaultValueFactories)
+	{
+		MockBehavior behavior = this with
+		{
+			DefaultValue = new DefaultValueGeneratorWithFactories(DefaultValue, defaultValueFactories),
+		};
+		return behavior;
+	}
+
 	private interface IInitializer;
 
 	private interface IInitializer<in T> : IInitializer
@@ -167,6 +179,23 @@ public record MockBehavior : IMockBehaviorAccess
 		{
 			int index = Interlocked.Increment(ref _counter);
 			return setups.Select(a => new Action<IMockSetup<T>>(s => a(index, s))).ToArray();
+		}
+	}
+
+	private sealed class DefaultValueGeneratorWithFactories(
+		IDefaultValueGenerator inner,
+		DefaultValueFactory[] factories)
+		: IDefaultValueGenerator
+	{
+		public object? GenerateValue(Type type, params object?[] parameters)
+		{
+			DefaultValueFactory? factory = factories.FirstOrDefault(f => f.CanGenerateValue(type));
+			if (factory is not null)
+			{
+				return factory.GenerateValue(type, parameters);
+			}
+
+			return inner.GenerateValue(type, parameters);
 		}
 	}
 }

@@ -13,6 +13,13 @@ namespace Mockolate
             public object?[] Parameters { get; init; }
         }
     }
+    public class DefaultValueFactory
+    {
+        protected DefaultValueFactory() { }
+        public DefaultValueFactory(System.Func<System.Type, bool> predicate, System.Func<System.Type, object?[], object?> generator) { }
+        public virtual bool CanGenerateValue(System.Type type) { }
+        public virtual object? GenerateValue(System.Type type, params object?[] parameters) { }
+    }
     public interface IDefaultValueGenerator
     {
         object? GenerateValue(System.Type type, params object?[] parameters);
@@ -90,6 +97,7 @@ namespace Mockolate
         public Mockolate.MockBehavior Initialize<T>(params System.Action<int, Mockolate.Setup.IMockSetup<T>>[] setups) { }
         public Mockolate.MockBehavior UseConstructorParametersFor<T>(System.Func<object?[]> parameters) { }
         public Mockolate.MockBehavior UseConstructorParametersFor<T>(params object?[] parameters) { }
+        public Mockolate.MockBehavior WithDefaultValueFor(params Mockolate.DefaultValueFactory[] defaultValueFactories) { }
     }
     public static class MockBehaviorExtensions
     {
@@ -97,6 +105,7 @@ namespace Mockolate
         {
             public Mockolate.MockBehavior SkippingBaseClass(bool skipBaseClass = true) { }
             public Mockolate.MockBehavior ThrowingWhenNotSetup(bool throwWhenNotSetup = true) { }
+            public Mockolate.MockBehavior WithDefaultValueFor<T>(System.Func<T> factory) { }
         }
     }
     public static class MockExtensions

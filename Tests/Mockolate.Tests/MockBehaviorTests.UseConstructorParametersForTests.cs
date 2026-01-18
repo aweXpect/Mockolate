@@ -5,8 +5,22 @@ public sealed partial class MockBehaviorTests
 	public sealed class UseConstructorParametersForTests
 	{
 		[Fact]
+		public async Task WithExplicitConstructorParameters_ShouldIgnoreConstructorParametersFromBehavior()
+		{
+			MockBehavior behavior = MockBehavior.Default
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() => [5,]);
+
+			MyServiceWithMultipleConstructors mock
+				= Mock.Create<MyServiceWithMultipleConstructors>(BaseClass.WithConstructorParameters(7), behavior);
+
+			int value = mock.Value;
+
+			await That(value).IsEqualTo(7);
+		}
+
+		[Fact]
 		public async Task
-			UseConstructorParametersFor_WithExplicitParameters_ShouldUseConstructorParametersFromBehavior()
+			WithExplicitParameters_ShouldUseConstructorParametersFromBehavior()
 		{
 			MockBehavior behavior = MockBehavior.Default
 				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(5);
@@ -24,7 +38,7 @@ public sealed partial class MockBehaviorTests
 		}
 
 		[Fact]
-		public async Task UseConstructorParametersFor_WithPredicate_ShouldUseConstructorParametersFromBehavior()
+		public async Task WithPredicate_ShouldUseConstructorParametersFromBehavior()
 		{
 			MockBehavior behavior = MockBehavior.Default
 				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() => [5,]);
@@ -39,20 +53,6 @@ public sealed partial class MockBehaviorTests
 
 			await That(valueWithDefaultBehavior).IsEqualTo(0);
 			await That(valueWithCustomBehavior).IsEqualTo(5);
-		}
-
-		[Fact]
-		public async Task WithExplicitConstructorParameters_ShouldIgnoreConstructorParametersFromBehavior()
-		{
-			MockBehavior behavior = MockBehavior.Default
-				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() => [5,]);
-
-			MyServiceWithMultipleConstructors mock
-				= Mock.Create<MyServiceWithMultipleConstructors>(BaseClass.WithConstructorParameters(7), behavior);
-
-			int value = mock.Value;
-
-			await That(value).IsEqualTo(7);
 		}
 
 		internal class MyServiceWithMultipleConstructors
