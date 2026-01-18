@@ -189,7 +189,7 @@ public record MockBehavior : IMockBehaviorAccess
 	{
 		public object? GenerateValue(Type type, params object?[] parameters)
 		{
-			DefaultValueFactory? factory = factories.FirstOrDefault(factory => factory.CanGenerateValue(type));
+			DefaultValueFactory? factory = factories.FirstOrDefault(f => f.CanGenerateValue(type));
 			if (factory is not null)
 			{
 				return factory.GenerateValue(type, parameters);
