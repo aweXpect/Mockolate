@@ -27,9 +27,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn> Do(Action callback)
 	{
 		Callback<Action<int>> currentCallback = new(_ => callback());
@@ -38,9 +36,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Do(Action{int})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn> Do(Action<int> callback)
 	{
 		Callback<Action<int>> currentCallback = new(callback);
@@ -49,9 +45,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Returns(Func<TReturn> callback)
 	{
 		Callback<Func<int, TReturn>> currentCallback = new(_ => callback());
@@ -60,9 +54,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Returns(TReturn returnValue)
 	{
 		Callback<Func<int, TReturn>> currentCallback = new(_ => returnValue);
@@ -71,9 +63,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -83,9 +73,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Throws(Exception exception)
 	{
 		Callback<Func<int, TReturn>> currentCallback = new(_ => throw exception);
@@ -94,9 +82,7 @@ public class ReturnMethodSetup<TReturn>(string name) : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, TReturn>> currentCallback = new(_ => throw callback());
@@ -267,9 +253,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, _) => callback());
@@ -278,9 +262,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action{T1})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback(p1));
@@ -289,9 +271,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action{int, T1})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
@@ -300,9 +280,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(Func{T1, TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new((_, p1) => callback(p1));
@@ -311,9 +289,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<TReturn> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => callback());
@@ -322,9 +298,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(TReturn returnValue)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => returnValue);
@@ -333,9 +307,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -345,9 +317,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Exception exception)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => throw exception);
@@ -356,9 +326,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => throw callback());
@@ -367,9 +335,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Func{T1, Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<T1, Exception> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new((_, p1) => throw callback(p1));
@@ -575,9 +541,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => callback());
@@ -586,9 +550,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Do(Action{T1, T2})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => callback(p1, p2));
@@ -597,9 +559,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Do(Action{int, T1, T2})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<int, T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(callback);
@@ -608,9 +568,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Returns(Func{T1, T2, TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, p1, p2) => callback(p1, p2));
@@ -619,9 +577,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => callback());
@@ -630,9 +586,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(TReturn returnValue)
 	{
 		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => returnValue);
@@ -641,9 +595,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -653,9 +605,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Exception exception)
 	{
 		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => throw exception);
@@ -664,9 +614,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => throw callback());
@@ -675,9 +623,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws(Func{T1, T2, Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, p1, p2) => throw callback(p1, p2));
@@ -898,9 +844,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => callback());
@@ -909,9 +853,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Do(Action{T1, T2, T3})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
@@ -920,9 +862,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<int, T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(callback);
@@ -931,9 +871,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Returns(Func{T1, T2, T3, TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
@@ -942,9 +880,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => callback());
@@ -953,9 +889,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(TReturn returnValue)
 	{
 		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => returnValue);
@@ -964,9 +898,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -976,9 +908,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Exception exception)
 	{
 		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => throw exception);
@@ -987,9 +917,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => throw callback());
@@ -998,9 +926,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback =
@@ -1234,9 +1160,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => callback());
@@ -1245,9 +1169,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
@@ -1256,9 +1178,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
@@ -1267,9 +1187,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback =
@@ -1279,9 +1197,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new((_, _, _, _, _) => callback());
@@ -1290,9 +1206,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new((_, _, _, _, _) => returnValue);
@@ -1301,9 +1215,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new()
 	{
@@ -1314,9 +1226,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Exception exception)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new((_, _, _, _, _) => throw exception);
@@ -1325,9 +1235,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new((_, _, _, _, _) => throw callback());
@@ -1336,9 +1244,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
-	/// </summary>
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback =
