@@ -121,18 +121,6 @@ public record MockBehavior : IMockBehaviorAccess
 	}
 
 	/// <summary>
-	///     Uses the given <paramref name="defaultValueFactories" /> to create default values for supported types.
-	/// </summary>
-	public MockBehavior WithDefaultValueFor(params DefaultValueFactory[] defaultValueFactories)
-	{
-		MockBehavior behavior = this with
-		{
-			DefaultValue = new DefaultValueGeneratorWithFactories(DefaultValue, defaultValueFactories),
-		};
-		return behavior;
-	}
-
-	/// <summary>
 	///     Initialize all mocks of type <typeparamref name="T" /> to use the given constructor <paramref name="parameters" />.
 	/// </summary>
 	/// <remarks>
@@ -145,6 +133,18 @@ public record MockBehavior : IMockBehaviorAccess
 			_constructorParameters = new ConcurrentStack<IConstructorParameters>(_constructorParameters),
 		};
 		behavior._constructorParameters.Push(new ConstructorParameters<T>(() => parameters));
+		return behavior;
+	}
+
+	/// <summary>
+	///     Uses the given <paramref name="defaultValueFactories" /> to create default values for supported types.
+	/// </summary>
+	public MockBehavior WithDefaultValueFor(params DefaultValueFactory[] defaultValueFactories)
+	{
+		MockBehavior behavior = this with
+		{
+			DefaultValue = new DefaultValueGeneratorWithFactories(DefaultValue, defaultValueFactories),
+		};
 		return behavior;
 	}
 
@@ -189,12 +189,10 @@ public record MockBehavior : IMockBehaviorAccess
 	{
 		public object? GenerateValue(Type type, params object?[] parameters)
 		{
-			foreach (DefaultValueFactory factory in factories)
+			DefaultValueFactory? factory = factories.FirstOrDefault(factory => factory.CanGenerateValue(type));
+			if (factory is not null)
 			{
-				if (factory.CanGenerateValue(type))
-				{
-					return factory.GenerateValue(type, parameters);
-				}
+				return factory.GenerateValue(type, parameters);
 			}
 
 			return inner.GenerateValue(type, parameters);
