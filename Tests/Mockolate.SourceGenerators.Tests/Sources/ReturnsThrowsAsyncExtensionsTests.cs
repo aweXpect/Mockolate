@@ -2,7 +2,7 @@
 
 namespace Mockolate.SourceGenerators.Tests.Sources;
 
-public sealed class ReturnsAsyncExtensionsTests
+public sealed class ReturnsThrowsAsyncExtensionsTests
 {
 	[Fact]
 	public async Task ForVoidMethods_ShouldNotGenerateReturnsAsyncExtensions()
@@ -31,7 +31,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).DoesNotContainKey("ReturnsAsyncExtensions.g.cs");
+		await That(result.Sources).DoesNotContainKey("ReturnsThrowsAsyncExtensions.g.cs");
 	}
 
 	[Fact]
@@ -61,7 +61,7 @@ public sealed class ReturnsAsyncExtensionsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).ContainsKey("ReturnsAsyncExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("ReturnsThrowsAsyncExtensions.g.cs").WhoseValue
 			.Contains(
 				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
 			.And
@@ -78,7 +78,25 @@ public sealed class ReturnsAsyncExtensionsTests
 				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<TReturn> callback)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, TReturn> callback)");
+				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, TReturn> callback)")
+			.And
+			.Contains(
+				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Exception exception)")
+			.And
+			.Contains(
+				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<Exception> callback)")
+			.And
+			.Contains(
+				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, Exception> callback)")
+			.And
+			.Contains(
+				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Exception exception)")
+			.And
+			.Contains(
+				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<Exception> callback)")
+			.And
+			.Contains(
+				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, Exception> callback)");
 	}
 
 	[Fact]
@@ -108,10 +126,13 @@ public sealed class ReturnsAsyncExtensionsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).ContainsKey("ReturnsAsyncExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("ReturnsThrowsAsyncExtensions.g.cs").WhoseValue
 			.Contains("ReturnsAsync<TReturn, T1, T2, T3, T4, T5, T6>(this").And
+			.Contains("ThrowsAsync<TReturn, T1, T2, T3, T4, T5, T6>(this").And
 			.DoesNotContain("ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this").And
-			.DoesNotContain("ReturnsAsync<TReturn, T1, T2, T3, T4, T5, T6, T7>(this");
+			.DoesNotContain("ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this").And
+			.DoesNotContain("ReturnsAsync<TReturn, T1, T2, T3, T4, T5, T6, T7>(this").And
+			.DoesNotContain("ThrowsAsync<TReturn, T1, T2, T3, T4, T5, T6, T7>(this");
 	}
 
 	[Fact]
@@ -142,6 +163,6 @@ public sealed class ReturnsAsyncExtensionsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).DoesNotContainKey("ReturnsAsyncExtensions.g.cs");
+		await That(result.Sources).DoesNotContainKey("ReturnsThrowsAsyncExtensions.g.cs");
 	}
 }

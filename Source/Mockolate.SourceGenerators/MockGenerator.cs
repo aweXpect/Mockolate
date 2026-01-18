@@ -105,8 +105,8 @@ public class MockGenerator : IIncrementalGenerator
 
 		if (methodSetups.Any(x => !x.Item2))
 		{
-			context.AddSource("ReturnsAsyncExtensions.g.cs",
-				SourceText.From(Sources.Sources.ReturnsAsyncExtensions(methodSetups
+			context.AddSource("ReturnsThrowsAsyncExtensions.g.cs",
+				SourceText.From(Sources.Sources.ReturnsThrowsAsyncExtensions(methodSetups
 					.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
 		}
 
