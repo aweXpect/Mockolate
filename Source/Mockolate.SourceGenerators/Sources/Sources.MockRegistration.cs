@@ -41,7 +41,8 @@ internal static partial class Sources
 			sb.AppendLine(
 				"\t\tpartial void Generate<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups, params Type[] types)");
 			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tif (mockBehavior.TryInitialize<T>(out Action<IMockSetup<T>>[]? additionalSetups))")
+			sb.Append("\t\t\tIMockBehaviorAccess mockBehaviorAccess = (IMockBehaviorAccess)mockBehavior;").AppendLine();
+			sb.Append("\t\t\tif (mockBehaviorAccess.TryInitialize<T>(out Action<IMockSetup<T>>[]? additionalSetups))")
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
@@ -59,7 +60,8 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.AppendLine();
-			sb.Append("\t\t\tif (constructorParameters is null && mockBehavior.TryGetConstructorParameters<T>(out object?[]? parameters))")
+			sb.Append(
+					"\t\t\tif (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<T>(out object?[]? parameters))")
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tconstructorParameters = new BaseClass.ConstructorParameters(parameters);").AppendLine();
@@ -247,13 +249,14 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine("\t\t}");
-			
+
 			sb.AppendLine();
 			sb.AppendLine(
 				"\t\tpartial void GenerateWrapped<T>(T instance, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups)");
 			sb.Append("\t\t{").AppendLine();
 			index = 0;
-			foreach ((string Name, MockClass MockClass) mock in mocks.Where(m => m.MockClass.AdditionalImplementations.Count == 0))
+			foreach ((string Name, MockClass MockClass) mock in mocks.Where(m
+				         => m.MockClass.AdditionalImplementations.Count == 0))
 			{
 				if (index++ > 0)
 				{
@@ -266,13 +269,14 @@ internal static partial class Sources
 
 				sb.Append("if (typeof(T) == typeof(").Append(mock.MockClass.ClassFullName).Append("))").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
-				
+
 				sb.Append("\t\t\t\tMockRegistration mockRegistration = new MockRegistration(mockBehavior, \"")
 					.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
 
 				if (mock.MockClass.IsInterface)
 				{
-					sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior, instance as ").Append(mock.MockClass.ClassFullName).Append(");").AppendLine();
+					sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior, instance as ")
+						.Append(mock.MockClass.ClassFullName).Append(");").AppendLine();
 					sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
@@ -285,11 +289,12 @@ internal static partial class Sources
 					sb.Append("\t\t\t\t\t}").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
 				}
-				
+
 				sb.Append("\t\t\t}").AppendLine();
 			}
+
 			sb.AppendLine("\t\t}");
-			
+
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}

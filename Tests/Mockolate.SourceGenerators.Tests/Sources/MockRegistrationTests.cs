@@ -335,7 +335,8 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		partial void Generate<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups, params Type[] types)
 			          		{
-			          			if (mockBehavior.TryInitialize<T>(out Action<IMockSetup<T>>[]? additionalSetups))
+			          			IMockBehaviorAccess mockBehaviorAccess = (IMockBehaviorAccess)mockBehavior;
+			          			if (mockBehaviorAccess.TryInitialize<T>(out Action<IMockSetup<T>>[]? additionalSetups))
 			          			{
 			          				if (setups.Length > 0)
 			          				{
@@ -350,7 +351,7 @@ public sealed class MockRegistrationTests
 			          				}
 			          			}
 			          
-			          			if (constructorParameters is null && mockBehavior.TryGetConstructorParameters<T>(out object?[]? parameters))
+			          			if (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<T>(out object?[]? parameters))
 			          			{
 			          				constructorParameters = new BaseClass.ConstructorParameters(parameters);
 			          			}

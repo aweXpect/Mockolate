@@ -22,6 +22,11 @@ namespace Mockolate
         Mockolate.MockRegistration Registrations { get; }
     }
     public interface IInteractiveMock<out T> { }
+    public interface IMockBehaviorAccess
+    {
+        bool TryGetConstructorParameters<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object?[]? parameters);
+        bool TryInitialize<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Action<Mockolate.Setup.IMockSetup<T>>[]? setups);
+    }
     public interface IMockSubject<T> : Mockolate.IHasMockRegistration
     {
         Mockolate.Mock<T> Mock { get; }
@@ -75,7 +80,7 @@ namespace Mockolate
         public static Mockolate.Parameters.IParameters Parameters(System.Func<Mockolate.Parameters.NamedParameterValue[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IDefaultEventParameters WithDefaultParameters() { }
     }
-    public class MockBehavior : System.IEquatable<Mockolate.MockBehavior>
+    public class MockBehavior : Mockolate.IMockBehaviorAccess, System.IEquatable<Mockolate.MockBehavior>
     {
         public MockBehavior(Mockolate.IDefaultValueGenerator defaultValue) { }
         public Mockolate.IDefaultValueGenerator DefaultValue { get; init; }
@@ -83,8 +88,6 @@ namespace Mockolate
         public bool ThrowWhenNotSetup { get; init; }
         public Mockolate.MockBehavior Initialize<T>(params System.Action<Mockolate.Setup.IMockSetup<T>>[] setups) { }
         public Mockolate.MockBehavior Initialize<T>(params System.Action<int, Mockolate.Setup.IMockSetup<T>>[] setups) { }
-        public bool TryGetConstructorParameters<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object?[]? parameters) { }
-        public bool TryInitialize<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Action<Mockolate.Setup.IMockSetup<T>>[]? setups) { }
         public Mockolate.MockBehavior UseConstructorParametersFor<T>(System.Func<object?[]> parameters) { }
         public Mockolate.MockBehavior UseConstructorParametersFor<T>(params object?[] parameters) { }
     }
