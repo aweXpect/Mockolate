@@ -8,7 +8,8 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=aweXpect_Mockolate&metric=coverage)](https://sonarcloud.io/summary/overall?id=aweXpect_Mockolate)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/main)
 
-**Mockolate** is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators. It enables fast,
+**Mockolate** is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators. It
+enables fast,
 compile-time validated mocks for interfaces and classes, supporting .NET Standard 2.0, .NET 8, .NET 10, and .NET
 Framework 4.8.
 
@@ -120,7 +121,8 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- If `false` (default), the mock will return a default value (see `DefaultValue`).
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
 - `SkipBaseClass` (bool):
-	- If `false` (default), the mock will call the base class implementation and use its return values as default values, if no
+	- If `false` (default), the mock will call the base class implementation and use its return values as default
+	  values, if no
 	  explicit setup is defined.
 	- If `true`, the mock will not call any base class implementations.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
@@ -489,6 +491,38 @@ If the order is incorrect or a call is missing, a `MockVerificationException` wi
 
    This is useful for ensuring that your test setup and test execution match.
    If any setup was not used, this method returns `false`.
+
+## Mocking HttpClient
+
+Mockolate supports mocking `HttpClient` out of the box, with no special configuration required. You can set up, use, and
+verify HTTP interactions just like with any other interface or class.
+
+**Example: Mocking HttpClient for a Chocolate Dispenser Service**
+
+```csharp
+HttpClient httpClient = Mock.Create<HttpClient>();
+httpClient.SetupMock.Method.PostAsync(
+		It.IsAny<string>(),
+		It.IsStringContent())
+	.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/api/chocolate/dispense",
+	new StringContent("""
+	                  { "type": "Dark", "amount": 3 }
+	                  """, Encoding.UTF8, "application/json"));
+
+await That(result.IsSuccessStatusCode).IsTrue();
+httpClient.VerifyMock.Invoked.PostAsync(
+	It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
+	It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
+```
+
+**Notes:**
+
+- The custom extensions for the `HttpClient` are in the `Mockolate.Web` namespace.
+- Under the hood, the setups, requests and verifications are forwarded to a mocked `HttpMessageHandler`.
+  As they therefore all forward to the `SendAsync` method, you can mix using a string or an `Uri` parameter in setup or
+  verification.
 
 ## Analyzers
 
