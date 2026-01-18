@@ -13,6 +13,7 @@ public class DefaultValueFactory
 	/// <summary>
 	///     This constructor is protected to allow inheritance.
 	/// </summary>
+	// ReSharper disable once UnusedMember.Global
 	protected DefaultValueFactory()
 	{
 	}

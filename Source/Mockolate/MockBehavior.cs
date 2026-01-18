@@ -121,21 +121,13 @@ public record MockBehavior : IMockBehaviorAccess
 	}
 
 	/// <summary>
-	///     Uses the given <paramref name="factory" /> to create default values for <typeparamref name="T" />.
+	///     Uses the given <paramref name="defaultValueFactories" /> to create default values for supported types.
 	/// </summary>
-	public MockBehavior WithDefaultValueFor<T>(Func<T> factory)
-		=> WithDefaultValueFor(new DefaultValueFactory(
-			t => t == typeof(T),
-			(_, _) => factory()));
-
-	/// <summary>
-	///     Uses the given <paramref name="factories" /> to create default values for supported types.
-	/// </summary>
-	public MockBehavior WithDefaultValueFor(params DefaultValueFactory[] factories)
+	public MockBehavior WithDefaultValueFor(params DefaultValueFactory[] defaultValueFactories)
 	{
 		MockBehavior behavior = this with
 		{
-			DefaultValue = new DefaultValueGeneratorWithFactories(DefaultValue, factories),
+			DefaultValue = new DefaultValueGeneratorWithFactories(DefaultValue, defaultValueFactories),
 		};
 		return behavior;
 	}

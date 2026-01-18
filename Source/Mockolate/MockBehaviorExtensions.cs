@@ -1,3 +1,5 @@
+using System;
+
 namespace Mockolate;
 
 /// <summary>
@@ -34,5 +36,13 @@ public static class MockBehaviorExtensions
 			{
 				ThrowWhenNotSetup = throwWhenNotSetup,
 			};
+
+		/// <summary>
+		///     Uses the given <paramref name="factory" /> to create default values for <typeparamref name="T" />.
+		/// </summary>
+		public MockBehavior WithDefaultValueFor<T>(Func<T> factory)
+			=> mockBehavior.WithDefaultValueFor(new DefaultValueFactory(
+				t => t == typeof(T),
+				(_, _) => factory()));
 	}
 }
