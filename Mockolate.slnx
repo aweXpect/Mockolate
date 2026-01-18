@@ -45,8 +45,9 @@
     <File Path="Docs/pages/02-setup.md" />
     <File Path="Docs/pages/03-mock-events.md" />
     <File Path="Docs/pages/04-verify-interactions.md" />
-    <File Path="Docs/pages/05-analyzers.md" />
-    <File Path="Docs/pages/06-comparison.md" />
+    <File Path="Docs/pages/05-httpclient.md" />
+    <File Path="Docs/pages/06-analyzers.md" />
+    <File Path="Docs/pages/07-comparison.md" />
   </Folder>
   <Folder Name="/_/Source/">
     <File Path="Source/Directory.Build.props" />
