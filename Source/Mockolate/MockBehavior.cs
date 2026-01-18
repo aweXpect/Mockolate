@@ -10,7 +10,7 @@ namespace Mockolate;
 /// <summary>
 ///     The behavior of the mock.
 /// </summary>
-public record MockBehavior
+public record MockBehavior : IMockBehaviorAccess
 {
 	private ConcurrentStack<IConstructorParameters> _constructorParameters = [];
 	private ConcurrentStack<IInitializer>? _initializers;
@@ -46,6 +46,34 @@ public record MockBehavior
 	///     If <see cref="ThrowWhenNotSetup" /> is not set to <see langword="false" />, an exception is thrown in such cases.
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
+
+	/// <inheritdoc cref="IMockBehaviorAccess.TryInitialize{T}(out Action{IMockSetup{T}}[])" />
+	bool IMockBehaviorAccess.TryInitialize<T>([NotNullWhen(true)] out Action<IMockSetup<T>>[]? setups)
+	{
+		if (_initializers?.FirstOrDefault(i => i is IInitializer<T>)
+		    is not IInitializer<T> initializer)
+		{
+			setups = null;
+			return false;
+		}
+
+		setups = initializer.GetSetups();
+		return true;
+	}
+
+	/// <inheritdoc cref="IMockBehaviorAccess.TryGetConstructorParameters{T}(out object?[])" />
+	bool IMockBehaviorAccess.TryGetConstructorParameters<T>([NotNullWhen(true)] out object?[]? parameters)
+	{
+		if (_constructorParameters.FirstOrDefault(i => i is ConstructorParameters<T>)
+		    is not ConstructorParameters<T> constructorParameters)
+		{
+			parameters = null;
+			return false;
+		}
+
+		parameters = constructorParameters.GetParameters();
+		return true;
+	}
 
 	/// <summary>
 	///     Initialize all mocks of type <typeparamref name="T" /> with the given <paramref name="setups" />.
@@ -106,44 +134,6 @@ public record MockBehavior
 		};
 		behavior._constructorParameters.Push(new ConstructorParameters<T>(() => parameters));
 		return behavior;
-	}
-
-	/// <summary>
-	///     Tries to get the initialization setups for a mock of type <typeparamref name="T" />.
-	/// </summary>
-	/// <remarks>
-	///     Returns <see langword="false" />, when no matching initialization is found.
-	/// </remarks>
-	public bool TryInitialize<T>([NotNullWhen(true)] out Action<IMockSetup<T>>[]? setups)
-	{
-		if (_initializers?.FirstOrDefault(i => i is IInitializer<T>)
-		    is not IInitializer<T> initializer)
-		{
-			setups = null;
-			return false;
-		}
-
-		setups = initializer.GetSetups();
-		return true;
-	}
-
-	/// <summary>
-	///     Tries to get the constructor parameters for a mock of type <typeparamref name="T" />.
-	/// </summary>
-	/// <remarks>
-	///     Returns <see langword="false" />, when no matching constructor parameters are found.
-	/// </remarks>
-	public bool TryGetConstructorParameters<T>([NotNullWhen(true)] out object?[]? parameters)
-	{
-		if (_constructorParameters.FirstOrDefault(i => i is ConstructorParameters<T>)
-		    is not ConstructorParameters<T> constructorParameters)
-		{
-			parameters = null;
-			return false;
-		}
-
-		parameters = constructorParameters.GetParameters();
-		return true;
 	}
 
 	private interface IInitializer;
