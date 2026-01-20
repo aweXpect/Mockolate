@@ -1,0 +1,31 @@
+﻿using System.Collections.Generic;
+
+namespace Mockolate.Tests.TestHelpers;
+
+internal interface IMyService
+{
+	string this[int index] { get; set; }
+	string this[int index1, int index2] { get; set; }
+	string this[int index1, int index2, int index3] { get; set; }
+	string? this[int? index1, int? index2, int? index3, int? index4] { get; set; }
+
+	bool SomeFlag { get; set; }
+	int SomeReadOnlyValue { get; }
+
+	void DoSomething(int value);
+	void DoSomething(int value, bool flag);
+	bool IsValid(int id);
+
+	string DoSomethingAndReturn(int value);
+
+	void MyMethodWithOutParam(out int value);
+	void MyMethodWithRefParam(ref int value);
+
+	event EventHandler? MyEvent;
+
+	TService GetInstance<TService>();
+
+	TService GetInstance<TService>(string key);
+
+	IEnumerable<TService> GetAllInstances<TService>();
+}
