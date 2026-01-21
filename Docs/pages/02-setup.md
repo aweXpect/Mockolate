@@ -74,7 +74,7 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 When the method name is unique (no overloads), you can omit the argument matchers for simpler setups:
 
 - `Match.AnyParameters()`: Matches any parameters.
-- `Match.Parameters(Func<NamedParameterValue[], bool>)`: Matches the parameters based on a predicate.
+- `Match.Parameters(Func<NamedParameterValue[], bool> predicate)`: Matches the parameters based on a predicate.
 
 #### Parameter Interaction
 
