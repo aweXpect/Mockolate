@@ -44,8 +44,8 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- If `false` (default), the mock will return a default value (see `DefaultValue`).
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
 - `SkipBaseClass` (bool):
-	- If `false` (default), the mock will call the base class implementation and use its return values as default values, if no
-	  explicit setup is defined.
+	- If `false` (default), the mock will call the base class implementation and use its return values as default
+	  values, if no explicit setup is defined.
 	- If `true`, the mock will not call any base class implementations.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
 	- Automatically initialize all mocks of type T with the given setups when they are created.

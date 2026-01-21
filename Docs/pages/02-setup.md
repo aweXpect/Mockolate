@@ -55,8 +55,10 @@ sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
 Mockolate provides flexible parameter matching for method setups and verifications:
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
-- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality comparer.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality comparer.
+- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
+  comparer.
+- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
+  provide a custom equality comparer.
 - `It.IsNull<T>()`: Matches null.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
@@ -65,8 +67,14 @@ Mockolate provides flexible parameter matching for method setups and verificatio
   predicates.
 - `It.IsRef<T>(…)`/`It.IsAnyRef<T>(…)`: Matches and sets ref parameters, supports value setting and
   predicates.
-- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use regular expressions instead.
+- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
+  regular expressions instead.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
+
+When the method name is unique (no overloads), you can omit the argument matchers for simpler setups:
+
+- `Match.AnyParameters()`: Matches any parameters.
+- `Match.Parameters(Func<NamedParameterValue[], bool>)`: Matches the parameters based on a predicate.
 
 #### Parameter Interaction
 
