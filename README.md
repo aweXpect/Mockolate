@@ -122,8 +122,7 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- If `true`, the mock will throw an exception when a method or property is called without a setup.
 - `SkipBaseClass` (bool):
 	- If `false` (default), the mock will call the base class implementation and use its return values as default
-	  values, if no
-	  explicit setup is defined.
+	  values, if no explicit setup is defined.
 	- If `true`, the mock will not call any base class implementations.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
 	- Automatically initialize all mocks of type T with the given setups when they are created.
@@ -223,6 +222,13 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 - `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
   regular expressions instead.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
+
+When the method name is unique (no overloads), you can omit the argument matchers for simpler setups:
+
+- `Match.AnyParameters()`: Matches any parameters.
+- `Match.Parameters(Func<NamedParameterValue[], bool> predicate)`: Matches the parameters based on a predicate.
+
+```csharp
 
 #### Parameter Interaction
 
