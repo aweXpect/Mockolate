@@ -34,21 +34,21 @@ internal static partial class Sources
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
-				.AppendLine("\" />.").AppendLine();
+				.Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).AppendLine("> SetupMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic System.IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
 				.AppendLine("> monitor)").AppendLine();
@@ -179,28 +179,28 @@ internal static partial class Sources
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
-				.AppendLine("\" />.").AppendLine();
+				.Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).AppendLine("> SetupMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Raise events on the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic IMockRaises<").Append(@class.ClassFullName).AppendLine("> RaiseOnMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).AppendLine("\" />.").AppendLine();
+				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic System.IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
 				.AppendLine("> monitor)").AppendLine();
@@ -952,7 +952,7 @@ internal static partial class Sources
 				.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
 				.Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
-				.Append(")\"/> with the given <paramref name=\"parameters\"/>..")
+				.Append(")\"/> with the given <paramref name=\"parameters\"/>.")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(method.Name)
