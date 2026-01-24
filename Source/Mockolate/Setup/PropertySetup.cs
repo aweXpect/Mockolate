@@ -194,7 +194,6 @@ public class PropertySetup<T>(string name) : PropertySetup,
 			}
 		}
 
-		bool foundCallback = false;
 		foreach (Callback<Func<int, T, T>> _ in _returnCallbacks)
 		{
 			Callback<Func<int, T, T>> returnCallback =
@@ -202,14 +201,13 @@ public class PropertySetup<T>(string name) : PropertySetup,
 			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
 				    => @delegate(invocationCount, _value), out T? newValue))
 			{
-				foundCallback = true;
 				_value = newValue;
 				_isInitialized = true;
 				break;
 			}
 		}
 
-		if (!foundCallback && _returnCallbacks.Count > 0 && !_isInitialized)
+		if (!_isInitialized)
 		{
 			_value = defaultValueGenerator() is T value ? value : default!;
 			_isInitialized = true;
@@ -261,10 +259,6 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		if (value is T typedValue)
 		{
 			_value = typedValue;
-		}
-		else
-		{
-			_value = default!;
 		}
 	}
 

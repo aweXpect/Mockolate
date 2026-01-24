@@ -180,6 +180,19 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task MethodSetupResult_TriggerCallbacks_Null_ShouldTriggerCallbacksWithNullArray()
+	{
+		IInteractiveMethodSetup methodSetup = Mock.Create<IInteractiveMethodSetup>();
+		MethodSetupResult sut = new(methodSetup, MockBehavior.Default);
+
+		sut.TriggerCallbacks(null);
+
+		await That(methodSetup.VerifyMock.Invoked.TriggerCallbacks(
+			// ReSharper disable once MergeIntoPattern
+			It.Satisfies<object?[]>(arr => arr.Length == 1 && arr[0] is null))).Once();
+	}
+
+	[Fact]
 	public async Task MultipleOnlyOnceCallbacks_ShouldExecuteInOrder()
 	{
 		List<int> receivedCalls = [];
@@ -539,14 +552,25 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
-	public async Task TriggerCallbacks_ArrayLengthDoesNotMatch_ShouldNotThrow()
+	public async Task TriggerCallbacks_WhenParameterCountDoesNotMatch_ShouldNotInvokeParameterCallbacks()
 	{
-		void Act()
-		{
-			MyMethodSetup.DoTriggerCallbacks([null, null,], [null,]);
-		}
+		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
+		MyMethodSetup.DoTriggerCallbacks([
+			new NamedParameter("foo", (IParameter)parameter),
+		], [4, 5,]);
 
-		await That(Act).DoesNotThrow();
+		await That(monitor.Values).IsEmpty();
+	}
+
+	[Fact]
+	public async Task TriggerCallbacks_WhenParameterCountMatches_ShouldInvokeParameterCallbacks()
+	{
+		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
+		MyMethodSetup.DoTriggerCallbacks([
+			new NamedParameter("foo", (IParameter)parameter),
+		], [4,]);
+
+		await That(monitor.Values).IsEqualTo([4,]);
 	}
 
 	[Fact]
