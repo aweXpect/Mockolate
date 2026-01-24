@@ -28,6 +28,34 @@ public class MockabilityAnalyzerTests
 		);
 
 	[Fact]
+	public async Task WhenMockingArray_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  using System;
+
+			  {{GeneratedPrefix}}
+
+			  namespace MyNamespace
+			  {
+			  	public interface IMyInterface
+			  	{
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			Mockolate.Mock.Create<{|#0:IMyInterface[]|}>();
+			  		}
+			  	}
+			  }
+			  """,
+			Verifier.Diagnostic(Rules.MockabilityRule)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.IMyInterface[]", "type kind 'Array' is not supported")
+		);
+
+	[Fact]
 	public async Task WhenMockingClass_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -119,11 +147,14 @@ public class MockabilityAnalyzerTests
 			  	void DoSomething();
 			  }
 
-			  public class MyClass
+			  namespace MyNamespace
 			  {
-			  	public void MyTest()
+			  	public class MyClass
 			  	{
-			  		Mockolate.Mock.Create<{|#0:IGlobalInterface|}>();
+			  		public void MyTest()
+			  		{
+			  			Mockolate.Mock.Create<{|#0:IGlobalInterface|}>();
+			  		}
 			  	}
 			  }
 			  """,
@@ -154,6 +185,45 @@ public class MockabilityAnalyzerTests
 			  			Mock.Create<IMyInterface>();
 			  		}
 			  	}
+			  }
+			  """
+		);
+
+	[Fact]
+	public async Task WhenMockingMockGeneratorWithoutAttributes_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  using System;
+
+			  {{GeneratedPrefix}}
+
+			  namespace MyNamespace
+			  {
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			Mockolate.MyMock.Create();
+			  		}
+			  	}
+			  }
+			  namespace Mockolate
+			  {
+			      public interface IGlobalInterface
+			      {
+			      	void DoSomething();
+			      }
+
+			      [AttributeUsage(AttributeTargets.Method)]
+			      internal class MockGeneratorAttribute : Attribute
+			      {
+			      }
+			      
+			      public static class MyMock
+			      {
+			          [MockGenerator]
+			          public static IGlobalInterface Create() => default!;
+			      }
 			  }
 			  """
 		);
