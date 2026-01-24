@@ -18,6 +18,7 @@ public sealed partial class ItExtensionsTests
 		[Fact]
 		public async Task ShouldSupportMonitoring()
 		{
+			int callbackCount = 0;
 			List<StringContent> responses =
 			[
 				new("", Encoding.UTF8, "application/json"),
@@ -26,7 +27,9 @@ public sealed partial class ItExtensionsTests
 			];
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method.PostAsync(It.IsAny<Uri>(),
-				It.IsStringContent("application/json").Monitor(out IParameterMonitor<HttpContent?> monitor));
+				It.IsStringContent("application/json")
+					.Do(_ => callbackCount++)
+					.Monitor(out IParameterMonitor<HttpContent?> monitor));
 
 			foreach (StringContent response in responses)
 			{
@@ -35,6 +38,7 @@ public sealed partial class ItExtensionsTests
 
 			await That(await Task.WhenAll(monitor.Values.Select(c => c!.ReadAsStringAsync())))
 				.IsEqualTo(["", "foo", "bar",]);
+			await That(callbackCount).IsEqualTo(3);
 		}
 #endif
 

@@ -15,16 +15,76 @@ public sealed partial class ItExtensionsTests
 	{
 		[Theory]
 		[InlineData(new byte[0], new byte[0], true)]
-		[InlineData(new byte[] { 0x1, }, new byte[] { 0x1, }, true)]
-		[InlineData(new byte[] { 0x1, }, new byte[] { 0x2, }, false)]
-		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, }, true)]
-		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x2, }, true)]
-		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x3, }, true)]
-		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, 0x2, }, true)]
-		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x2, 0x3, }, true)]
-		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, 0x3, }, false)]
-		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, 0x2, 0x3, }, true)]
-		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, 0x2, 0x3, 0x4, }, false)]
+		[InlineData(new byte[]
+		{
+			0x1,
+		}, new byte[]
+		{
+			0x1,
+		}, true)]
+		[InlineData(new byte[]
+		{
+			0x1,
+		}, new byte[]
+		{
+			0x2,
+		}, false)]
+		[InlineData(new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, new byte[]
+		{
+			0x1,
+		}, true)]
+		[InlineData(new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, new byte[]
+		{
+			0x2,
+		}, true)]
+		[InlineData(new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, new byte[]
+		{
+			0x3,
+		}, true)]
+		[InlineData(new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, new byte[]
+		{
+			0x1, 0x2,
+		}, true)]
+		[InlineData(new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, new byte[]
+		{
+			0x2, 0x3,
+		}, true)]
+		[InlineData(new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, new byte[]
+		{
+			0x1, 0x3,
+		}, false)]
+		[InlineData(new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, true)]
+		[InlineData(new byte[]
+		{
+			0x1, 0x2, 0x3,
+		}, new byte[]
+		{
+			0x1, 0x2, 0x3, 0x4,
+		}, false)]
 		public async Task Containing_ShouldCheckForEquality(byte[] body, byte[] expected, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -41,10 +101,34 @@ public sealed partial class ItExtensionsTests
 
 		[Theory]
 		[InlineData(new byte[0], new byte[0], true)]
-		[InlineData(new byte[] { 0x66, }, new byte[] { 0x66, }, true)]
-		[InlineData(new byte[] { 0x66, }, new byte[] { 0x67, }, false)]
-		[InlineData(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, }, false)]
-		[InlineData(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, 0x68, 0x69, }, false)]
+		[InlineData(new byte[]
+		{
+			0x66,
+		}, new byte[]
+		{
+			0x66,
+		}, true)]
+		[InlineData(new byte[]
+		{
+			0x66,
+		}, new byte[]
+		{
+			0x67,
+		}, false)]
+		[InlineData(new byte[]
+		{
+			0x66, 0x67,
+		}, new byte[]
+		{
+			0x67,
+		}, false)]
+		[InlineData(new byte[]
+		{
+			0x66, 0x67,
+		}, new byte[]
+		{
+			0x67, 0x68, 0x69,
+		}, false)]
 		public async Task EqualTo_ShouldCheckForEquality(byte[] body, byte[] expected, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -58,11 +142,12 @@ public sealed partial class ItExtensionsTests
 
 			await That(result.StatusCode).IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
-		
+
 #if !NETFRAMEWORK
 		[Fact]
 		public async Task ShouldSupportMonitoring()
 		{
+			int callbackCount = 0;
 			List<ByteArrayContent> responses =
 			[
 				new([]),
@@ -71,7 +156,9 @@ public sealed partial class ItExtensionsTests
 			];
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method.PostAsync(It.IsAny<Uri>(),
-				It.IsBinaryContent().Monitor(out IParameterMonitor<HttpContent?> monitor));
+				It.IsBinaryContent()
+					.Do(_ => callbackCount++)
+					.Monitor(out IParameterMonitor<HttpContent?> monitor));
 
 			foreach (ByteArrayContent response in responses)
 			{
@@ -81,6 +168,7 @@ public sealed partial class ItExtensionsTests
 			await That(
 					(await Task.WhenAll(monitor.Values.Select(c => c!.ReadAsByteArrayAsync()))).Select(x => x.Length))
 				.IsEqualTo([0, 1, 3,]);
+			await That(callbackCount).IsEqualTo(3);
 		}
 #endif
 

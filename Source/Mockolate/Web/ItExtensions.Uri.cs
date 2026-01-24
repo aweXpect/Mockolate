@@ -79,12 +79,9 @@ public static partial class ItExtensions
 			if (pattern is not null)
 			{
 				string requestUri1 = uri.ToString();
-				string requestUri2 = requestUri1.EndsWith('/')
-					? requestUri1.Substring(0, requestUri1.Length - 1)
-					: requestUri1 + '/';
 				Wildcard wildcard = Wildcard.Pattern(pattern, true);
 				if (!wildcard.Matches(requestUri1) &&
-				    !wildcard.Matches(requestUri2))
+				    (!requestUri1.EndsWith('/') || !wildcard.Matches(requestUri1.TrimEnd('/'))))
 				{
 					return false;
 				}

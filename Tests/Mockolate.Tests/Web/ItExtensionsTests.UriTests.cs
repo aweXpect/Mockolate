@@ -46,8 +46,11 @@ public sealed partial class ItExtensionsTests
 		[Fact]
 		public async Task ShouldSupportMonitoring()
 		{
+			int callbackCount = 0;
 			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method.GetAsync(It.IsUri().Monitor(out IParameterMonitor<Uri?> monitor));
+			httpClient.SetupMock.Method.GetAsync(It.IsUri()
+				.Do(_ => callbackCount++)
+				.Monitor(out IParameterMonitor<Uri?> monitor));
 
 			await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
 			await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
@@ -59,6 +62,7 @@ public sealed partial class ItExtensionsTests
 					"https://www.aweXpect.com/foo",
 					"https://www.aweXpect.com/bar",
 				]).IgnoringCase();
+			await That(callbackCount).IsEqualTo(3);
 		}
 
 		[Theory]
@@ -85,8 +89,41 @@ public sealed partial class ItExtensionsTests
 		}
 
 		[Theory]
+		[InlineData("*aweXpect.com")]
+		[InlineData("*aweXpect.com/")]
+		public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
+		{
+			HttpClient httpClient = Mock.Create<HttpClient>();
+			httpClient.SetupMock.Method
+				.GetAsync(It.IsUri(matchPattern))
+				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+			HttpResponseMessage result =
+				await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+
+			await That(result.StatusCode)
+				.IsEqualTo(HttpStatusCode.OK);
+		}
+
+		[Fact]
+		public async Task TrailingSlash_WhenNotPresent_ShouldNotBeAdded()
+		{
+			HttpClient httpClient = Mock.Create<HttpClient>();
+			httpClient.SetupMock.Method
+				.GetAsync(It.IsUri("*www.aweXpect.com/foo/"))
+				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+			HttpResponseMessage result =
+				await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
+
+			await That(result.StatusCode)
+				.IsEqualTo(HttpStatusCode.NotImplemented);
+		}
+
+		[Theory]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "www.awexpect.com", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*awexpect*", true)]
+		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*aweXpect*", true)]
 		[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "mockolate.com", false)]
 		public async Task WithHost_ShouldVerifyHost(string uri, string hostPattern, bool expectMatch)
 		{
@@ -103,6 +140,7 @@ public sealed partial class ItExtensionsTests
 		[Theory]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "/foo/bar", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*foo*", true)]
+		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*FOO*", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*bar*", true)]
 		[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "*baz*", false)]
 		public async Task WithPath_ShouldVerifyPath(string uri, string pathPattern, bool expectMatch)
@@ -139,6 +177,7 @@ public sealed partial class ItExtensionsTests
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "?x=123&y=234", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*123*", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*x=*y=*", true)]
+		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*X=*Y=*", true)]
 		[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "*z=*", false)]
 		public async Task WithQuery_ShouldVerifyQuery(string uri, string queryPattern, bool expectMatch)
 		{
