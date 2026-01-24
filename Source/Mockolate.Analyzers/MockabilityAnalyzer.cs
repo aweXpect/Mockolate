@@ -93,12 +93,6 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return false;
 		}
 
-		if (typeSymbol.IsStatic)
-		{
-			reason = "type is static";
-			return false;
-		}
-
 		if (typeSymbol.TypeKind != TypeKind.Interface &&
 		    typeSymbol.TypeKind != TypeKind.Class &&
 		    typeSymbol.TypeKind != TypeKind.Delegate)

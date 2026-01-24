@@ -97,6 +97,38 @@ public class WrappabilityAnalyzerTests
 		);
 
 	[Fact]
+	public async Task WhenWrappingGenericInterface_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  using System;
+
+			  {{GeneratedPrefix}}
+
+			  namespace MyNamespace
+			  {
+			  	public interface IMyInterface<T>
+			  	{
+			  		void DoSomething(T value);
+			  	}
+
+			  	public class MyImplementation : IMyInterface<int>
+			  	{
+			  		public void DoSomething(int value) { }
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			MyImplementation instance = new MyImplementation();
+			  			Mockolate.Mock.Wrap<IMyInterface<int>>(instance);
+			  		}
+			  	}
+			  }
+			  """
+		);
+
+	[Fact]
 	public async Task WhenWrappingInterface_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
