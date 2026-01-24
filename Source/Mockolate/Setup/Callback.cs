@@ -195,7 +195,6 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 				_invocationCount++;
 				_matchingCount++;
 				returnValue = callback(_invocationCount - 1, @delegate)!;
-
 				return true;
 			}
 
