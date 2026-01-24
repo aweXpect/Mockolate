@@ -45,6 +45,7 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				sut.MyProperty = 0;
 				values[i] = sut.MyProperty;
 			}
 
@@ -60,6 +61,7 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				sut.MyProperty = 0;
 				values[i] = sut.MyProperty;
 			}
 

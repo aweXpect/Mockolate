@@ -1,9 +1,33 @@
-﻿namespace Mockolate.Tests.MockProperties;
+﻿using System.Collections.Generic;
+
+namespace Mockolate.Tests.MockProperties;
 
 public sealed partial class SetupPropertyTests
 {
 	public sealed class InitializeWithTests
 	{
+		[Fact]
+		public async Task Returns_PredicateIsFalse_ShouldUseInitializedDefaultValue()
+		{
+			List<int> results = [];
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyProperty
+				.InitializeWith(2)
+				.Returns(() => 4).When(i => i > 3);
+
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+			sut.MyProperty = -3;
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+
+			await That(results).IsEqualTo([2, 2, -3, -3, 4, 4, 4,]);
+		}
+
 		[Fact]
 		public async Task WhenRead_ShouldReturnInitializedValue()
 		{
@@ -13,17 +37,6 @@ public sealed partial class SetupPropertyTests
 			int result = sut.MyProperty;
 
 			await That(result).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task WithNull_ShouldReturnNull()
-		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyStringProperty.InitializeWith(null);
-
-			string? result = sut.MyStringProperty;
-
-			await That(result).IsNull();
 		}
 
 		[Fact]
@@ -38,6 +51,17 @@ public sealed partial class SetupPropertyTests
 
 			await That(result1).IsEqualTo(42);
 			await That(result2).IsEqualTo(100);
+		}
+
+		[Fact]
+		public async Task WithNull_ShouldReturnNull()
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyStringProperty.InitializeWith(null);
+
+			string? result = sut.MyStringProperty;
+
+			await That(result).IsNull();
 		}
 	}
 }

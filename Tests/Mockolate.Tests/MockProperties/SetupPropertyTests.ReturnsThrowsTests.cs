@@ -59,6 +59,20 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
+		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyProperty
+				.InitializeWith(3)
+				.Returns(x => 4 * x);
+
+			int result = sut.MyProperty;
+
+			await That(result).IsEqualTo(12);
+		}
+
+		[Fact]
 		public async Task Returns_CallbackWithWhen_ShouldReturnDefaultValueWhenPredicateIsFalse()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -74,62 +88,6 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task WithoutCallback_IPropertySetupReturnBuilder_ShouldNotThrow()
-		{
-			IPropertyService mock = Mock.Create<IPropertyService>();
-			IPropertySetupReturnBuilder<int> setup =
-				(IPropertySetupReturnBuilder<int>)mock.SetupMock.Property.MyProperty;
-
-			void ActWhen()
-			{
-				setup.When(_ => true);
-			}
-
-			void ActFor()
-			{
-				setup.For(2);
-			}
-
-			await That(ActWhen).DoesNotThrow();
-			await That(ActFor).DoesNotThrow();
-		}
-
-		[Fact]
-		public async Task WithoutCallback_IPropertySetupReturnWhenBuilder_ShouldNotThrow()
-		{
-			IPropertyService mock = Mock.Create<IPropertyService>();
-			IPropertySetupReturnWhenBuilder<int> setup =
-				(IPropertySetupReturnWhenBuilder<int>)mock.SetupMock.Property.MyProperty;
-
-			void ActFor()
-			{
-				setup.For(2);
-			}
-
-			void ActOnly()
-			{
-				setup.Only(2);
-			}
-
-			await That(ActFor).DoesNotThrow();
-			await That(ActOnly).DoesNotThrow();
-		}
-
-		[Fact]
-		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
-		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
-
-			sut.SetupMock.Property.MyProperty
-				.InitializeWith(3)
-				.Returns(x => 4 * x);
-
-			int result = sut.MyProperty;
-
-			await That(result).IsEqualTo(12);
-		}
-
-		[Fact]
 		public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -141,10 +99,11 @@ public sealed partial class SetupPropertyTests
 			List<string?> values = [];
 			for (int i = 0; i < 10; i++)
 			{
+				sut.MyStringProperty = "-";
 				values.Add(sut.MyStringProperty);
 			}
 
-			await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
+			await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "-", "-", "-", "-", "-",]);
 		}
 
 		[Fact]
@@ -164,6 +123,27 @@ public sealed partial class SetupPropertyTests
 			}
 
 			await That(result).IsEqualTo([2, 3, 4, 4, 4, 4, 4, 4, 4, 4,]);
+		}
+
+		[Fact]
+		public async Task Returns_PredicateIsFalse_ShouldUseInitializedDefaultValue()
+		{
+			List<int> results = [];
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyProperty
+				.Returns(() => 4).When(i => i > 3);
+
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+			sut.MyProperty = -3;
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+			results.Add(sut.MyProperty);
+
+			await That(results).IsEqualTo([0, 0, -3, -3, 4, 4, 4,]);
 		}
 
 		[Fact]
@@ -288,6 +268,48 @@ public sealed partial class SetupPropertyTests
 			}
 
 			await That(Act).ThrowsException().WithMessage("foo");
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IPropertySetupReturnBuilder_ShouldNotThrow()
+		{
+			IPropertyService mock = Mock.Create<IPropertyService>();
+			IPropertySetupReturnBuilder<int> setup =
+				(IPropertySetupReturnBuilder<int>)mock.SetupMock.Property.MyProperty;
+
+			void ActWhen()
+			{
+				setup.When(_ => true);
+			}
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			await That(ActWhen).DoesNotThrow();
+			await That(ActFor).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WithoutCallback_IPropertySetupReturnWhenBuilder_ShouldNotThrow()
+		{
+			IPropertyService mock = Mock.Create<IPropertyService>();
+			IPropertySetupReturnWhenBuilder<int> setup =
+				(IPropertySetupReturnWhenBuilder<int>)mock.SetupMock.Property.MyProperty;
+
+			void ActFor()
+			{
+				setup.For(2);
+			}
+
+			void ActOnly()
+			{
+				setup.Only(2);
+			}
+
+			await That(ActFor).DoesNotThrow();
+			await That(ActOnly).DoesNotThrow();
 		}
 	}
 }
