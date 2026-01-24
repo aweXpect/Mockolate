@@ -97,6 +97,26 @@ public sealed partial class RaiseTests
 	}
 
 	[Fact]
+	public async Task WhenSubscriptionThrows_ShouldNotWrapException()
+	{
+		IMyEventService mock = Mock.Create<IMyEventService, IMyEventServiceBase1>();
+
+		mock.SomeEvent += SubscriptionThrowingException;
+
+		void Act()
+		{
+			mock.RaiseOnMock.SomeEvent(this, "event data");
+		}
+
+		await That(Act).Throws<MockException>().WithMessage("Subscription exception");
+
+		void SubscriptionThrowingException(object? sender, string e)
+		{
+			throw new MockException("Subscription exception");
+		}
+	}
+
+	[Fact]
 	public async Task WhenUnsubscribedFromOtherEvent_ShouldNotAffectOtherSubscriptions()
 	{
 		int callCount = 0;
