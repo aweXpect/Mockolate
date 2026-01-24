@@ -200,7 +200,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetupWithReturn_ShouldUseBaseValue()
+			public async Task SetupWithReturn_ShouldReturnSetupValue()
 			{
 				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
 				sut.SetupMock.Method.Method0()
@@ -504,7 +504,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetupWithReturn_ShouldUseBaseValue()
+			public async Task SetupWithReturn_ShouldReturnSetupValue()
 			{
 				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
 				sut.SetupMock.Method.Method1(It.IsAny<int>())
@@ -843,7 +843,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetupWithReturn_ShouldUseBaseValue()
+			public async Task SetupWithReturn_ShouldReturnSetupValue()
 			{
 				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
 				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
@@ -1188,7 +1188,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task SetupWithReturn_ShouldUseBaseValue()
+			public async Task SetupWithReturn_ShouldReturnSetupValue()
 			{
 				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
 				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
