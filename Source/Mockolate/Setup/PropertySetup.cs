@@ -113,13 +113,13 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T, T>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T>>> _setterCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private bool _isInitialized;
+	private bool? _skipBaseClass;
 	private T _value = default!;
 
 	/// <inheritdoc cref="PropertySetup.Name" />
@@ -209,7 +209,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 			}
 		}
 
-		if (!foundCallback && _returnCallbacks.Count > 0)
+		if (!foundCallback && _returnCallbacks.Count > 0 && !_isInitialized)
 		{
 			_value = defaultValueGenerator() is T value ? value : default!;
 			_isInitialized = true;

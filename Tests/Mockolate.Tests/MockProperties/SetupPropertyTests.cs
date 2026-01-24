@@ -6,6 +6,17 @@ namespace Mockolate.Tests.MockProperties;
 public sealed partial class SetupPropertyTests
 {
 	[Fact]
+	public async Task InitializeValue_NotMatchingTypes_ShouldUseDefault()
+	{
+		MyPropertySetup<int> setup = new();
+
+		setup.MyInitializeValue("f");
+
+		int result = setup.InvokeGetter<int>();
+		await That(result).IsEqualTo(0);
+	}
+
+	[Fact]
 	public async Task InvokeGetter_InvalidType_ShouldThrowMockException()
 	{
 		MyPropertySetup<int> setup = new();
@@ -161,5 +172,8 @@ public sealed partial class SetupPropertyTests
 
 		public TResult InvokeGetter<TResult>()
 			=> InvokeGetter<TResult>(MockBehavior.Default, () => default!);
+
+		public void MyInitializeValue(object? value)
+			=> InitializeValue(value);
 	}
 }
