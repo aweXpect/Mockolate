@@ -15,4 +15,8 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Mockolate.Internal.Tests" PublicKey="$(PublicKey)"/>
+	</ItemGroup>
+
 </Project>

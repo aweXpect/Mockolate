@@ -79,7 +79,7 @@ public partial class It
 		{
 			_regex ??= (_regexOptionsExpression is not null, _caseSensitive) switch
 			{
-				(false, _) => Wildcard.Pattern(pattern, !_caseSensitive, _timeout).Regex,
+				(false, _) => Wildcard.Pattern(pattern, !_caseSensitive).Regex,
 				(true, false) => new Regex(pattern,
 					_regexOptions | RegexOptions.IgnoreCase, _timeout),
 				(true, true) => new Regex(pattern,

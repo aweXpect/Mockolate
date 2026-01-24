@@ -23,7 +23,7 @@ namespace Build;
 partial class Build
 {
 	private static readonly bool DisableMutationTests = false;
-	static string MutationCommentBody = "";
+	private static string MutationCommentBody = "";
 
 	Target MutationTests => _ => _
 		.DependsOn(MutationTestExecution)
@@ -48,7 +48,10 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.Mockolate, [Solution.Tests.Mockolate_Tests,]
+					Solution.Mockolate, [
+						Solution.Tests.Mockolate_Tests,
+						Solution.Tests.Mockolate_Internal_Tests,
+					]
 				},
 			};
 
@@ -124,10 +127,10 @@ partial class Build
 			}
 
 			string body = "## :alien: Mutation Results"
-						  + Environment.NewLine
-						  + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/pull/{prId}/merge)"
-						  + Environment.NewLine
-						  + MutationCommentBody;
+			              + Environment.NewLine
+			              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/pull/{prId}/merge)"
+			              + Environment.NewLine
+			              + MutationCommentBody;
 			File.WriteAllText(ArtifactsDirectory / "PR_Comment.md", body);
 
 			if (prId != null)
@@ -146,7 +149,10 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.Mockolate, [Solution.Tests.Mockolate_Tests,]
+					Solution.Mockolate, [
+						Solution.Tests.Mockolate_Tests,
+						Solution.Tests.Mockolate_Internal_Tests,
+					]
 				},
 			};
 			string apiKey = Environment.GetEnvironmentVariable("STRYKER_DASHBOARD_API_KEY");
@@ -230,8 +236,8 @@ partial class Build
 			}
 
 			if (count == 0 &&
-				line.StartsWith("|") &&
-				line.Contains("| N\\/A"))
+			    line.StartsWith("|") &&
+			    line.Contains("| N\\/A"))
 			{
 				continue;
 			}
