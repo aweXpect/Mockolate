@@ -95,6 +95,27 @@ public sealed class MockMonitorTests
 	}
 
 	[Fact]
+	public async Task Run_ShouldIncludeAllInvocations()
+	{
+		IMyService sut = Mock.Create<IMyService>();
+		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
+		MockMonitor<IMyService> monitor = new(mock);
+
+		using (monitor.Run())
+		{
+			sut.IsValid(1);
+			sut.IsValid(2);
+			sut.IsValid(3);
+			sut.IsValid(4);
+		}
+
+		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
+		await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Once();
+		await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Once();
+		await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Once();
+	}
+
+	[Fact]
 	public async Task Run_ShouldMonitorInvocationsDuringTheRun()
 	{
 		IMyService sut = Mock.Create<IMyService>();
@@ -121,5 +142,34 @@ public sealed class MockMonitorTests
 		await That(sut.VerifyMock.Invoked.IsValid(It.Is(3))).Once();
 		await That(sut.VerifyMock.Invoked.IsValid(It.Is(4))).Once();
 		await That(sut.VerifyMock.Invoked.IsValid(It.Is(5))).Once();
+	}
+
+	[Fact]
+	public async Task Verify_WhileRunning_ShouldBeUpToDate()
+	{
+		IMyService sut = Mock.Create<IMyService>();
+		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
+		MockMonitor<IMyService> monitor = new(mock);
+
+		using (monitor.Run())
+		{
+			sut.IsValid(1);
+			await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Never();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Never();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Never();
+
+			sut.IsValid(2);
+			await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Once();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Never();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Never();
+
+			sut.IsValid(3);
+			await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Once();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Once();
+			await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Never();
+		}
 	}
 }

@@ -8,7 +8,34 @@ public sealed class MockExtensionsTests
 	public sealed class ClearAllInteractionsTests
 	{
 		[Fact]
-		public async Task Monitor_ShouldWorkAcrossClearAllInteractions()
+		public async Task Monitor_WhenRunning_ShouldClearAllInteractions()
+		{
+			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+			mock.Dispense("Dark", 1);
+			MockMonitor<IChocolateDispenser> monitor;
+			using (_ = mock.MonitorMock(out monitor))
+			{
+				mock.Dispense("Light", 2);
+				mock.Dispense("Dark", 3);
+				mock.SetupMock.ClearAllInteractions();
+			}
+
+			mock.Dispense("Light", 4);
+
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(2))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(3))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(4))).Once();
+
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(2))).Never();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.Is(3))).Never();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(4))).Never();
+		}
+
+		[Fact]
+		public async Task Monitor_WhenRunning_ShouldContinueAfterClearAllInteractions()
 		{
 			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
 
@@ -26,6 +53,33 @@ public sealed class MockExtensionsTests
 			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
 			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(2))).Never();
 			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(3))).Once();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(4))).Once();
+
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(2))).Never();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.Is(3))).Once();
+			await That(monitor.Verify.Invoked.Dispense(It.Is("Light"), It.Is(4))).Never();
+		}
+
+		[Fact]
+		public async Task Monitor_WhenStopped_ShouldIgnoreClearAllInteractions()
+		{
+			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+			mock.Dispense("Dark", 1);
+			MockMonitor<IChocolateDispenser> monitor;
+			using (_ = mock.MonitorMock(out monitor))
+			{
+				mock.Dispense("Light", 2);
+				mock.Dispense("Dark", 3);
+			}
+
+			mock.SetupMock.ClearAllInteractions();
+			mock.Dispense("Light", 4);
+
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(2))).Never();
+			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(3))).Never();
 			await That(mock.VerifyMock.Invoked.Dispense(It.Is("Light"), It.Is(4))).Once();
 
 			await That(monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.Is(1))).Never();
