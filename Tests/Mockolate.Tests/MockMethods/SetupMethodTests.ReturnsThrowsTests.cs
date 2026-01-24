@@ -200,6 +200,18 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task SetupWithReturn_ShouldUseBaseValue()
+			{
+				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Returns("bar");
+
+				string result = sut.Method0();
+
+				await That(result).IsEqualTo("bar");
+			}
+
+			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -489,6 +501,18 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method1(1);
 
 				await That(result).IsEqualTo("foo-1");
+			}
+
+			[Fact]
+			public async Task SetupWithReturn_ShouldUseBaseValue()
+			{
+				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut.Method1(1);
+
+				await That(result).IsEqualTo("bar");
 			}
 
 			[Fact]
@@ -816,6 +840,18 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method2(1, 2);
 
 				await That(result).IsEqualTo("foo-1-2");
+			}
+
+			[Fact]
+			public async Task SetupWithReturn_ShouldUseBaseValue()
+			{
+				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut.Method2(1, 2);
+
+				await That(result).IsEqualTo("bar");
 			}
 
 			[Fact]
@@ -1152,6 +1188,18 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task SetupWithReturn_ShouldUseBaseValue()
+			{
+				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut.Method3(1, 2, 3);
+
+				await That(result).IsEqualTo("bar");
+			}
+
+			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -1484,6 +1532,18 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method4(1, 2, 3, 4);
 
 				await That(result).IsEqualTo("foo-1-2-3-4");
+			}
+
+			[Fact]
+			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
+			{
+				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut.Method4(1, 2, 3, 4);
+
+				await That(result).IsEqualTo("bar");
 			}
 
 			[Fact]
@@ -1831,6 +1891,19 @@ public sealed partial class SetupMethodTests
 				string result = sut.Method5(1, 2, 3, 4, 5);
 
 				await That(result).IsEqualTo("foo-1-2-3-4-5");
+			}
+
+			[Fact]
+			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
+			{
+				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut.Method5(1, 2, 3, 4, 5);
+
+				await That(result).IsEqualTo("bar");
 			}
 
 			[Fact]
