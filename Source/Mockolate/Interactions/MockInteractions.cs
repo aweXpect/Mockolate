@@ -62,8 +62,8 @@ public class MockInteractions : IMockInteractions
 
 	internal void Clear()
 	{
-		OnClearing?.Invoke(this, EventArgs.Empty);
 		_interactions.Clear();
+		OnClearing?.Invoke(this, EventArgs.Empty);
 		_index = -1;
 	}
 }

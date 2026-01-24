@@ -50,10 +50,10 @@ public abstract class MockMonitor
 
 		_monitoringStart = _monitoredInvocations.Count;
 		_monitoredInvocations.OnClearing += OnClearing;
-		return new MonitorScope(() => Stop());
+		return new MonitorScope(Stop);
 	}
 
-	internal void Stop()
+	private void Stop()
 	{
 		if (_monitoringStart >= 0)
 		{
@@ -69,8 +69,8 @@ public abstract class MockMonitor
 
 	private void OnClearing(object? sender, EventArgs e)
 	{
-		UpdateInteractions();
 		_monitoringStart = 0;
+		UpdateInteractions();
 	}
 
 	/// <summary>
