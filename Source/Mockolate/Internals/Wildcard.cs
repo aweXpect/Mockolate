@@ -17,8 +17,8 @@ internal readonly struct Wildcard
 				new Regex(
 					item.RegexPattern,
 					item.IgnoreCase
-						? RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled
-						: RegexOptions.Multiline | RegexOptions.Compiled,
+						? RegexOptions.IgnoreCase | RegexOptions.Compiled
+						: RegexOptions.Compiled,
 					Regex.InfiniteMatchTimeout)));
 		return wildcard;
 	}
