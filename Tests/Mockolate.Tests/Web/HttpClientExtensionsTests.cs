@@ -48,6 +48,60 @@ public sealed partial class HttpClientExtensionsTests
 		await That(result).IsFalse();
 	}
 
+	[Fact]
+	public async Task ShouldSupportMonitoring()
+	{
+		int callbackCount = 0;
+		HttpClient httpClient = Mock.Create<HttpClient>();
+		httpClient.SetupMock.Method
+			.GetAsync(It.Matches("*")
+				.Do(_ => callbackCount++)
+				.Monitor(out IParameterMonitor<string> monitor))
+			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+		await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
+		await httpClient.PostAsync("https://www.aweXpect.com/bar", null, CancellationToken.None);
+		await httpClient.GetAsync("https://www.aweXpect.com/baz", CancellationToken.None);
+
+		await That(monitor.Values).IsEqualTo([
+			"https://www.awexpect.com/foo",
+			"https://www.awexpect.com/baz",
+		]);
+		await That(callbackCount).IsEqualTo(2);
+	}
+
+	[Theory]
+	[InlineData("*aweXpect.com")]
+	[InlineData("*aweXpect.com/")]
+	public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
+	{
+		HttpClient httpClient = Mock.Create<HttpClient>();
+		httpClient.SetupMock.Method
+			.GetAsync(It.Matches(matchPattern))
+			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+		HttpResponseMessage result =
+			await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+
+		await That(result.StatusCode)
+			.IsEqualTo(HttpStatusCode.OK);
+	}
+
+	[Fact]
+	public async Task TrailingSlash_WhenNotPresent_ShouldNotBeAdded()
+	{
+		HttpClient httpClient = Mock.Create<HttpClient>();
+		httpClient.SetupMock.Method
+			.GetAsync(It.Matches("*www.aweXpect.com/foo/"))
+			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+		HttpResponseMessage result =
+			await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
+
+		await That(result.StatusCode)
+			.IsEqualTo(HttpStatusCode.NotImplemented);
+	}
+
 	private sealed class InvalidParameter : IParameter<string?>
 	{
 		public IParameter<string?> Do(Action<string?> callback)

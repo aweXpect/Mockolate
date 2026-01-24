@@ -17,17 +17,6 @@ public sealed partial class VerifyInvokedTests
 	}
 
 	[Fact]
-	public async Task Equals_WithOtherOverload_ShouldWork()
-	{
-		object obj = new();
-		IMethodService mock = Mock.Create<IMethodService>();
-
-		_ = mock.Equals(3);
-
-		await That(mock.VerifyMock.Invoked.Equals(It.Is(obj))).Never();
-	}
-
-	[Fact]
 	public async Task Equals_ShouldWorkWithNull()
 	{
 		object? obj = null;
@@ -36,6 +25,17 @@ public sealed partial class VerifyInvokedTests
 		_ = mock.Equals(null);
 
 		await That(mock.VerifyMock.Invoked.Equals(It.Is(obj))).Once();
+	}
+
+	[Fact]
+	public async Task Equals_WithOtherOverload_ShouldWork()
+	{
+		object obj = new();
+		IMethodService mock = Mock.Create<IMethodService>();
+
+		_ = mock.Equals(3);
+
+		await That(mock.VerifyMock.Invoked.Equals(It.Is(obj))).Never();
 	}
 
 	[Fact]
@@ -57,6 +57,17 @@ public sealed partial class VerifyInvokedTests
 		sut.Multiply(2, 4);
 
 		await That(sut.VerifyMock.Invoked.Subtract(It.IsAny<int>(), It.IsAny<int?>())).Never();
+	}
+
+	[Fact]
+	public async Task MethodWithDifferentName_WithParameters_ShouldNotMatch()
+	{
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+
+		sut.Subtract(1, 4);
+		sut.Subtract(2, 4);
+
+		await That(sut.VerifyMock.Invoked.Multiply(Match.AnyParameters())).Never();
 	}
 
 	[Fact]

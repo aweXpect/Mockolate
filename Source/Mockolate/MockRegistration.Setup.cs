@@ -307,6 +307,7 @@ public partial class MockRegistration
 			}
 		}
 
+		[ExcludeFromCodeCoverage]
 		private sealed class NamedParameterValueComparer : IEqualityComparer<NamedParameterValue>
 		{
 			public static readonly NamedParameterValueComparer Instance = new();

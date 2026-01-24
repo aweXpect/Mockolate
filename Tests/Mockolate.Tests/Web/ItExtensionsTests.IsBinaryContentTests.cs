@@ -58,11 +58,12 @@ public sealed partial class ItExtensionsTests
 
 			await That(result.StatusCode).IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
-		
+
 #if !NETFRAMEWORK
 		[Fact]
 		public async Task ShouldSupportMonitoring()
 		{
+			int callbackCount = 0;
 			List<ByteArrayContent> responses =
 			[
 				new([]),
@@ -71,7 +72,9 @@ public sealed partial class ItExtensionsTests
 			];
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method.PostAsync(It.IsAny<Uri>(),
-				It.IsBinaryContent().Monitor(out IParameterMonitor<HttpContent?> monitor));
+				It.IsBinaryContent()
+					.Do(_ => callbackCount++)
+					.Monitor(out IParameterMonitor<HttpContent?> monitor));
 
 			foreach (ByteArrayContent response in responses)
 			{
@@ -81,6 +84,7 @@ public sealed partial class ItExtensionsTests
 			await That(
 					(await Task.WhenAll(monitor.Values.Select(c => c!.ReadAsByteArrayAsync()))).Select(x => x.Length))
 				.IsEqualTo([0, 1, 3,]);
+			await That(callbackCount).IsEqualTo(3);
 		}
 #endif
 
