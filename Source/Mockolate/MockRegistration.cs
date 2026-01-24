@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -184,7 +185,7 @@ public partial class MockRegistration
 			}
 			catch (TargetInvocationException ex) when (ex.InnerException is not null)
 			{
-				throw ex.InnerException;
+				ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
 			}
 		}
 	}
