@@ -15,76 +15,16 @@ public sealed partial class ItExtensionsTests
 	{
 		[Theory]
 		[InlineData(new byte[0], new byte[0], true)]
-		[InlineData(new byte[]
-		{
-			0x1,
-		}, new byte[]
-		{
-			0x1,
-		}, true)]
-		[InlineData(new byte[]
-		{
-			0x1,
-		}, new byte[]
-		{
-			0x2,
-		}, false)]
-		[InlineData(new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, new byte[]
-		{
-			0x1,
-		}, true)]
-		[InlineData(new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, new byte[]
-		{
-			0x2,
-		}, true)]
-		[InlineData(new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, new byte[]
-		{
-			0x3,
-		}, true)]
-		[InlineData(new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, new byte[]
-		{
-			0x1, 0x2,
-		}, true)]
-		[InlineData(new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, new byte[]
-		{
-			0x2, 0x3,
-		}, true)]
-		[InlineData(new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, new byte[]
-		{
-			0x1, 0x3,
-		}, false)]
-		[InlineData(new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, true)]
-		[InlineData(new byte[]
-		{
-			0x1, 0x2, 0x3,
-		}, new byte[]
-		{
-			0x1, 0x2, 0x3, 0x4,
-		}, false)]
+		[InlineData(new byte[] { 0x1, }, new byte[] { 0x1, }, true)]
+		[InlineData(new byte[] { 0x1, }, new byte[] { 0x2, }, false)]
+		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, }, true)]
+		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x2, }, true)]
+		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x3, }, true)]
+		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, 0x2, }, true)]
+		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x2, 0x3, }, true)]
+		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, 0x3, }, false)]
+		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, 0x2, 0x3, }, true)]
+		[InlineData(new byte[] { 0x1, 0x2, 0x3, }, new byte[] { 0x1, 0x2, 0x3, 0x4, }, false)]
 		public async Task Containing_ShouldCheckForEquality(byte[] body, byte[] expected, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -101,34 +41,10 @@ public sealed partial class ItExtensionsTests
 
 		[Theory]
 		[InlineData(new byte[0], new byte[0], true)]
-		[InlineData(new byte[]
-		{
-			0x66,
-		}, new byte[]
-		{
-			0x66,
-		}, true)]
-		[InlineData(new byte[]
-		{
-			0x66,
-		}, new byte[]
-		{
-			0x67,
-		}, false)]
-		[InlineData(new byte[]
-		{
-			0x66, 0x67,
-		}, new byte[]
-		{
-			0x67,
-		}, false)]
-		[InlineData(new byte[]
-		{
-			0x66, 0x67,
-		}, new byte[]
-		{
-			0x67, 0x68, 0x69,
-		}, false)]
+		[InlineData(new byte[] { 0x66, }, new byte[] { 0x66, }, true)]
+		[InlineData(new byte[] { 0x66, }, new byte[] { 0x67, }, false)]
+		[InlineData(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, }, false)]
+		[InlineData(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, 0x68, 0x69, }, false)]
 		public async Task EqualTo_ShouldCheckForEquality(byte[] body, byte[] expected, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
