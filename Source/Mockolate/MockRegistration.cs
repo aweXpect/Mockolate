@@ -182,9 +182,9 @@ public partial class MockRegistration
 			{
 				method.Invoke(target, parameters);
 			}
-			catch (TargetInvocationException ex)
+			catch (TargetInvocationException ex) when (ex.InnerException is not null)
 			{
-				throw ex.InnerException ?? ex;
+				throw ex.InnerException;
 			}
 		}
 	}
