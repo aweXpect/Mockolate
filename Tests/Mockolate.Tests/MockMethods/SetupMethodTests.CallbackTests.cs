@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockMethods;
@@ -452,6 +453,22 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1));
+
+				sut.Method1(-1);
+				sut.Method1(1);
+				sut.Method1(0);
+				sut.Method1(3);
+
+				await That(values1.Values).IsEqualTo([1, 3,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -740,6 +757,24 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2));
+
+				sut.Method2(-1, 4);
+				sut.Method2(1, 4);
+				sut.Method2(2, 3);
+				sut.Method2(1, -1);
+
+				await That(values1.Values).IsEqualTo([1, 2,]);
+				await That(values2.Values).IsEqualTo([4, 3,]);
 			}
 
 			[Fact]
@@ -1040,6 +1075,27 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3));
+
+				sut.Method3(-1, 2, 3);
+				sut.Method3(1, 2, 3);
+				sut.Method3(1, -2, 3);
+				sut.Method3(2, 3, 4);
+				sut.Method3(1, 2, -3);
+
+				await That(values1.Values).IsEqualTo([1, 2,]);
+				await That(values2.Values).IsEqualTo([2, 3,]);
+				await That(values3.Values).IsEqualTo([3, 4,]);
 			}
 
 			[Fact]
@@ -1345,6 +1401,31 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values4));
+
+				sut.Method4(-1, 2, 3, 4);
+				sut.Method4(1, 2, 3, 4);
+				sut.Method4(1, -2, 3, 4);
+				sut.Method4(2, 3, 4, 5);
+				sut.Method4(1, 2, -3, 4);
+				sut.Method4(3, 4, 5, 6);
+				sut.Method4(1, 2, 3, -4);
+
+				await That(values1.Values).IsEqualTo([1, 2, 3,]);
+				await That(values2.Values).IsEqualTo([2, 3, 4,]);
+				await That(values3.Values).IsEqualTo([3, 4, 5,]);
+				await That(values4.Values).IsEqualTo([4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1666,6 +1747,35 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values4),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values5));
+
+				sut.Method5(-1, 2, 3, 4, 5);
+				sut.Method5(1, 2, 3, 4, 5);
+				sut.Method5(1, -2, 3, 4, 5);
+				sut.Method5(2, 3, 4, 5, 6);
+				sut.Method5(1, 2, -3, 4, 5);
+				sut.Method5(3, 4, 5, 6, 7);
+				sut.Method5(1, 2, 3, -4, 5);
+				sut.Method5(4, 5, 6, 7, 8);
+				sut.Method5(1, 2, 3, -4, 5);
+
+				await That(values1.Values).IsEqualTo([1, 2, 3, 4,]);
+				await That(values2.Values).IsEqualTo([2, 3, 4, 5,]);
+				await That(values3.Values).IsEqualTo([3, 4, 5, 6,]);
+				await That(values4.Values).IsEqualTo([4, 5, 6, 7,]);
+				await That(values5.Values).IsEqualTo([5, 6, 7, 8,]);
 			}
 
 			[Fact]
@@ -2167,6 +2277,22 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method1(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1));
+
+				sut.Method1(-1);
+				sut.Method1(1);
+				sut.Method1(0);
+				sut.Method1(3);
+
+				await That(values1.Values).IsEqualTo([1, 3,]);
+			}
+
+			[Fact]
 			public async Task ShouldInvokeCallbacksInSequence()
 			{
 				int callCount1 = 0;
@@ -2454,6 +2580,24 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method2(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2));
+
+				sut.Method2(-1, 4);
+				sut.Method2(1, 4);
+				sut.Method2(2, 3);
+				sut.Method2(1, -1);
+
+				await That(values1.Values).IsEqualTo([1, 2,]);
+				await That(values2.Values).IsEqualTo([4, 3,]);
 			}
 
 			[Fact]
@@ -2753,6 +2897,27 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method3(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3));
+
+				sut.Method3(-1, 2, 3);
+				sut.Method3(1, 2, 3);
+				sut.Method3(1, -2, 3);
+				sut.Method3(2, 3, 4);
+				sut.Method3(1, 2, -3);
+
+				await That(values1.Values).IsEqualTo([1, 2,]);
+				await That(values2.Values).IsEqualTo([2, 3,]);
+				await That(values3.Values).IsEqualTo([3, 4,]);
 			}
 
 			[Fact]
@@ -3057,6 +3222,31 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method4(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values4));
+
+				sut.Method4(-1, 2, 3, 4);
+				sut.Method4(1, 2, 3, 4);
+				sut.Method4(1, -2, 3, 4);
+				sut.Method4(2, 3, 4, 5);
+				sut.Method4(1, 2, -3, 4);
+				sut.Method4(3, 4, 5, 6);
+				sut.Method4(1, 2, 3, -4);
+
+				await That(values1.Values).IsEqualTo([1, 2, 3,]);
+				await That(values2.Values).IsEqualTo([2, 3, 4,]);
+				await That(values3.Values).IsEqualTo([3, 4, 5,]);
+				await That(values4.Values).IsEqualTo([4, 5, 6,]);
 			}
 
 			[Fact]
@@ -3377,6 +3567,35 @@ public sealed partial class SetupMethodTests
 
 				await That(callCount1).IsEqualTo(3);
 				await That(callCount2).IsEqualTo(2);
+			}
+
+			[Fact]
+			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
+			{
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method5(
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values4),
+					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values5));
+
+				sut.Method5(-1, 2, 3, 4, 5);
+				sut.Method5(1, 2, 3, 4, 5);
+				sut.Method5(1, -2, 3, 4, 5);
+				sut.Method5(2, 3, 4, 5, 6);
+				sut.Method5(1, 2, -3, 4, 5);
+				sut.Method5(3, 4, 5, 6, 7);
+				sut.Method5(1, 2, 3, -4, 5);
+				sut.Method5(4, 5, 6, 7, 8);
+				sut.Method5(1, 2, 3, -4, 5);
+
+				await That(values1.Values).IsEqualTo([1, 2, 3, 4,]);
+				await That(values2.Values).IsEqualTo([2, 3, 4, 5,]);
+				await That(values3.Values).IsEqualTo([3, 4, 5, 6,]);
+				await That(values4.Values).IsEqualTo([4, 5, 6, 7,]);
+				await That(values5.Values).IsEqualTo([5, 6, 7, 8,]);
 			}
 
 			[Fact]

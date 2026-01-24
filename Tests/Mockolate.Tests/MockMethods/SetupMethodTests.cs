@@ -62,6 +62,114 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task HasOutParameter_WhenNameAndTypeMatches_ShouldReturnParameter()
+	{
+		IOutParameter<int> expectedParameter = It.IsAnyOut<int>();
+
+		bool result = MyMethodSetup.MyHasOutParameter(
+			[new NamedParameter("foo", (IParameter)expectedParameter),],
+			"foo",
+			out IOutParameter<int>? parameter);
+
+		await That(result).IsTrue();
+		await That(parameter).IsSameAs(expectedParameter);
+	}
+
+	[Fact]
+	public async Task HasOutParameter_WhenNamedParameterIsNull_ShouldIgnore()
+	{
+		bool result = MyMethodSetup.MyHasOutParameter(
+			[null,],
+			"foo",
+			out IOutParameter<int>? parameter);
+
+		await That(result).IsFalse();
+		await That(parameter).IsNull();
+	}
+
+	[Fact]
+	public async Task HasOutParameter_WhenNameIsDifferent_ShouldIgnore()
+	{
+		IOutParameter<int> expectedParameter = It.IsAnyOut<int>();
+
+		bool result = MyMethodSetup.MyHasOutParameter(
+			[new NamedParameter("FOO", (IParameter)expectedParameter),],
+			"foo",
+			out IOutParameter<int>? parameter);
+
+		await That(result).IsFalse();
+		await That(parameter).IsNull();
+	}
+
+	[Fact]
+	public async Task HasOutParameter_WhenTypeIsDifferent_ShouldIgnore()
+	{
+		IOutParameter<int> expectedParameter = It.IsAnyOut<int>();
+
+		bool result = MyMethodSetup.MyHasOutParameter(
+			[new NamedParameter("foo", (IParameter)expectedParameter),],
+			"foo",
+			out IOutParameter<long>? parameter);
+
+		await That(result).IsFalse();
+		await That(parameter).IsNull();
+	}
+
+	[Fact]
+	public async Task HasRefParameter_WhenNameAndTypeMatches_ShouldReturnParameter()
+	{
+		IRefParameter<int> expectedParameter = It.IsAnyRef<int>();
+
+		bool result = MyMethodSetup.MyHasRefParameter(
+			[new NamedParameter("foo", (IParameter)expectedParameter),],
+			"foo",
+			out IRefParameter<int>? parameter);
+
+		await That(result).IsTrue();
+		await That(parameter).IsSameAs(expectedParameter);
+	}
+
+	[Fact]
+	public async Task HasRefParameter_WhenNamedParameterIsNull_ShouldIgnore()
+	{
+		bool result = MyMethodSetup.MyHasRefParameter(
+			[null,],
+			"foo",
+			out IRefParameter<int>? parameter);
+
+		await That(result).IsFalse();
+		await That(parameter).IsNull();
+	}
+
+	[Fact]
+	public async Task HasRefParameter_WhenNameIsDifferent_ShouldIgnore()
+	{
+		IRefParameter<int> expectedParameter = It.IsAnyRef<int>();
+
+		bool result = MyMethodSetup.MyHasRefParameter(
+			[new NamedParameter("FOO", (IParameter)expectedParameter),],
+			"foo",
+			out IRefParameter<int>? parameter);
+
+		await That(result).IsFalse();
+		await That(parameter).IsNull();
+	}
+
+	[Fact]
+	public async Task HasRefParameter_WhenTypeIsDifferent_ShouldIgnore()
+	{
+		IRefParameter<int> expectedParameter = It.IsAnyRef<int>();
+
+		bool result = MyMethodSetup.MyHasRefParameter(
+			[new NamedParameter("foo", (IParameter)expectedParameter),],
+			"foo",
+			out IRefParameter<long>? parameter);
+
+		await That(result).IsFalse();
+		await That(parameter).IsNull();
+	}
+
+	[Fact]
 	public async Task HasReturnCalls_ShouldDefaultToFalse()
 	{
 		MyMethodSetup sut = new();
@@ -1016,6 +1124,14 @@ public sealed partial class SetupMethodTests
 		public bool GetHasReturnCalls()
 			=> base.HasReturnCalls();
 
+		public static bool MyHasOutParameter<T>(NamedParameter?[] namedParameters, string parameterName,
+			out IOutParameter<T>? parameter)
+			=> HasOutParameter(namedParameters, parameterName, out parameter);
+
+		public static bool MyHasRefParameter<T>(NamedParameter?[] namedParameters, string parameterName,
+			out IRefParameter<T>? parameter)
+			=> HasRefParameter(namedParameters, parameterName, out parameter);
+
 		protected override bool? GetSkipBaseClass()
 			=> throw new NotSupportedException();
 
@@ -1134,6 +1250,27 @@ public sealed partial class SetupMethodTests
 		string Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
 		string Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
 		string UniqueMethodWithParameters(int p1, int p2);
+	}
+
+	public class ReturnMethodSetupTest
+	{
+		public virtual string Method0()
+			=> "foo";
+
+		public virtual string Method1(int p1)
+			=> $"foo-{p1}";
+
+		public virtual string Method2(int p1, int p2)
+			=> $"foo-{p1}-{p2}";
+
+		public virtual string Method3(int p1, int p2, int p3)
+			=> $"foo-{p1}-{p2}-{p3}";
+
+		public virtual string Method4(int p1, int p2, int p3, int p4)
+			=> $"foo-{p1}-{p2}-{p3}-{p4}";
+
+		public virtual string Method5(int p1, int p2, int p3, int p4, int p5)
+			=> $"foo-{p1}-{p2}-{p3}-{p4}-{p5}";
 	}
 
 	public interface IVoidMethodSetupTest
