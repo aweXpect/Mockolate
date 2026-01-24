@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using Mockolate.Internals;
@@ -120,14 +121,15 @@ public static partial class ItExtensions
 				return false;
 			}
 
-			if (value is not StringContent)
-			{
-				return false;
-			}
-
 			if (_body is not null)
 			{
-				string content = value.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+#if NET8_0_OR_GREATER
+				Stream stream = value.ReadAsStream();
+#else
+				Stream stream = value.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+#endif
+				using StreamReader reader = new(stream);
+				string content = reader.ReadToEnd();
 				switch (_bodyMatchType)
 				{
 					case BodyMatchType.Exact when

@@ -121,6 +121,20 @@ public sealed partial class ItExtensionsTests
 		}
 
 		[Theory]
+		[InlineData("https://www.aweXpect.com")]
+		[InlineData(443)]
+		[InlineData(null)]
+		public async Task WhenTypeDoesNotMatch_ShouldReturnFalse(object? value)
+		{
+			ItExtensions.IUriParameter sut = It.IsUri();
+			IParameter parameter = (IParameter)sut;
+
+			bool result = parameter.Matches(value);
+
+			await That(result).IsFalse();
+		}
+
+		[Theory]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "www.awexpect.com", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*awexpect*", true)]
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "*aweXpect*", true)]

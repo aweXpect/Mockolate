@@ -1,3 +1,4 @@
+using System.IO;
 using System.Net.Http;
 #if !NET8_0_OR_GREATER
 using System.Linq;
@@ -77,7 +78,14 @@ public static partial class ItExtensions
 
 			if (_body is not null)
 			{
-				byte[] content = value.ReadAsByteArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+#if NET8_0_OR_GREATER
+				Stream stream = value.ReadAsStream();
+#else
+				Stream stream = value.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+#endif
+				using MemoryStream ms = new();
+				stream.CopyTo(ms);
+				byte[] content = ms.ToArray();
 				switch (_bodyMatchType)
 				{
 					case BodyMatchType.Exact when
