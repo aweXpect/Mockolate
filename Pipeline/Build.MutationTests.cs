@@ -20,16 +20,16 @@ using Project = Nuke.Common.ProjectModel.Project;
 
 namespace Build;
 
-partial class Build
+internal partial class Build
 {
 	private static readonly bool DisableMutationTests = false;
-	static string MutationCommentBody = "";
+	private static string MutationCommentBody = "";
 
-	Target MutationTests => _ => _
+	private Target MutationTests => _ => _
 		.DependsOn(MutationTestExecution)
 		.DependsOn(MutationTestComment);
 
-	Target MutationTestExecution => _ => _
+	private Target MutationTestExecution => _ => _
 		.DependsOn(Compile)
 		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.Executes(() =>
@@ -48,7 +48,10 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.Mockolate, [Solution.Tests.Mockolate_Tests,]
+					Solution.Mockolate, [
+						Solution.Tests.Mockolate_Tests,
+						Solution.Tests.Mockolate_Internal_Tests,
+					]
 				},
 			};
 
@@ -110,7 +113,7 @@ partial class Build
 			}
 		});
 
-	Target MutationTestComment => _ => _
+	private Target MutationTestComment => _ => _
 		.After(MutationTestExecution)
 		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.OnlyWhenDynamic(() => GitHubActions.IsPullRequest)
@@ -124,10 +127,10 @@ partial class Build
 			}
 
 			string body = "## :alien: Mutation Results"
-						  + Environment.NewLine
-						  + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/pull/{prId}/merge)"
-						  + Environment.NewLine
-						  + MutationCommentBody;
+			              + Environment.NewLine
+			              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/pull/{prId}/merge)"
+			              + Environment.NewLine
+			              + MutationCommentBody;
 			File.WriteAllText(ArtifactsDirectory / "PR_Comment.md", body);
 
 			if (prId != null)
@@ -136,7 +139,7 @@ partial class Build
 			}
 		});
 
-	Target MutationTestDashboard => _ => _
+	private Target MutationTestDashboard => _ => _
 		.After(MutationTestExecution)
 		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.Executes(async () =>
@@ -146,7 +149,10 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.Mockolate, [Solution.Tests.Mockolate_Tests,]
+					Solution.Mockolate, [
+						Solution.Tests.Mockolate_Tests,
+						Solution.Tests.Mockolate_Internal_Tests,
+					]
 				},
 			};
 			string apiKey = Environment.GetEnvironmentVariable("STRYKER_DASHBOARD_API_KEY");
@@ -200,7 +206,7 @@ partial class Build
 			}
 		});
 
-	string CreateMutationCommentBody(string projectName)
+	private string CreateMutationCommentBody(string projectName)
 	{
 		string[] fileContent = File.ReadAllLines(ArtifactsDirectory / "Stryker" / "reports" / "mutation-report.md");
 		StringBuilder sb = new();
@@ -230,8 +236,8 @@ partial class Build
 			}
 
 			if (count == 0 &&
-				line.StartsWith("|") &&
-				line.Contains("| N\\/A"))
+			    line.StartsWith("|") &&
+			    line.Contains("| N\\/A"))
 			{
 				continue;
 			}
@@ -243,5 +249,5 @@ partial class Build
 		return body;
 	}
 
-	static string PathForJson(Project project) => $"\"{project.Path.ToString().Replace(@"\", @"\\")}\"";
+	private static string PathForJson(Project project) => $"\"{project.Path.ToString().Replace(@"\", @"\\")}\"";
 }

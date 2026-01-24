@@ -1,5 +1,6 @@
 [assembly: System.Reflection.AssemblyMetadata("IsTrimmable", "True")]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/aweXpect/Mockolate.git")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(@"Mockolate.Internal.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100917b2e28a0dcd1de99a208f70383c300caa03729b1f9cdad97cb11a127f822aa36aad08225cc24312de1fadf3aeafc7ab6c2c4b588d5e88c2b61f0a56e02df1b6aa11d0c3e4ee6675f24b20dbd75ee4fc229f82b0eeeafe1a5bc376d5e5f9a5c4320267921d9a962cc5f58ccc94e7127db3119bafedfb76fd3a7b1f2d22155ac")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
 namespace Mockolate
 {

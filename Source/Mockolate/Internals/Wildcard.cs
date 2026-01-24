@@ -10,7 +10,7 @@ internal readonly struct Wildcard
 
 	private static readonly ConcurrentDictionary<(string RegexPattern, bool IgnoreCase), Wildcard> RegexCache = new();
 
-	public static Wildcard Pattern(string pattern, bool ignoreCase, TimeSpan? timeout = null)
+	public static Wildcard Pattern(string pattern, bool ignoreCase)
 	{
 		Wildcard wildcard = RegexCache.GetOrAdd((ToRegularExpression(pattern), ignoreCase),
 			item => new Wildcard(
@@ -19,7 +19,7 @@ internal readonly struct Wildcard
 					item.IgnoreCase
 						? RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled
 						: RegexOptions.Multiline | RegexOptions.Compiled,
-					timeout ?? Regex.InfiniteMatchTimeout)));
+					Regex.InfiniteMatchTimeout)));
 		return wildcard;
 	}
 

@@ -17,13 +17,31 @@ public sealed class TypeFormatterTests
 			new PropertySetup<int>("Foo").ToString(), "int Foo"
 		},
 		{
+			new PropertySetup<uint>("Foo").ToString(), "uint Foo"
+		},
+		{
+			new PropertySetup<nint>("Foo").ToString(), "nint Foo"
+		},
+		{
+			new PropertySetup<nuint>("Foo").ToString(), "nuint Foo"
+		},
+		{
 			new PropertySetup<byte>("Foo").ToString(), "byte Foo"
+		},
+		{
+			new PropertySetup<sbyte>("Foo").ToString(), "sbyte Foo"
 		},
 		{
 			new PropertySetup<short>("Foo").ToString(), "short Foo"
 		},
 		{
+			new PropertySetup<ushort>("Foo").ToString(), "ushort Foo"
+		},
+		{
 			new PropertySetup<long>("Foo").ToString(), "long Foo"
+		},
+		{
+			new PropertySetup<ulong>("Foo").ToString(), "ulong Foo"
 		},
 		{
 			new PropertySetup<float>("Foo").ToString(), "float Foo"
