@@ -12,6 +12,19 @@ namespace Mockolate.Verify;
 /// </summary>
 public static class VerificationResultExtensions
 {
+	private static string ToTimes(this int amount, string verb = "")
+		=> (amount, verb) switch
+		{
+			(0, "") => "never",
+			(1, "") => "once",
+			(2, "") => "twice",
+			(_, "") => $"{amount} times",
+			(0, _) => $"never {verb}",
+			(1, _) => $"{verb} once",
+			(2, _) => $"{verb} twice",
+			(_, _) => $"{verb} {amount} times",
+		};
+
 	extension<TMock>(VerificationResult<TMock> verificationResult)
 	{
 		/// <summary>
@@ -87,7 +100,8 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     Verifies that the mock was invoked between <paramref name="minimum" /> and <paramref name="maximum" /> times (inclusive).
+		///     Verifies that the mock was invoked between <paramref name="minimum" /> and <paramref name="maximum" /> times
+		///     (inclusive).
 		/// </summary>
 		public void Between(int minimum, int maximum)
 		{
@@ -98,7 +112,8 @@ public static class VerificationResultExtensions
 
 			if (maximum < minimum)
 			{
-				throw new ArgumentOutOfRangeException(nameof(maximum), "Maximum value must be greater than or equal to minimum.");
+				throw new ArgumentOutOfRangeException(nameof(maximum),
+					"Maximum value must be greater than or equal to minimum.");
 			}
 
 			IVerificationResult result = verificationResult;
@@ -225,7 +240,9 @@ public static class VerificationResultExtensions
 		/// <summary>
 		///     Verifies that the mock was invoked according to the <paramref name="predicate" />.
 		/// </summary>
-		public void Times(Func<int, bool> predicate, [CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
+		public void Times(Func<int, bool> predicate,
+			[CallerArgumentExpression("predicate")]
+			string doNotPopulateThisValue = "")
 		{
 			IVerificationResult result = verificationResult;
 			int found = 0;
@@ -280,10 +297,12 @@ public static class VerificationResultExtensions
 
 			bool VerifyInteractions(IInteraction[] interactions, IVerificationResult currentResult)
 			{
-				bool hasInteractionAfter = interactions.Any(x => x.Index > after);
-				after = hasInteractionAfter
-					? interactions.Where(x => x.Index > after).Min(x => x.Index)
-					: int.MaxValue;
+				IInteraction? firstInteraction = interactions
+					.Where(x => x.Index > after)
+					.OrderBy(x => x.Index)
+					.FirstOrDefault();
+				bool hasInteractionAfter = firstInteraction is not null;
+				after = firstInteraction?.Index ?? int.MaxValue;
 				if (!hasInteractionAfter && error is null)
 				{
 					error = interactions.Length > 0
@@ -295,17 +314,4 @@ public static class VerificationResultExtensions
 			}
 		}
 	}
-
-	private static string ToTimes(this int amount, string verb = "")
-		=> (amount, verb) switch
-		{
-			(0, "") => "never",
-			(1, "") => "once",
-			(2, "") => "twice",
-			(_, "") => $"{amount} times",
-			(0, _) => $"never {verb}",
-			(1, _) => $"{verb} once",
-			(2, _) => $"{verb} twice",
-			(_, _) => $"{verb} {amount} times",
-		};
 }
