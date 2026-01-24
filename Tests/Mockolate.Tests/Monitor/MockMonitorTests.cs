@@ -6,6 +6,21 @@ namespace Mockolate.Tests.Monitor;
 public sealed class MockMonitorTests
 {
 	[Fact]
+	public async Task ClearAllInteractions_WhenMonitorIsRunning_ShouldClearInternalCollection()
+	{
+		IMyService sut = Mock.Create<IMyService>();
+		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
+		MockMonitor<IMyService> monitor = new(mock);
+
+		sut.IsValid(1);
+		using IDisposable disposable = monitor.Run();
+		sut.IsValid(1);
+		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
+		sut.SetupMock.ClearAllInteractions();
+		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Never();
+	}
+
+	[Fact]
 	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
 	{
 		IMyService sut = Mock.Create<IMyService>();
