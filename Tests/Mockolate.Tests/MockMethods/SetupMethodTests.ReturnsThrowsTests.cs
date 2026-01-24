@@ -27,6 +27,24 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task For_ShouldLimitMatches()
+			{
+				List<string> results = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Returns("a").When(v => v > 1).For(2);
+
+				results.Add(sut.Method0());
+				results.Add(sut.Method0());
+				results.Add(sut.Method0());
+				results.Add(sut.Method0());
+				results.Add(sut.Method0());
+
+				await That(results).IsEqualTo(["", "", "a", "a", "",]);
+			}
+
+			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
 				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
@@ -2054,6 +2072,31 @@ public sealed partial class SetupMethodTests
 
 				await That(Act).Throws<ArgumentOutOfRangeException>()
 					.WithMessage("Times must be greater than zero.").AsPrefix();
+			}
+
+			[Fact]
+			public async Task For_ShouldLimitMatches()
+			{
+				List<string> results = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Throws(new Exception("a")).When(v => v > 1).For(2);
+
+				for (int i = 0; i < 5; i++)
+				{
+					try
+					{
+						sut.Method0();
+						results.Add("");
+					}
+					catch (Exception ex)
+					{
+						results.Add(ex.Message);
+					}
+				}
+
+				await That(results).IsEqualTo(["", "", "a", "a", "",]);
 			}
 
 			[Fact]

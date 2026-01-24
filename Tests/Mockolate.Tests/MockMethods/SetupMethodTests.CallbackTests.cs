@@ -40,6 +40,44 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
+			public async Task For_InParallel_ShouldLimitMatches()
+			{
+				List<int> callIndices = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(v => { callIndices.Add(v); }).InParallel().When(v => v > 1).For(2)
+					.Returns("a");
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callIndices).IsEqualTo([2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_ShouldLimitMatches()
+			{
+				List<int> callIndices = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(v => { callIndices.Add(v); }).When(v => v > 1).For(2)
+					.Returns("a");
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callIndices).IsEqualTo([2, 3,]);
+			}
+
+			[Fact]
 			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
@@ -1896,6 +1934,42 @@ public sealed partial class SetupMethodTests
 				sut.Method0(false);
 
 				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task For_InParallel_ShouldLimitMatches()
+			{
+				List<int> callIndices = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(v => { callIndices.Add(v); }).InParallel().When(v => v > 1).For(2);
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callIndices).IsEqualTo([2, 3,]);
+			}
+
+			[Fact]
+			public async Task For_ShouldLimitMatches()
+			{
+				List<int> callIndices = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(v => { callIndices.Add(v); }).When(v => v > 1).For(2);
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callIndices).IsEqualTo([2, 3,]);
 			}
 
 			[Fact]
