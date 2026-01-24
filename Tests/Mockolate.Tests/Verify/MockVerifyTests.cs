@@ -56,6 +56,20 @@ public class MockVerifyTests
 	}
 
 	[Fact]
+	public async Task ThatAllInteractionsAreVerified_MultipleVerifications_ShouldBeCombined()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+		sut.Dispense("Dark", 1);
+		sut.Dispense("Dark", 2);
+
+		sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.Is(1)).Once();
+		sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.Is(2)).Once();
+
+		await That(sut.VerifyMock.ThatAllInteractionsAreVerified()).IsTrue();
+	}
+
+	[Fact]
 	public async Task ThatAllInteractionsAreVerified_WithoutInteractions_ShouldReturnTrue()
 	{
 		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
