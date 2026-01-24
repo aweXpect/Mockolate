@@ -70,7 +70,7 @@ public abstract class MockMonitor
 	private void OnClearing(object? sender, EventArgs e)
 	{
 		_monitoringStart = 0;
-		UpdateInteractions();
+		Interactions.Clear();
 	}
 
 	/// <summary>
