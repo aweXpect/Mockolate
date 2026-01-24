@@ -78,11 +78,13 @@ public partial class MockRegistration
 					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x.Value?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
 			}
 
-			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters.Select(x => x.Value).ToArray()));
+			return new MethodSetupResult<TResult>(null, Behavior,
+				defaultValue(parameters.Select(x => x.Value).ToArray()));
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters.Select(x => x.Value).ToArray())));
+			matchingSetup.Invoke(methodInvocation, Behavior,
+				() => defaultValue(parameters.Select(x => x.Value).ToArray())));
 	}
 
 	/// <summary>
@@ -176,7 +178,14 @@ public partial class MockRegistration
 	{
 		foreach ((object? target, MethodInfo method) in GetEventHandlers(eventName))
 		{
-			method.Invoke(target, parameters);
+			try
+			{
+				method.Invoke(target, parameters);
+			}
+			catch (TargetInvocationException ex)
+			{
+				throw ex.InnerException ?? ex;
+			}
 		}
 	}
 
