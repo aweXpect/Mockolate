@@ -9,7 +9,7 @@ public sealed class TypeFormatterTests
 	[Fact]
 	public async Task GenericArguments_ShouldFormatToName()
 	{
-		MethodInfo methodInfo = GetType().GetMethod(nameof(MyMethod), BindingFlags.NonPublic | BindingFlags.Instance)!;
+		MethodInfo methodInfo = GetType().GetMethod(nameof(MyMethod), BindingFlags.NonPublic | BindingFlags.Static)!;
 		Type type = methodInfo.GetGenericArguments().First();
 
 		string result = type.FormatType();
@@ -27,9 +27,8 @@ public sealed class TypeFormatterTests
 		await That(result).IsEqualTo("TypeFormatterTests.MyType");
 	}
 
-	private class MyType
-	{
-	}
+	private class MyType;
 
-	private void MyMethod<T>() { }
+	// ReSharper disable once UnusedTypeParameter
+	private static void MyMethod<T>() { }
 }
