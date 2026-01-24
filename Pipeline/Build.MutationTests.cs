@@ -20,16 +20,16 @@ using Project = Nuke.Common.ProjectModel.Project;
 
 namespace Build;
 
-internal partial class Build
+partial class Build
 {
 	private static readonly bool DisableMutationTests = false;
 	private static string MutationCommentBody = "";
 
-	private Target MutationTests => _ => _
+	Target MutationTests => _ => _
 		.DependsOn(MutationTestExecution)
 		.DependsOn(MutationTestComment);
 
-	private Target MutationTestExecution => _ => _
+	Target MutationTestExecution => _ => _
 		.DependsOn(Compile)
 		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.Executes(() =>
@@ -113,7 +113,7 @@ internal partial class Build
 			}
 		});
 
-	private Target MutationTestComment => _ => _
+	Target MutationTestComment => _ => _
 		.After(MutationTestExecution)
 		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.OnlyWhenDynamic(() => GitHubActions.IsPullRequest)
@@ -139,7 +139,7 @@ internal partial class Build
 			}
 		});
 
-	private Target MutationTestDashboard => _ => _
+	Target MutationTestDashboard => _ => _
 		.After(MutationTestExecution)
 		.OnlyWhenDynamic(() => !DisableMutationTests)
 		.Executes(async () =>
@@ -206,7 +206,7 @@ internal partial class Build
 			}
 		});
 
-	private string CreateMutationCommentBody(string projectName)
+	string CreateMutationCommentBody(string projectName)
 	{
 		string[] fileContent = File.ReadAllLines(ArtifactsDirectory / "Stryker" / "reports" / "mutation-report.md");
 		StringBuilder sb = new();
@@ -249,5 +249,5 @@ internal partial class Build
 		return body;
 	}
 
-	private static string PathForJson(Project project) => $"\"{project.Path.ToString().Replace(@"\", @"\\")}\"";
+	static string PathForJson(Project project) => $"\"{project.Path.ToString().Replace(@"\", @"\\")}\"";
 }
