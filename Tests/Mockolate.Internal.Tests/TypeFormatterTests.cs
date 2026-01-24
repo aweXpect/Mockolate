@@ -27,6 +27,17 @@ public sealed class TypeFormatterTests
 		await That(result).IsEqualTo("TypeFormatterTests.MyType");
 	}
 
+	[Fact]
+	public async Task ShouldFormatVoid()
+	{
+		MethodInfo methodInfo = GetType().GetMethod(nameof(MyMethod), BindingFlags.NonPublic | BindingFlags.Static)!;
+		Type type = methodInfo.ReturnType;
+
+		string result = type.FormatType();
+
+		await That(result).IsEqualTo("void");
+	}
+
 	private class MyType;
 
 	// ReSharper disable once UnusedTypeParameter

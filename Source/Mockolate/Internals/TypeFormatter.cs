@@ -86,7 +86,8 @@ internal static class TypeFormatter
 		}
 		else if (!AppendedPrimitiveAlias(value, stringBuilder))
 		{
-			if (value.IsNested && value.DeclaringType is not null)
+			// Handle nested types
+			if (value.DeclaringType is not null)
 			{
 				FormatType(value.DeclaringType, stringBuilder);
 				stringBuilder.Append('.');
