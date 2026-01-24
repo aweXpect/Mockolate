@@ -103,12 +103,13 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 	///     Determines whether the specified collection of named parameters contains a reference parameter of the given name
 	///     and type.
 	/// </summary>
-	protected static bool HasRefParameter<T>(NamedParameter[] namedParameters, string parameterName,
+	protected static bool HasRefParameter<T>(NamedParameter?[] namedParameters, string parameterName,
 		[NotNullWhen(true)] out IRefParameter<T>? parameter)
 	{
-		foreach (NamedParameter namedParameter in namedParameters)
+		foreach (NamedParameter? namedParameter in namedParameters)
 		{
-			if (namedParameter.Name.Equals(parameterName, StringComparison.Ordinal) &&
+			if (namedParameter is not null &&
+			    namedParameter.Name.Equals(parameterName, StringComparison.Ordinal) &&
 			    namedParameter.Parameter is IRefParameter<T> refParameter)
 			{
 				parameter = refParameter;
@@ -124,12 +125,13 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 	///     Determines whether the specified collection of named parameters contains an out parameter with the given name and
 	///     type.
 	/// </summary>
-	protected static bool HasOutParameter<T>(NamedParameter[] namedParameters, string parameterName,
+	protected static bool HasOutParameter<T>(NamedParameter?[] namedParameters, string parameterName,
 		[NotNullWhen(true)] out IOutParameter<T>? parameter)
 	{
-		foreach (NamedParameter namedParameter in namedParameters)
+		foreach (NamedParameter? namedParameter in namedParameters)
 		{
-			if (namedParameter.Name.Equals(parameterName, StringComparison.Ordinal) &&
+			if (namedParameter is not null &&
+			    namedParameter.Name.Equals(parameterName, StringComparison.Ordinal) &&
 			    namedParameter.Parameter is IOutParameter<T> outParameter)
 			{
 				parameter = outParameter;

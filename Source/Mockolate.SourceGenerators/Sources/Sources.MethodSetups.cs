@@ -580,10 +580,7 @@ internal static partial class Sources
 		sb.Append("\t\tprotected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tif (")
-			.Append(string.Join(" && ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is not null")))
-			.Append(" &&").AppendLine();
-		sb.Append("\t\t\t\tHasOutParameter([")
+		sb.Append("\t\t\tif (HasOutParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
@@ -599,10 +596,7 @@ internal static partial class Sources
 		sb.Append("\t\tprotected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tif (")
-			.Append(string.Join(" && ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is not null")))
-			.Append(" &&").AppendLine();
-		sb.Append("\t\t\t\tHasRefParameter([")
+		sb.Append("\t\t\tif (HasRefParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out IRefParameter<T>? refParameter))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
@@ -1166,10 +1160,7 @@ internal static partial class Sources
 		sb.Append("\t\tprotected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tif (")
-			.Append(string.Join(" && ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is not null")))
-			.Append(" &&").AppendLine();
-		sb.Append("\t\t\t\tHasOutParameter([")
+		sb.Append("\t\t\tif (HasOutParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out IOutParameter<T>? outParameter))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
@@ -1185,10 +1176,7 @@ internal static partial class Sources
 		sb.Append("\t\tprotected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tif (")
-			.Append(string.Join(" && ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x} is not null")))
-			.Append(" &&").AppendLine();
-		sb.Append("\t\t\t\tHasRefParameter([")
+		sb.Append("\t\t\tif (HasRefParameter([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameterName, out IRefParameter<T>? refParameter))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();

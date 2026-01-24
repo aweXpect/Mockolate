@@ -405,8 +405,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
-		if (_match1 is not null &&
-		    HasOutParameter([_match1,], parameterName, out IOutParameter<T>? outParameter))
+		if (HasOutParameter([_match1,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(defaultValueGenerator);
 		}
@@ -417,8 +416,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (_match1 is not null &&
-		    HasRefParameter([_match1,], parameterName, out IRefParameter<T>? refParameter))
+		if (HasRefParameter([_match1,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -651,8 +649,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
-		if (_match1 is not null && _match2 is not null &&
-		    HasOutParameter([_match1, _match2,], parameterName, out IOutParameter<T>? outParameter))
+		if (HasOutParameter([_match1, _match2,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(defaultValueGenerator);
 		}
@@ -663,8 +660,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (_match1 is not null && _match2 is not null &&
-		    HasRefParameter([_match1, _match2,], parameterName, out IRefParameter<T>? refParameter))
+		if (HasRefParameter([_match1, _match2,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -906,8 +902,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
-		if (_match1 is not null && _match2 is not null && _match3 is not null &&
-		    HasOutParameter([_match1, _match2, _match3,], parameterName, out IOutParameter<T>? outParameter))
+		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(defaultValueGenerator);
 		}
@@ -918,8 +913,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (_match1 is not null && _match2 is not null && _match3 is not null &&
-		    HasRefParameter([_match1, _match2, _match3,], parameterName, out IRefParameter<T>? refParameter))
+		if (HasRefParameter([_match1, _match2, _match3,], parameterName, out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
 		}
@@ -1167,8 +1161,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
 	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
-		if (_match1 is not null && _match2 is not null && _match3 is not null && _match4 is not null &&
-		    HasOutParameter([_match1, _match2, _match3, _match4,], parameterName,
+		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName,
 			    out IOutParameter<T>? outParameter))
 		{
 			return outParameter.GetValue(defaultValueGenerator);
@@ -1180,8 +1173,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
-		if (_match1 is not null && _match2 is not null && _match3 is not null && _match4 is not null &&
-		    HasRefParameter([_match1, _match2, _match3, _match4,], parameterName,
+		if (HasRefParameter([_match1, _match2, _match3, _match4,], parameterName,
 			    out IRefParameter<T>? refParameter))
 		{
 			return refParameter.GetValue(value);
