@@ -13,7 +13,6 @@ public sealed partial class SetupPropertyTests
 		setup.MyInitializeValue("f");
 
 		int result = setup.InvokeGetter<int>();
-
 		await That(result).IsEqualTo(0);
 	}
 
