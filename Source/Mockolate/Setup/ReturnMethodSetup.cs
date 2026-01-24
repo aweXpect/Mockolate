@@ -420,11 +420,6 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
-		if (_returnCallbacks.Count == 0)
-		{
-			return defaultValueGenerator();
-		}
-
 		if (!TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			throw new MockException(
@@ -709,11 +704,6 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
-		if (_returnCallbacks.Count == 0)
-		{
-			return defaultValueGenerator();
-		}
-
 		if (!TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			throw new MockException(
@@ -1013,11 +1003,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
-		if (_returnCallbacks.Count == 0)
-		{
-			return defaultValueGenerator();
-		}
-
 		if (!TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			throw new MockException(
@@ -1335,11 +1320,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 	{
-		if (_returnCallbacks.Count == 0)
-		{
-			return defaultValueGenerator();
-		}
-
 		if (!TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
 		{
 			throw new MockException(
