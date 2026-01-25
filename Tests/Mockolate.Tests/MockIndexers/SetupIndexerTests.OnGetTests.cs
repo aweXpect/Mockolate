@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Mockolate.Interactions;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockIndexers;
@@ -7,6 +9,128 @@ public sealed partial class SetupIndexerTests
 {
 	public sealed class OnGetTests
 	{
+		[Fact]
+		public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int> indexerSetup = new();
+			indexerSetup.OnGet.Do(() => { callCount++; });
+			IndexerGetterAccess access = new(0, [
+				new NamedParameterValue("p1", 1),
+			]);
+
+			long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
+
+			await That(result).IsEqualTo(2L);
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int> indexerSetup = new();
+			indexerSetup.OnGet.Do(() => { callCount++; });
+			IndexerGetterAccess access = new(0, [
+				new NamedParameterValue("p1", 1),
+				new NamedParameterValue("p2", 1),
+			]);
+
+			string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+			await That(result).IsEqualTo("foo");
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int> indexerSetup = new();
+			indexerSetup.OnGet.Do(() => { callCount++; });
+			IndexerGetterAccess access = new(0, [
+				new NamedParameterValue("p1", "expect-int"),
+			]);
+
+			string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+			await That(result).IsEqualTo("foo");
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int> indexerSetup = new();
+			indexerSetup.OnGet.Do(() => { callCount++; });
+			IndexerGetterAccess access = new(0, [new NamedParameterValue("p1", 1),]);
+
+			string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+			await That(result).IsEqualTo("foo");
+			await That(callCount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int> indexerSetup = new();
+			indexerSetup.OnSet.Do(() => { callCount++; });
+			IndexerSetterAccess access = new(0, [
+				new NamedParameterValue("p1", 1),
+			], "bar");
+
+			indexerSetup.DoExecuteSetterCallback(access, 2L);
+
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int> indexerSetup = new();
+			indexerSetup.OnSet.Do(() => { callCount++; });
+			IndexerSetterAccess access = new(0, [
+				new NamedParameterValue("p1", 1),
+				new NamedParameterValue("p2", 1),
+			], "bar");
+
+			indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int> indexerSetup = new();
+			indexerSetup.OnSet.Do(() => { callCount++; });
+			IndexerSetterAccess access = new(0, [
+				new NamedParameterValue("p1", "expect-int"),
+			], "bar");
+
+			indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int> indexerSetup = new();
+			indexerSetup.OnSet.Do(() => { callCount++; });
+			IndexerSetterAccess access = new(0, [new NamedParameterValue("p1", 1),], "bar");
+
+			indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+			await That(callCount).IsEqualTo(1);
+		}
+
 		[Fact]
 		public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
@@ -256,6 +380,19 @@ public sealed partial class SetupIndexerTests
 			await That(ActOnly).DoesNotThrow();
 		}
 
+		private sealed class MyIndexerSetup<T1>()
+			: IndexerSetup<string, T1>(
+				new NamedParameter("p1", (IParameter)It.IsAny<T1>()))
+		{
+			public T DoExecuteGetterCallback<T>(
+				IndexerGetterAccess indexerGetterAccess, T value, MockBehavior? behavior = null)
+				=> ExecuteGetterCallback(indexerGetterAccess, value, behavior ?? MockBehavior.Default);
+
+			public void DoExecuteSetterCallback<T>(
+				IndexerSetterAccess indexerSetterAccess, T value, MockBehavior? behavior = null)
+				=> ExecuteSetterCallback(indexerSetterAccess, value, behavior ?? MockBehavior.Default);
+		}
+
 		public sealed class With2Levels
 		{
 			[Fact]
@@ -269,6 +406,146 @@ public sealed partial class SetupIndexerTests
 				_ = mock[1];
 				_ = mock[2, 2];
 				_ = mock[3, 3, 3];
+
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+				]);
+
+				long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
+
+				await That(result).IsEqualTo(2L);
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Theory]
+			[InlineData(1, "expect-int")]
+			[InlineData("expect-int", 2)]
+			public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute(
+				object? v1, object? v2)
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", v1),
+					new NamedParameterValue("p2", v2),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, 2L);
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Theory]
+			[InlineData(1, "expect-int")]
+			[InlineData("expect-int", 2)]
+			public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute(
+				object? v1, object? v2)
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", v1),
+					new NamedParameterValue("p2", v2),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
 
 				await That(callCount).IsEqualTo(1);
 			}
@@ -509,6 +786,20 @@ public sealed partial class SetupIndexerTests
 				await That(ActFor).DoesNotThrow();
 				await That(ActOnly).DoesNotThrow();
 			}
+
+			private sealed class MyIndexerSetup<T1, T2>()
+				: IndexerSetup<string, T1, T2>(
+					new NamedParameter("p1", (IParameter)It.IsAny<T1>()),
+					new NamedParameter("p2", (IParameter)It.IsAny<T2>()))
+			{
+				public T DoExecuteGetterCallback<T>(
+					IndexerGetterAccess indexerGetterAccess, T value, MockBehavior? behavior = null)
+					=> ExecuteGetterCallback(indexerGetterAccess, value, behavior ?? MockBehavior.Default);
+
+				public void DoExecuteSetterCallback<T>(
+					IndexerSetterAccess indexerSetterAccess, T value, MockBehavior? behavior = null)
+					=> ExecuteSetterCallback(indexerSetterAccess, value, behavior ?? MockBehavior.Default);
+			}
 		}
 
 		public sealed class With3Levels
@@ -525,6 +816,156 @@ public sealed partial class SetupIndexerTests
 				_ = mock[2, 2];
 				_ = mock[3, 3, 3];
 				_ = mock[4, 4, 4, 4];
+
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+				]);
+
+				long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
+
+				await That(result).IsEqualTo(2L);
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Theory]
+			[InlineData(1, 2, "expect-int")]
+			[InlineData(1, "expect-int", 3)]
+			[InlineData("expect-int", 2, 3)]
+			public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute(
+				object? v1, object? v2, object? v3)
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", v1),
+					new NamedParameterValue("p2", v2),
+					new NamedParameterValue("p3", v3),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, 2L);
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Theory]
+			[InlineData(1, 2, "expect-int")]
+			[InlineData(1, "expect-int", 3)]
+			[InlineData("expect-int", 2, 3)]
+			public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute(
+				object? v1, object? v2, object? v3)
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", v1),
+					new NamedParameterValue("p2", v2),
+					new NamedParameterValue("p3", v3),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
 
 				await That(callCount).IsEqualTo(1);
 			}
@@ -769,6 +1210,21 @@ public sealed partial class SetupIndexerTests
 				await That(ActFor).DoesNotThrow();
 				await That(ActOnly).DoesNotThrow();
 			}
+
+			private sealed class MyIndexerSetup<T1, T2, T3>()
+				: IndexerSetup<string, T1, T2, T3>(
+					new NamedParameter("p1", (IParameter)It.IsAny<T1>()),
+					new NamedParameter("p2", (IParameter)It.IsAny<T2>()),
+					new NamedParameter("p3", (IParameter)It.IsAny<T3>()))
+			{
+				public T DoExecuteGetterCallback<T>(
+					IndexerGetterAccess indexerGetterAccess, T value, MockBehavior? behavior = null)
+					=> ExecuteGetterCallback(indexerGetterAccess, value, behavior ?? MockBehavior.Default);
+
+				public void DoExecuteSetterCallback<T>(
+					IndexerSetterAccess indexerSetterAccess, T value, MockBehavior? behavior = null)
+					=> ExecuteSetterCallback(indexerSetterAccess, value, behavior ?? MockBehavior.Default);
+			}
 		}
 
 		public sealed class With4Levels
@@ -785,6 +1241,166 @@ public sealed partial class SetupIndexerTests
 				_ = mock[2, 2];
 				_ = mock[3, 3, 3];
 				_ = mock[4, 4, 4, 4];
+
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+				]);
+
+				long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
+
+				await That(result).IsEqualTo(2L);
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+					new NamedParameterValue("p5", 5),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Theory]
+			[InlineData(1, 2, 3, "expect-int")]
+			[InlineData(1, 2, "expect-int", 4)]
+			[InlineData(1, "expect-int", 3, 4)]
+			[InlineData("expect-int", 2, 3, 4)]
+			public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute(
+				object? v1, object? v2, object? v3, object? v4)
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", v1),
+					new NamedParameterValue("p2", v2),
+					new NamedParameterValue("p3", v3),
+					new NamedParameterValue("p4", v4),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, 2L);
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+					new NamedParameterValue("p5", 5),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Theory]
+			[InlineData(1, 2, 3, "expect-int")]
+			[InlineData(1, 2, "expect-int", 4)]
+			[InlineData(1, "expect-int", 3, 4)]
+			[InlineData("expect-int", 2, 3, 4)]
+			public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute(
+				object? v1, object? v2, object? v3, object? v4)
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", v1),
+					new NamedParameterValue("p2", v2),
+					new NamedParameterValue("p3", v3),
+					new NamedParameterValue("p4", v4),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
 
 				await That(callCount).IsEqualTo(1);
 			}
@@ -1030,6 +1646,22 @@ public sealed partial class SetupIndexerTests
 				await That(ActFor).DoesNotThrow();
 				await That(ActOnly).DoesNotThrow();
 			}
+
+			private sealed class MyIndexerSetup<T1, T2, T3, T4>()
+				: IndexerSetup<string, T1, T2, T3, T4>(
+					new NamedParameter("p1", (IParameter)It.IsAny<T1>()),
+					new NamedParameter("p2", (IParameter)It.IsAny<T2>()),
+					new NamedParameter("p3", (IParameter)It.IsAny<T3>()),
+					new NamedParameter("p4", (IParameter)It.IsAny<T4>()))
+			{
+				public T DoExecuteGetterCallback<T>(
+					IndexerGetterAccess indexerGetterAccess, T value, MockBehavior? behavior = null)
+					=> ExecuteGetterCallback(indexerGetterAccess, value, behavior ?? MockBehavior.Default);
+
+				public void DoExecuteSetterCallback<T>(
+					IndexerSetterAccess indexerSetterAccess, T value, MockBehavior? behavior = null)
+					=> ExecuteSetterCallback(indexerSetterAccess, value, behavior ?? MockBehavior.Default);
+			}
 		}
 
 		public sealed class With5Levels
@@ -1048,6 +1680,176 @@ public sealed partial class SetupIndexerTests
 				_ = mock[3, 3, 3];
 				_ = mock[4, 4, 4, 4];
 				_ = mock[5, 5, 5, 5, 5];
+
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+					new NamedParameterValue("p5", 5),
+				]);
+
+				long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
+
+				await That(result).IsEqualTo(2L);
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+					new NamedParameterValue("p5", 5),
+					new NamedParameterValue("p6", 6),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Theory]
+			[InlineData(1, 2, 3, 4, "expect-int")]
+			[InlineData(1, 2, 3, "expect-int", 5)]
+			[InlineData(1, 2, "expect-int", 4, 5)]
+			[InlineData(1, "expect-int", 3, 4, 5)]
+			[InlineData("expect-int", 2, 3, 4, 5)]
+			public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute(
+				object? v1, object? v2, object? v3, object? v4, object? v5)
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", v1),
+					new NamedParameterValue("p2", v2),
+					new NamedParameterValue("p3", v3),
+					new NamedParameterValue("p4", v4),
+					new NamedParameterValue("p5", v5),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
+				indexerSetup.OnGet.Do(() => { callCount++; });
+				IndexerGetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+					new NamedParameterValue("p5", 5),
+				]);
+
+				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
+
+				await That(result).IsEqualTo("foo");
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+					new NamedParameterValue("p5", 5),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, 2L);
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+					new NamedParameterValue("p5", 5),
+					new NamedParameterValue("p6", 6),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Theory]
+			[InlineData(1, 2, 3, 4, "expect-int")]
+			[InlineData(1, 2, 3, "expect-int", 5)]
+			[InlineData(1, 2, "expect-int", 4, 5)]
+			[InlineData(1, "expect-int", 3, 4, 5)]
+			[InlineData("expect-int", 2, 3, 4, 5)]
+			public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute(
+				object? v1, object? v2, object? v3, object? v4, object? v5)
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", v1),
+					new NamedParameterValue("p2", v2),
+					new NamedParameterValue("p3", v3),
+					new NamedParameterValue("p4", v4),
+					new NamedParameterValue("p5", v5),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
+
+				await That(callCount).IsEqualTo(0);
+			}
+
+			[Fact]
+			public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
+			{
+				int callCount = 0;
+				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
+				indexerSetup.OnSet.Do(() => { callCount++; });
+				IndexerSetterAccess access = new(0, [
+					new NamedParameterValue("p1", 1),
+					new NamedParameterValue("p2", 2),
+					new NamedParameterValue("p3", 3),
+					new NamedParameterValue("p4", 4),
+					new NamedParameterValue("p5", 5),
+				], "bar");
+
+				indexerSetup.DoExecuteSetterCallback(access, "foo");
 
 				await That(callCount).IsEqualTo(1);
 			}
@@ -1301,6 +2103,23 @@ public sealed partial class SetupIndexerTests
 
 				await That(ActFor).DoesNotThrow();
 				await That(ActOnly).DoesNotThrow();
+			}
+
+			private sealed class MyIndexerSetup<T1, T2, T3, T4, T5>()
+				: IndexerSetup<string, T1, T2, T3, T4, T5>(
+					new NamedParameter("p1", (IParameter)It.IsAny<T1>()),
+					new NamedParameter("p2", (IParameter)It.IsAny<T2>()),
+					new NamedParameter("p3", (IParameter)It.IsAny<T3>()),
+					new NamedParameter("p4", (IParameter)It.IsAny<T4>()),
+					new NamedParameter("p5", (IParameter)It.IsAny<T5>()))
+			{
+				public T DoExecuteGetterCallback<T>(
+					IndexerGetterAccess indexerGetterAccess, T value, MockBehavior? behavior = null)
+					=> ExecuteGetterCallback(indexerGetterAccess, value, behavior ?? MockBehavior.Default);
+
+				public void DoExecuteSetterCallback<T>(
+					IndexerSetterAccess indexerSetterAccess, T value, MockBehavior? behavior = null)
+					=> ExecuteSetterCallback(indexerSetterAccess, value, behavior ?? MockBehavior.Default);
 			}
 		}
 	}
