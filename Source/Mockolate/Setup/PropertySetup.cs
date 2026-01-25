@@ -207,12 +207,6 @@ public class PropertySetup<T>(string name) : PropertySetup,
 			}
 		}
 
-		if (!_isInitialized)
-		{
-			_value = defaultValueGenerator() is T value ? value : default!;
-			_isInitialized = true;
-		}
-
 		if (!TryCast(_value, out TResult result))
 		{
 			throw new MockException(
