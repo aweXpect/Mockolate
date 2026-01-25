@@ -26,6 +26,9 @@ public class Callback
 	/// <summary>
 	///     Flag indicating whether the callback is active.
 	/// </summary>
+	/// <remarks>
+	///     A <see cref="Callback" /> is active, until it has reached the <see cref="Only" /> limit, if specified.
+	/// </remarks>
 	protected bool IsActive(int matchingCount)
 	{
 		if (_forTimes is not null)
