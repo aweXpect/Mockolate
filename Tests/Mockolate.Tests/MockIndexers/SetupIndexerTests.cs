@@ -308,7 +308,7 @@ public sealed partial class SetupIndexerTests
 		protected override bool HasReturnCalls()
 			=> throw new NotSupportedException();
 
-		protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+		protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 			NamedParameterValue[] parameters,
 			[NotNullWhen(true)] out T value)
 			=> throw new NotSupportedException();
