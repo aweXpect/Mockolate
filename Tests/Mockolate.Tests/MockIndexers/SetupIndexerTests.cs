@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
@@ -7,6 +9,37 @@ namespace Mockolate.Tests.MockIndexers;
 
 public sealed partial class SetupIndexerTests
 {
+	[Fact]
+	public async Task Matches_WhenParameterCountDoesNotMatch_ShouldNotInvokeParameterCallbacks()
+	{
+		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
+
+		bool result = MyIndexerSetup.DoesMatch([
+			new NamedParameter("foo", (IParameter)parameter),
+		], [
+			new NamedParameterValue("foo", 4),
+			new NamedParameterValue("bar", 5),
+		]);
+
+		await That(result).IsFalse();
+		await That(monitor.Values).IsEmpty();
+	}
+
+	[Fact]
+	public async Task Matches_WhenParameterCountMatches_ShouldInvokeParameterCallbacks()
+	{
+		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
+
+		bool result = MyIndexerSetup.DoesMatch([
+			new NamedParameter("foo", (IParameter)parameter),
+		], [
+			new NamedParameterValue("foo", 4),
+		]);
+
+		await That(result).IsTrue();
+		await That(monitor.Values).IsEqualTo([4,]);
+	}
+
 	[Fact]
 	public async Task MultipleValues_ShouldAllStoreValues()
 	{
@@ -253,6 +286,34 @@ public sealed partial class SetupIndexerTests
 			.WithMessage("The indexer [null, 1, 2] was accessed without prior setup.");
 	}
 
+	public class MyIndexerSetup : IndexerSetup
+	{
+		public static bool DoesMatch(NamedParameter[] namedParameters, NamedParameterValue[] values)
+			=> Matches(namedParameters, values);
+
+		protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
+			MockBehavior behavior)
+			=> throw new NotSupportedException();
+
+		protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value,
+			MockBehavior behavior)
+			=> throw new NotSupportedException();
+
+		protected override bool IsMatch(NamedParameterValue[] parameters)
+			=> throw new NotSupportedException();
+
+		protected override bool? GetSkipBaseClass()
+			=> throw new NotSupportedException();
+
+		protected override bool HasReturnCalls()
+			=> throw new NotSupportedException();
+
+		protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+			NamedParameterValue[] parameters,
+			[NotNullWhen(true)] out T value)
+			=> throw new NotSupportedException();
+	}
+
 	public interface IIndexerService
 	{
 		string this[int index] { get; set; }
@@ -260,6 +321,12 @@ public sealed partial class SetupIndexerTests
 		string this[int index1, int index2, int index3] { get; set; }
 		string this[int index1, int index2, int index3, int index4] { get; set; }
 		string this[int index1, int index2, int index3, int index4, int index5] { get; set; }
+
+		string this[char index] { get; set; }
+		string this[char index1, char index2] { get; set; }
+		string this[char index1, char index2, char index3] { get; set; }
+		string this[char index1, char index2, char index3, char index4] { get; set; }
+		string this[char index1, char index2, char index3, char index4, char index5] { get; set; }
 
 		int? this[string? index1, int index2, int index3] { get; set; }
 	}

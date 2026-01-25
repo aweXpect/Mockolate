@@ -21,11 +21,11 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 		=> IsMatch(indexerAccess.Parameters);
 
 	/// <inheritdoc
-	///     cref="IInteractiveIndexerSetup.TryGetInitialValue{TValue}(MockBehavior, Func{TValue}, NamedParameterValue[], out TValue)" />
-	bool IInteractiveIndexerSetup.TryGetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
+	///     cref="IInteractiveIndexerSetup.GetInitialValue{TValue}" />
+	void IInteractiveIndexerSetup.GetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
 		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out TValue value)
-		=> TryGetInitialValue(behavior, defaultValueGenerator, parameters, out value);
+		=> GetInitialValue(behavior, defaultValueGenerator, parameters, out value);
 
 	/// <inheritdoc cref="IInteractiveIndexerSetup.SkipBaseClass()" />
 	bool? IInteractiveIndexerSetup.SkipBaseClass()
@@ -120,7 +120,7 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
 	///     initialization is set up.
 	/// </summary>
-	protected abstract bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+	protected abstract void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value);
 }
@@ -458,8 +458,8 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	protected override bool IsMatch(NamedParameterValue[] parameters)
 		=> Matches([match1,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
+	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
@@ -469,11 +469,10 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 		    _initialization.Invoke(p1) is T initialValue)
 		{
 			value = initialValue;
-			return true;
+			return;
 		}
 
 		value = defaultValueGenerator();
-		return false;
 	}
 }
 
@@ -817,8 +816,8 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 	protected override bool IsMatch(NamedParameterValue[] parameters)
 		=> Matches([match1, match2,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
+	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
@@ -829,11 +828,10 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 		    _initialization.Invoke(p1, p2) is T initialValue)
 		{
 			value = initialValue;
-			return true;
+			return;
 		}
 
 		value = defaultValueGenerator();
-		return false;
 	}
 }
 
@@ -1191,8 +1189,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	protected override bool IsMatch(NamedParameterValue[] parameters)
 		=> Matches([match1, match2, match3,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
+	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
@@ -1204,11 +1202,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		    _initialization.Invoke(p1, p2, p3) is T initialValue)
 		{
 			value = initialValue;
-			return true;
+			return;
 		}
 
 		value = defaultValueGenerator();
-		return false;
 	}
 }
 
@@ -1580,8 +1577,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	protected override bool IsMatch(NamedParameterValue[] parameters)
 		=> Matches([match1, match2, match3, match4,], parameters);
 
-	/// <inheritdoc cref="IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)" />
-	protected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
+	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
+	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value)
 	{
@@ -1594,11 +1591,10 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		    _initialization.Invoke(p1, p2, p3, p4) is T initialValue)
 		{
 			value = initialValue;
-			return true;
+			return;
 		}
 
 		value = defaultValueGenerator();
-		return false;
 	}
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters

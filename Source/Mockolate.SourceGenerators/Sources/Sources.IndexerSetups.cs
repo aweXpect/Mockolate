@@ -828,10 +828,10 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append(
-				"\t\t/// <inheritdoc cref=\"IndexerSetup.TryGetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)\" />")
+				"\t\t/// <inheritdoc cref=\"IndexerSetup.GetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)\" />")
 			.AppendLine();
 		sb.Append(
-				"\t\tprotected override bool TryGetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, NamedParameterValue[] parameters, [NotNullWhen(true)] out T value)")
+				"\t\tprotected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, NamedParameterValue[] parameters, [NotNullWhen(true)] out T value)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (_initialization is not null &&").AppendLine();
@@ -845,11 +845,10 @@ internal static partial class Sources
 		sb.Append("\t\t\t    _initialization.Invoke(").Append(parameters).Append(") is T initialValue)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tvalue = initialValue;").AppendLine();
-		sb.Append("\t\t\t\treturn true;").AppendLine();
+		sb.Append("\t\t\t\treturn;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\tvalue = defaultValueGenerator();").AppendLine();
-		sb.Append("\t\t\treturn false;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
