@@ -46,9 +46,16 @@
     <File Path="Docs/pages/02-setup.md" />
     <File Path="Docs/pages/03-mock-events.md" />
     <File Path="Docs/pages/04-verify-interactions.md" />
-    <File Path="Docs/pages/05-httpclient.md" />
-    <File Path="Docs/pages/06-analyzers.md" />
-    <File Path="Docs/pages/07-comparison.md" />
+    <File Path="Docs/pages/07-analyzers.md" />
+    <File Path="Docs/pages/08-comparison.md" />
+  </Folder>
+  <Folder Name="/_/Docs/advanced-features/">
+    <File Path="Docs/pages/advanced-features/_category_.json" />
+  </Folder>
+  <Folder Name="/_/Docs/special-types/">
+    <File Path="Docs/pages/special-types/01-httpclient.md" />
+    <File Path="Docs/pages/special-types/02-delegates.md" />
+    <File Path="Docs/pages/special-types/_category_.json" />
   </Folder>
   <Folder Name="/_/Source/">
     <File Path="Source/Directory.Build.props" />

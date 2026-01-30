@@ -1,4 +1,4 @@
-# Mocking HttpClient
+# HttpClient
 
 Mockolate supports mocking `HttpClient` out of the box, with no special configuration required. You can set up, use, and
 verify HTTP interactions just like with any other interface or class.
