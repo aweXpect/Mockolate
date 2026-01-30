@@ -113,15 +113,27 @@ myAction.VerifyMock.Invoked().AtLeastOnce();
 Func<int> myFunc = Mock.Create<Func<int>>();
 _ = myFunc();
 myFunc.VerifyMock.Invoked().Once();
+```
 
-// Verify custom delegate was invoked with specific arguments
+For custom delegates with parameters:
+
+```csharp
+// Define a custom delegate (typically declared at type level)
 public delegate int Calculate(int x, string operation);
+
+// Create, invoke, and verify the mock
 Calculate calculator = Mock.Create<Calculate>();
 _ = calculator(5, "add");
 calculator.VerifyMock.Invoked(It.IsAny<int>(), It.Is("add")).Once();
+```
 
-// Verify delegates with ref and out parameters
+Delegates with `ref` and `out` parameters are also supported:
+
+```csharp
+// Define a custom delegate (typically declared at type level)
 public delegate void ProcessData(int input, ref int value, out int result);
+
+// Create, invoke, and verify the mock
 ProcessData processor = Mock.Create<ProcessData>();
 int val = 0;
 processor(1, ref val, out int res);

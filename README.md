@@ -328,15 +328,27 @@ myAction.SetupMock.Delegate().Do(() => Console.WriteLine("Action invoked!"));
 // Mock Func<T> delegate
 Func<int> myFunc = Mock.Create<Func<int>>();
 myFunc.SetupMock.Delegate().Returns(42);
+```
 
-// Mock custom delegate with parameters
+For custom delegates with parameters:
+
+```csharp
+// Define a custom delegate (typically declared at type level)
 public delegate int Calculate(int x, string operation);
+
+// Create and setup the mock
 Calculate calculator = Mock.Create<Calculate>();
 calculator.SetupMock.Delegate(It.IsAny<int>(), It.Is("add"))
     .Returns((x, operation) => x + 10);
+```
 
-// Support for ref and out parameters
+Delegates with `ref` and `out` parameters are also supported:
+
+```csharp
+// Define a custom delegate (typically declared at type level)
 public delegate void ProcessData(int input, ref int value, out int result);
+
+// Create and setup the mock
 ProcessData processor = Mock.Create<ProcessData>();
 processor.SetupMock.Delegate(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 100));
 ```
@@ -498,15 +510,27 @@ myAction.VerifyMock.Invoked().AtLeastOnce();
 Func<int> myFunc = Mock.Create<Func<int>>();
 _ = myFunc();
 myFunc.VerifyMock.Invoked().Once();
+```
 
-// Verify custom delegate was invoked with specific arguments
+For custom delegates with parameters:
+
+```csharp
+// Define a custom delegate (typically declared at type level)
 public delegate int Calculate(int x, string operation);
+
+// Create, invoke, and verify the mock
 Calculate calculator = Mock.Create<Calculate>();
 _ = calculator(5, "add");
 calculator.VerifyMock.Invoked(It.IsAny<int>(), It.Is("add")).Once();
+```
 
-// Verify delegates with ref and out parameters
+Delegates with `ref` and `out` parameters are also supported:
+
+```csharp
+// Define a custom delegate (typically declared at type level)
 public delegate void ProcessData(int input, ref int value, out int result);
+
+// Create, invoke, and verify the mock
 ProcessData processor = Mock.Create<ProcessData>();
 int val = 0;
 processor(1, ref val, out int res);
