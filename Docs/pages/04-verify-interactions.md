@@ -99,6 +99,38 @@ sut.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
 
+## Delegates
+
+You can verify that delegates were invoked with specific arguments:
+
+```csharp
+// Verify Action was invoked at least once
+Action myAction = Mock.Create<Action>();
+myAction.Invoke();
+myAction.VerifyMock.Invoked().AtLeastOnce();
+
+// Verify Func<T> was invoked exactly once
+Func<int> myFunc = Mock.Create<Func<int>>();
+_ = myFunc();
+myFunc.VerifyMock.Invoked().Once();
+
+// Verify custom delegate was invoked with specific arguments
+public delegate int Calculate(int x, string operation);
+Calculate calculator = Mock.Create<Calculate>();
+_ = calculator(5, "add");
+calculator.VerifyMock.Invoked(It.IsAny<int>(), It.Is("add")).Once();
+
+// Verify delegates with ref and out parameters
+public delegate void ProcessData(int input, ref int value, out int result);
+ProcessData processor = Mock.Create<ProcessData>();
+int val = 0;
+processor(1, ref val, out int res);
+processor.VerifyMock.Invoked(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).Once();
+```
+
+**Note:**  
+Delegate parameters also support [argument matchers](#argument-matchers).
+
 ## Call Ordering
 
 Use `Then` to verify that calls occurred in a specific order:
