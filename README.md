@@ -559,7 +559,7 @@ httpClient.VerifyMock.Invoked.PostAsync(
 
 Mockolate supports mocking delegates including `Action`, `Func<T>`, and custom delegates.
 
-#### Setup
+**Setup**
 
 Use `SetupMock.Delegate(...)` to configure delegate behavior.
 
@@ -603,7 +603,7 @@ processor.SetupMock.Delegate(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOu
 - Full [parameter matching](#parameter-matching) support for delegate
   parameters including `ref` and `out` parameters.
 
-#### Verification
+**Verification**
 
 You can verify that delegates were invoked with specific arguments:
 
