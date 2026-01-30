@@ -35,20 +35,54 @@ sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Exactly(2);
 
 You can use argument matchers from the `Match` class to verify calls with flexible conditions:
 
+**Basic Matchers:**
+
 - `It.IsAny<T>()`: Matches any value of type `T`.
-- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
-  comparer.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
-  provide a custom equality comparer.
+- `It.Is<T>(value)`: Matches a specific value.
+- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values.
 - `It.IsNull<T>()`: Matches null.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
   minimum and maximum value.
-- `It.IsOut<T>()`: Matches any out parameter of type `T`
-- `It.IsRef<T>()`: Matches any ref parameter of type `T`
-- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
-  regular expressions instead.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
+
+**String Matching:**
+
+- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`).
+
+**Ref and Out Parameters:**
+
+- `It.IsRef<T>()`: Matches any `ref` parameter of type `T`.
+- `It.IsOut<T>()`: Matches any `out` parameter of type `T`.
+
+**Span Parameters (.NET 8+):**
+
+- `It.IsSpan<T>(predicate)`: Matches `Span<T>` parameters that satisfy the predicate.
+- `It.IsAnySpan<T>()`: Matches any `Span<T>` parameter.
+- `It.IsReadOnlySpan<T>(predicate)`: Matches `ReadOnlySpan<T>` parameters that satisfy the predicate.
+- `It.IsAnyReadOnlySpan<T>()`: Matches any `ReadOnlySpan<T>` parameter.
+
+**Custom Equality Comparers:**
+
+Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It.Is()` and `It.IsOneOf()`:
+
+```csharp
+// Example: Case-insensitive string comparison
+var comparer = StringComparer.OrdinalIgnoreCase;
+sut.VerifyMock.Invoked.Process(It.Is("hello").Using(comparer)).Once();
+```
+
+**Regular Expression Matching:**
+
+Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
+
+```csharp
+// Example: Verify email addresses
+sut.VerifyMock.Invoked.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex()).AtLeastOnce();
+
+// Case-sensitive regex
+sut.VerifyMock.Invoked.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive()).Once();
+```
 
 **Example:**
 
