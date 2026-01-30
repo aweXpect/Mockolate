@@ -318,7 +318,7 @@ methods.
 
 ### Working with Protected Members
 
-Mockolate allows you to setup and verify protected methods and properties on class mocks. Access protected members using the `.Protected` property:
+Mockolate allows you to set up and verify protected methods and properties on class mocks. Access protected members using the `.Protected` property:
 
 ```csharp
 public abstract class ChocolateDispenser
@@ -336,13 +336,6 @@ sut.SetupMock.Protected.Method.DispenseInternal(
 
 // Setup protected property
 sut.SetupMock.Protected.Property.InternalStock.InitializeWith(100);
-
-// Verify protected method was called
-sut.VerifyMock.Invoked.Protected.DispenseInternal(
-    It.Is("Dark"), It.IsAny<int>()).Once();
-
-// Verify protected property was accessed
-sut.VerifyMock.Got.Protected.InternalStock().AtLeastOnce();
 ```
 
 **Notes:**
@@ -350,6 +343,7 @@ sut.VerifyMock.Got.Protected.InternalStock().AtLeastOnce();
 - All setup options (`.Returns()`, `.Throws()`, `.Do()`, `.InitializeWith()`, etc.) work with protected members.
 - All verification options (`.Once()`, `.AtLeastOnce()`, etc.) work with protected members.
 - Protected indexers are supported using `.Protected.Indexer()` for setup and `.GotProtectedIndexer()`/`.SetProtectedIndexer()` for verification.
+- See [Protected Members](#protected-members) in the Verify interactions section for verification examples.
 
 ## Mock events
 
