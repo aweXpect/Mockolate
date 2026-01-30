@@ -126,13 +126,48 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
+		public async Task Returns_OnlyOnce_ShouldKeepLastUsedValue()
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyProperty.Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				values[i] = sut.MyProperty;
+				if (i == 4)
+				{
+					sut.MyProperty = 10;
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 1, 1, 10, 10, 10, 10, 10,]);
+		}
+
+		[Fact]
+		public async Task Returns_OnlyOnce_ShouldUseReturnValueOnlyOnce()
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyProperty.Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				sut.MyProperty = 0;
+				values[i] = sut.MyProperty;
+			}
+
+			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
+		}
+
+		[Fact]
 		public async Task Returns_PredicateIsFalse_ShouldUseInitializedDefaultValue()
 		{
 			List<int> results = [];
 			IPropertyService sut = Mock.Create<IPropertyService>();
 
 			sut.SetupMock.Property.MyProperty
-				.Returns(() => 4).When(i => i > 3);
+				.Returns(() => 4).When(i => i is > 3 and < 6);
 
 			results.Add(sut.MyProperty);
 			results.Add(sut.MyProperty);

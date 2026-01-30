@@ -7,326 +7,353 @@ public sealed partial class SetupIndexerTests
 {
 	public sealed class ReturnsThrowsTests
 	{
-		[Fact]
-		public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
+		public sealed class With1Level
 		{
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			mock.SetupMock.Indexer(It.Is(1))
-				.Returns("a")
-				.Returns("b");
-
-			string result11 = mock[1];
-			string result2 = mock[2];
-			string result12 = mock[1];
-			string result13 = mock[1];
-			string result14 = mock[1];
-			string result15 = mock[1];
-
-			await That(result11).IsEqualTo("a");
-			await That(result2).IsEqualTo("");
-			await That(result12).IsEqualTo("b");
-			await That(result13).IsEqualTo("a");
-			await That(result14).IsEqualTo("b");
-			await That(result15).IsEqualTo("a");
-		}
-
-		[Fact]
-		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Returns("a")
-				.Throws(new Exception("foo"))
-				.Returns(() => "b");
-
-			string result1 = sut[1];
-			Exception? result2 = Record.Exception(() => _ = sut[2]);
-			string result3 = sut[3];
-
-			await That(result1).IsEqualTo("a");
-			await That(result2).HasMessage("foo");
-			await That(result3).IsEqualTo("b");
-		}
-
-		[Fact]
-		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Returns("a")
-				.Returns(() => "b")
-				.Returns(p1 => $"foo-{p1}");
-
-			string[] result = new string[10];
-			for (int i = 0; i < 10; i++)
+			[Fact]
+			public async Task IndexerReturns_WithSpecificParameter_ShouldIterateThroughValues()
 			{
-				result[i] = sut[i];
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				mock.SetupMock.Indexer(It.Is(1))
+					.Returns("a")
+					.Returns("b");
+
+				string result11 = mock[1];
+				string result2 = mock[2];
+				string result12 = mock[1];
+				string result13 = mock[1];
+				string result14 = mock[1];
+				string result15 = mock[1];
+
+				await That(result11).IsEqualTo("a");
+				await That(result2).IsEqualTo("");
+				await That(result12).IsEqualTo("b");
+				await That(result13).IsEqualTo("a");
+				await That(result14).IsEqualTo("b");
+				await That(result15).IsEqualTo("a");
 			}
 
-			await That(result).IsEqualTo(["a", "b", "foo-2", "a", "b", "foo-5", "a", "b", "foo-8", "a",]);
-		}
-
-		[Fact]
-		public async Task Returns_Callback_ShouldReturnExpectedValue()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Returns(() => "foo");
-
-			string result = sut[1];
-
-			await That(result).IsEqualTo("foo");
-		}
-
-		[Fact]
-		public async Task Returns_CallbackWithParameters_ShouldReturnExpectedValue()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.InitializeWith("a")
-				.Returns(p1 => $"foo-{p1}");
-
-			string result = sut[3];
-
-			await That(result).IsEqualTo("foo-3");
-		}
-
-		[Fact]
-		public async Task Returns_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.InitializeWith("init")
-				.Returns((p1, v) => $"foo-{v}-{p1}");
-
-			string result = sut[3];
-
-			await That(result).IsEqualTo("foo-init-3");
-		}
-
-		[Fact]
-		public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Returns("foo").For(2)
-				.Returns("bar").For(3);
-
-			List<string> values = [];
-			for (int i = 0; i < 10; i++)
+			[Fact]
+			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				values.Add(sut[i]);
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns("a")
+					.Throws(new Exception("foo"))
+					.Returns(() => "b");
+
+				string result1 = sut[1];
+				Exception? result2 = Record.Exception(() => _ = sut[2]);
+				string result3 = sut[3];
+
+				await That(result1).IsEqualTo("a");
+				await That(result2).HasMessage("foo");
+				await That(result3).IsEqualTo("b");
 			}
 
-			await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
-		}
-
-		[Fact]
-		public async Task Returns_Forever_ShouldUseTheLastValueForever()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Returns("a")
-				.Returns("b")
-				.Returns("c").Forever();
-
-			string[] result = new string[10];
-			for (int i = 0; i < 10; i++)
+			[Fact]
+			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				result[i] = sut[i];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns("a")
+					.Returns(() => "b")
+					.Returns(p1 => $"foo-{p1}");
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut[i];
+				}
+
+				await That(result).IsEqualTo(["a", "b", "foo-2", "a", "b", "foo-5", "a", "b", "foo-8", "a",]);
 			}
 
-			await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
-		}
-
-		[Fact]
-		public async Task Returns_ShouldReturnExpectedValue()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Returns("foo");
-
-			string result = sut[3];
-
-			await That(result).IsEqualTo("foo");
-		}
-
-		[Fact]
-		public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Returns("foo").When(i => i > 0);
-
-			string result1 = sut[3];
-			string result2 = sut[4];
-			string result3 = sut[5];
-
-			await That(result1).IsEqualTo("");
-			await That(result2).IsEqualTo("foo");
-			await That(result3).IsEqualTo("foo");
-		}
-
-		[Fact]
-		public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Returns("foo").When(i => i > 0).For(2)
-				.Returns("baz")
-				.Returns("bar").For(3);
-
-			List<string> values = [];
-			for (int i = 0; i < 10; i++)
+			[Fact]
+			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				values.Add(sut[i]);
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns(() => "foo");
+
+				string result = sut[1];
+
+				await That(result).IsEqualTo("foo");
 			}
 
-			await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
-		}
-
-		[Fact]
-		public async Task Returns_WithoutSetup_ShouldReturnDefault()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			string result = sut[2];
-
-			await That(result).IsEmpty();
-		}
-
-		[Fact]
-		public async Task Throws_Callback_ShouldThrowException()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Throws(() => new Exception("foo"));
-
-			void Act()
+			[Fact]
+			public async Task Returns_CallbackWithParameters_ShouldReturnExpectedValue()
 			{
-				_ = sut[3];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.InitializeWith("a")
+					.Returns(p1 => $"foo-{p1}");
+
+				string result = sut[3];
+
+				await That(result).IsEqualTo("foo-3");
 			}
 
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task Throws_CallbackWithParameters_ShouldThrowException()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.InitializeWith("init")
-				.Throws(p1 => new Exception($"foo-{p1}"));
-
-			void Act()
+			[Fact]
+			public async Task Returns_CallbackWithParametersAndValue_ShouldReturnExpectedValue()
 			{
-				_ = sut[3];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.InitializeWith("init")
+					.Returns((p1, v) => $"foo-{v}-{p1}");
+
+				string result = sut[3];
+
+				await That(result).IsEqualTo("foo-init-3");
 			}
 
-			await That(Act).ThrowsException().WithMessage("foo-3");
-		}
-
-		[Fact]
-		public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.InitializeWith("init")
-				.Throws((p1, v) => new Exception($"foo-{v}-{p1}"));
-
-			void Act()
+			[Fact]
+			public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				_ = sut[3];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns("foo").For(2)
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i]);
+				}
+
+				await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "", "", "", "", "",]);
 			}
 
-			await That(Act).ThrowsException().WithMessage("foo-init-3");
-		}
-
-		[Fact]
-		public async Task Throws_Generic_ShouldThrowException()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Throws<ArgumentNullException>();
-
-			void Act()
+			[Fact]
+			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				_ = sut[3];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns("a")
+					.Returns("b")
+					.Returns("c").Forever();
+
+				string[] result = new string[10];
+				for (int i = 0; i < 10; i++)
+				{
+					result[i] = sut[i];
+				}
+
+				await That(result).IsEqualTo(["a", "b", "c", "c", "c", "c", "c", "c", "c", "c",]);
 			}
 
-			await That(Act).ThrowsExactly<ArgumentNullException>();
-		}
-
-		[Fact]
-		public async Task Throws_ShouldThrowException()
-		{
-			IIndexerService sut = Mock.Create<IIndexerService>();
-
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.Throws(new Exception("foo"));
-
-			void Act()
+			[Fact]
+			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				_ = sut[3];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns("foo");
+
+				string result = sut[3];
+
+				await That(result).IsEqualTo("foo");
 			}
 
-			await That(Act).ThrowsException().WithMessage("foo");
-		}
-
-		[Fact]
-		public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
-		{
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			IIndexerSetupReturnBuilder<string, int> setup =
-				(IIndexerSetupReturnBuilder<string, int>)mock.SetupMock.Indexer(It.IsAny<int>());
-
-			void ActWhen()
+			[Fact]
+			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				setup.When(_ => true);
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns("foo").When(i => i > 0);
+
+				string result1 = sut[3];
+				string result2 = sut[4];
+				string result3 = sut[5];
+
+				await That(result1).IsEqualTo("");
+				await That(result2).IsEqualTo("foo");
+				await That(result3).IsEqualTo("foo");
 			}
 
-			void ActFor()
+			[Fact]
+			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				setup.For(2);
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns("foo").When(i => i > 0).For(2)
+					.Returns("baz")
+					.Returns("bar").For(3);
+
+				List<string> values = [];
+				for (int i = 0; i < 10; i++)
+				{
+					values.Add(sut[i]);
+				}
+
+				await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
 			}
 
-			await That(ActWhen).DoesNotThrow();
-			await That(ActFor).DoesNotThrow();
-		}
-
-		[Fact]
-		public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
-		{
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			IIndexerSetupReturnWhenBuilder<string, int> setup =
-				(IIndexerSetupReturnWhenBuilder<string, int>)mock.SetupMock.Indexer(It.IsAny<int>());
-
-			void ActFor()
+			[Fact]
+			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				setup.For(2);
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				string result = sut[2];
+
+				await That(result).IsEmpty();
 			}
 
-			void ActOnly()
+			[Fact]
+			public async Task SetupWithoutReturn_ShouldUseBaseValue()
 			{
-				setup.Only(2);
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.OnGet.Do(() => { });
+
+				string result = sut[1];
+
+				await That(result).IsEqualTo("foo-1");
 			}
 
-			await That(ActFor).DoesNotThrow();
-			await That(ActOnly).DoesNotThrow();
+			[Fact]
+			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut[1];
+
+				await That(result).IsEqualTo("bar");
+			}
+
+			[Fact]
+			public async Task Throws_Callback_ShouldThrowException()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Throws(() => new Exception("foo"));
+
+				void Act()
+				{
+					_ = sut[3];
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task Throws_CallbackWithParameters_ShouldThrowException()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.InitializeWith("init")
+					.Throws(p1 => new Exception($"foo-{p1}"));
+
+				void Act()
+				{
+					_ = sut[3];
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo-3");
+			}
+
+			[Fact]
+			public async Task Throws_CallbackWithParametersAndValue_ShouldThrowException()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.InitializeWith("init")
+					.Throws((p1, v) => new Exception($"foo-{v}-{p1}"));
+
+				void Act()
+				{
+					_ = sut[3];
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo-init-3");
+			}
+
+			[Fact]
+			public async Task Throws_Generic_ShouldThrowException()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Throws<ArgumentNullException>();
+
+				void Act()
+				{
+					_ = sut[3];
+				}
+
+				await That(Act).ThrowsExactly<ArgumentNullException>();
+			}
+
+			[Fact]
+			public async Task Throws_ShouldThrowException()
+			{
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Throws(new Exception("foo"));
+
+				void Act()
+				{
+					_ = sut[3];
+				}
+
+				await That(Act).ThrowsException().WithMessage("foo");
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnBuilder<string, int> setup =
+					(IIndexerSetupReturnBuilder<string, int>)mock.SetupMock.Indexer(It.IsAny<int>());
+
+				void ActWhen()
+				{
+					setup.When(_ => true);
+				}
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				await That(ActWhen).DoesNotThrow();
+				await That(ActFor).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithoutCallback_IIndexerSetupReturnWhenBuilder_ShouldNotThrow()
+			{
+				IIndexerService mock = Mock.Create<IIndexerService>();
+				IIndexerSetupReturnWhenBuilder<string, int> setup =
+					(IIndexerSetupReturnWhenBuilder<string, int>)mock.SetupMock.Indexer(It.IsAny<int>());
+
+				void ActFor()
+				{
+					setup.For(2);
+				}
+
+				void ActOnly()
+				{
+					setup.Only(2);
+				}
+
+				await That(ActFor).DoesNotThrow();
+				await That(ActOnly).DoesNotThrow();
+			}
 		}
 
 		public sealed class With2Levels
@@ -527,6 +554,30 @@ public sealed partial class SetupIndexerTests
 				string result = sut[1, 2];
 
 				await That(result).IsEmpty();
+			}
+
+			[Fact]
+			public async Task SetupWithoutReturn_ShouldUseBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do(() => { });
+
+				string result = sut[1, 2];
+
+				await That(result).IsEqualTo("foo-1-2");
+			}
+
+			[Fact]
+			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut[1, 2];
+
+				await That(result).IsEqualTo("bar");
 			}
 
 			[Fact]
@@ -858,6 +909,51 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task SetupWithoutReturn_ShouldUseBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do(() => { });
+
+				string result = sut[1, 2, 3];
+
+				await That(result).IsEqualTo("foo-1-2-3");
+			}
+
+			[Fact]
+			public async Task Returns_WithPredicate_ShouldApplyReturnWhenPredicateMatches()
+			{
+				List<string> results = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+
+				sut.SetupMock.Indexer(It.IsAny<int>())
+					.Returns(() => "foo").When(i => i is > 3 and < 6);
+
+				results.Add(sut[1]);
+				results.Add(sut[1]);
+				sut[1] = "bar";
+				results.Add(sut[1]);
+				results.Add(sut[1]);
+				results.Add(sut[1]);
+				results.Add(sut[1]);
+				results.Add(sut[1]);
+
+				await That(results).IsEqualTo(["", "", "bar", "bar", "foo", "foo", "foo",]);
+			}
+
+			[Fact]
+			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut[1, 2, 3];
+
+				await That(result).IsEqualTo("bar");
+			}
+
+			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1184,6 +1280,30 @@ public sealed partial class SetupIndexerTests
 				string result = sut[1, 2, 3, 4];
 
 				await That(result).IsEmpty();
+			}
+
+			[Fact]
+			public async Task SetupWithoutReturn_ShouldUseBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do(() => { });
+
+				string result = sut[1, 2, 3, 4];
+
+				await That(result).IsEqualTo("foo-1-2-3-4");
+			}
+
+			[Fact]
+			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut[1, 2, 3, 4];
+
+				await That(result).IsEqualTo("bar");
 			}
 
 			[Fact]
@@ -1526,6 +1646,32 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
+			public async Task SetupWithoutReturn_ShouldUseBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do(() => { });
+
+				string result = sut[1, 2, 3, 4, 5];
+
+				await That(result).IsEqualTo("foo-1-2-3-4-5");
+			}
+
+			[Fact]
+			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
+			{
+				IndexerMethodSetupTest sut = Mock.Create<IndexerMethodSetupTest>();
+				sut.SetupMock.Indexer(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Returns("bar");
+
+				string result = sut[1, 2, 3, 4, 5];
+
+				await That(result).IsEqualTo("bar");
+			}
+
+			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
 				IIndexerService sut = Mock.Create<IIndexerService>();
@@ -1654,6 +1800,45 @@ public sealed partial class SetupIndexerTests
 
 				await That(ActFor).DoesNotThrow();
 				await That(ActOnly).DoesNotThrow();
+			}
+		}
+
+		public class IndexerMethodSetupTest
+		{
+			private string? _data1;
+			private string? _data2;
+			private string? _data3;
+			private string? _data4;
+			private string? _data5;
+			
+			public virtual string this[int index]
+			{
+				get => _data1 ?? $"foo-{index}";
+				set => _data1 = value;
+			}
+
+			public virtual string this[int index1, int index2]
+			{
+				get => _data2 ?? $"foo-{index1}-{index2}";
+				set => _data2 = value;
+			}
+
+			public virtual string this[int index1, int index2, int index3]
+			{
+				get => _data3 ?? $"foo-{index1}-{index2}-{index3}";
+				set => _data3 = value;
+			}
+
+			public virtual string this[int index1, int index2, int index3, int index4]
+			{
+				get => _data4 ?? $"foo-{index1}-{index2}-{index3}-{index4}";
+				set => _data4 = value;
+			}
+
+			public virtual string this[int index1, int index2, int index3, int index4, int index5]
+			{
+				get => _data5 ?? $"foo-{index1}-{index2}-{index3}-{index4}-{index5}";
+				set => _data5 = value;
 			}
 		}
 	}

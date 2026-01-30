@@ -262,7 +262,7 @@ public sealed class SetupExtensionsTests
 		}
 
 		[Fact]
-		public async Task OnlyOnce_With1Parameter_ShouldApplySetupOnlyOnce()
+		public async Task OnlyOnce_With1Parameter_ShouldKeepLastUsedValue()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
 			sut.SetupMock.Indexer(It.IsAny<int>()).Returns(1).OnlyOnce();
@@ -270,6 +270,26 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				values[i] = sut[10];
+				if (i == 4)
+				{
+					sut[10] = 10;
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 1, 1, 10, 10, 10, 10, 10,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With1Parameter_ShouldUseReturnValueOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				sut[10] = 0;
 				values[i] = sut[10];
 			}
 
@@ -285,6 +305,7 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				sut[10] = 0;
 				values[i] = sut[10];
 			}
 
@@ -292,7 +313,7 @@ public sealed class SetupExtensionsTests
 		}
 
 		[Fact]
-		public async Task OnlyOnce_With2Parameters_ShouldApplySetupOnlyOnce()
+		public async Task OnlyOnce_With2Parameters_ShouldKeepLastUsedValue()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
 			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).Returns(1).OnlyOnce();
@@ -300,6 +321,26 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				values[i] = sut[10, 20];
+				if (i == 4)
+				{
+					sut[10, 20] = 10;
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 1, 1, 10, 10, 10, 10, 10,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With2Parameters_ShouldUseReturnValueOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				sut[10, 20] = 0;
 				values[i] = sut[10, 20];
 			}
 
@@ -315,6 +356,7 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				sut[10, 20] = 0;
 				values[i] = sut[10, 20];
 			}
 
@@ -322,7 +364,7 @@ public sealed class SetupExtensionsTests
 		}
 
 		[Fact]
-		public async Task OnlyOnce_With3Parameters_ShouldApplySetupOnlyOnce()
+		public async Task OnlyOnce_With3Parameters_ShouldKeepLastUsedValue()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
 			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).OnlyOnce();
@@ -330,6 +372,26 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				values[i] = sut[10, 20, 30];
+				if (i == 4)
+				{
+					sut[10, 20, 30] = 10;
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 1, 1, 10, 10, 10, 10, 10,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With3Parameters_ShouldUseReturnValueOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				sut[10, 20, 30] = 0;
 				values[i] = sut[10, 20, 30];
 			}
 
@@ -345,6 +407,7 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				sut[10, 20, 30] = 0;
 				values[i] = sut[10, 20, 30];
 			}
 
@@ -352,15 +415,36 @@ public sealed class SetupExtensionsTests
 		}
 
 		[Fact]
-		public async Task OnlyOnce_With4Parameters_ShouldApplySetupOnlyOnce()
+		public async Task OnlyOnce_With4Parameters_ShouldKeepLastUsedValue()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
-			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Returns(1)
-				.OnlyOnce();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).OnlyOnce();
 
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				values[i] = sut[10, 20, 30, 40];
+				if (i == 4)
+				{
+					sut[10, 20, 30, 40] = 10;
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 1, 1, 10, 10, 10, 10, 10,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With4Parameters_ShouldUseReturnValueOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				sut[10, 20, 30, 40] = 0;
 				values[i] = sut[10, 20, 30, 40];
 			}
 
@@ -377,6 +461,7 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				sut[10, 20, 30, 40] = 0;
 				values[i] = sut[10, 20, 30, 40];
 			}
 
@@ -384,7 +469,7 @@ public sealed class SetupExtensionsTests
 		}
 
 		[Fact]
-		public async Task OnlyOnce_With5Parameters_ShouldApplySetupOnlyOnce()
+		public async Task OnlyOnce_With5Parameters_ShouldKeepLastUsedValue()
 		{
 			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
 			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
@@ -393,6 +478,27 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				values[i] = sut[10, 20, 30, 40, 50];
+				if (i == 4)
+				{
+					sut[10, 20, 30, 40, 50] = 10;
+				}
+			}
+
+			await That(values).IsEqualTo([1, 1, 1, 1, 1, 10, 10, 10, 10, 10,]);
+		}
+
+		[Fact]
+		public async Task OnlyOnce_With5Parameters_ShouldUseReturnValueOnlyOnce()
+		{
+			ISetupExtensionsTestService sut = Mock.Create<ISetupExtensionsTestService>();
+			sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns(1).OnlyOnce();
+
+			int[] values = new int[10];
+			for (int i = 0; i < 10; i++)
+			{
+				sut[10, 20, 30, 40, 50] = 0;
 				values[i] = sut[10, 20, 30, 40, 50];
 			}
 
@@ -409,6 +515,7 @@ public sealed class SetupExtensionsTests
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
 			{
+				sut[10, 20, 30, 40, 50] = 0;
 				values[i] = sut[10, 20, 30, 40, 50];
 			}
 

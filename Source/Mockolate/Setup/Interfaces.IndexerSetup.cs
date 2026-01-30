@@ -16,11 +16,6 @@ public interface IInteractiveIndexerSetup : ISetup
 	bool? SkipBaseClass();
 
 	/// <summary>
-	///     Gets a value indicating whether this setup has return calls configured.
-	/// </summary>
-	bool HasReturnCalls();
-
-	/// <summary>
 	///     Checks if the <paramref name="indexerAccess" /> matches the setup.
 	/// </summary>
 	bool Matches(IndexerAccess indexerAccess);
