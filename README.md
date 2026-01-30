@@ -645,7 +645,7 @@ processor.VerifyMock.Invoked(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).
 ```
 
 **Note:**  
-Delegate parameters also support [argument matchers](#argument-matcher).
+Delegate parameters also support [argument matchers](#argument-matchers).
 
 ## Analyzers
 
