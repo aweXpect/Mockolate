@@ -12,10 +12,6 @@ namespace Mockolate.Setup;
 /// </summary>
 public abstract class IndexerSetup : IInteractiveIndexerSetup
 {
-	/// <inheritdoc cref="IInteractiveIndexerSetup.HasReturnCalls()" />
-	bool IInteractiveIndexerSetup.HasReturnCalls()
-		=> HasReturnCalls();
-
 	/// <inheritdoc cref="IInteractiveIndexerSetup.Matches(IndexerAccess)" />
 	bool IInteractiveIndexerSetup.Matches(IndexerAccess indexerAccess)
 		=> IsMatch(indexerAccess.Parameters);
@@ -110,11 +106,6 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
 	protected abstract bool? GetSkipBaseClass();
-
-	/// <summary>
-	///     Gets a value indicating whether this setup has return calls configured.
-	/// </summary>
-	protected abstract bool HasReturnCalls();
 
 	/// <summary>
 	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
@@ -389,10 +380,6 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
 	protected override bool? GetSkipBaseClass()
 		=> _skipBaseClass;
-
-	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
@@ -745,10 +732,6 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
 	protected override bool? GetSkipBaseClass()
 		=> _skipBaseClass;
-
-	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
@@ -1116,10 +1099,6 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
 	protected override bool? GetSkipBaseClass()
 		=> _skipBaseClass;
-
-	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
@@ -1502,10 +1481,6 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
 	protected override bool? GetSkipBaseClass()
 		=> _skipBaseClass;
-
-	/// <inheritdoc cref="IndexerSetup.HasReturnCalls()" />
-	protected override bool HasReturnCalls()
-		=> _returnCallbacks.Count > 0;
 
 	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,

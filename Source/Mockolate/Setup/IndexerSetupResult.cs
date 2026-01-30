@@ -59,14 +59,16 @@ public class IndexerSetupResult<TResult>(
 		TResult value;
 		if (_setup is IndexerSetup indexerSetup)
 		{
-			_setup.GetInitialValue(_behavior, defaultValueGenerator, indexerAccess.Parameters, out value);
+			value = getIndexerValue(_setup,
+				() =>
+				{
+					_setup.GetInitialValue(_behavior, defaultValueGenerator, indexerAccess.Parameters,
+						out var v);
+					return v;
+				}, indexerAccess.Parameters);
 			value = indexerSetup.InvokeGetter(indexerAccess, value, _behavior);
-
-			if (_setup.HasReturnCalls())
-			{
-				setIndexerValue(indexerAccess.Parameters, value);
-				return value;
-			}
+			setIndexerValue(indexerAccess.Parameters, value);
+			return value;
 		}
 		else if (_behavior.ThrowWhenNotSetup)
 		{

@@ -774,11 +774,6 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> _skipBaseClass;").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IndexerSetup.HasReturnCalls()\" />").AppendLine();
-		sb.Append("\t\tprotected override bool HasReturnCalls()").AppendLine();
-		sb.Append("\t\t\t=> _returnCallbacks.Count > 0;").AppendLine();
-		sb.AppendLine();
-
 		sb.Append(
 				"\t\t/// <inheritdoc cref=\"ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)\" />")
 			.AppendLine();
