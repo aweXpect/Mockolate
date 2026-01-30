@@ -1,0 +1,74 @@
+[
+  {
+    "title": "Document Mock.Wrap feature",
+    "labels": ["documentation", "enhancement"],
+    "priority": "High",
+    "body": "## Description\n\nThe `Mock.Wrap<T>(instance)` feature is completely missing from the README.md documentation.\n\n## Missing Documentation\n\n- `Mock.Wrap<T>(instance)` - Wrap existing instances with mock tracking\n- Forward calls to real instance while tracking interactions\n- Verify interactions on wrapped instances\n\n## Suggested Documentation\n\nAdd a new subsection under \"Create mocks\" titled \"Wrapping Existing Instances\":\n\n```markdown\n### Wrapping Existing Instances\n\nYou can wrap an existing instance with mock tracking using `Mock.Wrap<T>()`. This allows you to track interactions with a real object:\n\n```csharp\nvar realDispenser = new ChocolateDispenser();\nvar wrappedDispenser = Mock.Wrap<IChocolateDispenser>(realDispenser);\n\n// Calls are forwarded to the real instance\nwrappedDispenser.Dispense(\"Dark\", 5);\n\n// But you can still verify interactions\nwrappedDispenser.VerifyMock.Invoked.Dispense(It.Is(\"Dark\"), It.Is(5)).Once();\n```\n```\n\n## Priority\n\n**High** - This is a core feature that is completely undocumented.\n\n## Related Files\n\n- README.md\n- Docs/index.md (if applicable)"
+  },
+  {
+    "title": "Document delegate mocking feature",
+    "labels": ["documentation", "enhancement"],
+    "priority": "High",
+    "body": "## Description\n\nWhile delegates are mentioned in the main example, delegate mocking is not properly documented as a standalone feature.\n\n## Missing Documentation\n\n- Mock `Action<T>`, `Func<T>`, and custom delegates\n- `SetupMock.Delegate()` for setup\n- `VerifyMock.Invoked()` for delegate verification\n- Full parameter matching support for delegates\n\n## Suggested Documentation\n\nAdd a new section titled \"Mocking Delegates\":\n\n```markdown\n### Mocking Delegates\n\nMockolate supports mocking delegates including `Action<T>`, `Func<T>`, and custom delegates:\n\n```csharp\n// Create a mock delegate\nvar myDelegate = Mock.Create<Action<string, int>>();\n\n// Setup the delegate\nmyDelegate.SetupMock.Delegate(It.Is(\"Dark\"), It.IsAny<int>())\n    .Do((type, amount) => Console.WriteLine($\"Dispensed {amount} {type}\"));\n\n// Invoke the delegate\nmyDelegate(\"Dark\", 5);\n\n// Verify invocation\nmyDelegate.VerifyMock.Invoked(It.Is(\"Dark\"), It.Is(5)).Once();\n```\n\nCustom delegates are also supported:\n```csharp\nvar customDelegate = Mock.Create<ChocolateDispensedDelegate>();\ncustomDelegate.SetupMock.Delegate(It.IsAny<string>(), It.IsAny<int>())\n    .Do((type, amount) => { /* handler */ });\n```\n```\n\n## Priority\n\n**High** - Delegates are a common C# construct that many users will want to mock.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document advanced parameter matching (ref/out/span parameters)",
+    "labels": ["documentation", "enhancement"],
+    "priority": "High",
+    "body": "## Description\n\nSeveral advanced parameter matching features are missing from the Parameter Matching section.\n\n## Missing Documentation\n\n- **Ref/Out parameters**: `It.IsRef<T>()`, `It.IsOut<T>()`, `It.IsAnyRef<T>()`, `It.IsAnyOut<T>()`\n- **Span parameters**: `It.IsSpan<T>()`, `It.IsReadOnlySpan<T>()`, `It.IsAnySpan<T>()`, `It.IsAnyReadOnlySpan<T>()`\n- **Regex matching**: `.AsRegex()` extension on `It.Matches()`\n- **Custom equality comparers**: `.Using(IEqualityComparer<T>)` for `It.Is()` and `It.IsOneOf()`\n- **Custom parameter predicates**: `Match.Parameters(Func<NamedParameterValue[], bool>)`\n\n## Suggested Documentation\n\nExpand the \"Parameter Matching\" section with subsections for:\n\n1. **Ref and Out Parameters**\n2. **Span Parameters** \n3. **Regular Expression Matching**\n4. **Custom Equality Comparers**\n\nSee DOCUMENTATION_GAPS.md for detailed examples.\n\n## Priority\n\n**High** - These are critical for scenarios involving ref/out parameters and modern C# features like Span<T>.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document protected member support",
+    "labels": ["documentation", "enhancement"],
+    "priority": "High",
+    "body": "## Description\n\nMockolate supports setting up and verifying protected members, but this is completely undocumented.\n\n## Missing Documentation\n\n- `SetupMock.Protected.Method()` and `.Property()`\n- `VerifyMock.Protected.Invoked()`, `.Got()`, `.Set()`\n- Examples of working with protected methods and properties\n\n## Suggested Documentation\n\nAdd a new section titled \"Working with Protected Members\":\n\n```markdown\n### Working with Protected Members\n\nMockolate allows you to setup and verify protected methods and properties:\n\n```csharp\nvar sut = Mock.Create<MyChocolateDispenser>();\n\n// Setup protected method\nsut.SetupMock.Protected.Method(\"DispenseInternal\",\n    It.Is(\"Dark\"), It.IsAny<int>())\n    .Returns(true);\n\n// Setup protected property\nsut.SetupMock.Protected.Property(\"InternalStock\").InitializeWith(100);\n\n// Verify protected method was called\nsut.VerifyMock.Protected.Invoked(\"DispenseInternal\",\n    It.Is(\"Dark\"), It.IsAny<int>()).Once();\n\n// Verify protected property was accessed\nsut.VerifyMock.Protected.Got(\"InternalStock\").AtLeastOnce();\n```\n```\n\n## Priority\n\n**High** - Important for testing classes with protected members.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document advanced callback features",
+    "labels": ["documentation", "enhancement"],
+    "priority": "Medium",
+    "body": "## Description\n\nSeveral advanced callback control features are missing from the callback documentation.\n\n## Missing Documentation\n\n- `.When(Func<int, bool>)` - Conditional callback execution\n- `.For(int times)` - Execute callback N times\n- `.Only(int times)` - Execute callback up to N times\n- `.InParallel()` - Execute callback in parallel\n- Invocation counter in callbacks (`Action<int>`)\n\n## Suggested Documentation\n\nExpand the callback sections with subsections for:\n\n1. **Conditional Callbacks** (`.When()`)\n2. **Frequency Control** (`.For()`, `.Only()`)\n3. **Parallel Callbacks** (`.InParallel()`)\n4. **Invocation Counter**\n\nSee DOCUMENTATION_GAPS.md for detailed examples.\n\n## Priority\n\n**Medium** - Enhances existing callback documentation.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document advanced property and indexer features",
+    "labels": ["documentation", "enhancement"],
+    "priority": "Medium",
+    "body": "## Description\n\nSeveral advanced property and indexer features are missing from the documentation.\n\n## Missing Documentation\n\n- `.Returns(Func<T, T>)` - Return value based on previous value\n- `.OnGet.Do(Action<int, T>)` - Getter callback with counter and value\n- `.OnSet.Do(Action<int, T>)` - Setter callback with counter and value\n- `.Register()` - Register setup without value\n\n## Suggested Documentation\n\nExpand the Property Setup and Indexer Setup sections with:\n\n1. **Advanced Property Returns** (with previous value)\n2. **Advanced Callbacks** (with counter and value)\n3. **Register Without Value**\n\nSee DOCUMENTATION_GAPS.md for detailed examples.\n\n## Priority\n\n**Medium** - Completes existing property and indexer documentation.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document additional verification count methods",
+    "labels": ["documentation", "enhancement"],
+    "priority": "Medium",
+    "body": "## Description\n\nSome verification count methods are missing from the documentation.\n\n## Missing Documentation\n\n- `.Between(min, max)` - Between min and max times (inclusive)\n- `.Times(Func<int, bool>)` - Custom predicate verification\n\n## Suggested Documentation\n\nAdd these methods to the \"Verify interactions\" section under supported call count verifications:\n\n```markdown\n- `.Between(min, max)` - Between min and max times (inclusive)\n- `.Times(predicate)` - Custom predicate\n\n**Examples:**\n\n```csharp\n// Between min and max (inclusive)\nsut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())\n    .Between(3, 5);\n\n// Custom predicate\nsut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())\n    .Times(count => count % 2 == 0);  // Even number of calls\n```\n```\n\n## Priority\n\n**Medium** - Rounds out verification options.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document extended HttpClient features",
+    "labels": ["documentation", "enhancement"],
+    "priority": "Medium",
+    "body": "## Description\n\nThe HttpClient section is missing documentation for several matchers and HTTP methods.\n\n## Missing Documentation\n\n- `It.IsBinaryContent()` matcher\n- `.ForHttps()`, `.ForHttp()` URI scheme filters\n- `.WithBodyMatching()` content body matching (appears in example but not explained)\n- PUT, DELETE, PATCH methods (only GET and POST shown)\n- CancellationToken support\n\n## Suggested Documentation\n\nExpand the \"Mocking HttpClient\" section with subsections for:\n\n1. **All HTTP Methods** (PUT, DELETE, PATCH)\n2. **Binary Content Matching**\n3. **URI Scheme Filtering**\n4. **Content Body Matching** (explain the feature shown in example)\n5. **CancellationToken Support**\n\nSee DOCUMENTATION_GAPS.md for detailed examples.\n\n## Priority\n\n**Medium** - Completes HttpClient section which is already documented.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document interaction tracking features",
+    "labels": ["documentation", "enhancement"],
+    "priority": "Low",
+    "body": "## Description\n\nInteraction tracking features are completely undocumented.\n\n## Missing Documentation\n\n- `.Interactions` property - Access all recorded interactions\n- `.ClearAllInteractions()` - Clear interaction history\n- `MockMonitor.Run()` - Session-based monitoring\n\n## Suggested Documentation\n\nAdd a new section titled \"Interaction Tracking\":\n\n```markdown\n### Interaction Tracking\n\nMockolate tracks all interactions with mocks. You can access and manage these interactions:\n\n```csharp\nvar sut = Mock.Create<IChocolateDispenser>();\n\nsut.Dispense(\"Dark\", 5);\nsut.Dispense(\"Milk\", 3);\n\n// Access all interactions\nforeach (var interaction in sut.Interactions)\n{\n    Console.WriteLine($\"Interaction: {interaction}\");\n}\n\n// Clear interaction history\nsut.ClearAllInteractions();\n```\n\n#### Mock Monitoring Sessions\n\nUse `MockMonitor.Run()` to track interactions within a specific scope:\n\n```csharp\nusing (var monitor = MockMonitor.Run())\n{\n    sut.Dispense(\"Dark\", 5);\n    \n    // Access interactions within this session\n    var interactions = monitor.GetInteractions();\n}\n```\n```\n\n## Priority\n\n**Low** - Advanced debugging feature for specific use cases.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document advanced mock behavior options",
+    "labels": ["documentation", "enhancement"],
+    "priority": "Low",
+    "body": "## Description\n\nSeveral advanced mock behavior configuration options are missing from the documentation.\n\n## Missing Documentation\n\n- `.WithDefaultValueFor<T>()` - Custom default value factories\n- `.Initialize<T>(Action<int, IMockSetup<T>>)` - Initialize with counter\n- `.UseConstructorParametersFor<T>()` - Constructor parameter configuration\n\n## Suggested Documentation\n\nExpand the \"Customizing mock behavior\" section with subsection \"Advanced Mock Behavior\":\n\nSee DOCUMENTATION_GAPS.md for detailed examples.\n\n## Priority\n\n**Low** - Advanced edge cases.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document special method overrides (ToString, Equals, GetHashCode)",
+    "labels": ["documentation", "enhancement"],
+    "priority": "Low",
+    "body": "## Description\n\nThe ability to override `ToString()`, `Equals()`, and `GetHashCode()` is completely undocumented.\n\n## Missing Documentation\n\n- Override `ToString()`, `Equals()`, `GetHashCode()` on mocks\n- Customize mock identity and string representation\n\n## Suggested Documentation\n\nAdd a new section or subsection titled \"Overriding Special Methods\":\n\n```markdown\n### Overriding Special Methods\n\nYou can override `ToString()`, `Equals()`, and `GetHashCode()` on your mocks:\n\n```csharp\nvar sut = Mock.Create<IChocolateDispenser>();\n\n// Override ToString\nsut.SetupMock.Method.ToString()\n    .Returns(\"Custom Mock Dispenser\");\n\n// Override Equals\nsut.SetupMock.Method.Equals(It.IsAny<object>())\n    .Returns((obj) => ReferenceEquals(sut, obj));\n\n// Override GetHashCode\nsut.SetupMock.Method.GetHashCode()\n    .Returns(12345);\n\nConsole.WriteLine(sut.ToString());  // \"Custom Mock Dispenser\"\n```\n```\n\n## Priority\n\n**Low** - Rare use case.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  },
+  {
+    "title": "Document async exception handling with ThrowsAsync",
+    "labels": ["documentation", "enhancement"],
+    "priority": "Low",
+    "body": "## Description\n\nThe `.ThrowsAsync<TException>()` method is missing from the async documentation.\n\n## Missing Documentation\n\n- `.ThrowsAsync<TException>()` - Throw exceptions from async methods\n- Variants with exception factories\n\n## Suggested Documentation\n\nAdd to the \"Async Methods\" subsection under Method Setup:\n\n```markdown\n**Async Exception Handling**\n\nThrow exceptions from async methods:\n\n```csharp\nsut.SetupMock.Method.DispenseAsync(It.Is(\"Invalid\"), It.IsAny<int>())\n    .ThrowsAsync<InvalidOperationException>();\n\n// Or with a specific exception\nsut.SetupMock.Method.DispenseAsync(It.Is(\"Error\"), It.IsAny<int>())\n    .ThrowsAsync(new InvalidChocolateException(\"Bad chocolate!\"));\n\n// Or with a factory\nsut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())\n    .ThrowsAsync((type, amount) => new Exception($\"Cannot dispense {amount} {type}\"));\n```\n```\n\n## Priority\n\n**Low** - Minor completion of async documentation.\n\n## Related Files\n\n- README.md\n- Docs/index.md"
+  }
+]
