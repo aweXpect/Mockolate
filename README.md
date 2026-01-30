@@ -316,6 +316,41 @@ sut.SetupMock.Indexer(It.Is("Dark"))
 You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for
 methods.
 
+### Working with Protected Members
+
+Mockolate allows you to setup and verify protected methods and properties on class mocks. Access protected members using the `.Protected` property:
+
+```csharp
+public abstract class ChocolateDispenser
+{
+    protected virtual bool DispenseInternal(string type, int amount) => true;
+    protected virtual int InternalStock { get; set; }
+}
+
+var sut = Mock.Create<ChocolateDispenser>();
+
+// Setup protected method
+sut.SetupMock.Protected.Method.DispenseInternal(
+    It.Is("Dark"), It.IsAny<int>())
+    .Returns(true);
+
+// Setup protected property
+sut.SetupMock.Protected.Property.InternalStock.InitializeWith(100);
+
+// Verify protected method was called
+sut.VerifyMock.Invoked.Protected.DispenseInternal(
+    It.Is("Dark"), It.IsAny<int>()).Once();
+
+// Verify protected property was accessed
+sut.VerifyMock.Got.Protected.InternalStock().AtLeastOnce();
+```
+
+**Notes:**
+- Protected members can be set up and verified just like public members, using the `.Protected` accessor.
+- All setup options (`.Returns()`, `.Throws()`, `.Do()`, `.InitializeWith()`, etc.) work with protected members.
+- All verification options (`.Once()`, `.AtLeastOnce()`, etc.) work with protected members.
+- Protected indexers are supported using `.Protected.Indexer()` for setup and `.GotProtectedIndexer()`/`.SetProtectedIndexer()` for verification.
+
 ## Mock events
 
 Easily raise events on your mock to test event handlers in your code.
@@ -452,6 +487,31 @@ sut.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 // Verify that the event 'ChocolateDispensed' was unsubscribed from exactly once
 sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
+
+### Protected Members
+
+You can verify interactions with protected members on class mocks using the `.Protected` accessor:
+
+```csharp
+// Verify protected method was invoked
+sut.VerifyMock.Invoked.Protected.DispenseInternal(
+    It.Is("Dark"), It.IsAny<int>()).Once();
+
+// Verify protected property was read
+sut.VerifyMock.Got.Protected.InternalStock().AtLeastOnce();
+
+// Verify protected property was set
+sut.VerifyMock.Set.Protected.InternalStock(It.Is(100)).Once();
+
+// Verify protected indexer was read
+sut.VerifyMock.GotProtectedIndexer(It.Is(0)).Once();
+
+// Verify protected indexer was set
+sut.VerifyMock.SetProtectedIndexer(It.Is(0), It.Is(42)).Once();
+```
+
+**Note:**  
+All verification options (argument matchers, count assertions) work the same for protected members as for public members.
 
 ### Call Ordering
 

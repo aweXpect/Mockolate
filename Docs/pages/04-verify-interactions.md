@@ -99,6 +99,31 @@ sut.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
 
+## Protected Members
+
+You can verify interactions with protected members on class mocks using the `.Protected` accessor:
+
+```csharp
+// Verify protected method was invoked
+sut.VerifyMock.Invoked.Protected.DispenseInternal(
+    It.Is("Dark"), It.IsAny<int>()).Once();
+
+// Verify protected property was read
+sut.VerifyMock.Got.Protected.InternalStock().AtLeastOnce();
+
+// Verify protected property was set
+sut.VerifyMock.Set.Protected.InternalStock(It.Is(100)).Once();
+
+// Verify protected indexer was read
+sut.VerifyMock.GotProtectedIndexer(It.Is(0)).Once();
+
+// Verify protected indexer was set
+sut.VerifyMock.SetProtectedIndexer(It.Is(0), It.Is(42)).Once();
+```
+
+**Note:**  
+All verification options (argument matchers, count assertions) work the same for protected members as for public members.
+
 ## Call Ordering
 
 Use `Then` to verify that calls occurred in a specific order:
