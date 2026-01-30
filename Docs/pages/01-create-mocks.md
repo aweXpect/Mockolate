@@ -73,7 +73,7 @@ var sut2 = factory.Create<ILemonadeDispenser>();
 Using a factory allows you to create multiple mocks with identical, centrally configured behavior. This is especially
 useful when you need consistent mock setups across multiple tests or for different types.
 
-## Wrapping Existing Instances
+## Wrapping existing instances
 
 You can wrap an existing instance with mock tracking using `Mock.Wrap<T>()`. This allows you to track interactions with
 a real object:
