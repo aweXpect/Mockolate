@@ -88,3 +88,10 @@ wrappedDispenser.Dispense("Dark", 5);
 // But you can still verify interactions
 wrappedDispenser.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).Once();
 ```
+
+**Notes:**
+
+- Only interface types can be wrapped with `Mock.Wrap<T>()`.
+- All calls are forwarded to the wrapped instance.
+- You can still set up custom behavior that overrides the wrapped instance's behavior.
+- Verification works the same as with regular mocks.
