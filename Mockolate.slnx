@@ -43,7 +43,6 @@
   <Folder Name="/_/Docs/">
     <File Path="Docs/pages/00-index.md" />
     <File Path="Docs/pages/01-create-mocks.md" />
-    <File Path="Docs/pages/02-setup.md" />
     <File Path="Docs/pages/03-mock-events.md" />
     <File Path="Docs/pages/04-verify-interactions.md" />
     <File Path="Docs/pages/07-analyzers.md" />
@@ -51,6 +50,13 @@
   </Folder>
   <Folder Name="/_/Docs/advanced-features/">
     <File Path="Docs/pages/advanced-features/_category_.json" />
+  </Folder>
+  <Folder Name="/_/Docs/setup/">
+    <File Path="Docs/pages/setup/01-properties.md" />
+    <File Path="Docs/pages/setup/02-methods.md" />
+    <File Path="Docs/pages/setup/03-indexers.md" />
+    <File Path="Docs/pages/setup/04-parameter-matching.md" />
+    <File Path="Docs/pages/setup/_category_.json" />
   </Folder>
   <Folder Name="/_/Docs/special-types/">
     <File Path="Docs/pages/special-types/01-httpclient.md" />
