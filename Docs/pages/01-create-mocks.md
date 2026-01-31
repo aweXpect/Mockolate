@@ -65,7 +65,7 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 Provide custom default values for specific types using `.WithDefaultValueFor<T>()`:
 
 ```csharp
-var behavior = new MockBehavior()
+var behavior = MockBehavior.Default
     .WithDefaultValueFor<string>(() => "default")
     .WithDefaultValueFor<int>(() => 42);
 
@@ -79,7 +79,7 @@ This is useful when you want mocks to return specific default values for certain
 Initialize mocks with a counter to track creation order or assign unique identifiers:
 
 ```csharp
-var behavior = new MockBehavior()
+var behavior = MockBehavior.Default
     .Initialize<IChocolateDispenser>((count, setup) => 
     {
         setup.Property.TotalDispensed.InitializeWith(count * 10);
@@ -99,7 +99,7 @@ The counter starts at 1 and increments with each mock instance created. This is 
 Configure constructor parameters for specific types at the behavior level:
 
 ```csharp
-var behavior = new MockBehavior()
+var behavior = MockBehavior.Default
     .UseConstructorParametersFor<MyChocolateDispenser>("Dark", 100);
 
 var sut = Mock.Create<MyChocolateDispenser>(behavior);
