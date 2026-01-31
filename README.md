@@ -135,6 +135,55 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 		- Tuples with recursively defaulted values
 		- `null` for other reference types
 
+### Advanced Mock Behavior
+
+#### Custom Default Value Factories
+
+Provide custom default values for specific types using `.WithDefaultValueFor<T>()`:
+
+```csharp
+var behavior = new MockBehavior()
+    .WithDefaultValueFor<string>(() => "default")
+    .WithDefaultValueFor<int>(() => 42);
+
+var sut = Mock.Create<IChocolateDispenser>(behavior);
+```
+
+This is useful when you want mocks to return specific default values for certain types instead of the standard defaults (e.g., `null`, `0`, empty strings).
+
+#### Initialize with Counter
+
+Initialize mocks with a counter to track creation order or assign unique identifiers:
+
+```csharp
+var behavior = new MockBehavior()
+    .Initialize<IChocolateDispenser>((count, mock) => 
+    {
+        mock.Indexer(It.Is("Dark")).InitializeWith(count * 10);
+    });
+
+var mock1 = Mock.Create<IChocolateDispenser>(behavior);
+var mock2 = Mock.Create<IChocolateDispenser>(behavior);
+
+// mock1["Dark"] == 10
+// mock2["Dark"] == 20
+```
+
+The counter starts at 1 and increments with each mock instance created. This is particularly useful when you need to create multiple mocks with slightly different configurations.
+
+#### Constructor Parameters Configuration
+
+Configure constructor parameters for specific types at the behavior level:
+
+```csharp
+var behavior = new MockBehavior()
+    .UseConstructorParametersFor<MyChocolateDispenser>("Dark", 100);
+
+var sut = Mock.Create<MyChocolateDispenser>(behavior);
+```
+
+This allows you to define default constructor parameters in the behavior, which will be used when creating mocks unless explicit parameters are provided via `BaseClass.WithConstructorParameters()`.
+
 ### Using a factory for shared behavior
 
 Use `Mock.Factory` to create multiple mocks with a shared behavior:
