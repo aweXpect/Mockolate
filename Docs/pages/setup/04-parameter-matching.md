@@ -4,7 +4,7 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 ## Parameter Matchers
 
-### Basic Matchers
+**Basic Matchers**
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value.
@@ -15,26 +15,26 @@ Mockolate provides flexible parameter matching for method setups and verificatio
   minimum and maximum value.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
-### String Matching
+**tring Matching**
 
 - `It.Matches(pattern)`: Matches strings using wildcard patterns (`*` and `?`).
 
-  **Regular Expressions**  
-  Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
+**Regular Expressions**  
+Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
 
-  ```csharp
-  // Example: Match email addresses
-  sut.SetupMock.Method.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
-      .Returns(true);
-  
-  bool result = sut.ValidateEmail("user@example.com");
-  
-  // Case-sensitive regex
-  sut.SetupMock.Method.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
-      .Returns(1);
-  ```
+```csharp
+// Example: Match email addresses
+sut.SetupMock.Method.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
+  .Returns(true);
 
-### Ref and Out Parameters
+bool result = sut.ValidateEmail("user@example.com");
+
+// Case-sensitive regex
+sut.SetupMock.Method.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
+  .Returns(1);
+```
+
+**Ref and Out Parameters**
 
 - `It.IsRef<T>(setter)`: Matches any `ref` parameter and sets a new value using the setter function.
 - `It.IsRef<T>(predicate, setter)`: Matches `ref` parameters that satisfy the predicate and sets a new value.
@@ -62,7 +62,7 @@ sut.Increment(ref value);
 // value == 6
 ```
 
-### Span Parameters (.NET 8+)
+**Span Parameters (.NET 8+)**
 
 - `It.IsSpan<T>(predicate)`: Matches `Span<T>` parameters that satisfy the predicate.
 - `It.IsAnySpan<T>()`: Matches any `Span<T>` parameter.
@@ -83,7 +83,7 @@ bool result = sut.Process(buffer);
 // result == true
 ```
 
-### Custom Equality Comparers
+**Custom Equality Comparers**
 
 Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It.Is()` and `It.IsOneOf()`:
 
@@ -118,7 +118,7 @@ bool result = sut.Process("test123", 5);
 
 ## Parameter Interaction
 
-### Callbacks
+**Callbacks**
 
 With `.Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side
 effects or checks directly when the method or indexer is called.
@@ -132,7 +132,7 @@ sut.Dispense("Dark", 42);
 // lastAmount == 42
 ```
 
-### Monitor
+**Monitor**
 
 With `.Monitor(out monitor)`, you can track the actual
 values passed during test execution and analyze them afterward.

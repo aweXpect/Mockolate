@@ -38,7 +38,7 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 );
 ```
 
-### `MockBehavior` options
+**`MockBehavior` options**
 
 - `ThrowWhenNotSetup` (bool):
 	- If `false` (default), the mock will return a default value (see `DefaultValue`).

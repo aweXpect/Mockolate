@@ -16,47 +16,6 @@ Supported call count verifications in the `Mockolate.VerifyMock` namespace:
 - `.AtMostTwice()`
 - `.AtMost(n)`
 
-## Methods
-
-You can verify that methods were invoked with specific arguments and how many times:
-
-```csharp
-// Verify that Dispense("Dark", 5) was invoked at least once
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
-
-// Verify that Dispense was never invoked with "White" and any amount
-sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
-
-// Verify that Dispense was invoked exactly twice with any type and any amount
-sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Exactly(2);
-```
-
-### Argument Matchers
-
-You can use argument matchers from the `Match` class to verify calls with flexible conditions:
-
-- `It.IsAny<T>()`: Matches any value of type `T`.
-- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
-  comparer.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
-  provide a custom equality comparer.
-- `It.IsNull<T>()`: Matches null.
-- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
-- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
-  minimum and maximum value.
-- `It.IsOut<T>()`: Matches any out parameter of type `T`
-- `It.IsRef<T>()`: Matches any ref parameter of type `T`
-- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
-  regular expressions instead.
-- `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
-
-**Example:**
-
-```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is<string>(t => t.StartsWith("D")), It.IsAny<int>()).Once();
-sut.VerifyMock.Invoked.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
-```
-
 ## Properties
 
 You can verify access to property getter and setter:
@@ -71,6 +30,21 @@ sut.VerifyMock.Set.TotalDispensed(It.Is(42)).Once();
 
 **Note:**  
 The setter value also supports argument matchers.
+
+## Methods
+
+You can verify that methods were invoked with specific arguments and how many times:
+
+```csharp
+// Verify that Dispense("Dark", 5) was invoked at least once
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
+
+// Verify that Dispense was never invoked with "White" and any amount
+sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
+
+// Verify that Dispense was invoked exactly twice with any type and any amount
+sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Exactly(2);
+```
 
 ## Indexers
 
@@ -99,6 +73,32 @@ sut.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
 
+## Argument Matchers
+
+You can use argument matchers from the `Match` class to verify calls with flexible conditions:
+
+- `It.IsAny<T>()`: Matches any value of type `T`.
+- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
+  comparer.
+- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
+  provide a custom equality comparer.
+- `It.IsNull<T>()`: Matches null.
+- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
+- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
+  minimum and maximum value.
+- `It.IsOut<T>()`: Matches any out parameter of type `T`
+- `It.IsRef<T>()`: Matches any ref parameter of type `T`
+- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
+  regular expressions instead.
+- `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
+
+**Example:**
+
+```csharp
+sut.VerifyMock.Invoked.Dispense(It.Is<string>(t => t.StartsWith("D")), It.IsAny<int>()).Once();
+sut.VerifyMock.Invoked.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
+```
+
 ## Call Ordering
 
 Use `Then` to verify that calls occurred in a specific order:
@@ -118,28 +118,3 @@ sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1)).Then(
 ```
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.
-
-## Check for unexpected interactions
-
-1. **ThatAllInteractionsAreVerified**:  
-   You can check if all interactions with the mock have been verified using `ThatAllInteractionsAreVerified`:
-
-   ```csharp
-   // Returns true if all interactions have been verified before
-   bool allVerified = sut.VerifyMock.ThatAllInteractionsAreVerified();
-   ```
-
-   This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.
-   If any interaction was not verified, this method returns `false`.
-
-
-2. **ThatAllSetupsAreUsed**:  
-   You can check if all registered setups on the mock have been used using `ThatAllSetupsAreUsed`:
-
-   ```csharp
-   // Returns true if all setups have been used
-   bool allUsed = sut.VerifyMock.ThatAllSetupsAreUsed();
-   ```
-
-   This is useful for ensuring that your test setup and test execution match.
-   If any setup was not used, this method returns `false`.

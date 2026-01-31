@@ -51,6 +51,7 @@
   <Folder Name="/_/Docs/advanced-features/">
     <File Path="Docs/pages/advanced-features/01-working-with-protected-members.md" />
     <File Path="Docs/pages/advanced-features/02-advanced-callback-features.md" />
+    <File Path="Docs/pages/advanced-features/03-check-for-unexpected-interactions.md" />
     <File Path="Docs/pages/advanced-features/_category_.json" />
   </Folder>
   <Folder Name="/_/Docs/setup/">
