@@ -15,6 +15,8 @@ Supported call count verifications in the `Mockolate.VerifyMock` namespace:
 - `.AtMostOnce()`
 - `.AtMostTwice()`
 - `.AtMost(n)`
+- `.Between(min, max)` - Between min and max times (inclusive)
+- `.Times(predicate)` - Custom predicate
 
 ## Properties
 
@@ -44,6 +46,12 @@ sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
 sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Exactly(2);
+
+// Verify that Dispense was invoked between 3 and 5 times (inclusive)
+sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>()).Between(3, 5);
+
+// Verify that Dispense was invoked an even number of times
+sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>()).Times(count => count % 2 == 0);
 ```
 
 ## Indexers
