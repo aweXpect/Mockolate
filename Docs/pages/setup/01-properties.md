@@ -63,11 +63,11 @@ sut.SetupMock.Property.TotalDispensed.OnGet
 	.Do(() => Console.WriteLine("Execute on all odd read interactions"));
 ```
 
-**Note:**  
-All callbacks support more advanced features like conditional execution, frequency control, parallel execution, and
-access to the invocation counter.
-See [Advanced callback features](https://awexpect.com/docs/mockolate/advanced-features/advanced-callback-features) for
-details.
+**Notes:**
+- All callbacks support more advanced features like conditional execution, frequency control, parallel execution, and
+  access to the invocation counter.
+  See [Advanced callback features](https://awexpect.com/docs/mockolate/advanced-features/advanced-callback-features)
+  for details.
 
 ## Register
 
