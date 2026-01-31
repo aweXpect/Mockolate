@@ -157,16 +157,16 @@ Initialize mocks with a counter to track creation order or assign unique identif
 
 ```csharp
 var behavior = new MockBehavior()
-    .Initialize<IChocolateDispenser>((count, mock) => 
+    .Initialize<IChocolateDispenser>((count, setup) => 
     {
-        mock.Indexer(It.Is("Dark")).InitializeWith(count * 10);
+        setup.Property.TotalDispensed.InitializeWith(count * 10);
     });
 
 var mock1 = Mock.Create<IChocolateDispenser>(behavior);
 var mock2 = Mock.Create<IChocolateDispenser>(behavior);
 
-// mock1["Dark"] == 10
-// mock2["Dark"] == 20
+// mock1.TotalDispensed == 10
+// mock2.TotalDispensed == 20
 ```
 
 The counter starts at 1 and increments with each mock instance created. This is particularly useful when you need to create multiple mocks with slightly different configurations.
