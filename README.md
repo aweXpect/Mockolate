@@ -115,7 +115,7 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 );
 ```
 
-#### `MockBehavior` options
+**`MockBehavior` options**
 
 - `ThrowWhenNotSetup` (bool):
 	- If `false` (default), the mock will return a default value (see `DefaultValue`).
@@ -292,7 +292,7 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 #### Parameter Matchers
 
-##### Basic Matchers
+**Basic Matchers**
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value.
@@ -303,12 +303,12 @@ Mockolate provides flexible parameter matching for method setups and verificatio
   minimum and maximum value.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
-##### String Matching
+**String Matching**
 
 - `It.Matches(pattern)`: Matches strings using wildcard patterns (`*` and `?`).
 
-  **Regular Expressions**  
-  Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
+**Regular Expressions**  
+Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
 
   ```csharp
   // Example: Match email addresses
@@ -322,7 +322,7 @@ Mockolate provides flexible parameter matching for method setups and verificatio
       .Returns(1);
   ```
 
-##### Ref and Out Parameters
+**Ref and Out Parameters**
 
 - `It.IsRef<T>(setter)`: Matches any `ref` parameter and sets a new value using the setter function.
 - `It.IsRef<T>(predicate, setter)`: Matches `ref` parameters that satisfy the predicate and sets a new value.
@@ -350,7 +350,7 @@ sut.Increment(ref value);
 // value == 6
 ```
 
-##### Span Parameters (.NET 8+)
+**Span Parameters (.NET 8+)**
 
 - `It.IsSpan<T>(predicate)`: Matches `Span<T>` parameters that satisfy the predicate.
 - `It.IsAnySpan<T>()`: Matches any `Span<T>` parameter.
@@ -371,7 +371,7 @@ bool result = sut.Process(buffer);
 // result == true
 ```
 
-##### Custom Equality Comparers
+**Custom Equality Comparers**
 
 Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It.Is()` and `It.IsOneOf()`:
 
@@ -406,7 +406,7 @@ bool result = sut.Process("test123", 5);
 
 #### Parameter Interaction
 
-##### Callbacks
+**Callbacks**
 
 With `.Do`, you can register a callback for individual parameters of a method setup. This allows you to implement side
 effects or checks directly when the method or indexer is called.
@@ -420,7 +420,7 @@ sut.Dispense("Dark", 42);
 // lastAmount == 42
 ```
 
-##### Monitor
+**Monitor**
 
 With `.Monitor(out monitor)`, you can track the actual
 values passed during test execution and analyze them afterward.
@@ -489,47 +489,6 @@ Supported call count verifications in the `Mockolate.VerifyMock` namespace:
 - `.AtMostTwice()`
 - `.AtMost(n)`
 
-### Methods
-
-You can verify that methods were invoked with specific arguments and how many times:
-
-```csharp
-// Verify that Dispense("Dark", 5) was invoked at least once
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
-
-// Verify that Dispense was never invoked with "White" and any amount
-sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
-
-// Verify that Dispense was invoked exactly twice with any type and any amount
-sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()()).Exactly(2);
-```
-
-#### Argument Matchers
-
-You can use argument matchers from the `With` class to verify calls with flexible conditions:
-
-- `It.IsAny<T>()`: Matches any value of type `T`.
-- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
-  comparer.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
-  provide a custom equality comparer.
-- `It.IsNull<T>()`: Matches null.
-- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
-- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
-  minimum and maximum value.
-- `It.IsOut<T>()`: Matches any out parameter of type `T`
-- `It.IsRef<T>()`: Matches any ref parameter of type `T`
-- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
-  regular expressions instead.
-- `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
-
-**Example:**
-
-```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is<string>(t => t.StartsWith("D")), It.IsAny<int>()).Once();
-sut.VerifyMock.Invoked.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
-```
-
 ### Properties
 
 You can verify access to property getter and setter:
@@ -544,6 +503,21 @@ sut.VerifyMock.Set.TotalDispensed(It.Is(42)).Once();
 
 **Note:**  
 The setter value also supports argument matchers.
+
+### Methods
+
+You can verify that methods were invoked with specific arguments and how many times:
+
+```csharp
+// Verify that Dispense("Dark", 5) was invoked at least once
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
+
+// Verify that Dispense was never invoked with "White" and any amount
+sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
+
+// Verify that Dispense was invoked exactly twice with any type and any amount
+sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()()).Exactly(2);
+```
 
 ### Indexers
 
@@ -572,6 +546,32 @@ sut.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
 sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
 ```
 
+### Argument Matchers
+
+You can use argument matchers from the `With` class to verify calls with flexible conditions:
+
+- `It.IsAny<T>()`: Matches any value of type `T`.
+- `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
+  comparer.
+- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
+  provide a custom equality comparer.
+- `It.IsNull<T>()`: Matches null.
+- `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
+- `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
+  minimum and maximum value.
+- `It.IsOut<T>()`: Matches any out parameter of type `T`
+- `It.IsRef<T>()`: Matches any ref parameter of type `T`
+- `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
+  regular expressions instead.
+- `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
+
+**Example:**
+
+```csharp
+sut.VerifyMock.Invoked.Dispense(It.Is<string>(t => t.StartsWith("D")), It.IsAny<int>()).Once();
+sut.VerifyMock.Invoked.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
+```
+
 ### Call Ordering
 
 Use `Then` to verify that calls occurred in a specific order:
@@ -592,31 +592,6 @@ sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1)).Then(
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.
 
-### Check for unexpected interactions
-
-1. **ThatAllInteractionsAreVerified**:  
-   You can check if all interactions with the mock have been verified using `ThatAllInteractionsAreVerified`:
-
-   ```csharp
-   // Returns true if all interactions have been verified before
-   bool allVerified = sut.VerifyMock.ThatAllInteractionsAreVerified();
-   ```
-
-   This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.
-   If any interaction was not verified, this method returns `false`.
-
-
-2. **ThatAllSetupsAreUsed**:  
-   You can check if all registered setups on the mock have been used using `ThatAllSetupsAreUsed`:
-
-   ```csharp
-   // Returns true if all setups have been used
-   bool allUsed = sut.VerifyMock.ThatAllSetupsAreUsed();
-   ```
-
-   This is useful for ensuring that your test setup and test execution match.
-   If any setup was not used, this method returns `false`.
-
 ## Advanced Features
 
 ### Working with protected members
@@ -624,7 +599,7 @@ If the order is incorrect or a call is missing, a `MockVerificationException` wi
 Mockolate allows you to set up and verify protected virtual members on class mocks. Access protected members using the
 `.Protected` property:
 
-#### Example:
+**Example**
 
 ```csharp
 public abstract class ChocolateDispenser
@@ -636,7 +611,7 @@ public abstract class ChocolateDispenser
 var sut = Mock.Create<ChocolateDispenser>();
 ```
 
-##### Setup
+#### Setup
 
 ```csharp
 // Setup protected method
@@ -653,7 +628,7 @@ sut.SetupMock.Protected.Property.InternalStock.InitializeWith(100);
 - Protected members can be set up and verified just like public members, using the `.Protected` accessor.
 - All setup options (`.Returns()`, `.Throws()`, `.Do()`, `.InitializeWith()`, etc.) work with protected members.
 
-##### Verification
+#### Verification
 
 ```csharp
 // Verify protected method was invoked
@@ -730,6 +705,32 @@ sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
 sut.SetupMock.Property.TotalDispensed.OnGet
 	.Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
 ```
+
+### Check for unexpected interactions
+
+#### ThatAllInteractionsAreVerified
+
+You can check if all interactions with the mock have been verified using `ThatAllInteractionsAreVerified`:
+
+```csharp
+// Returns true if all interactions have been verified before
+bool allVerified = sut.VerifyMock.ThatAllInteractionsAreVerified();
+```
+
+This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.
+If any interaction was not verified, this method returns `false`.
+
+#### ThatAllSetupsAreUsed
+
+You can check if all registered setups on the mock have been used using `ThatAllSetupsAreUsed`:
+
+```csharp
+// Returns true if all setups have been used
+bool allUsed = sut.VerifyMock.ThatAllSetupsAreUsed();
+```
+
+This is useful for ensuring that your test setup and test execution match.
+If any setup was not used, this method returns `false`.
 
 ## Special Types
 

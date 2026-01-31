@@ -3,7 +3,7 @@
 Mockolate allows you to set up and verify protected virtual members on class mocks. Access protected members using the
 `.Protected` property:
 
-## Example:
+**Example**
 
 ```csharp
 public abstract class ChocolateDispenser
@@ -15,7 +15,7 @@ public abstract class ChocolateDispenser
 var sut = Mock.Create<ChocolateDispenser>();
 ```
 
-### Setup
+## Setup
 
 ```csharp
 // Setup protected method
@@ -32,7 +32,7 @@ sut.SetupMock.Protected.Property.InternalStock.InitializeWith(100);
 - Protected members can be set up and verified just like public members, using the `.Protected` accessor.
 - All setup options (`.Returns()`, `.Throws()`, `.Do()`, `.InitializeWith()`, etc.) work with protected members.
 
-### Verification
+## Verification
 
 ```csharp
 // Verify protected method was invoked
