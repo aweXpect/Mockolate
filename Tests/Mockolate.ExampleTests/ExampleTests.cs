@@ -2,6 +2,7 @@ using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Mockolate.ExampleTests.TestData;
+using Mockolate.Monitor;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
 using System.Net;
@@ -201,4 +202,58 @@ public class ExampleTests
 		await That(result).IsEqualTo(returnValue);
 		mock.VerifyMock.Invoked.TryDelete(It.Is(id), It.IsOut<User?>()).Once();
 	}
+
+	[Fact]
+	public async Task InteractionTracking_ShouldTrackAllInteractions()
+	{
+		Guid id1 = Guid.NewGuid();
+		Guid id2 = Guid.NewGuid();
+		IExampleRepository sut = Mock.Create<IExampleRepository>();
+
+		sut.AddUser("Alice");
+		sut.RemoveUser(id1);
+		sut.AddUser("Bob");
+
+		// Access all interactions via cast to access the concrete Mock type
+		Mock<IExampleRepository> mockInstance = ((IMockSubject<IExampleRepository>)sut).Mock;
+		await That(mockInstance.Interactions.Count).IsEqualTo(3);
+		await That(mockInstance.Interactions.Interactions).HasCount(3);
+
+		// Clear interaction history
+		sut.SetupMock.ClearAllInteractions();
+		await That(mockInstance.Interactions.Count).IsEqualTo(0);
+	}
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task MockMonitoring_ShouldTrackScopedInteractions()
+	{
+		Guid id1 = Guid.NewGuid();
+		Guid id2 = Guid.NewGuid();
+		IExampleRepository sut = Mock.Create<IExampleRepository>();
+		sut.SetupMock.Method.AddUser(It.IsAny<string>()).Returns(name => new User(Guid.NewGuid(), name));
+
+		sut.AddUser("Before");
+		
+		using (IDisposable monitor = sut.MonitorMock(out MockMonitor<IExampleRepository> monitorInstance))
+		{
+			sut.AddUser("Alice");
+			sut.AddUser("Bob");
+
+			// Verify interactions within this session only
+			monitorInstance.Verify.Invoked.AddUser(It.Is("Alice")).Once();
+			monitorInstance.Verify.Invoked.AddUser(It.Is("Bob")).Once();
+			// "Before" was called outside the monitoring session
+			monitorInstance.Verify.Invoked.AddUser(It.Is("Before")).Never();
+		}
+
+		sut.AddUser("After");
+
+		// The main mock still tracks all interactions
+		sut.VerifyMock.Invoked.AddUser(It.Is("Before")).Once();
+		sut.VerifyMock.Invoked.AddUser(It.Is("Alice")).Once();
+		sut.VerifyMock.Invoked.AddUser(It.Is("Bob")).Once();
+		sut.VerifyMock.Invoked.AddUser(It.Is("After")).Once();
+	}
+#endif
 }
