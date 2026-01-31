@@ -7,20 +7,21 @@ verify HTTP interactions just like with any other interface or class.
 
 ```csharp
 HttpClient httpClient = Mock.Create<HttpClient>();
-httpClient.SetupMock.Method.PostAsync(
-		It.IsAny<string>(),
-		It.IsStringContent())
-	.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+httpClient.SetupMock.Method
+    .PostAsync(
+        It.IsAny<string>(),
+        It.IsStringContent())
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/api/chocolate/dispense",
-	new StringContent("""
-	                  { "type": "Dark", "amount": 3 }
-	                  """, Encoding.UTF8, "application/json"));
+    new StringContent("""
+                      { "type": "Dark", "amount": 3 }
+                      """, Encoding.UTF8, "application/json"));
 
 await That(result.IsSuccessStatusCode).IsTrue();
 httpClient.VerifyMock.Invoked.PostAsync(
-	It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
-	It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
+    It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
+    It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
 ```
 
 **Notes:**
@@ -75,7 +76,7 @@ await httpClient.GetAsync("https://example.com", cts.Token);
 
 ## URI matching
 
-Use `It.IsUri(string?)` to match URIs using a wildcard patterns against the string representation of the URI.
+Use `It.IsUri(string?)` to match URIs using a wildcard pattern against the string representation of the URI.
 The pattern supports `*` to match zero or more characters and `?` to match a single character.
 
 ### Scheme
@@ -145,7 +146,7 @@ value:
 httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
-        It.IsStringContent("application/json").Matching("*\"type\": \"Dark\"*"))
+        It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*"))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 ```
 

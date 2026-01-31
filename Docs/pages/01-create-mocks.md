@@ -41,37 +41,37 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 ### `MockBehavior` options
 
 - `ThrowWhenNotSetup` (bool):
-	- If `false` (default), the mock will return a default value (see `DefaultValue`).
-	- If `true`, the mock will throw an exception when a method or property is called without a setup.
+  - If `false` (default), the mock will return a default value (see `DefaultValue`).
+  - If `true`, the mock will throw an exception when a method or property is called without a setup.
 - `SkipBaseClass` (bool):
-	- If `false` (default), the mock will call the base class implementation and use its return values as default
-	  values, if no explicit setup is defined.
-	- If `true`, the mock will not call any base class implementations.
+  - If `false` (default), the mock will call the base class implementation and use its return values as default
+    values, if no explicit setup is defined.
+  - If `true`, the mock will not call any base class implementations.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
-	- Automatically initialize all mocks of type T with the given setups when they are created.
-	- The callback can optionally receive an additional counter parameter which allows to differentiate between multiple
-	  instances. This is useful when you want to ensure that you can distinguish between different automatically created
-	  instances.
+  - Automatically initialize all mocks of type T with the given setups when they are created.
+  - The callback can optionally receive an additional counter parameter which allows to differentiate between multiple
+    instances. This is useful when you want to ensure that you can distinguish between different automatically created
+    instances.
 - `DefaultValue` (IDefaultValueGenerator):
-	- Customizes how default values are generated for methods/properties that are not set up.
-	- The default implementation provides sensible defaults for the most common use cases:
-		- Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
-		- Empty string for `string`
-		- Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
-		- Tuples with recursively defaulted values
-		- `null` for other reference types
-	- You can provide custom default values for specific types using `.WithDefaultValueFor<T>()`:
-	  ```csharp
-	  var behavior = MockBehavior.Default
-	      .WithDefaultValueFor<string>(() => "default")
-	      .WithDefaultValueFor<int>(() => 42);
-	  var sut = Mock.Create<IChocolateDispenser>(behavior);
-	  ```
-	  This is useful when you want mocks to return specific default values for certain types instead of the standard
-	  defaults (e.g., `null`, `0`, empty strings).
+  - Customizes how default values are generated for methods/properties that are not set up.
+  - The default implementation provides sensible defaults for the most common use cases:
+    - Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
+    - Empty string for `string`
+    - Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
+    - Tuples with recursively defaulted values
+    - `null` for other reference types
+  - You can provide custom default values for specific types using `.WithDefaultValueFor<T>()`:
+    ```csharp
+    var behavior = MockBehavior.Default
+        .WithDefaultValueFor<string>(() => "default")
+        .WithDefaultValueFor<int>(() => 42);
+    var sut = Mock.Create<IChocolateDispenser>(behavior);
+    ```
+    This is useful when you want mocks to return specific default values for certain types instead of the standard
+    defaults (e.g., `null`, `0`, empty strings).
 - `.UseConstructorParametersFor<T>(object?[])`:
-	- Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
-	  during mock creation via `BaseClass.WithConstructorParameters(…)`.
+  - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
+    during mock creation via `BaseClass.WithConstructorParameters(…)`.
 
 ## Using a factory for shared behavior
 

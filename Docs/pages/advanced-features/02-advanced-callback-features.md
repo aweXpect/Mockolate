@@ -47,5 +47,5 @@ sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do((count, _, _) => Console.WriteLine($"Call #{count}"));
 
 sut.SetupMock.Property.TotalDispensed.OnGet
-	.Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
+    .Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
 ```

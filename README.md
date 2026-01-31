@@ -118,37 +118,37 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 **`MockBehavior` options**
 
 - `ThrowWhenNotSetup` (bool):
-	- If `false` (default), the mock will return a default value (see `DefaultValue`).
-	- If `true`, the mock will throw an exception when a method or property is called without a setup.
+  - If `false` (default), the mock will return a default value (see `DefaultValue`).
+  - If `true`, the mock will throw an exception when a method or property is called without a setup.
 - `SkipBaseClass` (bool):
-	- If `false` (default), the mock will call the base class implementation and use its return values as default
-	  values, if no explicit setup is defined.
-	- If `true`, the mock will not call any base class implementations.
+  - If `false` (default), the mock will call the base class implementation and use its return values as default
+    values, if no explicit setup is defined.
+  - If `true`, the mock will not call any base class implementations.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
-	- Automatically initialize all mocks of type T with the given setups when they are created.
-	- The callback can optionally receive an additional counter parameter which allows to differentiate between multiple
-	  instances. This is useful when you want to ensure that you can distinguish between different automatically created
-	  instances.
+  - Automatically initialize all mocks of type T with the given setups when they are created.
+  - The callback can optionally receive an additional counter parameter which allows to differentiate between multiple
+    instances. This is useful when you want to ensure that you can distinguish between different automatically created
+    instances.
 - `DefaultValue` (IDefaultValueGenerator):
-	- Customizes how default values are generated for methods/properties that are not set up.
-	- The default implementation provides sensible defaults for the most common use cases:
-		- Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
-		- Empty string for `string`
-		- Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
-		- Tuples with recursively defaulted values
-		- `null` for other reference types
-	- You can provide custom default values for specific types using `.WithDefaultValueFor<T>()`:
-	  ```csharp
-	  var behavior = MockBehavior.Default
-	      .WithDefaultValueFor<string>(() => "default")
-	      .WithDefaultValueFor<int>(() => 42);
-	  var sut = Mock.Create<IChocolateDispenser>(behavior);
-	  ```
-	  This is useful when you want mocks to return specific default values for certain types instead of the standard
-	  defaults (e.g., `null`, `0`, empty strings).
+  - Customizes how default values are generated for methods/properties that are not set up.
+  - The default implementation provides sensible defaults for the most common use cases:
+    - Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
+    - Empty string for `string`
+    - Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
+    - Tuples with recursively defaulted values
+    - `null` for other reference types
+  - You can provide custom default values for specific types using `.WithDefaultValueFor<T>()`:
+    ```csharp
+    var behavior = MockBehavior.Default
+        .WithDefaultValueFor<string>(() => "default")
+        .WithDefaultValueFor<int>(() => 42);
+    var sut = Mock.Create<IChocolateDispenser>(behavior);
+    ```
+    This is useful when you want mocks to return specific default values for certain types instead of the standard
+    defaults (e.g., `null`, `0`, empty strings).
 - `.UseConstructorParametersFor<T>(object?[])`:
-	- Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
-	  during mock creation via `BaseClass.WithConstructorParameters(…)`.
+  - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
+    during mock creation via `BaseClass.WithConstructorParameters(…)`.
 
 ### Using a factory for shared behavior
 
@@ -839,7 +839,7 @@ sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do((count, _, _) => Console.WriteLine($"Call #{count}"));
 
 sut.SetupMock.Property.TotalDispensed.OnGet
-	.Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
+    .Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
 ```
 
 ### Monitor interactions
@@ -930,20 +930,21 @@ verify HTTP interactions just like with any other interface or class.
 
 ```csharp
 HttpClient httpClient = Mock.Create<HttpClient>();
-httpClient.SetupMock.Method.PostAsync(
-		It.IsAny<string>(),
-		It.IsStringContent())
-	.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+httpClient.SetupMock.Method
+    .PostAsync(
+        It.IsAny<string>(),
+        It.IsStringContent())
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/api/chocolate/dispense",
-	new StringContent("""
-	                  { "type": "Dark", "amount": 3 }
-	                  """, Encoding.UTF8, "application/json"));
+    new StringContent("""
+                      { "type": "Dark", "amount": 3 }
+                      """, Encoding.UTF8, "application/json"));
 
 await That(result.IsSuccessStatusCode).IsTrue();
 httpClient.VerifyMock.Invoked.PostAsync(
-	It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
-	It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
+    It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
+    It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
 ```
 
 **Notes:**
@@ -998,7 +999,7 @@ await httpClient.GetAsync("https://example.com", cts.Token);
 
 #### URI matching
 
-Use `It.IsUri(string?)` to match URIs using a wildcard patterns against the string representation of the URI.
+Use `It.IsUri(string?)` to match URIs using a wildcard pattern against the string representation of the URI.
 The pattern supports `*` to match zero or more characters and `?` to match a single character.
 
 **Scheme**
@@ -1060,6 +1061,7 @@ httpClient.VerifyMock.Invoked
 #### Content Matching
 
 **String content**
+
 Use `It.IsStringContent(string?)` to match string content types, optionally providing an expected media type header
 value:
 
@@ -1067,7 +1069,7 @@ value:
 httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
-        It.IsStringContent("application/json").Matching("*\"type\": \"Dark\"*"))
+        It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*"))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 ```
 
@@ -1078,6 +1080,7 @@ To verify against the string content, use the following methods:
 - `.WithBodyMatching(string).AsRegex()`: to match content using regular expressions
 
 **Binary content**
+
 Use `It.IsBinaryContent(string?)` to match binary content types, optionally providing an expected media type header
 value:
 
