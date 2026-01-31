@@ -50,26 +50,26 @@ sut.SetupMock.Property.TotalDispensed.OnSet
     .Do(newValue => Console.WriteLine($"Changed to {newValue}!") );
 ```
 
-Callbacks can also receive the invocation counter and current value:
+Callbacks can also receive the current value:
 
 ```csharp
-// Getter with counter and current value
+// Getter with the current value
 sut.SetupMock.Property.TotalDispensed
-    .OnGet.Do((int count, int value) => 
-        Console.WriteLine($"[#{count}] Read TotalDispensed current value: {value}"));
+    .OnGet.Do(value => 
+        Console.WriteLine($"Read TotalDispensed current value: {value}"));
 
-// Setter with counter and new value
+// Setter with the new value
 sut.SetupMock.Property.TotalDispensed
-    .OnSet.Do((int count, int newValue) => 
-        Console.WriteLine($"[#{count}] Set TotalDispensed to {newValue}"));
+    .OnSet.Do(newValue => 
+        Console.WriteLine($"Set TotalDispensed to {newValue}"));
 ```
 
 Callbacks also support sequences, similar to `Returns` and `Throws`:
 
 ```csharp
 sut.SetupMock.Property.TotalDispensed.OnGet
-	.Do(() => Console.WriteLine("Execute on all even read interactions"))
-	.Do(() => Console.WriteLine("Execute on all odd read interactions"));
+    .Do(() => Console.WriteLine("Execute on all even read interactions"))
+    .Do(() => Console.WriteLine("Execute on all odd read interactions"));
 ```
 
 **Notes:**
