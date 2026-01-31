@@ -212,6 +212,43 @@ sut.SetupMock.Property.TotalDispensed.OnGet.Do(() => Console.WriteLine("TotalDis
 sut.SetupMock.Property.TotalDispensed.OnSet.Do((oldValue, newValue) => Console.WriteLine($"Changed from {oldValue} to {newValue}!") );
 ```
 
+**Advanced Property Returns**
+
+Return a value based on the previous value:
+
+```csharp
+sut.SetupMock.Property.TotalDispensed
+    .Returns((current) => current + 10);  // Increment by 10 each read
+```
+
+**Advanced Callbacks**
+
+Access invocation counter and values in callbacks:
+
+```csharp
+// Getter with counter and current value
+sut.SetupMock.Property.TotalDispensed
+    .OnGet.Do((int count, int value) => 
+        Console.WriteLine($"Read #{count}, current value: {value}"));
+
+// Setter with counter and new value
+sut.SetupMock.Property.TotalDispensed
+    .OnSet.Do((int count, int newValue) => 
+        Console.WriteLine($"Set #{count} to {newValue}"));
+```
+
+**Register Without Value**
+
+Register a setup without providing a value (useful with `ThrowWhenNotSetup`):
+
+```csharp
+var strictMock = Mock.Create<IChocolateDispenser>(
+    new MockBehavior { ThrowWhenNotSetup = true });
+
+// Register property without value - won't throw
+strictMock.SetupMock.Property.TotalDispensed.Register();
+```
+
 ### Methods
 
 Use `mock.SetupMock.Method.MethodName(…)` to set up methods. You can specify argument matchers for each parameter.
@@ -281,6 +318,31 @@ sut.SetupMock.Indexer(It.Is("Dark"))
   call.
 - Use `.SkippingBaseClass(…)` to override the base class behavior for a specific indexer (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
+
+**Advanced Indexer Returns**
+
+Return a value based on the previous value:
+
+```csharp
+sut.SetupMock.Indexer(It.Is("Dark"))
+    .Returns((string type, int current) => current + 10);  // Increment by 10 each read
+```
+
+**Advanced Callbacks**
+
+Access invocation counter and values in callbacks:
+
+```csharp
+// Getter with counter, parameter, and current value
+sut.SetupMock.Indexer(It.IsAny<string>())
+    .OnGet.Do((int count, string type, int value) => 
+        Console.WriteLine($"Read #{count} for {type}, current value: {value}"));
+
+// Setter with counter, parameter, and new value
+sut.SetupMock.Indexer(It.IsAny<string>())
+    .OnSet.Do((int count, string type, int newValue) => 
+        Console.WriteLine($"Set #{count} for {type} to {newValue}"));
+```
 
 **Note**:
 You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for
