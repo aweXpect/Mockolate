@@ -520,7 +520,7 @@ sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>())
     .Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()())
+sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
     .Exactly(2);
 
 // Verify that Dispense was invoked between 3 and 5 times (inclusive)
