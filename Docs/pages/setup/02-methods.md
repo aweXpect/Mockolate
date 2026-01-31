@@ -2,6 +2,16 @@
 
 Use `mock.SetupMock.Method.MethodName(…)` to set up methods. You can specify argument matchers for each parameter.
 
+## Returns / Throws
+
+Use `.Returns(…)` to specify the value to return. You can provide a direct value, a callback, or a callback with
+parameters.
+Use `.Throws(…)` to specify an exception to throw. Supports direct exceptions, exception factories, or factories with
+parameters.
+
+You can call `.Returns(…)` and `.Throws(…)` multiple times to define a sequence of return values or exceptions (cycled
+on each call).
+
 ```csharp
 // Setup Dispense to decrease stock and raise event
 sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
@@ -17,28 +27,21 @@ sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
         return false;
     });
 
-// Setup method with callback
-sut.SetupMock.Method.Dispense(It.Is("White"), It.IsAny<int>())
-    .Do((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
-
 // Setup method to throw
 sut.SetupMock.Method.Dispense(It.Is("Green"), It.IsAny<int>())
     .Throws<InvalidChocolateException>();
+
+// Sequence of returns and throws
+sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Returns(true)
+    .Throws(new Exception("Error"))
+    .Returns(false);
 ```
 
-- Use `.Do(…)` to run code when the method is called. Supports parameterless or parameter callbacks.
-- Use `.Returns(…)` to specify the value to return. You can provide a direct value, a callback, or a callback with
-  parameters.
-- Use `.Throws(…)` to specify an exception to throw. Supports direct exceptions, exception factories, or factories with
-  parameters.
-- Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of return values or exceptions (cycled on each
-  call).
-- Use `.SkippingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
-- When you specify overlapping setups, the most recently defined setup takes precedence.
+### Async Methods
 
-## Async Methods
-
-For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)` or `ThrowsAsync(…)`:
+For async methods returning `Task`/`Task<T>` or `ValueTask`/`ValueTask<T>`, use `.ReturnsAsync(…)` or `ThrowsAsync(…)`
+respectively:
 
 ```csharp
 sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
@@ -46,3 +49,22 @@ sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
     .ThrowsAsync(new TimeoutException())  // Second execution throws a TimeoutException
     .ReturnsAsync(0).Forever();           // Subsequent executions return 0
 ```
+
+## Callbacks
+
+Use `.Do(…)` to run code when the method is called. Supports parameterless or parameter callbacks.
+
+```csharp
+// Setup method with callback
+sut.SetupMock.Method.Dispense(It.Is("White"), It.IsAny<int>())
+    .Do((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
+```
+
+**Notes:**
+
+- Use `.SkippingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
+- When you specify overlapping setups, the most recently defined setup takes precedence.
+- All callbacks and return values support more advanced features like conditional execution, frequency control,
+  parallel execution, and access to the invocation counter.
+  See [Advanced callback features](https://awexpect.com/docs/mockolate/advanced-features/advanced-callback-features)
+  for details.
