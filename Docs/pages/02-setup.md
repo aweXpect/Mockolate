@@ -41,6 +41,57 @@ sut.SetupMock.Method.Dispense(It.Is("Green"), It.IsAny<int>())
 - Use `.SkippingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
+#### Advanced Callback Features
+
+**Conditional Callbacks**
+
+Execute callbacks conditionally based on invocation count using `.When()`:
+
+```csharp
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
+    .Do(() => Console.WriteLine("Called!"))
+    .When(count => count <= 3);  // Only first 3 invocations
+```
+
+**Frequency Control**
+
+Control how many times a callback executes:
+
+```csharp
+// Execute exactly 5 times
+sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Do(() => Console.WriteLine("First 5 calls"))
+    .For(5);
+
+// Execute up to 3 times
+sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Do(() => Console.WriteLine("Up to 3 calls"))
+    .Only(3);
+```
+
+**Parallel Callbacks**
+
+Execute callbacks in parallel (all callbacks run on every invocation):
+
+```csharp
+sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Do(() => { /* parallel work */ })
+    .InParallel();
+```
+
+**Invocation Counter**
+
+Access the invocation counter in callbacks:
+
+```csharp
+sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Do((int count) => Console.WriteLine($"Call #{count}"));
+
+sut.SetupMock.Property.TotalDispensed
+    .OnGet.Do((int count, int value) => 
+        Console.WriteLine($"Read #{count}, value: {value}"));
+```
+
 **Async Methods**
 
 For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
