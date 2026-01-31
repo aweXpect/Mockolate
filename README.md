@@ -340,8 +340,8 @@ sut.SetupMock.Method.Dispense(It.Is("White"), It.IsAny<int>())
 
 - Use `.SkippingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
-- All callbacks support more advanced features like conditional execution, frequency control, parallel execution, and
-  access to the invocation counter.
+- All callbacks and return values support more advanced features like conditional execution, frequency control,
+  parallel execution, and access to the invocation counter.
   See [Advanced callback features](#advanced-callback-features) for details.
 
 ### Indexers

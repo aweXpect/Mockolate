@@ -75,7 +75,7 @@ sut.SetupMock.Property.TotalDispensed.OnGet
 **Notes:**
 
 - Use `.SkippingBaseClass(…)` to override the base class behavior for a specific property (only for class mocks).
-- All callbacks support more advanced features like conditional execution, frequency control, parallel execution, and
-  access to the invocation counter.
+- AAll callbacks and return values support more advanced features like conditional execution, frequency control,
+  parallel execution, and access to the invocation counter.
   See [Advanced callback features](https://awexpect.com/docs/mockolate/advanced-features/advanced-callback-features)
   for details.
