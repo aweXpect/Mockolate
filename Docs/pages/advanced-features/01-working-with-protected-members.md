@@ -31,8 +31,6 @@ sut.SetupMock.Protected.Property.InternalStock.InitializeWith(100);
 
 - Protected members can be set up and verified just like public members, using the `.Protected` accessor.
 - All setup options (`.Returns()`, `.Throws()`, `.Do()`, `.InitializeWith()`, etc.) work with protected members.
-- Protected indexers are supported using `.Protected.Indexer()` for setup and `.GotProtectedIndexer()`/
-  `.SetProtectedIndexer()` for verification.
 
 ### Verification
 
