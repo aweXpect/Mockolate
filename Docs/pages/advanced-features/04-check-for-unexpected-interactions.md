@@ -1,6 +1,6 @@
 # Check for unexpected interactions
 
-## ThatAllInteractionsAreVerified
+## That all interactions are verified
 
 You can check if all interactions with the mock have been verified using `ThatAllInteractionsAreVerified`:
 
@@ -12,7 +12,7 @@ bool allVerified = sut.VerifyMock.ThatAllInteractionsAreVerified();
 This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.
 If any interaction was not verified, this method returns `false`.
 
-## ThatAllSetupsAreUsed
+## That all setups are used
 
 You can check if all registered setups on the mock have been used using `ThatAllSetupsAreUsed`:
 
