@@ -193,7 +193,7 @@ sut.SetupMock.Property.TotalDispensed.InitializeWith(42);
 
 **Returns / Throws**
 
-Alternatively, set up properties with `Returns` and `Throws` (supports sequences):
+Set up properties with `Returns` and `Throws` (supports sequences):
 
 ```csharp
 sut.SetupMock.Property.TotalDispensed
@@ -201,6 +201,13 @@ sut.SetupMock.Property.TotalDispensed
     .Returns(2)
     .Throws(new Exception("Error"))
     .Returns(4);
+```
+
+You can also return a value based on the previous value:
+
+```csharp
+sut.SetupMock.Property.TotalDispensed
+    .Returns((current) => current + 10);  // Increment by 10 each read
 ```
 
 **Callbacks**
@@ -212,18 +219,7 @@ sut.SetupMock.Property.TotalDispensed.OnGet.Do(() => Console.WriteLine("TotalDis
 sut.SetupMock.Property.TotalDispensed.OnSet.Do((oldValue, newValue) => Console.WriteLine($"Changed from {oldValue} to {newValue}!") );
 ```
 
-**Advanced Property Returns**
-
-Return a value based on the previous value:
-
-```csharp
-sut.SetupMock.Property.TotalDispensed
-    .Returns((current) => current + 10);  // Increment by 10 each read
-```
-
-**Advanced Callbacks**
-
-Access invocation counter and values in callbacks:
+Callbacks can also receive the invocation counter and current value:
 
 ```csharp
 // Getter with counter and current value
@@ -237,7 +233,7 @@ sut.SetupMock.Property.TotalDispensed
         Console.WriteLine($"Set #{count} to {newValue}"));
 ```
 
-**Register Without Value**
+**Register**
 
 Register a setup without providing a value (useful with `ThrowWhenNotSetup`):
 
@@ -312,37 +308,28 @@ sut.SetupMock.Indexer(It.Is("Dark"))
 
 - `.InitializeWith(…)` can take a value or a callback with parameters.
 - `.Returns(…)` and `.Throws(…)` support direct values, callbacks, and callbacks with parameters and/or the current
-  value.
-- `.OnGet.Do(…)` and `.OnSet.Do(…)` support callbacks with or without parameters.
+  value. You can also return a value based on the previous value:
+  ```csharp
+  sut.SetupMock.Indexer(It.Is("Dark"))
+      .Returns((string type, int current) => current + 10);  // Increment by 10 each read
+  ```
+- `.OnGet.Do(…)` and `.OnSet.Do(…)` support callbacks with or without parameters. Callbacks can receive the invocation
+  counter, indexer parameters, and current value:
+  ```csharp
+  // Getter with counter, parameter, and current value
+  sut.SetupMock.Indexer(It.IsAny<string>())
+      .OnGet.Do((int count, string type, int value) => 
+          Console.WriteLine($"Read #{count} for {type}, current value: {value}"));
+  
+  // Setter with counter, parameter, and new value
+  sut.SetupMock.Indexer(It.IsAny<string>())
+      .OnSet.Do((int count, string type, int newValue) => 
+          Console.WriteLine($"Set #{count} for {type} to {newValue}"));
+  ```
 - `.Returns(…)` and `.Throws(…)` can be chained to define a sequence of behaviors, which are cycled through on each
   call.
 - Use `.SkippingBaseClass(…)` to override the base class behavior for a specific indexer (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
-
-**Advanced Indexer Returns**
-
-Return a value based on the previous value:
-
-```csharp
-sut.SetupMock.Indexer(It.Is("Dark"))
-    .Returns((string type, int current) => current + 10);  // Increment by 10 each read
-```
-
-**Advanced Callbacks**
-
-Access invocation counter and values in callbacks:
-
-```csharp
-// Getter with counter, parameter, and current value
-sut.SetupMock.Indexer(It.IsAny<string>())
-    .OnGet.Do((int count, string type, int value) => 
-        Console.WriteLine($"Read #{count} for {type}, current value: {value}"));
-
-// Setter with counter, parameter, and new value
-sut.SetupMock.Indexer(It.IsAny<string>())
-    .OnSet.Do((int count, string type, int newValue) => 
-        Console.WriteLine($"Set #{count} for {type} to {newValue}"));
-```
 
 **Note**:
 You can use the same [parameter matching](#parameter-matching) and [interaction](#parameter-interaction) options as for

@@ -13,7 +13,7 @@ sut.SetupMock.Property.TotalDispensed.InitializeWith(42);
 
 **Returns / Throws**
 
-Alternatively, set up properties with `Returns` and `Throws` (supports sequences):
+Set up properties with `Returns` and `Throws` (supports sequences):
 
 ```csharp
 sut.SetupMock.Property.TotalDispensed
@@ -21,6 +21,13 @@ sut.SetupMock.Property.TotalDispensed
     .Returns(2)
     .Throws(new Exception("Error"))
     .Returns(4);
+```
+
+You can also return a value based on the previous value:
+
+```csharp
+sut.SetupMock.Property.TotalDispensed
+    .Returns((current) => current + 10);  // Increment by 10 each read
 ```
 
 **Callbacks**
@@ -32,20 +39,7 @@ sut.SetupMock.Property.TotalDispensed.OnGet.Do(() => Console.WriteLine("TotalDis
 sut.SetupMock.Property.TotalDispensed.OnSet.Do((oldValue, newValue) => Console.WriteLine($"Changed from {oldValue} to {newValue}!") );
 ```
 
-## Advanced Features
-
-**Advanced Property Returns**
-
-Return a value based on the previous value:
-
-```csharp
-sut.SetupMock.Property.TotalDispensed
-    .Returns((current) => current + 10);  // Increment by 10 each read
-```
-
-**Advanced Callbacks**
-
-Access invocation counter and values in callbacks:
+Callbacks can also receive the invocation counter and current value:
 
 ```csharp
 // Getter with counter and current value
@@ -59,7 +53,7 @@ sut.SetupMock.Property.TotalDispensed
         Console.WriteLine($"Set #{count} to {newValue}"));
 ```
 
-**Register Without Value**
+**Register**
 
 Register a setup without providing a value (useful with `ThrowWhenNotSetup`):
 
