@@ -847,6 +847,78 @@ httpClient.VerifyMock.Invoked.PostAsync(
   As they therefore all forward to the `SendAsync` method, you can mix using a string or an `Uri` parameter in setup or
   verification.
 
+#### All HTTP Methods
+
+Mockolate supports all standard HTTP methods:
+
+```csharp
+// PUT
+httpClient.SetupMock.Method.PutAsync(
+    It.IsAny<string>(), It.IsAny<HttpContent>())
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+// DELETE
+httpClient.SetupMock.Method.DeleteAsync(It.IsAny<string>())
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NoContent));
+
+// PATCH
+httpClient.SetupMock.Method.PatchAsync(
+    It.IsAny<string>(), It.IsAny<HttpContent>())
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+```
+
+#### Binary Content Matching
+
+Use `It.IsBinaryContent()` to match binary content types:
+
+```csharp
+httpClient.SetupMock.Method.PostAsync(
+    It.IsAny<string>(),
+    It.IsBinaryContent("application/octet-stream"))
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+```
+
+#### URI Scheme Filtering
+
+Filter requests by URI scheme using `.ForHttps()` or `.ForHttp()`:
+
+```csharp
+// Match only HTTPS requests
+httpClient.VerifyMock.Invoked.GetAsync(
+    It.IsUri("*api.example.com*").ForHttps())
+    .Once();
+
+// Match only HTTP requests
+httpClient.VerifyMock.Invoked.GetAsync(
+    It.IsUri("*localhost*").ForHttp())
+    .Never();
+```
+
+#### Content Body Matching
+
+Use `.WithBodyMatching()` to match against the content body:
+
+```csharp
+httpClient.VerifyMock.Invoked.PostAsync(
+    It.IsAny<string>(),
+    It.IsStringContent("application/json")
+        .WithBodyMatching("*\"type\": \"Dark\"*"))
+    .Once();
+```
+
+#### CancellationToken Support
+
+All HTTP methods support CancellationToken parameters:
+
+```csharp
+var cts = new CancellationTokenSource();
+httpClient.SetupMock.Method.GetAsync(
+    It.IsAny<string>(), It.IsAny<CancellationToken>())
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+await httpClient.GetAsync("https://example.com", cts.Token);
+```
+
 ### Delegates
 
 Mockolate supports mocking delegates including `Action`, `Func<T>`, and custom delegates.
