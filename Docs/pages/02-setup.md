@@ -50,7 +50,7 @@ Execute callbacks conditionally based on invocation count using `.When()`:
 ```csharp
 sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
     .Do(() => Console.WriteLine("Called!"))
-    .When(count => count <= 3);  // Only first 3 invocations
+    .When(count => count < 3);  // Only first 3 invocations (count is 0-indexed)
 ```
 
 **Frequency Control**
