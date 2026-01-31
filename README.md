@@ -148,8 +148,7 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	  defaults (e.g., `null`, `0`, empty strings).
 - `.UseConstructorParametersFor<T>(object?[])`:
 	- Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
-	  during mock
-	  creation via `BaseClass.WithConstructorParameters(…)`.
+	  during mock creation via `BaseClass.WithConstructorParameters(…)`.
 
 ### Using a factory for shared behavior
 
