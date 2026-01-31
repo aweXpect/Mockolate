@@ -15,7 +15,7 @@ Mockolate provides flexible parameter matching for method setups and verificatio
   minimum and maximum value.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
-**tring Matching**
+**String Matching**
 
 - `It.Matches(pattern)`: Matches strings using wildcard patterns (`*` and `?`).
 
