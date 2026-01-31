@@ -478,16 +478,18 @@ many times, using the `Verify` API:
 
 Supported call count verifications in the `Mockolate.VerifyMock` namespace:
 
-- `.Never()`
-- `.Once()`
-- `.Twice()`
-- `.Exactly(n)`
-- `.AtLeastOnce()`
-- `.AtLeastTwice()`
-- `.AtLeast(n)`
-- `.AtMostOnce()`
-- `.AtMostTwice()`
-- `.AtMost(n)`
+- `.Never()`: The interaction never occurred
+- `.Once()`: The interaction occurred exactly once
+- `.Twice()`: The interaction occurred exactly twice
+- `.Exactly(n)`: The interaction occurred exactly n times
+- `.AtLeastOnce()`: The interaction occurred at least once
+- `.AtLeastTwice()`: The interaction occurred at least twice
+- `.AtLeast(n)`: The interaction occurred at least n times
+- `.AtMostOnce()`: The interaction occurred at most once
+- `.AtMostTwice()`: The interaction occurred at most twice
+- `.AtMost(n)`: The interaction occurred at most n times
+- `.Between(min, max)`: The interaction occurred between min and max times (inclusive)
+- `.Times(predicate)`: The interaction count matches the predicate
 
 ### Properties
 
@@ -510,13 +512,24 @@ You can verify that methods were invoked with specific arguments and how many ti
 
 ```csharp
 // Verify that Dispense("Dark", 5) was invoked at least once
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).AtLeastOnce();
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5))
+    .AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>()).Never();
+sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>())
+    .Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()()).Exactly(2);
+sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+    .Exactly(2);
+
+// Verify that Dispense was invoked between 3 and 5 times (inclusive)
+sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Between(3, 5);
+
+// Verify that Dispense was invoked an even number of times
+sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Times(count => count % 2 == 0);
 ```
 
 ### Indexers
