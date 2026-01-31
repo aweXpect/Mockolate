@@ -272,8 +272,8 @@ For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)` or `ThrowsAsyn
 ```csharp
 sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
     .ReturnsAsync((_, v) => v)            // First execution returns the value of the `int` parameter
-	.ThrowsAsync(new TimeoutException())  // Second execution throws a TimeoutException;
-	.ReturnsAsync(0).Forever();           // Subsequent executions return 0
+    .ThrowsAsync(new TimeoutException())  // Second execution throws a TimeoutException
+    .ReturnsAsync(0).Forever();           // Subsequent executions return 0
 ```
 
 ### Indexers
