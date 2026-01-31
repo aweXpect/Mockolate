@@ -4,7 +4,7 @@ Mockolate supports mocking delegates including `Action`, `Func<T>`, and custom d
 
 **Setup**
 
-Use `SetupMock.Delegate(...)` to configure delegate behavior.
+Use `SetupMock.Delegate(…)` to configure delegate behavior.
 
 ```csharp
 // Mock Action delegate
@@ -39,10 +39,10 @@ ProcessData processor = Mock.Create<ProcessData>();
 processor.SetupMock.Delegate(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 100));
 ```
 
-- Use `.Do(...)` to run code when the delegate is invoked.
-- Use `.Returns(...)` to specify the return value for `Func<T>` delegates.
-- Use `.Throws(...)` to specify an exception to throw.
-- Use `.Returns(...)` and `.Throws(...)` repeatedly to define a sequence of behaviors.
+- Use `.Do(…)` to run code when the delegate is invoked.
+- Use `.Returns(…)` to specify the return value for `Func<T>` delegates.
+- Use `.Throws(…)` to specify an exception to throw.
+- Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of behaviors.
 - Full [parameter matching](https://awexpect.com/docs/mockolate/setup#parameter-matching) support for delegate
   parameters including `ref` and `out` parameters.
 

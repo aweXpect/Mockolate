@@ -126,6 +126,9 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 	- If `true`, the mock will not call any base class implementations.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
 	- Automatically initialize all mocks of type T with the given setups when they are created.
+	- The callback can optionally receive an additional counter parameter which allows to differentiate between multiple
+	  instances. This is useful when you want to ensure that you can distinguish between different automatically created
+	  instances.
 - `DefaultValue` (IDefaultValueGenerator):
 	- Customizes how default values are generated for methods/properties that are not set up.
 	- The default implementation provides sensible defaults for the most common use cases:
@@ -134,6 +137,19 @@ var classMock = Mock.Create<MyChocolateDispenser>(
 		- Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
 		- Tuples with recursively defaulted values
 		- `null` for other reference types
+	- You can provide custom default values for specific types using `.WithDefaultValueFor<T>()`:
+	  ```csharp
+	  var behavior = MockBehavior.Default
+	      .WithDefaultValueFor<string>(() => "default")
+	      .WithDefaultValueFor<int>(() => 42);
+	  var sut = Mock.Create<IChocolateDispenser>(behavior);
+	  ```
+	  This is useful when you want mocks to return specific default values for certain types instead of the standard
+	  defaults (e.g., `null`, `0`, empty strings).
+- `.UseConstructorParametersFor<T>(object?[])`:
+	- Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
+	  during mock
+	  creation via `BaseClass.WithConstructorParameters(…)`.
 
 ### Using a factory for shared behavior
 
@@ -785,7 +801,7 @@ Mockolate supports mocking delegates including `Action`, `Func<T>`, and custom d
 
 **Setup**
 
-Use `SetupMock.Delegate(...)` to configure delegate behavior.
+Use `SetupMock.Delegate(…)` to configure delegate behavior.
 
 ```csharp
 // Mock Action delegate
@@ -820,10 +836,10 @@ ProcessData processor = Mock.Create<ProcessData>();
 processor.SetupMock.Delegate(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 100));
 ```
 
-- Use `.Do(...)` to run code when the delegate is invoked.
-- Use `.Returns(...)` to specify the return value for `Func<T>` delegates.
-- Use `.Throws(...)` to specify an exception to throw.
-- Use `.Returns(...)` and `.Throws(...)` repeatedly to define a sequence of behaviors.
+- Use `.Do(…)` to run code when the delegate is invoked.
+- Use `.Returns(…)` to specify the return value for `Func<T>` delegates.
+- Use `.Throws(…)` to specify an exception to throw.
+- Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of behaviors.
 - Full [parameter matching](#parameter-matching) support for delegate
   parameters including `ref` and `out` parameters.
 
