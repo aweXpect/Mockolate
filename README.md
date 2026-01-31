@@ -745,7 +745,8 @@ can use a `MockMonitor<T>`:
 var sut = Mock.Create<IChocolateDispenser>();
 
 sut.Dispense("Dark", 1); // Not monitored
-using (var monitor = sut.MonitorMock(out var monitor))
+var monitorScope = sut.MonitorMock(out var monitor);
+using (monitorScope)
 {
     sut.Dispense("Dark", 2); // Monitored
 }
@@ -768,7 +769,7 @@ sut.Dispense("Dark", 1);
 sut.SetupMock.ClearAllInteractions();
 sut.Dispense("Dark", 2);
 
-monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
 ```
 
 ### Check for unexpected interactions
