@@ -11,6 +11,15 @@ value):
 sut.SetupMock.Property.TotalDispensed.InitializeWith(42);
 ```
 
+You can also register a setup without providing a value (useful when `ThrowWhenNotSetup` is enabled):
+
+```csharp
+var strictMock = Mock.Create<IChocolateDispenser>(MockBehavior.Default.ThrowingWhenNotSetup());
+
+// Register property without value - won't throw
+strictMock.SetupMock.Property.TotalDispensed.Register();
+```
+
 ## Returns / Throws
 
 Set up properties with `Returns` and `Throws` (supports sequences):
@@ -64,18 +73,8 @@ sut.SetupMock.Property.TotalDispensed.OnGet
 ```
 
 **Notes:**
+
 - All callbacks support more advanced features like conditional execution, frequency control, parallel execution, and
   access to the invocation counter.
   See [Advanced callback features](https://awexpect.com/docs/mockolate/advanced-features/advanced-callback-features)
   for details.
-
-## Register
-
-Register a setup without providing a value (useful when `ThrowWhenNotSetup` is enabled):
-
-```csharp
-var strictMock = Mock.Create<IChocolateDispenser>(MockBehavior.Default.ThrowingWhenNotSetup());
-
-// Register property without value - won't throw
-strictMock.SetupMock.Property.TotalDispensed.Register();
-```
