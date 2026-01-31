@@ -2,7 +2,7 @@
 
 Set up property getters and setters to control or verify property access on your mocks.
 
-**Initialization**
+## Initialization
 
 You can initialize properties so they work like normal properties (setter changes the value, getter returns the last set
 value):
@@ -11,7 +11,7 @@ value):
 sut.SetupMock.Property.TotalDispensed.InitializeWith(42);
 ```
 
-**Returns / Throws**
+## Returns / Throws
 
 Alternatively, set up properties with `Returns` and `Throws` (supports sequences):
 
@@ -23,7 +23,7 @@ sut.SetupMock.Property.TotalDispensed
     .Returns(4);
 ```
 
-**Callbacks**
+## Callbacks
 
 Register callbacks on the setter or getter:
 

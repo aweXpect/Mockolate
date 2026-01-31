@@ -36,11 +36,13 @@ sut.SetupMock.Method.Dispense(It.Is("Green"), It.IsAny<int>())
 - Use `.SkippingBaseClass(…)` to override the base class behavior for a specific method (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 
-**Async Methods**
+## Async Methods
 
-For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)`:
+For `Task<T>` or `ValueTask<T>` methods, use `.ReturnsAsync(…)` or `ThrowsAsync(…)`:
 
 ```csharp
 sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
-    .ReturnsAsync(true);
+    .ReturnsAsync((_, v) => v)            // First execution returns the value of the `int` parameter
+	.ThrowsAsync(new TimeoutException())  // Second execution throws a TimeoutException;
+	.ReturnsAsync(0).Forever();           // Subsequent executions return 0
 ```
