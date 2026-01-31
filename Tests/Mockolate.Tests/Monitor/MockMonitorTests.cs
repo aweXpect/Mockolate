@@ -1,3 +1,4 @@
+using Mockolate.Exceptions;
 using Mockolate.Monitor;
 using Mockolate.Tests.TestHelpers;
 
@@ -9,8 +10,7 @@ public sealed class MockMonitorTests
 	public async Task ClearAllInteractions_WhenMonitorIsRunning_ShouldClearInternalCollection()
 	{
 		IMyService sut = Mock.Create<IMyService>();
-		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
-		MockMonitor<IMyService> monitor = new(mock);
+		MockMonitor<IMyService> monitor = new(sut);
 
 		sut.IsValid(1);
 		using IDisposable disposable = monitor.Run();
@@ -21,11 +21,24 @@ public sealed class MockMonitorTests
 	}
 
 	[Fact]
+	public async Task Constructor_WithoutMock_ShouldThrowMockException()
+	{
+		MyServiceBase sut = new();
+
+		void Act()
+		{
+			_ = new MockMonitor<MyServiceBase>(sut);
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The subject is no mock.");
+	}
+
+	[Fact]
 	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
 	{
 		IMyService sut = Mock.Create<IMyService>();
-		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
-		MockMonitor<IMyService> monitor = new(mock);
+		MockMonitor<IMyService> monitor = new(sut);
 
 		sut.IsValid(1);
 		sut.IsValid(2);
@@ -53,8 +66,7 @@ public sealed class MockMonitorTests
 	public async Task MultipleRun_ShouldMonitorInvocationsDuringTheRun()
 	{
 		IMyService sut = Mock.Create<IMyService>();
-		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
-		MockMonitor<IMyService> monitor = new(mock);
+		MockMonitor<IMyService> monitor = new(sut);
 
 		sut.IsValid(1);
 		sut.IsValid(2);
@@ -91,8 +103,7 @@ public sealed class MockMonitorTests
 	public async Task NestedRun_ShouldThrowInvalidOperationException()
 	{
 		IMyService sut = Mock.Create<IMyService>();
-		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
-		MockMonitor<IMyService> monitor = new(mock);
+		MockMonitor<IMyService> monitor = new(sut);
 
 		void Act()
 		{
@@ -113,8 +124,7 @@ public sealed class MockMonitorTests
 	public async Task Run_ShouldIncludeAllInvocations()
 	{
 		IMyService sut = Mock.Create<IMyService>();
-		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
-		MockMonitor<IMyService> monitor = new(mock);
+		MockMonitor<IMyService> monitor = new(sut);
 
 		using (monitor.Run())
 		{
@@ -134,8 +144,7 @@ public sealed class MockMonitorTests
 	public async Task Run_ShouldMonitorInvocationsDuringTheRun()
 	{
 		IMyService sut = Mock.Create<IMyService>();
-		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
-		MockMonitor<IMyService> monitor = new(mock);
+		MockMonitor<IMyService> monitor = new(sut);
 
 		sut.IsValid(1);
 		sut.IsValid(2);
@@ -163,8 +172,7 @@ public sealed class MockMonitorTests
 	public async Task Verify_WhileRunning_ShouldBeUpToDate()
 	{
 		IMyService sut = Mock.Create<IMyService>();
-		Mock<IMyService> mock = ((IMockSubject<IMyService>)sut).Mock;
-		MockMonitor<IMyService> monitor = new(mock);
+		MockMonitor<IMyService> monitor = new(sut);
 
 		using (monitor.Run())
 		{

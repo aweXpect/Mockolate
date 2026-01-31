@@ -568,7 +568,7 @@ namespace Mockolate.Monitor
     }
     public sealed class MockMonitor<T> : Mockolate.Monitor.MockMonitor
     {
-        public MockMonitor(Mockolate.Mock<T> mock) { }
+        public MockMonitor(T mock) { }
         public Mockolate.Verify.IMockVerify<T> Verify { get; }
     }
 }
