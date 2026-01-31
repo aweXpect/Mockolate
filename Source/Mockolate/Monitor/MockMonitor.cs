@@ -101,26 +101,22 @@ public abstract class MockMonitor
 /// </summary>
 /// <remarks>
 ///     Use this class to track and analyze interactions with a mock, such as which members were accessed or
-///     which events were subscribed to, during a test session. Monitoring is session-based; begin a session with the Run
-///     method and dispose the returned scope to finalize monitoring.
+///     which events were subscribed to, during a test session.<br />
+///     Monitoring is session-based: begin a session with the <see cref="MockMonitor.Run()" /> method and
+///     dispose the returned scope to finalize monitoring.
 /// </remarks>
 public sealed class MockMonitor<T> : MockMonitor
 {
-	/// <inheritdoc cref="MockMonitor{T}" />
-	public MockMonitor(Mock<T> mock) : base(mock.Interactions)
-	{
-		Verify = new Mock<T>(mock.Subject,
-			new MockRegistration(mock.Registrations.Behavior, mock.Registrations.Prefix, Interactions));
-	}
-
 	/// <inheritdoc cref="MockMonitor{T}" />
 	public MockMonitor(T mock) : this(mock as IMockSubject<T>)
 	{
 	}
 
 	private MockMonitor(IMockSubject<T>? mockSubject)
-		: this(mockSubject?.Mock ?? throw new MockException("The subject is no mock."))
+		: base(mockSubject?.Mock.Interactions ?? throw new MockException("The subject is no mock."))
 	{
+		Verify = new Mock<T>(mockSubject.Mock.Subject,
+			new MockRegistration(mockSubject.Registrations.Behavior, mockSubject.Registrations.Prefix, Interactions));
 	}
 
 	/// <summary>

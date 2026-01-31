@@ -51,10 +51,10 @@ internal static partial class Sources
 				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic System.IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
-				.AppendLine("> monitor)").AppendLine();
+				.Append("> monitor)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tmonitor = new MockMonitor<").Append(@class.ClassFullName)
-				.AppendLine(">(GetMockOrThrow(subject));").AppendLine();
+				.AppendLine(">(subject);").AppendLine();
 			sb.Append("\t\t\treturn monitor.Run();").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine("\t}");
@@ -203,10 +203,10 @@ internal static partial class Sources
 				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic System.IDisposable MonitorMock(out MockMonitor<").Append(@class.ClassFullName)
-				.AppendLine("> monitor)").AppendLine();
+				.Append("> monitor)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tmonitor = new MockMonitor<").Append(@class.ClassFullName)
-				.AppendLine(">(GetMockOrThrow(subject));").AppendLine();
+				.AppendLine(">(subject);").AppendLine();
 			sb.Append("\t\t\treturn monitor.Run();").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine("\t}");

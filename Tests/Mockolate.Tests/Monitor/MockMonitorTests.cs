@@ -1,3 +1,4 @@
+using Mockolate.Exceptions;
 using Mockolate.Monitor;
 using Mockolate.Tests.TestHelpers;
 
@@ -17,6 +18,20 @@ public sealed class MockMonitorTests
 		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
 		sut.SetupMock.ClearAllInteractions();
 		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Never();
+	}
+
+	[Fact]
+	public async Task Constructor_WithoutMock_ShouldThrowMockException()
+	{
+		MyServiceBase sut = new();
+
+		void Act()
+		{
+			_ = new MockMonitor<MyServiceBase>(sut);
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The subject is no mock.");
 	}
 
 	[Fact]

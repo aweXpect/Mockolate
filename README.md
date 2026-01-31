@@ -765,7 +765,7 @@ var sut = Mock.Create<IChocolateDispenser>();
 sut.Dispense("Dark", 1); // Not monitored
 using var scope = sut.MonitorMock(out var monitor);
 sut.Dispense("Dark", 2); // Monitored
-sut.Dispense("Dark", 3); // Not monitored
+sut.Dispense("Dark", 3); // Monitored
 
 // Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
 monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Twice();
