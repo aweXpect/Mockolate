@@ -96,9 +96,13 @@ var classMock = Mock.Create<MyChocolateDispenser>();
 var classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
     BaseClass.WithConstructorParameters("Dark", 42)
 );
+```
 
-// Specify up to 8 additional interfaces for the mock:
-var sut2 = Mock.Create<MyChocolateDispenser, ILemonadeDispenser>();
+You can specify up to eight additional interfaces that the mock also implements (beyond the first type):
+
+```csharp
+// return type is a MyChocolateDispenser that also implements ILemonadeDispenser
+var sut = Mock.Create<MyChocolateDispenser, ILemonadeDispenser>();
 ```
 
 **Notes:**
@@ -151,7 +155,7 @@ var classMock = Mock.Create<MyChocolateDispenser>(
     ```
     This is useful when you want mocks to return specific default values for certain types instead of the standard
     defaults (e.g., `null`, `0`, empty strings).
-- `.UseConstructorParametersFor<T>(object?[])`:
+- `UseConstructorParametersFor<T>(object?[])`:
   - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
     during mock creation via `BaseClass.WithConstructorParameters(…)`.
 
