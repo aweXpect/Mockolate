@@ -41,9 +41,9 @@ public class WebTests
 		await That(result).IsFalse();
 	}
 
-	private class MyHttpContent : HttpContent
+	private sealed class MyHttpContent : HttpContent
 	{
-		protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
+		protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
 			=> Task.CompletedTask;
 
 		protected override bool TryComputeLength(out long length)
@@ -53,5 +53,5 @@ public class WebTests
 		}
 	}
 
-	private class SomeOtherObject;
+	private sealed class SomeOtherObject;
 }
