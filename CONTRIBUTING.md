@@ -11,7 +11,8 @@ All code should be covered by unit tests and comply with the coding guideline in
 
 As a framework for supporting unit testing, this project has a high standard for testing itself.  
 In order to support this, static code analysis is performed
-using [SonarCloud](https://sonarcloud.io/summary/overall?id=aweXpect_Mockolate&branch=main) with quality gate requiring to
+using [SonarCloud](https://sonarcloud.io/summary/overall?id=aweXpect_Mockolate&branch=main) with quality gate requiring
+to
 
 - solve all issues reported by SonarCloud
 - have a code coverage of > 90%
