@@ -88,7 +88,26 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task Returns_For_ShouldLimitUsage_ToSpecifiedNumber()
+		public async Task Returns_For_OnlyOnce_ShouldLimitUsage_ToSpecifiedNumber()
+		{
+			IPropertyService sut = Mock.Create<IPropertyService>();
+
+			sut.SetupMock.Property.MyStringProperty
+				.Returns("foo").For(2).OnlyOnce()
+				.Returns("bar").For(3).OnlyOnce();
+
+			List<string?> values = [];
+			for (int i = 0; i < 11; i++)
+			{
+				sut.MyStringProperty = "-";
+				values.Add(sut.MyStringProperty);
+			}
+
+			await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "-", "-", "-", "-", "-", "-",]);
+		}
+
+		[Fact]
+		public async Task Returns_For_ShouldRepeatUsage_ToSpecifiedNumber()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
 
@@ -97,13 +116,14 @@ public sealed partial class SetupPropertyTests
 				.Returns("bar").For(3);
 
 			List<string?> values = [];
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 11; i++)
 			{
 				sut.MyStringProperty = "-";
 				values.Add(sut.MyStringProperty);
 			}
 
-			await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "-", "-", "-", "-", "-",]);
+			await That(values)
+				.IsEqualTo(["foo", "foo", "bar", "bar", "bar", "foo", "foo", "bar", "bar", "bar", "foo",]);
 		}
 
 		[Fact]
@@ -219,15 +239,17 @@ public sealed partial class SetupPropertyTests
 			sut.SetupMock.Property.MyStringProperty
 				.Returns("foo").When(i => i > 0).For(2)
 				.Returns("baz")
-				.Returns("bar").For(3);
+				.Returns("bar").For(3).OnlyOnce();
 
 			List<string?> values = [];
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 14; i++)
 			{
 				values.Add(sut.MyStringProperty);
 			}
 
-			await That(values).IsEqualTo(["baz", "bar", "bar", "bar", "foo", "foo", "baz", "baz", "baz", "baz",]);
+			await That(values).IsEqualTo([
+				"baz", "bar", "bar", "bar", "foo", "foo", "baz", "foo", "foo", "baz", "foo", "foo", "baz", "foo",
+			]);
 		}
 
 		[Fact]

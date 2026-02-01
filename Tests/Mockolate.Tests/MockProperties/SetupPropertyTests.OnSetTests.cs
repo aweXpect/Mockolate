@@ -7,41 +7,6 @@ public sealed partial class SetupPropertyTests
 	public sealed class OnSetTests
 	{
 		[Fact]
-		public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-		{
-			List<int> invocations = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty
-				.OnSet.Do((i, _) => { invocations.Add(i); })
-				.For(4);
-
-			for (int i = 0; i < 20; i++)
-			{
-				sut.MyProperty = i * 2;
-			}
-
-			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-		}
-
-		[Fact]
-		public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-		{
-			List<int> invocations = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty
-				.OnSet.Do((i, _) => { invocations.Add(i); })
-				.When(x => x > 2)
-				.For(4);
-
-			for (int i = 0; i < 20; i++)
-			{
-				sut.MyProperty = i * 2;
-			}
-
-			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-		}
-
-		[Fact]
 		public async Task MultipleOnSet_InParallel_ShouldInvokeCallbacksInSequence()
 		{
 			int callCount1 = 0;
@@ -126,6 +91,41 @@ public sealed partial class SetupPropertyTests
 
 			await That(callCount1).IsEqualTo(2);
 			await That(callCount2).IsEqualTo(6 + 10);
+		}
+
+		[Fact]
+		public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+		{
+			List<int> invocations = [];
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyProperty
+				.OnSet.Do((i, _) => { invocations.Add(i); })
+				.Only(4);
+
+			for (int i = 0; i < 20; i++)
+			{
+				sut.MyProperty = i * 2;
+			}
+
+			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+		}
+
+		[Fact]
+		public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+		{
+			List<int> invocations = [];
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyProperty
+				.OnSet.Do((i, _) => { invocations.Add(i); })
+				.When(x => x > 2)
+				.Only(4);
+
+			for (int i = 0; i < 20; i++)
+			{
+				sut.MyProperty = i * 2;
+			}
+
+			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 		}
 
 		[Fact]

@@ -59,60 +59,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldLimitMatches()
-			{
-				List<int> callIndices = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-
-				sut.SetupMock.Method.Method0()
-					.Do(v => { callIndices.Add(v); }).When(v => v > 1).For(2)
-					.Returns("a");
-
-				sut.Method0();
-				sut.Method0();
-				sut.Method0();
-				sut.Method0();
-				sut.Method0();
-
-				await That(callIndices).IsEqualTo([2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
-					.Do(i => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method0();
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
-					.Do(i => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method0();
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -154,6 +100,60 @@ public sealed partial class SetupMethodTests
 				sut.Method0();
 
 				await That(callCount).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldLimitMatches()
+			{
+				List<int> callIndices = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(v => { callIndices.Add(v); }).When(v => v > 1).Only(2)
+					.Returns("a");
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callIndices).IsEqualTo([2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Do(i => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Do(i => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -376,41 +376,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
-					.Do((i, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method1(i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
-					.Do((i, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method1(i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -468,6 +433,41 @@ public sealed partial class SetupMethodTests
 				sut.Method1(4);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do((i, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do((i, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -700,41 +700,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method2(i, 2 * i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method2(i, 2 * i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -775,6 +740,41 @@ public sealed partial class SetupMethodTests
 				sut.Method2(4, 2);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1018,41 +1018,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method3(i, 2 * i, 3 * i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method3(i, 2 * i, 3 * i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -1093,6 +1058,41 @@ public sealed partial class SetupMethodTests
 				sut.Method3(4, 2, 3);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1344,41 +1344,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method4(i, 2 * i, 3 * i, 4 * i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method4(i, 2 * i, 3 * i, 4 * i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -1419,6 +1384,41 @@ public sealed partial class SetupMethodTests
 				sut.Method4(4, 2, 3, 4);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1685,43 +1685,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-						It.IsAny<int>())
-					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-						It.IsAny<int>())
-					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -1764,6 +1727,43 @@ public sealed partial class SetupMethodTests
 				sut.Method5(4, 2, 3, 4, 5);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1955,59 +1955,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldLimitMatches()
-			{
-				List<int> callIndices = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-
-				sut.SetupMock.Method.Method0()
-					.Do(v => { callIndices.Add(v); }).When(v => v > 1).For(2);
-
-				sut.Method0();
-				sut.Method0();
-				sut.Method0();
-				sut.Method0();
-				sut.Method0();
-
-				await That(callIndices).IsEqualTo([2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
-					.Do(i => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method0();
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
-					.Do(i => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method0();
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -2049,6 +1996,59 @@ public sealed partial class SetupMethodTests
 				sut.Method0();
 
 				await That(callCount).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldLimitMatches()
+			{
+				List<int> callIndices = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+
+				sut.SetupMock.Method.Method0()
+					.Do(v => { callIndices.Add(v); }).When(v => v > 1).Only(2);
+
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+				sut.Method0();
+
+				await That(callIndices).IsEqualTo([2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Do(i => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method0()
+					.Do(i => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method0();
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -2253,41 +2253,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
-					.Do((i, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method1(i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
-					.Do((i, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method1(i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -2328,6 +2293,41 @@ public sealed partial class SetupMethodTests
 				sut.Method1(4);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do((i, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method1(It.IsAny<int>())
+					.Do((i, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method1(i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -2559,41 +2559,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method2(i, 2 * i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method2(i, 2 * i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -2634,6 +2599,41 @@ public sealed partial class SetupMethodTests
 				sut.Method2(4, 2);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method2(i, 2 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -2876,41 +2876,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method3(i, 2 * i, 3 * i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method3(i, 2 * i, 3 * i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -2951,6 +2916,41 @@ public sealed partial class SetupMethodTests
 				sut.Method3(4, 2, 3);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method3(i, 2 * i, 3 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -3201,41 +3201,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method4(i, 2 * i, 3 * i, 4 * i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.Do((i, _, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method4(i, 2 * i, 3 * i, 4 * i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -3276,6 +3241,41 @@ public sealed partial class SetupMethodTests
 				sut.Method4(4, 2, 3, 4);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.Do((i, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method4(i, 2 * i, 3 * i, 4 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -3541,43 +3541,6 @@ public sealed partial class SetupMethodTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-						It.IsAny<int>())
-					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-						It.IsAny<int>())
-					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -3620,6 +3583,43 @@ public sealed partial class SetupMethodTests
 				sut.Method5(4, 2, 3, 4, 5);
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					sut.Method5(i, 2 * i, 3 * i, 4 * i, 5 * i);
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
