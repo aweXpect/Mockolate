@@ -23,10 +23,10 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public VerificationResult<HttpClient> PatchAsync(
-			IParameter<string?>? requestUri,
+			IParameter<string?> requestUri,
 			IParameter<HttpContent?>? content = null)
 			=> verifyInvoked.PatchAsync(
-				requestUri ?? It.IsAny<string?>(),
+				requestUri,
 				content ?? It.IsAny<HttpContent?>(),
 				It.IsAny<CancellationToken>());
 
@@ -36,10 +36,10 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public VerificationResult<HttpClient> PatchAsync(
-			IParameter<Uri?>? requestUri,
+			IParameter<Uri?> requestUri,
 			IParameter<HttpContent?>? content = null)
 			=> verifyInvoked.PatchAsync(
-				requestUri ?? It.IsAny<Uri?>(),
+				requestUri,
 				content ?? It.IsAny<HttpContent?>(),
 				It.IsAny<CancellationToken>());
 
@@ -64,7 +64,8 @@ public static partial class HttpClientExtensions
 					.Map(httpClientMock.Subject);
 			}
 
-			throw new MockException("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException(
+				"Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 
 		/// <summary>
@@ -88,7 +89,8 @@ public static partial class HttpClientExtensions
 					.Map(httpClientMock.Subject);
 			}
 
-			throw new MockException("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException(
+				"Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 }

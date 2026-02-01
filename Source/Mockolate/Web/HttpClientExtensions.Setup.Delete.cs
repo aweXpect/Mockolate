@@ -23,8 +23,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
-			IParameter<string?>? requestUri)
-			=> setup.DeleteAsync(requestUri ?? It.IsAny<string?>(), It.IsAny<CancellationToken>());
+			IParameter<string?> requestUri)
+			=> setup.DeleteAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Setup for the method
@@ -32,8 +32,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
-			IParameter<Uri?>? requestUri)
-			=> setup.DeleteAsync(requestUri ?? It.IsAny<Uri?>(), It.IsAny<CancellationToken>());
+			IParameter<Uri?> requestUri)
+			=> setup.DeleteAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Setup for the method
@@ -56,7 +56,8 @@ public static partial class HttpClientExtensions
 				return methodSetup;
 			}
 
-			throw new MockException("Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException(
+				"Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 
 		/// <summary>
@@ -80,7 +81,8 @@ public static partial class HttpClientExtensions
 				return methodSetup;
 			}
 
-			throw new MockException("Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException(
+				"Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 }
