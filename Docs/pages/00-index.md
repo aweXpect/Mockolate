@@ -17,8 +17,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    Install the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), because Mockolate leverages
    C# 14 extension members (the projects can still target any supported framework).
 
-
-2. **Install the [`Mockolate`](https://www.nuget.org/packages/Mockolate) nuget package**
+2. **Install the package**
    ```powershell
    dotnet add package Mockolate
    ```
