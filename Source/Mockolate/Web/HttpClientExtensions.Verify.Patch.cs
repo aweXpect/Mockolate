@@ -24,8 +24,11 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		public VerificationResult<HttpClient> PatchAsync(
 			IParameter<string?>? requestUri,
-			IParameter<HttpContent?>? content)
-			=> verifyInvoked.PatchAsync(requestUri, content, It.IsAny<CancellationToken>());
+			IParameter<HttpContent?>? content = null)
+			=> verifyInvoked.PatchAsync(
+				requestUri ?? It.IsAny<string?>(),
+				content ?? It.IsAny<HttpContent?>(),
+				It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Validates the invocations for the method
@@ -34,8 +37,11 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		public VerificationResult<HttpClient> PatchAsync(
 			IParameter<Uri?>? requestUri,
-			IParameter<HttpContent?>? content)
-			=> verifyInvoked.PatchAsync(requestUri, content, It.IsAny<CancellationToken>());
+			IParameter<HttpContent?>? content = null)
+			=> verifyInvoked.PatchAsync(
+				requestUri ?? It.IsAny<Uri?>(),
+				content ?? It.IsAny<HttpContent?>(),
+				It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Validates the invocations for the method
@@ -43,8 +49,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public VerificationResult<HttpClient> PatchAsync(
-			IParameter<string?>? requestUri,
-			IParameter<HttpContent?>? content,
+			IParameter<string?> requestUri,
+			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (verifyInvoked is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
@@ -67,8 +73,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public VerificationResult<HttpClient> PatchAsync(
-			IParameter<Uri?>? requestUri,
-			IParameter<HttpContent?>? content,
+			IParameter<Uri?> requestUri,
+			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (verifyInvoked is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&

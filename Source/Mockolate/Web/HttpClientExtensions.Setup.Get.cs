@@ -24,7 +24,7 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> GetAsync(
 			IParameter<string?>? requestUri)
-			=> setup.GetAsync(requestUri, It.IsAny<CancellationToken>());
+			=> setup.GetAsync(requestUri ?? It.IsAny<string?>(), It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Setup for the method
@@ -33,7 +33,7 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> GetAsync(
 			IParameter<Uri?>? requestUri)
-			=> setup.GetAsync(requestUri, It.IsAny<CancellationToken>());
+			=> setup.GetAsync(requestUri ?? It.IsAny<Uri?>(), It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Setup for the method
@@ -41,7 +41,7 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> GetAsync(
-			IParameter<string?>? requestUri,
+			IParameter<string?> requestUri,
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
@@ -65,7 +65,7 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> GetAsync(
-			IParameter<Uri?>? requestUri,
+			IParameter<Uri?> requestUri,
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&

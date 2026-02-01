@@ -25,8 +25,11 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PatchAsync(
 			IParameter<string?>? requestUri,
-			IParameter<HttpContent?>? content)
-			=> setup.PatchAsync(requestUri, content, It.IsAny<CancellationToken>());
+			IParameter<HttpContent?>? content = null)
+			=> setup.PatchAsync(
+				requestUri ?? It.IsAny<string?>(),
+				content ?? It.IsAny<HttpContent?>(),
+				It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Setup for the method
@@ -35,8 +38,11 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PatchAsync(
 			IParameter<Uri?>? requestUri,
-			IParameter<HttpContent?>? content)
-			=> setup.PatchAsync(requestUri, content, It.IsAny<CancellationToken>());
+			IParameter<HttpContent?>? content = null)
+			=> setup.PatchAsync(
+				requestUri ?? It.IsAny<Uri?>(),
+				content ?? It.IsAny<HttpContent?>(),
+				It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Setup for the method
@@ -44,8 +50,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PatchAsync(
-			IParameter<string?>? requestUri,
-			IParameter<HttpContent?>? content,
+			IParameter<string?> requestUri,
+			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
@@ -70,8 +76,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PatchAsync(
-			IParameter<Uri?>? requestUri,
-			IParameter<HttpContent?>? content,
+			IParameter<Uri?> requestUri,
+			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&

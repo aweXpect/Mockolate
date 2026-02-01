@@ -51,12 +51,11 @@ public static partial class HttpClientExtensions
 
 	private sealed class HttpRequestMessageParameter<T>(
 		Func<HttpRequestMessage, T> valueSelector,
-		IParameter<T>? parameter)
+		IParameter<T> parameter)
 		: IHttpRequestMessageParameter
 	{
 		public bool Matches(HttpRequestMessage value)
-			=> parameter is null ||
-			   ((IParameter)parameter).Matches(valueSelector(value));
+			=> ((IParameter)parameter).Matches(valueSelector(value));
 
 		public void InvokeCallbacks(HttpRequestMessage value)
 		{
@@ -67,7 +66,7 @@ public static partial class HttpClientExtensions
 		}
 	}
 
-	private sealed class HttpStringUriParameter(IParameter<string?>? parameter)
+	private sealed class HttpStringUriParameter(IParameter<string?> parameter)
 		: IHttpRequestMessageParameter
 	{
 		public bool Matches(HttpRequestMessage value)
