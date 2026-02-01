@@ -92,7 +92,7 @@ public sealed partial class HttpClientExtensionsTests
 				void Act()
 				{
 					httpClient.VerifyMock.Invoked
-						.PostAsync(It.Matches("*aweXpect.com*"), It.IsAny<HttpContent>()).Never();
+						.PostAsync(It.Matches("*aweXpect.com*")).Never();
 				}
 
 				await That(Act).Throws<MockException>()
@@ -178,7 +178,7 @@ public sealed partial class HttpClientExtensionsTests
 				void Act()
 				{
 					httpClient.VerifyMock.Invoked
-						.PostAsync(It.IsUri("*aweXpect.com*"), It.IsAny<HttpContent>()).Never();
+						.PostAsync(It.IsUri("*aweXpect.com*")).Never();
 				}
 
 				await That(Act).Throws<MockException>()

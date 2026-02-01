@@ -43,7 +43,7 @@ public sealed partial class HttpClientExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PatchAsync(It.Matches("*aweXpect.com*"), It.IsAny<HttpContent>())
+					.PatchAsync(It.Matches("*aweXpect.com*"))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.SendAsync(
@@ -63,7 +63,7 @@ public sealed partial class HttpClientExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PatchAsync(It.Matches(pattern), It.IsAny<HttpContent>())
+					.PatchAsync(It.Matches(pattern))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
@@ -103,7 +103,7 @@ public sealed partial class HttpClientExtensionsTests
 				void Act()
 				{
 					httpClient.SetupMock.Method
-						.PatchAsync(It.Matches("*aweXpect.com*"), It.IsAny<HttpContent>())
+						.PatchAsync(It.Matches("*aweXpect.com*"))
 						.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				}
 
@@ -141,7 +141,7 @@ public sealed partial class HttpClientExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PatchAsync(It.IsUri("*aweXpect.com*"), It.IsAny<HttpContent>())
+					.PatchAsync(It.IsUri("*aweXpect.com*"))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.SendAsync(
@@ -161,7 +161,7 @@ public sealed partial class HttpClientExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PatchAsync(It.IsUri(pattern), It.IsAny<HttpContent>())
+					.PatchAsync(It.IsUri(pattern))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
@@ -201,7 +201,7 @@ public sealed partial class HttpClientExtensionsTests
 				void Act()
 				{
 					httpClient.SetupMock.Method
-						.PatchAsync(It.IsUri("*aweXpect.com*"), It.IsAny<HttpContent>())
+						.PatchAsync(It.IsUri("*aweXpect.com*"))
 						.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				}
 
