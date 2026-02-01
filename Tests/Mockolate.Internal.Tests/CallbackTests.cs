@@ -47,6 +47,46 @@ public class CallbackTests
 			await That(indexValues).IsEqualTo(expectResult);
 		}
 
+		[Theory]
+		[InlineData(2, 2, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2)]
+		[InlineData(2, 3, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3)]
+		public async Task ShouldIncrementIndexWheneverForIsExhausted(
+			int @for, int only, params int[] expectResult)
+		{
+			bool wasInvoked = false;
+			List<int> indexValues = [];
+			Callback<Action> sut = new(() => { });
+			sut.For(@for);
+			sut.Only(only);
+
+			int index = 0;
+			for (int iteration = 1; iteration <= 10; iteration++)
+			{
+				sut.Invoke(wasInvoked, ref index, (_, _) => { });
+				indexValues.Add(index);
+			}
+
+			await That(indexValues).IsEqualTo(expectResult);
+		}
+
+		[Fact]
+		public async Task ShouldLimitExecutionWhenRunningInParallel()
+		{
+			bool wasInvoked = false;
+			List<int> values = [];
+			Callback<Action> sut = new(() => { });
+			sut.Only(2);
+			sut.InParallel();
+
+			int index = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				sut.Invoke(wasInvoked, ref index, (v, _) => values.Add(v));
+			}
+
+			await That(values).IsEqualTo([0, 1,]);
+		}
+
 		[Fact]
 		public async Task WhenCheck_ShouldOnlyBeCalledWhenOnlyLimitIsNotReached()
 		{

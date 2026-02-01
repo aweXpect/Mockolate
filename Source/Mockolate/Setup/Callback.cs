@@ -143,9 +143,6 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 
 				return !RunInParallel;
 			}
-
-			_forIterationCount++;
-			_matchingCount++;
 		}
 
 		_invocationCount++;
@@ -177,9 +174,6 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 				callback(_invocationCount - 1, @delegate);
 				return true;
 			}
-
-			_forIterationCount++;
-			_matchingCount++;
 		}
 
 		_invocationCount++;
@@ -212,9 +206,6 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 				returnValue = callback(_invocationCount - 1, @delegate)!;
 				return true;
 			}
-
-			_forIterationCount++;
-			_matchingCount++;
 		}
 
 		_invocationCount++;
