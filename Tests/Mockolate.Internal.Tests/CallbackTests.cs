@@ -13,7 +13,7 @@ public class CallbackTests
 			bool wasInvoked = false;
 			List<int> values = [];
 			Callback<Action> sut = new(() => { });
-			sut.For(2);
+			sut.Only(2);
 			sut.When(v => v > 1);
 
 			int index = 0;
@@ -26,16 +26,16 @@ public class CallbackTests
 		}
 
 		[Theory]
-		[InlineData(2, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1)]
-		[InlineData(2, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1)]
+		[InlineData(2, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2)]
+		[InlineData(2, 1, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2)]
 		public async Task ShouldIncrementIndexOnceWhenCallbackIsExhausted(
-			int forValue, int whenMinimum, params int[] expectResult)
+			int only, int when, params int[] expectResult)
 		{
 			bool wasInvoked = false;
 			List<int> indexValues = [];
 			Callback<Action> sut = new(() => { });
-			sut.For(forValue);
-			sut.When(v => v > whenMinimum);
+			sut.Only(only);
+			sut.When(v => v > when);
 
 			int index = 0;
 			for (int iteration = 1; iteration <= 10; iteration++)
@@ -51,7 +51,7 @@ public class CallbackTests
 		public async Task WhenCheck_ShouldOnlyBeCalledWhenOnlyLimitIsNotReached()
 		{
 			bool wasInvoked = false;
-			int[] expectResult = [0, 1, 2, 3, 4, 5,];
+			int[] expectResult = [0, 1, 2, 3, 4, 5, 6, 7,];
 			List<int> invocationChecks = [];
 			int invocationCount = 0;
 			Callback<Action> sut = new(() => { invocationCount++; });
@@ -70,7 +70,7 @@ public class CallbackTests
 			}
 
 			await That(invocationChecks).IsEqualTo(expectResult);
-			await That(invocationCount).IsEqualTo(2);
+			await That(invocationCount).IsEqualTo(8);
 		}
 
 		[Theory]
@@ -84,7 +84,7 @@ public class CallbackTests
 		{
 			bool wasInvoked = false;
 			Callback<Action> sut = new(() => { });
-			sut.For(2);
+			sut.Only(2);
 			sut.When(v => v > 1);
 
 			int index = 0;
@@ -105,7 +105,7 @@ public class CallbackTests
 		{
 			List<int> values = [];
 			Callback<Action> sut = new(() => { });
-			sut.For(2);
+			sut.Only(2);
 			sut.When(v => v > 1);
 
 			int index = 0;
@@ -117,39 +117,10 @@ public class CallbackTests
 			await That(values).IsEqualTo([2, 3,]);
 		}
 
-		[Theory]
-		[InlineData(2, 0, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
-		[InlineData(2, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8, 9)]
-		[InlineData(3, 1, 1, 2, 2, 2, 3, 4, 5, 6, 7, 8)]
-		[InlineData(5, 4, 1, 2, 3, 4, 5, 5, 5, 5, 5, 6)]
-		[InlineData(6, 4, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5)]
-		[InlineData(7, 4, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5)]
-		[InlineData(3, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)]
-		public async Task ShouldIncrementIndexWhenForIsNotActive(
-			int forValue, int whenMinimum, params int[] expectResult)
-		{
-			List<int> indexValues = [];
-			int invocationCount = 0;
-			int expectedInvocationCount = Math.Max(0, Math.Min(forValue, 9 - whenMinimum));
-			Callback<Action> sut = new(() => { invocationCount++; });
-			sut.For(forValue);
-			sut.When(v => v > whenMinimum);
-
-			int index = 0;
-			for (int iteration = 1; iteration <= 10; iteration++)
-			{
-				sut.Invoke(ref index, (_, c) => c());
-				indexValues.Add(index);
-			}
-
-			await That(indexValues).IsEqualTo(expectResult);
-			await That(invocationCount).IsEqualTo(expectedInvocationCount);
-		}
-
 		[Fact]
 		public async Task WhenCheck_ShouldOnlyBeCalledWhenOnlyLimitIsNotReached()
 		{
-			int[] expectResult = [0, 1, 2, 3, 4, 5,];
+			int[] expectResult = [0, 1, 2, 3, 4, 5, 6, 7,];
 			List<int> invocationChecks = [];
 			int invocationCount = 0;
 			Callback<Action> sut = new(() => { invocationCount++; });
@@ -168,7 +139,7 @@ public class CallbackTests
 			}
 
 			await That(invocationChecks).IsEqualTo(expectResult);
-			await That(invocationCount).IsEqualTo(2);
+			await That(invocationCount).IsEqualTo(8);
 		}
 
 		[Theory]
@@ -181,7 +152,7 @@ public class CallbackTests
 			int iterations, bool expectResult)
 		{
 			Callback<Action> sut = new(() => { });
-			sut.For(2);
+			sut.Only(2);
 			sut.When(v => v > 1);
 
 			int index = 0;
@@ -202,7 +173,7 @@ public class CallbackTests
 		{
 			List<int> values = [];
 			Callback<Action> sut = new(() => { });
-			sut.For(2);
+			sut.Only(2);
 			sut.When(v => v > 1);
 
 			int index = 0;
@@ -218,43 +189,10 @@ public class CallbackTests
 			await That(values).IsEqualTo([2, 3,]);
 		}
 
-		[Theory]
-		[InlineData(2, 0, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
-		[InlineData(2, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8, 9)]
-		[InlineData(3, 1, 1, 2, 2, 2, 3, 4, 5, 6, 7, 8)]
-		[InlineData(5, 4, 1, 2, 3, 4, 5, 5, 5, 5, 5, 6)]
-		[InlineData(6, 4, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5)]
-		[InlineData(7, 4, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5)]
-		[InlineData(3, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)]
-		public async Task ShouldIncrementIndexWhenForIsNotActive(
-			int forValue, int whenMinimum, params int[] expectResult)
-		{
-			List<int> indexValues = [];
-			int invocationCount = 0;
-			int expectedInvocationCount = Math.Max(0, Math.Min(forValue, 9 - whenMinimum));
-			Callback<Action> sut = new(() => { invocationCount++; });
-			sut.For(forValue);
-			sut.When(v => v > whenMinimum);
-
-			int index = 0;
-			for (int iteration = 1; iteration <= 10; iteration++)
-			{
-				sut.Invoke(ref index, (_, c) =>
-				{
-					c();
-					return "foo";
-				}, out string? _);
-				indexValues.Add(index);
-			}
-
-			await That(indexValues).IsEqualTo(expectResult);
-			await That(invocationCount).IsEqualTo(expectedInvocationCount);
-		}
-
 		[Fact]
 		public async Task WhenCheck_ShouldOnlyBeCalledWhenOnlyLimitIsNotReached()
 		{
-			int[] expectResult = [0, 1, 2, 3, 4, 5,];
+			int[] expectResult = [0, 1, 2, 3, 4, 5, 6, 7,];
 			List<int> invocationChecks = [];
 			int invocationCount = 0;
 			Callback<Action> sut = new(() => { invocationCount++; });
@@ -277,7 +215,7 @@ public class CallbackTests
 			}
 
 			await That(invocationChecks).IsEqualTo(expectResult);
-			await That(invocationCount).IsEqualTo(2);
+			await That(invocationCount).IsEqualTo(8);
 		}
 
 		[Theory]
@@ -290,7 +228,7 @@ public class CallbackTests
 			int iterations, bool expectResult)
 		{
 			Callback<Action> sut = new(() => { });
-			sut.For(2);
+			sut.Only(2);
 			sut.When(v => v > 1);
 
 			int index = 0;
