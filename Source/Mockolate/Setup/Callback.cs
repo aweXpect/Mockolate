@@ -30,14 +30,7 @@ public class Callback
 	///     A <see cref="Callback" /> is active, until it has reached the <see cref="Only" /> limit, if specified.
 	/// </remarks>
 	protected bool IsActive(int matchingCount)
-	{
-		if (_forTimes is not null)
-		{
-			matchingCount -= _forTimes.Value;
-		}
-
-		return _onlyTimes == 0 || matchingCount < _onlyTimes;
-	}
+		=> _onlyTimes == 0 || matchingCount < _onlyTimes * (_forTimes ?? 1);
 
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns <see langword="true" />.
@@ -105,6 +98,7 @@ public class Callback
 /// </summary>
 public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate : Delegate
 {
+	private int _forIterationCount;
 	private int _invocationCount;
 	private int _matchingCount;
 
@@ -116,7 +110,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	{
 		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
 		{
-			if (CheckMatching(_matchingCount))
+			if (CheckMatching(_forIterationCount))
 			{
 				_invocationCount++;
 
@@ -127,14 +121,20 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 						Interlocked.Increment(ref index);
 					}
 
+					_forIterationCount++;
 					_matchingCount++;
 					callback(_invocationCount - 1, @delegate);
 				}
 				else if (!wasInvoked)
 				{
-					if (!HasForSpecified || !CheckMatching(_matchingCount + 1))
+					if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
 					{
 						Interlocked.Increment(ref index);
+						_forIterationCount = 0;
+					}
+					else
+					{
+						_forIterationCount++;
 					}
 
 					_matchingCount++;
@@ -144,6 +144,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 				return !RunInParallel;
 			}
 
+			_forIterationCount++;
 			_matchingCount++;
 		}
 
@@ -159,11 +160,16 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	{
 		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
 		{
-			if (CheckMatching(_matchingCount))
+			if (CheckMatching(_forIterationCount))
 			{
-				if (!HasForSpecified || !CheckMatching(_matchingCount + 1))
+				if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
 				{
 					Interlocked.Increment(ref index);
+					_forIterationCount = 0;
+				}
+				else
+				{
+					_forIterationCount++;
 				}
 
 				_invocationCount++;
@@ -172,6 +178,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 				return true;
 			}
 
+			_forIterationCount++;
 			_matchingCount++;
 		}
 
@@ -188,11 +195,16 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	{
 		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
 		{
-			if (CheckMatching(_matchingCount))
+			if (CheckMatching(_forIterationCount))
 			{
-				if (!HasForSpecified || !CheckMatching(_matchingCount + 1))
+				if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
 				{
 					Interlocked.Increment(ref index);
+					_forIterationCount = 0;
+				}
+				else
+				{
+					_forIterationCount++;
 				}
 
 				_invocationCount++;
@@ -201,6 +213,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 				return true;
 			}
 
+			_forIterationCount++;
 			_matchingCount++;
 		}
 

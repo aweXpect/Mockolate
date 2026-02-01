@@ -7,23 +7,6 @@ public sealed partial class SetupPropertyTests
 {
 	public sealed class OnGetTests
 	{
-		[Fact]
-		public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-		{
-			List<int> invocations = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty
-				.OnGet.Do((i, _) => { invocations.Add(i); })
-				.For(4);
-
-			for (int i = 0; i < 20; i++)
-			{
-				_ = sut.MyProperty;
-			}
-
-			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-		}
-
 		[Theory]
 		[InlineData(-2)]
 		[InlineData(0)]
@@ -39,24 +22,6 @@ public sealed partial class SetupPropertyTests
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()
 				.WithMessage("Times must be greater than zero.").AsPrefix();
-		}
-
-		[Fact]
-		public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-		{
-			List<int> invocations = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty
-				.OnGet.Do((i, _) => { invocations.Add(i); })
-				.When(x => x > 2)
-				.For(4);
-
-			for (int i = 0; i < 20; i++)
-			{
-				_ = sut.MyProperty;
-			}
-
-			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 		}
 
 		[Fact]
@@ -176,6 +141,40 @@ public sealed partial class SetupPropertyTests
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()
 				.WithMessage("Times must be greater than zero.").AsPrefix();
+		}
+
+		[Fact]
+		public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+		{
+			List<int> invocations = [];
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyProperty
+				.OnGet.Do((i, _) => { invocations.Add(i); }).Only(4);
+
+			for (int i = 0; i < 20; i++)
+			{
+				_ = sut.MyProperty;
+			}
+
+			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+		}
+
+		[Fact]
+		public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+		{
+			List<int> invocations = [];
+			IPropertyService sut = Mock.Create<IPropertyService>();
+			sut.SetupMock.Property.MyProperty
+				.OnGet.Do((i, _) => { invocations.Add(i); })
+				.When(x => x > 2)
+				.Only(4);
+
+			for (int i = 0; i < 20; i++)
+			{
+				_ = sut.MyProperty;
+			}
+
+			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 		}
 
 		[Fact]

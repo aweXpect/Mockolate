@@ -132,41 +132,6 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
-		public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-		{
-			List<int> invocations = [];
-			IIndexerService sut = Mock.Create<IIndexerService>();
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.OnGet.Do((i, _) => { invocations.Add(i); })
-				.For(4);
-
-			for (int i = 0; i < 20; i++)
-			{
-				_ = sut[i];
-			}
-
-			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-		}
-
-		[Fact]
-		public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-		{
-			List<int> invocations = [];
-			IIndexerService sut = Mock.Create<IIndexerService>();
-			sut.SetupMock.Indexer(It.IsAny<int>())
-				.OnGet.Do((i, _) => { invocations.Add(i); })
-				.When(x => x > 2)
-				.For(4);
-
-			for (int i = 0; i < 20; i++)
-			{
-				_ = sut[i];
-			}
-
-			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-		}
-
-		[Fact]
 		public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 		{
 			int callCount1 = 0;
@@ -207,6 +172,41 @@ public sealed partial class SetupIndexerTests
 			_ = sut[4];
 
 			await That(sum).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+		{
+			List<int> invocations = [];
+			IIndexerService sut = Mock.Create<IIndexerService>();
+			sut.SetupMock.Indexer(It.IsAny<int>())
+				.OnGet.Do((i, _) => { invocations.Add(i); })
+				.Only(4);
+
+			for (int i = 0; i < 20; i++)
+			{
+				_ = sut[i];
+			}
+
+			await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+		}
+
+		[Fact]
+		public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+		{
+			List<int> invocations = [];
+			IIndexerService sut = Mock.Create<IIndexerService>();
+			sut.SetupMock.Indexer(It.IsAny<int>())
+				.OnGet.Do((i, _) => { invocations.Add(i); })
+				.When(x => x > 2)
+				.Only(4);
+
+			for (int i = 0; i < 20; i++)
+			{
+				_ = sut[i];
+			}
+
+			await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 		}
 
 		[Fact]
@@ -551,41 +551,6 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
-					.OnGet.Do((i, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					_ = sut[i, 2 * i];
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
-					.OnGet.Do((i, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					_ = sut[i, 2 * i];
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -626,6 +591,41 @@ public sealed partial class SetupIndexerTests
 				_ = sut[4, 2];
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					_ = sut[i, 2 * i];
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					_ = sut[i, 2 * i];
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -971,41 +971,6 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnGet.Do((i, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					_ = sut[i, 2 * i, 3 * i];
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnGet.Do((i, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					_ = sut[i, 2 * i, 3 * i];
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -1046,6 +1011,41 @@ public sealed partial class SetupIndexerTests
 				_ = sut[4, 2, 3];
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					_ = sut[i, 2 * i, 3 * i];
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					_ = sut[i, 2 * i, 3 * i];
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1406,41 +1406,6 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnGet.Do((i, _, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					_ = sut[i, 2 * i, 3 * i, 4 * i];
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
-					.OnGet.Do((i, _, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					_ = sut[i, 2 * i, 3 * i, 4 * i];
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -1481,6 +1446,41 @@ public sealed partial class SetupIndexerTests
 				_ = sut[4, 2, 3, 4];
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					_ = sut[i, 2 * i, 3 * i, 4 * i];
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					.OnGet.Do((i, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					_ = sut[i, 2 * i, 3 * i, 4 * i];
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]
@@ -1855,43 +1855,6 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task For_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-						It.IsAny<int>())
-					.OnGet.Do((i, _, _, _, _, _) => { invocations.Add(i); })
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					_ = sut[i, 2 * i, 3 * i, 4 * i, 5 * i];
-				}
-
-				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
-			}
-
-			[Fact]
-			public async Task For_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
-			{
-				List<int> invocations = [];
-				IIndexerService sut = Mock.Create<IIndexerService>();
-				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-						It.IsAny<int>())
-					.OnGet.Do((i, _, _, _, _, _) => { invocations.Add(i); })
-					.When(x => x > 2)
-					.For(4);
-
-				for (int i = 0; i < 20; i++)
-				{
-					_ = sut[i, 2 * i, 3 * i, 4 * i, 5 * i];
-				}
-
-				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
-			}
-
-			[Fact]
 			public async Task InParallel_ShouldInvokeParallelCallbacksAlways()
 			{
 				int callCount1 = 0;
@@ -1934,6 +1897,43 @@ public sealed partial class SetupIndexerTests
 				_ = sut[4, 2, 3, 4, 5];
 
 				await That(sum).IsEqualTo(expectedValue);
+			}
+
+			[Fact]
+			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.OnGet.Do((i, _, _, _, _, _) => { invocations.Add(i); })
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					_ = sut[i, 2 * i, 3 * i, 4 * i, 5 * i];
+				}
+
+				await That(invocations).IsEqualTo([0, 1, 2, 3,]);
+			}
+
+			[Fact]
+			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
+			{
+				List<int> invocations = [];
+				IIndexerService sut = Mock.Create<IIndexerService>();
+				sut.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+						It.IsAny<int>())
+					.OnGet.Do((i, _, _, _, _, _) => { invocations.Add(i); })
+					.When(x => x > 2)
+					.Only(4);
+
+				for (int i = 0; i < 20; i++)
+				{
+					_ = sut[i, 2 * i, 3 * i, 4 * i, 5 * i];
+				}
+
+				await That(invocations).IsEqualTo([3, 4, 5, 6,]);
 			}
 
 			[Fact]

@@ -36,7 +36,7 @@ sut.SetupMock.Property.TotalDispensed
     .Returns(10).For(1)
     .Returns(20).For(2)
     .Returns(30).For(3);
-// Reads: 10, 20, 20, 30, 30, 30, 0, 0, 0, 0 …
+// Reads: 10, 20, 20, 30, 30, 30, 10, 20, 20, 30, 30, 30 …
 ```
 
 ### Repeat `Forever`
