@@ -4,28 +4,26 @@
 
 [![Nuget](https://img.shields.io/nuget/v/Mockolate)](https://www.nuget.org/packages/Mockolate)
 
-**Mockolate** is a modern, strongly-typed mocking library for .NET, powered by source generators. It enables fast,
-compile-time validated mocks for interfaces and classes, supporting .NET Standard 2.0, .NET 8, .NET 10, and .NET
-Framework 4.8.
+**Mockolate** is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators.
+It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, .NET 10 and .NET Framework 4.8.
 
-- **Source generator-based**: No runtime proxy generation, fast and reliable.
-- **Strongly-typed**: Setup and verify mocks with full IntelliSense and compile-time safety.
+- **Source generator-based**: No runtime proxy generation.
+- **Strongly-typed**: Compile-time safety and IntelliSense support.
 - **AOT compatible**: Works with NativeAOT and trimming.
 
 ## Getting Started
 
-1. Check prerequisites  
-   Although Mockolate supports multiple .NET Standard 2.0 compatible frameworks (including .NET Framework 4.8), you must
-   have the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed to build and compile
-   Mockolate. This is required because Mockolate
-   leverages [C# 14 extension members](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods#declare-extension-members).
+1. **Check prerequisites**  
+   Install the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), because Mockolate
+   leverages [C# 14 extension members](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods#declare-extension-members);
+   the projects can still target any supported framework.
 
-2. Install the [`Mockolate`](https://www.nuget.org/packages/Mockolate) nuget package
-   ```ps
+2. **Install the [`Mockolate`](https://www.nuget.org/packages/Mockolate) nuget package**
+   ```powershell
    dotnet add package Mockolate
    ```
 
-3. Create and use the mock
+3. **Create and use a mock**
    ```csharp
    using Mockolate;
 
@@ -39,7 +37,7 @@ Framework 4.8.
    }
    
    // Create a mock for IChocolateDispenser
-   var sut = Mock.Create<IChocolateDispenser>();
+   IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
    
    // Setup: Initial stock of 10 for Dark chocolate
    sut.SetupMock.Indexer(It.Is("Dark")).InitializeWith(10);
@@ -47,7 +45,7 @@ Framework 4.8.
    sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
        .Returns((type, amount) =>
        {
-           var current = sut[type];
+           int current = sut[type];
            if (current >= amount)
            {
                sut[type] = current - amount;
@@ -59,10 +57,10 @@ Framework 4.8.
    
    // Track dispensed amount via event
    int dispensedAmount = 0;
-   sut.ChocolateDispensed += (type, amount)
+   sut.ChocolateDispensed += (type, amount) =>
    {
        dispensedAmount += amount;
-   }
+   };
    
    // Act: Try to dispense chocolates
    bool gotChoc1 = sut.Dispense("Dark", 4); // true

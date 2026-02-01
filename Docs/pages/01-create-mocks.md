@@ -5,13 +5,13 @@ You can create mocks for interfaces and classes. For classes without a default c
 
 ```csharp
 // Create a mock for an interface
-var sut = Mock.Create<IChocolateDispenser>();
+IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 
 // Create a mock for a class
-var classMock = Mock.Create<MyChocolateDispenser>();
+MyChocolateDispenser classMock = Mock.Create<MyChocolateDispenser>();
 
 // For classes without a default constructor:
-var classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
+MyChocolateDispenserWithCtor classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
     BaseClass.WithConstructorParameters("Dark", 42)
 );
 ```
