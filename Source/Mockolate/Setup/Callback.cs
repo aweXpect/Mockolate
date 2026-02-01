@@ -108,48 +108,42 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	/// </summary>
 	public bool Invoke(bool wasInvoked, ref int index, Action<int, TDelegate> callback)
 	{
-		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
+		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
 		{
-			if (CheckMatching(_forIterationCount))
+			_invocationCount++;
+			return false;
+		}
+
+		_invocationCount++;
+
+		if (RunInParallel)
+		{
+			if (!wasInvoked)
 			{
-				_invocationCount++;
-
-				if (RunInParallel)
-				{
-					if (!wasInvoked)
-					{
-						Interlocked.Increment(ref index);
-					}
-
-					_forIterationCount++;
-					_matchingCount++;
-					callback(_invocationCount - 1, @delegate);
-				}
-				else if (!wasInvoked)
-				{
-					if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
-					{
-						Interlocked.Increment(ref index);
-						_forIterationCount = 0;
-					}
-					else
-					{
-						_forIterationCount++;
-					}
-
-					_matchingCount++;
-					callback(_invocationCount - 1, @delegate);
-				}
-
-				return !RunInParallel;
+				Interlocked.Increment(ref index);
 			}
 
 			_forIterationCount++;
 			_matchingCount++;
+			callback(_invocationCount - 1, @delegate);
+		}
+		else if (!wasInvoked)
+		{
+			if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
+			{
+				Interlocked.Increment(ref index);
+				_forIterationCount = 0;
+			}
+			else
+			{
+				_forIterationCount++;
+			}
+
+			_matchingCount++;
+			callback(_invocationCount - 1, @delegate);
 		}
 
-		_invocationCount++;
-		return false;
+		return !RunInParallel;
 	}
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
@@ -158,33 +152,27 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	/// </summary>
 	public bool Invoke(ref int index, Action<int, TDelegate> callback)
 	{
-		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
+		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
 		{
-			if (CheckMatching(_forIterationCount))
-			{
-				if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
-				{
-					Interlocked.Increment(ref index);
-					_forIterationCount = 0;
-				}
-				else
-				{
-					_forIterationCount++;
-				}
+			_invocationCount++;
+			Interlocked.Increment(ref index);
+			return false;
+		}
 
-				_invocationCount++;
-				_matchingCount++;
-				callback(_invocationCount - 1, @delegate);
-				return true;
-			}
-
+		if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
+		{
+			Interlocked.Increment(ref index);
+			_forIterationCount = 0;
+		}
+		else
+		{
 			_forIterationCount++;
-			_matchingCount++;
 		}
 
 		_invocationCount++;
-		Interlocked.Increment(ref index);
-		return false;
+		_matchingCount++;
+		callback(_invocationCount - 1, @delegate);
+		return true;
 	}
 
 	/// <summary>
@@ -193,33 +181,27 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 	public bool Invoke<TReturn>(ref int index, Func<int, TDelegate, TReturn> callback,
 		[NotNullWhen(true)] out TReturn? returnValue)
 	{
-		if (IsActive(_matchingCount) && CheckInvocations(_invocationCount))
+		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
 		{
-			if (CheckMatching(_forIterationCount))
-			{
-				if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
-				{
-					Interlocked.Increment(ref index);
-					_forIterationCount = 0;
-				}
-				else
-				{
-					_forIterationCount++;
-				}
+			_invocationCount++;
+			returnValue = default;
+			Interlocked.Increment(ref index);
+			return false;
+		}
 
-				_invocationCount++;
-				_matchingCount++;
-				returnValue = callback(_invocationCount - 1, @delegate)!;
-				return true;
-			}
-
+		if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
+		{
+			Interlocked.Increment(ref index);
+			_forIterationCount = 0;
+		}
+		else
+		{
 			_forIterationCount++;
-			_matchingCount++;
 		}
 
 		_invocationCount++;
-		returnValue = default;
-		Interlocked.Increment(ref index);
-		return false;
+		_matchingCount++;
+		returnValue = callback(_invocationCount - 1, @delegate)!;
+		return true;
 	}
 }
