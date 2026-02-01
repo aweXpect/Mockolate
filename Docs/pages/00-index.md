@@ -14,12 +14,18 @@ Framework 4.8.
 
 ## Getting Started
 
-1. Install the [`Mockolate`](https://www.nuget.org/packages/Mockolate) nuget package
+1. Check prerequisites  
+   Although Mockolate supports multiple .NET Standard 2.0 compatible frameworks (including .NET Framework 4.8), you must
+   have the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed to build and compile
+   Mockolate. This is required because Mockolate
+   leverages [C# 14 extension members](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods#declare-extension-members).
+
+2. Install the [`Mockolate`](https://www.nuget.org/packages/Mockolate) nuget package
    ```ps
    dotnet add package Mockolate
    ```
 
-2. Create and use the mock
+3. Create and use the mock
    ```csharp
    using Mockolate;
 
