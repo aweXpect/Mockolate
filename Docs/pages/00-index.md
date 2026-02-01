@@ -14,7 +14,7 @@ Framework 4.8.
 
 ## Getting Started
 
-1. Check prerequisites:  
+1. Check prerequisites  
    Although Mockolate supports multiple .NET Standard 2.0 compatible frameworks (including .NET Framework 4.8), you must
    have the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed to build and compile
    Mockolate. This is required because Mockolate
