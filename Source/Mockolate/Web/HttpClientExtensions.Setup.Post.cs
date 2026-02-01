@@ -23,9 +23,12 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PostAsync(
-			IParameter<string?>? requestUri,
-			IParameter<HttpContent?>? content)
-			=> setup.PostAsync(requestUri, content, It.IsAny<CancellationToken>());
+			IParameter<string?> requestUri,
+			IParameter<HttpContent?>? content = null)
+			=> setup.PostAsync(
+				requestUri,
+				content ?? It.IsAny<HttpContent?>(),
+				It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Setup for the method
@@ -33,9 +36,12 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PostAsync(
-			IParameter<Uri?>? requestUri,
-			IParameter<HttpContent?>? content)
-			=> setup.PostAsync(requestUri, content, It.IsAny<CancellationToken>());
+			IParameter<Uri?> requestUri,
+			IParameter<HttpContent?>? content = null)
+			=> setup.PostAsync(
+				requestUri,
+				content ?? It.IsAny<HttpContent?>(),
+				It.IsAny<CancellationToken>());
 
 		/// <summary>
 		///     Setup for the method
@@ -43,8 +49,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PostAsync(
-			IParameter<string?>? requestUri,
-			IParameter<HttpContent?>? content,
+			IParameter<string?> requestUri,
+			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
@@ -60,7 +66,8 @@ public static partial class HttpClientExtensions
 				return methodSetup;
 			}
 
-			throw new MockException("Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException(
+				"Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 
 		/// <summary>
@@ -69,8 +76,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PostAsync(
-			IParameter<Uri?>? requestUri,
-			IParameter<HttpContent?>? content,
+			IParameter<Uri?> requestUri,
+			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
 			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
@@ -86,7 +93,8 @@ public static partial class HttpClientExtensions
 				return methodSetup;
 			}
 
-			throw new MockException("Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+			throw new MockException(
+				"Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 }
