@@ -882,7 +882,8 @@ sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
 ```
 
 **Note:**
-This only applies to callbacks defined via `Do`, not to the other setup callbacks like `Returns` or `Throws`.
+Parallel execution via `.InParallel()` only applies to callbacks defined via `Do`, not to other setup callbacks like
+`Returns` or `Throws`.
 
 #### Invocation counter
 
