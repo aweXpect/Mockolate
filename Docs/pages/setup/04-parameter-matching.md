@@ -19,7 +19,8 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 - `It.Matches(pattern)`: Matches strings using wildcard patterns (`*` and `?`).
 
-#### Regular Expressions  
+#### Regular Expressions
+
 Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
 
 ```csharp
