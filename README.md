@@ -152,9 +152,10 @@ var classMock = Mock.Create<MyChocolateDispenser>(
     defaults.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
   - Automatically initialize all mocks of type T with the given setups when they are created.
-  - The callback can optionally receive an additional counter parameter which allows to differentiate between multiple
-    instances. This is useful when you want to ensure that you can distinguish between different automatically created
-    instances (e.g. when mocking databases).
+  - The callback can optionally receive an additional counter parameter, allowing you to differentiate between multiple
+    automatically created instances.
+    For example, when initializing `IDbConnection` mocks, you can use the counter to assign different database names or
+    connection strings to each mock so they can be verified independently.
 - `UseConstructorParametersFor<T>(object?[])`:
   - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
     during mock creation via `BaseClass.WithConstructorParameters(…)`.
