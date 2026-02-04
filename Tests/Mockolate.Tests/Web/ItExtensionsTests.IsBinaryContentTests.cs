@@ -36,7 +36,8 @@ public sealed partial class ItExtensionsTests
 				new ByteArrayContent(body),
 				CancellationToken.None);
 
-			await That(result.StatusCode).IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			await That(result.StatusCode)
+				.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
 
 		[Theory]
@@ -56,7 +57,8 @@ public sealed partial class ItExtensionsTests
 				new ByteArrayContent(body),
 				CancellationToken.None);
 
-			await That(result.StatusCode).IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			await That(result.StatusCode)
+				.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
 
 #if !NETFRAMEWORK
@@ -82,7 +84,8 @@ public sealed partial class ItExtensionsTests
 			}
 
 			await That(
-					(await Task.WhenAll(monitor.Values.Select(c => c!.ReadAsByteArrayAsync()))).Select(x => x.Length))
+					(await Task.WhenAll(monitor.Values.Select(c => c!.ReadAsByteArrayAsync())))
+					.Select(x => x.Length))
 				.IsEqualTo([0, 1, 3,]);
 			await That(callbackCount).IsEqualTo(3);
 		}
@@ -105,7 +108,8 @@ public sealed partial class ItExtensionsTests
 				content,
 				CancellationToken.None);
 
-			await That(result.StatusCode).IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			await That(result.StatusCode)
+				.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
 
 		[Theory]
@@ -125,7 +129,8 @@ public sealed partial class ItExtensionsTests
 				content,
 				CancellationToken.None);
 
-			await That(result.StatusCode).IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			await That(result.StatusCode)
+				.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
 	}
 }
