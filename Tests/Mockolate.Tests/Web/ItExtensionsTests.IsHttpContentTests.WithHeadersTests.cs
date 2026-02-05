@@ -176,7 +176,8 @@ public sealed partial class ItExtensionsTests
 				}
 
 				await That(Act).Throws<ArgumentException>()
-					.WithMessage("The header contained an invalid line: x-myHeader2");
+					.WithParamName("headers").And
+					.WithMessage("The header contained an invalid line: x-myHeader2").AsPrefix();
 			}
 		}
 	}

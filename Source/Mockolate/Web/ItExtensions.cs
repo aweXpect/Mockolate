@@ -41,10 +41,10 @@ public static partial class ItExtensions
 			return values.Any(value.Matches);
 		}
 
-		private static List<KeyValuePair<string, HttpHeaderValue>> ExtractHeaders(string headerValue)
+		private static List<KeyValuePair<string, HttpHeaderValue>> ExtractHeaders(string headers)
 		{
-			List<KeyValuePair<string, HttpHeaderValue>> headers = new();
-			using StringReader reader = new(headerValue);
+			List<KeyValuePair<string, HttpHeaderValue>> headerList = new();
+			using StringReader reader = new(headers);
 			string? line = reader.ReadLine();
 			while (!string.IsNullOrWhiteSpace(line))
 			{
@@ -52,14 +52,14 @@ public static partial class ItExtensions
 
 				if (parts.Length != 2)
 				{
-					throw new ArgumentException("The header contained an invalid line: " + line);
+					throw new ArgumentException("The header contained an invalid line: " + line, nameof(headers));
 				}
 
-				headers.Add(new KeyValuePair<string, HttpHeaderValue>(parts[0], parts[1].TrimStart(' ')));
+				headerList.Add(new KeyValuePair<string, HttpHeaderValue>(parts[0], parts[1].TrimStart(' ')));
 				line = reader.ReadLine();
 			}
 
-			return headers;
+			return headerList;
 		}
 	}
 
