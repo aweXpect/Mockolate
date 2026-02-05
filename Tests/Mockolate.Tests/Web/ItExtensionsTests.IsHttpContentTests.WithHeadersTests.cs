@@ -157,6 +157,27 @@ public sealed partial class ItExtensionsTests
 
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
+
+			[Fact]
+			public async Task WithInvalidStringHeader_ShouldThrowArgumentException()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+
+				void Act()
+				{
+					httpClient.SetupMock.Method
+						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+							.WithHeaders("""
+							             x-myHeader1: foo
+							             x-myHeader2
+							             x-myHeader3: baz
+							             """))
+						.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				}
+
+				await That(Act).Throws<ArgumentException>()
+					.WithMessage("The header contained an invalid line: x-myHeader2");
+			}
 		}
 	}
 }
