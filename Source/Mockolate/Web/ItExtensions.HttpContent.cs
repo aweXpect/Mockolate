@@ -60,7 +60,6 @@ public static partial class ItExtensions
 			return GetThis;
 		}
 
-
 		public TParameter WithHeaders(IEnumerable<KeyValuePair<string, HttpHeaderValue>> headers)
 		{
 			_headers ??= new HttpHeadersMatcher();
@@ -121,17 +120,6 @@ public static partial class ItExtensions
 	{
 		/// <inheritdoc cref="HttpContentParameter{TParameter}.GetThis" />
 		protected override IHttpContentParameter GetThis => this;
-
-		/// <inheritdoc cref="HttpContentParameter{TParameter}.Matches(HttpContent)" />
-		protected override bool Matches(HttpContent value)
-		{
-			if (!base.Matches(value))
-			{
-				return false;
-			}
-
-			return true;
-		}
 	}
 }
 #pragma warning restore S2325 // Methods and properties that don't access instance data should be static
