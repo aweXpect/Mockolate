@@ -15,7 +15,7 @@ namespace Mockolate.Web;
 /// </summary>
 public static partial class ItExtensions
 {
-	private class HttpHeadersMatcher
+	private sealed class HttpHeadersMatcher
 	{
 		private readonly List<KeyValuePair<string, HttpHeaderValue>> _requiredHeaders = [];
 
@@ -41,7 +41,7 @@ public static partial class ItExtensions
 			return values.Any(value.Matches);
 		}
 
-		private static IEnumerable<KeyValuePair<string, HttpHeaderValue>> ExtractHeaders(string headerValue)
+		private static List<KeyValuePair<string, HttpHeaderValue>> ExtractHeaders(string headerValue)
 		{
 			List<KeyValuePair<string, HttpHeaderValue>> headers = new();
 			using StringReader reader = new(headerValue);
