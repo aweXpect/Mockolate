@@ -20,7 +20,6 @@ public sealed partial class ItExtensionsTests
 			httpClient.SetupMock.Method
 				.SendAsync(It.IsHttpRequestMessage(new HttpMethod(method)))
 				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-			StringContent content = new("");
 
 			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com",
 				CancellationToken.None);
