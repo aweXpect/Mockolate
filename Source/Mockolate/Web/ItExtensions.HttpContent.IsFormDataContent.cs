@@ -18,7 +18,7 @@ public static partial class ItExtensions
 	}
 
 	/// <summary>
-	///     Further expectations on the binary <see cref="HttpContent" />.
+	///     Further expectations on the form-data <see cref="HttpContent" />.
 	/// </summary>
 	public interface IFormDataContentParameter : IHttpContentParameter<IFormDataContentParameter>
 	{
