@@ -1785,6 +1785,12 @@ namespace Mockolate.Web
         public virtual bool Matches(string headerValue) { }
         public static Mockolate.Web.HttpHeaderValue op_Implicit(string value) { }
     }
+    public class HttpQueryParameterValue
+    {
+        public HttpQueryParameterValue(string value) { }
+        public virtual bool Matches(string parameterValue) { }
+        public static Mockolate.Web.HttpQueryParameterValue op_Implicit(string value) { }
+    }
     public static class ItExtensions
     {
         public interface IBinaryContentParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter<Mockolate.Web.ItExtensions.IBinaryContentParameter>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IBinaryContentParameter>
@@ -1825,7 +1831,11 @@ namespace Mockolate.Web
             Mockolate.Web.ItExtensions.IUriParameter WithHost(string hostPattern);
             Mockolate.Web.ItExtensions.IUriParameter WithPath(string pathPattern);
             Mockolate.Web.ItExtensions.IUriParameter WithPort(int port);
-            Mockolate.Web.ItExtensions.IUriParameter WithQuery(string queryPattern);
+            Mockolate.Web.ItExtensions.IUriParameter WithQuery([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                    "Key",
+                    "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpQueryParameterValue>> parameters);
+            Mockolate.Web.ItExtensions.IUriParameter WithQuery(string queryString);
+            Mockolate.Web.ItExtensions.IUriParameter WithQuery(string key, Mockolate.Web.HttpQueryParameterValue value);
         }
         extension(Mockolate.It _)
         {

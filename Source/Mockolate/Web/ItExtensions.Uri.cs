@@ -54,9 +54,24 @@ public static partial class ItExtensions
 		IUriParameter WithPath(string pathPattern);
 
 		/// <summary>
-		///     Expects the <see cref="Uri.Query" /> to match the given <paramref name="queryPattern" /> supporting wildcards.
+		///     Expects the <see cref="Uri.Query" /> to contain the parameters in the <paramref name="queryString" />.
 		/// </summary>
-		IUriParameter WithQuery(string queryPattern);
+		/// <remarks>
+		///     Expect parameters to be separated by '&amp;' and the key-value pairs of the parameters to be separated by '='.
+		///     The order of the parameters is ignored.
+		/// </remarks>
+		IUriParameter WithQuery(string queryString);
+
+		/// <summary>
+		///     Expects the <see cref="Uri.Query" /> to contain the given <paramref name="key" />-<paramref name="value" />
+		///     pair.
+		/// </summary>
+		IUriParameter WithQuery(string key, HttpQueryParameterValue value);
+
+		/// <summary>
+		///     Expects the <see cref="Uri.Query" /> to contain the given query <paramref name="parameters" />.
+		/// </summary>
+		IUriParameter WithQuery(params IEnumerable<(string Key, HttpQueryParameterValue Value)> parameters);
 	}
 
 	private sealed class UriParameter(string? pattern) : IUriParameter, IParameter
@@ -65,7 +80,7 @@ public static partial class ItExtensions
 		private string? _hostPattern;
 		private string? _pathPattern;
 		private Func<int, bool>? _portPredicate;
-		private string? _queryPattern;
+		private HttpQueryMatcher? _query;
 		private string? _scheme;
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
@@ -110,8 +125,7 @@ public static partial class ItExtensions
 				return false;
 			}
 
-			if (_queryPattern is not null &&
-			    !Wildcard.Pattern(_queryPattern, true).Matches(WebUtility.UrlDecode(uri.Query)))
+			if (_query is not null && !_query.Matches(uri))
 			{
 				return false;
 			}
@@ -165,9 +179,24 @@ public static partial class ItExtensions
 			return this;
 		}
 
-		public IUriParameter WithQuery(string queryPattern)
+		public IUriParameter WithQuery(string queryString)
 		{
-			_queryPattern = queryPattern;
+			_query ??= new HttpQueryMatcher();
+			_query.AddRequiredQueryParameter(queryString);
+			return this;
+		}
+
+		public IUriParameter WithQuery(string key, HttpQueryParameterValue value)
+		{
+			_query ??= new HttpQueryMatcher();
+			_query.AddRequiredQueryParameter(key, value);
+			return this;
+		}
+
+		public IUriParameter WithQuery(params IEnumerable<(string Key, HttpQueryParameterValue Value)> parameters)
+		{
+			_query ??= new HttpQueryMatcher();
+			_query.AddRequiredQueryParameter(parameters);
 			return this;
 		}
 	}
