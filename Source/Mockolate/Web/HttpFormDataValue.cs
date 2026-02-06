@@ -1,7 +1,7 @@
 namespace Mockolate.Web;
 
 /// <summary>
-///     The value of an HTTP query parameter.
+///     The value of an HTTP form data parameter.
 /// </summary>
 public class HttpFormDataValue
 {
@@ -14,7 +14,7 @@ public class HttpFormDataValue
 	}
 
 	/// <summary>
-	///     Checks whether the given query parameter value matches this value.
+	///     Checks whether the given form data parameter value matches this value.
 	/// </summary>
 	public virtual bool Matches(string parameterValue)
 		=> _value.Equals(parameterValue);

@@ -82,12 +82,10 @@ public static partial class ItExtensions
 				return false;
 			}
 
-			if (_formDataMatcher is not null)
+			if (_formDataMatcher is not null &&
+			    !_formDataMatcher.Matches(value))
 			{
-				if (!_formDataMatcher.Matches(value))
-				{
-					return false;
-				}
+				return false;
 			}
 
 			return true;

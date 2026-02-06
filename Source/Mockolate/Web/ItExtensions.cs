@@ -136,10 +136,9 @@ public static partial class ItExtensions
 
 		private IEnumerable<(string, string)> GetFormData(HttpContent content)
 		{
-			if (content is MultipartFormDataContent)
+			if (content is MultipartFormDataContent multipartFormDataContent)
 			{
-				return ((MultipartFormDataContent)content)
-					.SelectMany(GetFormData);
+				return multipartFormDataContent.SelectMany(GetFormData);
 			}
 
 #if NET8_0_OR_GREATER
