@@ -1794,6 +1794,7 @@ namespace Mockolate.Web
     {
         extension(Mockolate.Setup.IMockMethodSetup<System.Net.Http.HttpClient> setup)
         {
+            public Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>, System.Net.Http.HttpRequestMessage, System.Threading.CancellationToken> SendAsync(Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage> request) { }
             public Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>, System.Net.Http.HttpRequestMessage, System.Threading.CancellationToken> DeleteAsync(Mockolate.Parameters.IParameter<string?> requestUri) { }
             public Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>, System.Net.Http.HttpRequestMessage, System.Threading.CancellationToken> DeleteAsync(Mockolate.Parameters.IParameter<System.Uri?> requestUri) { }
             public Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>, System.Net.Http.HttpRequestMessage, System.Threading.CancellationToken> DeleteAsync(Mockolate.Parameters.IParameter<string?> requestUri, Mockolate.Parameters.IParameter<System.Threading.CancellationToken> cancellationToken) { }
@@ -1867,9 +1868,18 @@ namespace Mockolate.Web
         {
             TParameter WithHeaders([System.Runtime.CompilerServices.TupleElementNames(new string[] {
                     "Name",
-                    "Value"})] params System.ValueTuple<string, Mockolate.Web.HttpHeaderValue>[] headers);
+                    "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpHeaderValue>> headers);
             TParameter WithHeaders(string headers);
             TParameter WithHeaders(string name, Mockolate.Web.HttpHeaderValue value);
+        }
+        public interface IHttpRequestMessageParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpRequestMessageParameter>, Mockolate.Web.ItExtensions.IHttpRequestMessageParameter<Mockolate.Web.ItExtensions.IHttpRequestMessageParameter> { }
+        public interface IHttpRequestMessageParameter<out TParameter> : Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter>
+        {
+            TParameter WhoseBinaryContentIs(System.Action<Mockolate.Web.ItExtensions.IBinaryContentParameter> configureContent);
+            TParameter WhoseContentIs(System.Action<Mockolate.Web.ItExtensions.IHttpContentParameter> configureContent);
+            TParameter WhoseStringContentIs(System.Action<Mockolate.Web.ItExtensions.IStringContentParameter> configureContent);
+            TParameter WhoseUriIs(System.Action<Mockolate.Web.ItExtensions.IUriParameter> configureUri);
+            TParameter WhoseUriIs(string uri, System.Action<Mockolate.Web.ItExtensions.IUriParameter>? configureUri = null);
         }
         public interface IStringContentBodyMatchingParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter<Mockolate.Web.ItExtensions.IStringContentParameter>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IStringContentParameter>, Mockolate.Web.ItExtensions.IStringContentBodyParameter, Mockolate.Web.ItExtensions.IStringContentParameter
         {
@@ -1904,6 +1914,7 @@ namespace Mockolate.Web
             Mockolate.Web.ItExtensions.IBinaryContentParameter IsBinaryContent(string mediaType);
             Mockolate.Web.ItExtensions.IStringContentParameter IsStringContent();
             Mockolate.Web.ItExtensions.IStringContentParameter IsStringContent(string mediaType);
+            Mockolate.Web.ItExtensions.IHttpRequestMessageParameter IsHttpRequestMessage(System.Net.Http.HttpMethod? method = null);
             Mockolate.Web.ItExtensions.IUriParameter IsUri(string? pattern = null);
         }
     }
