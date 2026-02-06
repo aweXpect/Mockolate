@@ -60,7 +60,7 @@ public static partial class ItExtensions
 			return GetThis;
 		}
 
-		public TParameter WithHeaders(IEnumerable<KeyValuePair<string, HttpHeaderValue>> headers)
+		public TParameter WithHeaders(params (string Name, HttpHeaderValue Value)[] headers)
 		{
 			_headers ??= new HttpHeadersMatcher();
 			_headers.AddRequiredHeader(headers);

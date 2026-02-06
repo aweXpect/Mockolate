@@ -17,19 +17,19 @@ public static partial class ItExtensions
 {
 	private sealed class HttpHeadersMatcher
 	{
-		private readonly List<KeyValuePair<string, HttpHeaderValue>> _requiredHeaders = [];
+		private readonly List<(string Name, HttpHeaderValue Value)> _requiredHeaders = [];
 
 		public void AddRequiredHeader(string name, HttpHeaderValue value)
-			=> _requiredHeaders.Add(new KeyValuePair<string, HttpHeaderValue>(name, value));
+			=> _requiredHeaders.Add((name, value));
 
-		public void AddRequiredHeader(IEnumerable<KeyValuePair<string, HttpHeaderValue>> headers)
+		public void AddRequiredHeader(IEnumerable<(string Name, HttpHeaderValue Value)> headers)
 			=> _requiredHeaders.AddRange(headers);
 
 		public void AddRequiredHeader(string headers)
 			=> _requiredHeaders.AddRange(ExtractHeaders(headers));
 
 		public bool Matches(HttpHeaders messageHeaders)
-			=> _requiredHeaders.All(header => MatchesHeader(header.Key, header.Value, messageHeaders));
+			=> _requiredHeaders.All(header => MatchesHeader(header.Name, header.Value, messageHeaders));
 
 		private static bool MatchesHeader(string name, HttpHeaderValue value, HttpHeaders messageHeaders)
 		{
@@ -41,9 +41,9 @@ public static partial class ItExtensions
 			return values.Any(value.Matches);
 		}
 
-		private static List<KeyValuePair<string, HttpHeaderValue>> ExtractHeaders(string headers)
+		private static List<(string, HttpHeaderValue)> ExtractHeaders(string headers)
 		{
-			List<KeyValuePair<string, HttpHeaderValue>> headerList = new();
+			List<(string, HttpHeaderValue)> headerList = new();
 			using StringReader reader = new(headers);
 			string? line = reader.ReadLine();
 			while (!string.IsNullOrWhiteSpace(line))
@@ -55,7 +55,7 @@ public static partial class ItExtensions
 					throw new ArgumentException("The header contained an invalid line: " + line, nameof(headers));
 				}
 
-				headerList.Add(new KeyValuePair<string, HttpHeaderValue>(parts[0], parts[1].TrimStart(' ')));
+				headerList.Add((parts[0].Trim(), parts[1].TrimStart(' ')));
 				line = reader.ReadLine();
 			}
 
@@ -77,7 +77,7 @@ public static partial class ItExtensions
 		/// <summary>
 		///     Expects the <see cref="HttpContent" /> to contain the given <paramref name="headers" />.
 		/// </summary>
-		TParameter WithHeaders(IEnumerable<KeyValuePair<string, HttpHeaderValue>> headers);
+		TParameter WithHeaders(params (string Name, HttpHeaderValue Value)[] headers);
 
 		/// <summary>
 		///     Expects the <see cref="HttpContent" /> to contain the given <paramref name="headers" />.

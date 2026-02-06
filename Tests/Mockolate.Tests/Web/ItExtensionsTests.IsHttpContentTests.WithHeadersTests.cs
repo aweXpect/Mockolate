@@ -81,15 +81,10 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithHeaders(new Dictionary<string, HttpHeaderValue>
-					{
-						{
-							"foo", "my-foo-value"
-						},
-						{
-							"bar", "my-bar-value"
-						},
-					}))
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+						.WithHeaders(
+							("foo", "my-foo-value"),
+							("bar", "my-bar-value")))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
 				content.Headers.Add(key, "my-foo-value");
@@ -112,15 +107,10 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithHeaders(new Dictionary<string, HttpHeaderValue>
-					{
-						{
-							"x-myHeader1", "foo"
-						},
-						{
-							"x-myHeader2", "bar"
-						},
-					}))
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+						.WithHeaders(
+							("x-myHeader1", "foo"),
+							("x-myHeader2", "bar")))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader1", value);
@@ -142,8 +132,8 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
 						.WithHeaders("""
-						             x-myHeader1: foo
-						             x-myHeader3: baz
+						             x-myHeader1 : foo
+						              x-myHeader3: baz
 						             """))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");

@@ -1859,7 +1859,9 @@ namespace Mockolate.Web
         }
         public interface IHttpHeaderParameter<out TParameter>
         {
-            TParameter WithHeaders(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, Mockolate.Web.HttpHeaderValue>> headers);
+            TParameter WithHeaders([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                    "Name",
+                    "Value"})] params System.ValueTuple<string, Mockolate.Web.HttpHeaderValue>[] headers);
             TParameter WithHeaders(string headers);
             TParameter WithHeaders(string name, Mockolate.Web.HttpHeaderValue value);
         }
