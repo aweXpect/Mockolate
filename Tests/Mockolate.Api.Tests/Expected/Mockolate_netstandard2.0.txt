@@ -1780,6 +1780,12 @@ namespace Mockolate.Web
             public Mockolate.Verify.VerificationResult<System.Net.Http.HttpClient> PutAsync(Mockolate.Parameters.IParameter<System.Uri?> requestUri, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?> content, Mockolate.Parameters.IParameter<System.Threading.CancellationToken> cancellationToken) { }
         }
     }
+    public class HttpFormDataValue
+    {
+        public HttpFormDataValue(string value) { }
+        public virtual bool Matches(string parameterValue) { }
+        public static Mockolate.Web.HttpFormDataValue op_Implicit(string value) { }
+    }
     public class HttpHeaderValue
     {
         public HttpHeaderValue(string value) { }
@@ -1798,6 +1804,19 @@ namespace Mockolate.Web
         {
             Mockolate.Web.ItExtensions.IBinaryContentParameter Containing(byte[] bytes);
             Mockolate.Web.ItExtensions.IBinaryContentParameter EqualTo(byte[] bytes);
+        }
+        public interface IFormDataContentParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter<Mockolate.Web.ItExtensions.IFormDataContentParameter>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IFormDataContentParameter>
+        {
+            Mockolate.Web.ItExtensions.IFormDataContentParameter Containing([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                    "Key",
+                    "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpFormDataValue>> values);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter Containing(string values);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter Containing(string key, Mockolate.Web.HttpFormDataValue value);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter EqualTo([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                    "Key",
+                    "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpFormDataValue>> values);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter EqualTo(string values);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter EqualTo(string key, Mockolate.Web.HttpFormDataValue value);
         }
         public interface IHttpContentParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter<Mockolate.Web.ItExtensions.IHttpContentParameter>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentParameter> { }
         public interface IHttpContentParameter<out TParameter> : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter>
@@ -1852,6 +1871,7 @@ namespace Mockolate.Web
             Mockolate.Web.ItExtensions.IHttpContentParameter IsHttpContent();
             Mockolate.Web.ItExtensions.IBinaryContentParameter IsBinaryContent();
             Mockolate.Web.ItExtensions.IBinaryContentParameter IsBinaryContent(string mediaType);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter IsFormDataContent();
             Mockolate.Web.ItExtensions.IStringContentParameter IsStringContent();
             Mockolate.Web.ItExtensions.IStringContentParameter IsStringContent(string mediaType);
             Mockolate.Web.ItExtensions.IHttpRequestMessageParameter IsHttpRequestMessage(System.Net.Http.HttpMethod? method = null);
