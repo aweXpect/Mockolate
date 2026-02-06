@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 #if NETSTANDARD2_0
@@ -61,6 +62,43 @@ public static partial class ItExtensions
 
 			return headerList;
 		}
+	}
+
+	private sealed class HttpQueryMatcher
+	{
+		private readonly List<(string Name, HttpQueryParameterValue Value)> _requiredQueryParameters = [];
+
+		public void AddRequiredQueryParameter(string name, HttpQueryParameterValue value)
+			=> _requiredQueryParameters.Add((name, value));
+
+		public void AddRequiredQueryParameter(IEnumerable<(string Name, HttpQueryParameterValue Value)> headers)
+			=> _requiredQueryParameters.AddRange(headers);
+
+		public void AddRequiredQueryParameter(string headers)
+			=> _requiredQueryParameters.AddRange(
+				ParseQueryParameters(headers)
+					.Select(pair => (pair.Key, new HttpQueryParameterValue(pair.Value))));
+
+		public bool Matches(Uri uri)
+		{
+			List<(string Key, string Value)> queryParameters = ParseQueryParameters(uri.Query).ToList();
+			return _requiredQueryParameters.All(requiredParameter
+				=> queryParameters.Any(p
+					=> p.Key == requiredParameter.Name &&
+					   requiredParameter.Value.Matches(p.Value)));
+		}
+
+		private static IEnumerable<(string Key, string Value)> ParseQueryParameters(string input)
+			=> input.TrimStart('?')
+				.Split('&')
+				.Select(pair => pair.Split('=', 2))
+				.Where(pair => pair.Length > 0)
+				.Select(pair =>
+					(
+						WebUtility.UrlDecode(pair[0]),
+						pair.Length == 2 ? WebUtility.UrlDecode(pair[1]) : ""
+					)
+				);
 	}
 
 	/// <summary>
