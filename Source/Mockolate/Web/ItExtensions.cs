@@ -104,68 +104,6 @@ public static partial class ItExtensions
 				);
 	}
 
-	private sealed class FormDataMatcher
-	{
-		private readonly List<(string Name, HttpFormDataValue Value)> _requiredFormDataParameters = [];
-
-		public FormDataMatcher(string name, HttpFormDataValue value)
-		{
-			_requiredFormDataParameters.Add((name, value));
-		}
-
-		public FormDataMatcher(IEnumerable<(string Name, HttpFormDataValue Value)> formDataParameters)
-		{
-			_requiredFormDataParameters.AddRange(formDataParameters);
-		}
-
-		public FormDataMatcher(string formDataParameters)
-		{
-			_requiredFormDataParameters.AddRange(
-				ParseFormDataParameters(formDataParameters)
-					.Select(pair => (pair.Key, new HttpFormDataValue(pair.Value))));
-		}
-
-		public bool Matches(HttpContent content)
-		{
-			List<(string Key, string Value)> formDataParameters = GetFormData(content).ToList();
-			return _requiredFormDataParameters.All(requiredParameter
-				=> formDataParameters.Any(p
-					=> p.Key == requiredParameter.Name &&
-					   requiredParameter.Value.Matches(p.Value)));
-		}
-
-		private IEnumerable<(string, string)> GetFormData(HttpContent content)
-		{
-			if (content is MultipartFormDataContent multipartFormDataContent)
-			{
-				return multipartFormDataContent.SelectMany(GetFormData);
-			}
-
-#if NET8_0_OR_GREATER
-			Stream stream = content.ReadAsStream();
-			using StreamReader reader = new(stream, leaveOpen: true);
-#else
-			Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-			using StreamReader reader = new(stream);
-#endif
-			string rawFormData = reader.ReadToEnd();
-
-			return ParseFormDataParameters(rawFormData);
-		}
-
-		private static IEnumerable<(string Key, string Value)> ParseFormDataParameters(string input)
-			=> input.TrimStart('?')
-				.Split('&')
-				.Select(pair => pair.Split('=', 2))
-				.Where(pair => pair.Length > 0 && !string.IsNullOrWhiteSpace(pair[0]))
-				.Select(pair =>
-					(
-						WebUtility.UrlDecode(pair[0]),
-						pair.Length == 2 ? WebUtility.UrlDecode(pair[1]) : ""
-					)
-				);
-	}
-
 	/// <summary>
 	///     Further expectations on the <see cref="HttpContent" />.
 	/// </summary>

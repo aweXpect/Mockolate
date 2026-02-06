@@ -28,7 +28,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				await That(httpClient.VerifyMock.Invoked.PatchAsync(
 						It.IsAny<string?>(),
-						It.IsStringContent("application/json")))
+						It.IsHttpContent("application/json")))
 					.Exactly(expected);
 			}
 
@@ -116,7 +116,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				await That(httpClient.VerifyMock.Invoked.PatchAsync(
 						It.IsUri("*aweXpect.com*"),
-						It.IsStringContent("application/json")))
+						It.IsHttpContent("application/json")))
 					.Exactly(expected);
 			}
 

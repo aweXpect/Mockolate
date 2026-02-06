@@ -53,7 +53,7 @@ public class ExampleTests
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>();
 		httpClient.SetupMock.Method
-			.PostAsync(It.Matches("*example.com*"), It.IsStringContent())
+			.PostAsync(It.Matches("*example.com*"), It.IsHttpContent())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 
 		HttpResponseMessage result = await httpClient.PostAsync("https://www.example.com", new StringContent(""));

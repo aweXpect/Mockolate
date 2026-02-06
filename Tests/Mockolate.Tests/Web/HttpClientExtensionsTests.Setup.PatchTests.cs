@@ -22,7 +22,7 @@ public sealed partial class HttpClientExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PatchAsync(It.IsAny<string>(), It.IsStringContent("application/json"))
+					.PatchAsync(It.IsAny<string>(), It.IsHttpContent("application/json"))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
@@ -120,7 +120,7 @@ public sealed partial class HttpClientExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PatchAsync(It.IsAny<Uri>(), It.IsStringContent("application/json"))
+					.PatchAsync(It.IsAny<Uri>(), It.IsHttpContent("application/json"))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
