@@ -16,5 +16,15 @@ internal static class StringExtensionMethods
 		this string @this,
 		char value)
 		=> @this.EndsWith($"{value}");
+
+	/// <summary>
+	///     Splits a string into a maximum number of substrings based on the provided character <paramref name="separator" />,
+	///     optionally omitting empty substrings from the result.
+	/// </summary>
+	internal static string[] Split(
+		this string @this,
+		char separator,
+		int count)
+		=> @this.Split([separator,], count);
 }
 #endif
