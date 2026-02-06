@@ -104,6 +104,68 @@ public static partial class ItExtensions
 				);
 	}
 
+	private sealed class FormDataMatcher
+	{
+		private readonly List<(string Name, HttpFormDataValue Value)> _requiredQueryParameters = [];
+
+		public FormDataMatcher(string name, HttpFormDataValue value)
+		{
+			_requiredQueryParameters.Add((name, value));
+		}
+
+		public FormDataMatcher(IEnumerable<(string Name, HttpFormDataValue Value)> queryParameters)
+		{
+			_requiredQueryParameters.AddRange(queryParameters);
+		}
+
+		public FormDataMatcher(string queryParameters)
+		{
+			_requiredQueryParameters.AddRange(
+				ParseQueryParameters(queryParameters)
+					.Select(pair => (pair.Key, new HttpFormDataValue(pair.Value))));
+		}
+
+		public bool Matches(HttpContent content)
+		{
+			List<(string Key, string Value)> queryParameters = GetFormData(content).ToList();
+			return _requiredQueryParameters.All(requiredParameter
+				=> queryParameters.Any(p
+					=> p.Key == requiredParameter.Name &&
+					   requiredParameter.Value.Matches(p.Value)));
+		}
+
+		private IEnumerable<(string, string)> GetFormData(HttpContent content)
+		{
+			if (content is MultipartFormDataContent)
+			{
+				return ((MultipartFormDataContent)content)
+					.SelectMany(GetFormData);
+			}
+
+#if NET8_0_OR_GREATER
+			Stream stream = content.ReadAsStream();
+#else
+			Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+#endif
+			using StreamReader reader = new(stream);
+			string rawFormData = reader.ReadToEnd();
+
+			return ParseQueryParameters(rawFormData);
+		}
+
+		private static IEnumerable<(string Key, string Value)> ParseQueryParameters(string input)
+			=> input.TrimStart('?')
+				.Split('&')
+				.Select(pair => pair.Split('=', 2))
+				.Where(pair => pair.Length > 0 && !string.IsNullOrWhiteSpace(pair[0]))
+				.Select(pair =>
+					(
+						WebUtility.UrlDecode(pair[0]),
+						pair.Length == 2 ? WebUtility.UrlDecode(pair[1]) : ""
+					)
+				);
+	}
+
 	/// <summary>
 	///     Further expectations on the <see cref="HttpContent" />.
 	/// </summary>
