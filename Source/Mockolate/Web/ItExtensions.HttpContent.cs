@@ -463,9 +463,18 @@ public static partial class ItExtensions
 
 			private IEnumerable<(string, string)> GetFormData(HttpContent content)
 			{
+				bool IsUrlEncodedFormData(HttpContent? httpContent)
+				{
+					return httpContent is MultipartFormDataContent ||
+					       httpContent?.Headers.ContentType?.MediaType?.Equals("application/x-www-form-urlencoded") ==
+					       true;
+				}
+
 				if (content is MultipartFormDataContent multipartFormDataContent)
 				{
-					return multipartFormDataContent.SelectMany(GetFormData);
+					return multipartFormDataContent
+						.Where(IsUrlEncodedFormData)
+						.SelectMany(GetFormData);
 				}
 
 #if NET8_0_OR_GREATER

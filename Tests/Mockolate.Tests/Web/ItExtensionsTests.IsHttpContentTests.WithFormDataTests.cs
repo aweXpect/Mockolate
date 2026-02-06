@@ -55,6 +55,30 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
+			[InlineData("x<>", "1<2> 3")]
+			public async Task ShouldEncodeValues(string key, string value)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(key, value))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				MultipartFormDataContent content = new()
+				{
+					new FormUrlEncodedContent(new Dictionary<string, string>
+					{
+						{
+							key, value
+						},
+					}),
+				};
+
+				HttpResponseMessage result =
+					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
+
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
+
+			[Theory]
 			[InlineData("x", "123", "z", "345")]
 			[InlineData("z", "345", "x", "123")]
 			public async Task WithFormData_ShouldMatchParametersInAnyOrder(params string[] rawValues)

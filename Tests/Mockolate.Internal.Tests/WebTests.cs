@@ -1,4 +1,3 @@
-/* TODO Re-Enable
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -12,7 +11,7 @@ public class WebTests
 	[Fact]
 	public async Task HttpContentParameter_MatchesSomeOtherObject_ShouldReturnFalse()
 	{
-		ItExtensions.IStringContentParameter sut = It.IsStringContent();
+		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
 		IParameter parameter = (IParameter)sut;
 
 		bool result = parameter.Matches(new SomeOtherObject());
@@ -23,7 +22,7 @@ public class WebTests
 	[Fact]
 	public async Task WithoutMediaTypeHeader_WhenNoneIsRequired_ShouldReturnTrue()
 	{
-		ItExtensions.IStringContentParameter sut = It.IsStringContent();
+		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
 		IParameter parameter = (IParameter)sut;
 
 		bool result = parameter.Matches(new MyHttpContent());
@@ -34,7 +33,7 @@ public class WebTests
 	[Fact]
 	public async Task WithoutMediaTypeHeader_WhenOneIsRequired_ShouldReturnFalse()
 	{
-		ItExtensions.IStringContentParameter sut = It.IsStringContent("*");
+		ItExtensions.IHttpContentParameter sut = It.IsHttpContent("*");
 		IParameter parameter = (IParameter)sut;
 
 		bool result = parameter.Matches(new MyHttpContent());
@@ -56,4 +55,3 @@ public class WebTests
 
 	private sealed class SomeOtherObject;
 }
-*/
