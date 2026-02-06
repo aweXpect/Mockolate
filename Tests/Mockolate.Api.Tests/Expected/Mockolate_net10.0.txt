@@ -1872,11 +1872,6 @@ namespace Mockolate.Web
                     "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpFormDataValue>> values);
             Mockolate.Web.ItExtensions.IFormDataContentParameter Containing(string values);
             Mockolate.Web.ItExtensions.IFormDataContentParameter Containing(string key, Mockolate.Web.HttpFormDataValue value);
-            Mockolate.Web.ItExtensions.IFormDataContentParameter EqualTo([System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                    "Key",
-                    "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpFormDataValue>> values);
-            Mockolate.Web.ItExtensions.IFormDataContentParameter EqualTo(string values);
-            Mockolate.Web.ItExtensions.IFormDataContentParameter EqualTo(string key, Mockolate.Web.HttpFormDataValue value);
         }
         public interface IHttpContentParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter<Mockolate.Web.ItExtensions.IHttpContentParameter>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentParameter> { }
         public interface IHttpContentParameter<out TParameter> : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter>

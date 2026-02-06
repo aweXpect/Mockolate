@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 
 namespace Mockolate.Web;
@@ -25,21 +23,6 @@ public static partial class ItExtensions
 	public interface IFormDataContentParameter : IHttpContentParameter<IFormDataContentParameter>
 	{
 		/// <summary>
-		///     Expects the form data content to be equal to the given <paramref name="key" />-<paramref name="value" /> pair.
-		/// </summary>
-		IFormDataContentParameter EqualTo(string key, HttpFormDataValue value);
-
-		/// <summary>
-		///     Expects the form data content to be equal to the given <paramref name="values" />.
-		/// </summary>
-		IFormDataContentParameter EqualTo(params IEnumerable<(string Key, HttpFormDataValue Value)> values);
-
-		/// <summary>
-		///     Expects the form data content to be equal to the given <paramref name="values" />.
-		/// </summary>
-		IFormDataContentParameter EqualTo(string values);
-
-		/// <summary>
 		///     Expects the form data content to contain the given <paramref name="key" />-<paramref name="value" /> pair.
 		/// </summary>
 		IFormDataContentParameter Containing(string key, HttpFormDataValue value);
@@ -62,26 +45,6 @@ public static partial class ItExtensions
 
 		/// <inheritdoc cref="HttpContentParameter{TParameter}.GetThis" />
 		protected override IFormDataContentParameter GetThis => this;
-
-		/// <inheritdoc cref="IFormDataContentParameter.EqualTo(string, HttpFormDataValue)" />
-		public IFormDataContentParameter EqualTo(string key, HttpFormDataValue value)
-		{
-			_formDataMatcher = new FormDataMatcher(key, value);
-			return this;
-		}
-
-		public IFormDataContentParameter EqualTo(params IEnumerable<(string Key, HttpFormDataValue Value)> values)
-		{
-			_formDataMatcher = new FormDataMatcher(values);
-			return this;
-		}
-
-		/// <inheritdoc cref="IFormDataContentParameter.EqualTo(string)" />
-		public IFormDataContentParameter EqualTo(string values)
-		{
-			_formDataMatcher = new FormDataMatcher(values);
-			return this;
-		}
 
 		/// <inheritdoc cref="IFormDataContentParameter.Containing(string, HttpFormDataValue)" />
 		public IFormDataContentParameter Containing(string key, HttpFormDataValue value)
