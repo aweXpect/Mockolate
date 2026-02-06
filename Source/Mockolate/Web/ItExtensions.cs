@@ -29,8 +29,11 @@ public static partial class ItExtensions
 		public void AddRequiredHeader(string headers)
 			=> _requiredHeaders.AddRange(ExtractHeaders(headers));
 
-		public bool Matches(HttpHeaders messageHeaders)
-			=> _requiredHeaders.All(header => MatchesHeader(header.Name, header.Value, messageHeaders));
+		public bool Matches(HttpHeaders messageHeaders, HttpHeaders? alternativeHeaders = null)
+			=> alternativeHeaders is null
+				? _requiredHeaders.All(header => MatchesHeader(header.Name, header.Value, messageHeaders))
+				: _requiredHeaders.All(header => MatchesHeader(header.Name, header.Value, messageHeaders) ||
+				                                 MatchesHeader(header.Name, header.Value, alternativeHeaders));
 
 		private static bool MatchesHeader(string name, HttpHeaderValue value, HttpHeaders messageHeaders)
 		{
@@ -115,7 +118,7 @@ public static partial class ItExtensions
 		/// <summary>
 		///     Expects the <see cref="HttpContent" /> to contain the given <paramref name="headers" />.
 		/// </summary>
-		TParameter WithHeaders(params (string Name, HttpHeaderValue Value)[] headers);
+		TParameter WithHeaders(params IEnumerable<(string Name, HttpHeaderValue Value)> headers);
 
 		/// <summary>
 		///     Expects the <see cref="HttpContent" /> to contain the given <paramref name="headers" />.
