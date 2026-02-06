@@ -14,7 +14,7 @@ public class HttpQueryParameterValue
 	}
 
 	/// <summary>
-	///     Checks whether the given header value matches this value.
+	///     Checks whether the given query parameter value matches this value.
 	/// </summary>
 	public virtual bool Matches(string parameterValue)
 		=> _value.Equals(parameterValue);

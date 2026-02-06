@@ -71,12 +71,12 @@ public static partial class ItExtensions
 		public void AddRequiredQueryParameter(string name, HttpQueryParameterValue value)
 			=> _requiredQueryParameters.Add((name, value));
 
-		public void AddRequiredQueryParameter(IEnumerable<(string Name, HttpQueryParameterValue Value)> headers)
-			=> _requiredQueryParameters.AddRange(headers);
+		public void AddRequiredQueryParameter(IEnumerable<(string Name, HttpQueryParameterValue Value)> queryParameters)
+			=> _requiredQueryParameters.AddRange(queryParameters);
 
-		public void AddRequiredQueryParameter(string headers)
+		public void AddRequiredQueryParameter(string queryParameters)
 			=> _requiredQueryParameters.AddRange(
-				ParseQueryParameters(headers)
+				ParseQueryParameters(queryParameters)
 					.Select(pair => (pair.Key, new HttpQueryParameterValue(pair.Value))));
 
 		public bool Matches(Uri uri)
@@ -92,7 +92,7 @@ public static partial class ItExtensions
 			=> input.TrimStart('?')
 				.Split('&')
 				.Select(pair => pair.Split('=', 2))
-				.Where(pair => pair.Length > 0)
+				.Where(pair => pair.Length > 0 && !string.IsNullOrWhiteSpace(pair[0]))
 				.Select(pair =>
 					(
 						WebUtility.UrlDecode(pair[0]),
