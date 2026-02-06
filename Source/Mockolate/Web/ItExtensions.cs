@@ -106,30 +106,30 @@ public static partial class ItExtensions
 
 	private sealed class FormDataMatcher
 	{
-		private readonly List<(string Name, HttpFormDataValue Value)> _requiredQueryParameters = [];
+		private readonly List<(string Name, HttpFormDataValue Value)> _requiredFormDataParameters = [];
 
 		public FormDataMatcher(string name, HttpFormDataValue value)
 		{
-			_requiredQueryParameters.Add((name, value));
+			_requiredFormDataParameters.Add((name, value));
 		}
 
-		public FormDataMatcher(IEnumerable<(string Name, HttpFormDataValue Value)> queryParameters)
+		public FormDataMatcher(IEnumerable<(string Name, HttpFormDataValue Value)> formDataParameters)
 		{
-			_requiredQueryParameters.AddRange(queryParameters);
+			_requiredFormDataParameters.AddRange(formDataParameters);
 		}
 
-		public FormDataMatcher(string queryParameters)
+		public FormDataMatcher(string formDataParameters)
 		{
-			_requiredQueryParameters.AddRange(
-				ParseQueryParameters(queryParameters)
+			_requiredFormDataParameters.AddRange(
+				ParseFormDataParameters(formDataParameters)
 					.Select(pair => (pair.Key, new HttpFormDataValue(pair.Value))));
 		}
 
 		public bool Matches(HttpContent content)
 		{
-			List<(string Key, string Value)> queryParameters = GetFormData(content).ToList();
-			return _requiredQueryParameters.All(requiredParameter
-				=> queryParameters.Any(p
+			List<(string Key, string Value)> formDataParameters = GetFormData(content).ToList();
+			return _requiredFormDataParameters.All(requiredParameter
+				=> formDataParameters.Any(p
 					=> p.Key == requiredParameter.Name &&
 					   requiredParameter.Value.Matches(p.Value)));
 		}
@@ -144,16 +144,17 @@ public static partial class ItExtensions
 
 #if NET8_0_OR_GREATER
 			Stream stream = content.ReadAsStream();
+			using StreamReader reader = new(stream, leaveOpen: true);
 #else
 			Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-#endif
 			using StreamReader reader = new(stream);
+#endif
 			string rawFormData = reader.ReadToEnd();
 
-			return ParseQueryParameters(rawFormData);
+			return ParseFormDataParameters(rawFormData);
 		}
 
-		private static IEnumerable<(string Key, string Value)> ParseQueryParameters(string input)
+		private static IEnumerable<(string Key, string Value)> ParseFormDataParameters(string input)
 			=> input.TrimStart('?')
 				.Split('&')
 				.Select(pair => pair.Split('=', 2))

@@ -125,10 +125,11 @@ public static partial class ItExtensions
 			{
 #if NET8_0_OR_GREATER
 				Stream stream = value.ReadAsStream();
+				using StreamReader reader = new(stream, leaveOpen: true);
 #else
 				Stream stream = value.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-#endif
 				using StreamReader reader = new(stream);
+#endif
 				string content = reader.ReadToEnd();
 				switch (_bodyMatchType)
 				{
