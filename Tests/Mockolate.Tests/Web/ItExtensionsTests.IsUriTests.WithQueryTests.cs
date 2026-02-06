@@ -19,6 +19,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "y", "", false)]
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x", "234", false)]
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "y", "123", false)]
+			[InlineData("https://www.aweXpect.com/foo/bar?x=123&foo&y=234", "foo", "", true)]
 			public async Task WithQueryParameter_ShouldVerifyQueryParameters(string uri, string key, string value,
 				bool expectMatch)
 			{
@@ -64,6 +65,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "y", false)]
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x=234", false)]
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "y=123", false)]
+			[InlineData("http://www.aweXpect.com/foo/bar?x=123&foo&y=234", "foo", true)]
 			public async Task WithQueryString_ShouldVerifyQueryParameters(string uri, string query, bool expectMatch)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();

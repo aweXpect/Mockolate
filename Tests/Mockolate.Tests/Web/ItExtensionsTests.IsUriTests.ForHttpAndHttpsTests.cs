@@ -9,7 +9,7 @@ public sealed partial class ItExtensionsTests
 {
 	public sealed partial class IsUriTests
 	{
-		public sealed class ForHttpsTests
+		public sealed class ForHttpAndHttpsTests
 		{
 			[Theory]
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", true)]
