@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
@@ -46,6 +47,23 @@ public sealed partial class HttpClientExtensionsTests
 		]));
 
 		await That(result).IsFalse();
+	}
+
+	[Fact]
+	public async Task SendAsync_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
+	{
+		HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+
+		void Act()
+		{
+			httpClient.SetupMock.Method
+				.SendAsync(It.IsHttpRequestMessage())
+				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 	}
 
 	[Fact]

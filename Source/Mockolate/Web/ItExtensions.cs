@@ -95,7 +95,7 @@ public static partial class ItExtensions
 			=> input.TrimStart('?')
 				.Split('&')
 				.Select(pair => pair.Split('=', 2))
-				.Where(pair => pair.Length > 0 && !string.IsNullOrWhiteSpace(pair[0]))
+				.Where(pair => !string.IsNullOrWhiteSpace(pair[0]))
 				.Select(pair =>
 					(
 						WebUtility.UrlDecode(pair[0]),

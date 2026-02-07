@@ -34,7 +34,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", "foo", true)]
 			[InlineData("foo", "FOO", true)]
 			[InlineData("foo", "bar", false)]
-			public async Task WithBody_IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
+			public async Task IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
 				string expected, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -54,7 +54,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", "foo", true)]
 			[InlineData("foo", "FOO", false)]
 			[InlineData("foo", "bar", false)]
-			public async Task WithBody_ShouldCheckForEquality(string body, string expected,
+			[InlineData("foo", "f*o", false)]
+			public async Task ShouldCheckForEquality(string body, string expected,
 				bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();

@@ -16,6 +16,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData(true, "x", "123", "y", "234", "z", "345", "z", "567")]
 			[InlineData(true, "z", "567", "x", "123", "z", "345", "y", "234")]
 			[InlineData(true, "x", "123", "y", "234", "z", "345", "z", "567", "z", "567")]
+			[InlineData(false, "z", "567", "x", "123", "x", "345", "y", "234")]
 			[InlineData(false, "x", "123", "y", "234", "z", "345", "z", "567", "z", "789")]
 			[InlineData(false, "y", "234", "z", "345", "z", "567")]
 			[InlineData(false, "x", "123", "z", "345")]
@@ -158,6 +159,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("y", false)]
 			[InlineData("x=234", false)]
 			[InlineData("y=123", false)]
+			[InlineData("x=123&y=432", false)]
+			[InlineData("y=432&x=123", false)]
 			[InlineData("foo", true)]
 			public async Task WithFormDataString_ShouldVerifyParameters(string values, bool expectMatch)
 			{
