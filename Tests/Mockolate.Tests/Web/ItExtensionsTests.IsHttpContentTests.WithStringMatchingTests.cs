@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Mockolate.Web;
@@ -17,9 +16,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", "f[aeiou]*", true)]
 			[InlineData("foo", "F[aeiou]*", true)]
 			[InlineData("foo", ".a.", false)]
-			public async Task
-				WithBodyMatching_AsRegex_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
-					string body, string pattern, bool expectSuccess)
+			public async Task AsRegex_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
+				string body, string pattern, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
@@ -38,8 +36,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", "f[aeiou]*", true)]
 			[InlineData("foo", "F[aeiou]*", false)]
 			[InlineData("foo", ".a.", false)]
-			public async Task WithBodyMatching_AsRegex_ShouldCheckForMatchingWildcard(
-				string body, string pattern, bool expectSuccess)
+			public async Task AsRegex_ShouldCheckForMatchingWildcard(string body, string pattern, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
@@ -55,7 +52,7 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Fact]
-			public async Task WithBodyMatching_AsRegex_ShouldUseProvidedOptions()
+			public async Task AsRegex_ShouldUseProvidedOptions()
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
@@ -71,7 +68,7 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Fact]
-			public async Task WithBodyMatching_AsRegex_ShouldUseTimeout()
+			public async Task AsRegex_ShouldUseTimeout()
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
@@ -98,7 +95,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", "*", true)]
 			[InlineData("foo", "F*", true)]
 			[InlineData("foo", "*a*", false)]
-			public async Task WithBodyMatching_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
+			public async Task IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -121,8 +118,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", "*", true)]
 			[InlineData("foo", "F*", false)]
 			[InlineData("foo", "*a*", false)]
-			public async Task WithBodyMatching_ShouldCheckForMatchingWildcard(
-				string body, string pattern, bool expectSuccess)
+			public async Task ShouldCheckForMatchingWildcard(string body, string pattern, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method

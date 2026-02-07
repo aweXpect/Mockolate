@@ -53,6 +53,26 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
+			[InlineData("text/plain", "foo", true)]
+			[InlineData("image/png", "foo", false)]
+			[InlineData("text/plain", "bar", false)]
+			public async Task ShouldVerifyMediaTypeAndContent(string mediaType, string value, bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(mediaType, c => c.WithString(value)))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("foo", Encoding.UTF8, "text/plain");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Theory]
 			[InlineData("foo", "foo", true)]
 			[InlineData("foo", "FOO", true)]
 			[InlineData("foo", "bar", false)]

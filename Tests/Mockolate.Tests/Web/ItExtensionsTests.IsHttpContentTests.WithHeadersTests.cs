@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -12,6 +11,86 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithHeadersTests
 		{
+			[Theory]
+			[InlineData("x-myHeader1", "foo", "x-myHeader3", "baz", true)]
+			[InlineData("x-myHeader3", "baz", "x-myHeader1", "foo", true)]
+			[InlineData("x-myHeader2", "baz", "x-myHeader1", "foo", false)]
+			[InlineData("x-myHeader1", "foo", "x-myHeader2", "baz", false)]
+			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(string key1, string value1, string key2,
+				string value2,
+				bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+						.WithHeaders(key1, value1).WithHeaders(key2, value2))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("x-myHeader1", "foo");
+				content.Headers.Add("x-myHeader2", "bar");
+				content.Headers.Add("x-myHeader3", "baz");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Theory]
+			[InlineData("x-myHeader1", "foo", "x-myHeader3", "baz", true)]
+			[InlineData("x-myHeader3", "baz", "x-myHeader1", "foo", true)]
+			[InlineData("x-myHeader2", "baz", "x-myHeader1", "foo", false)]
+			[InlineData("x-myHeader1", "foo", "x-myHeader2", "baz", false)]
+			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(string key1, string value1, string key2,
+				string value2,
+				bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+						.WithHeaders((key1, value1)).WithHeaders((key2, value2)))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("x-myHeader1", "foo");
+				content.Headers.Add("x-myHeader2", "bar");
+				content.Headers.Add("x-myHeader3", "baz");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Theory]
+			[InlineData("x-myHeader1: foo", "x-myHeader3: baz", true)]
+			[InlineData("x-myHeader3: baz", "x-myHeader1: foo", true)]
+			[InlineData("x-myHeader2: baz", "x-myHeader1: foo", false)]
+			[InlineData("x-myHeader1: foo", "x-myHeader2: baz", false)]
+			public async Task MultipleCalls_ShouldVerifyStringHeaders(string headers1, string headers2,
+				bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+						.WithHeaders(headers1).WithHeaders(headers2))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("x-myHeader1", "foo");
+				content.Headers.Add("x-myHeader2", "bar");
+				content.Headers.Add("x-myHeader3", "baz");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
 			[Fact]
 			public async Task ShouldOnlyRequireOneMatchingValue()
 			{
@@ -125,16 +204,25 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Fact]
-			public async Task ShouldVerifyStringHeaders()
+			[Theory]
+			[InlineData("""
+			            x-myHeader1 : foo
+			             x-myHeader3: baz
+			            """, true)]
+			[InlineData("""
+			            x-myHeader3: baz
+			            x-myHeader1: foo
+			            """, true)]
+			[InlineData("""
+			            x-myHeader2: foo
+			            x-myHeader3: baz
+			            """, false)]
+			public async Task ShouldVerifyStringHeaders(string headers, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
-						.WithHeaders("""
-						             x-myHeader1 : foo
-						              x-myHeader3: baz
-						             """))
+						.WithHeaders(headers))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader1", "foo");
@@ -145,7 +233,8 @@ public sealed partial class ItExtensionsTests
 					content,
 					CancellationToken.None);
 
-				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
 			[Fact]

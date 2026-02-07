@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using Mockolate.Parameters;
 using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
@@ -9,6 +12,35 @@ public sealed partial class ItExtensionsTests
 {
 	public sealed partial class IsHttpRequestMessageTests
 	{
+#if !NETFRAMEWORK
+		[Fact]
+		public async Task ShouldSupportMonitoring()
+		{
+			int callbackCount = 0;
+			List<ByteArrayContent> responses =
+			[
+				new([]),
+				new([0x66,]),
+				new([0x62, 0x61, 0x72,]),
+			];
+			HttpClient httpClient = Mock.Create<HttpClient>();
+			httpClient.SetupMock.Method.SendAsync(It.IsHttpRequestMessage()
+				.Do(_ => callbackCount++)
+				.Monitor(out IParameterMonitor<HttpRequestMessage> monitor));
+
+			foreach (ByteArrayContent response in responses)
+			{
+				await httpClient.PostAsync("https://www.aweXpect.com", response);
+			}
+
+			await That(
+					(await Task.WhenAll(monitor.Values.Select(c => c!.Content!.ReadAsByteArrayAsync())))
+					.Select(x => x.Length))
+				.IsEqualTo([0, 1, 3,]);
+			await That(callbackCount).IsEqualTo(3);
+		}
+#endif
+
 		[Theory]
 		[InlineData(nameof(HttpMethod.Get), true)]
 		[InlineData(nameof(HttpMethod.Delete), false)]

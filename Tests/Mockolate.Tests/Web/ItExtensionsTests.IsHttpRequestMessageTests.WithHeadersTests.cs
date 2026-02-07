@@ -12,6 +12,86 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithHeadersTests
 		{
+			[Theory]
+			[InlineData("x-myHeader", "foo", "Authorization", "Basic abcdef", true)]
+			[InlineData("Authorization", "Basic abcdef", "x-myHeader", "foo", true)]
+			[InlineData("Authorization", "Basic xyz", "x-myHeader", "foo", false)]
+			[InlineData("x-myHeader", "foo", "Authorization", "Basic xyz", false)]
+			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(string key1, string value1, string key2,
+				string value2,
+				bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
+				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				httpClient.SetupMock.Method
+					.SendAsync(It.IsHttpRequestMessage()
+						.WithHeaders(key1, value1).WithHeaders(key2, value2))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("x-myHeader", "foo");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Theory]
+			[InlineData("x-myHeader", "foo", "Authorization", "Basic abcdef", true)]
+			[InlineData("Authorization", "Basic abcdef", "x-myHeader", "foo", true)]
+			[InlineData("Authorization", "Basic xyz", "x-myHeader", "foo", false)]
+			[InlineData("x-myHeader", "foo", "Authorization", "Basic xyz", false)]
+			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(string key1, string value1, string key2,
+				string value2,
+				bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
+				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				httpClient.SetupMock.Method
+					.SendAsync(It.IsHttpRequestMessage()
+						.WithHeaders((key1, value1)).WithHeaders((key2, value2)))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("x-myHeader", "foo");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Theory]
+			[InlineData("x-myHeader: foo", "Authorization: Basic abcdef", true)]
+			[InlineData("Authorization: Basic abcdef", "x-myHeader: foo", true)]
+			[InlineData("Authorization: Basic xyz", "x-myHeader: foo", false)]
+			[InlineData("x-myHeader: foo", "Authorization: Basic xyz", false)]
+			public async Task MultipleCalls_ShouldVerifyStringHeaders(string headers1, string headers2,
+				bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
+				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				httpClient.SetupMock.Method
+					.SendAsync(It.IsHttpRequestMessage()
+						.WithHeaders(headers1).WithHeaders(headers2))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("x-myHeader", "foo");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
 			[Fact]
 			public async Task ShouldAlsoMatchContentHeaders()
 			{
