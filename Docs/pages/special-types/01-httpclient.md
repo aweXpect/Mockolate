@@ -195,7 +195,6 @@ httpClient.SetupMock.Method
 ### Form data content
 
 To verify against the URL-encoded form data content, use the following methods:
-To verify against the binary content, use the following methods:
 
 - `.WithFormData(string, string)`: checks that the form-data content contains the provided key-value pair
 - `.WithFormData(IEnumerable<(string, string)>)`: checks that the form-data content contains the provided key-value
@@ -206,7 +205,7 @@ To verify against the binary content, use the following methods:
 httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
-        It.IsHttpContent("application/octet-stream").WithFormData("my-key", "my-value"))
+        It.IsHttpContent("application/x-www-form-urlencoded").WithFormData("my-key", "my-value"))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 ```
 
