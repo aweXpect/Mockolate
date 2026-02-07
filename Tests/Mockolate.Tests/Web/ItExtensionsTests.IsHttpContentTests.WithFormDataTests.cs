@@ -13,9 +13,11 @@ public sealed partial class ItExtensionsTests
 		public sealed class WithFormDataTests
 		{
 			[Theory]
-			[InlineData(true, "x", "123", "y", "234", "z", "345")]
-			[InlineData(true, "x", "123", "z", "345", "y", "234")]
-			[InlineData(false, "y", "234", "z", "345")]
+			[InlineData(true, "x", "123", "y", "234", "z", "345", "z", "567")]
+			[InlineData(true, "z", "567", "x", "123", "z", "345", "y", "234")]
+			[InlineData(true, "x", "123", "y", "234", "z", "345", "z", "567", "z", "567")]
+			[InlineData(false, "x", "123", "y", "234", "z", "345", "z", "567", "z", "789")]
+			[InlineData(false, "y", "234", "z", "345", "z", "567")]
 			[InlineData(false, "x", "123", "z", "345")]
 			[InlineData(false, "x", "123", "y", "234")]
 			public async Task Exactly_ShouldOnlyMatchWhenAllParametersAreChecked(
@@ -33,17 +35,12 @@ public sealed partial class ItExtensionsTests
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				MultipartFormDataContent content = new()
 				{
-					new FormUrlEncodedContent(new Dictionary<string, string>
+					new FormUrlEncodedContent(new List<KeyValuePair<string, string>>
 					{
-						{
-							"x", "123"
-						},
-						{
-							"y", "234"
-						},
-						{
-							"z", "345"
-						},
+						new("x", "123"),
+						new("y", "234"),
+						new("z", "345"),
+						new("z", "567"),
 					}),
 				};
 

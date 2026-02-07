@@ -448,14 +448,16 @@ public static partial class ItExtensions
 				List<(string Key, string Value)> formDataParameters = GetFormData(content).ToList();
 				return _isExactly
 					? _requiredFormDataParameters.All(requiredParameter
-						  => formDataParameters.Any(p
-							  => p.Key == requiredParameter.Name &&
-							     requiredParameter.Value.Matches(p.Value))) &&
-					  formDataParameters.All(f => _requiredFormDataParameters.Any(y => f.Key == y.Name))
+						  => formDataParameters.Any(parameter
+							  => parameter.Key == requiredParameter.Name &&
+							     requiredParameter.Value.Matches(parameter.Value))) &&
+					  formDataParameters.All(parameter => _requiredFormDataParameters
+						  .Any(requiredParameter => parameter.Key == requiredParameter.Name &&
+						                            requiredParameter.Value.Matches(parameter.Value)))
 					: _requiredFormDataParameters.All(requiredParameter
-						=> formDataParameters.Any(p
-							=> p.Key == requiredParameter.Name &&
-							   requiredParameter.Value.Matches(p.Value)));
+						=> formDataParameters.Any(parameter
+							=> parameter.Key == requiredParameter.Name &&
+							   requiredParameter.Value.Matches(parameter.Value)));
 			}
 
 			public void Exactly()
