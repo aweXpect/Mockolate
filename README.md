@@ -991,7 +991,7 @@ HttpClient httpClient = Mock.Create<HttpClient>();
 httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
-        It.IsStringContent())
+        It.IsHttpContent())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/api/chocolate/dispense",
@@ -1002,7 +1002,7 @@ HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/ap
 await That(result.IsSuccessStatusCode).IsTrue();
 httpClient.VerifyMock.Invoked.PostAsync(
     It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
-    It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
+    It.IsHttpContent("application/json").WithStringMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
 ```
 
 **Notes:**
@@ -1078,7 +1078,7 @@ httpClient.VerifyMock.Invoked
 
 **Host**
 
-Filter requests by host using `.WithHost(string?)`. You can provide a wildcard pattern to match against the host name:
+Filter requests by host using `.WithHost(string)`. You can provide a wildcard pattern to match against the host name:
 
 ```csharp
 httpClient.VerifyMock.Invoked
@@ -1098,7 +1098,7 @@ httpClient.VerifyMock.Invoked
 
 **Path**
 
-Filter requests by path using `.WithPath(string?)`. You can provide a wildcard pattern to match against the path:
+Filter requests by path using `.WithPath(string)`. You can provide a wildcard pattern to match against the path:
 
 ```csharp
 httpClient.VerifyMock.Invoked
@@ -1108,52 +1108,93 @@ httpClient.VerifyMock.Invoked
 
 **Query**
 
-Filter requests by query using `.WithQuery(string?)`. You can provide a wildcard pattern to match against the query:
+Filter requests by query parameters using `.WithQuery(...)`. You can provide one or many key-value pairs or a raw query
+string to match against the query parameters. The order of the key-value pairs does not matter:
 
 ```csharp
+// Match query string containing "x=42"
 httpClient.VerifyMock.Invoked
-    .GetAsync(It.IsUri().WithQuery("*x=42*"))
+    .GetAsync(It.IsUri().WithQuery("x", "42"))
+    .Once();
+// Match query string containing "x=42" and "y=foo" (in any order)
+httpClient.VerifyMock.Invoked
+    .GetAsync(It.IsUri().WithQuery(("x", "42"), ("y", "foo")))
+    .Once();
+// Match query string containing "x=42" and "y=foo" (in any order)
+httpClient.VerifyMock.Invoked
+    .GetAsync(It.IsUri().WithQuery("x=42&y=foo"))
     .Once();
 ```
 
 #### Content Matching
 
-**String content**
-
-Use `It.IsStringContent(string?)` to match string content types, optionally providing an expected media type header
-value:
+Use `It.IsHttpContent(string?)` to match the HTTP content, optionally providing an expected media type header value:
 
 ```csharp
 httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
-        It.IsStringContent("application/json").WithBodyMatching("*\"type\": \"Dark\"*"))
+        It.IsHttpContent("application/json"))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 ```
+
+**String content**
 
 To verify against the string content, use the following methods:
 
-- `.WithBody(string)`: to match content exactly as provided
-- `.WithBodyMatching(string)`: to match content using wildcard patterns
-- `.WithBodyMatching(string).AsRegex()`: to match content using regular expressions
-
-**Binary content**
-
-Use `It.IsBinaryContent(string?)` to match binary content types, optionally providing an expected media type header
-value:
+- `.WithString(string)`: to match the content exactly as provided
+- `.WithStringMatching(string)`: to match the content using wildcard patterns
+- `.WithStringMatching(string).AsRegex()`: to match the content using regular expressions
 
 ```csharp
 httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
-        It.IsBinaryContent("application/octet-stream"))
+        It.IsHttpContent("application/json").WithStringMatching("*\"type\": \"Dark\"*"))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 ```
 
+*Notes:*
+
+- Add the `.IgnoringCase()` modifier to make the string matching case-insensitive.
+
+**Binary content**
+
 To verify against the binary content, use the following methods:
 
-- `.EqualTo(byte[])`: to match content exactly as provided
-- `.Containing(byte[])`: to match content to contain the provided byte sequence in order
+- `.WithBytes(byte[])`: to match the content exactly as provided
+- `.WithBytesContaining(byte[])`: to match the content to contain the provided byte sequence in order
+
+```csharp
+httpClient.SetupMock.Method
+    .PostAsync(
+        It.IsAny<string>(),
+        It.IsHttpContent("application/octet-stream").WithBytes([0x01, 0x02, 0x03, ]))
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+```
+
+**Form data content**
+
+To verify against the URL-encoded form data content, use the following methods:
+To verify against the binary content, use the following methods:
+
+- `.WithFormData(string, string)`: checks that the form-data content contains the provided key-value pair
+- `.WithFormData(IEnumerable<(string, string)>)`: checks that the form-data content contains the provided key-value
+  pairs
+- `.WithFormData(string)`: checks that the form-data content contains the provided raw form data string
+
+```csharp
+httpClient.SetupMock.Method
+    .PostAsync(
+        It.IsAny<string>(),
+        It.IsHttpContent("application/octet-stream").WithFormData("my-key", "my-value"))
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+```
+
+*Notes:*
+
+- Similar to the query parameter matching, the order of the form-data key-value pairs does not matter.
+- Add the `.Exactly()` modifier to also check that no other form-data is present.
 
 ### Delegates
 
