@@ -13,6 +13,21 @@ public sealed partial class ItExtensionsTests
 		public sealed class WithQueryTests
 		{
 			[Theory]
+			[InlineData("x<>", "1<2> 3")]
+			public async Task ShouldEncodeValues(string key, string value)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.GetAsync(It.IsUri().WithQuery(key, value))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+				HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com/?x%3c%3e=1%3c2%3e+3",
+					CancellationToken.None);
+
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
+
+			[Theory]
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x", "123", true)]
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "y", "234", true)]
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x", "", false)]

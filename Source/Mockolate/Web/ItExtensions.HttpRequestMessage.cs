@@ -35,14 +35,10 @@ public static partial class ItExtensions
 		TParameter WhoseContentIs(Action<IHttpContentParameter> configureContent);
 
 		/// <summary>
-		///     Add expectations on the string <see cref="HttpContent" /> of the <see cref="HttpRequestMessage" />.
+		///     Add expectations on the <see cref="HttpContent" /> of the <see cref="HttpRequestMessage" />
+		///     with the given <paramref name="mediaType" />.
 		/// </summary>
-		TParameter WhoseStringContentIs(Action<IStringContentParameter> configureContent);
-
-		/// <summary>
-		///     Add expectations on the binary <see cref="HttpContent" /> of the <see cref="HttpRequestMessage" />.
-		/// </summary>
-		TParameter WhoseBinaryContentIs(Action<IBinaryContentParameter> configureContent);
+		TParameter WhoseContentIs(string mediaType, Action<IHttpContentParameter>? configureContent = null);
 
 		/// <summary>
 		///     Add expectations on the URI of the <see cref="HttpRequestMessage" />.
@@ -59,8 +55,8 @@ public static partial class ItExtensions
 		: IHttpRequestMessageParameter<TParameter>, IParameter
 	{
 		private List<Action<HttpRequestMessage>>? _callbacks;
-		private HttpHeadersMatcher? _headers;
 		private IParameter<HttpContent?>? _contentParameter;
+		private HttpHeadersMatcher? _headers;
 		private IParameter<Uri?>? _uriParameter;
 
 		/// <summary>
@@ -95,6 +91,39 @@ public static partial class ItExtensions
 			_callbacks ??= [];
 			_callbacks.Add(callback);
 			return this;
+		}
+
+		public TParameter WhoseContentIs(Action<IHttpContentParameter> configureContent)
+		{
+			IHttpContentParameter parameter = new HttpContentParameter();
+			configureContent.Invoke(parameter);
+			_contentParameter = parameter;
+			return GetThis;
+		}
+
+		public TParameter WhoseContentIs(string mediaType, Action<IHttpContentParameter>? configureContent = null)
+		{
+			IHttpContentParameter parameter = new HttpContentParameter();
+			parameter.WithMediaType(mediaType);
+			configureContent?.Invoke(parameter);
+			_contentParameter = parameter;
+			return GetThis;
+		}
+
+		public TParameter WhoseUriIs(Action<IUriParameter> configureUri)
+		{
+			IUriParameter parameter = new UriParameter(null);
+			configureUri.Invoke(parameter);
+			_uriParameter = parameter;
+			return GetThis;
+		}
+
+		public TParameter WhoseUriIs(string uri, Action<IUriParameter>? configureUri = null)
+		{
+			IUriParameter parameter = new UriParameter(uri);
+			configureUri?.Invoke(parameter);
+			_uriParameter = parameter;
+			return GetThis;
 		}
 
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
@@ -134,46 +163,6 @@ public static partial class ItExtensions
 			}
 
 			return true;
-		}
-
-		public TParameter WhoseContentIs(Action<IHttpContentParameter> configureContent)
-		{
-			IHttpContentParameter parameter = new HttpContentParameter();
-			configureContent.Invoke(parameter);
-			_contentParameter = parameter;
-			return GetThis;
-		}
-
-		public TParameter WhoseStringContentIs(Action<IStringContentParameter> configureContent)
-		{
-			IStringContentParameter parameter = new StringContentParameter();
-			configureContent.Invoke(parameter);
-			_contentParameter = parameter;
-			return GetThis;
-		}
-
-		public TParameter WhoseBinaryContentIs(Action<IBinaryContentParameter> configureContent)
-		{
-			IBinaryContentParameter parameter = new BinaryContentParameter();
-			configureContent.Invoke(parameter);
-			_contentParameter = parameter;
-			return GetThis;
-		}
-
-		public TParameter WhoseUriIs(Action<IUriParameter> configureUri)
-		{
-			IUriParameter parameter = new UriParameter(null);
-			configureUri.Invoke(parameter);
-			_uriParameter = parameter;
-			return GetThis;
-		}
-
-		public TParameter WhoseUriIs(string uri, Action<IUriParameter>? configureUri = null)
-		{
-			IUriParameter parameter = new UriParameter(uri);
-			configureUri?.Invoke(parameter);
-			_uriParameter = parameter;
-			return GetThis;
 		}
 	}
 

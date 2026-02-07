@@ -1,3 +1,5 @@
+using System;
+
 namespace Mockolate.Web;
 
 /// <summary>
@@ -17,7 +19,7 @@ public class HttpQueryParameterValue
 	///     Checks whether the given query parameter value matches this value.
 	/// </summary>
 	public virtual bool Matches(string parameterValue)
-		=> _value.Equals(parameterValue);
+		=> _value.Equals(parameterValue, StringComparison.Ordinal);
 
 	/// <summary>
 	///     Implicitly converts a string to an <see cref="HttpQueryParameterValue" />.

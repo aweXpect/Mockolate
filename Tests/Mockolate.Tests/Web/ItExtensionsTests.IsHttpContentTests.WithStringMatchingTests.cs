@@ -9,67 +9,10 @@ namespace Mockolate.Tests.Web;
 
 public sealed partial class ItExtensionsTests
 {
-	public sealed partial class IsHttpRequestMessageTests
+	public sealed partial class IsHttpContentTests
 	{
-		public sealed class WhoseStringContentIsTests
+		public sealed class WithStringMatchingTests
 		{
-			[Fact]
-			public async Task ShouldNotCheckHttpContentType()
-			{
-				string expectedValue = "foo";
-				byte[] bytes = Encoding.UTF8.GetBytes(expectedValue);
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseStringContentIs(c => c.WithBody("foo")))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
-					new ByteArrayContent(bytes),
-					CancellationToken.None);
-
-				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
-			}
-
-			[Theory]
-			[InlineData("foo", "foo", true)]
-			[InlineData("foo", "FOO", true)]
-			[InlineData("foo", "bar", false)]
-			public async Task WithBody_IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
-				string expected, bool expectSuccess)
-			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseStringContentIs(c => c.WithBody(expected).IgnoringCase()))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
-					new StringContent(body),
-					CancellationToken.None);
-
-				await That(result.StatusCode)
-					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
-			}
-
-			[Theory]
-			[InlineData("foo", "foo", true)]
-			[InlineData("foo", "FOO", false)]
-			[InlineData("foo", "bar", false)]
-			public async Task WithBody_ShouldCheckForEquality(string body, string expected,
-				bool expectSuccess)
-			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseStringContentIs(c => c.WithBody(expected)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
-					new StringContent(body),
-					CancellationToken.None);
-
-				await That(result.StatusCode)
-					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
-			}
-
 			[Theory]
 			[InlineData("foo", "f[aeiou]*", true)]
 			[InlineData("foo", "F[aeiou]*", true)]
@@ -80,8 +23,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage()
-						.WhoseStringContentIs(c => c.WithBodyMatching(pattern).AsRegex().IgnoringCase()))
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching(pattern).AsRegex().IgnoringCase())
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
@@ -101,8 +43,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage()
-						.WhoseStringContentIs(c => c.WithBodyMatching(pattern).AsRegex()))
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching(pattern).AsRegex())
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
@@ -118,8 +59,8 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseStringContentIs(c => c
-						.WithBodyMatching("F[A-Z]*").AsRegex(RegexOptions.IgnoreCase)))
+					.PostAsync(It.IsAny<Uri>(),
+						It.IsHttpContent().WithStringMatching("F[A-Z]*").AsRegex(RegexOptions.IgnoreCase))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
@@ -134,8 +75,8 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseStringContentIs(c => c
-						.WithBodyMatching("F[A-Z]*").AsRegex(timeout: TimeSpan.FromSeconds(0))))
+					.PostAsync(It.IsAny<Uri>(),
+						It.IsHttpContent().WithStringMatching("F[A-Z]*").AsRegex(timeout: TimeSpan.FromSeconds(0)))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				Task Act()
@@ -162,8 +103,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseStringContentIs(c => c
-						.WithBodyMatching(pattern).IgnoringCase()))
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching(pattern).IgnoringCase())
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
@@ -186,32 +126,11 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseStringContentIs(c => c
-						.WithBodyMatching(pattern)))
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching(pattern))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(body),
-					CancellationToken.None);
-
-				await That(result.StatusCode)
-					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
-			}
-
-			[Theory]
-			[InlineData("application/json", true)]
-			[InlineData("text/plain", false)]
-			[InlineData("application/txt", false)]
-			public async Task WithMediaType_ShouldVerifyMediaType(string mediaType, bool expectSuccess)
-			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseStringContentIs(c => c
-						.WithMediaType("application/json")))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
-					new StringContent("", Encoding.UTF8, mediaType),
 					CancellationToken.None);
 
 				await That(result.StatusCode)
