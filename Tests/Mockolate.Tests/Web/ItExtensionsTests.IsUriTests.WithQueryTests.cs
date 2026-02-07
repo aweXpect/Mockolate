@@ -17,7 +17,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData("z", "345", "x", "123", true)]
 			[InlineData("x", "123", "y", "345", false)]
 			[InlineData("y", "345", "x", "123", false)]
-			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(
+			public async Task MultipleCalls_ShouldVerifyKeyValueQueryParameters(
 				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -37,7 +37,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData("z", "345", "x", "123", true)]
 			[InlineData("x", "123", "y", "345", false)]
 			[InlineData("y", "345", "x", "123", false)]
-			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(
+			public async Task MultipleCalls_ShouldVerifyKeyValuePairQueryParameters(
 				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -57,8 +57,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("z=345", "x=123", true)]
 			[InlineData("x=123", "y=345", false)]
 			[InlineData("y=345", "x=123", false)]
-			public async Task MultipleCalls_ShouldVerifyStringHeaders(string query1, string query2,
-				bool expectSuccess)
+			public async Task MultipleCalls_ShouldVerifyStringQueryParameters(
+				string query1, string query2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method

@@ -17,9 +17,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("Authorization", "Basic abcdef", "x-myHeader", "foo", true)]
 			[InlineData("Authorization", "Basic xyz", "x-myHeader", "foo", false)]
 			[InlineData("x-myHeader", "foo", "Authorization", "Basic xyz", false)]
-			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(string key1, string value1, string key2,
-				string value2,
-				bool expectSuccess)
+			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(
+				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
@@ -44,9 +43,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("Authorization", "Basic abcdef", "x-myHeader", "foo", true)]
 			[InlineData("Authorization", "Basic xyz", "x-myHeader", "foo", false)]
 			[InlineData("x-myHeader", "foo", "Authorization", "Basic xyz", false)]
-			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(string key1, string value1, string key2,
-				string value2,
-				bool expectSuccess)
+			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(
+				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
@@ -71,8 +69,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("Authorization: Basic abcdef", "x-myHeader: foo", true)]
 			[InlineData("Authorization: Basic xyz", "x-myHeader: foo", false)]
 			[InlineData("x-myHeader: foo", "Authorization: Basic xyz", false)]
-			public async Task MultipleCalls_ShouldVerifyStringHeaders(string headers1, string headers2,
-				bool expectSuccess)
+			public async Task MultipleCalls_ShouldVerifyStringHeaders(
+				string headers1, string headers2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");

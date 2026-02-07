@@ -16,9 +16,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("x-myHeader3", "baz", "x-myHeader1", "foo", true)]
 			[InlineData("x-myHeader2", "baz", "x-myHeader1", "foo", false)]
 			[InlineData("x-myHeader1", "foo", "x-myHeader2", "baz", false)]
-			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(string key1, string value1, string key2,
-				string value2,
-				bool expectSuccess)
+			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(
+				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
@@ -43,9 +42,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("x-myHeader3", "baz", "x-myHeader1", "foo", true)]
 			[InlineData("x-myHeader2", "baz", "x-myHeader1", "foo", false)]
 			[InlineData("x-myHeader1", "foo", "x-myHeader2", "baz", false)]
-			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(string key1, string value1, string key2,
-				string value2,
-				bool expectSuccess)
+			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(
+				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
@@ -70,8 +68,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("x-myHeader3: baz", "x-myHeader1: foo", true)]
 			[InlineData("x-myHeader2: baz", "x-myHeader1: foo", false)]
 			[InlineData("x-myHeader1: foo", "x-myHeader2: baz", false)]
-			public async Task MultipleCalls_ShouldVerifyStringHeaders(string headers1, string headers2,
-				bool expectSuccess)
+			public async Task MultipleCalls_ShouldVerifyStringHeaders(
+				string headers1, string headers2, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
