@@ -79,7 +79,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x1, true)]
 			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x2, false)]
 			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x3, false)]
-			public async Task WithBytes_Predicate_ShouldCheckForEquality(
+			public async Task WithBytes_Predicate_ShouldValidatePredicate(
 				byte[] body, byte expectedFirstByte, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -167,7 +167,8 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithString(v => v.ToLower() == v)))
+					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c
+							.WithString(v => v.Equals(v.ToLowerInvariant(), StringComparison.Ordinal))))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",

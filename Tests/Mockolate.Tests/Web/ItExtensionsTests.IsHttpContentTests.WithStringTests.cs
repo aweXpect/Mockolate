@@ -23,7 +23,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
-						.WithString(c => c.ToLower() == c))
+						.WithString(c => c.Equals(c.ToLowerInvariant(), StringComparison.Ordinal)))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",

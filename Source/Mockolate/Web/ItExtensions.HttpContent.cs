@@ -276,6 +276,19 @@ public static partial class ItExtensions
 			return true;
 		}
 
+		private static string GetStringFromHttpContent(HttpContent content)
+		{
+#if NET8_0_OR_GREATER
+			Stream stream = content.ReadAsStream();
+			using StreamReader reader = new(stream, leaveOpen: true);
+#else
+			Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+			using StreamReader reader = new(stream);
+#endif
+			string stringContent = reader.ReadToEnd();
+			return stringContent;
+		}
+
 		private interface IContentMatcher
 		{
 			bool Matches(HttpContent content);
@@ -297,14 +310,7 @@ public static partial class ItExtensions
 
 			public bool Matches(HttpContent content)
 			{
-#if NET8_0_OR_GREATER
-				Stream stream = content.ReadAsStream();
-				using StreamReader reader = new(stream, leaveOpen: true);
-#else
-				Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-				using StreamReader reader = new(stream);
-#endif
-				string stringContent = reader.ReadToEnd();
+				string stringContent = GetStringFromHttpContent(content);
 				switch (_bodyMatchType)
 				{
 					case BodyMatchType.Exact when
@@ -363,14 +369,7 @@ public static partial class ItExtensions
 
 			public bool Matches(HttpContent content)
 			{
-#if NET8_0_OR_GREATER
-				Stream stream = content.ReadAsStream();
-				using StreamReader reader = new(stream, leaveOpen: true);
-#else
-				Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-				using StreamReader reader = new(stream);
-#endif
-				string stringContent = reader.ReadToEnd();
+				string stringContent = GetStringFromHttpContent(content);
 				return _predicate.Invoke(stringContent);
 			}
 		}
