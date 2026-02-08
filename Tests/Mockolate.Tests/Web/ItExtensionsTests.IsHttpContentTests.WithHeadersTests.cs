@@ -17,7 +17,6 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
-				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 				httpClient.SetupMock.Method
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
 						.WithHeaders(("foo", "my-value"), ("Authorization", "Basic abcdef")).IncludingRequestHeaders())
@@ -30,6 +29,25 @@ public sealed partial class ItExtensionsTests
 					CancellationToken.None);
 
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
+
+			[Fact]
+			public async Task IncludingRequestHeaders_WhenNotSet_ShouldOnlyMatchRequestHeadersFromContent()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+						.WithHeaders(("foo", "my-value"), ("Authorization", "Basic abcdef")))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("foo", "my-value");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.NotImplemented);
 			}
 
 			[Theory]
