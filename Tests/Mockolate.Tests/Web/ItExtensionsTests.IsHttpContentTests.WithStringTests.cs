@@ -139,6 +139,23 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
+			[Fact]
+			public async Task WhenValidatedAndSetup_ShouldResetStreamPosition()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo"))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+				HttpResponseMessage result = await httpClient
+					.PostAsync("https://www.aweXpect.com", new StringContent("foo"), CancellationToken.None);
+
+				await That(httpClient.VerifyMock.Invoked
+						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo")))
+					.Once();
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
+
 			[Theory]
 			[InlineData("foo")]
 			public async Task WithInvalidCharsetHeader_ShouldFallbackToUtf8(string charsetHeader)

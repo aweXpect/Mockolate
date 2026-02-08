@@ -53,6 +53,24 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
+
+			[Fact]
+			public async Task WhenValidatedAndSetup_ShouldResetStreamPosition()
+			{
+				byte[] body = [0x66, 0x67,];
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(body))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+				HttpResponseMessage result = await httpClient
+					.PostAsync("https://www.aweXpect.com", new ByteArrayContent(body), CancellationToken.None);
+
+				await That(httpClient.VerifyMock.Invoked
+						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(body)))
+					.Once();
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
 		}
 	}
 }

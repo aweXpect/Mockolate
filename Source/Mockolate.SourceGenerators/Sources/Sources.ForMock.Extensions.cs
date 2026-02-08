@@ -403,34 +403,7 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
-
-		if (@class is { ClassName: "HttpClient", ClassFullName: "System.Net.Http.HttpClient", } &&
-		    method.Name.StartsWith("Send"))
-		{
-			sb.Append("\t\t\tif (setup is Mock<System.Net.Http.HttpClient> httpClientMock &&").AppendLine();
-			sb.Append(
-					"\t\t\t    httpClientMock.ConstructorParameters[0] is IMockSubject<System.Net.Http.HttpMessageHandler> httpMessageHandlerMock &&")
-				.AppendLine();
-			sb.Append(
-					"\t\t\t    httpMessageHandlerMock.Mock is IMockMethodSetup<System.Net.Http.HttpMessageHandler> httpMessageHandlerSetup)")
-				.AppendLine();
-			sb.Append("\t\t\t{").AppendLine();
-			AppendMethodSetupBody(sb, method, useParameters,
-				"\t\t\t\t",
-				method.GetUniqueNameString().Replace("System.Net.Http.HttpMessageInvoker",
-					"System.Net.Http.HttpMessageHandler"),
-				"httpMessageHandlerSetup");
-			sb.Append("\t\t\t}").AppendLine();
-			sb.Append("\t\t\telse").AppendLine();
-			sb.Append("\t\t\t{").AppendLine();
-			AppendMethodSetupBody(sb, method, useParameters, "\t\t\t\t");
-			sb.Append("\t\t\t}").AppendLine();
-		}
-		else
-		{
-			AppendMethodSetupBody(sb, method, useParameters);
-		}
-
+		AppendMethodSetupBody(sb, method, useParameters);
 		sb.AppendLine("\t\t}");
 	}
 

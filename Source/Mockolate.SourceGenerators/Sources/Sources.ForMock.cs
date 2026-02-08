@@ -75,7 +75,7 @@ internal static partial class Sources
 				sb.Append("\t\tvar ").Append(resultVarName).Append(" = _mock.Registrations.InvokeMethod(")
 					.Append(mockClass.Delegate.GetUniqueNameString());
 			}
-			
+
 			foreach (MethodParameter p in mockClass.Delegate.Parameters)
 			{
 				sb.Append(", new NamedParameterValue(\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
@@ -291,7 +291,7 @@ internal static partial class Sources
 			if (mockMethods?.All(m => !Method.EqualityComparer.Equals(method, m)) != false)
 			{
 				AppendMockSubject_ImplementClass_AddMethod(sb, method, className, mockClass is not null,
-					@class.IsInterface);
+					@class.IsInterface, @class);
 			}
 		}
 
@@ -607,7 +607,7 @@ internal static partial class Sources
 	}
 
 	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method, string className,
-		bool explicitInterfaceImplementation, bool isClassInterface)
+		bool explicitInterfaceImplementation, bool isClassInterface, Class @class)
 	{
 		sb.Append("\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.')
 			.Append(method.Name.EscapeForXmlDoc())
@@ -757,6 +757,26 @@ internal static partial class Sources
 			if (method.ReturnType != Type.Void)
 			{
 				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
+
+				if (method.Name.StartsWith("Send", StringComparison.Ordinal) &&
+				    @class is { ClassName: "HttpClient", ClassFullName: "System.Net.Http.HttpClient", })
+				{
+					sb.Append("\t\t\t#if NETFRAMEWORK").AppendLine();
+					sb.Append("\t\t\t// Persist the HttpContent, because it gets automatically disposed on .NET Framework").AppendLine();
+					sb.Append("\t\t\tif (request.Content != null)").AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					sb.Append(
+							"\t\t\t\tvar stream = request.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();")
+						.AppendLine();
+					sb.Append("\t\t\t\tusing System.IO.MemoryStream ms = new();").AppendLine();
+					sb.Append("\t\t\t\tstream.CopyTo(ms);").AppendLine();
+					sb.Append("\t\t\t\tbyte[] bytes = ms.ToArray();").AppendLine();
+					sb.Append("\t\t\t\tstream.Position = 0L;").AppendLine();
+					sb.Append("\t\t\t\trequest.Properties.Add(\"Mockolate:HttpContent\", bytes);").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+					sb.Append("\t\t\t#endif").AppendLine();
+				}
+
 				sb.Append("\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name).Append('(')
 					.Append(FormatMethodParametersWithRefKind(method.Parameters))
 					.Append(");").AppendLine();
