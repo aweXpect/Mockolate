@@ -114,10 +114,12 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("", false)]
+			[InlineData("UTF-8", false)]
 			[InlineData("iso-8859-1", true)]
-			public async Task WhenCharsetHeaderIsSet_ShouldApplyEncodingCorrectly(string contentTypeHeader,
-				bool expectSuccess)
+			[InlineData("ISO-8859-1", true)]
+			[InlineData(" iso-8859-1\t", true)]
+			public async Task WhenCharsetHeaderIsSet_ShouldApplyEncodingCorrectly(
+				string charsetHeader, bool expectSuccess)
 			{
 				string original = "äöüß";
 				Encoding encoding = Encoding.GetEncoding("iso-8859-1");
@@ -128,19 +130,38 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(original))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				ByteArrayContent content = new(bytes);
-				if (!string.IsNullOrEmpty(contentTypeHeader))
-				{
-					content.Headers.ContentType = new MediaTypeHeaderValue("text/plain")
-					{
-						CharSet = contentTypeHeader,
-					};
-				}
+				content.Headers.Add("Content-Type", $"text/plain; charset={charsetHeader}");
 
 				HttpResponseMessage result = await httpClient.PostAsync(
 					"https://www.aweXpect.com", content, CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Theory]
+			[InlineData("foo")]
+			public async Task WithInvalidCharsetHeader_ShouldFallbackToUtf8(string charsetHeader)
+			{
+				string original = "äöüß";
+				Encoding encoding = Encoding.UTF8;
+				byte[] bytes = encoding.GetBytes(original);
+
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(original))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				ByteArrayContent content = new(bytes);
+				content.Headers.ContentType = new MediaTypeHeaderValue("text/plain")
+				{
+					CharSet = charsetHeader,
+				};
+
+				HttpResponseMessage result = await httpClient.PostAsync(
+					"https://www.aweXpect.com", content, CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(HttpStatusCode.OK);
 			}
 		}
 	}

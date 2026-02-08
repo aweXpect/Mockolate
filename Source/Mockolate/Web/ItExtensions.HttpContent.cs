@@ -279,10 +279,25 @@ public static partial class ItExtensions
 
 		private static string GetStringFromHttpContent(HttpContent content)
 		{
+			static Encoding GetEncodingFromCharset(string? charset)
+			{
+				if (!string.IsNullOrEmpty(charset))
+				{
+					try
+					{
+						return Encoding.GetEncoding(charset);
+					}
+					catch (ArgumentException)
+					{
+						// If the charset is invalid or not supported, we fall back to the default encoding (UTF-8).
+					}
+				}
+
+				return Encoding.UTF8;
+			}
+
 			string? charset = content.Headers.ContentType?.CharSet;
-			Encoding encoding = !string.IsNullOrEmpty(charset)
-				? Encoding.GetEncoding(charset)
-				: Encoding.UTF8;
+			Encoding encoding = GetEncodingFromCharset(charset);
 #if NET8_0_OR_GREATER
 			Stream stream = content.ReadAsStream();
 			using StreamReader reader = new(stream, encoding, leaveOpen: true);
