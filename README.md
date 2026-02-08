@@ -1196,6 +1196,35 @@ httpClient.SetupMock.Method
 - Similar to the query parameter matching, the order of the form-data key-value pairs does not matter.
 - Add the `.Exactly()` modifier to also check that no other form-data is present.
 
+**Header matching**
+
+To verify against the HTTP content headers, use the following methods:
+
+- `.WithHeaders(string, HttpHeaderValue)`: checks that the content headers contain the provided key-value pair
+- `.WithHeaders(IEnumerable<(string, HttpHeaderValue)>)`: checks that the content headers contain all key-value pairs
+- `.WithHeaders(string)`: checks that the content headers contain the provided raw headers
+
+```csharp
+httpClient.SetupMock.Method
+    .PostAsync(
+        It.IsAny<string>(),
+        It.IsHttpContent().WithHeaders(("Content-Type", "application/json"), ("X-My-Header", "my-value")))
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+httpClient.SetupMock.Method
+    .PostAsync(
+        It.IsAny<string>(),
+        It.IsHttpContent().WithHeaders("""
+        		                           Content-Type: application/json
+        		                           X-My-Header: my-value
+        		                           """))
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+```
+
+*Notes:*
+
+- Per default only the content headers are checked, not the headers in the corresponding `HttpRequestMessage`.
+  If you want to check both, add the `.IncludingRequestHeaders()` modifier.
+
 ### Delegates
 
 Mockolate supports mocking delegates including `Action`, `Func<T>`, and custom delegates.
