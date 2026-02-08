@@ -151,7 +151,7 @@ public static partial class ItExtensions
 
 		public IHttpContentParameter IncludingRequestHeaders()
 		{
-			_headers?.IncludingRequestHeaders();
+			_headers!.IncludingRequestHeaders();
 			return this;
 		}
 

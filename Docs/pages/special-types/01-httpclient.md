@@ -241,5 +241,5 @@ httpClient.SetupMock.Method
 
 **Notes:**
 
-- Per default only the content headers are checked, not the headers in the corresponding `HttpRequestMessage`.
+- By default, only the content headers are checked, not the headers in the corresponding `HttpRequestMessage`.
   If you want to check both, add the `.IncludingRequestHeaders()` modifier.
