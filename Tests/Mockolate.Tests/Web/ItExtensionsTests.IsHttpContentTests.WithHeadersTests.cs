@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using Mockolate.Web;
 
@@ -11,6 +12,26 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithHeadersTests
 		{
+			[Fact]
+			public async Task IncludingRequestHeaders_ShouldMatchRequestHeadersFromContentAndRequest()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
+				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+						.WithHeaders(("foo", "my-value"), ("Authorization", "Basic abcdef")).IncludingRequestHeaders())
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("foo", "my-value");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
+
 			[Theory]
 			[InlineData("x-myHeader1", "foo", "x-myHeader3", "baz", true)]
 			[InlineData("x-myHeader3", "baz", "x-myHeader1", "foo", true)]
