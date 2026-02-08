@@ -73,6 +73,11 @@ public static partial class ItExtensions
 	public interface IHttpContentParameter : IParameter<HttpContent?>, IHttpHeaderParameter<IHttpContentParameter>
 	{
 		/// <summary>
+		///     Expects the content to have a string body that satisfies the <paramref name="predicate" />.
+		/// </summary>
+		IHttpContentParameter WithString(Func<string, bool> predicate);
+
+		/// <summary>
 		///     Expects the content to have a string body equal to the <paramref name="expected" /> value.
 		/// </summary>
 		IStringContentBodyParameter WithString(string expected);
@@ -88,9 +93,9 @@ public static partial class ItExtensions
 		IHttpContentParameter WithBytes(byte[] bytes);
 
 		/// <summary>
-		///     Expects the binary content to contain the given <paramref name="bytes" />.
+		///     Expects the binary content to satisfy the <paramref name="predicate" />.
 		/// </summary>
-		IHttpContentParameter WithBytesContaining(byte[] bytes);
+		IHttpContentParameter WithBytes(Func<byte[], bool> predicate);
 
 		/// <summary>
 		///     Expects the form data content to contain the given <paramref name="key" />-<paramref name="value" /> pair.
@@ -144,6 +149,11 @@ public static partial class ItExtensions
 			}
 		}
 
+		public IHttpContentParameter WithString(Func<string, bool> predicate)
+		{
+			_contentMatcher = new PredicateStringMatcher(predicate);
+			return this;
+		}
 
 		public IStringContentBodyParameter WithString(string expected)
 		{
@@ -157,17 +167,14 @@ public static partial class ItExtensions
 			return this;
 		}
 
-		public IHttpContentParameter WithBytes(byte[] bytes)
+		public IHttpContentParameter WithBytes(Func<byte[], bool> predicate)
 		{
-			_contentMatcher = new BinaryMatcher(bytes, true);
+			_contentMatcher = new BinaryMatcher(predicate);
 			return this;
 		}
 
-		public IHttpContentParameter WithBytesContaining(byte[] bytes)
-		{
-			_contentMatcher = new BinaryMatcher(bytes, false);
-			return this;
-		}
+		public IHttpContentParameter WithBytes(byte[] bytes)
+			=> WithBytes(b => bytes.SequenceEqual(b));
 
 		public IFormDataContentParameter WithFormData(string key, HttpFormDataValue value)
 		{
@@ -269,6 +276,19 @@ public static partial class ItExtensions
 			return true;
 		}
 
+		private static string GetStringFromHttpContent(HttpContent content)
+		{
+#if NET8_0_OR_GREATER
+			Stream stream = content.ReadAsStream();
+			using StreamReader reader = new(stream, leaveOpen: true);
+#else
+			Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+			using StreamReader reader = new(stream);
+#endif
+			string stringContent = reader.ReadToEnd();
+			return stringContent;
+		}
+
 		private interface IContentMatcher
 		{
 			bool Matches(HttpContent content);
@@ -290,14 +310,7 @@ public static partial class ItExtensions
 
 			public bool Matches(HttpContent content)
 			{
-#if NET8_0_OR_GREATER
-				Stream stream = content.ReadAsStream();
-				using StreamReader reader = new(stream, leaveOpen: true);
-#else
-				Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-				using StreamReader reader = new(stream);
-#endif
-				string stringContent = reader.ReadToEnd();
+				string stringContent = GetStringFromHttpContent(content);
 				switch (_bodyMatchType)
 				{
 					case BodyMatchType.Exact when
@@ -345,15 +358,29 @@ public static partial class ItExtensions
 			}
 		}
 
+		private sealed class PredicateStringMatcher : IContentMatcher
+		{
+			private readonly Func<string, bool> _predicate;
+
+			public PredicateStringMatcher(Func<string, bool> predicate)
+			{
+				_predicate = predicate;
+			}
+
+			public bool Matches(HttpContent content)
+			{
+				string stringContent = GetStringFromHttpContent(content);
+				return _predicate.Invoke(stringContent);
+			}
+		}
+
 		private sealed class BinaryMatcher : IContentMatcher
 		{
-			private readonly BodyMatchType _bodyMatchType;
-			private readonly byte[] _expectedBytes;
+			private readonly Func<byte[], bool> _predicate;
 
-			public BinaryMatcher(byte[] bytes, bool isExact)
+			public BinaryMatcher(Func<byte[], bool> predicate)
 			{
-				_expectedBytes = bytes;
-				_bodyMatchType = isExact ? BodyMatchType.Exact : BodyMatchType.Contains;
+				_predicate = predicate;
 			}
 
 			public bool Matches(HttpContent content)
@@ -366,58 +393,7 @@ public static partial class ItExtensions
 				using MemoryStream ms = new();
 				stream.CopyTo(ms);
 				byte[] bytes = ms.ToArray();
-				switch (_bodyMatchType)
-				{
-					case BodyMatchType.Exact when
-						!bytes.SequenceEqual(_expectedBytes):
-						return false;
-					case BodyMatchType.Contains when
-						!Contains(bytes, _expectedBytes):
-						return false;
-				}
-
-				return true;
-			}
-
-			private static bool Contains(byte[] data, byte[] otherData)
-			{
-#if NET8_0_OR_GREATER
-				return data.AsSpan().IndexOf(otherData) >= 0;
-#else
-				int dataLength = data.Length;
-				int otherDataLength = otherData.Length;
-
-				if (dataLength < otherDataLength)
-				{
-					return false;
-				}
-
-				for (int i = 0; i <= dataLength - otherDataLength; i++)
-				{
-					bool isMatch = true;
-					for (int j = 0; j < otherDataLength; j++)
-					{
-						if (data[i + j] != otherData[j])
-						{
-							isMatch = false;
-							break;
-						}
-					}
-
-					if (isMatch)
-					{
-						return true;
-					}
-				}
-
-				return false;
-#endif
-			}
-
-			private enum BodyMatchType
-			{
-				Exact,
-				Contains,
+				return _predicate.Invoke(bytes);
 			}
 		}
 

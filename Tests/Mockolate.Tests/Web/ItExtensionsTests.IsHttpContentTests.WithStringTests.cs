@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Mockolate.Web;
 
@@ -13,6 +12,28 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithStringTests
 		{
+			[Theory]
+			[InlineData("", true)]
+			[InlineData("foo", true)]
+			[InlineData("FOO", false)]
+			[InlineData("bar", true)]
+			[InlineData("BAR", false)]
+			public async Task Predicate_ShouldValidatePredicate(string content, bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+						.WithString(c => c.Equals(c.ToLowerInvariant(), StringComparison.Ordinal)))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					new StringContent(content),
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
 			[Fact]
 			public async Task ShouldNotCheckHttpContentType()
 			{

@@ -1142,6 +1142,7 @@ httpClient.SetupMock.Method
 
 To verify against the string content, use the following methods:
 
+- `.WithString(Func<string, bool>)`: to match the string content against the given predicate
 - `.WithString(string)`: to match the content exactly as provided
 - `.WithStringMatching(string)`: to match the content using wildcard patterns
 - `.WithStringMatching(string).AsRegex()`: to match the content using regular expressions
@@ -1162,8 +1163,8 @@ httpClient.SetupMock.Method
 
 To verify against the binary content, use the following methods:
 
+- `.WithBytes(Func<byte[], bool>)`: to match the binary content against the given predicate
 - `.WithBytes(byte[])`: to match the content exactly as provided
-- `.WithBytesContaining(byte[])`: to match the content to contain the provided byte sequence in order
 
 ```csharp
 httpClient.SetupMock.Method

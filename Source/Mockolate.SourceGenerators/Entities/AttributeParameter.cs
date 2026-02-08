@@ -38,7 +38,7 @@ internal record AttributeParameter
 		{
 			SpecialType.System_Char => $"'{value.Value}'",
 			SpecialType.System_String => $"\"{value.Value.ToString().Replace("\"", "\\\"")}\"",
-			SpecialType.System_Boolean => value.Value.ToString().ToLower(),
+			SpecialType.System_Boolean => value.Value.ToString().ToLowerInvariant(),
 			SpecialType.System_Double => ((double)value.Value).ToString(CultureInfo.InvariantCulture),
 			SpecialType.System_Single => $"{((float)value.Value).ToString(CultureInfo.InvariantCulture)}F",
 			SpecialType.System_Byte => $"(byte){value.Value}",
