@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using Mockolate.Web;
 
@@ -11,6 +12,44 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithHeadersTests
 		{
+			[Fact]
+			public async Task IncludingRequestHeaders_ShouldMatchRequestHeadersFromContentAndRequest()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
+						.WithHeaders(("foo", "my-value"), ("Authorization", "Basic abcdef")).IncludingRequestHeaders())
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("foo", "my-value");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
+
+			[Fact]
+			public async Task IncludingRequestHeaders_WhenNotSet_ShouldOnlyMatchRequestHeadersFromContent()
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
+						.WithHeaders(("foo", "my-value"), ("Authorization", "Basic abcdef")))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("");
+				content.Headers.Add("foo", "my-value");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.NotImplemented);
+			}
+
 			[Theory]
 			[InlineData("x-myHeader1", "foo", "x-myHeader3", "baz", true)]
 			[InlineData("x-myHeader3", "baz", "x-myHeader1", "foo", true)]
@@ -21,7 +60,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(key1, value1).WithHeaders(key2, value2))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
@@ -47,7 +86,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders((key1, value1)).WithHeaders((key2, value2)))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
@@ -73,7 +112,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(headers1).WithHeaders(headers2))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
@@ -94,7 +133,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithHeaders("x-myHeader", "foo"))
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent().WithHeaders("x-myHeader", "foo"))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", "foo");
@@ -116,7 +155,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithHeaders("foo", "my-value"))
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent().WithHeaders("foo", "my-value"))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
 				content.Headers.Add(key, "my-value");
@@ -137,7 +176,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithHeaders("x-myHeader", "foo"))
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent().WithHeaders("x-myHeader", "foo"))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", value);
@@ -158,7 +197,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(
 							("foo", "my-foo-value"),
 							("bar", "my-bar-value")))
@@ -184,7 +223,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(
 							("x-myHeader1", "foo"),
 							("x-myHeader2", "bar")))
@@ -219,7 +258,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(headers))
 					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 				StringContent content = new("");

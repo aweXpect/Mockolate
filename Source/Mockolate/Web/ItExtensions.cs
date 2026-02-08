@@ -20,6 +20,8 @@ public static partial class ItExtensions
 	{
 		private readonly List<(string Name, HttpHeaderValue Value)> _requiredHeaders = [];
 
+		public bool IncludeRequestHeaders { get; private set; }
+
 		public void AddRequiredHeader(string name, HttpHeaderValue value)
 			=> _requiredHeaders.Add((name, value));
 
@@ -65,6 +67,9 @@ public static partial class ItExtensions
 
 			return headerList;
 		}
+
+		public void IncludingRequestHeaders()
+			=> IncludeRequestHeaders = true;
 	}
 
 	private sealed class HttpQueryMatcher

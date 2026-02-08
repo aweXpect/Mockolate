@@ -69,9 +69,20 @@ public static partial class ItExtensions
 	}
 
 	/// <summary>
+	///     Further expectations on the headers of the <see cref="HttpContent" />.
+	/// </summary>
+	public interface IHttpContentHeaderParameter : IHttpContentParameter
+	{
+		/// <summary>
+		///     If set, also includes the headers from the <see cref="HttpRequestMessage" /> when matching the headers.
+		/// </summary>
+		IHttpContentParameter IncludingRequestHeaders();
+	}
+
+	/// <summary>
 	///     Further expectations on the <see cref="HttpContent" />.
 	/// </summary>
-	public interface IHttpContentParameter : IParameter<HttpContent?>, IHttpHeaderParameter<IHttpContentParameter>
+	public interface IHttpContentParameter : IParameter<HttpContent?>, IHttpHeaderParameter<IHttpContentHeaderParameter>
 	{
 		/// <summary>
 		///     Expects the content to have a string body that satisfies the <paramref name="predicate" />.
@@ -121,7 +132,7 @@ public static partial class ItExtensions
 
 	private sealed class HttpContentParameter
 		: IParameter, IStringContentBodyMatchingParameter, IFormDataContentParameter,
-			IHttpRequestMessagePropertyParameter<HttpContent?>
+			IHttpRequestMessagePropertyParameter<HttpContent?>, IHttpContentHeaderParameter
 	{
 		private List<Action<HttpContent?>>? _callbacks;
 		private IContentMatcher? _contentMatcher;
@@ -135,6 +146,12 @@ public static partial class ItExtensions
 				formDataMatcher.Exactly();
 			}
 
+			return this;
+		}
+
+		public IHttpContentParameter IncludingRequestHeaders()
+		{
+			_headers!.IncludingRequestHeaders();
 			return this;
 		}
 
@@ -153,7 +170,7 @@ public static partial class ItExtensions
 			}
 
 			if (_headers is not null &&
-			    !_headers.Matches(value.Headers))
+			    !_headers.Matches(value.Headers, _headers.IncludeRequestHeaders ? requestMessage?.Headers : null))
 			{
 				return false;
 			}
@@ -232,21 +249,21 @@ public static partial class ItExtensions
 			return this;
 		}
 
-		public IHttpContentParameter WithHeaders(string name, HttpHeaderValue value)
+		public IHttpContentHeaderParameter WithHeaders(string name, HttpHeaderValue value)
 		{
 			_headers ??= new HttpHeadersMatcher();
 			_headers.AddRequiredHeader(name, value);
 			return this;
 		}
 
-		public IHttpContentParameter WithHeaders(params IEnumerable<(string Name, HttpHeaderValue Value)> headers)
+		public IHttpContentHeaderParameter WithHeaders(params IEnumerable<(string Name, HttpHeaderValue Value)> headers)
 		{
 			_headers ??= new HttpHeadersMatcher();
 			_headers.AddRequiredHeader(headers);
 			return this;
 		}
 
-		public IHttpContentParameter WithHeaders(string headers)
+		public IHttpContentHeaderParameter WithHeaders(string headers)
 		{
 			_headers ??= new HttpHeadersMatcher();
 			_headers.AddRequiredHeader(headers);
@@ -281,7 +298,11 @@ public static partial class ItExtensions
 			return this;
 		}
 
+#if NET8_0_OR_GREATER
+		private static string GetStringFromHttpContent(HttpContent content, HttpRequestMessage? _)
+#else
 		private static string GetStringFromHttpContent(HttpContent content, HttpRequestMessage? message)
+#endif
 		{
 			static Encoding GetEncodingFromCharset(string? charset)
 			{
