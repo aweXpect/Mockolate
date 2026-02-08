@@ -20,6 +20,18 @@ public class WebTests
 	}
 
 	[Fact]
+	public async Task HttpContentParameter_MatchesWithNullContent_ShouldReturnFalse()
+	{
+		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
+		IHttpRequestMessagePropertyParameter<HttpContent?> parameter =
+			(IHttpRequestMessagePropertyParameter<HttpContent?>)sut;
+
+		bool result = parameter.Matches(null, new HttpRequestMessage());
+
+		await That(result).IsFalse();
+	}
+
+	[Fact]
 	public async Task WithoutMediaTypeHeader_WhenNoneIsRequired_ShouldReturnTrue()
 	{
 		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();

@@ -298,7 +298,11 @@ public static partial class ItExtensions
 			return this;
 		}
 
+#if NET8_0_OR_GREATER
+		private static string GetStringFromHttpContent(HttpContent content, HttpRequestMessage? _)
+#else
 		private static string GetStringFromHttpContent(HttpContent content, HttpRequestMessage? message)
+#endif
 		{
 			static Encoding GetEncodingFromCharset(string? charset)
 			{
