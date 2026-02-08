@@ -1871,24 +1871,14 @@ namespace Mockolate.Web
         public interface IHttpContentParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
         {
             Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(System.Func<byte[], bool> predicate);
-            Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(byte[] bytes);
-            Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData([System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                    "Key",
-                    "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpFormDataValue>> values);
-            Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData(string values);
-            Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData(string key, Mockolate.Web.HttpFormDataValue value);
             Mockolate.Web.ItExtensions.IHttpContentParameter WithMediaType(string? mediaType);
             Mockolate.Web.ItExtensions.IHttpContentParameter WithString(System.Func<string, bool> predicate);
-            Mockolate.Web.ItExtensions.IStringContentBodyParameter WithString(string expected);
-            Mockolate.Web.ItExtensions.IStringContentBodyMatchingParameter WithStringMatching(string pattern);
         }
         public interface IHttpHeaderParameter<out TParameter>
         {
             TParameter WithHeaders([System.Runtime.CompilerServices.TupleElementNames(new string[] {
                     "Name",
                     "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpHeaderValue>> headers);
-            TParameter WithHeaders(string headers);
-            TParameter WithHeaders(string name, Mockolate.Web.HttpHeaderValue value);
         }
         public interface IHttpRequestMessageParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpRequestMessageParameter>, Mockolate.Web.ItExtensions.IHttpRequestMessageParameter<Mockolate.Web.ItExtensions.IHttpRequestMessageParameter> { }
         public interface IHttpRequestMessageParameter<out TParameter> : Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter>
@@ -1925,6 +1915,23 @@ namespace Mockolate.Web
             Mockolate.Web.ItExtensions.IHttpContentParameter IsHttpContent(string mediaType);
             Mockolate.Web.ItExtensions.IHttpRequestMessageParameter IsHttpRequestMessage(System.Net.Http.HttpMethod? method = null);
             Mockolate.Web.ItExtensions.IUriParameter IsUri(string? pattern = null);
+        }
+        extension<TParameter>(Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter> parameter)
+            where TParameter :  notnull
+        {
+            TParameter WithHeaders(string name, Mockolate.Web.HttpHeaderValue value);
+            TParameter WithHeaders(string headers);
+        }
+        extension(Mockolate.Web.ItExtensions.IHttpContentParameter parameter)
+        {
+            Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(byte[] bytes);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData(string key, Mockolate.Web.HttpFormDataValue value);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                    "Key",
+                    "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpFormDataValue>> values);
+            Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData(string values);
+            Mockolate.Web.ItExtensions.IStringContentBodyParameter WithString(string expected);
+            Mockolate.Web.ItExtensions.IStringContentBodyMatchingParameter WithStringMatching(string pattern);
         }
     }
 }

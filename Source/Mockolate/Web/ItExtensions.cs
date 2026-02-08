@@ -16,6 +16,27 @@ namespace Mockolate.Web;
 /// </summary>
 public static partial class ItExtensions
 {
+	private static List<(string Name, HttpHeaderValue Value)> ExtractHeaders(string headers)
+	{
+		List<(string, HttpHeaderValue)> headerList = new();
+		using StringReader reader = new(headers);
+		string? line = reader.ReadLine();
+		while (!string.IsNullOrWhiteSpace(line))
+		{
+			string[] parts = line.Split(':', 2);
+
+			if (parts.Length != 2)
+			{
+				throw new ArgumentException("The header contained an invalid line: " + line, nameof(headers));
+			}
+
+			headerList.Add((parts[0].Trim(), parts[1].TrimStart(' ')));
+			line = reader.ReadLine();
+		}
+
+		return headerList;
+	}
+
 	private sealed class HttpHeadersMatcher
 	{
 		private readonly List<(string Name, HttpHeaderValue Value)> _requiredHeaders = [];
@@ -115,19 +136,25 @@ public static partial class ItExtensions
 	public interface IHttpHeaderParameter<out TParameter>
 	{
 		/// <summary>
-		///     Expects the <see cref="HttpContent" /> to contain a header matching the <paramref name="name" /> and
-		///     <paramref name="value" />.
-		/// </summary>
-		TParameter WithHeaders(string name, HttpHeaderValue value);
-
-		/// <summary>
 		///     Expects the <see cref="HttpContent" /> to contain the given <paramref name="headers" />.
 		/// </summary>
 		TParameter WithHeaders(params IEnumerable<(string Name, HttpHeaderValue Value)> headers);
+	}
+
+	/// <inheritdoc cref="IHttpContentParameter" />
+	extension<TParameter>(IHttpHeaderParameter<TParameter> parameter)
+	{
+		/// <summary>
+		///     Expects the <see cref="HttpContent" /> to contain a header matching the <paramref name="name" /> and
+		///     <paramref name="value" />.
+		/// </summary>
+		public TParameter WithHeaders(string name, HttpHeaderValue value)
+			=> parameter.WithHeaders((name, value));
 
 		/// <summary>
 		///     Expects the <see cref="HttpContent" /> to contain the given <paramref name="headers" />.
 		/// </summary>
-		TParameter WithHeaders(string headers);
+		public TParameter WithHeaders(string headers)
+			=> parameter.WithHeaders(ExtractHeaders(headers));
 	}
 }
