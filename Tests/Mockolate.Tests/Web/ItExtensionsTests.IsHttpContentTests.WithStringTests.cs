@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using Mockolate.Web;
@@ -12,6 +13,26 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithStringTests
 		{
+			[Theory]
+			[InlineData("foo", "foo", true)]
+			[InlineData("foo", "FOO", true)]
+			[InlineData("foo", "bar", false)]
+			public async Task IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
+				string expected, bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected).IgnoringCase())
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					new StringContent(body),
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
 			[Theory]
 			[InlineData("", true)]
 			[InlineData("foo", true)]
@@ -28,43 +49,6 @@ public sealed partial class ItExtensionsTests
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(content),
-					CancellationToken.None);
-
-				await That(result.StatusCode)
-					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
-			}
-
-			[Fact]
-			public async Task ShouldNotCheckHttpContentType()
-			{
-				string expectedValue = "foo";
-				byte[] bytes = Encoding.UTF8.GetBytes(expectedValue);
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo"))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
-					new ByteArrayContent(bytes),
-					CancellationToken.None);
-
-				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
-			}
-
-			[Theory]
-			[InlineData("foo", "foo", true)]
-			[InlineData("foo", "FOO", true)]
-			[InlineData("foo", "bar", false)]
-			public async Task IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
-				string expected, bool expectSuccess)
-			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected).IgnoringCase())
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
-					new StringContent(body),
 					CancellationToken.None);
 
 				await That(result.StatusCode)
@@ -90,6 +74,94 @@ public sealed partial class ItExtensionsTests
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Fact]
+			public async Task ShouldNotCheckHttpContentType()
+			{
+				string expectedValue = "foo";
+				byte[] bytes = Encoding.UTF8.GetBytes(expectedValue);
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo"))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					new ByteArrayContent(bytes),
+					CancellationToken.None);
+
+				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
+
+			[Fact]
+			public async Task WhenCharsetHeaderIsNotSet_ShouldFallbackToUtf8()
+			{
+				string original = "äöüß";
+				Encoding encoding = Encoding.UTF8;
+				byte[] bytes = encoding.GetBytes(original);
+
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(original))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				ByteArrayContent content = new(bytes);
+
+				HttpResponseMessage result = await httpClient.PostAsync(
+					"https://www.aweXpect.com", content, CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(HttpStatusCode.OK);
+			}
+
+			[Theory]
+			[InlineData("UTF-8", false)]
+			[InlineData("iso-8859-1", true)]
+			[InlineData("ISO-8859-1", true)]
+			[InlineData(" iso-8859-1\t", true)]
+			public async Task WhenCharsetHeaderIsSet_ShouldApplyEncodingCorrectly(
+				string charsetHeader, bool expectSuccess)
+			{
+				string original = "äöüß";
+				Encoding encoding = Encoding.GetEncoding("iso-8859-1");
+				byte[] bytes = encoding.GetBytes(original);
+
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(original))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				ByteArrayContent content = new(bytes);
+				content.Headers.Add("Content-Type", $"text/plain; charset={charsetHeader}");
+
+				HttpResponseMessage result = await httpClient.PostAsync(
+					"https://www.aweXpect.com", content, CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Theory]
+			[InlineData("foo")]
+			public async Task WithInvalidCharsetHeader_ShouldFallbackToUtf8(string charsetHeader)
+			{
+				string original = "äöüß";
+				Encoding encoding = Encoding.UTF8;
+				byte[] bytes = encoding.GetBytes(original);
+
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(original))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				ByteArrayContent content = new(bytes);
+				content.Headers.ContentType = new MediaTypeHeaderValue("text/plain")
+				{
+					CharSet = charsetHeader,
+				};
+
+				HttpResponseMessage result = await httpClient.PostAsync(
+					"https://www.aweXpect.com", content, CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(HttpStatusCode.OK);
 			}
 		}
 	}

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -278,12 +279,31 @@ public static partial class ItExtensions
 
 		private static string GetStringFromHttpContent(HttpContent content)
 		{
+			static Encoding GetEncodingFromCharset(string? charset)
+			{
+				if (!string.IsNullOrEmpty(charset))
+				{
+					try
+					{
+						return Encoding.GetEncoding(charset);
+					}
+					catch (ArgumentException)
+					{
+						// If the charset is invalid or not supported, we fall back to the default encoding (UTF-8).
+					}
+				}
+
+				return Encoding.UTF8;
+			}
+
+			string? charset = content.Headers.ContentType?.CharSet;
+			Encoding encoding = GetEncodingFromCharset(charset);
 #if NET8_0_OR_GREATER
 			Stream stream = content.ReadAsStream();
-			using StreamReader reader = new(stream, leaveOpen: true);
+			using StreamReader reader = new(stream, encoding, leaveOpen: true);
 #else
 			Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-			using StreamReader reader = new(stream);
+			using StreamReader reader = new(stream, encoding);
 #endif
 			string stringContent = reader.ReadToEnd();
 			return stringContent;
