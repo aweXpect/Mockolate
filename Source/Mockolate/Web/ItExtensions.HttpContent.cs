@@ -120,7 +120,8 @@ public static partial class ItExtensions
 	}
 
 	private sealed class HttpContentParameter
-		: IParameter, IStringContentBodyMatchingParameter, IFormDataContentParameter
+		: IParameter, IStringContentBodyMatchingParameter, IFormDataContentParameter,
+			IHttpRequestMessagePropertyParameter<HttpContent?>
 	{
 		private List<Action<HttpContent?>>? _callbacks;
 		private IContentMatcher? _contentMatcher;
@@ -137,9 +138,38 @@ public static partial class ItExtensions
 			return this;
 		}
 
+		/// <inheritdoc cref="IHttpRequestMessagePropertyParameter{HttpContent}.Matches(HttpContent, HttpRequestMessage)" />
+		public bool Matches(HttpContent? value, HttpRequestMessage? requestMessage)
+		{
+			if (value is null)
+			{
+				return false;
+			}
+
+			if (_mediaType is not null &&
+			    value.Headers.ContentType?.MediaType?.Equals(_mediaType, StringComparison.OrdinalIgnoreCase) != true)
+			{
+				return false;
+			}
+
+			if (_headers is not null &&
+			    !_headers.Matches(value.Headers))
+			{
+				return false;
+			}
+
+			if (_contentMatcher is not null &&
+			    !_contentMatcher.Matches(value, requestMessage))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value)
-			=> value is HttpContent typedValue && Matches(typedValue);
+			=> value is HttpContent typedValue && Matches(typedValue, null);
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
@@ -251,33 +281,7 @@ public static partial class ItExtensions
 			return this;
 		}
 
-		/// <summary>
-		///     Checks whether the given <see cref="HttpContent" /> <paramref name="value" /> matches the expectations.
-		/// </summary>
-		private bool Matches(HttpContent value)
-		{
-			if (_mediaType is not null &&
-			    value.Headers.ContentType?.MediaType?.Equals(_mediaType, StringComparison.OrdinalIgnoreCase) != true)
-			{
-				return false;
-			}
-
-			if (_headers is not null &&
-			    !_headers.Matches(value.Headers))
-			{
-				return false;
-			}
-
-			if (_contentMatcher is not null &&
-			    !_contentMatcher.Matches(value))
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		private static string GetStringFromHttpContent(HttpContent content)
+		private static string GetStringFromHttpContent(HttpContent content, HttpRequestMessage? message)
 		{
 			static Encoding GetEncodingFromCharset(string? charset)
 			{
@@ -300,18 +304,32 @@ public static partial class ItExtensions
 			Encoding encoding = GetEncodingFromCharset(charset);
 #if NET8_0_OR_GREATER
 			Stream stream = content.ReadAsStream();
+			long position = stream.Position;
 			using StreamReader reader = new(stream, encoding, leaveOpen: true);
-#else
-			Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-			using StreamReader reader = new(stream, encoding);
-#endif
 			string stringContent = reader.ReadToEnd();
+			stream.Position = position;
+#else
+			string stringContent;
+			if (message?.Properties.TryGetValue("Mockolate:HttpContent", out object value) == true
+			    && value is byte[] bytes)
+			{
+				stringContent = encoding.GetString(bytes);
+			}
+			else
+			{
+				Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+				long position = stream.Position;
+				using StreamReader reader = new(stream, encoding, true, 1024, true);
+				stringContent = reader.ReadToEnd();
+				stream.Position = position;
+			}
+#endif
 			return stringContent;
 		}
 
 		private interface IContentMatcher
 		{
-			bool Matches(HttpContent content);
+			bool Matches(HttpContent content, HttpRequestMessage? message);
 		}
 
 		private sealed class StringMatcher : IContentMatcher
@@ -328,9 +346,9 @@ public static partial class ItExtensions
 				_bodyMatchType = isExact ? BodyMatchType.Exact : BodyMatchType.Wildcard;
 			}
 
-			public bool Matches(HttpContent content)
+			public bool Matches(HttpContent content, HttpRequestMessage? message)
 			{
-				string stringContent = GetStringFromHttpContent(content);
+				string stringContent = GetStringFromHttpContent(content, message);
 				switch (_bodyMatchType)
 				{
 					case BodyMatchType.Exact when
@@ -387,9 +405,9 @@ public static partial class ItExtensions
 				_predicate = predicate;
 			}
 
-			public bool Matches(HttpContent content)
+			public bool Matches(HttpContent content, HttpRequestMessage? message)
 			{
-				string stringContent = GetStringFromHttpContent(content);
+				string stringContent = GetStringFromHttpContent(content, message);
 				return _predicate.Invoke(stringContent);
 			}
 		}
@@ -403,16 +421,32 @@ public static partial class ItExtensions
 				_predicate = predicate;
 			}
 
-			public bool Matches(HttpContent content)
+			public bool Matches(HttpContent content, HttpRequestMessage? message)
 			{
 #if NET8_0_OR_GREATER
 				Stream stream = content.ReadAsStream();
-#else
-				Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-#endif
+				long position = stream.Position;
 				using MemoryStream ms = new();
 				stream.CopyTo(ms);
 				byte[] bytes = ms.ToArray();
+				stream.Position = position;
+#else
+				byte[] bytes;
+				if (message?.Properties.TryGetValue("Mockolate:HttpContent", out object value) == true
+				    && value is byte[] b)
+				{
+					bytes = b;
+				}
+				else
+				{
+					Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+					long position = stream.Position;
+					using MemoryStream ms = new();
+					stream.CopyTo(ms);
+					bytes = ms.ToArray();
+					stream.Position = position;
+				}
+#endif
 				return _predicate.Invoke(bytes);
 			}
 		}
@@ -439,7 +473,7 @@ public static partial class ItExtensions
 						.Select(pair => (pair.Key, new HttpFormDataValue(pair.Value))));
 			}
 
-			public bool Matches(HttpContent content)
+			public bool Matches(HttpContent content, HttpRequestMessage? message)
 			{
 				List<(string Key, string Value)> formDataParameters = GetFormData(content).ToList();
 				return _isExactly

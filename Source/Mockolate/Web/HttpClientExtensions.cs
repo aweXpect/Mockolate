@@ -73,7 +73,6 @@ public static partial class HttpClientExtensions
 		}
 	}
 
-
 	private interface IHttpRequestMessageParameter
 	{
 		bool Matches(HttpRequestMessage value);
@@ -87,7 +86,14 @@ public static partial class HttpClientExtensions
 		: IHttpRequestMessageParameter
 	{
 		public bool Matches(HttpRequestMessage value)
-			=> ((IParameter)parameter).Matches(valueSelector(value));
+		{
+			if (parameter is IHttpRequestMessagePropertyParameter<T> httpRequestMessageParameter)
+			{
+				return httpRequestMessageParameter.Matches(valueSelector(value), value);
+			}
+
+			return ((IParameter)parameter).Matches(valueSelector(value));
+		}
 
 		public void InvokeCallbacks(HttpRequestMessage value)
 		{
