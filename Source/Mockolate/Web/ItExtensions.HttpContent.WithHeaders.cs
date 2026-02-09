@@ -15,7 +15,7 @@ namespace Mockolate.Web;
 /// </summary>
 public static partial class ItExtensions
 {
-	/// <inheritdoc cref="IHttpContentParameter" />
+	/// <inheritdoc cref="IHttpHeaderParameter{TParameter}" />
 	extension<TParameter>(IHttpHeaderParameter<TParameter> parameter)
 	{
 		/// <summary>
