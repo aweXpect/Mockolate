@@ -148,56 +148,6 @@ public static partial class ItExtensions
 			}
 		}
 
-#if NET8_0_OR_GREATER
-		private static string GetStringFromHttpContent(HttpContent content, HttpRequestMessage? _)
-#else
-		private static string GetStringFromHttpContent(HttpContent content, HttpRequestMessage? message)
-#endif
-		{
-			static Encoding GetEncodingFromCharset(string? charset)
-			{
-				if (!string.IsNullOrEmpty(charset))
-				{
-					try
-					{
-						return Encoding.GetEncoding(charset);
-					}
-					catch (ArgumentException)
-					{
-						// If the charset is invalid or not supported, we fall back to the default encoding (UTF-8).
-					}
-				}
-
-				return Encoding.UTF8;
-			}
-
-			string? charset = content.Headers.ContentType?.CharSet;
-			Encoding encoding = GetEncodingFromCharset(charset);
-#if NET8_0_OR_GREATER
-			Stream stream = content.ReadAsStream();
-			long position = stream.Position;
-			using StreamReader reader = new(stream, encoding, leaveOpen: true);
-			string stringContent = reader.ReadToEnd();
-			stream.Position = position;
-#else
-			string stringContent;
-			if (message?.Properties.TryGetValue("Mockolate:HttpContent", out object value) == true
-			    && value is byte[] bytes)
-			{
-				stringContent = encoding.GetString(bytes);
-			}
-			else
-			{
-				Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-				long position = stream.Position;
-				using StreamReader reader = new(stream, encoding, true, 1024, true);
-				stringContent = reader.ReadToEnd();
-				stream.Position = position;
-			}
-#endif
-			return stringContent;
-		}
-
 		private interface IContentMatcher
 		{
 			bool Matches(HttpContent content, HttpRequestMessage? message);
@@ -207,7 +157,47 @@ public static partial class ItExtensions
 		{
 			public bool Matches(HttpContent content, HttpRequestMessage? message)
 			{
-				string stringContent = GetStringFromHttpContent(content, message);
+				static Encoding GetEncodingFromCharset(string? charset)
+				{
+					if (!string.IsNullOrEmpty(charset))
+					{
+						try
+						{
+							return Encoding.GetEncoding(charset);
+						}
+						catch (ArgumentException)
+						{
+							// If the charset is invalid or not supported, we fall back to the default encoding (UTF-8).
+						}
+					}
+
+					return Encoding.UTF8;
+				}
+
+				string? charset = content.Headers.ContentType?.CharSet;
+				Encoding encoding = GetEncodingFromCharset(charset);
+#if NET8_0_OR_GREATER
+				Stream stream = content.ReadAsStream();
+				long position = stream.Position;
+				using StreamReader reader = new(stream, encoding, leaveOpen: true);
+				string stringContent = reader.ReadToEnd();
+				stream.Position = position;
+#else
+				string stringContent;
+				if (message?.Properties.TryGetValue("Mockolate:HttpContent", out object value) == true
+				    && value is byte[] bytes)
+				{
+					stringContent = encoding.GetString(bytes);
+				}
+				else
+				{
+					Stream stream = content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+					long position = stream.Position;
+					using StreamReader reader = new(stream, encoding, true, 1024, true);
+					stringContent = reader.ReadToEnd();
+					stream.Position = position;
+				}
+#endif
 				return predicate.Invoke(stringContent);
 			}
 		}

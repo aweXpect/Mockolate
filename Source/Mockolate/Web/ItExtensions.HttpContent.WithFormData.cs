@@ -92,13 +92,13 @@ public static partial class ItExtensions
 					)
 				);
 
-		private IEnumerable<(string, string)> GetFormData(string rawContent)
+		private static IEnumerable<(string, string)> GetFormData(string rawContent)
 		{
 			string rawFormData = ExtractFormDataFromMultipartContent(rawContent);
 			return ParseFormDataParameters(rawFormData);
 		}
 
-		private string ExtractFormDataFromMultipartContent(string rawContent)
+		private static string ExtractFormDataFromMultipartContent(string rawContent)
 		{
 			string[] lines = rawContent.Split('\n');
 			StringBuilder sb = new();
