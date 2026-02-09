@@ -12,18 +12,6 @@ namespace Mockolate.Web;
 #pragma warning disable S2325 // Methods and properties that don't access instance data should be static
 public static partial class ItExtensions
 {
-	private static IEnumerable<(string Key, string Value)> ParseFormDataParameters(string input)
-		=> input.TrimStart('?')
-			.Split('&')
-			.Select(pair => pair.Split('=', 2))
-			.Where(pair => !string.IsNullOrWhiteSpace(pair[0]))
-			.Select(pair =>
-				(
-					WebUtility.UrlDecode(pair[0]),
-					pair.Length == 2 ? WebUtility.UrlDecode(pair[1]) : ""
-				)
-			);
-
 	/// <inheritdoc cref="IHttpContentParameter" />
 	extension(IHttpContentParameter parameter)
 	{
@@ -31,7 +19,7 @@ public static partial class ItExtensions
 		///     Expects the form data content to contain the given <paramref name="key" />-<paramref name="value" /> pair.
 		/// </summary>
 		public IFormDataContentParameter WithFormData(string key, HttpFormDataValue value)
-			=> parameter.WithFormData([(key, value)]);
+			=> parameter.WithFormData([(key, value),]);
 
 		/// <summary>
 		///     Expects the form data content to contain the given <paramref name="values" />.
@@ -47,7 +35,7 @@ public static partial class ItExtensions
 		///     Expects the form data content to contain the given <paramref name="values" />.
 		/// </summary>
 		public IFormDataContentParameter WithFormData(string values)
-			=> parameter.WithFormData(ParseFormDataParameters(values)
+			=> parameter.WithFormData(FormDataMatcher.ParseFormDataParameters(values)
 				.Select(pair => (pair.Key, new HttpFormDataValue(pair.Value))));
 	}
 
@@ -91,6 +79,18 @@ public static partial class ItExtensions
 
 		public void Exactly()
 			=> _isExactly = true;
+
+		internal static IEnumerable<(string Key, string Value)> ParseFormDataParameters(string input)
+			=> input.TrimStart('?')
+				.Split('&')
+				.Select(pair => pair.Split('=', 2))
+				.Where(pair => !string.IsNullOrWhiteSpace(pair[0]))
+				.Select(pair =>
+					(
+						WebUtility.UrlDecode(pair[0]),
+						pair.Length == 2 ? WebUtility.UrlDecode(pair[1]) : ""
+					)
+				);
 
 		private IEnumerable<(string, string)> GetFormData(string rawContent)
 		{

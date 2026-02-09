@@ -1915,12 +1915,6 @@ namespace Mockolate.Web
             Mockolate.Web.ItExtensions.IHttpRequestMessageParameter IsHttpRequestMessage(System.Net.Http.HttpMethod? method = null);
             Mockolate.Web.ItExtensions.IUriParameter IsUri(string? pattern = null);
         }
-        extension<TParameter>(Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter> parameter)
-            where TParameter :  notnull
-        {
-            TParameter WithHeaders(string name, Mockolate.Web.HttpHeaderValue value);
-            TParameter WithHeaders(string headers);
-        }
         extension(Mockolate.Web.ItExtensions.IHttpContentParameter parameter)
         {
             Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(byte[] bytes);
@@ -1931,6 +1925,12 @@ namespace Mockolate.Web
             Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData(string values);
             Mockolate.Web.ItExtensions.IStringContentBodyParameter WithString(string expected);
             Mockolate.Web.ItExtensions.IStringContentBodyMatchingParameter WithStringMatching(string pattern);
+        }
+        extension<TParameter>(Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter> parameter)
+            where TParameter :  notnull
+        {
+            TParameter WithHeaders(string name, Mockolate.Web.HttpHeaderValue value);
+            TParameter WithHeaders(string headers);
         }
     }
 }
