@@ -96,6 +96,7 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
+#if !NETFRAMEWORK
 			[Fact]
 			public async Task ShouldSupportMonitoring()
 			{
@@ -123,6 +124,7 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(["foo", "foobar", "foo-baz",]);
 				await That(callbackCount).IsEqualTo(3);
 			}
+#endif
 
 			[Theory]
 			[InlineData("image/png", false)]
