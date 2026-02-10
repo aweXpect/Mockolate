@@ -115,7 +115,7 @@ public sealed partial class ItExtensionsTests
 
 				foreach (StringContent response in responses)
 				{
-					await httpClient.PostAsync("https://www.aweXpect.com", response);
+					await httpClient.PostAsync("https://www.aweXpect.com", response, CancellationToken.None);
 				}
 
 				await That(
