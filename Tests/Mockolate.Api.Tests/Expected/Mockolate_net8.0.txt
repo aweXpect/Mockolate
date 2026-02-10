@@ -1859,6 +1859,19 @@ namespace Mockolate.Web
     }
     public static class ItExtensions
     {
+        public abstract class HttpContentParameterWrapper : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
+        {
+            protected HttpContentParameterWrapper(Mockolate.Web.ItExtensions.IHttpContentParameter parameter) { }
+            public Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?> Do(System.Action<System.Net.Http.HttpContent?> callback) { }
+            public void InvokeCallbacks(object? value) { }
+            public bool Matches(object? value) { }
+            public Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(System.Func<byte[], bool> predicate) { }
+            public Mockolate.Web.ItExtensions.IHttpContentHeaderParameter WithHeaders([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                    "Name",
+                    "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpHeaderValue>> headers) { }
+            public Mockolate.Web.ItExtensions.IHttpContentParameter WithMediaType(string? mediaType) { }
+            public Mockolate.Web.ItExtensions.IHttpContentParameter WithString(System.Func<string, bool> predicate) { }
+        }
         public interface IFormDataContentParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
         {
             Mockolate.Web.ItExtensions.IFormDataContentParameter Exactly();
