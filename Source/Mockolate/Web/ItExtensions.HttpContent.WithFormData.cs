@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -105,8 +106,8 @@ public static partial class ItExtensions
 			foreach (string line in lines)
 			{
 				if (line.StartsWith("--") ||
-				    line.StartsWith("Content-Type: ") ||
-				    line.StartsWith("Content-Disposition: "))
+				    line.StartsWith("Content-Type: ", StringComparison.OrdinalIgnoreCase) ||
+				    line.StartsWith("Content-Disposition: ", StringComparison.OrdinalIgnoreCase))
 				{
 					continue;
 				}

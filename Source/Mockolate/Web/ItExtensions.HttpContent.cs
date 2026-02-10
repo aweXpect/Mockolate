@@ -255,7 +255,14 @@ public static partial class ItExtensions
 			=> parameter.WithMediaType(mediaType);
 
 		public bool Matches(HttpContent? value, HttpRequestMessage? requestMessage)
-			=> ((IHttpRequestMessagePropertyParameter<HttpContent?>)parameter).Matches(value, requestMessage);
+		{
+			if (parameter is IHttpRequestMessagePropertyParameter<HttpContent?> requestMessagePropertyParameter)
+			{
+				return requestMessagePropertyParameter.Matches(value, requestMessage);
+			}
+
+			return Matches(value);
+		}
 
 		public bool Matches(object? value)
 			=> ((IParameter)parameter).Matches(value);

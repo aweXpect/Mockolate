@@ -52,7 +52,7 @@ public static partial class ItExtensions
 	}
 
 	/// <summary>
-	///     Further expectations on the <see cref="HttpContent" />.
+	///     Further expectations on the headers of the <see cref="HttpContent" />.
 	/// </summary>
 	public interface IHttpHeaderParameter<out TParameter>
 	{
