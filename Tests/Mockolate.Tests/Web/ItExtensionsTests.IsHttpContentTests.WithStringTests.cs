@@ -1,8 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using Mockolate.Parameters;
 using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
@@ -91,6 +94,56 @@ public sealed partial class ItExtensionsTests
 					CancellationToken.None);
 
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+			}
+
+#if !NETFRAMEWORK
+			[Fact]
+			public async Task ShouldSupportMonitoring()
+			{
+				int callbackCount = 0;
+				List<StringContent> responses =
+				[
+					new("foo"),
+					new("foobar"),
+					new("something-different"),
+					new("foo-baz"),
+				];
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method.PostAsync(It.IsAny<Uri>(),
+					It.IsHttpContent().WithStringMatching("foo*")
+						.Do(_ => callbackCount++)
+						.Monitor(out IParameterMonitor<HttpContent?> monitor));
+
+				foreach (StringContent response in responses)
+				{
+					await httpClient.PostAsync("https://www.aweXpect.com", response, CancellationToken.None);
+				}
+
+				await That(
+						await Task.WhenAll(monitor.Values.Select(c => c!.ReadAsStringAsync())))
+					.IsEqualTo(["foo", "foobar", "foo-baz",]);
+				await That(callbackCount).IsEqualTo(3);
+			}
+#endif
+
+			[Theory]
+			[InlineData("image/png", false)]
+			[InlineData("text/plain", true)]
+			[InlineData("text/csv", false)]
+			public async Task ShouldVerifyMediaType(string mediaType, bool expectSuccess)
+			{
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching("*").WithMediaType(mediaType))
+					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				StringContent content = new("foo", Encoding.UTF8, "text/plain");
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					content,
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
 			[Fact]
