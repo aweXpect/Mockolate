@@ -39,10 +39,11 @@ public class MockGenerator : IIncrementalGenerator
 	{
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
 		HashSet<(string? BaseNamespace, string BaseClassName, string? Namespace, string ClassName)>
-			generatedExtensions = new();
+			generatedAdditionalInterfacesByBaseType = new();
 
 		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate
-			         .OrderBy(m => m.MockClass.AdditionalImplementations.Count))
+			         .OrderBy(m => m.MockClass.AdditionalImplementations.Count)
+			         .ThenBy(m => m.Name))
 		{
 			if (!IsValidMockDeclaration(mockToGenerate.MockClass))
 			{
@@ -54,7 +55,7 @@ public class MockGenerator : IIncrementalGenerator
 			if (mockToGenerate.MockClass.AdditionalImplementations.Any() && mockToGenerate.MockClass.Delegate is null)
 			{
 				Class[] interfacesToGenerate = mockToGenerate.MockClass.DistinctAdditionalImplementations()
-					.Where(impl => generatedExtensions.Add(
+					.Where(impl => generatedAdditionalInterfacesByBaseType .Add(
 						(mockToGenerate.MockClass.Namespace, mockToGenerate.MockClass.ClassName,
 							impl.Namespace, impl.ClassName)))
 					.ToArray();

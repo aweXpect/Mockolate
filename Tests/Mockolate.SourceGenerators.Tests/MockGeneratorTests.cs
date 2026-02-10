@@ -441,6 +441,7 @@ public class MockGeneratorTests
 			     			_ = Mock.Create<IBaseInterface, ICommonInterface>();
 			     			_ = Mock.Create<IBaseInterface, ICommonInterface, IAdditionalInterface1>();
 			     			_ = Mock.Create<IBaseInterface, IAdditionalInterface2, ICommonInterface>();
+			     			_ = Mock.Create<IBaseInterface, IAdditionalInterface1, IAdditionalInterface2, ICommonInterface>();
 			             }
 			         }
 
@@ -450,11 +451,12 @@ public class MockGeneratorTests
 			         public interface IAdditionalInterface2 { }
 			     }
 			     """);
-		
+
 		await That(result.Sources)
 			.ContainsKey("MockForIBaseInterface_ICommonInterfaceExtensions.g.cs").And
 			.ContainsKey("MockForIBaseInterface_ICommonInterface_IAdditionalInterface1Extensions.g.cs").And
-			.ContainsKey("MockForIBaseInterface_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs");
+			.ContainsKey("MockForIBaseInterface_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs").And
+			.DoesNotContainKey("MockForIBaseInterface_IAdditionalInterface1_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs");
 		
 		await That(result.Sources["MockForIBaseInterface_ICommonInterfaceExtensions.g.cs"])
 			.Contains("SetupICommonInterfaceMock").And
