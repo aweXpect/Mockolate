@@ -38,7 +38,7 @@ public class WebTests
 			Mock.Create<ItExtensions.IHttpContentParameter, IParameter,
 				IHttpRequestMessagePropertyParameter<HttpContent?>>();
 		parameter.SetupIParameterMock.Method.Matches(It.IsAny<object?>()).Returns(true);
-		parameter.SetupIHttpRequestMessagePropertyParameterHttpContentMock.Method
+		parameter.SetupIHttpRequestMessagePropertyParameter_HttpContent_Mock.Method
 			.Matches(It.IsAny<HttpContent?>(), It.IsAny<HttpRequestMessage?>()).Returns(true);
 
 		ItExtensions.IStringContentBodyParameter sut = parameter.WithString("foo");
@@ -46,7 +46,7 @@ public class WebTests
 		bool result = ((IHttpRequestMessagePropertyParameter<HttpContent?>)sut).Matches(null, null);
 
 		await That(result).IsTrue();
-		await That(parameter.VerifyOnIHttpRequestMessagePropertyParameterHttpContentMock.Invoked
+		await That(parameter.VerifyOnIHttpRequestMessagePropertyParameter_HttpContent_Mock.Invoked
 				.Matches(It.IsNull<HttpContent?>(), It.IsNull<HttpRequestMessage?>()))
 			.Once();
 	}

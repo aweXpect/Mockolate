@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using Mockolate.SourceGenerators.Entities;
 
 namespace Mockolate.SourceGenerators.Sources;
@@ -6,6 +7,8 @@ namespace Mockolate.SourceGenerators.Sources;
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
+	private static readonly Regex InvalidIdentifierChars = new("[^a-zA-Z0-9_]", RegexOptions.Compiled);
+
 	public static string ForMockCombinationExtensions(string name, MockClass mockClass,
 		IEnumerable<Class> distinctAdditionalImplementations)
 	{
@@ -75,10 +78,11 @@ internal static partial class Sources
 	{
 		sb.AppendLine();
 		int nameSuffix = 1;
-		string name = @class.ClassName.Replace('.', '_').Replace("<", "").Replace(">", "");
+		string sanitizedClassName = InvalidIdentifierChars.Replace(@class.ClassName, "_");
+		string name = sanitizedClassName;
 		while (!usedNames.Add(name))
 		{
-			name = $"{@class.ClassName.Replace('.', '_').Replace("<", "").Replace(">", "")}__{++nameSuffix}";
+			name = $"{sanitizedClassName}__{++nameSuffix}";
 		}
 
 		string mockExpression =
