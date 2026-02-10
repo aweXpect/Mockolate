@@ -34,6 +34,7 @@ public class MockGenerator : IIncrementalGenerator
 			(spc, source) => Execute([..source.Distinct(),], spc));
 	}
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
 	{
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
@@ -132,6 +133,7 @@ public class MockGenerator : IIncrementalGenerator
 		context.AddSource("MockBehaviorExtensions.g.cs",
 			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate), Encoding.UTF8));
 	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)
 	{
