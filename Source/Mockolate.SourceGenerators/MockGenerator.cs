@@ -39,7 +39,7 @@ public class MockGenerator : IIncrementalGenerator
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
 		
 		// Track which additional implementations have been generated for each base type to avoid duplicates
-		Dictionary<(string? Namespace, string ClassName), HashSet<(string? Namespace, string ClassName)>> generatedAdditionalImplementations = new();
+		Dictionary<(string? Namespace, string ClassName), HashSet<(string? Namespace, string ClassName)>> generatedInterfacesByBaseType = new();
 		
 		// Sort by number of additional implementations (ascending) to generate simpler combinations first
 		(string Name, MockClass MockClass)[] sortedMocks = namedMocksToGenerate
@@ -59,15 +59,15 @@ public class MockGenerator : IIncrementalGenerator
 			{
 				(string? Namespace, string ClassName) baseTypeKey = (mockToGenerate.MockClass.Namespace, mockToGenerate.MockClass.ClassName);
 				
-				if (!generatedAdditionalImplementations.TryGetValue(baseTypeKey, out HashSet<(string? Namespace, string ClassName)>? generatedForThisBase))
+				if (!generatedInterfacesByBaseType.TryGetValue(baseTypeKey, out HashSet<(string? Namespace, string ClassName)>? generatedInterfaces))
 				{
-					generatedForThisBase = new HashSet<(string? Namespace, string ClassName)>();
-					generatedAdditionalImplementations[baseTypeKey] = generatedForThisBase;
+					generatedInterfaces = new HashSet<(string? Namespace, string ClassName)>();
+					generatedInterfacesByBaseType[baseTypeKey] = generatedInterfaces;
 				}
 				
 				// Filter out interfaces that have already been generated for this base type
 				Class[] interfacesToGenerate = mockToGenerate.MockClass.DistinctAdditionalImplementations()
-					.Where(impl => generatedForThisBase.Add((impl.Namespace, impl.ClassName)))
+					.Where(impl => generatedInterfaces.Add((impl.Namespace, impl.ClassName)))
 					.ToArray();
 				
 				if (interfacesToGenerate.Length > 0)
