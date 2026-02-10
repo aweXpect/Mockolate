@@ -235,26 +235,35 @@ public static partial class ItExtensions
 		}
 	}
 
-	private class HttpContentParameterWrapper(IHttpContentParameter parameter) : IHttpContentParameter,
+	/// <summary>
+	///     An abstract wrapper base class for <see cref="IHttpContentParameter" />.
+	/// </summary>
+	public abstract class HttpContentParameterWrapper(IHttpContentParameter parameter) : IHttpContentParameter,
 		IHttpRequestMessagePropertyParameter<HttpContent?>, IParameter
 	{
+		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
 		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
 			=> parameter.Do(callback);
 
+		/// <inheritdoc cref="IHttpHeaderParameter{T}.WithHeaders" />
 		public IHttpContentHeaderParameter WithHeaders(
 			params IEnumerable<(string Name, HttpHeaderValue Value)> headers)
 			=> parameter.WithHeaders(headers);
 
+		/// <inheritdoc cref="IHttpContentParameter.WithString(Func{string, bool})" />
 		public IHttpContentParameter WithString(Func<string, bool> predicate)
 			=> parameter.WithString(predicate);
 
+		/// <inheritdoc cref="IHttpContentParameter.WithBytes(Func{byte[], bool})" />
 		public IHttpContentParameter WithBytes(Func<byte[], bool> predicate)
 			=> parameter.WithBytes(predicate);
 
+		/// <inheritdoc cref="IHttpContentParameter.WithMediaType(string)" />
 		public IHttpContentParameter WithMediaType(string? mediaType)
 			=> parameter.WithMediaType(mediaType);
 
-		public bool Matches(HttpContent? value, HttpRequestMessage? requestMessage)
+		bool IHttpRequestMessagePropertyParameter<HttpContent?>.Matches(HttpContent? value,
+			HttpRequestMessage? requestMessage)
 		{
 			if (parameter is IHttpRequestMessagePropertyParameter<HttpContent?> requestMessagePropertyParameter)
 			{
@@ -264,9 +273,11 @@ public static partial class ItExtensions
 			return Matches(value);
 		}
 
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value)
 			=> ((IParameter)parameter).Matches(value);
 
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 			=> ((IParameter)parameter).InvokeCallbacks(value);
 	}
