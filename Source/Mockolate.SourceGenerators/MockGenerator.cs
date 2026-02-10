@@ -37,16 +37,11 @@ public class MockGenerator : IIncrementalGenerator
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
 	{
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
-		
-		// Track which additional implementations have been generated for each base type to avoid duplicates
-		Dictionary<(string? Namespace, string ClassName), HashSet<(string? Namespace, string ClassName)>> generatedInterfacesByBaseType = new();
-		
-		// Sort by number of additional implementations (ascending) to generate simpler combinations first
-		(string Name, MockClass MockClass)[] sortedMocks = namedMocksToGenerate
-			.OrderBy(m => m.MockClass.AdditionalImplementations.Count)
-			.ToArray();
-		
-		foreach ((string Name, MockClass MockClass) mockToGenerate in sortedMocks)
+		HashSet<(string? BaseNamespace, string BaseClassName, string? Namespace, string ClassName)>
+			generatedExtensions = new();
+
+		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate
+			         .OrderBy(m => m.MockClass.AdditionalImplementations.Count))
 		{
 			if (!IsValidMockDeclaration(mockToGenerate.MockClass))
 			{
@@ -57,24 +52,18 @@ public class MockGenerator : IIncrementalGenerator
 				SourceText.From(Sources.Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
 			if (mockToGenerate.MockClass.AdditionalImplementations.Any() && mockToGenerate.MockClass.Delegate is null)
 			{
-				(string? Namespace, string ClassName) baseTypeKey = (mockToGenerate.MockClass.Namespace, mockToGenerate.MockClass.ClassName);
-				
-				if (!generatedInterfacesByBaseType.TryGetValue(baseTypeKey, out HashSet<(string? Namespace, string ClassName)>? generatedInterfaces))
-				{
-					generatedInterfaces = new HashSet<(string? Namespace, string ClassName)>();
-					generatedInterfacesByBaseType[baseTypeKey] = generatedInterfaces;
-				}
-				
-				// Filter out interfaces that have already been generated for this base type
 				Class[] interfacesToGenerate = mockToGenerate.MockClass.DistinctAdditionalImplementations()
-					.Where(impl => generatedInterfaces.Add((impl.Namespace, impl.ClassName)))
+					.Where(impl => generatedExtensions.Add(
+						(mockToGenerate.MockClass.Namespace, mockToGenerate.MockClass.ClassName,
+							impl.Namespace, impl.ClassName)))
 					.ToArray();
-				
+
 				if (interfacesToGenerate.Length > 0)
 				{
 					context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
 						SourceText.From(
-							Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass, interfacesToGenerate),
+							Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass,
+								interfacesToGenerate),
 							Encoding.UTF8));
 				}
 			}

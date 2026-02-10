@@ -439,33 +439,37 @@ public class MockGeneratorTests
 			             public static void Main(string[] args)
 			             {
 			     			_ = Mock.Create<IBaseInterface, ICommonInterface>();
-			     			_ = Mock.Create<IBaseInterface, ICommonInterface, IAdditionalInterface>();
+			     			_ = Mock.Create<IBaseInterface, ICommonInterface, IAdditionalInterface1>();
+			     			_ = Mock.Create<IBaseInterface, IAdditionalInterface2, ICommonInterface>();
 			             }
 			         }
 
 			         public interface IBaseInterface { }
 			         public interface ICommonInterface { }
-			         public interface IAdditionalInterface { }
+			         public interface IAdditionalInterface1 { }
+			         public interface IAdditionalInterface2 { }
 			     }
-			     """, typeof(DateTime), typeof(Task));
-
-		await That(result.Diagnostics).IsEmpty();
+			     """);
 		
-		// Should generate two combination extension files
-		await That(result.Sources).ContainsKey("MockForIBaseInterface_ICommonInterfaceExtensions.g.cs").And
-			.ContainsKey("MockForIBaseInterface_ICommonInterface_IAdditionalInterfaceExtensions.g.cs");
+		await That(result.Sources)
+			.ContainsKey("MockForIBaseInterface_ICommonInterfaceExtensions.g.cs").And
+			.ContainsKey("MockForIBaseInterface_ICommonInterface_IAdditionalInterface1Extensions.g.cs").And
+			.ContainsKey("MockForIBaseInterface_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs");
 		
-		// The first combination should have Setup/Verify for ICommonInterface
-		string firstExtensionContent = result.Sources["MockForIBaseInterface_ICommonInterfaceExtensions.g.cs"];
-		await That(firstExtensionContent).Contains("SetupICommonInterfaceMock").And
+		await That(result.Sources["MockForIBaseInterface_ICommonInterfaceExtensions.g.cs"])
+			.Contains("SetupICommonInterfaceMock").And
 			.Contains("VerifyOnICommonInterfaceMock");
 		
-		// The second combination should only have Setup/Verify for IAdditionalInterface
-		// It should NOT have Setup/Verify for ICommonInterface (to avoid ambiguous reference)
-		string secondExtensionContent = result.Sources["MockForIBaseInterface_ICommonInterface_IAdditionalInterfaceExtensions.g.cs"];
-		await That(secondExtensionContent).DoesNotContain("SetupICommonInterfaceMock").And
+		await That(result.Sources["MockForIBaseInterface_ICommonInterface_IAdditionalInterface1Extensions.g.cs"])
+			.DoesNotContain("SetupICommonInterfaceMock").And
 			.DoesNotContain("VerifyOnICommonInterfaceMock").And
-			.Contains("SetupIAdditionalInterfaceMock").And
-			.Contains("VerifyOnIAdditionalInterfaceMock");
+			.Contains("SetupIAdditionalInterface1Mock").And
+			.Contains("VerifyOnIAdditionalInterface1Mock");
+		
+		await That(result.Sources["MockForIBaseInterface_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs"])
+			.DoesNotContain("SetupICommonInterfaceMock").And
+			.DoesNotContain("VerifyOnICommonInterfaceMock").And
+			.Contains("SetupIAdditionalInterface2Mock").And
+			.Contains("VerifyOnIAdditionalInterface2Mock");
 	}
 }

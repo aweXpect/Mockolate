@@ -32,12 +32,29 @@ public class WebTests
 	}
 
 	[Fact]
+	public async Task WhenParameterDoesNotImplementIHttpRequestMessagePropertyParameter_ShouldFallbackToParameterMatch()
+	{
+		ItExtensions.IHttpContentParameter parameter =
+			Mock.Create<ItExtensions.IHttpContentParameter, IParameter>();
+		parameter.SetupIParameterMock.Method.Matches(It.IsAny<object?>()).Returns(true);
+
+		ItExtensions.IStringContentBodyParameter sut = parameter.WithString("foo");
+
+		bool result = ((IHttpRequestMessagePropertyParameter<HttpContent?>)sut).Matches(null, null);
+
+		await That(result).IsTrue();
+		await That(parameter.VerifyOnIParameterMock.Invoked
+				.Matches(It.IsNull<object?>()))
+			.Once();
+	}
+
+	[Fact]
 	public async Task WhenParameterImplementsIHttpRequestMessagePropertyParameter_ShouldUseThisMatch()
 	{
 		ItExtensions.IHttpContentParameter parameter =
 			Mock.Create<ItExtensions.IHttpContentParameter, IParameter,
 				IHttpRequestMessagePropertyParameter<HttpContent?>>();
-		parameter.SetupIParameterMock.Method.Matches(It.IsAny<object?>()).Returns(true);
+		parameter.SetupIParameterMock.Method.Matches(It.IsAny<object?>()).Returns(false);
 		parameter.SetupIHttpRequestMessagePropertyParameter_HttpContent_Mock.Method
 			.Matches(It.IsAny<HttpContent?>(), It.IsAny<HttpRequestMessage?>()).Returns(true);
 
@@ -49,6 +66,9 @@ public class WebTests
 		await That(parameter.VerifyOnIHttpRequestMessagePropertyParameter_HttpContent_Mock.Invoked
 				.Matches(It.IsNull<HttpContent?>(), It.IsNull<HttpRequestMessage?>()))
 			.Once();
+		await That(parameter.VerifyOnIParameterMock.Invoked
+				.Matches(It.IsNull<object?>()))
+			.Never();
 	}
 
 	[Fact]
