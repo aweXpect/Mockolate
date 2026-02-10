@@ -75,10 +75,10 @@ internal static partial class Sources
 	{
 		sb.AppendLine();
 		int nameSuffix = 1;
-		string name = @class.ClassName.Replace('.', '_');
+		string name = @class.ClassName.Replace('.', '_').Replace("<", "").Replace(">", "");
 		while (!usedNames.Add(name))
 		{
-			name = $"{@class.ClassName.Replace('.', '_')}__{++nameSuffix}";
+			name = $"{@class.ClassName.Replace('.', '_').Replace("<", "").Replace(">", "")}__{++nameSuffix}";
 		}
 
 		string mockExpression =

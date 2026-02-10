@@ -32,6 +32,26 @@ public class WebTests
 	}
 
 	[Fact]
+	public async Task WhenParameterImplementsIHttpRequestMessagePropertyParameter_ShouldUseThisMatch()
+	{
+		ItExtensions.IHttpContentParameter parameter =
+			Mock.Create<ItExtensions.IHttpContentParameter, IParameter,
+				IHttpRequestMessagePropertyParameter<HttpContent?>>();
+		parameter.SetupIParameterMock.Method.Matches(It.IsAny<object?>()).Returns(true);
+		parameter.SetupIHttpRequestMessagePropertyParameterHttpContentMock.Method
+			.Matches(It.IsAny<HttpContent?>(), It.IsAny<HttpRequestMessage?>()).Returns(true);
+
+		ItExtensions.IStringContentBodyParameter sut = parameter.WithString("foo");
+
+		bool result = ((IHttpRequestMessagePropertyParameter<HttpContent?>)sut).Matches(null, null);
+
+		await That(result).IsTrue();
+		await That(parameter.VerifyOnIHttpRequestMessagePropertyParameterHttpContentMock.Invoked
+				.Matches(It.IsNull<HttpContent?>(), It.IsNull<HttpRequestMessage?>()))
+			.Once();
+	}
+
+	[Fact]
 	public async Task WithoutMediaTypeHeader_WhenNoneIsRequired_ShouldReturnTrue()
 	{
 		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
