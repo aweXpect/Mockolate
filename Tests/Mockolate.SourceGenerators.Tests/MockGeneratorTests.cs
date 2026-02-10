@@ -421,4 +421,51 @@ public class MockGeneratorTests
 		await That(result.Sources).ContainsKey("MockForHttpMessageHandler.g.cs").And
 			.ContainsKey("MockForHttpClient.g.cs");
 	}
+
+	[Fact]
+	public async Task WhenSameTypeImplementsDifferentCombinationsOfSameInterface_ShouldNotGenerateDuplicates()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IBaseInterface, ICommonInterface>();
+			     			_ = Mock.Create<IBaseInterface, ICommonInterface, IAdditionalInterface>();
+			             }
+			         }
+
+			         public interface IBaseInterface { }
+			         public interface ICommonInterface { }
+			         public interface IAdditionalInterface { }
+			     }
+			     """, typeof(DateTime), typeof(Task));
+
+		await That(result.Diagnostics).IsEmpty();
+		
+		// Should generate two combination extension files
+		await That(result.Sources).ContainsKey("MockForIBaseInterface_ICommonInterfaceExtensions.g.cs").And
+			.ContainsKey("MockForIBaseInterface_ICommonInterface_IAdditionalInterfaceExtensions.g.cs");
+		
+		// The first combination should have Setup/Verify for ICommonInterface
+		string firstExtensionContent = result.Sources["MockForIBaseInterface_ICommonInterfaceExtensions.g.cs"];
+		await That(firstExtensionContent).Contains("SetupICommonInterfaceMock").And
+			.Contains("VerifyOnICommonInterfaceMock");
+		
+		// The second combination should only have Setup/Verify for IAdditionalInterface
+		// It should NOT have Setup/Verify for ICommonInterface (to avoid ambiguous reference)
+		string secondExtensionContent = result.Sources["MockForIBaseInterface_ICommonInterface_IAdditionalInterfaceExtensions.g.cs"];
+		await That(secondExtensionContent).DoesNotContain("SetupICommonInterfaceMock").And
+			.DoesNotContain("VerifyOnICommonInterfaceMock").And
+			.Contains("SetupIAdditionalInterfaceMock").And
+			.Contains("VerifyOnIAdditionalInterfaceMock");
+	}
 }
