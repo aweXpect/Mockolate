@@ -110,6 +110,9 @@ public sealed partial class ItExtensionsTests
 				HttpResponseMessage result =
 					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
 
+				await That(httpClient.VerifyMock.Invoked
+					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values)))
+					.Once();
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 

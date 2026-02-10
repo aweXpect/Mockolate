@@ -64,21 +64,7 @@ public static partial class ItExtensions
 		/// </summary>
 		protected abstract TParameter GetThis { get; }
 
-		public TParameter WithHeaders(string name, HttpHeaderValue value)
-		{
-			_headers ??= new HttpHeadersMatcher();
-			_headers.AddRequiredHeader(name, value);
-			return GetThis;
-		}
-
 		public TParameter WithHeaders(params IEnumerable<(string Name, HttpHeaderValue Value)> headers)
-		{
-			_headers ??= new HttpHeadersMatcher();
-			_headers.AddRequiredHeader(headers);
-			return GetThis;
-		}
-
-		public TParameter WithHeaders(string headers)
 		{
 			_headers ??= new HttpHeadersMatcher();
 			_headers.AddRequiredHeader(headers);
