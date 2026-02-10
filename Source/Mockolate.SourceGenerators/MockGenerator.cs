@@ -34,10 +34,16 @@ public class MockGenerator : IIncrementalGenerator
 			(spc, source) => Execute([..source.Distinct(),], spc));
 	}
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
 	{
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
-		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate)
+		HashSet<(string? BaseNamespace, string BaseClassName, string? Namespace, string ClassName)>
+			generatedAdditionalInterfacesByBaseType = new();
+
+		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate
+			         .OrderBy(m => m.MockClass.AdditionalImplementations.Count)
+			         .ThenBy(m => m.Name))
 		{
 			if (!IsValidMockDeclaration(mockToGenerate.MockClass))
 			{
@@ -48,10 +54,20 @@ public class MockGenerator : IIncrementalGenerator
 				SourceText.From(Sources.Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
 			if (mockToGenerate.MockClass.AdditionalImplementations.Any() && mockToGenerate.MockClass.Delegate is null)
 			{
-				context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
-					SourceText.From(
-						Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass, mockToGenerate.MockClass.DistinctAdditionalImplementations()),
-						Encoding.UTF8));
+				Class[] interfacesToGenerate = mockToGenerate.MockClass.DistinctAdditionalImplementations()
+					.Where(impl => generatedAdditionalInterfacesByBaseType .Add(
+						(mockToGenerate.MockClass.Namespace, mockToGenerate.MockClass.ClassName,
+							impl.Namespace, impl.ClassName)))
+					.ToArray();
+
+				if (interfacesToGenerate.Length > 0)
+				{
+					context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
+						SourceText.From(
+							Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass,
+								interfacesToGenerate),
+							Encoding.UTF8));
+				}
 			}
 		}
 
@@ -118,6 +134,7 @@ public class MockGenerator : IIncrementalGenerator
 		context.AddSource("MockBehaviorExtensions.g.cs",
 			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate), Encoding.UTF8));
 	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)
 	{
