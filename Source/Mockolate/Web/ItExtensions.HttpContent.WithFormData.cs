@@ -19,7 +19,7 @@ public static partial class ItExtensions
 		///     Expects the form data content to contain the given <paramref name="key" />-<paramref name="value" /> pair.
 		/// </summary>
 		public IFormDataContentParameter WithFormData(string key, HttpFormDataValue value)
-			=> parameter.WithFormData([(key, value),]);
+			=> parameter.WithFormData((key, value)!);
 
 		/// <summary>
 		///     Expects the form data content to contain the given <paramref name="values" />.
