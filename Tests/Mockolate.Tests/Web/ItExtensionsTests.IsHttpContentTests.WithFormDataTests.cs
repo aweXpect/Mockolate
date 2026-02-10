@@ -21,6 +21,7 @@ public sealed partial class ItExtensionsTests
 			[InlineData(false, "y", "234", "z", "345", "z", "567")]
 			[InlineData(false, "x", "123", "z", "345")]
 			[InlineData(false, "x", "123", "y", "234")]
+			[InlineData(false, "x", "123", "y", "234", "z", "345")]
 			public async Task Exactly_ShouldOnlyMatchWhenAllParametersAreChecked(
 				bool expectSuccess, params string[] rawValues)
 			{
@@ -53,7 +54,7 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("x<>", "1<2> 3")]
+			[InlineData("x<>", "1<2> 3 ")]
 			public async Task ShouldEncodeValues(string key, string value)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();

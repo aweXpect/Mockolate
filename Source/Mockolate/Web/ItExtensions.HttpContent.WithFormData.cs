@@ -114,7 +114,7 @@ public static partial class ItExtensions
 
 				if (!string.IsNullOrWhiteSpace(line))
 				{
-					sb.AppendLine(line.TrimEnd());
+					sb.AppendLine(line);
 				}
 			}
 
