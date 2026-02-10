@@ -43,6 +43,47 @@ public sealed partial class ItExtensionsTests
 		}
 #endif
 
+		[Fact]
+		public async Task ShouldSupportMultipleCombinations()
+		{
+			byte[] bytes = "foo"u8.ToArray();
+			HttpClient httpClient = Mock.Create<HttpClient>();
+			httpClient.SetupMock.Method
+				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+					.WithStringMatching("*")
+					.WithString("foo")
+					.WithBytes(b => b.Length == 3))
+				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+			ByteArrayContent content = new(bytes);
+			content.Headers.Add("x-my-header", "my-value");
+
+			HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				content,
+				CancellationToken.None);
+
+			await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+		}
+
+		[Fact]
+		public async Task ShouldSupportWithHeadersInWrapper()
+		{
+			byte[] bytes = "foo"u8.ToArray();
+			HttpClient httpClient = Mock.Create<HttpClient>();
+			httpClient.SetupMock.Method
+				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
+					.WithStringMatching("*")
+					.WithHeaders("x-my-header", "my-value"))
+				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+			ByteArrayContent content = new(bytes);
+			content.Headers.Add("x-my-header", "my-value");
+
+			HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				content,
+				CancellationToken.None);
+
+			await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
+		}
+
 		[Theory]
 		[InlineData("image/png", true)]
 		[InlineData("text/plain", false)]
