@@ -657,5 +657,38 @@ public sealed partial class MockTests
 				.WithMessage(
 					"The mock declaration has 1 additional implementation that is not an interface: Mockolate.Tests.TestHelpers.MyServiceBase");
 		}
+
+		[Fact]
+		public async Task WithAdditionalInterfacesFromDifferentNamespaces_ShouldHaveUniqueName()
+		{
+			int invocationCount1 = 0;
+			int invocationCount2 = 0;
+			IChocolateDispenser sut1 = Mock.Create<IChocolateDispenser, TestHelpers.IMyService>();
+			IChocolateDispenser sut2 = Mock.Create<IChocolateDispenser, TestHelpers.Other.IMyService>();
+
+			sut1.SetupIMyServiceMock.Method
+				.DoSomething(It.IsAny<int>())
+				.Do(() => invocationCount1++);
+			sut2.SetupIMyService__2Mock.Method
+				.DoSomething(It.IsAny<int>())
+				.Do(() => invocationCount2++);
+
+			((TestHelpers.IMyService)sut1).DoSomething(1);
+			((TestHelpers.IMyService)sut1).DoSomething(2);
+			((TestHelpers.Other.IMyService)sut2).DoSomething(1);
+			((TestHelpers.Other.IMyService)sut2).DoSomething(2);
+			((TestHelpers.Other.IMyService)sut2).DoSomething(3);
+
+			await That(invocationCount1).IsEqualTo(2);
+			await That(invocationCount2).IsEqualTo(3);
+			await That(sut1.VerifyOnIMyServiceMock.Invoked
+				.DoSomething(It.IsAny<int>())).Exactly(2);
+			await That(() => sut1.VerifyOnIMyService__2Mock)
+				.Throws<InvalidCastException>();
+			await That(() => sut2.VerifyOnIMyServiceMock)
+				.Throws<InvalidCastException>();
+			await That(sut2.VerifyOnIMyService__2Mock.Invoked
+				.DoSomething(It.IsAny<int>())).Exactly(3);
+		}
 	}
 }

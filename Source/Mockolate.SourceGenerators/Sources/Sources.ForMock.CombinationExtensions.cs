@@ -9,8 +9,11 @@ internal static partial class Sources
 {
 	private static readonly Regex InvalidIdentifierChars = new("[^a-zA-Z0-9_]", RegexOptions.Compiled);
 
-	public static string ForMockCombinationExtensions(string name, MockClass mockClass,
-		IEnumerable<Class> distinctAdditionalImplementations)
+	public static string ForMockCombinationExtensions(
+		string name,
+		MockClass mockClass,
+		IEnumerable<Class> distinctAdditionalImplementations,
+		HashSet<string> usedNames)
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Exceptions",
@@ -61,7 +64,6 @@ internal static partial class Sources
 		sb.Append("\textension(").Append(mockClass.ClassFullName).AppendLine(" subject)");
 		sb.AppendLine("\t{");
 
-		HashSet<string> usedNames = [];
 		foreach (Class @class in distinctAdditionalImplementations)
 		{
 			AppendAdditionalMockExtensions(sb, @class, usedNames);

@@ -162,6 +162,54 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WhenNamesConflictForAdditionalClassesInDifferentNamespaces_ShouldAppendAnIndex()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = Mock.Create<IMyService, MyCode.IMyInt>();
+			     			_ = Mock.Create<IMyService, OtherNamespace.IMyInt>();
+			             }
+			         }
+
+			         public interface IMyInt { }
+
+			         public interface IMyService { }
+			     }
+			     namespace OtherNamespace
+			     {
+			         public interface IMyInt { }
+			     }
+			     """, typeof(HttpResponseMessage));
+
+		await ThatAll(
+			That(result.Sources.Keys).Contains([
+				"MockForIMyService_IMyInt.g.cs",
+				"MockForIMyService_IMyInt_1.g.cs",
+				"MockForIMyService_IMyIntExtensions.g.cs",
+				"MockForIMyService_IMyInt_1Extensions.g.cs",
+			]).InAnyOrder(),
+			That(result.Sources["MockForIMyService_IMyIntExtensions.g.cs"])
+				.Contains("public IMockSetup<MyCode.IMyInt> SetupIMyIntMock").And
+				.Contains("public IMockVerify<MyCode.IMyInt> VerifyOnIMyIntMock"),
+			That(result.Sources["MockForIMyService_IMyInt_1Extensions.g.cs"])
+				.Contains("public IMockSetup<OtherNamespace.IMyInt> SetupIMyInt__2Mock").And
+				.Contains("public IMockVerify<OtherNamespace.IMyInt> VerifyOnIMyInt__2Mock"),
+			That(result.Diagnostics).IsEmpty()
+		);
+	}
+
+	[Fact]
 	public async Task WhenUsingCustomMockGeneratorAttribute_ShouldNotBeIncluded()
 	{
 		GeneratorResult result = Generator
