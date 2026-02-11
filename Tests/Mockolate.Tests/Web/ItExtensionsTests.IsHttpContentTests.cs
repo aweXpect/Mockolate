@@ -13,7 +13,6 @@ public sealed partial class ItExtensionsTests
 {
 	public sealed partial class IsHttpContentTests
 	{
-#if !NETFRAMEWORK
 		[Fact]
 		public async Task ShouldSupportMonitoring()
 		{
@@ -35,13 +34,14 @@ public sealed partial class ItExtensionsTests
 				await httpClient.PostAsync("https://www.aweXpect.com", response, CancellationToken.None);
 			}
 
+#if !NETFRAMEWORK
 			await That(
 					(await Task.WhenAll(monitor.Values.Select(c => c!.ReadAsByteArrayAsync())))
 					.Select(x => x.Length))
 				.IsEqualTo([0, 1, 3,]);
+#endif
 			await That(callbackCount).IsEqualTo(3);
 		}
-#endif
 
 		[Fact]
 		public async Task ShouldSupportMultipleCombinations()
