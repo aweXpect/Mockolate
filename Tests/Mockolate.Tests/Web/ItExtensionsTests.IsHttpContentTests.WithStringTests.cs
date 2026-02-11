@@ -96,7 +96,6 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
-#if !NETFRAMEWORK
 			[Fact]
 			public async Task ShouldSupportMonitoring()
 			{
@@ -119,12 +118,13 @@ public sealed partial class ItExtensionsTests
 					await httpClient.PostAsync("https://www.aweXpect.com", response, CancellationToken.None);
 				}
 
+#if !NETFRAMEWORK
 				await That(
 						await Task.WhenAll(monitor.Values.Select(c => c!.ReadAsStringAsync())))
 					.IsEqualTo(["foo", "foobar", "foo-baz",]);
+#endif
 				await That(callbackCount).IsEqualTo(3);
 			}
-#endif
 
 			[Theory]
 			[InlineData("image/png", false)]
