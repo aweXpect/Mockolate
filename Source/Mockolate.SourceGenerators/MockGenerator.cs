@@ -38,6 +38,7 @@ public class MockGenerator : IIncrementalGenerator
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
 	{
 		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
+		Dictionary<(string? Namespace, string ClassName), HashSet<string>> allUsedNames = [];
 		HashSet<(string? BaseNamespace, string BaseClassName, string? Namespace, string ClassName)>
 			generatedAdditionalInterfacesByBaseType = new();
 
@@ -55,17 +56,30 @@ public class MockGenerator : IIncrementalGenerator
 			if (mockToGenerate.MockClass.AdditionalImplementations.Any() && mockToGenerate.MockClass.Delegate is null)
 			{
 				Class[] interfacesToGenerate = mockToGenerate.MockClass.DistinctAdditionalImplementations()
-					.Where(impl => generatedAdditionalInterfacesByBaseType .Add(
+					.Where(impl => generatedAdditionalInterfacesByBaseType.Add(
 						(mockToGenerate.MockClass.Namespace, mockToGenerate.MockClass.ClassName,
 							impl.Namespace, impl.ClassName)))
 					.ToArray();
 
 				if (interfacesToGenerate.Length > 0)
 				{
+					(string? Namespace, string ClassName) key = (mockToGenerate.MockClass.Namespace,
+						mockToGenerate.MockClass.ClassName);
+					HashSet<string> usedNames;
+					if (allUsedNames.ContainsKey(key))
+					{
+						usedNames = allUsedNames[key];
+					}
+					else
+					{
+						usedNames = new HashSet<string>();
+						allUsedNames.Add(key, usedNames);
+					}
+
 					context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
 						SourceText.From(
 							Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass,
-								interfacesToGenerate),
+								interfacesToGenerate, usedNames),
 							Encoding.UTF8));
 				}
 			}

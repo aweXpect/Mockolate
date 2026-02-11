@@ -9,8 +9,11 @@ internal static partial class Sources
 {
 	private static readonly Regex InvalidIdentifierChars = new("[^a-zA-Z0-9_]", RegexOptions.Compiled);
 
-	public static string ForMockCombinationExtensions(string name, MockClass mockClass,
-		IEnumerable<Class> distinctAdditionalImplementations)
+	public static string ForMockCombinationExtensions(
+		string name,
+		MockClass mockClass,
+		IEnumerable<Class> distinctAdditionalImplementations,
+		HashSet<string> usedNames)
 	{
 		StringBuilder sb = InitializeBuilder([
 			"Mockolate.Exceptions",
@@ -61,10 +64,9 @@ internal static partial class Sources
 		sb.Append("\textension(").Append(mockClass.ClassFullName).AppendLine(" subject)");
 		sb.AppendLine("\t{");
 
-		HashSet<string> usedNames = [];
 		foreach (Class @class in distinctAdditionalImplementations)
 		{
-			AppendAdditionalMockExtensions(sb, @class, usedNames);
+			AppendAdditionalMockExtensions(sb, mockClass, @class, usedNames);
 		}
 
 		sb.AppendLine("\t}");
@@ -74,15 +76,19 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	private static void AppendAdditionalMockExtensions(StringBuilder sb, Class @class, HashSet<string> usedNames)
+	private static void AppendAdditionalMockExtensions(StringBuilder sb, MockClass mockClass, Class @class,
+		HashSet<string> usedNames)
 	{
 		sb.AppendLine();
 		int nameSuffix = 1;
-		string sanitizedClassName = InvalidIdentifierChars.Replace(@class.ClassName, "_");
+		string sanitizedClassName = InvalidIdentifierChars.Replace(
+			mockClass.Namespace == @class.Namespace
+				? @class.ClassName
+				: $"{@class.Namespace}.{@class.ClassName}", "_");
 		string name = sanitizedClassName;
 		while (!usedNames.Add(name))
 		{
-			name = $"{sanitizedClassName}__{++nameSuffix}";
+			name = $"{sanitizedClassName}_{++nameSuffix}";
 		}
 
 		string mockExpression =
@@ -93,8 +99,8 @@ internal static partial class Sources
 			.Append("\" />")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).Append("> Setup").Append(name)
-			.Append("Mock")
+		sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).Append("> Setup_").Append(name)
+			.Append("_Mock")
 			.AppendLine();
 		sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
 
@@ -106,8 +112,8 @@ internal static partial class Sources
 				.Append(@class.ClassFullName.EscapeForXmlDoc())
 				.Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic IMockRaises<").Append(@class.ClassFullName).Append("> RaiseOn")
-				.Append(name).Append("Mock").AppendLine();
+			sb.Append("\t\tpublic IMockRaises<").Append(@class.ClassFullName).Append("> RaiseOn_")
+				.Append(name).Append("_Mock").AppendLine();
 			sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
 		}
 
@@ -116,8 +122,8 @@ internal static partial class Sources
 		sb.Append("\t\t///     Verifies the interactions with the mocked subject of <see cref=\"")
 			.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" /> on the mock.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).Append("> VerifyOn").Append(name)
-			.Append("Mock")
+		sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).Append("> VerifyOn_").Append(name)
+			.Append("_Mock")
 			.AppendLine();
 		sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
 	}

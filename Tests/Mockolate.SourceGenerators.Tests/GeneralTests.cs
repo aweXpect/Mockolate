@@ -354,7 +354,7 @@ public class GeneralTests
 
 		await That(result.Sources).ContainsKey("MockForIMyInterface_IMyInterface_IMyInterfaceExtensions.g.cs")
 			.WhoseValue
-			.Contains("public IMockSetup<MyCode.N2.IMyInterface> SetupIMyInterface__2Mock");
+			.Contains("public IMockSetup<MyCode.N2.IMyInterface> Setup_MyCode_N2_IMyInterface_Mock");
 	}
 
 	[Fact]

@@ -20,14 +20,14 @@ public class ExampleTests
 		Guid id = Guid.NewGuid();
 		MyClass mock =
 			Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
-		mock.SetupIExampleRepositoryMock.Method.AddUser(
+		mock.Setup_IExampleRepository_Mock.Method.AddUser(
 				It.IsAny<string>())
 			.Returns(new User(id, "Alice"));
 
 		User result = ((IExampleRepository)mock).AddUser("Bob");
 
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		mock.VerifyOnIExampleRepositoryMock.Invoked.AddUser(It.Is("Bob")).Once();
+		mock.VerifyOn_IExampleRepository_Mock.Invoked.AddUser(It.Is("Bob")).Once();
 	}
 
 	[Fact]
@@ -93,14 +93,14 @@ public class ExampleTests
 	{
 		Guid id = Guid.NewGuid();
 		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.SetupIOrderRepositoryMock.Method
+		mock.Setup_IOrderRepository_Mock.Method
 			.AddOrder(It.IsAny<string>())
 			.Returns(new Order(id, "Order1"));
 
 		Order result = ((IOrderRepository)mock).AddOrder("foo");
 
 		await That(result.Name).IsEqualTo("Order1");
-		mock.VerifyOnIOrderRepositoryMock.Invoked.AddOrder(It.Is("foo")).Once();
+		mock.VerifyOn_IOrderRepository_Mock.Invoked.AddOrder(It.Is("foo")).Once();
 		await That(mock).Is<IExampleRepository>();
 		await That(mock).Is<IOrderRepository>();
 	}
@@ -142,7 +142,7 @@ public class ExampleTests
 		Order result = ((IOrderRepository)mock).AddOrder("foo");
 
 		await That(result.Name).IsEqualTo("Order1");
-		mock.VerifyOnIOrderRepositoryMock.Invoked.AddOrder(It.Is("foo")).Once();
+		mock.VerifyOn_IOrderRepository_Mock.Invoked.AddOrder(It.Is("foo")).Once();
 		await That(mock).Is<IExampleRepository>();
 		await That(mock).Is<IOrderRepository>();
 	}
@@ -152,7 +152,7 @@ public class ExampleTests
 	{
 		Guid id = Guid.NewGuid();
 		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.SetupIOrderRepositoryMock.Method
+		mock.Setup_IOrderRepository_Mock.Method
 			.AddOrder(It.IsAny<string>())
 			.Returns(new Order(id, "Order1"));
 
