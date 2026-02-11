@@ -666,10 +666,10 @@ public sealed partial class MockTests
 			IChocolateDispenser sut1 = Mock.Create<IChocolateDispenser, TestHelpers.IMyService>();
 			IChocolateDispenser sut2 = Mock.Create<IChocolateDispenser, TestHelpers.Other.IMyService>();
 
-			sut1.SetupIMyServiceMock.Method
+			sut1.Setup_IMyService_Mock.Method
 				.DoSomething(It.IsAny<int>())
 				.Do(() => invocationCount1++);
-			sut2.SetupIMyService__2Mock.Method
+			sut2.Setup_Mockolate_Tests_TestHelpers_Other_IMyService_Mock.Method
 				.DoSomething(It.IsAny<int>())
 				.Do(() => invocationCount2++);
 
@@ -681,13 +681,13 @@ public sealed partial class MockTests
 
 			await That(invocationCount1).IsEqualTo(2);
 			await That(invocationCount2).IsEqualTo(3);
-			await That(sut1.VerifyOnIMyServiceMock.Invoked
+			await That(sut1.VerifyOn_IMyService_Mock.Invoked
 				.DoSomething(It.IsAny<int>())).Exactly(2);
-			await That(() => sut1.VerifyOnIMyService__2Mock)
+			await That(() => sut1.VerifyOn_Mockolate_Tests_TestHelpers_Other_IMyService_Mock)
 				.Throws<InvalidCastException>();
-			await That(() => sut2.VerifyOnIMyServiceMock)
+			await That(() => sut2.VerifyOn_IMyService_Mock)
 				.Throws<InvalidCastException>();
-			await That(sut2.VerifyOnIMyService__2Mock.Invoked
+			await That(sut2.VerifyOn_Mockolate_Tests_TestHelpers_Other_IMyService_Mock.Invoked
 				.DoSomething(It.IsAny<int>())).Exactly(3);
 		}
 	}

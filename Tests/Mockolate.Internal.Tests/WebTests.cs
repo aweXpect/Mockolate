@@ -36,14 +36,14 @@ public class WebTests
 	{
 		ItExtensions.IHttpContentParameter parameter =
 			Mock.Create<ItExtensions.IHttpContentParameter, IParameter>();
-		parameter.SetupIParameterMock.Method.Matches(It.IsAny<object?>()).Returns(true);
+		parameter.Setup_Mockolate_Parameters_IParameter_Mock.Method.Matches(It.IsAny<object?>()).Returns(true);
 
 		ItExtensions.IStringContentBodyParameter sut = parameter.WithString("foo");
 
 		bool result = ((IHttpRequestMessagePropertyParameter<HttpContent?>)sut).Matches(null, null);
 
 		await That(result).IsTrue();
-		await That(parameter.VerifyOnIParameterMock.Invoked
+		await That(parameter.VerifyOn_Mockolate_Parameters_IParameter_Mock.Invoked
 				.Matches(It.IsNull<object?>()))
 			.Once();
 	}
@@ -54,8 +54,8 @@ public class WebTests
 		ItExtensions.IHttpContentParameter parameter =
 			Mock.Create<ItExtensions.IHttpContentParameter, IParameter,
 				IHttpRequestMessagePropertyParameter<HttpContent?>>();
-		parameter.SetupIParameterMock.Method.Matches(It.IsAny<object?>()).Returns(false);
-		parameter.SetupIHttpRequestMessagePropertyParameter_HttpContent_Mock.Method
+		parameter.Setup_Mockolate_Parameters_IParameter_Mock.Method.Matches(It.IsAny<object?>()).Returns(false);
+		parameter.Setup_IHttpRequestMessagePropertyParameter_HttpContent__Mock.Method
 			.Matches(It.IsAny<HttpContent?>(), It.IsAny<HttpRequestMessage?>()).Returns(true);
 
 		ItExtensions.IStringContentBodyParameter sut = parameter.WithString("foo");
@@ -63,10 +63,10 @@ public class WebTests
 		bool result = ((IHttpRequestMessagePropertyParameter<HttpContent?>)sut).Matches(null, null);
 
 		await That(result).IsTrue();
-		await That(parameter.VerifyOnIHttpRequestMessagePropertyParameter_HttpContent_Mock.Invoked
+		await That(parameter.VerifyOn_IHttpRequestMessagePropertyParameter_HttpContent__Mock.Invoked
 				.Matches(It.IsNull<HttpContent?>(), It.IsNull<HttpRequestMessage?>()))
 			.Once();
-		await That(parameter.VerifyOnIParameterMock.Invoked
+		await That(parameter.VerifyOn_Mockolate_Parameters_IParameter_Mock.Invoked
 				.Matches(It.IsNull<object?>()))
 			.Never();
 	}

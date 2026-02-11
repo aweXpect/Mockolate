@@ -200,11 +200,11 @@ public class MockGeneratorTests
 				"MockForIMyService_IMyInt_1Extensions.g.cs",
 			]).InAnyOrder(),
 			That(result.Sources["MockForIMyService_IMyIntExtensions.g.cs"])
-				.Contains("public IMockSetup<MyCode.IMyInt> SetupIMyIntMock").And
-				.Contains("public IMockVerify<MyCode.IMyInt> VerifyOnIMyIntMock"),
+				.Contains("public IMockSetup<MyCode.IMyInt> Setup_IMyInt_Mock").And
+				.Contains("public IMockVerify<MyCode.IMyInt> VerifyOn_IMyInt_Mock"),
 			That(result.Sources["MockForIMyService_IMyInt_1Extensions.g.cs"])
-				.Contains("public IMockSetup<OtherNamespace.IMyInt> SetupIMyInt__2Mock").And
-				.Contains("public IMockVerify<OtherNamespace.IMyInt> VerifyOnIMyInt__2Mock"),
+				.Contains("public IMockSetup<OtherNamespace.IMyInt> Setup_OtherNamespace_IMyInt_Mock").And
+				.Contains("public IMockVerify<OtherNamespace.IMyInt> VerifyOn_OtherNamespace_IMyInt_Mock"),
 			That(result.Diagnostics).IsEmpty()
 		);
 	}
@@ -507,19 +507,19 @@ public class MockGeneratorTests
 			.DoesNotContainKey("MockForIBaseInterface_IAdditionalInterface1_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs");
 		
 		await That(result.Sources["MockForIBaseInterface_ICommonInterfaceExtensions.g.cs"])
-			.Contains("SetupICommonInterfaceMock").And
-			.Contains("VerifyOnICommonInterfaceMock");
+			.Contains("Setup_ICommonInterface_Mock").And
+			.Contains("VerifyOn_ICommonInterface_Mock");
 		
 		await That(result.Sources["MockForIBaseInterface_ICommonInterface_IAdditionalInterface1Extensions.g.cs"])
-			.DoesNotContain("SetupICommonInterfaceMock").And
-			.DoesNotContain("VerifyOnICommonInterfaceMock").And
-			.Contains("SetupIAdditionalInterface1Mock").And
-			.Contains("VerifyOnIAdditionalInterface1Mock");
+			.DoesNotContain("Setup_ICommonInterface_Mock").And
+			.DoesNotContain("VerifyOn_ICommonInterface_Mock").And
+			.Contains("Setup_IAdditionalInterface1_Mock").And
+			.Contains("VerifyOn_IAdditionalInterface1_Mock");
 		
 		await That(result.Sources["MockForIBaseInterface_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs"])
-			.DoesNotContain("SetupICommonInterfaceMock").And
-			.DoesNotContain("VerifyOnICommonInterfaceMock").And
-			.Contains("SetupIAdditionalInterface2Mock").And
-			.Contains("VerifyOnIAdditionalInterface2Mock");
+			.DoesNotContain("Setup_ICommonInterface_Mock").And
+			.DoesNotContain("VerifyOn_ICommonInterface_Mock").And
+			.Contains("Setup_IAdditionalInterface2_Mock").And
+			.Contains("VerifyOn_IAdditionalInterface2_Mock");
 	}
 }
