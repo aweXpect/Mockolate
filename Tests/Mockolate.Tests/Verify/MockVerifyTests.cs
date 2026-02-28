@@ -276,7 +276,7 @@ public class MockVerifyTests
 
 		await That(r0).IsTrue().Because("No interaction was performed yet");
 		await That(r1).IsTrue().Because("One interaction was performed");
-		await That(r2).IsTrue().Because("The second interactions did not match");
-		await That(r3).IsTrue().Because("The third interactions did again match");
+		await That(r2).IsTrue().Because("The second interaction did not match");
+		await That(r3).IsTrue().Because("The third interaction did again match");
 	}
 }

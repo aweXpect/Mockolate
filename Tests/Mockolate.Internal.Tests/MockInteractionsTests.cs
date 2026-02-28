@@ -1,14 +1,13 @@
-using System.Collections.Generic;
 using Mockolate.Interactions;
 
-namespace Mockolate.Tests.Interactions;
+namespace Mockolate.Internal.Tests;
 
 public class MockInteractionsTests
 {
 	[Fact]
 	public async Task InteractionAdded_ShouldIncludeInteraction()
 	{
-		List<IInteraction> addedInteractions = [];
+		int interactionCount = 0;
 		MockInteractions sut = new();
 		MethodInvocation interaction = new(0, "foo", []);
 		sut.InteractionAdded += OnInteractionAdded;
@@ -17,11 +16,11 @@ public class MockInteractionsTests
 
 		sut.InteractionAdded -= OnInteractionAdded;
 
-		await That(addedInteractions).HasSingle().Which.IsSameAs(interaction);
+		await That(interactionCount).IsEqualTo(1);
 
-		void OnInteractionAdded(object? sender, IInteraction e)
+		void OnInteractionAdded(object? sender, EventArgs e)
 		{
-			addedInteractions.Add(e);
+			interactionCount++;
 		}
 	}
 
