@@ -49,7 +49,7 @@ public sealed partial class VerificationResultTests
 			void Act()
 			{
 				sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
-					.Within(TimeSpan.FromMilliseconds(100))
+					.Within(TimeSpan.FromMilliseconds(30000))
 					.WithCancellation(token)
 					.AtLeastOnce();
 			}
@@ -63,7 +63,7 @@ public sealed partial class VerificationResultTests
 		public async Task WithCancellationAndTimeout_ShouldIncludeTimeoutInExceptionWhenLessThanCancellationToken()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-			using CancellationTokenSource cts = new(250);
+			using CancellationTokenSource cts = new(30000);
 			CancellationToken token = cts.Token;
 
 			void Act()

@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
-using Mockolate.Internals;
 
 namespace Mockolate.Verify;
 
@@ -133,13 +132,13 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 					token = cts.Token;
 				}
 
-				TaskCompletionSource<bool> tcs = new();
+				SemaphoreSlim semaphore = new(0, 1);
 				try
 				{
 					_interactions.InteractionAdded += OnInteractionAdded;
 					do
 					{
-						await tcs.WaitAsync(token);
+						await semaphore.WaitAsync(token);
 
 						matchingInteractions = _interactions.Interactions.Where(_predicate).ToArray();
 						_interactions.Verified(matchingInteractions);
@@ -147,8 +146,6 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 						{
 							return true;
 						}
-
-						tcs = new TaskCompletionSource<bool>();
 					} while (!token.IsCancellationRequested);
 
 					return false;
@@ -161,7 +158,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 				void OnInteractionAdded(object? sender, EventArgs eventArgs)
 				{
-					tcs.TrySetResult(true);
+					semaphore.Release();
 				}
 			}
 			catch (OperationCanceledException ex)
