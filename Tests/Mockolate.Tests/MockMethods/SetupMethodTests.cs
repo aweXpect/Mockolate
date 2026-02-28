@@ -1172,9 +1172,6 @@ public sealed partial class SetupMethodTests
 			Func<TResult> defaultValueGenerator)
 			=> throw new NotSupportedException();
 
-		protected override bool IsMatch(MethodInvocation invocation)
-			=> throw new NotSupportedException();
-
 		protected override void TriggerParameterCallbacks(object?[] parameters)
 			=> throw new NotSupportedException();
 	}

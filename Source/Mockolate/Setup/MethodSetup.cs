@@ -25,7 +25,7 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.Matches(MethodInvocation)" />
 	bool IInteractiveMethodSetup.Matches(MethodInvocation methodInvocation)
-		=> IsMatch(methodInvocation);
+		=> methodMatch.Matches(methodInvocation);
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.SkipBaseClass()" />
 	bool? IInteractiveMethodSetup.SkipBaseClass()
@@ -92,11 +92,6 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	/// </summary>
 	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator);
-
-	/// <summary>
-	///     Checks if the <paramref name="invocation" /> matches the setup.
-	/// </summary>
-	protected abstract bool IsMatch(MethodInvocation invocation);
 
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.

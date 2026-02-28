@@ -573,16 +573,6 @@ internal static partial class Sources
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
-		sb.Append("\t\tprotected override bool IsMatch(MethodInvocation invocation)").AppendLine();
-		sb.Append("\t\t\t=> invocation.Name.Equals(_name) &&").AppendLine();
-		sb.Append("\t\t\t\t(_matches is not null").AppendLine();
-		sb.Append("\t\t\t\t\t? _matches.Matches(invocation.Parameters)").AppendLine();
-		sb.Append("\t\t\t\t\t: Matches([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
-			.Append("], invocation.Parameters));").AppendLine();
-		sb.AppendLine();
-
 		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(object?[])\" />").AppendLine();
 		sb.Append("\t\tprotected override void TriggerParameterCallbacks(object?[] parameters)").AppendLine();
 		sb.Append("\t\t\t=> TriggerCallbacks([")
@@ -1179,16 +1169,6 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t\treturn defaultValueGenerator();").AppendLine();
 		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.IsMatch(MethodInvocation)\" />").AppendLine();
-		sb.Append("\t\tprotected override bool IsMatch(MethodInvocation invocation)").AppendLine();
-		sb.Append("\t\t\t=> invocation.Name.Equals(_name) &&").AppendLine();
-		sb.Append("\t\t\t\t(_matches is not null").AppendLine();
-		sb.Append("\t\t\t\t\t? _matches.Matches(invocation.Parameters)").AppendLine();
-		sb.Append("\t\t\t\t\t: Matches([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}!")))
-			.Append("], invocation.Parameters));").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(object?[])\" />").AppendLine();

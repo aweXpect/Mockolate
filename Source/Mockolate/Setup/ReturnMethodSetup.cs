@@ -186,10 +186,6 @@ public class ReturnMethodSetup<TReturn>(string name)
 		return defaultValueGenerator();
 	}
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
-
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 	{
@@ -448,12 +444,6 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 
 		return defaultValueGenerator();
 	}
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
@@ -740,12 +730,6 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 
 		return defaultValueGenerator();
 	}
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
@@ -1047,12 +1031,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 
 		return defaultValueGenerator();
 	}
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!, _match3!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
@@ -1372,12 +1350,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 
 		return defaultValueGenerator();
 	}
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)

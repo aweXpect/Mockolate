@@ -167,10 +167,6 @@ public class VoidMethodSetup(string name)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
-
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 	{
@@ -391,12 +387,6 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
@@ -637,12 +627,6 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
@@ -892,12 +876,6 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!, _match3!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
@@ -1153,12 +1131,6 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)

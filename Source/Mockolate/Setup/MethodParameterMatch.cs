@@ -16,11 +16,11 @@ namespace Mockolate.Setup;
 public readonly struct MethodParameterMatch(string methodName, NamedParameter[] parameters) : IMethodMatch
 {
 	/// <inheritdoc cref="IMethodMatch.Matches(MethodInvocation)" />
-	public bool Matches(MethodInvocation method)
-		=> method.Name.Equals(methodName) &&
-		   method.Parameters.Length == parameters.Length &&
+	public bool Matches(MethodInvocation methodInvocation)
+		=> methodInvocation.Name.Equals(methodName) &&
+		   methodInvocation.Parameters.Length == parameters.Length &&
 		   !parameters
-			   .Where((parameter, i) => !parameter.Matches(method.Parameters[i]))
+			   .Where((parameter, i) => !parameter.Matches(methodInvocation.Parameters[i]))
 			   .Any();
 
 	/// <inheritdoc cref="object.ToString()" />

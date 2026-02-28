@@ -14,9 +14,9 @@ namespace Mockolate.Setup;
 public readonly struct MethodParametersMatch(string methodName, IParameters parameters) : IMethodMatch
 {
 	/// <inheritdoc cref="IMethodMatch.Matches(MethodInvocation)" />
-	public bool Matches(MethodInvocation method)
-		=> method.Name.Equals(methodName) &&
-		   parameters.Matches(method.Parameters);
+	public bool Matches(MethodInvocation methodInvocation)
+		=> methodInvocation.Name.Equals(methodName) &&
+		   parameters.Matches(methodInvocation.Parameters);
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
