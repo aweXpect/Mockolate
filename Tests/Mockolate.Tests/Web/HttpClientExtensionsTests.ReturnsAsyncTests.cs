@@ -39,7 +39,6 @@ public sealed partial class HttpClientExtensionsTests
 			HttpStatusCode statusCode, string stringContent)
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(stringContent);
-
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
 				.GetAsync(It.IsAny<Uri>())
@@ -98,7 +97,7 @@ public sealed partial class HttpClientExtensionsTests
 		[InlineData(HttpStatusCode.OK, "foo", "text/plain")]
 		[InlineData(HttpStatusCode.NotFound, "bar", "application/json")]
 		public async Task
-			WithStatusCodeBytesAndMediaType_ShouldReturnHttpResponseMessageWithStatusCodeAndStringContent(
+			WithStatusCodeBytesAndMediaType_ShouldReturnHttpResponseMessageWithStatusCodeAndByteArrayContent(
 				HttpStatusCode statusCode, string stringContent, string mediaType)
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(stringContent);
@@ -110,6 +109,7 @@ public sealed partial class HttpClientExtensionsTests
 			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
+			await That(result.Content).Is<ByteArrayContent>();
 			await That(result.Content.ReadAsByteArrayAsync()).IsEqualTo(bytes);
 			await That(result.Content.Headers.ContentType?.MediaType).IsEqualTo(mediaType);
 		}
