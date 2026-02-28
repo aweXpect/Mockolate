@@ -10,15 +10,22 @@ internal static class TaskExtensions
 #if NET8_0_OR_GREATER
 		return tcs.Task.WaitAsync(cancellationToken);
 #else
-		if (cancellationToken.CanBeCanceled)
+		if (!cancellationToken.CanBeCanceled)
 		{
-			cancellationToken.Register(() =>
-			{
-				tcs.TrySetCanceled(cancellationToken);
-			});
+			return tcs.Task;
 		}
 
-		return tcs.Task;
+		CancellationTokenRegistration registration = cancellationToken.Register(() =>
+		{
+			tcs.TrySetCanceled(cancellationToken);
+		});
+		return tcs.Task.ContinueWith(
+			task =>
+			{
+				registration.Dispose();
+				return task.GetAwaiter().GetResult();
+			},
+			CancellationToken.None);
 #endif
 	}
 }

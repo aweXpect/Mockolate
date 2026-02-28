@@ -522,6 +522,22 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(It.IsAny<string>(), 2), then invoked method Dispense(It.IsAny<string>(), 1), then invoked method Dispense(It.IsAny<string>(), 4) in order, but it invoked method Dispense(It.IsAny<string>(), 1) too early.");
 	}
 
+	[Fact]
+	public async Task Times_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).Times(_ => false);
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) according to the predicate _ => false, but it timed out after 00:00:00.0200000.");
+	}
+
 	[Theory]
 	[InlineData(0, true)]
 	[InlineData(1, false)]
@@ -631,6 +647,22 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				$"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) exactly twice, but it {count switch { 0 => "never did", 1 => "did once", _ => $"did {count} times", }}.");
+	}
+
+	[Fact]
+	public async Task Twice_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).Twice();
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) exactly twice, but it timed out after 00:00:00.0200000.");
 	}
 
 	private class MyChocolateDispenser : IChocolateDispenser

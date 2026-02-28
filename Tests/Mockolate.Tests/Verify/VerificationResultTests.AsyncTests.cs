@@ -11,6 +11,75 @@ public sealed partial class VerificationResultTests
 	public class AsyncTests
 	{
 		[Fact]
+		public async Task MultipleWithin_ShouldOverwritePreviousTimeout()
+		{
+			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+			void Act()
+			{
+				sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+					.Within(TimeSpan.FromMilliseconds(100))
+					.Within(TimeSpan.FromMilliseconds(200))
+					.AtLeastOnce();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage(
+					"Expected that mock invoked method Dispense(Match.AnyParameters()) at least once, but it timed out after 00:00:00.2000000.");
+		}
+
+		[Fact]
+		public async Task WhenAlreadySuccessful_ShouldSucceed()
+		{
+			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+			sut.Dispense("Dark", 1);
+			sut.Dispense("Dark", 2);
+
+			await That(sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Within(TimeSpan.FromMilliseconds(500)))
+				.AtLeastOnce();
+		}
+
+		[Fact]
+		public async Task WithCancellationAndTimeout_ShouldCombineBoth()
+		{
+			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+			using CancellationTokenSource cts = new(50);
+			CancellationToken token = cts.Token;
+
+			void Act()
+			{
+				sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+					.Within(TimeSpan.FromMilliseconds(100))
+					.WithCancellation(token)
+					.AtLeastOnce();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage(
+					"Expected that mock invoked method Dispense(Match.AnyParameters()) at least once, but it timed out.");
+		}
+
+		[Fact]
+		public async Task WithCancellationAndTimeout_ShouldIncludeTimeoutInExceptionWhenLessThanCancellationToken()
+		{
+			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+			using CancellationTokenSource cts = new(250);
+			CancellationToken token = cts.Token;
+
+			void Act()
+			{
+				sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+					.Within(TimeSpan.FromMilliseconds(50))
+					.WithCancellation(token)
+					.AtLeastOnce();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage(
+					"Expected that mock invoked method Dispense(Match.AnyParameters()) at least once, but it timed out after 00:00:00.0500000.");
+		}
+
+		[Fact]
 		public async Task WithCancellationToken_ShouldIncludeTimeoutInException()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();

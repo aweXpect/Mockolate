@@ -96,7 +96,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 				return true;
 			}
 
-			return VerifyAsync(predicate).GetAwaiter().GetResult();
+			return VerifyAsync(predicate).ConfigureAwait(false).GetAwaiter().GetResult();
 		}
 
 		/// <inheritdoc cref="IAsyncVerificationResult.VerifyAsync(Func{IInteraction[], Boolean})" />
@@ -161,11 +161,16 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 				void OnInteractionAdded(object? sender, EventArgs eventArgs)
 				{
-					tcs.SetResult(true);
+					tcs.TrySetResult(true);
 				}
 			}
 			catch (OperationCanceledException ex)
 			{
+				if (_cancellationToken?.IsCancellationRequested == true)
+				{
+					throw new MockVerificationTimeoutException(null, ex);
+				}
+
 				throw new MockVerificationTimeoutException(_timeout, ex);
 			}
 		}

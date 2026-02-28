@@ -3,7 +3,7 @@ using System;
 namespace Mockolate.Exceptions;
 
 /// <summary>
-///     Represents a verification error on the mock.
+///     Represents a verification timeout error on the mock.
 /// </summary>
 internal class MockVerificationTimeoutException : MockException
 {
