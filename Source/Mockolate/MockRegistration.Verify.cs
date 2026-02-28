@@ -12,37 +12,18 @@ namespace Mockolate;
 public partial class MockRegistration
 {
 	/// <summary>
-	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
-	///     <paramref name="subject" />.
+	///     Counts the invocations of methods matching the <paramref name="methodMatch" /> on the <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Method<T>(T subject, string methodName, params NamedParameter[] parameters)
+	public VerificationResult<T> Method<T>(T subject, IMethodMatch methodMatch)
 		=> new(
 			subject,
 			Interactions,
 			Interactions.Interactions
 				.OfType<MethodInvocation>()
-				.Where(method => method.Name.Equals(methodName) &&
-				                 method.Parameters.Length == parameters.Length &&
-				                 !parameters
-					                 .Where((parameter, i) => !parameter.Matches(method.Parameters[i]))
-					                 .Any())
+				.Where(methodMatch.Matches)
 				.Cast<IInteraction>()
 				.ToArray(),
-			$"invoked method {methodName.SubstringAfterLast('.')}({string.Join(", ", parameters.Select(x => x.Parameter.ToString()))})");
-
-	/// <summary>
-	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" /> on the
-	///     <paramref name="subject" />.
-	/// </summary>
-	public VerificationResult<T> Method<T>(T subject, string methodName, IParameters parameters) => new(subject,
-		Interactions,
-		Interactions.Interactions
-			.OfType<MethodInvocation>()
-			.Where(method => method.Name.Equals(methodName) &&
-			                 parameters.Matches(method.Parameters))
-			.Cast<IInteraction>()
-			.ToArray(),
-		$"invoked method {methodName.SubstringAfterLast('.')}({parameters})");
+			$"invoked method {methodMatch}");
 
 	/// <summary>
 	///     Counts the getter accesses of property <paramref name="propertyName" /> on the <paramref name="subject" />.

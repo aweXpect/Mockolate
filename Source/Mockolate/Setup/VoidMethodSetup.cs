@@ -9,15 +9,17 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbackBuilder, IVoidMethodSetupReturnBuilder
+public class VoidMethodSetup(string name)
+	: MethodSetup(new MethodParameterMatch(name, [])),
+		IVoidMethodSetupCallbackBuilder, IVoidMethodSetupReturnBuilder
 {
 	private readonly List<Callback<Action<int>>> _callbacks = [];
 	private readonly List<Callback<Action<int>>> _returnCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IVoidMethodSetup.SkippingBaseClass(bool)" />
 	public IVoidMethodSetup SkippingBaseClass(bool skipBaseClass = true)
@@ -165,10 +167,6 @@ public class VoidMethodSetup(string name) : MethodSetup, IVoidMethodSetupCallbac
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(name) && invocation.Parameters.Length == 0;
-
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 	{
@@ -202,14 +200,15 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1>>> _returnCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1}" />
 	public VoidMethodSetup(string name, NamedParameter match1)
+		: base(new MethodParameterMatch(name, [match1,]))
 	{
 		_name = name;
 		_match1 = match1;
@@ -217,6 +216,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 
 	/// <inheritdoc cref="VoidMethodSetup{T1}" />
 	public VoidMethodSetup(string name, IParameters matches)
+		: base(new MethodParametersMatch(name, matches))
 	{
 		_name = name;
 		_matches = matches;
@@ -388,12 +388,6 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!,], invocation.Parameters));
-
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1,], parameters);
@@ -444,14 +438,15 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2>>> _returnCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
 	public VoidMethodSetup(string name, NamedParameter match1, NamedParameter match2)
+		: base(new MethodParameterMatch(name, [match1, match2,]))
 	{
 		_name = name;
 		_match1 = match1;
@@ -460,6 +455,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
 	public VoidMethodSetup(string name, IParameters matches)
+		: base(new MethodParametersMatch(name, matches))
 	{
 		_name = name;
 		_matches = matches;
@@ -632,12 +628,6 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!,], invocation.Parameters));
-
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1, _match2,], parameters);
@@ -689,11 +679,11 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _returnCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
 	public VoidMethodSetup(
@@ -701,6 +691,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		NamedParameter match1,
 		NamedParameter match2,
 		NamedParameter match3)
+		: base(new MethodParameterMatch(name, [match1, match2, match3,]))
 	{
 		_name = name;
 		_match1 = match1;
@@ -710,6 +701,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
 	public VoidMethodSetup(string name, IParameters matches)
+		: base(new MethodParametersMatch(name, matches))
 	{
 		_name = name;
 		_matches = matches;
@@ -885,12 +877,6 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
 
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!, _match3!,], invocation.Parameters));
-
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)
 		=> TriggerCallbacks([_match1, _match2, _match3,], parameters);
@@ -943,11 +929,11 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	private readonly IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _returnCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
 	public VoidMethodSetup(
@@ -956,6 +942,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		NamedParameter match2,
 		NamedParameter match3,
 		NamedParameter match4)
+		: base(new MethodParameterMatch(name, [match1, match2, match3, match4,]))
 	{
 		_name = name;
 		_match1 = match1;
@@ -966,6 +953,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
 	public VoidMethodSetup(string name, IParameters matches)
+		: base(new MethodParametersMatch(name, matches))
 	{
 		_name = name;
 		_matches = matches;
@@ -1143,12 +1131,6 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		Func<TResult> defaultValueGenerator)
 		where TResult : default
 		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.IsMatch(MethodInvocation)" />
-	protected override bool IsMatch(MethodInvocation invocation)
-		=> invocation.Name.Equals(_name) &&
-		   (_matches?.Matches(invocation.Parameters)
-		    ?? Matches([_match1!, _match2!, _match3!, _match4!,], invocation.Parameters));
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
 	protected override void TriggerParameterCallbacks(object?[] parameters)

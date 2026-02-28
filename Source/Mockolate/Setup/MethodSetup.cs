@@ -9,7 +9,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for method setups.
 /// </summary>
-public abstract class MethodSetup : IInteractiveMethodSetup
+public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethodSetup, IVerifiableMethodSetup
 {
 	/// <inheritdoc cref="IInteractiveMethodSetup.HasReturnCalls()" />
 	bool IInteractiveMethodSetup.HasReturnCalls()
@@ -25,7 +25,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.Matches(MethodInvocation)" />
 	bool IInteractiveMethodSetup.Matches(MethodInvocation methodInvocation)
-		=> IsMatch(methodInvocation);
+		=> methodMatch.Matches(methodInvocation);
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.SkipBaseClass()" />
 	bool? IInteractiveMethodSetup.SkipBaseClass()
@@ -47,6 +47,10 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 	/// <inheritdoc cref="IInteractiveMethodSetup.TriggerCallbacks(object?[])" />
 	public void TriggerCallbacks(object?[] parameters)
 		=> TriggerParameterCallbacks(parameters);
+
+	/// <inheritdoc cref="IVerifiableMethodSetup.GetMatch()" />
+	public IMethodMatch GetMatch()
+		=> methodMatch;
 
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be skipped.
@@ -88,11 +92,6 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 	/// </summary>
 	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator);
-
-	/// <summary>
-	///     Checks if the <paramref name="invocation" /> matches the setup.
-	/// </summary>
-	protected abstract bool IsMatch(MethodInvocation invocation);
 
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
