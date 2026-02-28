@@ -26,12 +26,16 @@ public static class MockExtensions
 	/// </summary>
 	public static VerificationResult<T> InvokedSetup<T>(this IMockVerify<T> verify, IMethodSetup setup)
 	{
-		if (setup is IVerifiableMethodSetup verifiableMethodSetup &&
-		    verify is Mock<T> mock)
+		if (verify is not Mock<T> mock)
 		{
-			return mock.Registrations.Method(mock.Subject, verifiableMethodSetup.GetMatch());
+			throw new MockException("The subject is no mock subject.");
 		}
 
-		throw new MockException("The subject is no mock.");
+		if (setup is not IVerifiableMethodSetup verifiableMethodSetup)
+		{
+			throw new MockException("The setup is not verifiable.");
+		}
+
+		return mock.Registrations.Method(mock.Subject, verifiableMethodSetup.GetMatch());
 	}
 }

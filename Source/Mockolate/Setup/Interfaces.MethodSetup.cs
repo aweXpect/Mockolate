@@ -872,7 +872,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetup
+public interface IVoidMethodSetup : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -1005,7 +1005,7 @@ public interface IVoidMethodSetupReturnWhenBuilder : IVoidMethodSetup
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetup<out T1>
+public interface IVoidMethodSetup<out T1> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -1152,7 +1152,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1>
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetup<out T1, out T2>
+public interface IVoidMethodSetup<out T1, out T2> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -1299,7 +1299,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2>
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetup<out T1, out T2, out T3>
+public interface IVoidMethodSetup<out T1, out T2, out T3> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -1446,7 +1446,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3>
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetup<out T1, out T2, out T3, out T4>
+public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.

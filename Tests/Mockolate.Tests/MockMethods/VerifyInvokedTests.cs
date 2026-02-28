@@ -52,7 +52,7 @@ public sealed partial class VerifyInvokedTests
 	[Theory]
 	[InlineData(-1, 0)]
 	[InlineData(1, 1)]
-	public async Task InvokedSetup_WhenSetupWasNotInvoked_ShouldVerifyToNever(int firstParameter, int expectedCallCount)
+	public async Task InvokedSetup_ShouldVerifySameConditionAsSetup(int firstParameter, int expectedCallCount)
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
 		IMethodSetup setup = sut.SetupMock.Method.Subtract(

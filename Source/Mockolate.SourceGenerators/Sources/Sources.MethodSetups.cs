@@ -113,7 +113,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary(
 			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <see langword=\"void\" />.",
 			"\t");
-		sb.Append("\tinternal interface IVoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
+		sb.Append("\tinternal interface IVoidMethodSetup<").Append(typeParams).Append("> : IMethodSetup").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
 		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.SkipBaseClass\" />.");
@@ -646,7 +646,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary(
 			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" />.",
 			"\t");
-		sb.Append("\tinternal interface IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
+		sb.Append("\tinternal interface IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> : IMethodSetup")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");

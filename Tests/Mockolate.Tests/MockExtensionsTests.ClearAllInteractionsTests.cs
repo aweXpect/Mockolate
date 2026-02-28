@@ -3,7 +3,7 @@ using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
 
-public sealed class MockExtensionsTests
+public sealed partial class MockExtensionsTests
 {
 	public sealed class ClearAllInteractionsTests
 	{
