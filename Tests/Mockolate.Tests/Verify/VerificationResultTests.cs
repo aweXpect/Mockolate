@@ -3,7 +3,7 @@ using Mockolate.Verify;
 
 namespace Mockolate.Tests.Verify;
 
-public class VerificationResultTests
+public sealed partial class VerificationResultTests
 {
 	[Fact]
 	public async Task VerificationResult_Got_ShouldHaveExpectedValue()

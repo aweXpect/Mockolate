@@ -533,7 +533,6 @@ namespace Mockolate.Interactions
         public MockInteractions() { }
         public int Count { get; }
         public System.Collections.Generic.IEnumerable<Mockolate.Interactions.IInteraction> Interactions { get; }
-        public event System.EventHandler<Mockolate.Interactions.IInteraction>? InteractionAdded;
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
@@ -1729,6 +1728,10 @@ namespace Mockolate.Setup
 }
 namespace Mockolate.Verify
 {
+    public interface IAsyncVerificationResult : Mockolate.Verify.IVerificationResult
+    {
+        System.Threading.Tasks.Task<bool> VerifyAsync(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate);
+    }
     public interface IMockVerifyGotIndexerProtected<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockVerifyGotIndexer<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IMockVerifyGotProtected<out T> : Mockolate.IInteractiveMock<T> { }
@@ -1797,6 +1800,8 @@ namespace Mockolate.Verify
     public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult, Mockolate.Verify.IVerificationResult<TVerify>
     {
         public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, string expectation) { }
+        public virtual Mockolate.Verify.VerificationResult<TVerify> WithCancellation(System.Threading.CancellationToken cancellationToken) { }
+        public virtual Mockolate.Verify.VerificationResult<TVerify> Within(System.TimeSpan timeout) { }
     }
 }
 namespace Mockolate.Web
