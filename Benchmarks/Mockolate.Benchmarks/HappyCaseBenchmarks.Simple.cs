@@ -78,9 +78,9 @@ public partial class HappyCaseBenchmarks
 		TUnit.Mocks.Mock<IMyInterface> mock = TUnit.Mocks.Mock.Of<IMyInterface>();
 		mock.MyFunc(Any<int>()).Returns(true);
 
-		mock.MyFunc(42);
+		mock.Object.MyFunc(42);
 
-		mock.MyFunc(42).WasCalled();
+		mock.MyFunc(Any<int>()).WasCalled();
 	}
 
 	public interface IMyInterface
