@@ -22,11 +22,12 @@ public static partial class HttpClientExtensions
 
 		/// <summary>
 		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />
-		///     and string <paramref name="content" />.
+		///     and <see langword="string" /> <paramref name="content" />.
 		/// </summary>
 		/// <remarks>
 		///     Uses default encoding (UTF-8) and default media type ("text/plain") for the content.<br />
-		///     If you need a different encoding, use the overload that takes explicit media type or an <see cref="HttpContent" />.
+		///     If you need a different encoding, use the overload that takes an <see cref="HttpContent" />.<br />
+		///     If you need a different media type, use the overload that takes an explicit media type.
 		/// </remarks>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode, string content)
@@ -37,7 +38,7 @@ public static partial class HttpClientExtensions
 
 		/// <summary>
 		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />,
-		///     string <paramref name="content" /> and <paramref name="mediaType" />.
+		///     <see langword="string" /> <paramref name="content" /> and <paramref name="mediaType" />.
 		/// </summary>
 		/// <remarks>
 		///     Uses default encoding (UTF-8) for the content.<br />
@@ -54,10 +55,6 @@ public static partial class HttpClientExtensions
 		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />
 		///     and <paramref name="bytes" />.
 		/// </summary>
-		/// <remarks>
-		///     Uses default encoding (UTF-8) and default media type ("text/plain") for the content.<br />
-		///     If you need a different encoding, use the overload that takes explicit media type or an <see cref="HttpContent" />.
-		/// </remarks>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode, byte[] bytes)
 			=> setup.ReturnsAsync(new HttpResponseMessage(statusCode)
@@ -69,14 +66,10 @@ public static partial class HttpClientExtensions
 		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />,
 		///     <paramref name="bytes" /> and <paramref name="mediaType" />.
 		/// </summary>
-		/// <remarks>
-		///     Uses default encoding (UTF-8) for the content.<br />
-		///     If you need a different encoding, use the overload that takes an <see cref="HttpContent" />.
-		/// </remarks>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode, byte[] bytes, string mediaType)
 		{
-			ByteArrayContent? content = new(bytes);
+			ByteArrayContent content = new(bytes);
 			content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 			return setup.ReturnsAsync(new HttpResponseMessage(statusCode)
 			{

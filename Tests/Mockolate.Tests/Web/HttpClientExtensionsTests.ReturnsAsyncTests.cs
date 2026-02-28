@@ -25,13 +25,17 @@ public sealed partial class HttpClientExtensionsTests
 			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
+#if NET8_0_OR_GREATER
+			await That(result.Content.ReadAsByteArrayAsync()).IsEmpty();
+#else
 			await That(result.Content).IsNull();
+#endif
 		}
 
 		[Theory]
 		[InlineData(HttpStatusCode.OK, "foo")]
 		[InlineData(HttpStatusCode.NotFound, "bar")]
-		public async Task WithStatusCodeAndBytes_ShouldReturnHttpResponseMessageWithStatusCodeAndStringContent(
+		public async Task WithStatusCodeAndBytes_ShouldReturnHttpResponseMessageWithStatusCodeAndByteArrayContent(
 			HttpStatusCode statusCode, string stringContent)
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(stringContent);
@@ -44,6 +48,7 @@ public sealed partial class HttpClientExtensionsTests
 			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
+			await That(result.Content).Is<ByteArrayContent>();
 			await That(result.Content.ReadAsByteArrayAsync()).IsEqualTo(bytes);
 			await That(result.Content.Headers.ContentType).IsNull();
 		}
@@ -52,7 +57,7 @@ public sealed partial class HttpClientExtensionsTests
 		[InlineData(HttpStatusCode.OK, "foo")]
 		[InlineData(HttpStatusCode.NotFound, "bar")]
 		public async Task
-			WithStatusCodeAndHttpContent_ShouldReturnHttpResponseMessageWithStatusCodeAndStringContent(
+			WithStatusCodeAndHttpContent_ShouldReturnHttpResponseMessageWithStatusCodeAndByteArrayContent(
 				HttpStatusCode statusCode, string stringContent)
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(stringContent);
@@ -65,6 +70,7 @@ public sealed partial class HttpClientExtensionsTests
 			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
+			await That(result.Content).Is<ByteArrayContent>();
 			await That(result.Content.ReadAsStringAsync()).IsEqualTo(stringContent);
 			await That(result.Content.Headers.ContentType).IsNull();
 		}
