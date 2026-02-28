@@ -21,7 +21,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithMediaType("application/json"))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent("", Encoding.UTF8, mediaType),

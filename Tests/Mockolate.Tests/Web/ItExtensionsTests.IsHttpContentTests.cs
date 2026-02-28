@@ -53,7 +53,7 @@ public sealed partial class ItExtensionsTests
 					.WithStringMatching("*")
 					.WithString("foo")
 					.WithBytes(b => b.Length == 3))
-				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				.ReturnsAsync(HttpStatusCode.OK);
 			ByteArrayContent content = new(bytes);
 			content.Headers.Add("x-my-header", "my-value");
 
@@ -73,7 +73,7 @@ public sealed partial class ItExtensionsTests
 				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
 					.WithStringMatching("*")
 					.WithHeaders("x-my-header", "my-value"))
-				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				.ReturnsAsync(HttpStatusCode.OK);
 			ByteArrayContent content = new(bytes);
 			content.Headers.Add("x-my-header", "my-value");
 
@@ -93,7 +93,7 @@ public sealed partial class ItExtensionsTests
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
 				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent("image/png"))
-				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				.ReturnsAsync(HttpStatusCode.OK);
 			ByteArrayContent content = new([]);
 			content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
@@ -114,7 +114,7 @@ public sealed partial class ItExtensionsTests
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
 				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithMediaType("image/png"))
-				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				.ReturnsAsync(HttpStatusCode.OK);
 			ByteArrayContent content = new([]);
 			content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 

@@ -23,7 +23,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.GetAsync(It.IsUri().WithQuery(key1, value1).WithQuery(key2, value2))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
 					.GetAsync("https://www.aweXpect.com/foo/bar?x=123&y=234&z=345", CancellationToken.None);
@@ -43,7 +43,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.GetAsync(It.IsUri().WithQuery((key1, value1)).WithQuery((key2, value2)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
 					.GetAsync("https://www.aweXpect.com/foo/bar?x=123&y=234&z=345", CancellationToken.None);
@@ -63,7 +63,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.GetAsync(It.IsUri().WithQuery(query1).WithQuery(query2))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
 					.GetAsync("https://www.aweXpect.com/foo/bar?x=123&y=234&z=345", CancellationToken.None);
@@ -79,7 +79,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.GetAsync(It.IsUri().WithQuery(key, value))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com/?x%3c%3e=1%3c2%3e+3",
 					CancellationToken.None);
@@ -102,7 +102,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.GetAsync(It.IsUri().WithQuery(key, value))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync(uri, CancellationToken.None);
 
@@ -124,7 +124,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.GetAsync(It.IsUri().WithQuery(queryParameters))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com?x=123&y=234&z=345",
 					CancellationToken.None);
@@ -148,7 +148,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.GetAsync(It.IsUri().WithQuery(query))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync(uri, CancellationToken.None);
 

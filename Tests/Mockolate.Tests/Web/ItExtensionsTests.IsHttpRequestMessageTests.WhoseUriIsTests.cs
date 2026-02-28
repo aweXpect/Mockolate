@@ -19,7 +19,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseUriIs("*awexpect*", u => u.ForHttps()))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync(uri, CancellationToken.None);
 
@@ -35,7 +35,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseUriIs(u => u.ForHttps()))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync(uri, CancellationToken.None);
 
@@ -63,7 +63,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseUriIs(pattern))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync(uri, CancellationToken.None);
 
@@ -80,7 +80,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage()
 						.WhoseUriIs(matchPattern))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result =
 					await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
@@ -96,7 +96,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage()
 						.WhoseUriIs("*www.aweXpect.com/foo/"))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result =
 					await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);

@@ -22,7 +22,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.GetAsync(It.IsUri().WithPort(port))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync(uri, CancellationToken.None);
 
