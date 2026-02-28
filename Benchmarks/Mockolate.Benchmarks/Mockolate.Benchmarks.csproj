@@ -21,6 +21,7 @@
 		<PackageReference Include="Moq"/>
 		<PackageReference Include="NSubstitute"/>
 		<PackageReference Include="FakeItEasy"/>
+		<PackageReference Include="TUnit.Mocks"/>
 	</ItemGroup>
 
 </Project>

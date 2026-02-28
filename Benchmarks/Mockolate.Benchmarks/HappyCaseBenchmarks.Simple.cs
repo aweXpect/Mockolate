@@ -2,6 +2,7 @@ using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using Mockolate.Verify;
 using NSubstitute;
+using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
 namespace Mockolate.Benchmarks;
@@ -66,6 +67,20 @@ public partial class HappyCaseBenchmarks
 		mock.MyFunc(42);
 
 		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).MustHaveHappened(1, FakeItEasy.Times.Exactly);
+	}
+
+	/// <summary>
+	///     <see href="https://github.com/thomhurst/TUnit/" />
+	/// </summary>
+	[Benchmark]
+	public void Simple_TUnitMocks()
+	{
+		TUnit.Mocks.Mock<IMyInterface> mock = TUnit.Mocks.Mock.Of<IMyInterface>();
+		mock.MyFunc(Any<int>()).Returns(true);
+
+		mock.Object.MyFunc(42);
+
+		mock.MyFunc(Any<int>()).WasCalled();
 	}
 
 	public interface IMyInterface
