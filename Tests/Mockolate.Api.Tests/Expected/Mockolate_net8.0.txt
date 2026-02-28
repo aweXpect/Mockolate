@@ -1431,7 +1431,6 @@ namespace Mockolate.Setup
         protected static string FormatType(System.Type type) { }
         protected static bool HasOutParameter<T>(Mockolate.Parameters.NamedParameter?[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IOutParameter<T>? parameter) { }
         protected static bool HasRefParameter<T>(Mockolate.Parameters.NamedParameter?[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IRefParameter<T>? parameter) { }
-        protected static bool Matches(Mockolate.Parameters.NamedParameter[] namedParameters, Mockolate.Parameters.NamedParameterValue[] values) { }
         protected static void TriggerCallbacks(Mockolate.Parameters.NamedParameter?[] namedParameters, object?[] values) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }

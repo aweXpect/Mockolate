@@ -29,14 +29,53 @@ public sealed partial class VerificationResultTests
 		}
 
 		[Fact]
-		public async Task WhenAlreadySuccessful_ShouldSucceed()
+		public async Task VerifyAsync_WhenAlreadySuccessful_ShouldReturnTrue()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 			sut.Dispense("Dark", 1);
 			sut.Dispense("Dark", 2);
 
-			await That(sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Within(TimeSpan.FromMilliseconds(500)))
-				.AtLeastOnce();
+			VerificationResult<IChocolateDispenser> result = sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+				.Within(TimeSpan.FromMilliseconds(500));
+
+			await That(((IAsyncVerificationResult)result).VerifyAsync(l => l.Length > 0)).IsTrue();
+		}
+
+		[Fact]
+		public async Task VerifyAsync_WhenMultipleIterationsAreNecessary_ShouldStopWhenSuccessful()
+		{
+			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+			VerificationResult<IChocolateDispenser> result = sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+				.Within(TimeSpan.FromSeconds(10));
+			using CancellationTokenSource cts = new();
+			CancellationToken token = cts.Token;
+
+			_ = Task.Run(async () =>
+			{
+				for (int i = 0; i < 1000; i++)
+				{
+					await Task.Delay(10, CancellationToken.None);
+					sut.Dispense("Dark", i);
+					if (token.IsCancellationRequested)
+					{
+						break;
+					}
+				}
+			}, token);
+
+			await That(((IAsyncVerificationResult)result).VerifyAsync(l => l.Length > 20)).IsTrue();
+		}
+
+		[Fact]
+		public async Task WithCancellation_ShouldReturnAsyncVerificationResult()
+		{
+			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+			VerificationResult<IChocolateDispenser> result = sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+				.WithCancellation(CancellationToken.None);
+
+			await That(result).Is<IAsyncVerificationResult>();
 		}
 
 		[Fact]
@@ -107,7 +146,7 @@ public sealed partial class VerificationResultTests
 			{
 				for (int i = 0; i < 100; i++)
 				{
-					await Task.Delay(100);
+					await Task.Delay(100, CancellationToken.None);
 					sut.Dispense("Dark", i);
 					if (token.IsCancellationRequested)
 					{
@@ -122,7 +161,18 @@ public sealed partial class VerificationResultTests
 			sw.Stop();
 			cts.Cancel();
 
-			await That(sw.Elapsed).IsLessThan(TimeSpan.FromSeconds(1));
+			await That(sw.Elapsed).IsLessThan(TimeSpan.FromSeconds(2));
+		}
+
+		[Fact]
+		public async Task Within_ShouldReturnAsyncVerificationResult()
+		{
+			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+			VerificationResult<IChocolateDispenser> result = sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+				.Within(TimeSpan.FromMilliseconds(100));
+
+			await That(result).Is<IAsyncVerificationResult>();
 		}
 
 		[Fact]

@@ -143,32 +143,6 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	}
 
 	/// <summary>
-	///     Determines whether each value in the specified array matches the corresponding named parameter according to the
-	///     parameter's matching criteria.
-	/// </summary>
-	/// <remarks>
-	///     The method returns false if the lengths of the namedParameters and values arrays do not match.
-	///     Each value is compared to its corresponding named parameter using the parameter's matching logic.
-	/// </remarks>
-	protected static bool Matches(NamedParameter[] namedParameters, NamedParameterValue[] values)
-	{
-		if (namedParameters.Length != values.Length)
-		{
-			return false;
-		}
-
-		for (int i = 0; i < namedParameters.Length; i++)
-		{
-			if (!namedParameters[i].Matches(values[i]))
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/// <summary>
 	///     Triggers the parameter callbacks for each value in the specified array according to
 	///     the corresponding named parameter.
 	/// </summary>
