@@ -26,8 +26,8 @@ public class CallbackTests
 		}
 
 		[Test]
-		[Arguments(2, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2)]
-		[Arguments(2, 1, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2)]
+		[Arguments(2, 0, new[] { 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, })]
+		[Arguments(2, 1, new[] { 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, })]
 		public async Task ShouldIncrementIndexOnceWhenCallbackIsExhausted(
 			int only, int when, params int[] expectResult)
 		{
@@ -48,8 +48,8 @@ public class CallbackTests
 		}
 
 		[Test]
-		[Arguments(2, 2, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2)]
-		[Arguments(2, 3, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3)]
+		[Arguments(2, 2, new[] { 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, })]
+		[Arguments(2, 3, new[] { 0, 1, 1, 2, 2, 3, 3, 3, 3, 3, })]
 		public async Task ShouldIncrementIndexWheneverForIsExhausted(
 			int @for, int only, params int[] expectResult)
 		{

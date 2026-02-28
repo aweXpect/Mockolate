@@ -1892,7 +1892,7 @@ namespace Mockolate.Web
             public void InvokeCallbacks(object? value) { }
             public bool Matches(object? value) { }
             public Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(System.Func<byte[], bool> predicate) { }
-            public Mockolate.Web.ItExtensions.IHttpContentHeaderParameter WithHeaders([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+            public Mockolate.Web.ItExtensions.IHttpContentHeaderParameter WithHeaders([System.Runtime.CompilerServices.ParamCollection] [System.Runtime.CompilerServices.TupleElementNames(new string[] {
                     "Name",
                     "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpHeaderValue>> headers) { }
             public Mockolate.Web.ItExtensions.IHttpContentParameter WithMediaType(string? mediaType) { }
@@ -1914,7 +1914,7 @@ namespace Mockolate.Web
         }
         public interface IHttpHeaderParameter<out TParameter>
         {
-            TParameter WithHeaders([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+            TParameter WithHeaders([System.Runtime.CompilerServices.ParamCollection] [System.Runtime.CompilerServices.TupleElementNames(new string[] {
                     "Name",
                     "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpHeaderValue>> headers);
         }
@@ -1941,7 +1941,7 @@ namespace Mockolate.Web
             Mockolate.Web.ItExtensions.IUriParameter WithHost(string hostPattern);
             Mockolate.Web.ItExtensions.IUriParameter WithPath(string pathPattern);
             Mockolate.Web.ItExtensions.IUriParameter WithPort(int port);
-            Mockolate.Web.ItExtensions.IUriParameter WithQuery([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+            Mockolate.Web.ItExtensions.IUriParameter WithQuery([System.Runtime.CompilerServices.ParamCollection] [System.Runtime.CompilerServices.TupleElementNames(new string[] {
                     "Key",
                     "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpQueryParameterValue>> parameters);
             Mockolate.Web.ItExtensions.IUriParameter WithQuery(string queryString);
@@ -1958,7 +1958,7 @@ namespace Mockolate.Web
         {
             Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(byte[] bytes);
             Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData(string key, Mockolate.Web.HttpFormDataValue value);
-            Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+            Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData([System.Runtime.CompilerServices.ParamCollection] [System.Runtime.CompilerServices.TupleElementNames(new string[] {
                     "Key",
                     "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpFormDataValue>> values);
             Mockolate.Web.ItExtensions.IFormDataContentParameter WithFormData(string values);

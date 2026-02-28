@@ -35,7 +35,6 @@ partial class Build
 					.SetConfiguration(Configuration)
 					.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
 					.EnableNoBuild()
-					.SetDataCollector("XPlat Code Coverage")
 					.SetResultsDirectory(TestResultsDirectory)
 					.CombineWith(
 						UnitTestProjects,
@@ -45,8 +44,7 @@ partial class Build
 								(frameworkSettings, framework) => frameworkSettings
 									.SetFramework(framework)
 									.AddProcessAdditionalArguments(
-										$"--project \"{project.Path}\"")
-									.AddLoggers($"console;verbosity=normal;trx;LogFileName={project.Name}_{framework}.trx")
+										$"--project \"{project.Path}\" -- --report-trx --coverage --coverage-output-format cobertura ")
 							)
 					), completeOnFailure: true
 			);
