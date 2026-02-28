@@ -51,7 +51,7 @@ public sealed partial class VerificationResultTests
 			using CancellationTokenSource cts = new();
 			CancellationToken token = cts.Token;
 
-			_ = Task.Run(async () =>
+			Task backgroundTask = Task.Run(async () =>
 			{
 				for (int i = 0; i < 1000; i++)
 				{
@@ -65,6 +65,8 @@ public sealed partial class VerificationResultTests
 			}, token);
 
 			await That(((IAsyncVerificationResult)result).VerifyAsync(l => l.Length > 20)).IsTrue();
+			cts.Cancel();
+			await backgroundTask;
 		}
 
 		[Fact]
@@ -142,11 +144,11 @@ public sealed partial class VerificationResultTests
 			using CancellationTokenSource cts = new();
 			CancellationToken token = cts.Token;
 
-			_ = Task.Run(async () =>
+			Task backgroundTask = Task.Run(async () =>
 			{
 				for (int i = 0; i < 100; i++)
 				{
-					await Task.Delay(100, CancellationToken.None);
+					await Task.Delay(100, CancellationToken.None).ConfigureAwait(false);
 					sut.Dispense("Dark", i);
 					if (token.IsCancellationRequested)
 					{
@@ -160,6 +162,7 @@ public sealed partial class VerificationResultTests
 				.AtLeastOnce();
 			sw.Stop();
 			cts.Cancel();
+			await backgroundTask;
 
 			await That(sw.Elapsed).IsLessThan(TimeSpan.FromSeconds(2));
 		}
