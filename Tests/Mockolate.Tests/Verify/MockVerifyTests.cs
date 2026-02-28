@@ -259,4 +259,24 @@ public class MockVerifyTests
 
 		await That(sut.VerifyMock.ThatAllSetupsAreUsed()).IsTrue();
 	}
+
+	[Fact]
+	public async Task VerificationResult_ShouldUpdateWhenInteractionsChange()
+	{
+		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+		IVerificationResult result = sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>());
+		bool r0 = result.Verify(f => f.Length == 0);
+		sut.Dispense("Dark", 1);
+		bool r1 = result.Verify(f => f.Length == 1);
+		sut.Dispense("White", 2);
+		bool r2 = result.Verify(f => f.Length == 1);
+		sut.Dispense("Dark", 2);
+		bool r3 = result.Verify(f => f.Length == 2);
+
+		await That(r0).IsTrue().Because("No interaction was performed yet");
+		await That(r1).IsTrue().Because("One interaction was performed");
+		await That(r2).IsTrue().Because("The second interactions did not match");
+		await That(r3).IsTrue().Because("The third interactions did again match");
+	}
 }

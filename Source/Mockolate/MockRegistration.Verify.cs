@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Interactions;
@@ -18,11 +17,8 @@ public partial class MockRegistration
 		=> new(
 			subject,
 			Interactions,
-			Interactions.Interactions
-				.OfType<MethodInvocation>()
-				.Where(methodMatch.Matches)
-				.Cast<IInteraction>()
-				.ToArray(),
+			interaction => interaction is MethodInvocation method &&
+			               methodMatch.Matches(method),
 			$"invoked method {methodMatch}");
 
 	/// <summary>
@@ -30,11 +26,8 @@ public partial class MockRegistration
 	/// </summary>
 	public VerificationResult<T> Property<T>(T subject, string propertyName) => new(subject,
 		Interactions,
-		Interactions.Interactions
-			.OfType<PropertyGetterAccess>()
-			.Where(property => property.Name.Equals(propertyName))
-			.Cast<IInteraction>()
-			.ToArray(),
+		interaction => interaction is PropertyGetterAccess property &&
+		               property.Name.Equals(propertyName),
 		$"got property {propertyName.SubstringAfterLast('.')}");
 
 	/// <summary>
@@ -45,12 +38,9 @@ public partial class MockRegistration
 		IParameter value)
 		=> new(subject,
 			Interactions,
-			Interactions.Interactions
-				.OfType<PropertySetterAccess>()
-				.Where(property => property.Name.Equals(propertyName) &&
-				                   value.Matches(property.Value))
-				.Cast<IInteraction>()
-				.ToArray(),
+			interaction => interaction is PropertySetterAccess property &&
+			               property.Name.Equals(propertyName) &&
+			               value.Matches(property.Value),
 			$"set property {propertyName.SubstringAfterLast('.')} to value {value}");
 
 	/// <summary>
@@ -61,14 +51,11 @@ public partial class MockRegistration
 		params NamedParameter[] parameters)
 		=> new(subject,
 			Interactions,
-			Interactions.Interactions
-				.OfType<IndexerGetterAccess>()
-				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
-				                  !parameters
-					                  .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
-					                  .Any())
-				.Cast<IInteraction>()
-				.ToArray(),
+			interaction => interaction is IndexerGetterAccess indexer &&
+			               indexer.Parameters.Length == parameters.Length &&
+			               !parameters
+				               .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
+				               .Any(),
 			$"got indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}]");
 
 	/// <summary>
@@ -79,15 +66,12 @@ public partial class MockRegistration
 		params NamedParameter[] parameters)
 		=> new(subject,
 			Interactions,
-			Interactions.Interactions
-				.OfType<IndexerSetterAccess>()
-				.Where(indexer => indexer.Parameters.Length == parameters.Length &&
-				                  (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
-				                  !parameters
-					                  .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
-					                  .Any())
-				.Cast<IInteraction>()
-				.ToArray(),
+			interaction => interaction is IndexerSetterAccess indexer &&
+			               indexer.Parameters.Length == parameters.Length &&
+			               (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
+			               !parameters
+				               .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
+				               .Any(),
 			$"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}] to value {value?.ToString() ?? "null"}");
 
 	/// <summary>
@@ -95,11 +79,8 @@ public partial class MockRegistration
 	/// </summary>
 	public VerificationResult<T> SubscribedTo<T>(T subject, string eventName)
 		=> new(subject, Interactions,
-			Interactions.Interactions
-				.OfType<EventSubscription>()
-				.Where(@event => @event.Name.Equals(eventName))
-				.Cast<IInteraction>()
-				.ToArray(),
+			interaction => interaction is EventSubscription @event &&
+			               @event.Name.Equals(eventName),
 			$"subscribed to event {eventName.SubstringAfterLast('.')}");
 
 	/// <summary>
@@ -107,11 +88,8 @@ public partial class MockRegistration
 	/// </summary>
 	public VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName)
 		=> new(subject, Interactions,
-			Interactions.Interactions
-				.OfType<EventUnsubscription>()
-				.Where(@event => @event.Name.Equals(eventName))
-				.Cast<IInteraction>()
-				.ToArray(),
+			interaction => interaction is EventUnsubscription @event &&
+			               @event.Name.Equals(eventName),
 			$"unsubscribed from event {eventName.SubstringAfterLast('.')}");
 
 	/// <summary>

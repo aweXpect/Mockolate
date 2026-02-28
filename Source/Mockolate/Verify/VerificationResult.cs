@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Mockolate.Interactions;
 
 namespace Mockolate.Verify;
@@ -10,16 +11,18 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 {
 	private readonly string _expectation;
 	private readonly MockInteractions _interactions;
-	private readonly IInteraction[] _matchingInteractions;
+	private readonly Func<IInteraction, bool> _predicate;
 	private readonly TVerify _verify;
 
 	/// <inheritdoc cref="VerificationResult{TMock}" />
-	public VerificationResult(TVerify verify, MockInteractions interactions, IInteraction[] matchingInteractions,
+	public VerificationResult(TVerify verify,
+		MockInteractions interactions,
+		Func<IInteraction, bool> predicate,
 		string expectation)
 	{
 		_verify = verify;
 		_interactions = interactions;
-		_matchingInteractions = matchingInteractions;
+		_predicate = predicate;
 		_expectation = expectation;
 	}
 
@@ -32,7 +35,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	#endregion
 
 	internal VerificationResult<T> Map<T>(T mock)
-		=> new(mock, _interactions, _matchingInteractions, _expectation);
+		=> new(mock, _interactions, _predicate, _expectation);
 
 	#region IVerificationResult
 
@@ -47,8 +50,9 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
 	bool IVerificationResult.Verify(Func<IInteraction[], bool> predicate)
 	{
-		_interactions.Verified(_matchingInteractions);
-		return predicate(_matchingInteractions);
+		IInteraction[] matchingInteractions = _interactions.Interactions.Where(_predicate).ToArray();
+		_interactions.Verified(matchingInteractions);
+		return predicate(matchingInteractions);
 	}
 
 	#endregion

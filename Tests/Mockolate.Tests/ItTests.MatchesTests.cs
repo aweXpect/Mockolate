@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Mockolate.Parameters;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests;
 
@@ -58,8 +59,8 @@ public sealed partial class ItTests
 
 			void Act()
 			{
-				_ = mock.VerifyMock.Invoked.DoSomethingWithString(
-					It.Matches("F[aeiou]+o").AsRegex(timeout: TimeSpan.FromSeconds(0)));
+				mock.VerifyMock.Invoked.DoSomethingWithString(
+					It.Matches("F[aeiou]+o").AsRegex(timeout: TimeSpan.FromSeconds(0))).AtLeastOnce();
 			}
 
 			await That(Act)
