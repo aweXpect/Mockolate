@@ -655,7 +655,7 @@ sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5))
 ```
 
 You can also use `WithCancellation(CancellationToken)` to wait for the expected interactions until the cancellation
-token is canceled. If you combine this with the `Within` method, both cancellations are respected.
+token is canceled. If you combine this with the `Within` method, both the timeout and the cancellation token are respected.
 
 In both cases, it will block the test execution until the expected interaction occurs or the timeout is reached.
 If the interaction does not occur within the specified time, a `MockVerificationException` will be thrown.
@@ -1266,7 +1266,7 @@ httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a JSON content {"foo":"bar"}
     .ReturnsAsync(HttpStatusCode.OK, "{\"foo\":\"bar\"}", "application/json");
 
-byte[] bytes = //... some byte array content
+byte[] bytes = new byte[] { /* ... */ };
 
 httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a binary content with the provided bytes

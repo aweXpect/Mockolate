@@ -29,7 +29,7 @@ sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5))
 ```
 
 You can also use `WithCancellation(CancellationToken)` to wait for the expected interactions until the cancellation
-token is canceled. If you combine this with the `Within` method, both cancellations are respected.
+token is canceled. If you combine this with the `Within` method, both the timeout and the cancellation token are respected.
 
 In both cases, it will block the test execution until the expected interaction occurs or the timeout is reached.
 If the interaction does not occur within the specified time, a `MockVerificationException` will be thrown.

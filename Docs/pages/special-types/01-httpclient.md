@@ -261,7 +261,7 @@ httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a JSON content {"foo":"bar"}
     .ReturnsAsync(HttpStatusCode.OK, "{\"foo\":\"bar\"}", "application/json");
 
-byte[] bytes = //... some byte array content
+byte[] bytes = new byte[] { /* ... */ };
 
 httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a binary content with the provided bytes
