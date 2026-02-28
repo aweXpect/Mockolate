@@ -146,9 +146,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 						{
 							return true;
 						}
-					} while (!token.IsCancellationRequested);
-
-					return false;
+					} while (true);
 				}
 				finally
 				{
