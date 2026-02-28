@@ -91,7 +91,7 @@ public sealed partial class HttpClientExtensionsTests
 			await That(result.StatusCode).IsEqualTo(statusCode);
 			await That(result.Content).Is<StringContent>();
 			await That(result.Content.ReadAsStringAsync()).IsEqualTo(content);
-			await That(result.Content.Headers.ContentType.MediaType).IsEqualTo("text/plain");
+			await That(result.Content.Headers.ContentType?.MediaType).IsEqualTo("text/plain");
 		}
 
 		[Theory]
@@ -111,7 +111,7 @@ public sealed partial class HttpClientExtensionsTests
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
 			await That(result.Content.ReadAsByteArrayAsync()).IsEqualTo(bytes);
-			await That(result.Content.Headers.ContentType.MediaType).IsEqualTo(mediaType);
+			await That(result.Content.Headers.ContentType?.MediaType).IsEqualTo(mediaType);
 		}
 
 		[Theory]
@@ -131,7 +131,7 @@ public sealed partial class HttpClientExtensionsTests
 			await That(result.StatusCode).IsEqualTo(statusCode);
 			await That(result.Content).Is<StringContent>();
 			await That(result.Content.ReadAsStringAsync()).IsEqualTo(content);
-			await That(result.Content.Headers.ContentType.MediaType).IsEqualTo(mediaType);
+			await That(result.Content.Headers.ContentType?.MediaType).IsEqualTo(mediaType);
 		}
 	}
 }
