@@ -26,7 +26,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders(key1, value1).WithHeaders(key2, value2))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", "foo");
 
@@ -52,7 +52,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders((key1, value1)).WithHeaders((key2, value2)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", "foo");
 
@@ -78,7 +78,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders(headers1).WithHeaders(headers2))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", "foo");
 
@@ -103,7 +103,7 @@ public sealed partial class ItExtensionsTests
 						              Authorization : Basic abcdef
 						              x-myHeader3: baz
 						             """))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader1", "foo");
 				content.Headers.Add("x-myHeader2", "bar");
@@ -128,7 +128,7 @@ public sealed partial class ItExtensionsTests
 						             Authorization: Basic abcdef
 						             Accept: application/json
 						             """))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(""),
@@ -148,7 +148,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WithHeaders(key, "Basic abcdef"))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(""),
@@ -169,7 +169,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WithHeaders("Authorization", $"Basic {value}"))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(""),
@@ -193,7 +193,7 @@ public sealed partial class ItExtensionsTests
 						.WithHeaders(
 							(key, "Basic foo"),
 							("Accept", "application/json")))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(""),
@@ -217,7 +217,7 @@ public sealed partial class ItExtensionsTests
 						.WithHeaders(
 							("Authorization", "Basic foo"),
 							("Accept", "application/json")))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(""),
@@ -241,7 +241,7 @@ public sealed partial class ItExtensionsTests
 							             x-myHeader2
 							             x-myHeader3: baz
 							             """))
-						.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+						.ReturnsAsync(HttpStatusCode.OK);
 				}
 
 				await That(Act).Throws<ArgumentException>()

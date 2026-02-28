@@ -49,7 +49,7 @@ public sealed partial class ItExtensionsTests
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
 				.GetAsync(It.IsUri(pattern))
-				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				.ReturnsAsync(HttpStatusCode.OK);
 
 			HttpResponseMessage result = await httpClient.GetAsync(uri, CancellationToken.None);
 
@@ -64,7 +64,7 @@ public sealed partial class ItExtensionsTests
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
 				.GetAsync(It.IsUri(matchPattern))
-				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				.ReturnsAsync(HttpStatusCode.OK);
 
 			HttpResponseMessage result =
 				await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
@@ -79,7 +79,7 @@ public sealed partial class ItExtensionsTests
 			HttpClient httpClient = Mock.Create<HttpClient>();
 			httpClient.SetupMock.Method
 				.GetAsync(It.IsUri("*www.aweXpect.com/foo/"))
-				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				.ReturnsAsync(HttpStatusCode.OK);
 
 			HttpResponseMessage result =
 				await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);

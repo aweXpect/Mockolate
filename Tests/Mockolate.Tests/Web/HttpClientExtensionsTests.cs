@@ -18,7 +18,7 @@ public sealed partial class HttpClientExtensionsTests
 		IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> setup = httpClient
 			.SetupMock.Method
 			.GetAsync(new InvalidParameter())
-			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+			.ReturnsAsync(HttpStatusCode.OK);
 		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
 
 		bool result = interactiveSetup.Matches(new MethodInvocation(0, "System.Net.Http.HttpMessageHandler.SendAsync",
@@ -37,7 +37,7 @@ public sealed partial class HttpClientExtensionsTests
 		IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> setup = httpClient
 			.SetupMock.Method
 			.GetAsync(It.IsAny<string?>())
-			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+			.ReturnsAsync(HttpStatusCode.OK);
 		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
 
 		bool result = interactiveSetup.Matches(new MethodInvocation(0, "System.Net.Http.HttpMessageHandler.SendAsync",
@@ -58,7 +58,7 @@ public sealed partial class HttpClientExtensionsTests
 		{
 			httpClient.SetupMock.Method
 				.SendAsync(It.IsHttpRequestMessage())
-				.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+				.ReturnsAsync(HttpStatusCode.OK);
 		}
 
 		await That(Act).Throws<MockException>()
@@ -75,7 +75,7 @@ public sealed partial class HttpClientExtensionsTests
 			.GetAsync(It.Matches("*")
 				.Do(_ => callbackCount++)
 				.Monitor(out IParameterMonitor<string> monitor))
-			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+			.ReturnsAsync(HttpStatusCode.OK);
 
 		await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
 		await httpClient.PostAsync("https://www.aweXpect.com/bar", null, CancellationToken.None);
@@ -96,7 +96,7 @@ public sealed partial class HttpClientExtensionsTests
 		HttpClient httpClient = Mock.Create<HttpClient>();
 		httpClient.SetupMock.Method
 			.GetAsync(It.Matches(matchPattern))
-			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+			.ReturnsAsync(HttpStatusCode.OK);
 
 		HttpResponseMessage result =
 			await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
@@ -111,7 +111,7 @@ public sealed partial class HttpClientExtensionsTests
 		HttpClient httpClient = Mock.Create<HttpClient>();
 		httpClient.SetupMock.Method
 			.GetAsync(It.Matches("*www.aweXpect.com/foo/"))
-			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+			.ReturnsAsync(HttpStatusCode.OK);
 
 		HttpResponseMessage result =
 			await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);

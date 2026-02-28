@@ -22,7 +22,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithString("foo")))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new ByteArrayContent(bytes),
@@ -40,7 +40,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs("image/png"))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 				ByteArrayContent content = new([]);
 				content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
@@ -61,7 +61,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(mediaType, c => c.WithString(value)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("foo", Encoding.UTF8, "text/plain");
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
@@ -85,7 +85,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithBytes(b => b.Length > 0 && b[0] == expectedFirstByte)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new ByteArrayContent(body),
@@ -106,7 +106,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithBytes(expected)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new ByteArrayContent(body),
@@ -125,7 +125,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithMediaType("image/png")))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 				ByteArrayContent content = new([]);
 				content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
@@ -147,7 +147,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithString(expected).IgnoringCase()))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(body),
@@ -169,7 +169,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c
 							.WithString(v => v.Equals(v.ToLowerInvariant(), StringComparison.Ordinal))))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(content),
@@ -189,7 +189,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithString(expected)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(body),
@@ -211,7 +211,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage()
 						.WhoseContentIs(c => c.WithStringMatching(pattern).AsRegex().IgnoringCase()))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(body),
@@ -232,7 +232,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage()
 						.WhoseContentIs(c => c.WithStringMatching(pattern).AsRegex()))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(body),
@@ -249,7 +249,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c
 						.WithStringMatching("F[A-Z]*").AsRegex(RegexOptions.IgnoreCase)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent("foo"),
@@ -265,7 +265,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c
 						.WithStringMatching("F[A-Z]*").AsRegex(timeout: TimeSpan.FromSeconds(0))))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				Task Act()
 				{
@@ -293,7 +293,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c
 						.WithStringMatching(pattern).IgnoringCase()))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(body),
@@ -317,7 +317,7 @@ public sealed partial class ItExtensionsTests
 				httpClient.SetupMock.Method
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c
 						.WithStringMatching(pattern)))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
 					new StringContent(body),

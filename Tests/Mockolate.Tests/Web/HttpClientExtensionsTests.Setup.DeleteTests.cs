@@ -22,7 +22,7 @@ public sealed partial class HttpClientExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.DeleteAsync(It.Matches("*aweXpect.com*"))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.SendAsync(
 					new HttpRequestMessage(new HttpMethod(method), "https://www.aweXpect.com"),
@@ -42,7 +42,7 @@ public sealed partial class HttpClientExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.DeleteAsync(It.Matches(pattern))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result =
 					await httpClient.DeleteAsync("https://www.aweXpect.com", CancellationToken.None);
@@ -61,7 +61,7 @@ public sealed partial class HttpClientExtensionsTests
 					.DeleteAsync(
 						It.Matches("*aweXpect.com*"),
 						It.Satisfies<CancellationToken>(_ => tokenMatches))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result =
 					await httpClient.DeleteAsync("https://www.aweXpect.com", CancellationToken.None);
@@ -79,7 +79,7 @@ public sealed partial class HttpClientExtensionsTests
 				{
 					httpClient.SetupMock.Method
 						.DeleteAsync(It.Matches("*aweXpect.com*"))
-						.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+						.ReturnsAsync(HttpStatusCode.OK);
 				}
 
 				await That(Act).Throws<MockException>()
@@ -97,7 +97,7 @@ public sealed partial class HttpClientExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.DeleteAsync(It.IsUri("*aweXpect.com*"))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.SendAsync(
 					new HttpRequestMessage(new HttpMethod(method), "https://www.aweXpect.com"),
@@ -117,7 +117,7 @@ public sealed partial class HttpClientExtensionsTests
 				HttpClient httpClient = Mock.Create<HttpClient>();
 				httpClient.SetupMock.Method
 					.DeleteAsync(It.IsUri(pattern))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result =
 					await httpClient.DeleteAsync("https://www.aweXpect.com", CancellationToken.None);
@@ -136,7 +136,7 @@ public sealed partial class HttpClientExtensionsTests
 					.DeleteAsync(
 						It.IsUri("*aweXpect.com*"),
 						It.Satisfies<CancellationToken>(_ => tokenMatches))
-					.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result =
 					await httpClient.DeleteAsync("https://www.aweXpect.com", CancellationToken.None);
@@ -154,7 +154,7 @@ public sealed partial class HttpClientExtensionsTests
 				{
 					httpClient.SetupMock.Method
 						.DeleteAsync(It.IsUri("*aweXpect.com*"))
-						.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+						.ReturnsAsync(HttpStatusCode.OK);
 				}
 
 				await That(Act).Throws<MockException>()
