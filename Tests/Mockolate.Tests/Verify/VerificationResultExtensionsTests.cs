@@ -347,7 +347,7 @@ public class VerificationResultExtensionsTests
 	public async Task Then_WhenNoMock_ShouldThrowMockException()
 	{
 		IChocolateDispenser mock = new MyChocolateDispenser();
-		VerificationResult<IChocolateDispenser> result = new(mock, new MockInteractions(), [], "foo");
+		VerificationResult<IChocolateDispenser> result = new(mock, new MockInteractions(), _ => false, "foo");
 
 		void Act()
 		{

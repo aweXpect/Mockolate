@@ -34,6 +34,7 @@ public class MockInteractions : IMockInteractions
 	{
 		_missingVerification?.Add(interaction);
 		_interactions.TryAdd(interaction.Index, interaction);
+		InteractionAdded?.Invoke(this, EventArgs.Empty);
 		return interaction;
 	}
 
@@ -46,6 +47,7 @@ public class MockInteractions : IMockInteractions
 		return _missingVerification;
 	}
 
+	internal event EventHandler? InteractionAdded;
 	internal event EventHandler? OnClearing;
 
 	internal int GetNextIndex()

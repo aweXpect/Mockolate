@@ -1744,7 +1744,7 @@ namespace Mockolate.Verify
     }
     public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult, Mockolate.Verify.IVerificationResult<TVerify>
     {
-        public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, Mockolate.Interactions.IInteraction[] matchingInteractions, string expectation) { }
+        public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, string expectation) { }
     }
 }
 namespace Mockolate.Web
