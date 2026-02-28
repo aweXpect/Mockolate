@@ -1,4 +1,6 @@
+using Mockolate.Exceptions;
 using Mockolate.Setup;
+using Mockolate.Verify;
 
 namespace Mockolate;
 
@@ -17,5 +19,19 @@ public static class MockExtensions
 		{
 			hasMockRegistration.Registrations.ClearAllInteractions();
 		}
+	}
+
+	/// <summary>
+	///     Verifies the method invocations for the <paramref name="setup" /> on the mock.
+	/// </summary>
+	public static VerificationResult<T> InvokedSetup<T>(this IMockVerify<T> verify, IMethodSetup setup)
+	{
+		if (setup is IVerifiableMethodSetup verifiableMethodSetup &&
+		    verify is Mock<T> mock)
+		{
+			return mock.Registrations.Method(mock.Subject, verifiableMethodSetup.GetMatch());
+		}
+
+		throw new MockException("The subject is no mock.");
 	}
 }

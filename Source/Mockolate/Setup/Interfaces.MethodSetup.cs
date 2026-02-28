@@ -4,6 +4,23 @@ using Mockolate.Interactions;
 namespace Mockolate.Setup;
 
 /// <summary>
+///     Marker interface for method setups.
+/// </summary>
+public interface IMethodSetup;
+
+/// <summary>
+///     Interface for verifiable method setup. It hides the implementation details to get the underlying
+///     <see cref="IMethodMatch" />.
+/// </summary>
+public interface IVerifiableMethodSetup
+{
+	/// <summary>
+	///     Gets the <see cref="IMethodMatch" /> used to match against method invocations.
+	/// </summary>
+	IMethodMatch GetMatch();
+}
+
+/// <summary>
 ///     Interface for hiding some implementation details of <see cref="MethodSetup" />.
 /// </summary>
 public interface IInteractiveMethodSetup : ISetup
@@ -63,7 +80,7 @@ public interface IInteractiveMethodSetup : ISetup
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn>
+public interface IReturnMethodSetup<in TReturn> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -209,7 +226,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn>
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn, out T1>
+public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -370,7 +387,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1>
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn, out T1, out T2>
+public interface IReturnMethodSetup<in TReturn, out T1, out T2> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -531,7 +548,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2>
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
+public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -693,7 +710,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
-public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
+public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> : IMethodSetup
 {
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.

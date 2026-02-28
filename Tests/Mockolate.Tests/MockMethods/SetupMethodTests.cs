@@ -1140,7 +1140,7 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
-	public class MyMethodSetup : MethodSetup
+	public class MyMethodSetup() : MethodSetup(new MethodParameterMatch("", []))
 	{
 		public static void DoTriggerCallbacks(NamedParameter?[] namedParameters, object?[] values)
 			=> TriggerCallbacks(namedParameters, values);

@@ -1,4 +1,5 @@
 using Mockolate.Parameters;
+using Mockolate.Setup;
 using Mockolate.Verify;
 
 namespace Mockolate;
@@ -24,28 +25,28 @@ public partial class Mock<T> : IMockVerify<T>,
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithToString{T}.ToString()" />
 	VerificationResult<T> IMockVerifyInvokedWithToString<T>.ToString()
-		=> Registrations.Method(Subject, Registrations.Prefix + ".ToString");
+		=> Registrations.Method(Subject, new MethodParameterMatch(Registrations.Prefix + ".ToString", []));
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithEquals{T}.Equals(IParameter{object?})" />
 	VerificationResult<T> IMockVerifyInvokedWithEquals<T>.Equals(IParameter<object?>? obj)
-		=> Registrations.Method(Subject, Registrations.Prefix + ".Equals",
-			new NamedParameter("obj", (IParameter)(obj ?? It.IsNull<object>())));
+		=> Registrations.Method(Subject, new MethodParameterMatch(Registrations.Prefix + ".Equals",
+			[new NamedParameter("obj", (IParameter)(obj ?? It.IsNull<object>())),]));
 
 	/// <inheritdoc cref="IMockVerifyInvokedWithGetHashCode{T}.GetHashCode()" />
 	VerificationResult<T> IMockVerifyInvokedWithGetHashCode<T>.GetHashCode()
-		=> Registrations.Method(Subject, Registrations.Prefix + ".GetHashCode");
+		=> Registrations.Method(Subject, new MethodParameterMatch(Registrations.Prefix + ".GetHashCode", []));
 
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
 	public VerificationResult<T> Method(string methodName, params NamedParameter[] parameters)
-		=> Registrations.Method(Subject, methodName, parameters);
+		=> Registrations.Method(Subject, new MethodParameterMatch(methodName, parameters));
 
 	/// <summary>
 	///     Counts the invocations of method <paramref name="methodName" /> with matching <paramref name="parameters" />.
 	/// </summary>
 	public VerificationResult<T> Method(string methodName, IParameters parameters)
-		=> Registrations.Method(Subject, methodName, parameters);
+		=> Registrations.Method(Subject, new MethodParametersMatch(methodName, parameters));
 
 	/// <summary>
 	///     Counts the getter accesses of property <paramref name="propertyName" />.

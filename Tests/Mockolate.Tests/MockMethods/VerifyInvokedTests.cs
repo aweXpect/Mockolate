@@ -1,4 +1,5 @@
 using Mockolate.Exceptions;
+using Mockolate.Setup;
 using static Mockolate.Tests.MockMethods.SetupMethodTests;
 
 namespace Mockolate.Tests.MockMethods;
@@ -46,6 +47,21 @@ public sealed partial class VerifyInvokedTests
 		_ = mock.GetHashCode();
 
 		await That(mock.VerifyMock.Invoked.GetHashCode()).Once();
+	}
+
+	[Theory]
+	[InlineData(-1, 0)]
+	[InlineData(1, 1)]
+	public async Task InvokedSetup_WhenSetupWasNotInvoked_ShouldVerifyToNever(int firstParameter, int expectedCallCount)
+	{
+		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+		IMethodSetup setup = sut.SetupMock.Method.Subtract(
+			It.Satisfies<int>(x => x > 0),
+			It.IsAny<int?>()).Returns(1);
+
+		sut.Subtract(firstParameter, 4);
+
+		await That(sut.VerifyMock.InvokedSetup(setup)).Exactly(expectedCallCount);
 	}
 
 	[Fact]

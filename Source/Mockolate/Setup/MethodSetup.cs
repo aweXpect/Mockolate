@@ -9,7 +9,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for method setups.
 /// </summary>
-public abstract class MethodSetup : IInteractiveMethodSetup
+public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethodSetup, IVerifiableMethodSetup
 {
 	/// <inheritdoc cref="IInteractiveMethodSetup.HasReturnCalls()" />
 	bool IInteractiveMethodSetup.HasReturnCalls()
@@ -47,6 +47,10 @@ public abstract class MethodSetup : IInteractiveMethodSetup
 	/// <inheritdoc cref="IInteractiveMethodSetup.TriggerCallbacks(object?[])" />
 	public void TriggerCallbacks(object?[] parameters)
 		=> TriggerParameterCallbacks(parameters);
+
+	/// <inheritdoc cref="IVerifiableMethodSetup.GetMatch()" />
+	public IMethodMatch GetMatch()
+		=> methodMatch;
 
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be skipped.

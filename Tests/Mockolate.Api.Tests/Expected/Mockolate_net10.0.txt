@@ -113,6 +113,7 @@ namespace Mockolate
     {
         public static void ClearAllInteractions<T>(this Mockolate.Setup.IMockSetup<T> mock)
             where T :  class { }
+        public static Mockolate.Verify.VerificationResult<T> InvokedSetup<T>(this Mockolate.Verify.IMockVerify<T> verify, Mockolate.Setup.IMethodSetup setup) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MockRegistration
@@ -131,8 +132,7 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params Mockolate.Parameters.NamedParameterValue[] parameters) { }
         public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, params Mockolate.Parameters.NamedParameterValue[] parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, Mockolate.Parameters.IParameters parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, string methodName, params Mockolate.Parameters.NamedParameter[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, Mockolate.Setup.IMethodMatch methodMatch) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName, Mockolate.Parameters.IParameter value) { }
         public void Raise(string eventName, params object?[] parameters) { }
@@ -880,6 +880,11 @@ namespace Mockolate.Setup
         bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
         bool? SkipBaseClass();
     }
+    public interface IMethodMatch
+    {
+        bool Matches(Mockolate.Interactions.MethodInvocation methodInvocation);
+    }
+    public interface IMethodSetup { }
     public interface IMockMethodSetupWithEqualsWithGetHashCode<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetupWithEquals<T>, Mockolate.Setup.IMockMethodSetupWithGetHashCode<T>, Mockolate.Setup.IMockMethodSetup<T> { }
     public interface IMockMethodSetupWithEquals<out T> : Mockolate.IInteractiveMock<T>, Mockolate.Setup.IMockMethodSetup<T>
     {
@@ -952,102 +957,102 @@ namespace Mockolate.Setup
     public interface IProtectedMockMethodSetup<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IProtectedMockPropertySetup<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IProtectedMockSetup<out T> : Mockolate.IInteractiveMock<T> { }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn> : Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> InParallel();
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1> : Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> InParallel();
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> InParallel();
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> InParallel();
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> InParallel();
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn> : Mockolate.Setup.IReturnMethodSetup<TReturn>
+    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn> Only(int times);
     }
-    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1> : Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
+    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1> Only(int times);
     }
-    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
+    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2> Only(int times);
     }
-    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
+    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3> Only(int times);
     }
-    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+    public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
     {
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4> Only(int times);
     }
-    public interface IReturnMethodSetupReturnBuilder<in TReturn> : Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>
+    public interface IReturnMethodSetupReturnBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1> : Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
+    public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
+    public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
+    public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+    public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
     }
-    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn> : Mockolate.Setup.IReturnMethodSetup<TReturn>
+    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn> Only(int times);
     }
-    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1> : Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
+    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1> Only(int times);
     }
-    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
+    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2> Only(int times);
     }
-    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
+    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3> Only(int times);
     }
-    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+    public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
     {
         Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4> Only(int times);
     }
-    public interface IReturnMethodSetup<in TReturn>
+    public interface IReturnMethodSetup<in TReturn> : Mockolate.Setup.IMethodSetup
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> Do(System.Action callback);
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> Do(System.Action<int> callback);
@@ -1059,7 +1064,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn> Throws<TException>()
             where TException : System.Exception, new ();
     }
-    public interface IReturnMethodSetup<in TReturn, out T1>
+    public interface IReturnMethodSetup<in TReturn, out T1> : Mockolate.Setup.IMethodSetup
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(System.Action callback);
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(System.Action<T1> callback);
@@ -1074,7 +1079,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1> Throws<TException>()
             where TException : System.Exception, new ();
     }
-    public interface IReturnMethodSetup<in TReturn, out T1, out T2>
+    public interface IReturnMethodSetup<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(System.Action callback);
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(System.Action<T1, T2> callback);
@@ -1089,7 +1094,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws<TException>()
             where TException : System.Exception, new ();
     }
-    public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3>
+    public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(System.Action callback);
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(System.Action<T1, T2, T3> callback);
@@ -1104,7 +1109,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new ();
     }
-    public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4>
+    public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup
     {
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(System.Action callback);
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4> callback);
@@ -1120,6 +1125,10 @@ namespace Mockolate.Setup
             where TException : System.Exception, new ();
     }
     public interface ISetup { }
+    public interface IVerifiableMethodSetup
+    {
+        Mockolate.Setup.IMethodMatch GetMatch();
+    }
     public interface IVoidMethodSetup
     {
         Mockolate.Setup.IVoidMethodSetupCallbackBuilder Do(System.Action callback);
@@ -1396,10 +1405,23 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new () { }
     }
-    public abstract class MethodSetup : Mockolate.Setup.IInteractiveMethodSetup, Mockolate.Setup.ISetup
+    public readonly struct MethodParameterMatch : Mockolate.Setup.IMethodMatch
     {
-        protected MethodSetup() { }
+        public MethodParameterMatch(string methodName, Mockolate.Parameters.NamedParameter[] parameters) { }
+        public bool Matches(Mockolate.Interactions.MethodInvocation method) { }
+        public override string ToString() { }
+    }
+    public readonly struct MethodParametersMatch : Mockolate.Setup.IMethodMatch
+    {
+        public MethodParametersMatch(string methodName, Mockolate.Parameters.IParameters parameters) { }
+        public bool Matches(Mockolate.Interactions.MethodInvocation method) { }
+        public override string ToString() { }
+    }
+    public abstract class MethodSetup : Mockolate.Setup.IInteractiveMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVerifiableMethodSetup
+    {
+        protected MethodSetup(Mockolate.Setup.IMethodMatch methodMatch) { }
         protected abstract void ExecuteCallback(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior);
+        public Mockolate.Setup.IMethodMatch GetMatch() { }
         protected abstract TResult GetReturnValue<TResult>(Mockolate.Interactions.MethodInvocation invocation, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
         protected abstract bool? GetSkipBaseClass();
         protected virtual bool HasReturnCalls() { }
@@ -1470,7 +1492,7 @@ namespace Mockolate.Setup
         public static System.ReadOnlySpan<T> op_Implicit(Mockolate.Setup.ReadOnlySpanWrapper<T> wrapper) { }
         public static Mockolate.Setup.ReadOnlySpanWrapper<T> op_Implicit(System.ReadOnlySpan<T> span) { }
     }
-    public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>
+    public class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>
     {
         public ReturnMethodSetup(string name) { }
         public Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> Do(System.Action callback) { }
@@ -1492,7 +1514,7 @@ namespace Mockolate.Setup
         public override string ToString() { }
         protected override void TriggerParameterCallbacks(object?[] parameters) { }
     }
-    public class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
+    public class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
     {
         public ReturnMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
         public ReturnMethodSetup(string name, Mockolate.Parameters.NamedParameter match1) { }
@@ -1518,7 +1540,7 @@ namespace Mockolate.Setup
         public override string ToString() { }
         protected override void TriggerParameterCallbacks(object?[] parameters) { }
     }
-    public class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
+    public class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
     {
         public ReturnMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
         public ReturnMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2) { }
@@ -1544,7 +1566,7 @@ namespace Mockolate.Setup
         public override string ToString() { }
         protected override void TriggerParameterCallbacks(object?[] parameters) { }
     }
-    public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
+    public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
     {
         public ReturnMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
         public ReturnMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2, Mockolate.Parameters.NamedParameter match3) { }
@@ -1570,7 +1592,7 @@ namespace Mockolate.Setup
         public override string ToString() { }
         protected override void TriggerParameterCallbacks(object?[] parameters) { }
     }
-    public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+    public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
     {
         public ReturnMethodSetup(string name, Mockolate.Parameters.IParameters matches) { }
         public ReturnMethodSetup(string name, Mockolate.Parameters.NamedParameter match1, Mockolate.Parameters.NamedParameter match2, Mockolate.Parameters.NamedParameter match3, Mockolate.Parameters.NamedParameter match4) { }
