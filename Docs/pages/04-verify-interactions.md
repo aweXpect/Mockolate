@@ -18,6 +18,22 @@ Supported call count verifications in the `Mockolate.VerifyMock` namespace:
 - `.Between(min, max)`: The interaction occurred between min and max times (inclusive)
 - `.Times(predicate)`: The interaction count matches the predicate
 
+If the invocations run in a background thread, you can use `Within(TimeSpan)` to specify a timeout in which to wait for
+the expected interactions to occur:
+
+```csharp
+// Wait up to 1 second for Dispense("Dark", 5) to be invoked
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5))
+    .Within(TimeSpan.FromSeconds(1))
+    .AtLeastOnce();
+```
+
+You can also use `WithCancellation(CancellationToken)` to wait for the expected interactions until the cancellation
+token is canceled. If you combine this with the `Within` method, both cancellations are respected.
+
+In both cases, it will block the test execution until the expected interaction occurs or the timeout is reached.
+If the interaction does not occur within the specified time, a `MockVerificationException` will be thrown.
+
 ## Properties
 
 You can verify access to property getter and setter:
@@ -57,6 +73,14 @@ sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
 // Verify that Dispense was invoked an even number of times
 sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Times(count => count % 2 == 0);
+```
+
+You can also verify that a specific setup was invoked a specific number of times:
+
+```csharp
+var setup = sut.SetupMock.Method.Dispense(It.Is("Dark"), It.Is(5)).Returns(true);
+// Act
+sut.VerifyMock.InvokedSetup(setup).AtLeastOnce();
 ```
 
 ## Indexers

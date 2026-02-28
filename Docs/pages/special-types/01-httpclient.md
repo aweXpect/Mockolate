@@ -243,3 +243,31 @@ httpClient.SetupMock.Method
 
 - By default, only the content headers are checked, not the headers in the corresponding `HttpRequestMessage`.
   If you want to check both, add the `.IncludingRequestHeaders()` modifier.
+
+## Return Message
+
+Overloads of `.ReturnsAsync` simplify specifying the return value for HTTP method setups.
+
+```csharp
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+    // Returns a response with status code 200 OK and no content
+    .ReturnsAsync(HttpStatusCode.OK);
+
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+    // Returns a response with status code 200 OK and a string content "some string content"
+    .ReturnsAsync(HttpStatusCode.OK, "some string content");
+
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+    // Returns a response with status code 200 OK and a JSON content {"foo":"bar"}
+    .ReturnsAsync(HttpStatusCode.OK, "{\"foo\":\"bar\"}", "application/json");
+
+byte[] bytes = //... some byte array content
+
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+    // Returns a response with status code 200 OK and a binary content with the provided bytes
+    .ReturnsAsync(HttpStatusCode.OK, bytes);
+
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+    // Returns a response with status code 200 OK and a PNG image content with the provided bytes
+    .ReturnsAsync(HttpStatusCode.OK, bytes, "image/png");
+```
