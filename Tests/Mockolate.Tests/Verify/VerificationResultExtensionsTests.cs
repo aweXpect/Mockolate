@@ -28,6 +28,22 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at least 3 times, but it did twice.");
 	}
 
+	[Fact]
+	public async Task AtLeast_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).AtLeast(5);
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at least 5 times, but it timed out after 00:00:00.0200000.");
+	}
+
 	[Theory]
 	[InlineData(0, false)]
 	[InlineData(1, true)]
@@ -46,6 +62,22 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at least once, but it never did.");
+	}
+
+	[Fact]
+	public async Task AtLeastOnce_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).AtLeastOnce();
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at least once, but it timed out after 00:00:00.0200000.");
 	}
 
 	[Theory]
@@ -68,6 +100,22 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at least twice, but it {count switch { 0 => "never did", _ => "did once", }}.");
 	}
 
+	[Fact]
+	public async Task AtLeastTwice_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).AtLeastTwice();
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at least twice, but it timed out after 00:00:00.0200000.");
+	}
+
 	[Theory]
 	[InlineData(0, 0, true)]
 	[InlineData(2, 1, false)]
@@ -86,6 +134,23 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at most once, but it did twice.");
+	}
+
+	[Fact]
+	public async Task AtMost_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, 5);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).AtMost(4);
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at most 4 times, but it timed out after 00:00:00.0200000.");
 	}
 
 	[Theory]
@@ -108,6 +173,23 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at most once, but it did {(count == 2 ? "twice" : $"{count} times")}.");
 	}
 
+	[Fact]
+	public async Task AtMostOnce_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, 2);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).AtMostOnce();
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at most once, but it timed out after 00:00:00.0200000.");
+	}
+
 	[Theory]
 	[InlineData(0, true)]
 	[InlineData(1, true)]
@@ -126,6 +208,23 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				$"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at most twice, but it did {count} times.");
+	}
+
+	[Fact]
+	public async Task AtMostTwice_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, 3);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).AtMostTwice();
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) at most twice, but it timed out after 00:00:00.0200000.");
 	}
 
 	[Theory]
@@ -157,6 +256,22 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				$"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) between {minimum} and {maximum} times, but it {expectedDidTimes}.");
+	}
+
+	[Fact]
+	public async Task Between_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).Between(3, 5);
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) between 3 and 5 times, but it timed out after 00:00:00.0200000.");
 	}
 
 	[Fact]
@@ -209,6 +324,22 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) exactly {(times == 1 ? "once" : $"{times} times")}, but it did twice.");
 	}
 
+	[Fact]
+	public async Task Exactly_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).Exactly(3);
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) exactly 3 times, but it timed out after 00:00:00.0200000.");
+	}
+
 	[Theory]
 	[InlineData(0, true)]
 	[InlineData(1, false)]
@@ -229,6 +360,23 @@ public class VerificationResultExtensionsTests
 				$"Expected that mock never invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()), but it did {count switch { 1 => "once", 2 => "twice", _ => $"{count} times", }}.");
 	}
 
+	[Fact]
+	public async Task Never_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		ExecuteDoSomethingOn(mock, 1);
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).Never();
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock never invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()), but it timed out after 00:00:00.0200000.");
+	}
+
 	[Theory]
 	[InlineData(0, false)]
 	[InlineData(1, true)]
@@ -247,6 +395,22 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				$"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) exactly once, but it {count switch { 0 => "never did", 2 => "did twice", _ => $"did {count} times", }}.");
+	}
+
+	[Fact]
+	public async Task Once_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).Once();
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) exactly once, but it timed out after 00:00:00.0200000.");
 	}
 
 	[Fact]
@@ -297,23 +461,6 @@ public class VerificationResultExtensionsTests
 	}
 
 	[Fact]
-	public async Task Then_WhenOnlyPartlyMatch_ShouldFail()
-	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		mock.Dispense("Dark", 1);
-		mock.Dispense("Dark", 2);
-		mock.Dispense("Dark", 3);
-		mock.Dispense("Dark", 4);
-
-		await That(void () => mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.Is(2))
-				.Then(m => m.Invoked.Dispense(It.IsAny<string>(), It.Is(1)),
-					m => m.Invoked.Dispense(It.IsAny<string>(), It.Is(4))))
-			.Throws<MockVerificationException>()
-			.WithMessage(
-				"Expected that mock invoked method Dispense(It.IsAny<string>(), 2), then invoked method Dispense(It.IsAny<string>(), 1), then invoked method Dispense(It.IsAny<string>(), 4) in order, but it invoked method Dispense(It.IsAny<string>(), 1) too early.");
-	}
-
-	[Fact]
 	public async Task Then_WhenNoMatch_ShouldFail()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -356,6 +503,39 @@ public class VerificationResultExtensionsTests
 
 		await That(Act).Throws<MockException>()
 			.WithMessage("The subject is no mock subject.");
+	}
+
+	[Fact]
+	public async Task Then_WhenOnlyPartlyMatch_ShouldFail()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+		mock.Dispense("Dark", 1);
+		mock.Dispense("Dark", 2);
+		mock.Dispense("Dark", 3);
+		mock.Dispense("Dark", 4);
+
+		await That(void () => mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.Is(2))
+				.Then(m => m.Invoked.Dispense(It.IsAny<string>(), It.Is(1)),
+					m => m.Invoked.Dispense(It.IsAny<string>(), It.Is(4))))
+			.Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), 2), then invoked method Dispense(It.IsAny<string>(), 1), then invoked method Dispense(It.IsAny<string>(), 4) in order, but it invoked method Dispense(It.IsAny<string>(), 1) too early.");
+	}
+
+	[Fact]
+	public async Task Times_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).Times(_ => false);
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) according to the predicate _ => false, but it timed out after 00:00:00.0200000.");
 	}
 
 	[Theory]
@@ -467,6 +647,22 @@ public class VerificationResultExtensionsTests
 		await That(Act).Throws<MockVerificationException>().OnlyIf(!expectSuccess)
 			.WithMessage(
 				$"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) exactly twice, but it {count switch { 0 => "never did", 1 => "did once", _ => $"did {count} times", }}.");
+	}
+
+	[Fact]
+	public async Task Twice_WhenTimedOut_ShouldThrowMockVerificationException()
+	{
+		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+		void Act()
+		{
+			mock.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Within(TimeSpan.FromMilliseconds(20)).Twice();
+		}
+
+		await That(Act).Throws<MockVerificationException>()
+			.WithMessage(
+				"Expected that mock invoked method Dispense(It.IsAny<string>(), It.IsAny<int>()) exactly twice, but it timed out after 00:00:00.0200000.");
 	}
 
 	private class MyChocolateDispenser : IChocolateDispenser

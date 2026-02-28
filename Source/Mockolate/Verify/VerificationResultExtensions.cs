@@ -33,15 +33,23 @@ public static class VerificationResultExtensions
 		public void AtLeast(int times)
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length >= times;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length >= times;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} at least {times.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} at least {times.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} at least {times.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -51,15 +59,23 @@ public static class VerificationResultExtensions
 		public void AtLeastOnce()
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length >= 1;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length >= 1;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} at least {1.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} at least {1.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} at least {1.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -69,15 +85,23 @@ public static class VerificationResultExtensions
 		public void AtLeastTwice()
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length >= 2;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length >= 2;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} at least {2.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} at least {2.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} at least {2.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -87,15 +111,23 @@ public static class VerificationResultExtensions
 		public void AtMost(int times)
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length <= times;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length <= times;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} at most {times.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} at most {times.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} at most {times.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -117,15 +149,23 @@ public static class VerificationResultExtensions
 			}
 
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length >= minimum && interactions.Length <= maximum;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length >= minimum && interactions.Length <= maximum;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} between {minimum} and {maximum} times, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} between {minimum} and {maximum} times, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} between {minimum} and {maximum} times, but {timeoutException.Message}.");
 			}
 		}
 
@@ -135,15 +175,23 @@ public static class VerificationResultExtensions
 		public void AtMostOnce()
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length <= 1;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length <= 1;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} at most {1.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} at most {1.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} at most {1.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -153,15 +201,23 @@ public static class VerificationResultExtensions
 		public void AtMostTwice()
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length <= 2;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length <= 2;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} at most {2.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} at most {2.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} at most {2.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -171,15 +227,23 @@ public static class VerificationResultExtensions
 		public void Exactly(int times)
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length == times;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length == times;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} exactly {times.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} exactly {times.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} exactly {times.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -189,15 +253,23 @@ public static class VerificationResultExtensions
 		public void Never()
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length == 0;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length == 0;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {0.ToTimes()} {result.Expectation}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {0.ToTimes()} {result.Expectation}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {0.ToTimes()} {result.Expectation}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -207,15 +279,23 @@ public static class VerificationResultExtensions
 		public void Once()
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length == 1;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length == 1;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} exactly {1.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} exactly {1.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} exactly {1.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -225,15 +305,23 @@ public static class VerificationResultExtensions
 		public void Twice()
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return interactions.Length == 2;
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return interactions.Length == 2;
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} exactly {2.ToTimes()}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} exactly {2.ToTimes()}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} exactly {2.ToTimes()}, but {timeoutException.Message}.");
 			}
 		}
 
@@ -245,15 +333,23 @@ public static class VerificationResultExtensions
 			string doNotPopulateThisValue = "")
 		{
 			IVerificationResult result = verificationResult;
-			int found = 0;
-			if (!result.Verify(interactions =>
-			    {
-				    found = interactions.Length;
-				    return predicate(interactions.Length);
-			    }))
+			try
+			{
+				int found = 0;
+				if (!result.Verify(interactions =>
+				    {
+					    found = interactions.Length;
+					    return predicate(interactions.Length);
+				    }))
+				{
+					throw new MockVerificationException(
+						$"Expected that mock {result.Expectation} according to the predicate {doNotPopulateThisValue}, but it {found.ToTimes("did")}.");
+				}
+			}
+			catch (MockVerificationTimeoutException timeoutException)
 			{
 				throw new MockVerificationException(
-					$"Expected that mock {result.Expectation} according to the predicate {doNotPopulateThisValue}, but it {found.ToTimes("did")}.");
+					$"Expected that mock {result.Expectation} according to the predicate {doNotPopulateThisValue}, but {timeoutException.Message}.");
 			}
 		}
 
