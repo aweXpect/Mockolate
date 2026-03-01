@@ -19,11 +19,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="TUnit" />
+		<PackageReference Include="System.Net.Http"/>
+		<PackageReference Include="TUnit.Engine" />
 		<PackageReference Include="Polyfill">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
 		<PackageReference Include="aweXpect"/>
 		<PackageReference Include="aweXpect.Mockolate"/>
 	</ItemGroup>

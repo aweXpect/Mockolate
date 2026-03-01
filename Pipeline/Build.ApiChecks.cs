@@ -17,7 +17,7 @@ partial class Build
 			Project project = Solution.Tests.Mockolate_Api_Tests;
 
 			DotNetTest(s => s
-				.SetConfiguration(Configuration)
+				.SetConfiguration(Configuration == Configuration.Debug ? "Debug" : "Release")
 				.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
 				.EnableNoBuild()
 				.SetResultsDirectory(TestResultsDirectory)

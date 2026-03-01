@@ -12,24 +12,18 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithFormDataTests
 		{
-			public static IEnumerable<(bool, string[])> ExactlyDataSource()
-				=>
-				[
-					(true, ["x", "123", "y", "234", "z", "345", "z", "567",]),
-					(true, ["z", "567", "x", "123", "z", "345", "y", "234",]),
-					(true, ["x", "123", "y", "234", "z", "345", "z", "567", "z", "567",]),
-					(false, ["z", "567", "x", "123", "x", "345", "y", "234",]),
-					(false, ["x", "123", "y", "234", "z", "345", "z", "567", "z", "789",]),
-					(false, ["y", "234", "z", "345", "z", "567",]),
-					(false, ["x", "123", "z", "345",]),
-					(false, ["x", "123", "y", "234",]),
-					(false, ["x", "123", "y", "234", "z", "345",]),
-				];
-
 			[Test]
-			[MethodDataSource(nameof(ExactlyDataSource))]
+			[Arguments(true, new[] { "x", "123", "y", "234", "z", "345", "z", "567", })]
+			[Arguments(true, new[] { "z", "567", "x", "123", "z", "345", "y", "234", })]
+			[Arguments(true, new[] { "x", "123", "y", "234", "z", "345", "z", "567", "z", "567", })]
+			[Arguments(false, new[] { "z", "567", "x", "123", "x", "345", "y", "234", })]
+			[Arguments(false, new[] { "x", "123", "y", "234", "z", "345", "z", "567", "z", "789", })]
+			[Arguments(false, new[] { "y", "234", "z", "345", "z", "567", })]
+			[Arguments(false, new[] { "x", "123", "z", "345", })]
+			[Arguments(false, new[] { "x", "123", "y", "234", })]
+			[Arguments(false, new[] { "x", "123", "y", "234", "z", "345", })]
 			public async Task Exactly_ShouldOnlyMatchWhenAllParametersAreChecked(
-				bool expectSuccess, string[] rawValues)
+				bool expectSuccess, params string[] rawValues)
 			{
 				List<(string, HttpFormDataValue)> values = new();
 				for (int i = 0; i < rawValues.Length; i += 2)
