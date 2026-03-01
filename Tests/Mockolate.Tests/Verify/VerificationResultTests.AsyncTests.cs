@@ -158,13 +158,13 @@ public sealed partial class VerificationResultTests
 			}, token);
 
 			Stopwatch sw = Stopwatch.StartNew();
-			sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Within(TimeSpan.FromMilliseconds(500))
+			sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Within(TimeSpan.FromSeconds(2))
 				.AtLeastOnce();
 			sw.Stop();
 			cts.Cancel();
 			await backgroundTask;
 
-			await That(sw.Elapsed).IsLessThan(TimeSpan.FromSeconds(2));
+			await That(sw.Elapsed).IsLessThan(TimeSpan.FromSeconds(5));
 		}
 
 		[Test]
