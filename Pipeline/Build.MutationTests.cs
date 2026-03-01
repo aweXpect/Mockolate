@@ -79,7 +79,7 @@ partial class Build
 				                      			{{string.Join(",\n\t\t\t", project.Value.Select(PathForJson))}}
 				                      		],
 				                      		"project": {{PathForJson(project.Key)}},
-				                      		"target-framework": "net8.0",
+				                      		"target-framework": "net10.0",
 				                      		"since": {
 				                      			"target": "main",
 				                      			"enabled": {{(BranchName != "main").ToString().ToLowerInvariant()}},
