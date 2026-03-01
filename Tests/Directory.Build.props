@@ -8,39 +8,25 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<OutputType>Exe</OutputType>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<NoWarn>701;1702;CA1845</NoWarn>
+		<EnableTUnitPolyfills>false</EnableTUnitPolyfills>
 	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
-		<OutputType>exe</OutputType>
-	</PropertyGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<PackageReference Include="xunit.v3"/>
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' != 'net48'">
-		<PackageReference Include="xunit"/>
-	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="xunit.runner.visualstudio">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		<PackageReference Include="System.Net.Http"/>
+		<PackageReference Include="TUnit.Engine" />
+		<PackageReference Include="Polyfill">
 			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
-		<PackageReference Include="Nullable">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="coverlet.collector">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+		<PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
 		<PackageReference Include="aweXpect"/>
 		<PackageReference Include="aweXpect.Mockolate"/>
 	</ItemGroup>

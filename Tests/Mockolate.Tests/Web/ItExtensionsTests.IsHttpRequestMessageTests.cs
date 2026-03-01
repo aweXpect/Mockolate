@@ -12,7 +12,7 @@ public sealed partial class ItExtensionsTests
 {
 	public sealed partial class IsHttpRequestMessageTests
 	{
-		[Fact]
+		[Test]
 		public async Task ShouldSupportMonitoring()
 		{
 			int callbackCount = 0;
@@ -41,11 +41,11 @@ public sealed partial class ItExtensionsTests
 			await That(callbackCount).IsEqualTo(3);
 		}
 
-		[Theory]
-		[InlineData(nameof(HttpMethod.Get), true)]
-		[InlineData(nameof(HttpMethod.Delete), false)]
-		[InlineData(nameof(HttpMethod.Post), false)]
-		[InlineData(nameof(HttpMethod.Put), false)]
+		[Test]
+		[Arguments(nameof(HttpMethod.Get), true)]
+		[Arguments(nameof(HttpMethod.Delete), false)]
+		[Arguments(nameof(HttpMethod.Post), false)]
+		[Arguments(nameof(HttpMethod.Put), false)]
 		public async Task WithMethod_ShouldVerifyMethod(string method, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();

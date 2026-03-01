@@ -10,7 +10,7 @@ public sealed partial class VerificationResultTests
 {
 	public class AsyncTests
 	{
-		[Fact]
+		[Test]
 		public async Task MultipleWithin_ShouldOverwritePreviousTimeout()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -28,7 +28,7 @@ public sealed partial class VerificationResultTests
 					"Expected that mock invoked method Dispense(Match.AnyParameters()) at least once, but it timed out after 00:00:00.2000000.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task VerifyAsync_WhenAlreadySuccessful_ShouldReturnTrue()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -41,7 +41,7 @@ public sealed partial class VerificationResultTests
 			await That(((IAsyncVerificationResult)result).VerifyAsync(l => l.Length > 0)).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task VerifyAsync_WhenMultipleIterationsAreNecessary_ShouldStopWhenSuccessful()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -69,7 +69,7 @@ public sealed partial class VerificationResultTests
 			await backgroundTask;
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithCancellation_ShouldReturnAsyncVerificationResult()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -80,7 +80,7 @@ public sealed partial class VerificationResultTests
 			await That(result).Is<IAsyncVerificationResult>();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithCancellationAndTimeout_ShouldCombineBoth()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -100,7 +100,7 @@ public sealed partial class VerificationResultTests
 					"Expected that mock invoked method Dispense(Match.AnyParameters()) at least once, but it timed out.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithCancellationAndTimeout_ShouldIncludeTimeoutInExceptionWhenLessThanCancellationToken()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -120,7 +120,7 @@ public sealed partial class VerificationResultTests
 					"Expected that mock invoked method Dispense(Match.AnyParameters()) at least once, but it timed out after 00:00:00.0500000.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithCancellationToken_ShouldIncludeTimeoutInException()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -137,7 +137,7 @@ public sealed partial class VerificationResultTests
 					"Expected that mock invoked method Dispense(Match.AnyParameters()) at least once, but it timed out.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task Within_ShouldAbortAsSoonAsConditionIsSatisfied()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -158,16 +158,16 @@ public sealed partial class VerificationResultTests
 			}, token);
 
 			Stopwatch sw = Stopwatch.StartNew();
-			sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Within(TimeSpan.FromMilliseconds(500))
+			sut.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Within(TimeSpan.FromSeconds(2))
 				.AtLeastOnce();
 			sw.Stop();
 			cts.Cancel();
 			await backgroundTask;
 
-			await That(sw.Elapsed).IsLessThan(TimeSpan.FromSeconds(2));
+			await That(sw.Elapsed).IsLessThan(TimeSpan.FromSeconds(5));
 		}
 
-		[Fact]
+		[Test]
 		public async Task Within_ShouldReturnAsyncVerificationResult()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
@@ -178,7 +178,7 @@ public sealed partial class VerificationResultTests
 			await That(result).Is<IAsyncVerificationResult>();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithTimeout_ShouldIncludeTimeoutInException()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();

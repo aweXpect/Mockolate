@@ -6,7 +6,7 @@ public sealed partial class VerifyGotIndexerTests
 {
 	public sealed class SpanTests
 	{
-		[Fact]
+		[Test]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -18,7 +18,7 @@ public sealed partial class VerifyGotIndexerTests
 			await That(mock.VerifyMock.GotIndexer(It.Satisfies<Memory<int>>(v => v.Length == 4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Memory_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -30,7 +30,7 @@ public sealed partial class VerifyGotIndexerTests
 			await That(mock.VerifyMock.GotIndexer(It.IsAny<Memory<int>>())).Twice();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -42,7 +42,7 @@ public sealed partial class VerifyGotIndexerTests
 			await That(mock.VerifyMock.GotIndexer(It.IsReadOnlySpan<int>(v => v.Length == 4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -54,7 +54,7 @@ public sealed partial class VerifyGotIndexerTests
 			await That(mock.VerifyMock.GotIndexer(It.IsAnyReadOnlySpan<int>())).Twice();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();
@@ -66,7 +66,7 @@ public sealed partial class VerifyGotIndexerTests
 			await That(mock.VerifyMock.GotIndexer(It.IsSpan<int>(v => v.Length == 4))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Span_WithoutPredicate_ShouldApplyAllCalls()
 		{
 			SpanMock mock = Mock.Create<SpanMock>();

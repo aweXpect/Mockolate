@@ -11,12 +11,12 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithPortTests
 		{
-			[Theory]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", 443, true)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", 80, true)]
-			[InlineData("https://www.aweXpect.com:8080/foo/bar?x=123&y=234", 8080, true)]
-			[InlineData("https://www.aweXpect.com:442/foo/bar?x=123&y=234", 443, false)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", 442, false)]
+			[Test]
+			[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=234", 443, true)]
+			[Arguments("http://www.aweXpect.com/foo/bar?x=123&y=234", 80, true)]
+			[Arguments("https://www.aweXpect.com:8080/foo/bar?x=123&y=234", 8080, true)]
+			[Arguments("https://www.aweXpect.com:442/foo/bar?x=123&y=234", 443, false)]
+			[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=234", 442, false)]
 			public async Task ShouldVerifyPort(string uri, int port, bool expectMatch)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();

@@ -5,7 +5,7 @@ namespace Mockolate.Tests.Internals;
 
 public sealed class MockTests
 {
-	[Fact]
+	[Test]
 	public async Task WithThreeGenericArguments_WhenSecondIsNoInterface_ShouldThrowMockException()
 	{
 		void Act()
@@ -19,7 +19,7 @@ public sealed class MockTests
 			             """);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithTwoGenericArguments_WhenSecondIsNoInterface_ShouldThrowMockException()
 	{
 		void Act()

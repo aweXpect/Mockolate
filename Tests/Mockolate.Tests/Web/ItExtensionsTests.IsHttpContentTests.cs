@@ -13,7 +13,7 @@ public sealed partial class ItExtensionsTests
 {
 	public sealed partial class IsHttpContentTests
 	{
-		[Fact]
+		[Test]
 		public async Task ShouldSupportMonitoring()
 		{
 			int callbackCount = 0;
@@ -43,7 +43,7 @@ public sealed partial class ItExtensionsTests
 			await That(callbackCount).IsEqualTo(3);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldSupportMultipleCombinations()
 		{
 			byte[] bytes = "foo"u8.ToArray();
@@ -64,7 +64,7 @@ public sealed partial class ItExtensionsTests
 			await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldSupportWithHeadersInWrapper()
 		{
 			byte[] bytes = "foo"u8.ToArray();
@@ -84,10 +84,10 @@ public sealed partial class ItExtensionsTests
 			await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 		}
 
-		[Theory]
-		[InlineData("image/png", true)]
-		[InlineData("text/plain", false)]
-		[InlineData("image/gif", false)]
+		[Test]
+		[Arguments("image/png", true)]
+		[Arguments("text/plain", false)]
+		[Arguments("image/gif", false)]
 		public async Task ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -105,10 +105,10 @@ public sealed partial class ItExtensionsTests
 				.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
 
-		[Theory]
-		[InlineData("image/png", true)]
-		[InlineData("text/plain", false)]
-		[InlineData("image/gif", false)]
+		[Test]
+		[Arguments("image/png", true)]
+		[Arguments("text/plain", false)]
+		[Arguments("image/gif", false)]
 		public async Task WithMediaType_ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();

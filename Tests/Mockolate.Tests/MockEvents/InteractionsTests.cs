@@ -6,7 +6,7 @@ namespace Mockolate.Tests.MockEvents;
 
 public sealed class InteractionsTests
 {
-	[Fact]
+	[Test]
 	public async Task EventSubscription_ToString_ShouldReturnExpectedValue()
 	{
 		EventSubscription interaction = new(3, "SomeEvent", this, Helper.GetMethodInfo());
@@ -15,7 +15,7 @@ public sealed class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task EventUnsubscription_ToString_ShouldReturnExpectedValue()
 	{
 		EventUnsubscription interaction = new(3, "SomeEvent", this, Helper.GetMethodInfo());
@@ -24,7 +24,7 @@ public sealed class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Subscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -36,7 +36,7 @@ public sealed class InteractionsTests
 		await That(result).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Subscribed_WhenNameMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -48,7 +48,7 @@ public sealed class InteractionsTests
 		await That(result).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Subscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -60,7 +60,7 @@ public sealed class InteractionsTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event bar");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Unsubscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -72,7 +72,7 @@ public sealed class InteractionsTests
 		await That(result).Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Unsubscribed_WhenNameMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
@@ -84,7 +84,7 @@ public sealed class InteractionsTests
 		await That(result).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Unsubscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();

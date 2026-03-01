@@ -4,7 +4,7 @@ namespace Mockolate.Internal.Tests;
 
 public class MockVerificationTimeoutExceptionTests
 {
-	[Fact]
+	[Test]
 	public async Task WithoutTimeout_ShouldHaveTimedOutMessage()
 	{
 		Exception exception = new("foo");
@@ -15,7 +15,7 @@ public class MockVerificationTimeoutExceptionTests
 		await That(sut.InnerException).IsSameAs(exception);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithTimeout_ShouldIncludeTimeoutInMessage()
 	{
 		Exception exception = new("foo");

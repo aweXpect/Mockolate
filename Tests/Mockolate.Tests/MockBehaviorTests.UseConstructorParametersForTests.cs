@@ -4,7 +4,7 @@ public sealed partial class MockBehaviorTests
 {
 	public sealed class UseConstructorParametersForTests
 	{
-		[Fact]
+		[Test]
 		public async Task WithExplicitConstructorParameters_ShouldIgnoreConstructorParametersFromBehavior()
 		{
 			MockBehavior behavior = MockBehavior.Default
@@ -18,7 +18,7 @@ public sealed partial class MockBehaviorTests
 			await That(value).IsEqualTo(7);
 		}
 
-		[Fact]
+		[Test]
 		public async Task
 			WithExplicitParameters_ShouldUseConstructorParametersFromBehavior()
 		{
@@ -37,7 +37,7 @@ public sealed partial class MockBehaviorTests
 			await That(valueWithCustomBehavior).IsEqualTo(5);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithPredicate_ShouldUseConstructorParametersFromBehavior()
 		{
 			MockBehavior behavior = MockBehavior.Default

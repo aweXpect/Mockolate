@@ -5,7 +5,7 @@ namespace Mockolate.Tests.MockIndexers;
 
 public sealed class InteractionsTests
 {
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess_ToString_ShouldReturnExpectedValue()
 	{
 		IndexerGetterAccess interaction = new(4, [
@@ -19,7 +19,7 @@ public sealed class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess_ToString_ShouldReturnExpectedValue()
 	{
 		IndexerSetterAccess interaction = new(4, [
@@ -33,7 +33,7 @@ public sealed class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		IndexerSetterAccess interaction = new(4, [

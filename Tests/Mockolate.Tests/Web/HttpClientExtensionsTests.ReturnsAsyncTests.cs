@@ -10,11 +10,11 @@ public sealed partial class HttpClientExtensionsTests
 {
 	public sealed class ReturnsAsyncTests
 	{
-		[Theory]
-		[InlineData(HttpStatusCode.OK)]
-		[InlineData(HttpStatusCode.NotFound)]
-		[InlineData(HttpStatusCode.InternalServerError)]
-		[InlineData(HttpStatusCode.Forbidden)]
+		[Test]
+		[Arguments(HttpStatusCode.OK)]
+		[Arguments(HttpStatusCode.NotFound)]
+		[Arguments(HttpStatusCode.InternalServerError)]
+		[Arguments(HttpStatusCode.Forbidden)]
 		public async Task WithStatusCode_ShouldReturnHttpResponseMessageWithStatusCode(HttpStatusCode statusCode)
 		{
 			HttpClient httpClient = Mock.Create<HttpClient>();
@@ -32,9 +32,9 @@ public sealed partial class HttpClientExtensionsTests
 #endif
 		}
 
-		[Theory]
-		[InlineData(HttpStatusCode.OK, "foo")]
-		[InlineData(HttpStatusCode.NotFound, "bar")]
+		[Test]
+		[Arguments(HttpStatusCode.OK, "foo")]
+		[Arguments(HttpStatusCode.NotFound, "bar")]
 		public async Task WithStatusCodeAndBytes_ShouldReturnHttpResponseMessageWithStatusCodeAndByteArrayContent(
 			HttpStatusCode statusCode, string stringContent)
 		{
@@ -52,9 +52,9 @@ public sealed partial class HttpClientExtensionsTests
 			await That(result.Content.Headers.ContentType).IsNull();
 		}
 
-		[Theory]
-		[InlineData(HttpStatusCode.OK, "foo")]
-		[InlineData(HttpStatusCode.NotFound, "bar")]
+		[Test]
+		[Arguments(HttpStatusCode.OK, "foo")]
+		[Arguments(HttpStatusCode.NotFound, "bar")]
 		public async Task
 			WithStatusCodeAndHttpContent_ShouldReturnHttpResponseMessageWithStatusCodeAndByteArrayContent(
 				HttpStatusCode statusCode, string stringContent)
@@ -74,9 +74,9 @@ public sealed partial class HttpClientExtensionsTests
 			await That(result.Content.Headers.ContentType).IsNull();
 		}
 
-		[Theory]
-		[InlineData(HttpStatusCode.OK, "foo")]
-		[InlineData(HttpStatusCode.NotFound, "bar")]
+		[Test]
+		[Arguments(HttpStatusCode.OK, "foo")]
+		[Arguments(HttpStatusCode.NotFound, "bar")]
 		public async Task WithStatusCodeAndString_ShouldReturnHttpResponseMessageWithStatusCodeAndStringContent(
 			HttpStatusCode statusCode, string content)
 		{
@@ -93,9 +93,9 @@ public sealed partial class HttpClientExtensionsTests
 			await That(result.Content.Headers.ContentType?.MediaType).IsEqualTo("text/plain");
 		}
 
-		[Theory]
-		[InlineData(HttpStatusCode.OK, "foo", "text/plain")]
-		[InlineData(HttpStatusCode.NotFound, "bar", "application/json")]
+		[Test]
+		[Arguments(HttpStatusCode.OK, "foo", "text/plain")]
+		[Arguments(HttpStatusCode.NotFound, "bar", "application/json")]
 		public async Task
 			WithStatusCodeBytesAndMediaType_ShouldReturnHttpResponseMessageWithStatusCodeAndByteArrayContent(
 				HttpStatusCode statusCode, string stringContent, string mediaType)
@@ -114,9 +114,9 @@ public sealed partial class HttpClientExtensionsTests
 			await That(result.Content.Headers.ContentType?.MediaType).IsEqualTo(mediaType);
 		}
 
-		[Theory]
-		[InlineData(HttpStatusCode.OK, "foo", "text/plain")]
-		[InlineData(HttpStatusCode.NotFound, "bar", "application/json")]
+		[Test]
+		[Arguments(HttpStatusCode.OK, "foo", "text/plain")]
+		[Arguments(HttpStatusCode.NotFound, "bar", "application/json")]
 		public async Task
 			WithStatusCodeStringContentAndMediaType_ShouldReturnHttpResponseMessageWithStatusCodeAndStringContent(
 				HttpStatusCode statusCode, string content, string mediaType)

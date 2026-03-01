@@ -14,7 +14,7 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WhoseContentIsTests
 		{
-			[Fact]
+			[Test]
 			public async Task ShouldNotCheckHttpContentType()
 			{
 				string expectedValue = "foo";
@@ -31,10 +31,10 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
-			[Theory]
-			[InlineData("image/png", true)]
-			[InlineData("text/plain", false)]
-			[InlineData("image/gif", false)]
+			[Test]
+			[Arguments("image/png", true)]
+			[Arguments("text/plain", false)]
+			[Arguments("image/gif", false)]
 			public async Task ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -52,10 +52,10 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("text/plain", "foo", true)]
-			[InlineData("image/png", "foo", false)]
-			[InlineData("text/plain", "bar", false)]
+			[Test]
+			[Arguments("text/plain", "foo", true)]
+			[Arguments("image/png", "foo", false)]
+			[Arguments("text/plain", "bar", false)]
 			public async Task ShouldVerifyMediaTypeAndContent(string mediaType, string value, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -72,13 +72,13 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData(new byte[0], 0x1, false)]
-			[InlineData(new byte[] { 0x1, }, 0x1, true)]
-			[InlineData(new byte[] { 0x1, }, 0x2, false)]
-			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x1, true)]
-			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x2, false)]
-			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x3, false)]
+			[Test]
+			[Arguments(new byte[0], 0x1, false)]
+			[Arguments(new byte[] { 0x1, }, 0x1, true)]
+			[Arguments(new byte[] { 0x1, }, 0x2, false)]
+			[Arguments(new byte[] { 0x1, 0x2, 0x3, }, 0x1, true)]
+			[Arguments(new byte[] { 0x1, 0x2, 0x3, }, 0x2, false)]
+			[Arguments(new byte[] { 0x1, 0x2, 0x3, }, 0x3, false)]
 			public async Task WithBytes_Predicate_ShouldValidatePredicate(
 				byte[] body, byte expectedFirstByte, bool expectSuccess)
 			{
@@ -95,12 +95,12 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData(new byte[0], new byte[0], true)]
-			[InlineData(new byte[] { 0x66, }, new byte[] { 0x66, }, true)]
-			[InlineData(new byte[] { 0x66, }, new byte[] { 0x67, }, false)]
-			[InlineData(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, }, false)]
-			[InlineData(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, 0x68, 0x69, }, false)]
+			[Test]
+			[Arguments(new byte[0], new byte[0], true)]
+			[Arguments(new byte[] { 0x66, }, new byte[] { 0x66, }, true)]
+			[Arguments(new byte[] { 0x66, }, new byte[] { 0x67, }, false)]
+			[Arguments(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, }, false)]
+			[Arguments(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, 0x68, 0x69, }, false)]
 			public async Task WithBytes_ShouldCheckForEquality(byte[] body, byte[] expected, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -116,10 +116,10 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("image/png", true)]
-			[InlineData("text/plain", false)]
-			[InlineData("image/gif", false)]
+			[Test]
+			[Arguments("image/png", true)]
+			[Arguments("text/plain", false)]
+			[Arguments("image/gif", false)]
 			public async Task WithMediaType_ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -137,10 +137,10 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("foo", "foo", true)]
-			[InlineData("foo", "FOO", true)]
-			[InlineData("foo", "bar", false)]
+			[Test]
+			[Arguments("foo", "foo", true)]
+			[Arguments("foo", "FOO", true)]
+			[Arguments("foo", "bar", false)]
 			public async Task WithString_IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
 				string expected, bool expectSuccess)
 			{
@@ -157,12 +157,12 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("", true)]
-			[InlineData("foo", true)]
-			[InlineData("FOO", false)]
-			[InlineData("bar", true)]
-			[InlineData("BAR", false)]
+			[Test]
+			[Arguments("", true)]
+			[Arguments("foo", true)]
+			[Arguments("FOO", false)]
+			[Arguments("bar", true)]
+			[Arguments("BAR", false)]
 			public async Task WithString_Predicate_ShouldValidatePredicate(string content, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -179,10 +179,10 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("foo", "foo", true)]
-			[InlineData("foo", "FOO", false)]
-			[InlineData("foo", "bar", false)]
+			[Test]
+			[Arguments("foo", "foo", true)]
+			[Arguments("foo", "FOO", false)]
+			[Arguments("foo", "bar", false)]
 			public async Task WithString_ShouldCheckForEquality(string body, string expected,
 				bool expectSuccess)
 			{
@@ -199,10 +199,10 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("foo", "f[aeiou]*", true)]
-			[InlineData("foo", "F[aeiou]*", true)]
-			[InlineData("foo", ".a.", false)]
+			[Test]
+			[Arguments("foo", "f[aeiou]*", true)]
+			[Arguments("foo", "F[aeiou]*", true)]
+			[Arguments("foo", ".a.", false)]
 			public async Task
 				WithStringMatching_AsRegex_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 					string body, string pattern, bool expectSuccess)
@@ -221,10 +221,10 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("foo", "f[aeiou]*", true)]
-			[InlineData("foo", "F[aeiou]*", false)]
-			[InlineData("foo", ".a.", false)]
+			[Test]
+			[Arguments("foo", "f[aeiou]*", true)]
+			[Arguments("foo", "F[aeiou]*", false)]
+			[Arguments("foo", ".a.", false)]
 			public async Task WithStringMatching_AsRegex_ShouldCheckForMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 			{
@@ -242,7 +242,7 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithStringMatching_AsRegex_ShouldUseProvidedOptions()
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -258,7 +258,7 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WithStringMatching_AsRegex_ShouldUseTimeout()
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -279,13 +279,13 @@ public sealed partial class ItExtensionsTests
 					.WithParamName("matchTimeout");
 			}
 
-			[Theory]
-			[InlineData("foo", "f?", false)]
-			[InlineData("foo", "f??", true)]
-			[InlineData("foo", "f*", true)]
-			[InlineData("foo", "*", true)]
-			[InlineData("foo", "F*", true)]
-			[InlineData("foo", "*a*", false)]
+			[Test]
+			[Arguments("foo", "f?", false)]
+			[Arguments("foo", "f??", true)]
+			[Arguments("foo", "f*", true)]
+			[Arguments("foo", "*", true)]
+			[Arguments("foo", "F*", true)]
+			[Arguments("foo", "*a*", false)]
 			public async Task WithStringMatching_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 			{
@@ -303,13 +303,13 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("foo", "f?", false)]
-			[InlineData("foo", "f??", true)]
-			[InlineData("foo", "f*", true)]
-			[InlineData("foo", "*", true)]
-			[InlineData("foo", "F*", false)]
-			[InlineData("foo", "*a*", false)]
+			[Test]
+			[Arguments("foo", "f?", false)]
+			[Arguments("foo", "f??", true)]
+			[Arguments("foo", "f*", true)]
+			[Arguments("foo", "*", true)]
+			[Arguments("foo", "F*", false)]
+			[Arguments("foo", "*a*", false)]
 			public async Task WithStringMatching_ShouldCheckForMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 			{

@@ -4,7 +4,7 @@ public sealed partial class ForMockTests
 {
 	public sealed class ImplementClassTests
 	{
-		[Fact]
+		[Test]
 		public async Task BaseClassMethodWithParameterNamedBaseResult_ShouldGenerateUniqueLocalVariableName()
 		{
 			GeneratorResult result = Generator
@@ -42,7 +42,7 @@ public sealed partial class ForMockTests
 				.IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Events_MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 		{
 			GeneratorResult result = Generator
@@ -81,7 +81,7 @@ public sealed partial class ForMockTests
 				.Contains("event System.EventHandler<long>? MyCode.IMyServiceBase2.SomeEvent").Once();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Events_ShouldImplementAllEventsFromInterfaces()
 		{
 			GeneratorResult result = Generator
@@ -152,7 +152,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Events_ShouldImplementImplicitlyInheritedEvents()
 		{
 			GeneratorResult result = Generator
@@ -281,7 +281,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Events_ShouldImplementVirtualEventsOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 		{
 			GeneratorResult result = Generator
@@ -337,7 +337,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Indexers_ShouldImplementAllIndexersFromInterfaces()
 		{
 			GeneratorResult result = Generator
@@ -419,7 +419,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Indexers_ShouldImplementVirtualIndexersOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 		{
 			GeneratorResult result = Generator
@@ -526,7 +526,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task InterfaceIndexerWithParameterNamedIndexerResult_ShouldGenerateUniqueLocalVariableName()
 		{
 			GeneratorResult result = Generator
@@ -557,7 +557,7 @@ public sealed partial class ForMockTests
 				.IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task InterfaceMethodWithParameterNamedMethodExecution_ShouldGenerateUniqueLocalVariableName()
 		{
 			GeneratorResult result = Generator
@@ -589,7 +589,7 @@ public sealed partial class ForMockTests
 				.IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task InterfaceMethodWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
 		{
 			GeneratorResult result = Generator
@@ -621,20 +621,20 @@ public sealed partial class ForMockTests
 				.IgnoringNewlineStyle();
 		}
 
-		[Theory]
-		[InlineData("class, T")]
-		[InlineData("struct")]
-		[InlineData("class")]
-		[InlineData("class, notnull")]
-		[InlineData("notnull")]
-		[InlineData("unmanaged")]
-		[InlineData("class?")]
-		[InlineData("MyCode.IMyInterface")]
-		[InlineData("new()")]
-		[InlineData("MyCode.IMyInterface?")]
-		[InlineData("allows ref struct")]
-		[InlineData("class, allows ref struct")]
-		[InlineData("MyCode.IMyInterface, new()")]
+		[Test]
+		[Arguments("class, T")]
+		[Arguments("struct")]
+		[Arguments("class")]
+		[Arguments("class, notnull")]
+		[Arguments("notnull")]
+		[Arguments("unmanaged")]
+		[Arguments("class?")]
+		[Arguments("MyCode.IMyInterface")]
+		[Arguments("new()")]
+		[Arguments("MyCode.IMyInterface?")]
+		[Arguments("allows ref struct")]
+		[Arguments("class, allows ref struct")]
+		[Arguments("MyCode.IMyInterface, new()")]
 		public async Task Methods_Generic_ShouldApplyAllConstraints(string constraint)
 		{
 			GeneratorResult result = Generator
@@ -678,7 +678,7 @@ public sealed partial class ForMockTests
 				            """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Methods_Generic_WithoutConstraints_ShouldNotHaveWhereClause()
 		{
 			GeneratorResult result = Generator
@@ -719,7 +719,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Methods_MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 		{
 			GeneratorResult result = Generator
@@ -762,7 +762,7 @@ public sealed partial class ForMockTests
 				.Contains("long MyCode.IMyServiceBase2.Value()").Once();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Methods_ShouldImplementAllMethodsFromInterfaces()
 		{
 			GeneratorResult result = Generator
@@ -819,7 +819,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Methods_ShouldImplementImplicitlyInheritedMethods()
 		{
 			GeneratorResult result = Generator
@@ -932,7 +932,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Methods_ShouldImplementVirtualMethodsOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 		{
 			GeneratorResult result = Generator
@@ -1042,7 +1042,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Methods_ShouldSupportRefInAndOutParameters()
 		{
 			GeneratorResult result = Generator
@@ -1137,7 +1137,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Methods_ShouldSupportSpanParameters()
 		{
 			GeneratorResult result = Generator
@@ -1188,7 +1188,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Properties_MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 		{
 			GeneratorResult result = Generator
@@ -1227,7 +1227,7 @@ public sealed partial class ForMockTests
 				.Contains("long MyCode.IMyServiceBase2.Value").Once();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Properties_ShouldImplementAllPropertiesFromInterfaces()
 		{
 			GeneratorResult result = Generator
@@ -1354,7 +1354,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Properties_ShouldImplementImplicitlyInheritedProperties()
 		{
 			GeneratorResult result = Generator
@@ -1467,7 +1467,7 @@ public sealed partial class ForMockTests
 				          """).IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task
 			Properties_ShouldImplementVirtualPropertiesOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 		{

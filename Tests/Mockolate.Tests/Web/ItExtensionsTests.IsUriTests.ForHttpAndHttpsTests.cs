@@ -11,10 +11,10 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class ForHttpAndHttpsTests
 		{
-			[Theory]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", true)]
-			[InlineData("HTTP://www.aweXpect.com/foo/bar?x=123&y=234", true)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", false)]
+			[Test]
+			[Arguments("http://www.aweXpect.com/foo/bar?x=123&y=234", true)]
+			[Arguments("HTTP://www.aweXpect.com/foo/bar?x=123&y=234", true)]
+			[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=234", false)]
 			public async Task ForHttp_ShouldVerifyHttpScheme(string uri, bool expectMatch)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();
@@ -28,10 +28,10 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectMatch ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", true)]
-			[InlineData("HTTPS://www.aweXpect.com/foo/bar?x=123&y=234", true)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", false)]
+			[Test]
+			[Arguments("https://www.aweXpect.com/foo/bar?x=123&y=234", true)]
+			[Arguments("HTTPS://www.aweXpect.com/foo/bar?x=123&y=234", true)]
+			[Arguments("http://www.aweXpect.com/foo/bar?x=123&y=234", false)]
 			public async Task ForHttps_ShouldVerifyHttpsScheme(string uri, bool expectMatch)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();

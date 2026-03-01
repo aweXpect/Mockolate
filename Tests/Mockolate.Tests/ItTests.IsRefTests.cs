@@ -6,7 +6,7 @@ public sealed partial class ItTests
 {
 	public sealed class IsRefTests
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IRefParameter<int?> sut = It.IsRef<int?>(v => v * 3);
@@ -17,7 +17,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_Verify_ShouldReturnExpectedValue()
 		{
 			IVerifyRefParameter<int> sut = It.IsRef<int>();
@@ -28,7 +28,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_WithPredicate_ShouldReturnExpectedValue()
 		{
 			IRefParameter<int?> sut = It.IsRef<int?>(v => v > 3, v => v * 3);
@@ -39,9 +39,9 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(42L)]
+		[Arguments("foo")]
 		public async Task WithRef_DifferentType_ShouldNotMatch(object? value)
 		{
 			IRefParameter<int?> sut = It.IsRef<int?>(_ => true, _ => null);
@@ -51,9 +51,9 @@ public sealed partial class ItTests
 			await That(result).IsFalse();
 		}
 
-		[Theory]
-		[InlineData(true)]
-		[InlineData(false)]
+		[Test]
+		[Arguments(true)]
+		[Arguments(false)]
 		public async Task WithRef_ShouldMatchForExpectedResult(bool predicateValue)
 		{
 			IRefParameter<string> sut = It.IsRef<string>(_ => predicateValue, _ => "");
@@ -63,9 +63,9 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(predicateValue);
 		}
 
-		[Theory]
-		[InlineData(42)]
-		[InlineData(-2)]
+		[Test]
+		[Arguments(42)]
+		[Arguments(-2)]
 		public async Task WithRef_ShouldReturnValue(int? value)
 		{
 			IRefParameter<int?> sut = It.IsRef<int?>(v => v * 2);
@@ -75,9 +75,9 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(2 * value);
 		}
 
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
+		[Test]
+		[Arguments(42L)]
+		[Arguments("foo")]
 		public async Task WithRef_Verify_ShouldAlwaysMatch(object? value)
 		{
 			IVerifyRefParameter<int?> sut = It.IsRef<int?>();
@@ -88,9 +88,9 @@ public sealed partial class ItTests
 			await That(() => ((IParameter)sut).InvokeCallbacks(null)).DoesNotThrow();
 		}
 
-		[Theory]
-		[InlineData(42)]
-		[InlineData(-2)]
+		[Test]
+		[Arguments(42)]
+		[Arguments(-2)]
 		public async Task WithRef_WithoutSetter_ShouldReturnOriginalValue(int? value)
 		{
 			IRefParameter<int?> sut = It.IsRef<int?>(_ => true);

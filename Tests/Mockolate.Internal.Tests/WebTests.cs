@@ -8,7 +8,7 @@ namespace Mockolate.Internal.Tests;
 
 public class WebTests
 {
-	[Fact]
+	[Test]
 	public async Task HttpContentParameter_MatchesSomeOtherObject_ShouldReturnFalse()
 	{
 		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
@@ -19,7 +19,7 @@ public class WebTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task HttpContentParameter_MatchesWithNullContent_ShouldReturnFalse()
 	{
 		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
@@ -31,7 +31,7 @@ public class WebTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenParameterDoesNotImplementIHttpRequestMessagePropertyParameter_ShouldFallbackToParameterMatch()
 	{
 		ItExtensions.IHttpContentParameter parameter =
@@ -48,7 +48,7 @@ public class WebTests
 			.Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenParameterImplementsIHttpRequestMessagePropertyParameter_ShouldUseThisMatch()
 	{
 		ItExtensions.IHttpContentParameter parameter =
@@ -71,7 +71,7 @@ public class WebTests
 			.Never();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithoutMediaTypeHeader_WhenNoneIsRequired_ShouldReturnTrue()
 	{
 		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
@@ -82,7 +82,7 @@ public class WebTests
 		await That(result).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithoutMediaTypeHeader_WhenOneIsRequired_ShouldReturnFalse()
 	{
 		ItExtensions.IHttpContentParameter sut = It.IsHttpContent("*");
