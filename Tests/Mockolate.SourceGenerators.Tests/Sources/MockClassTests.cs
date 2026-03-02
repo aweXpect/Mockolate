@@ -4,7 +4,7 @@ namespace Mockolate.SourceGenerators.Tests.Sources;
 
 public sealed class MockClassTests
 {
-	[Test]
+	[Fact]
 	public async Task ShouldAlwaysCreateMockClass()
 	{
 		int maxAdditionalInterfaces = 8;
@@ -39,7 +39,7 @@ public sealed class MockClassTests
 		}
 	}
 
-	[Test]
+	[Fact]
 	public async Task ShouldSupportSpecialTypes()
 	{
 		GeneratorResult result = Generator

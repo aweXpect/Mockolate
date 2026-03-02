@@ -6,9 +6,9 @@ public sealed partial class ItTests
 {
 	public sealed class IsFalseTests
 	{
-		[Test]
-		[Arguments(false, 1)]
-		[Arguments(true, 0)]
+		[Theory]
+		[InlineData(false, 1)]
+		[InlineData(true, 0)]
 		public async Task False_ShouldMatchWhenFalse(bool value, int expectedCount)
 		{
 			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
@@ -19,7 +19,7 @@ public sealed partial class ItTests
 			await That(mock.VerifyMock.Invoked.DoSomething(null, It.IsFalse())).Exactly(expectedCount);
 		}
 
-		[Test]
+		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<bool> sut = It.IsFalse();

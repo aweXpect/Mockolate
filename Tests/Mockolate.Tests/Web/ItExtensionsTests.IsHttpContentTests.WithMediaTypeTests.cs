@@ -12,10 +12,10 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithMediaTypeTests
 		{
-			[Test]
-			[Arguments("application/json", true)]
-			[Arguments("text/plain", false)]
-			[Arguments("application/txt", false)]
+			[Theory]
+			[InlineData("application/json", true)]
+			[InlineData("text/plain", false)]
+			[InlineData("application/txt", false)]
 			public async Task ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 			{
 				HttpClient httpClient = Mock.Create<HttpClient>();

@@ -1,11 +1,12 @@
 using System.Threading.Tasks;
+using Xunit;
 using Verifier = Mockolate.Analyzers.Tests.Verifiers.CSharpAnalyzerVerifier<Mockolate.Analyzers.MockabilityAnalyzer>;
 
 namespace Mockolate.Analyzers.Tests;
 
 public class MockabilityAnalyzerTests
 {
-	[Test]
+	[Fact]
 	public async Task WhenMockingADelegate_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -26,7 +27,7 @@ public class MockabilityAnalyzerTests
 			  """
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingArray_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -54,7 +55,7 @@ public class MockabilityAnalyzerTests
 				.WithArguments("MyNamespace.IMyInterface[]", "type kind 'Array' is not supported")
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingClass_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -80,7 +81,7 @@ public class MockabilityAnalyzerTests
 			  """
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingDelegate_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -103,7 +104,7 @@ public class MockabilityAnalyzerTests
 			  """
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingEnum_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -133,7 +134,7 @@ public class MockabilityAnalyzerTests
 				.WithArguments("MyNamespace.MyEnum", "type is an enum")
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingGlobalNamespaceType_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -162,7 +163,7 @@ public class MockabilityAnalyzerTests
 				.WithArguments("IGlobalInterface", "type is declared in the global namespace")
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingInterface_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -188,7 +189,7 @@ public class MockabilityAnalyzerTests
 			  """
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingMockGeneratorWithoutAttributes_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -227,7 +228,7 @@ public class MockabilityAnalyzerTests
 			  """
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingRecord_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -253,7 +254,7 @@ public class MockabilityAnalyzerTests
 				.WithArguments("MyNamespace.MyRecord", "type is a record")
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingSealedClass_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -282,7 +283,7 @@ public class MockabilityAnalyzerTests
 				.WithArguments("MyNamespace.MySealedClass", "type is sealed")
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenMockingStruct_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""

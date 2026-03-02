@@ -7,7 +7,7 @@ public sealed partial class MockBehaviorTests
 {
 	public sealed class ThrowWhenNotSetupTests
 	{
-		[Test]
+		[Fact]
 		public async Task WhenFalse_ShouldReturnDefaultValueInNotSetupMethods()
 		{
 			IMyService mock = Mock.Create<IMyService>(MockBehavior.Default with
@@ -20,7 +20,7 @@ public sealed partial class MockBehaviorTests
 			await That(result).IsEqualTo("");
 		}
 
-		[Test]
+		[Fact]
 		public async Task WhenTrue_ShouldThrowMockNotSetupException()
 		{
 			IMyService mock = Mock.Create<IMyService>(MockBehavior.Default with

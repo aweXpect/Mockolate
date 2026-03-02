@@ -6,7 +6,7 @@ public sealed partial class InteractionsTests
 {
 	public sealed class CancellationTokenTests
 	{
-		[Test]
+		[Fact]
 		public async Task WithMultipleParameters_WhenOneIsCanceled_ShouldReturnCanceledTask()
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
@@ -17,7 +17,7 @@ public sealed partial class InteractionsTests
 			await That(result.IsCanceled).IsTrue();
 		}
 
-		[Test]
+		[Fact]
 		public async Task WithNonCanceledToken_ShouldReturnDefaultValue()
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
@@ -29,7 +29,7 @@ public sealed partial class InteractionsTests
 			await That(result.IsCanceled).IsFalse();
 		}
 
-		[Test]
+		[Fact]
 		public async Task WithSetup_ShouldUseSetupValue()
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
@@ -43,7 +43,7 @@ public sealed partial class InteractionsTests
 			await That(await result).IsEqualTo(42);
 		}
 
-		[Test]
+		[Fact]
 		public async Task WithTask_ShouldReturnCanceledTask()
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
@@ -54,7 +54,7 @@ public sealed partial class InteractionsTests
 			await That(result.IsCanceled).IsTrue();
 		}
 
-		[Test]
+		[Fact]
 		public async Task WithTaskOfInt_ShouldReturnCanceledTask()
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
@@ -65,7 +65,7 @@ public sealed partial class InteractionsTests
 			await That(result.IsCanceled).IsTrue();
 		}
 
-		[Test]
+		[Fact]
 		public async Task WithTaskOfString_ShouldReturnCanceledTask()
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
@@ -77,7 +77,7 @@ public sealed partial class InteractionsTests
 		}
 
 #if NET8_0_OR_GREATER
-		[Test]
+		[Fact]
 		public async Task WithValueTask_ShouldReturnCanceledTask()
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
@@ -90,7 +90,7 @@ public sealed partial class InteractionsTests
 #endif
 
 #if NET8_0_OR_GREATER
-		[Test]
+		[Fact]
 		public async Task WithValueTaskOfInt_ShouldReturnCanceledTask()
 		{
 			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();

@@ -4,7 +4,7 @@ namespace Mockolate.Internal.Tests;
 
 public class MockInteractionsTests
 {
-	[Test]
+	[Fact]
 	public async Task InteractionAdded_ShouldIncludeInteraction()
 	{
 		int interactionCount = 0;
@@ -24,7 +24,7 @@ public class MockInteractionsTests
 		}
 	}
 
-	[Test]
+	[Fact]
 	public async Task RegisterInteraction_ShouldRegisterInteraction()
 	{
 		MockInteractions sut = new();

@@ -8,10 +8,10 @@ public sealed partial class ItTests
 {
 	public sealed class IsSpanTests
 	{
-		[Test]
-		[Arguments("", false)]
-		[Arguments("foo", false)]
-		[Arguments("bar", true)]
+		[Theory]
+		[InlineData("", false)]
+		[InlineData("foo", false)]
+		[InlineData("bar", true)]
 		public async Task ShouldAlwaysMatch(string value, bool expectSuccess)
 		{
 			Span<char> valueSpan = new(value.ToCharArray());
@@ -22,7 +22,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectSuccess);
 		}
 
-		[Test]
+		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IVerifySpanParameter<char> sut = It.IsSpan<char>(c => c[0] == 'a');

@@ -11,7 +11,7 @@ namespace Mockolate.Tests.Web;
 
 public sealed partial class HttpClientExtensionsTests
 {
-	[Test]
+	[Fact]
 	public async Task InvalidParameter_ShouldReturnTrue()
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>();
@@ -30,7 +30,7 @@ public sealed partial class HttpClientExtensionsTests
 		await That(result).IsTrue();
 	}
 
-	[Test]
+	[Fact]
 	public async Task NullUri_ShouldReturnFalse()
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>();
@@ -49,7 +49,7 @@ public sealed partial class HttpClientExtensionsTests
 		await That(result).IsFalse();
 	}
 
-	[Test]
+	[Fact]
 	public async Task SendAsync_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
@@ -66,7 +66,7 @@ public sealed partial class HttpClientExtensionsTests
 				"Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 	}
 
-	[Test]
+	[Fact]
 	public async Task ShouldSupportMonitoring()
 	{
 		int callbackCount = 0;
@@ -88,9 +88,9 @@ public sealed partial class HttpClientExtensionsTests
 		await That(callbackCount).IsEqualTo(2);
 	}
 
-	[Test]
-	[Arguments("*aweXpect.com")]
-	[Arguments("*aweXpect.com/")]
+	[Theory]
+	[InlineData("*aweXpect.com")]
+	[InlineData("*aweXpect.com/")]
 	public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>();
@@ -105,7 +105,7 @@ public sealed partial class HttpClientExtensionsTests
 			.IsEqualTo(HttpStatusCode.OK);
 	}
 
-	[Test]
+	[Fact]
 	public async Task TrailingSlash_WhenNotPresent_ShouldNotBeAdded()
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>();

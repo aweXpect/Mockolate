@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using TUnit;
+using Xunit;
 using Verifier =
 	Mockolate.Analyzers.Tests.Verifiers.CSharpAnalyzerVerifier<Mockolate.Analyzers.UseVerificationAnalyzer>;
 
@@ -7,7 +7,7 @@ namespace Mockolate.Analyzers.Tests;
 
 public class UseVerificationAnalyzerTests
 {
-	[Test]
+	[Fact]
 	public async Task WhenAssigned_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			"""
@@ -27,7 +27,7 @@ public class UseVerificationAnalyzerTests
 			"""
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenNotUsed_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			"""
@@ -49,7 +49,7 @@ public class UseVerificationAnalyzerTests
 				.WithLocation(0)
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenUsedInMethod_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			"""

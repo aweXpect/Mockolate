@@ -6,7 +6,7 @@ public sealed partial class ItTests
 {
 	public sealed class IsOutTests
 	{
-		[Test]
+		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IOutParameter<int> sut = It.IsOut(() => 3);
@@ -17,7 +17,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Test]
+		[Fact]
 		public async Task ToString_Verify_ShouldReturnExpectedValue()
 		{
 			IVerifyOutParameter<int> sut = It.IsOut<int>();
@@ -28,9 +28,9 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Test]
-		[Arguments(42)]
-		[Arguments(-2)]
+		[Theory]
+		[InlineData(42)]
+		[InlineData(-2)]
 		public async Task WithOut_ShouldReturnValue(int? value)
 		{
 			IOutParameter<int?> sut = It.IsOut(() => value);
@@ -40,9 +40,9 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(value);
 		}
 
-		[Test]
-		[Arguments(42L)]
-		[Arguments("foo")]
+		[Theory]
+		[InlineData(42L)]
+		[InlineData("foo")]
 		public async Task WithOut_Verify_ShouldAlwaysMatch(object? value)
 		{
 			IVerifyOutParameter<int?> sut = It.IsOut<int?>();

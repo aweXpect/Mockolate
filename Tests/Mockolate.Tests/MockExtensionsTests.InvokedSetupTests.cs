@@ -9,7 +9,7 @@ public sealed partial class MockExtensionsTests
 {
 	public sealed class InvokedSetupTests
 	{
-		[Test]
+		[Fact]
 		public async Task WhenMethodSetupIsNotVerifiable_ShouldThrowMockException()
 		{
 			MyServiceBase mock = Mock.Create<MyServiceBase>();
@@ -24,7 +24,7 @@ public sealed partial class MockExtensionsTests
 				.WithMessage("The setup is not verifiable.");
 		}
 
-		[Test]
+		[Fact]
 		public async Task WhenSubjectIsNoMock_ShouldThrowMockException()
 		{
 			MyServiceBase mock = Mock.Create<MyServiceBase>();

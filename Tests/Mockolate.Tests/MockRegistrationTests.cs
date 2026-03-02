@@ -5,7 +5,7 @@ namespace Mockolate.Tests;
 
 public sealed class MockRegistrationTests
 {
-	[Test]
+	[Fact]
 	public async Task RegisterInteraction_ShouldBeThreadSafe()
 	{
 		MockRegistration sut = new(MockBehavior.Default, "");

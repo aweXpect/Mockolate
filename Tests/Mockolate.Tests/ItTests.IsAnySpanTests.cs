@@ -8,10 +8,10 @@ public sealed partial class ItTests
 {
 	public sealed class IsAnySpanTests
 	{
-		[Test]
-		[Arguments("")]
-		[Arguments("foo")]
-		[Arguments("bar")]
+		[Theory]
+		[InlineData("")]
+		[InlineData("foo")]
+		[InlineData("bar")]
 		public async Task ShouldAlwaysMatch(string value)
 		{
 			Span<char> valueSpan = new(value.ToCharArray());
@@ -22,7 +22,7 @@ public sealed partial class ItTests
 			await That(result).IsTrue();
 		}
 
-		[Test]
+		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IVerifySpanParameter<char> sut = It.IsAnySpan<char>();
