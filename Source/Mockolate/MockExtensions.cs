@@ -9,33 +9,40 @@ namespace Mockolate;
 /// </summary>
 public static class MockExtensions
 {
-	/// <summary>
-	///     Clears all interactions recorded by the mock object.
-	/// </summary>
-	public static void ClearAllInteractions<T>(this IMockSetup<T> mock)
-		where T : class
+	/// <inheritdoc cref="MockExtensions" />
+	extension<T>(IMockSetup<T> mock) where T : class
 	{
-		if (mock is IHasMockRegistration hasMockRegistration)
+		/// <summary>
+		///     Clears all interactions recorded by the mock object.
+		/// </summary>
+		public void ClearAllInteractions()
 		{
-			hasMockRegistration.Registrations.ClearAllInteractions();
+			if (mock is IHasMockRegistration hasMockRegistration)
+			{
+				hasMockRegistration.Registrations.ClearAllInteractions();
+			}
 		}
 	}
 
-	/// <summary>
-	///     Verifies the method invocations for the <paramref name="setup" /> on the mock.
-	/// </summary>
-	public static VerificationResult<T> InvokedSetup<T>(this IMockVerify<T> verify, IMethodSetup setup)
+	/// <inheritdoc cref="MockExtensions" />
+	extension<T>(IMockVerify<T> verify)
 	{
-		if (verify is not Mock<T> mock)
+		/// <summary>
+		///     Verifies the method invocations for the <paramref name="setup" /> on the mock.
+		/// </summary>
+		public VerificationResult<T> InvokedSetup(IMethodSetup setup)
 		{
-			throw new MockException("The subject is no mock subject.");
-		}
+			if (verify is not Mock<T> mock)
+			{
+				throw new MockException("The subject is no mock subject.");
+			}
 
-		if (setup is not IVerifiableMethodSetup verifiableMethodSetup)
-		{
-			throw new MockException("The setup is not verifiable.");
-		}
+			if (setup is not IVerifiableMethodSetup verifiableMethodSetup)
+			{
+				throw new MockException("The setup is not verifiable.");
+			}
 
-		return mock.Registrations.Method(mock.Subject, verifiableMethodSetup.GetMatch());
+			return mock.Registrations.Method(mock.Subject, verifiableMethodSetup.GetMatch());
+		}
 	}
 }

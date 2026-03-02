@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using Mockolate.Exceptions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
+using Mockolate.Verify;
+using Mockolate.Web;
 #if NETSTANDARD2_0
 using Mockolate.Internals.Polyfills;
 #endif
 
-namespace Mockolate.Web;
+// ReSharper disable once CheckNamespace
+namespace Mockolate;
 
 /// <summary>
 ///     Extensions for mocking <see cref="HttpClient" />.
@@ -42,6 +45,30 @@ public static partial class HttpClientExtensions
 
 			throw new MockException(
 				"Cannot setup HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+		}
+	}
+
+	/// <inheritdoc cref="HttpClientExtensions" />
+	extension(IMockVerify<HttpClient> verify)
+	{
+		/// <summary>
+		///     Verifies the method invocations for the <paramref name="setup" /> on the mock.
+		/// </summary>
+		public VerificationResult<HttpClient> InvokedSetup(IMethodSetup setup)
+		{
+			if (verify is not Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock ||
+			    httpClientMock.ConstructorParameters[0] is not IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
+			{
+				throw new MockException("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+			}
+
+			if (setup is not IVerifiableMethodSetup verifiableMethodSetup)
+			{
+				throw new MockException("The setup is not verifiable.");
+			}
+
+			return httpMessageHandlerMock.Registrations.Method(httpClientMock.Subject,
+				verifiableMethodSetup.GetMatch());
 		}
 	}
 

@@ -6,7 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Mockolate.Setup;
 
-namespace Mockolate.Web;
+// ReSharper disable once CheckNamespace
+namespace Mockolate;
 
 public static partial class HttpClientExtensions
 {
