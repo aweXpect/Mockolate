@@ -7,7 +7,8 @@ using Mockolate.Exceptions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
-namespace Mockolate.Web;
+// ReSharper disable once CheckNamespace
+namespace Mockolate;
 
 #pragma warning disable S2325 // Methods and properties that don't access instance data should be static
 public static partial class HttpClientExtensions

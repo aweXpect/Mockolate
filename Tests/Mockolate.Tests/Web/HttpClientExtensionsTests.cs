@@ -5,6 +5,7 @@ using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
+using Mockolate.Verify;
 using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
@@ -28,6 +29,69 @@ public sealed partial class HttpClientExtensionsTests
 		]));
 
 		await That(result).IsTrue();
+	}
+
+	[Fact]
+	public async Task InvokedSetup_ShouldWorkForHttpClient()
+	{
+		HttpClient httpClient = Mock.Create<HttpClient>();
+		IMethodSetup setup = httpClient
+			.SetupMock.Method.GetAsync(It.IsUri("https://www.aweXpect.com"))
+			.ReturnsAsync(HttpStatusCode.Accepted);
+
+		HttpResponseMessage result =
+			await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+
+		await That(result.StatusCode)
+			.IsEqualTo(HttpStatusCode.Accepted);
+		await That(httpClient.VerifyMock.InvokedSetup(setup)).Once();
+	}
+
+	[Fact]
+	public async Task InvokedSetup_WhenMethodSetupIsNotVerifiable_ShouldThrowMockException()
+	{
+		HttpClient mock = Mock.Create<HttpClient>();
+		IMethodSetup setup = new MyMethodSetup();
+
+		void Act()
+		{
+			mock.VerifyMock.InvokedSetup(setup).Never();
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("The setup is not verifiable.");
+	}
+
+	[Fact]
+	public async Task InvokedSetup_WhenSubjectIsNoMock_ShouldThrowMockException()
+	{
+		HttpClient mock = Mock.Create<HttpClient>();
+		IMockVerify<HttpClient> verify = new MyMockVerify<HttpClient>();
+		IMethodSetup setup = mock.SetupMock.Method.SendAsync(Match.AnyParameters());
+
+		void Act()
+		{
+			verify.InvokedSetup(setup).Never();
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+	}
+
+	[Fact]
+	public async Task InvokedSetup_WhenSubjectIsMockedWithoutConstructorParameters_ShouldThrowMockException()
+	{
+		HttpClient mock = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+		IMockVerify<HttpClient> verify = mock.VerifyMock;
+		IMethodSetup setup = mock.SetupMock.Method.SendAsync(Match.AnyParameters());
+
+		void Act()
+		{
+			verify.InvokedSetup(setup).Never();
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 	}
 
 	[Fact]
@@ -123,6 +187,19 @@ public sealed partial class HttpClientExtensionsTests
 	private sealed class InvalidParameter : IParameter<string?>
 	{
 		public IParameter<string?> Do(Action<string?> callback)
+			=> throw new NotSupportedException();
+	}
+
+	private sealed class MyMethodSetup : IMethodSetup
+	{
+	}
+
+	private sealed class MyMockVerify<T> : IMockVerify<T>
+	{
+		public bool ThatAllInteractionsAreVerified()
+			=> throw new NotSupportedException();
+
+		public bool ThatAllSetupsAreUsed()
 			=> throw new NotSupportedException();
 	}
 }
