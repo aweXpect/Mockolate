@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Mockolate.Setup;
-using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests.MockProperties;
 
@@ -8,7 +7,7 @@ public sealed partial class SetupPropertyTests
 {
 	public sealed class ReturnsThrowsTests
 	{
-		[Test]
+		[Fact]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -27,7 +26,7 @@ public sealed partial class SetupPropertyTests
 			await That(result3).IsEqualTo(2);
 		}
 
-		[Test]
+		[Fact]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -46,7 +45,7 @@ public sealed partial class SetupPropertyTests
 			await That(result).IsEqualTo([4, 3, 30, 4, 3, 30, 4, 3, 30, 4,]);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -59,7 +58,7 @@ public sealed partial class SetupPropertyTests
 			await That(result).IsEqualTo(4);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -73,7 +72,7 @@ public sealed partial class SetupPropertyTests
 			await That(result).IsEqualTo(12);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_CallbackWithWhen_ShouldReturnDefaultValueWhenPredicateIsFalse()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -88,7 +87,7 @@ public sealed partial class SetupPropertyTests
 			await That(result2).IsEqualTo(4);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_For_OnlyOnce_ShouldLimitUsage_ToSpecifiedNumber()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -107,7 +106,7 @@ public sealed partial class SetupPropertyTests
 			await That(values).IsEqualTo(["foo", "foo", "bar", "bar", "bar", "-", "-", "-", "-", "-", "-",]);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_For_ShouldRepeatUsage_ToSpecifiedNumber()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -127,7 +126,7 @@ public sealed partial class SetupPropertyTests
 				.IsEqualTo(["foo", "foo", "bar", "bar", "bar", "foo", "foo", "bar", "bar", "bar", "foo",]);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_Forever_ShouldUseTheLastValueForever()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -146,7 +145,7 @@ public sealed partial class SetupPropertyTests
 			await That(result).IsEqualTo([2, 3, 4, 4, 4, 4, 4, 4, 4, 4,]);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_OnlyOnce_ShouldKeepLastUsedValue()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -165,7 +164,7 @@ public sealed partial class SetupPropertyTests
 			await That(values).IsEqualTo([1, 1, 1, 1, 1, 10, 10, 10, 10, 10,]);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_OnlyOnce_ShouldUseReturnValueOnlyOnce()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -181,7 +180,7 @@ public sealed partial class SetupPropertyTests
 			await That(values).IsEqualTo([1, 0, 0, 0, 0, 0, 0, 0, 0, 0,]);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_PredicateIsFalse_ShouldUseInitializedDefaultValue()
 		{
 			List<int> results = [];
@@ -202,7 +201,7 @@ public sealed partial class SetupPropertyTests
 			await That(results).IsEqualTo([0, 0, -3, -3, 4, 4, 4,]);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -215,7 +214,7 @@ public sealed partial class SetupPropertyTests
 			await That(result).IsEqualTo(4);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -232,7 +231,7 @@ public sealed partial class SetupPropertyTests
 			await That(result3).IsEqualTo("foo");
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -253,7 +252,7 @@ public sealed partial class SetupPropertyTests
 			]);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -263,7 +262,7 @@ public sealed partial class SetupPropertyTests
 			await That(result).IsEqualTo(0);
 		}
 
-		[Test]
+		[Fact]
 		public async Task Throws_Callback_ShouldThrowException()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -279,7 +278,7 @@ public sealed partial class SetupPropertyTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
-		[Test]
+		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldThrowException()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -296,7 +295,7 @@ public sealed partial class SetupPropertyTests
 			await That(Act).ThrowsException().WithMessage("foo-42");
 		}
 
-		[Test]
+		[Fact]
 		public async Task Throws_Generic_ShouldThrowException()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -312,7 +311,7 @@ public sealed partial class SetupPropertyTests
 			await That(Act).ThrowsExactly<ArgumentNullException>();
 		}
 
-		[Test]
+		[Fact]
 		public async Task Throws_ShouldThrowException()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
@@ -328,7 +327,7 @@ public sealed partial class SetupPropertyTests
 			await That(Act).ThrowsException().WithMessage("foo");
 		}
 
-		[Test]
+		[Fact]
 		public async Task WithoutCallback_IPropertySetupReturnBuilder_ShouldNotThrow()
 		{
 			IPropertyService mock = Mock.Create<IPropertyService>();
@@ -349,7 +348,7 @@ public sealed partial class SetupPropertyTests
 			await That(ActFor).DoesNotThrow();
 		}
 
-		[Test]
+		[Fact]
 		public async Task WithoutCallback_IPropertySetupReturnWhenBuilder_ShouldNotThrow()
 		{
 			IPropertyService mock = Mock.Create<IPropertyService>();

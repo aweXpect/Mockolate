@@ -1,11 +1,12 @@
 using System.Threading.Tasks;
+using Xunit;
 using Verifier = Mockolate.Analyzers.Tests.Verifiers.CSharpAnalyzerVerifier<Mockolate.Analyzers.WrappabilityAnalyzer>;
 
 namespace Mockolate.Analyzers.Tests;
 
 public class WrappabilityAnalyzerTests
 {
-	[Test]
+	[Fact]
 	public async Task WhenWrappingAbstractClass_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -40,7 +41,7 @@ public class WrappabilityAnalyzerTests
 				.WithArguments("MyNamespace.MyAbstractClass", "only interface types can be wrapped")
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenWrappingADelegate_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -65,7 +66,7 @@ public class WrappabilityAnalyzerTests
 				.WithArguments("System.Action", "only interface types can be wrapped")
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenWrappingClass_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -95,7 +96,7 @@ public class WrappabilityAnalyzerTests
 				.WithArguments("MyNamespace.MyBaseClass", "only interface types can be wrapped")
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenWrappingGenericInterface_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -127,7 +128,7 @@ public class WrappabilityAnalyzerTests
 			  """
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenWrappingInterface_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -159,7 +160,7 @@ public class WrappabilityAnalyzerTests
 			  """
 		);
 
-	[Test]
+	[Fact]
 	public async Task WhenWrappingSealedClass_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""

@@ -21,7 +21,8 @@ partial class Build
 				.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
 				.EnableNoBuild()
 				.SetResultsDirectory(TestResultsDirectory)
-				.AddProcessAdditionalArguments(
-					$"--project \"{project.Path}\" -- --report-trx"));
+				.CombineWith(cc => cc
+					.SetProjectFile(project)
+					.AddLoggers($"trx;LogFileName={project.Name}.trx")), completeOnFailure: true);
 		});
 }

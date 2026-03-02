@@ -14,7 +14,7 @@ namespace Mockolate.ExampleTests;
 
 public class ExampleTests
 {
-	[Test]
+	[Fact]
 	public async Task Any_ShouldAlwaysMatch()
 	{
 		Guid id = Guid.NewGuid();
@@ -30,7 +30,7 @@ public class ExampleTests
 		mock.VerifyOn_IExampleRepository_Mock.Invoked.AddUser(It.Is("Bob")).Once();
 	}
 
-	[Test]
+	[Fact]
 	public async Task BaseClassWithConstructorParameters()
 	{
 		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
@@ -45,10 +45,10 @@ public class ExampleTests
 	}
 
 #if NET8_0_OR_GREATER
-	[Test]
-	[Arguments(HttpStatusCode.OK)]
-	[Arguments(HttpStatusCode.NotFound)]
-	[Arguments(HttpStatusCode.ServiceUnavailable)]
+	[Theory]
+	[InlineData(HttpStatusCode.OK)]
+	[InlineData(HttpStatusCode.NotFound)]
+	[InlineData(HttpStatusCode.ServiceUnavailable)]
 	public async Task HttpClientTest(HttpStatusCode statusCode)
 	{
 		HttpClient httpClient = Mock.Create<HttpClient>();
@@ -62,7 +62,7 @@ public class ExampleTests
 	}
 #endif
 
-	[Test]
+	[Fact]
 	public async Task MockIFileSystem_ShouldWork()
 	{
 		IFileSystem mock = Mock.Create<IFileSystem>(MockBehavior.Default.SkippingBaseClass());
@@ -75,7 +75,7 @@ public class ExampleTests
 		await That(result).IsEqualTo('a');
 	}
 
-	[Test]
+	[Fact]
 	public async Task SimpleInterfaceMock()
 	{
 		Guid id = Guid.NewGuid();
@@ -88,7 +88,7 @@ public class ExampleTests
 		mock.VerifyMock.Invoked.AddUser(It.IsAny<string>()).Once();
 	}
 
-	[Test]
+	[Fact]
 	public async Task WithAdditionalInterface_ShouldWork()
 	{
 		Guid id = Guid.NewGuid();
@@ -105,7 +105,7 @@ public class ExampleTests
 		await That(mock).Is<IOrderRepository>();
 	}
 
-	[Test]
+	[Fact]
 	public async Task WithEvent_ShouldSupportRaisingEvent()
 	{
 		EventArgs eventArgs = EventArgs.Empty;
@@ -130,7 +130,7 @@ public class ExampleTests
 		}
 	}
 
-	[Test]
+	[Fact]
 	public async Task WithExplicitCastToAdditionalInterfaceSetup_ShouldWork()
 	{
 		Guid id = Guid.NewGuid();
@@ -147,7 +147,7 @@ public class ExampleTests
 		await That(mock).Is<IOrderRepository>();
 	}
 
-	[Test]
+	[Fact]
 	public async Task WithExplicitCastToAdditionalInterfaceVerify_ShouldWork()
 	{
 		Guid id = Guid.NewGuid();
@@ -164,9 +164,9 @@ public class ExampleTests
 		await That(mock).Is<IOrderRepository>();
 	}
 
-	[Test]
-	[Arguments("Alice", true)]
-	[Arguments("Bob", false)]
+	[Theory]
+	[InlineData("Alice", true)]
+	[InlineData("Bob", false)]
 	public async Task WithMatching_ShouldAlwaysMatch(string name, bool expectResult)
 	{
 		Guid id = Guid.NewGuid();
@@ -182,9 +182,9 @@ public class ExampleTests
 		mock.VerifyMock.Invoked.AddUser(It.Is(name)).Once();
 	}
 
-	[Test]
-	[Arguments(false)]
-	[Arguments(true)]
+	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
 	public async Task WithOut_ShouldSupportOutParameter(bool returnValue)
 	{
 		Guid id = Guid.NewGuid();

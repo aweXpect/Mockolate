@@ -4,7 +4,7 @@ namespace Mockolate.Tests.MockProperties;
 
 public sealed class VerifyGotTests
 {
-	[Test]
+	[Fact]
 	public async Task ShouldIncreaseInvocationCountOfGetter()
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
@@ -15,7 +15,7 @@ public sealed class VerifyGotTests
 		await That(sut.VerifyMock.Set.Counter(It.IsAny<int>())).Never();
 	}
 
-	[Test]
+	[Fact]
 	public async Task ShouldReturnInitializedValue()
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
@@ -26,9 +26,9 @@ public sealed class VerifyGotTests
 		await That(result).IsEqualTo(24);
 	}
 
-	[Test]
-	[Arguments(true)]
-	[Arguments(false)]
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
 	public async Task ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
 		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TUnit;
+using Xunit;
 using Verifier = Mockolate.Analyzers.Tests.Verifiers.CSharpCodeFixVerifier<Mockolate.Analyzers.UseVerificationAnalyzer,
 	Mockolate.Analyzers.CodeFixers.UseVerificationCodeFixProvider>;
 
@@ -7,7 +7,7 @@ namespace Mockolate.Analyzers.Tests;
 
 public class UseVerificationCodeFixProviderTests
 {
-	[Test]
+	[Fact]
 	public async Task ShouldApplyCodeFix() => await Verifier.VerifyCodeFixAsync(
 		"""
 		using Mockolate;

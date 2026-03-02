@@ -4,7 +4,7 @@ namespace Mockolate.Tests.Exceptions;
 
 public sealed class MockNotSetupExceptionTests
 {
-	[Test]
+	[Fact]
 	public async Task ShouldForwardInnerException()
 	{
 		Exception innerException = new("bar");
@@ -14,7 +14,7 @@ public sealed class MockNotSetupExceptionTests
 			.HasInner<Exception>(e => e.HasMessage("bar"));
 	}
 
-	[Test]
+	[Fact]
 	public async Task ShouldForwardMessage()
 	{
 		Exception exception = new MockNotSetupException("foo");
