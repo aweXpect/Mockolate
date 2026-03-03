@@ -110,7 +110,7 @@ public sealed partial class HttpClientExtensionsTests
 			[Theory]
 			[InlineData("*aweXpect.com*", true)]
 			[InlineData("*aweXpect.com", true)]
-			[InlineData("aweXpect.com*", false)]
+			[InlineData("aweXpect.com*", true)]
 			[InlineData("*foo*", false)]
 			public async Task Uri_ShouldVerifyUri(string pattern, bool expectSuccess)
 			{

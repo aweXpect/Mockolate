@@ -10,9 +10,9 @@ internal readonly struct Wildcard
 
 	private static readonly ConcurrentDictionary<(string RegexPattern, bool IgnoreCase), Wildcard> RegexCache = new();
 
-	public static Wildcard Pattern(string pattern, bool ignoreCase)
+	public static Wildcard Pattern(string pattern, bool ignoreCase, bool fullMatch = true)
 	{
-		Wildcard wildcard = RegexCache.GetOrAdd((ToRegularExpression(pattern), ignoreCase),
+		Wildcard wildcard = RegexCache.GetOrAdd((ToRegularExpression(pattern, fullMatch), ignoreCase),
 			item => new Wildcard(
 				new Regex(
 					item.RegexPattern,
@@ -31,7 +31,7 @@ internal readonly struct Wildcard
 	public bool Matches(string value)
 		=> Regex.IsMatch(value);
 
-	public static string ToRegularExpression(string pattern)
+	public static string ToRegularExpression(string pattern, bool fullMatch)
 	{
 		string regex = Regex.Escape(pattern)
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -41,6 +41,11 @@ internal readonly struct Wildcard
 			.Replace("\\?", ".", StringComparison.Ordinal)
 			.Replace("\\*", "(?:.|\\n)*", StringComparison.Ordinal);
 #endif
-		return $"^{regex}$";
+		if (fullMatch)
+		{
+			return $"^{regex}$";
+		}
+
+		return regex;
 	}
 }

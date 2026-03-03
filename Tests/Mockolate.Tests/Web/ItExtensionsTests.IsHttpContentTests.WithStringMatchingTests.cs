@@ -89,7 +89,7 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("foo", "f?", false)]
+			[InlineData("foo", "f?", true)]
 			[InlineData("foo", "f??", true)]
 			[InlineData("foo", "f*", true)]
 			[InlineData("foo", "*", true)]
@@ -112,10 +112,13 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("foo", "f?", false)]
+			[InlineData("foo", "f?", true)]
 			[InlineData("foo", "f??", true)]
 			[InlineData("foo", "f*", true)]
 			[InlineData("foo", "*", true)]
+			[InlineData("foo", "o?", true)]
+			[InlineData("foo", "?o", true)]
+			[InlineData("foo", "o", true)]
 			[InlineData("foo", "F*", false)]
 			[InlineData("foo", "*a*", false)]
 			public async Task ShouldCheckForMatchingWildcard(string body, string pattern, bool expectSuccess)

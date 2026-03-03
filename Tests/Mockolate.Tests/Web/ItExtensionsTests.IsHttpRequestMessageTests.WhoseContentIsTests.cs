@@ -280,7 +280,7 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("foo", "f?", false)]
+			[InlineData("foo", "f?", true)]
 			[InlineData("foo", "f??", true)]
 			[InlineData("foo", "f*", true)]
 			[InlineData("foo", "*", true)]
@@ -304,7 +304,7 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("foo", "f?", false)]
+			[InlineData("foo", "f?", true)]
 			[InlineData("foo", "f??", true)]
 			[InlineData("foo", "f*", true)]
 			[InlineData("foo", "*", true)]
