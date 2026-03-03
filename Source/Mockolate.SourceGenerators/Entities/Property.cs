@@ -14,6 +14,7 @@ internal record Property
 		ContainingType = propertySymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		IsIndexer = propertySymbol.IsIndexer;
 		IsAbstract = propertySymbol.IsAbstract;
+		IsStatic = propertySymbol.IsStatic;
 		if (IsIndexer && propertySymbol.Parameters.Length > 0)
 		{
 			IndexerParameters = new EquatableArray<MethodParameter>(
@@ -43,6 +44,7 @@ internal record Property
 
 	public bool IsIndexer { get; }
 	public bool IsAbstract { get; }
+	public bool IsStatic { get; }
 	public EquatableArray<MethodParameter>? IndexerParameters { get; }
 	public Type Type { get; }
 	public string ContainingType { get; }
