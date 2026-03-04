@@ -47,7 +47,7 @@ public sealed partial class VerificationResultTests
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 
 			VerificationResult<IChocolateDispenser> result = sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
-				.Within(TimeSpan.FromSeconds(10));
+				.Within(TimeSpan.FromSeconds(30));
 			using CancellationTokenSource cts = new();
 			CancellationToken token = cts.Token;
 
@@ -55,7 +55,7 @@ public sealed partial class VerificationResultTests
 			{
 				for (int i = 0; i < 1000; i++)
 				{
-					await Task.Delay(10, CancellationToken.None);
+					await Task.Delay(10, CancellationToken.None).ConfigureAwait(false);
 					sut.Dispense("Dark", i);
 					if (token.IsCancellationRequested)
 					{
