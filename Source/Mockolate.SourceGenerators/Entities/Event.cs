@@ -11,7 +11,7 @@ internal record Event
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
 		Name = eventSymbol.Name;
 		Type = new Type(eventSymbol.Type);
-		ContainingType = eventSymbol.ContainingType.ToDisplayString();
+		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Delegate = new Method(delegateInvokeMethod, null);
 		Attributes = eventSymbol.GetAttributes().ToAttributeArray();
 

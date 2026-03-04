@@ -35,7 +35,7 @@ public sealed class MockRegistrationTests
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
 			          		public T[] Generate<T>(T[] nullValue, params object?[] parameters)
-			          			=> Array.Empty<T>();
+			          			=> global::System.Array.Empty<T>();
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		public T[,] Generate<T>(T[,] nullValue, params object?[] parameters)
@@ -81,12 +81,12 @@ public sealed class MockRegistrationTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public IEnumerable<T> Generate<T>(IEnumerable<T> nullValue, params object?[] parameters)
-			          			=> Array.Empty<T>();
+			          		public global::System.Collections.Generic.IEnumerable<T> Generate<T>(global::System.Collections.Generic.IEnumerable<T> nullValue, params object?[] parameters)
+			          			=> global::System.Array.Empty<T>();
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public List<T> Generate<T>(List<T> nullValue, params object?[] parameters)
-			          			=> new List<T>();
+			          		public global::System.Collections.Generic.List<T> Generate<T>(global::System.Collections.Generic.List<T> nullValue, params object?[] parameters)
+			          			=> new global::System.Collections.Generic.List<T>();
 			          """).IgnoringNewlineStyle();
 	}
 
@@ -120,21 +120,27 @@ public sealed class MockRegistrationTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public Task<T> Generate<T>(Task<T> nullValue, params object?[] parameters)
+			          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, params object?[] parameters)
 			          		{
-			          			CancellationToken cancellationToken = parameters.OfType<object?[]>().FirstOrDefault()?
-			          				.OfType<CancellationToken>().FirstOrDefault() ?? CancellationToken.None;
+			          			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
+			          			var objectParameters = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<object?[]>(parameters));
+			          			if (objectParameters is not null)
+			          			{
+			          				cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
+			          					global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(objectParameters)) ?? cancellationToken;
+			          			}
+			          			
 			          			if (cancellationToken.IsCancellationRequested)
 			          			{
-			          				return Task.FromCanceled<T>(cancellationToken);
+			          				return global::System.Threading.Tasks.Task.FromCanceled<T>(cancellationToken);
 			          			}
 			          			
-			          			if (parameters.Length > 0 && parameters[0] is Func<T> func)
+			          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
 			          			{
-			          				return Task.FromResult(func());
+			          				return global::System.Threading.Tasks.Task.FromResult(func());
 			          			}
 			          			
-			          			return Task.FromResult(generator.Generate(default(T)!, parameters));
+			          			return global::System.Threading.Tasks.Task.FromResult(generator.Generate(default(T)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle();
 	}
@@ -169,21 +175,27 @@ public sealed class MockRegistrationTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public ValueTask<T> Generate<T>(ValueTask<T> nullValue, params object?[] parameters)
+			          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, params object?[] parameters)
 			          		{
-			          			CancellationToken cancellationToken = parameters.OfType<object?[]>().FirstOrDefault()?
-			          				.OfType<CancellationToken>().FirstOrDefault() ?? CancellationToken.None;
+			          			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
+			          			var objectParameters = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<object?[]>(parameters));
+			          			if (objectParameters is not null)
+			          			{
+			          				cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
+			          					global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(objectParameters)) ?? cancellationToken;
+			          			}
+			          			
 			          			if (cancellationToken.IsCancellationRequested)
 			          			{
-			          				return ValueTask.FromCanceled<T>(cancellationToken);
+			          				return global::System.Threading.Tasks.ValueTask.FromCanceled<T>(cancellationToken);
 			          			}
 			          			
-			          			if (parameters.Length > 0 && parameters[0] is Func<T> func)
+			          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
 			          			{
-			          				return ValueTask.FromResult(func());
+			          				return global::System.Threading.Tasks.ValueTask.FromResult(func());
 			          			}
 			          			
-			          			return ValueTask.FromResult(generator.Generate(default(T)!, parameters));
+			          			return global::System.Threading.Tasks.ValueTask.FromResult(generator.Generate(default(T)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle();
 	}
@@ -219,7 +231,7 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params object?[] parameters)
 			          		{
-			          			if (parameters.Length >= 2 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2)
+			          			if (parameters.Length >= 2 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2)
 			          			{
 			          				return (func1(), func2());
 			          			}
@@ -230,7 +242,7 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		public (T1, T2, T3) Generate<T1, T2, T3>((T1, T2, T3) nullValue, params object?[] parameters)
 			          		{
-			          			if (parameters.Length >= 3 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3)
+			          			if (parameters.Length >= 3 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3)
 			          			{
 			          				return (func1(), func2(), func3());
 			          			}
@@ -241,7 +253,7 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		public (T1, T2, T3, T4) Generate<T1, T2, T3, T4>((T1, T2, T3, T4) nullValue, params object?[] parameters)
 			          		{
-			          			if (parameters.Length >= 4 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4)
+			          			if (parameters.Length >= 4 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4)
 			          			{
 			          				return (func1(), func2(), func3(), func4());
 			          			}
@@ -252,7 +264,7 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		public (T1, T2, T3, T4, T5) Generate<T1, T2, T3, T4, T5>((T1, T2, T3, T4, T5) nullValue, params object?[] parameters)
 			          		{
-			          			if (parameters.Length >= 5 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4 && parameters[4] is Func<T5> func5)
+			          			if (parameters.Length >= 5 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4 && parameters[4] is global::System.Func<T5> func5)
 			          			{
 			          				return (func1(), func2(), func3(), func4(), func5());
 			          			}
@@ -263,7 +275,7 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		public (T1, T2, T3, T4, T5, T6) Generate<T1, T2, T3, T4, T5, T6>((T1, T2, T3, T4, T5, T6) nullValue, params object?[] parameters)
 			          		{
-			          			if (parameters.Length >= 6 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4 && parameters[4] is Func<T5> func5 && parameters[5] is Func<T6> func6)
+			          			if (parameters.Length >= 6 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4 && parameters[4] is global::System.Func<T5> func5 && parameters[5] is global::System.Func<T6> func6)
 			          			{
 			          				return (func1(), func2(), func3(), func4(), func5(), func6());
 			          			}
@@ -274,7 +286,7 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		public (T1, T2, T3, T4, T5, T6, T7) Generate<T1, T2, T3, T4, T5, T6, T7>((T1, T2, T3, T4, T5, T6, T7) nullValue, params object?[] parameters)
 			          		{
-			          			if (parameters.Length >= 7 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4 && parameters[4] is Func<T5> func5 && parameters[5] is Func<T6> func6 && parameters[6] is Func<T7> func7)
+			          			if (parameters.Length >= 7 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4 && parameters[4] is global::System.Func<T5> func5 && parameters[5] is global::System.Func<T6> func6 && parameters[6] is global::System.Func<T7> func7)
 			          			{
 			          				return (func1(), func2(), func3(), func4(), func5(), func6(), func7());
 			          			}
@@ -285,7 +297,7 @@ public sealed class MockRegistrationTests
 			.Contains("""
 			          		public (T1, T2, T3, T4, T5, T6, T7, T8) Generate<T1, T2, T3, T4, T5, T6, T7, T8>((T1, T2, T3, T4, T5, T6, T7, T8) nullValue, params object?[] parameters)
 			          		{
-			          			if (parameters.Length >= 8 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2 && parameters[2] is Func<T3> func3 && parameters[3] is Func<T4> func4 && parameters[4] is Func<T5> func5 && parameters[5] is Func<T6> func6 && parameters[6] is Func<T7> func7 && parameters[7] is Func<T8> func8)
+			          			if (parameters.Length >= 8 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4 && parameters[4] is global::System.Func<T5> func5 && parameters[5] is global::System.Func<T6> func6 && parameters[6] is global::System.Func<T7> func7 && parameters[7] is global::System.Func<T8> func8)
 			          			{
 			          				return (func1(), func2(), func3(), func4(), func5(), func6(), func7(), func8());
 			          			}
@@ -333,14 +345,14 @@ public sealed class MockRegistrationTests
 
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("""
-			          		partial void Generate<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups, params Type[] types)
+			          		partial void Generate<T>(global::Mockolate.BaseClass.ConstructorParameters? constructorParameters, global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups, params global::System.Type[] types)
 			          		{
-			          			IMockBehaviorAccess mockBehaviorAccess = (IMockBehaviorAccess)mockBehavior;
-			          			if (mockBehaviorAccess.TryInitialize<T>(out Action<IMockSetup<T>>[]? additionalSetups))
+			          			IMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;
+			          			if (mockBehaviorAccess.TryInitialize<T>(out global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[]? additionalSetups))
 			          			{
 			          				if (setups.Length > 0)
 			          				{
-			          					Action<IMockSetup<T>>[] concatenatedSetups = new Action<IMockSetup<T>>[additionalSetups.Length + setups.Length];
+			          					global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] concatenatedSetups = new global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[additionalSetups.Length + setups.Length];
 			          					additionalSetups.CopyTo(concatenatedSetups, 0);
 			          					setups.CopyTo(concatenatedSetups, additionalSetups.Length);
 			          					setups = concatenatedSetups;
@@ -350,20 +362,20 @@ public sealed class MockRegistrationTests
 			          					setups = additionalSetups;
 			          				}
 			          			}
-			          
+
 			          			if (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<T>(out object?[]? parameters))
 			          			{
 			          				constructorParameters = new BaseClass.ConstructorParameters(parameters);
 			          			}
-			          
+
 			          			if (types.Length == 1 &&
 			          			    types[0] == typeof(MyCode.IMyInterface))
 			          			{
-			          				_value = new MockForIMyInterface(mockBehavior);
+			          				_value = new global::Mockolate.Generated.MockForIMyInterface(mockBehavior);
 			          				if (setups.Length > 0)
 			          				{
-			          					IMockSetup<MyCode.IMyInterface> setupTarget = ((IMockSubject<MyCode.IMyInterface>)_value).Mock;
-			          					foreach (Action<IMockSetup<MyCode.IMyInterface>> setup in setups)
+			          					global::Mockolate.Setup.IMockSetup<MyCode.IMyInterface> setupTarget = ((global::Mockolate.IMockSubject<MyCode.IMyInterface>)_value).Mock;
+			          					foreach (global::System.Action<global::Mockolate.Setup.IMockSetup<MyCode.IMyInterface>> setup in setups)
 			          					{
 			          						setup.Invoke(setupTarget);
 			          					}
@@ -375,39 +387,39 @@ public sealed class MockRegistrationTests
 			          			{
 			          				if (constructorParameters is null || constructorParameters.Parameters.Length == 0)
 			          				{
-			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
-			          					MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
+			          					global::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, "MyCode.MyBaseClass");
+			          					global::Mockolate.Generated.MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
 			          					if (setups.Length > 0)
 			          					{
 			          						#pragma warning disable CS0618
-			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
+			          						global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass> setupTarget = new global::Mockolate.MockSetup<MyCode.MyBaseClass>(mockRegistration);
 			          						#pragma warning restore CS0618
-			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
+			          						foreach (global::System.Action<global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass>> setup in setups)
 			          						{
 			          							setup.Invoke(setupTarget);
 			          						}
 			          					}
-			          					_value = new MockForMyBaseClass_IMyInterface(mockRegistration);
+			          					_value = new global::Mockolate.Generated.MockForMyBaseClass_IMyInterface(mockRegistration);
 			          				}
 			          				else if (constructorParameters.Parameters.Length == 0)
 			          				{
-			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
-			          					MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
+			          					global::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, "MyCode.MyBaseClass");
+			          					global::Mockolate.Generated.MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
 			          					if (setups.Length > 0)
 			          					{
 			          						#pragma warning disable CS0618
-			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
+			          						global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass> setupTarget = new global::Mockolate.MockSetup<MyCode.MyBaseClass>(mockRegistration);
 			          						#pragma warning restore CS0618
-			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
+			          						foreach (global::System.Action<global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass>> setup in setups)
 			          						{
 			          							setup.Invoke(setupTarget);
 			          						}
 			          					}
-			          					_value = new MockForMyBaseClass_IMyInterface(mockRegistration);
+			          					_value = new global::Mockolate.Generated.MockForMyBaseClass_IMyInterface(mockRegistration);
 			          				}
 			          				else
 			          				{
-			          					throw new MockException($"Could not find any constructor for 'MyCode.MyBaseClass' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(", ", constructorParameters.Parameters)}).");
+			          					throw new global::Mockolate.Exceptions.MockException($"Could not find any constructor for 'MyCode.MyBaseClass' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(", ", constructorParameters.Parameters)}).");
 			          				}
 			          			}
 			          		}

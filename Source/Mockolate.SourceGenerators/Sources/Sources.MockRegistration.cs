@@ -7,25 +7,9 @@ namespace Mockolate.SourceGenerators.Sources;
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
-	public static string MockRegistration(ICollection<(string Name, MockClass MockClass)> mocks, bool hasAnyMocks)
+	public static string ForMockRegistration(ICollection<(string Name, MockClass MockClass)> mocks, bool hasAnyMocks)
 	{
-		StringBuilder sb = InitializeBuilder(hasAnyMocks
-			?
-			[
-				"System",
-				"System.Linq",
-				"System.Threading",
-				"Mockolate.Exceptions",
-				"Mockolate.Generated",
-				"Mockolate.Setup",
-			]
-			:
-			[
-				"System",
-				"System.Linq",
-				"System.Threading",
-			]);
-
+		StringBuilder sb = InitializeBuilder();
 		sb.Append("""
 		          namespace Mockolate;
 
@@ -39,16 +23,16 @@ internal static partial class Sources
 			sb.AppendLine("\tprivate partial class MockGenerator");
 			sb.AppendLine("\t{");
 			sb.AppendLine(
-				"\t\tpartial void Generate<T>(BaseClass.ConstructorParameters? constructorParameters, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups, params Type[] types)");
+				"\t\tpartial void Generate<T>(global::Mockolate.BaseClass.ConstructorParameters? constructorParameters, global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups, params global::System.Type[] types)");
 			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tIMockBehaviorAccess mockBehaviorAccess = (IMockBehaviorAccess)mockBehavior;").AppendLine();
-			sb.Append("\t\t\tif (mockBehaviorAccess.TryInitialize<T>(out Action<IMockSetup<T>>[]? additionalSetups))")
+			sb.Append("\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;").AppendLine();
+			sb.Append("\t\t\tif (mockBehaviorAccess.TryInitialize<T>(out global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[]? additionalSetups))")
 				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append(
-					"\t\t\t\t\tAction<IMockSetup<T>>[] concatenatedSetups = new Action<IMockSetup<T>>[additionalSetups.Length + setups.Length];")
+					"\t\t\t\t\tglobal::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] concatenatedSetups = new global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[additionalSetups.Length + setups.Length];")
 				.AppendLine();
 			sb.Append("\t\t\t\t\tadditionalSetups.CopyTo(concatenatedSetups, 0);").AppendLine();
 			sb.Append("\t\t\t\t\tsetups.CopyTo(concatenatedSetups, additionalSetups.Length);").AppendLine();
@@ -100,7 +84,7 @@ internal static partial class Sources
 				{
 					List<Class> incorrectDeclarations = mock.MockClass.AdditionalImplementations
 						.Where(x => !x.IsInterface).ToList();
-					sb.Append("\t\t\t\tthrow new MockException($\"The mock declaration has ")
+					sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"The mock declaration has ")
 						.Append(incorrectDeclarations.Count)
 						.Append(" additional ")
 						.Append(incorrectDeclarations.Count == 1
@@ -112,15 +96,15 @@ internal static partial class Sources
 				}
 				else if (mock.MockClass.Delegate != null)
 				{
-					sb.Append("\t\t\t\tMockFor").Append(mock.Name).Append(" mockTarget = new MockFor").Append(mock.Name)
+					sb.Append("\t\t\t\tglobal::Mockolate.Generated.MockFor").Append(mock.Name).Append(" mockTarget = new global::Mockolate.Generated.MockFor").Append(mock.Name)
 						.Append("(mockBehavior);")
 						.AppendLine();
 					sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
-						.Append("> setupTarget = ((IMockSubject<").Append(mock.MockClass.ClassFullName)
+					sb.Append("\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append("> setupTarget = ((global::Mockolate.IMockSubject<").Append(mock.MockClass.ClassFullName)
 						.Append(">)mockTarget).Mock;").AppendLine();
-					sb.Append("\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
+					sb.Append("\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
 						.Append(">> setup in setups)").AppendLine();
 					sb.Append("\t\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
@@ -130,13 +114,13 @@ internal static partial class Sources
 				}
 				else if (mock.MockClass.IsInterface)
 				{
-					sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
+					sb.Append("\t\t\t\t_value = new global::Mockolate.Generated.MockFor").Append(mock.Name).Append("(mockBehavior);").AppendLine();
 					sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
-						.Append("> setupTarget = ((IMockSubject<").Append(mock.MockClass.ClassFullName)
+					sb.Append("\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append("> setupTarget = ((global::Mockolate.IMockSubject<").Append(mock.MockClass.ClassFullName)
 						.Append(">)_value).Mock;").AppendLine();
-					sb.Append("\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
+					sb.Append("\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
 						.Append(">> setup in setups)").AppendLine();
 					sb.Append("\t\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
@@ -151,29 +135,29 @@ internal static partial class Sources
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (mock.MockClass.Constructors.Value.Any(mockClass => mockClass.Parameters.Count == 0))
 					{
-						sb.Append("\t\t\t\t\tMockRegistration mockRegistration = new MockRegistration(mockBehavior, \"")
+						sb.Append("\t\t\t\t\tglobal::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, \"")
 							.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
-						sb.Append("\t\t\t\t\tMockFor").Append(mock.Name)
+						sb.Append("\t\t\t\t\tglobal::Mockolate.Generated.MockFor").Append(mock.Name)
 							.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
 						sb.Append("\t\t\t\t\tif (setups.Length > 0)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\t#pragma warning disable CS0618").AppendLine();
-						sb.Append("\t\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
-							.Append("> setupTarget = new MockSetup<").Append(mock.MockClass.ClassFullName)
+						sb.Append("\t\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
+							.Append("> setupTarget = new global::Mockolate.MockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append(">(mockRegistration);").AppendLine();
 						sb.Append("\t\t\t\t\t\t#pragma warning restore CS0618").AppendLine();
-						sb.Append("\t\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
+						sb.Append("\t\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append(">> setup in setups)").AppendLine();
 						sb.Append("\t\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
 						sb.Append("\t\t\t\t\t\t}").AppendLine();
 						sb.Append("\t\t\t\t\t}").AppendLine();
-						sb.Append("\t\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockRegistration);")
+						sb.Append("\t\t\t\t\t_value = new global::Mockolate.Generated.MockFor").Append(mock.Name).Append("(mockRegistration);")
 							.AppendLine();
 					}
 					else
 					{
-						sb.Append("\t\t\t\t\tthrow new MockException(\"No parameterless constructor found for '")
+						sb.Append("\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"No parameterless constructor found for '")
 							.Append(mock.MockClass.ClassFullName)
 							.Append("'. Please provide constructor parameters.\");")
 							.AppendLine();
@@ -200,24 +184,24 @@ internal static partial class Sources
 
 						sb.Append(")").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t\tMockRegistration mockRegistration = new MockRegistration(mockBehavior, \"")
+						sb.Append("\t\t\t\t\tglobal::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, \"")
 							.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
-						sb.Append("\t\t\t\t\tMockFor").Append(mock.Name)
+						sb.Append("\t\t\t\t\tglobal::Mockolate.Generated.MockFor").Append(mock.Name)
 							.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
 						sb.Append("\t\t\t\t\tif (setups.Length > 0)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\t#pragma warning disable CS0618").AppendLine();
-						sb.Append("\t\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
-							.Append("> setupTarget = new MockSetup<").Append(mock.MockClass.ClassFullName)
+						sb.Append("\t\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
+							.Append("> setupTarget = new global::Mockolate.MockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append(">(mockRegistration);").AppendLine();
 						sb.Append("\t\t\t\t\t\t#pragma warning restore CS0618").AppendLine();
-						sb.Append("\t\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
+						sb.Append("\t\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
 							.Append(">> setup in setups)").AppendLine();
 						sb.Append("\t\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
 						sb.Append("\t\t\t\t\t\t}").AppendLine();
 						sb.Append("\t\t\t\t\t}").AppendLine();
-						sb.Append("\t\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(");
+						sb.Append("\t\t\t\t\t_value = new global::Mockolate.Generated.MockFor").Append(mock.Name).Append("(");
 						for (int i = 1; i <= constructorParameters.Count; i++)
 						{
 							sb.Append('c').Append(constructorIndex).Append('p').Append(i).Append(", ");
@@ -229,7 +213,7 @@ internal static partial class Sources
 
 					sb.Append("\t\t\t\telse").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tthrow new MockException($\"Could not find any constructor for '")
+					sb.Append("\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"Could not find any constructor for '")
 						.Append(mock.MockClass.ClassFullName)
 						.Append(
 							"' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", constructorParameters.Parameters)}).\");")
@@ -239,7 +223,7 @@ internal static partial class Sources
 				else
 				{
 					sb.Append(
-							"\t\t\t\tthrow new MockException(\"Could not find any constructor at all for the base type '")
+							"\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"Could not find any constructor at all for the base type '")
 						.Append(mock.MockClass.ClassFullName)
 						.Append("'. Therefore mocking is not supported!\");")
 						.AppendLine();
@@ -252,7 +236,7 @@ internal static partial class Sources
 
 			sb.AppendLine();
 			sb.AppendLine(
-				"\t\tpartial void GenerateWrapped<T>(T instance, MockBehavior mockBehavior, Action<IMockSetup<T>>[] setups)");
+				"\t\tpartial void GenerateWrapped<T>(T instance, global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)");
 			sb.Append("\t\t{").AppendLine();
 			index = 0;
 			foreach ((string Name, MockClass MockClass) mock in mocks.Where(m
@@ -270,19 +254,19 @@ internal static partial class Sources
 				sb.Append("if (typeof(T) == typeof(").Append(mock.MockClass.ClassFullName).Append("))").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
 
-				sb.Append("\t\t\t\tMockRegistration mockRegistration = new MockRegistration(mockBehavior, \"")
+				sb.Append("\t\t\t\tglobal::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, \"")
 					.Append(mock.MockClass.DisplayString).Append("\");").AppendLine();
 
 				if (mock.MockClass.IsInterface)
 				{
-					sb.Append("\t\t\t\t_value = new MockFor").Append(mock.Name).Append("(mockBehavior, instance as ")
+					sb.Append("\t\t\t\t_value = new global::Mockolate.Generated.MockFor").Append(mock.Name).Append("(mockBehavior, instance as ")
 						.Append(mock.MockClass.ClassFullName).Append(");").AppendLine();
 					sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tIMockSetup<").Append(mock.MockClass.ClassFullName)
-						.Append("> setupTarget = ((IMockSubject<").Append(mock.MockClass.ClassFullName)
+					sb.Append("\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
+						.Append("> setupTarget = ((global::Mockolate.IMockSubject<").Append(mock.MockClass.ClassFullName)
 						.Append(">)_value).Mock;").AppendLine();
-					sb.Append("\t\t\t\t\tforeach (Action<IMockSetup<").Append(mock.MockClass.ClassFullName)
+					sb.Append("\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mock.MockClass.ClassFullName)
 						.Append(">> setup in setups)").AppendLine();
 					sb.Append("\t\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
@@ -300,7 +284,7 @@ internal static partial class Sources
 		}
 
 		sb.Append("""
-		          	private static bool TryCast<TValue>(object? value, MockBehavior behavior, out TValue result)
+		          	private static bool TryCast<TValue>(object? value, global::Mockolate.MockBehavior behavior, out TValue result)
 		          	{
 		          		if (value is TValue typedValue)
 		          		{

@@ -63,40 +63,40 @@ public sealed class ReturnsThrowsAsyncExtensionsTests
 
 		await That(result.Sources).ContainsKey("ReturnsThrowsAsyncExtensions.g.cs").WhoseValue
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<TReturn> callback)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Func<TReturn> callback)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, TReturn> callback)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Func<T1, T2, T3, T4, T5, TReturn> callback)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<TReturn> callback)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Func<TReturn> callback)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, TReturn> callback)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Func<T1, T2, T3, T4, T5, TReturn> callback)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Exception exception)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Exception exception)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<Exception> callback)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Func<global::System.Exception> callback)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, Exception> callback)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Func<T1, T2, T3, T4, T5, global::System.Exception> callback)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Exception exception)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Exception exception)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<Exception> callback)")
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Func<global::System.Exception> callback)")
 			.And
 			.Contains(
-				"public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, Func<T1, T2, T3, T4, T5, Exception> callback)");
+				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> ThrowsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, T1, T2, T3, T4, T5> setup, global::System.Func<T1, T2, T3, T4, T5, global::System.Exception> callback)");
 	}
 
 	[Fact]

@@ -6,15 +6,7 @@ internal static partial class Sources
 {
 	public static string IndexerSetups(HashSet<int> indexerSetups)
 	{
-		StringBuilder sb = InitializeBuilder([
-			"System",
-			"System.Collections.Generic",
-			"System.Diagnostics.CodeAnalysis",
-			"System.Threading",
-			"Mockolate.Exceptions",
-			"Mockolate.Interactions",
-			"Mockolate.Parameters",
-		]);
+		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("""
 		          #nullable enable
@@ -49,7 +41,7 @@ internal static partial class Sources
 			            			/// <summary>
 			            			///     Executes the callback only once.
 			            			/// </summary>
-			            			public Mockolate.Setup.IIndexerSetup<TValue, {{types}}> OnlyOnce()
+			            			public global::Mockolate.Setup.IIndexerSetup<TValue, {{types}}> OnlyOnce()
 			            				=> setup.Only(1);
 			            		}
 			            		
@@ -69,7 +61,7 @@ internal static partial class Sources
 			            			/// <summary>
 			            			///     Uses the return value only once.
 			            			/// </summary>
-			            			public Mockolate.Setup.IIndexerSetup<TValue, {{types}}> OnlyOnce()
+			            			public global::Mockolate.Setup.IIndexerSetup<TValue, {{types}}> OnlyOnce()
 			            				=> setup.Only(1);
 			            		}
 			            """).AppendLine();
@@ -96,27 +88,27 @@ internal static partial class Sources
 		sb.Append("\tinternal interface IIndexerGetterSetup<TValue, ").Append(outTypeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action callback);")
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action callback);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<")
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action<")
 			.Append(typeParams)
 			.Append("> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value of the indexer as last parameter.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<")
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action<")
 			.Append(typeParams)
 			.Append(", TValue> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's getter is accessed.");
 		sb.AppendXmlRemarks("The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value of the indexer as last parameter.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<int, ")
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action<int, ")
 			.Append(typeParams)
 			.Append(", TValue> callback);").AppendLine();
 		sb.Append("\t}").AppendLine();
@@ -126,25 +118,25 @@ internal static partial class Sources
 		sb.Append("\tinternal interface IIndexerSetterSetup<TValue, ").Append(outTypeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action callback);")
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action callback);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.");
 		sb.AppendXmlRemarks("The callback receives the value the indexer is set to as single parameter.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
-			.Append("> Do(Action<TValue> callback);").AppendLine();
+			.Append("> Do(global::System.Action<TValue> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.");
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<")
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action<")
 			.Append(typeParams).Append(", TValue> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\"/> to be invoked whenever the indexer's setter is accessed.");
 		sb.AppendXmlRemarks("The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(Action<int, ")
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action<int, ")
 			.Append(typeParams).Append(", TValue> callback);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -163,18 +155,18 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
-		sb.AppendXmlRemarks("If not specified, use <see cref=\"MockBehavior.SkipBaseClass\" />.");
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams)
+		sb.AppendXmlRemarks("If not specified, use <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" />.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams)
 			.Append("> SkippingBaseClass(bool skipBaseClass = true);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Initializes the indexer with the given <paramref name=\"value\" />.");
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(TValue value);")
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(TValue value);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Initializes the indexer according to the given <paramref name=\"valueGenerator\" />.");
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(Func<")
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(global::System.Func<")
 			.Append(typeParams).Append(", TValue> valueGenerator);").AppendLine();
 		sb.AppendLine();
 
@@ -185,20 +177,20 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
-			.Append("> Returns(Func<TValue> callback);")
+			.Append("> Returns(global::System.Func<TValue> callback);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.");
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer.");
-		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<")
+		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(global::System.Func<")
 			.Append(typeParams)
 			.Append(", TValue> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this indexer.");
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value of the indexer as last parameter.");
-		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<")
+		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(global::System.Func<")
 			.Append(typeParams).Append(", TValue, TValue> callback);").AppendLine();
 		sb.AppendLine();
 
@@ -215,20 +207,20 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
-			.Append("> Throws(Func<Exception> callback);")
+			.Append("> Throws(global::System.Func<Exception> callback);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.");
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer.");
-		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<")
+		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Func<")
 			.Append(typeParams)
 			.Append(", Exception> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.");
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value of the indexer as last parameter.");
-		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<")
+		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Func<")
 			.Append(typeParams).Append(", TValue, Exception> callback);").AppendLine();
 
 		sb.Append("\t}").AppendLine();
@@ -245,23 +237,23 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Limits the callback to only execute for indexer accesses where the predicate returns true.");
 		sb.AppendXmlRemarks("Provides a zero-based counter indicating how many times the indexer has been accessed so far.");
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
-			.Append("> When(Func<int, bool> predicate);").AppendLine();
+			.Append("> When(global::System.Func<int, bool> predicate);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Sets up a when callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetupCallbackWhenBuilder<TValue, ").Append(outTypeParams)
-			.Append("> : IIndexerSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
+			.Append("> : global::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
 		
 		sb.AppendXmlSummary("Repeats the callback for the given number of <paramref name=\"times\" />.");
-		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams).Append("> For(int times);")
 			.AppendLine();
 		sb.AppendLine();
 		sb.AppendXmlSummary("Deactivates the callback after the given number of <paramref name=\"times\" />.");
-		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -272,43 +264,43 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Limits the return/throw callback to only execute for indexer accesses where the predicate returns true.");
 		sb.AppendXmlRemarks("Provides a zero-based counter indicating how many times the indexer has been accessed so far.");
 		sb.Append("\t\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams)
-			.Append("> When(Func<int, bool> predicate);").AppendLine();
+			.Append("> When(global::System.Func<int, bool> predicate);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Sets up a when return/throw callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetupReturnWhenBuilder<TValue, ").Append(outTypeParams)
-			.Append("> : IIndexerSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
+			.Append("> : global::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Repeats the return/throw callback for the given number of <paramref name=\"times\" />.");
-		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{{TValue, {typeParams}}}.When(Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams).Append("> For(int times);")
 			.AppendLine();
 		sb.AppendLine();
 		sb.AppendXmlSummary("Deactivates the return/throw after the given number of <paramref name=\"times\" />.");
-		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{{TValue, {typeParams}}}.When(Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupReturnBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
 			.Append(
-				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"NamedParameter match{i}")))
-			.Append(") : IndexerSetup,")
+				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"global::Mockolate.Parameters.NamedParameter match{i}")))
+			.Append(") : global::Mockolate.Setup.IndexerSetup,")
 			.AppendLine();
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();
-		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();
-		sb.Append("\t\tIIndexerGetterSetup<TValue, ").Append(typeParams).Append(">,").AppendLine();
-		sb.Append("\t\tIIndexerSetterSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerGetterSetup<TValue, ").Append(typeParams).Append(">,").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetterSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\tprivate readonly List<Callback<Action<int, ").Append(typeParams)
+		sb.Append("\t\tprivate readonly global::System.Collections.Generic.List<Callback<global::System.Action<int, ").Append(typeParams)
 			.Append(", TValue>>> _getterCallbacks = [];")
 			.AppendLine();
-		sb.Append("\t\tprivate readonly List<Callback<Action<int, ").Append(typeParams)
+		sb.Append("\t\tprivate readonly global::System.Collections.Generic.List<Callback<global::System.Action<int, ").Append(typeParams)
 			.Append(", TValue>>> _setterCallbacks = [];")
 			.AppendLine();
-		sb.Append("\t\tprivate readonly List<Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\tprivate readonly global::System.Collections.Generic.List<Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>> _returnCallbacks = [];")
 			.AppendLine();
 		sb.Append("\t\tprivate bool? _skipBaseClass;").AppendLine();
@@ -317,12 +309,12 @@ internal static partial class Sources
 		sb.Append("\t\tprivate int _currentGetterCallbacksIndex;").AppendLine();
 		sb.Append("\t\tprivate int _currentReturnCallbackIndex;").AppendLine();
 		sb.Append("\t\tprivate int _currentSetterCallbacksIndex;").AppendLine();
-		sb.Append("\t\tprivate Func<").Append(typeParams).Append(", TValue>? _initialization;").AppendLine();
+		sb.Append("\t\tprivate global::System.Func<").Append(typeParams).Append(", TValue>? _initialization;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams)
 			.Append("}.SkippingBaseClass(bool)\" />").AppendLine();
-		sb.Append("\t\tpublic IIndexerSetup<TValue, ").Append(typeParams)
+		sb.Append("\t\tpublic global::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams)
 			.Append("> SkippingBaseClass(bool skipBaseClass = true)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -333,13 +325,13 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams)
 			.Append("}.InitializeWith(TValue)\" />").AppendLine();
-		sb.Append("\t\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(TValue value)")
+		sb.Append("\t\tpublic global::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(TValue value)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (_initialization is not null)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append(
-				"\t\t\t\tthrow new MockException(\"The indexer is already initialized. You cannot initialize it twice.\");")
+				"\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The indexer is already initialized. You cannot initialize it twice.\");")
 			.AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
@@ -349,14 +341,14 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams)
-			.Append("}.InitializeWith(Func{").Append(typeParams).Append(", TValue})\" />").AppendLine();
-		sb.Append("\t\tpublic IIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(Func<")
+			.Append("}.InitializeWith(global::System.Func{").Append(typeParams).Append(", TValue})\" />").AppendLine();
+		sb.Append("\t\tpublic global::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> InitializeWith(global::System.Func<")
 			.Append(typeParams).Append(", TValue> valueGenerator)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (_initialization is not null)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append(
-				"\t\t\t\tthrow new MockException(\"The indexer is already initialized. You cannot initialize it twice.\");")
+				"\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The indexer is already initialized. You cannot initialize it twice.\");")
 			.AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
@@ -373,12 +365,12 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerGetterSetup{TValue, ").Append(typeParams)
-			.Append("}.Do(Action)\" />").AppendLine();
+			.Append("}.Do(global::System.Action)\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerGetterSetup<TValue, ").Append(typeParams)
-			.Append(">.Do(Action callback)").AppendLine();
+			.Append(">.Do(global::System.Action callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
 			.Append(discards).Append(", _) => callback());").AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_getterCallbacks.Add(currentCallback);").AppendLine();
@@ -386,15 +378,15 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerGetterSetup{TValue, ").Append(typeParams).Append("}.Do(Action{")
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerGetterSetup{TValue, ").Append(typeParams).Append("}.Do(global::System.Action{")
 			.Append(typeParams).Append("})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerGetterSetup<TValue, ").Append(typeParams)
-			.Append(">.Do(Action<")
+			.Append(">.Do(global::System.Action<")
 			.Append(typeParams)
 			.Append("> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
 			.Append(parameters).Append(", _) => callback(").Append(parameters).Append("));").AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_getterCallbacks.Add(currentCallback);").AppendLine();
@@ -402,15 +394,15 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerGetterSetup{TValue, ").Append(typeParams).Append("}.Do(Action{")
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerGetterSetup{TValue, ").Append(typeParams).Append("}.Do(global::System.Action{")
 			.Append(typeParams).Append(", TValue})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerGetterSetup<TValue, ").Append(typeParams)
-			.Append(">.Do(Action<")
+			.Append(">.Do(global::System.Action<")
 			.Append(typeParams)
 			.Append(", TValue> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
 			.Append(parameters).Append(", v) => callback(").Append(parameters).Append(", v));").AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_getterCallbacks.Add(currentCallback);").AppendLine();
@@ -419,14 +411,14 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerGetterSetup{TValue, ").Append(typeParams)
-			.Append("}.Do(Action{int, ").Append(typeParams).Append(", TValue})\" />").AppendLine();
+			.Append("}.Do(global::System.Action{int, ").Append(typeParams).Append(", TValue})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerGetterSetup<TValue, ").Append(typeParams)
-			.Append(">.Do(Action<int, ")
+			.Append(">.Do(global::System.Action<int, ")
 			.Append(typeParams)
 			.Append(", TValue> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams)
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams)
 			.Append(", TValue>>? currentCallback = new(callback);")
 			.AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
@@ -443,12 +435,12 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetterSetup{TValue, ").Append(typeParams)
-			.Append("}.Do(Action)\" />").AppendLine();
+			.Append("}.Do(global::System.Action)\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerSetterSetup<TValue, ").Append(typeParams)
-			.Append(">.Do(Action callback)").AppendLine();
+			.Append(">.Do(global::System.Action callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, _, ")
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, _, ")
 			.Append(discards).Append(") => callback());").AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_setterCallbacks.Add(currentCallback);").AppendLine();
@@ -457,13 +449,13 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetterSetup{TValue, ").Append(typeParams)
-			.Append("}.Do(Action{TValue})\" />").AppendLine();
+			.Append("}.Do(global::System.Action{TValue})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerSetterSetup<TValue, ").Append(typeParams)
-			.Append(">.Do(Action<TValue> callback)")
+			.Append(">.Do(global::System.Action<TValue> callback)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
 			.Append(discards).Append(", v) => callback(v));").AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_setterCallbacks.Add(currentCallback);").AppendLine();
@@ -471,14 +463,14 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetterSetup{TValue, ").Append(typeParams).Append("}.Do(Action{")
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetterSetup{TValue, ").Append(typeParams).Append("}.Do(global::System.Action{")
 			.Append(typeParams).Append(", TValue})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerSetterSetup<TValue, ").Append(typeParams)
-			.Append(">.Do(Action<")
+			.Append(">.Do(global::System.Action<")
 			.Append(typeParams).Append(", TValue> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>>? currentCallback = new((_, ")
 			.Append(parameters).Append(", v) => callback(").Append(parameters).Append(", v));").AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_setterCallbacks.Add(currentCallback);").AppendLine();
@@ -487,13 +479,13 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetterSetup{TValue, ").Append(typeParams)
-			.Append("}.Do(Action{int, ").Append(typeParams).Append(", TValue})\" />").AppendLine();
+			.Append("}.Do(global::System.Action{int, ").Append(typeParams).Append(", TValue})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerSetterSetup<TValue, ").Append(typeParams)
-			.Append(">.Do(Action<int, ")
+			.Append(">.Do(global::System.Action<int, ")
 			.Append(typeParams).Append(", TValue> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tCallback<Action<int, ").Append(typeParams)
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams)
 			.Append(", TValue>>? currentCallback = new(callback);")
 			.AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
@@ -508,7 +500,7 @@ internal static partial class Sources
 			.Append("> Returns(TValue returnValue)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(discards).Append(", _) => returnValue);").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
@@ -517,12 +509,12 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams)
-			.Append("}.Returns(Func{TValue})\" />").AppendLine();
+			.Append("}.Returns(global::System.Func{TValue})\" />").AppendLine();
 		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
-			.Append("> Returns(Func<TValue> callback)")
+			.Append("> Returns(global::System.Func<TValue> callback)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(discards).Append(", _) => callback());").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
@@ -530,13 +522,13 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Returns(Func{")
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Returns(global::System.Func{")
 			.Append(typeParams).Append(", TValue})\" />").AppendLine();
-		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<")
+		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(global::System.Func<")
 			.Append(typeParams)
 			.Append(", TValue> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(parameters).Append(", _) => callback(").Append(parameters)
 			.Append("));")
 			.AppendLine();
@@ -546,12 +538,12 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Returns(Func{")
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Returns(global::System.Func{")
 			.Append(typeParams).Append(", TValue, TValue})\" />").AppendLine();
-		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(Func<")
+		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Returns(global::System.Func<")
 			.Append(typeParams).Append(", TValue, TValue> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, v, ").Append(parameters).Append(") => callback(v, ").Append(parameters)
 			.Append("));").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback = currentCallback;").AppendLine();
@@ -566,7 +558,7 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t\t\twhere TException : Exception, new()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(discards).Append(", _) => throw new TException());").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
@@ -580,7 +572,7 @@ internal static partial class Sources
 			.Append("> Throws(Exception exception)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(discards).Append(", _) => throw exception);").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
@@ -589,12 +581,12 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams)
-			.Append("}.Throws(Func{Exception})\" />").AppendLine();
+			.Append("}.Throws(global::System.Func{Exception})\" />").AppendLine();
 		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
-			.Append("> Throws(Func<Exception> callback)")
+			.Append("> Throws(global::System.Func<Exception> callback)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(discards).Append(", _) => throw callback());").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
@@ -602,13 +594,13 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Throws(Func{")
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Throws(global::System.Func{")
 			.Append(typeParams).Append(", Exception})\" />").AppendLine();
-		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<")
+		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Func<")
 			.Append(typeParams)
 			.Append(", Exception> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(parameters).Append(", _) => throw callback(").Append(parameters)
 			.Append("));").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback = currentCallback;").AppendLine();
@@ -617,12 +609,12 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Throws(Func{")
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Throws(global::System.Func{")
 			.Append(typeParams).Append(", TValue, Exception})\" />").AppendLine();
-		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Func<")
+		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Func<")
 			.Append(typeParams).Append(", TValue, Exception> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tvar currentCallback = new Callback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(parameters).Append(", v) => throw callback(").Append(parameters)
 			.Append(", v));").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback = currentCallback;").AppendLine();
@@ -632,10 +624,10 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupCallbackBuilder{TValue, ").Append(typeParams)
-			.Append("}.When(Func{int, bool})\" />").AppendLine();
+			.Append("}.When(global::System.Func{int, bool})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
-			.Append(">.When(Func<int, bool> predicate)").AppendLine();
+			.Append(">.When(global::System.Func<int, bool> predicate)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentCallback?.When(predicate);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
@@ -667,7 +659,7 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupCallbackWhenBuilder{TValue, ").Append(typeParams)
 			.Append("}.Only(int)\" />").AppendLine();
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupCallbackWhenBuilder<TValue, ")
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupCallbackWhenBuilder<TValue, ")
 			.Append(typeParams)
 			.Append(">.Only(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -677,10 +669,10 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupReturnBuilder{TValue, ").Append(typeParams)
-			.Append("}.When(Func{int, bool})\" />").AppendLine();
+			.Append("}.When(global::System.Func{int, bool})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupReturnWhenBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
-			.Append(">.When(Func<int, bool> predicate)").AppendLine();
+			.Append(">.When(global::System.Func<int, bool> predicate)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback?.When(predicate);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
@@ -701,7 +693,7 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupReturnWhenBuilder{TValue, ").Append(typeParams)
 			.Append("}.Only(int)\" />").AppendLine();
-		sb.Append("\t\tIIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupReturnWhenBuilder<TValue, ")
+		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> IIndexerSetupReturnWhenBuilder<TValue, ")
 			.Append(typeParams)
 			.Append(">.Only(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -711,10 +703,10 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append(
-				"\t\t/// <inheritdoc cref=\"ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)\" />")
+				"\t\t/// <inheritdoc cref=\"ExecuteGetterCallback{TValue}(global::Mockolate.Interactions.IndexerGetterAccess, TValue, global::Mockolate.MockBehavior)\" />")
 			.AppendLine();
 		sb.Append(
-				"\t\tprotected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value, MockBehavior behavior)")
+				"\t\tprotected override T ExecuteGetterCallback<T>(global::Mockolate.Interactions.IndexerGetterAccess indexerGetterAccess, T value, global::Mockolate.MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (TryCast(value, out TValue resultValue, behavior) &&").AppendLine();
@@ -733,7 +725,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t\tint currentGetterCallbacksIndex = _currentGetterCallbacksIndex;").AppendLine();
 		sb.Append("\t\t\t\tfor (int i = 0; i < _getterCallbacks.Count; i++)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\tCallback<Action<int, ").Append(typeParams).Append(", TValue>> getterCallback =")
+		sb.Append("\t\t\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>> getterCallback =")
 			.AppendLine();
 		sb.Append("\t\t\t\t\t\t_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];")
 			.AppendLine();
@@ -749,7 +741,7 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\tCallback<Func<int, ").Append(typeParams)
+		sb.Append("\t\t\t\t\tCallback<global::System.Func<int, ").Append(typeParams)
 			.Append(
 				", TValue, TValue>> returnCallback = _returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];")
 			.AppendLine();
@@ -775,10 +767,10 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append(
-				"\t\t/// <inheritdoc cref=\"ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)\" />")
+				"\t\t/// <inheritdoc cref=\"ExecuteSetterCallback{TValue}(global::Mockolate.Interactions.IndexerSetterAccess, TValue, global::Mockolate.MockBehavior)\" />")
 			.AppendLine();
 		sb.Append(
-				"\t\tprotected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value, MockBehavior behavior)")
+				"\t\tprotected override void ExecuteSetterCallback<T>(global::Mockolate.Interactions.IndexerSetterAccess indexerSetterAccess, T value, global::Mockolate.MockBehavior behavior)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (TryCast(value, out TValue resultValue, behavior) &&").AppendLine();
@@ -814,8 +806,8 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IsMatch(NamedParameterValue[])\" />").AppendLine();
-		sb.Append("\t\tprotected override bool IsMatch(NamedParameterValue[] parameters)").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"IsMatch(global::Mockolate.Parameters.NamedParameterValue[])\" />").AppendLine();
+		sb.Append("\t\tprotected override bool IsMatch(global::Mockolate.Parameters.NamedParameterValue[] parameters)").AppendLine();
 		sb.Append("\t\t\t=> Matches([")
 			.Append(string.Join(", ",
 				Enumerable.Range(1, numberOfParameters).Select(i => $"match{i}")))
@@ -823,10 +815,10 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append(
-				"\t\t/// <inheritdoc cref=\"IndexerSetup.GetInitialValue{T}(MockBehavior, Func{T}, NamedParameterValue[], out T)\" />")
+				"\t\t/// <inheritdoc cref=\"IndexerSetup.GetInitialValue{T}(global::Mockolate.MockBehavior, global::System.Func{T}, global::Mockolate.Parameters.NamedParameterValue[], out T)\" />")
 			.AppendLine();
 		sb.Append(
-				"\t\tprotected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, NamedParameterValue[] parameters, [NotNullWhen(true)] out T value)")
+				"\t\tprotected override void GetInitialValue<T>(global::Mockolate.MockBehavior behavior, global::System.Func<T> defaultValueGenerator, global::Mockolate.Parameters.NamedParameterValue[] parameters, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (_initialization is not null &&").AppendLine();

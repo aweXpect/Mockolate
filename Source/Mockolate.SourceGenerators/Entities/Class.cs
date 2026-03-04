@@ -19,7 +19,7 @@ internal record Class
 	{
 		_sourceAssembly = sourceAssembly;
 		Namespace = type.ContainingNamespace.ToString();
-		DisplayString = type.ToDisplayString();
+		DisplayString = type.ToDisplayString(Helpers.TypeDisplayFormat);
 		ClassName = GetTypeName(type);
 		ClassFullName = GetTypeFullName(type);
 

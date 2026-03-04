@@ -12,7 +12,7 @@ internal record Method
 		IsAbstract = methodSymbol.IsAbstract;
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : new Type(methodSymbol.ReturnType);
 		Name = methodSymbol.Name;
-		ContainingType = methodSymbol.ContainingType.ToDisplayString();
+		ContainingType = methodSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 

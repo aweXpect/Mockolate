@@ -11,7 +11,7 @@ internal record Property
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
 		Name = propertySymbol.Name;
 		Type = new Type(propertySymbol.Type);
-		ContainingType = propertySymbol.ContainingType.ToDisplayString();
+		ContainingType = propertySymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		IsIndexer = propertySymbol.IsIndexer;
 		IsAbstract = propertySymbol.IsAbstract;
 		if (IsIndexer && propertySymbol.Parameters.Length > 0)

@@ -26,16 +26,12 @@ public sealed partial class ForMockTests
 		await That(result.Sources)
 			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public IReturnMethodSetup<int, int, int, bool> Delegate(IParameter<int>? x, IParameter<int>? y, IOutParameter<bool> success)
-			          		{
-			          			var methodSetup = new ReturnMethodSetup<int, int, int, bool>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y ?? It.IsNull<int>())), new NamedParameter("success", (IParameter)(success)));
-			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
-			          			return methodSetup;
-			          		}
+			          		public global::Mockolate.Verify.VerificationResult<MyCode.Program.DoSomething> Invoked(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IParameter<int>? y, global::Mockolate.Parameters.IVerifyOutParameter<bool> success)
+			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("success", (global::Mockolate.Parameters.IParameter)(success)));
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<MyCode.Program.DoSomething> Invoked(IParameter<int>? x, IParameter<int>? y, IVerifyOutParameter<bool> success)
-			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y ?? It.IsNull<int>())), new NamedParameter("success", (IParameter)(success)));
+			          		public global::Mockolate.Verify.VerificationResult<MyCode.Program.DoSomething> Invoked(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IParameter<int>? y, global::Mockolate.Parameters.IVerifyOutParameter<bool> success)
+			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("success", (global::Mockolate.Parameters.IParameter)(success)));
 			          """).IgnoringNewlineStyle();
 	}
 
@@ -63,15 +59,15 @@ public sealed partial class ForMockTests
 		await That(result.Sources)
 			.ContainsKey("MockForProgramDoSomethingExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public IVoidMethodSetup<int, int, int> Delegate(IParameter<int>? x, IRefParameter<int> y, IOutParameter<int> z)
+			          		public global::Mockolate.Setup.IVoidMethodSetup<int, int, int> Delegate(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IRefParameter<int> y, global::Mockolate.Parameters.IOutParameter<int> z)
 			          		{
-			          			var methodSetup = new VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new NamedParameter("x", (IParameter)(x ?? It.IsNull<int>())), new NamedParameter("y", (IParameter)(y)), new NamedParameter("z", (IParameter)(z)));
+			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, int>("MyCode.Program.DoSomething.Invoke", new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y)), new global::Mockolate.Parameters.NamedParameter("z", (global::Mockolate.Parameters.IParameter)(z)));
 			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public VerificationResult<MyCode.Program.DoSomething> Invoked(IParameters parameters)
+			          		public global::Mockolate.Verify.VerificationResult<MyCode.Program.DoSomething> Invoked(global::Mockolate.Parameters.IParameters parameters)
 			          			=> CastToMockOrThrow(verify).Method("MyCode.Program.DoSomething.Invoke", parameters);
 			          """).IgnoringNewlineStyle();
 	}
@@ -105,7 +101,7 @@ public sealed partial class ForMockTests
 			          	public MyCode.Program.DoSomething1 Object => new(Invoke);
 			          	private System.Span<char> Invoke(int x)
 			          	{
-			          		var result = _mock.Registrations.InvokeMethod<System.Span<char>>("MyCode.Program.DoSomething1.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(SpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), new NamedParameterValue("x", x));
+			          		var result = _mock.Registrations.InvokeMethod<System.Span<char>>("MyCode.Program.DoSomething1.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), new global::Mockolate.Parameters.NamedParameterValue("x", x));
 			          		result.TriggerCallbacks(x);
 			          		return result.Result;
 			          	}
@@ -116,7 +112,7 @@ public sealed partial class ForMockTests
 			          	public MyCode.Program.DoSomething2 Object => new(Invoke);
 			          	private System.ReadOnlySpan<char> Invoke(int x)
 			          	{
-			          		var result = _mock.Registrations.InvokeMethod<System.ReadOnlySpan<char>>("MyCode.Program.DoSomething2.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(ReadOnlySpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), new NamedParameterValue("x", x));
+			          		var result = _mock.Registrations.InvokeMethod<System.ReadOnlySpan<char>>("MyCode.Program.DoSomething2.Invoke", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.ReadOnlySpanWrapper<char>)!, () => _mock.Registrations.Behavior.DefaultValue.Generate(default(char)!), p), new global::Mockolate.Parameters.NamedParameterValue("x", x));
 			          		result.TriggerCallbacks(x);
 			          		return result.Result;
 			          	}
@@ -143,7 +139,7 @@ public sealed partial class ForMockTests
 			     """);
 
 		await That(result.Sources).ContainsKey("MockForFuncintbool.g.cs").WhoseValue
-			.Contains("_mock.Registrations.InvokeMethod<bool>(\"System.Func<int, bool>.Invoke\", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(bool)!, p), new NamedParameterValue(\"arg\", arg))")
+			.Contains("_mock.Registrations.InvokeMethod<bool>(\"System.Func<int, bool>.Invoke\", p => _mock.Registrations.Behavior.DefaultValue.Generate(default(bool)!, p), new global::Mockolate.Parameters.NamedParameterValue(\"arg\", arg))")
 			.IgnoringNewlineStyle().And
 			.Contains("System.Func<int,bool> Object").IgnoringNewlineStyle();
 	}

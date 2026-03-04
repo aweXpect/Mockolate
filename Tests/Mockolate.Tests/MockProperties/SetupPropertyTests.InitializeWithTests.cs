@@ -57,7 +57,7 @@ public sealed partial class SetupPropertyTests
 		public async Task WithNull_ShouldReturnNull()
 		{
 			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyStringProperty.InitializeWith(null);
+			sut.SetupMock.Property.MyStringProperty.InitializeWith(null!);
 
 			string? result = sut.MyStringProperty;
 

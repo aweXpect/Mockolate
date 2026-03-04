@@ -32,7 +32,7 @@ public sealed partial class ForMockTests
 		await That(result.Sources).ContainsKey("MockForMyBaseClass.g.cs").And
 			.ContainsKey("MockRegistration.g.cs").WhoseValue
 			.DoesNotContain(
-				"throw new MockException(\"No parameterless constructor found for 'MyBaseClass'. Please provide constructor parameters.\");");
+				"throw new global::Mockolate.Exceptions.MockException(\"No parameterless constructor found for 'MyBaseClass'. Please provide constructor parameters.\");");
 	}
 
 	[Fact]
@@ -64,19 +64,19 @@ public sealed partial class ForMockTests
 			          				if (constructorParameters.Parameters.Length == 1
 			          				    && TryCast(constructorParameters.Parameters[0], mockBehavior, out int c1p1))
 			          				{
-			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
-			          					MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
+			          					global::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, "MyCode.MyBaseClass");
+			          					global::Mockolate.Generated.MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
 			          					if (setups.Length > 0)
 			          					{
 			          						#pragma warning disable CS0618
-			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
+			          						global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass> setupTarget = new global::Mockolate.MockSetup<MyCode.MyBaseClass>(mockRegistration);
 			          						#pragma warning restore CS0618
-			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
+			          						foreach (global::System.Action<global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass>> setup in setups)
 			          						{
 			          							setup.Invoke(setupTarget);
 			          						}
 			          					}
-			          					_value = new MockForMyBaseClass(c1p1, mockRegistration);
+			          					_value = new global::Mockolate.Generated.MockForMyBaseClass(c1p1, mockRegistration);
 			          				}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
@@ -84,42 +84,42 @@ public sealed partial class ForMockTests
 			          				    && TryCast(constructorParameters.Parameters[0], mockBehavior, out int c2p1)
 			          				    && TryCast(constructorParameters.Parameters[1], mockBehavior, out bool c2p2))
 			          				{
-			          					MockRegistration mockRegistration = new MockRegistration(mockBehavior, "MyCode.MyBaseClass");
-			          					MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
+			          					global::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, "MyCode.MyBaseClass");
+			          					global::Mockolate.Generated.MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
 			          					if (setups.Length > 0)
 			          					{
 			          						#pragma warning disable CS0618
-			          						IMockSetup<MyCode.MyBaseClass> setupTarget = new MockSetup<MyCode.MyBaseClass>(mockRegistration);
+			          						global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass> setupTarget = new global::Mockolate.MockSetup<MyCode.MyBaseClass>(mockRegistration);
 			          						#pragma warning restore CS0618
-			          						foreach (Action<IMockSetup<MyCode.MyBaseClass>> setup in setups)
+			          						foreach (global::System.Action<global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass>> setup in setups)
 			          						{
 			          							setup.Invoke(setupTarget);
 			          						}
 			          					}
-			          					_value = new MockForMyBaseClass(c2p1, c2p2, mockRegistration);
+			          					_value = new global::Mockolate.Generated.MockForMyBaseClass(c2p1, c2p2, mockRegistration);
 			          				}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
 			          				if (constructorParameters is null || constructorParameters.Parameters.Length == 0)
 			          				{
-			          					throw new MockException("No parameterless constructor found for 'MyCode.MyBaseClass'. Please provide constructor parameters.");
+			          					throw new global::Mockolate.Exceptions.MockException("No parameterless constructor found for 'MyCode.MyBaseClass'. Please provide constructor parameters.");
 			          				}
 			          """).IgnoringNewlineStyle();
 
 		await That(result.Sources).ContainsKey("MockForMyBaseClass.g.cs").WhoseValue
 			.Contains("""
-			          	public MockForMyBaseClass(int value, MockRegistration mockRegistration)
+			          	public MockForMyBaseClass(int value, global::Mockolate.MockRegistration mockRegistration)
 			          			: base(value)
 			          	{
-			          		_mock = new Mock<MyCode.MyBaseClass>(this, mockRegistration, new object?[] { value });
+			          		_mock = new global::Mockolate.Mock<MyCode.MyBaseClass>(this, mockRegistration, new object?[] { value });
 			          		_mockRegistrations = mockRegistration;
 			          	}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          	public MockForMyBaseClass(int value, bool flag, MockRegistration mockRegistration)
+			          	public MockForMyBaseClass(int value, bool flag, global::Mockolate.MockRegistration mockRegistration)
 			          			: base(value, flag)
 			          	{
-			          		_mock = new Mock<MyCode.MyBaseClass>(this, mockRegistration, new object?[] { value, flag });
+			          		_mock = new global::Mockolate.Mock<MyCode.MyBaseClass>(this, mockRegistration, new object?[] { value, flag });
 			          		_mockRegistrations = mockRegistration;
 			          	}
 			          """).IgnoringNewlineStyle();
@@ -152,7 +152,7 @@ public sealed partial class ForMockTests
 			.ContainsKey("MockForMyBaseClassExtensions.g.cs").And
 			.ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains(
-				"throw new MockException(\"Could not find any constructor at all for the base type 'MyCode.MyBaseClass'. Therefore mocking is not supported!\");");
+				"throw new global::Mockolate.Exceptions.MockException(\"Could not find any constructor at all for the base type 'MyCode.MyBaseClass'. Therefore mocking is not supported!\");");
 	}
 
 	[Fact]
@@ -286,45 +286,6 @@ public sealed partial class ForMockTests
 
 		await That(result.Sources).ContainsKey("MockForMyClassWithSealedProperties.g.cs").WhoseValue
 			.DoesNotContain("override int MyProperty");
-	}
-
-	[Fact]
-	public async Task ShouldNotIncludeNamespacesFromMockTypes()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System.Collections.Generic;
-			     using Mockolate;
-			     using MyCode.Models;
-			     using MyCode.Services;
-
-			     namespace MyCode
-			     {
-			     	public class Program
-			     	{
-			     	    public static void Main(string[] args)
-			     	    {
-			     			_ = Mock.Create<IMyService<List<MyData>>>();
-			     	    }
-			     	}
-			     }
-
-			     namespace MyCode.Services
-			     {
-			         public interface IMyService<T> { }
-			     }
-
-			     namespace MyCode.Models
-			     {
-			         public record MyData(int Value);
-			     }
-
-			     """, typeof(List<>));
-
-		await That(result.Sources).ContainsKey("MockForIMyServiceListMyData.g.cs").WhoseValue
-			.Contains("using Mockolate.Setup;").And
-			.DoesNotContain("using MyCode.Services;").And
-			.DoesNotContain("using MyCode.Models;");
 	}
 	
 	[Fact]

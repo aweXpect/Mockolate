@@ -15,14 +15,7 @@ internal static partial class Sources
 		IEnumerable<Class> distinctAdditionalImplementations,
 		HashSet<string> usedNames)
 	{
-		StringBuilder sb = InitializeBuilder([
-			"Mockolate.Exceptions",
-			"Mockolate.Parameters",
-			"Mockolate.Raise",
-			"Mockolate.Setup",
-			"Mockolate.Verify",
-		]);
-
+		StringBuilder sb = InitializeBuilder();
 		sb.Append("""
 		          namespace Mockolate;
 
@@ -32,31 +25,31 @@ internal static partial class Sources
 		sb.Append("internal static class ExtensionsFor").Append(name).AppendLine();
 		sb.AppendLine("{");
 		sb.AppendLine("""
-		              	private static Mock<T> CastToMockOrThrow<T>(IInteractiveMock<T> subject)
+		              	private static global::Mockolate.Mock<T> CastToMockOrThrow<T>(global::Mockolate.IInteractiveMock<T> subject)
 		              	{
-		              		if (subject is Mock<T> mock)
+		              		if (subject is global::Mockolate.Mock<T> mock)
 		              		{
 		              			return mock;
 		              		}
 		              	
-		              		throw new MockException("The subject is no mock.");
+		              		throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
 		              	}
 		              """);
 		sb.AppendLine();
 		sb.AppendLine("""
-		              	private static Mock<T> GetMockOrThrow<T>(T subject)
+		              	private static global::Mockolate.Mock<T> GetMockOrThrow<T>(T subject)
 		              	{
-		              		if (subject is IMockSubject<T> mock)
+		              		if (subject is global::Mockolate.IMockSubject<T> mock)
 		              		{
 		              			return mock.Mock;
 		              		}
 
-		              		if (subject is IHasMockRegistration hasMockRegistration)
+		              		if (subject is global::Mockolate.IHasMockRegistration hasMockRegistration)
 		              		{
-		              			return new Mock<T>(subject, hasMockRegistration.Registrations);
+		              			return new global::Mockolate.Mock<T>(subject, hasMockRegistration.Registrations);
 		              		}
 		              	
-		              		throw new MockException("The subject is no mock subject.");
+		              		throw new global::Mockolate.Exceptions.MockException("The subject is no mock subject.");
 		              	}
 		              """);
 		sb.AppendLine();
@@ -92,14 +85,14 @@ internal static partial class Sources
 		}
 
 		string mockExpression =
-			$"new Mock<{@class.ClassFullName}>(({@class.ClassFullName})subject, GetMockOrThrow(subject).Registrations);";
+			$"new global::Mockolate.Mock<{@class.ClassFullName}>(({@class.ClassFullName})subject, GetMockOrThrow(subject).Registrations);";
 
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
 			.Append("\" />")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IMockSetup<").Append(@class.ClassFullName).Append("> Setup_").Append(name)
+		sb.Append("\t\tpublic global::Mockolate.Setup.IMockSetup<").Append(@class.ClassFullName).Append("> Setup_").Append(name)
 			.Append("_Mock")
 			.AppendLine();
 		sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
@@ -112,7 +105,7 @@ internal static partial class Sources
 				.Append(@class.ClassFullName.EscapeForXmlDoc())
 				.Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic IMockRaises<").Append(@class.ClassFullName).Append("> RaiseOn_")
+			sb.Append("\t\tpublic global::Mockolate.Raise.IMockRaises<").Append(@class.ClassFullName).Append("> RaiseOn_")
 				.Append(name).Append("_Mock").AppendLine();
 			sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
 		}
@@ -122,7 +115,7 @@ internal static partial class Sources
 		sb.Append("\t\t///     Verifies the interactions with the mocked subject of <see cref=\"")
 			.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" /> on the mock.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic IMockVerify<").Append(@class.ClassFullName).Append("> VerifyOn_").Append(name)
+		sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> VerifyOn_").Append(name)
 			.Append("_Mock")
 			.AppendLine();
 		sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();

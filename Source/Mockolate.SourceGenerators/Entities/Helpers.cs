@@ -7,6 +7,14 @@ namespace Mockolate.SourceGenerators.Entities;
 
 internal static class Helpers
 {
+	public static SymbolDisplayFormat TypeDisplayFormat { get; } = new(
+		miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
+		                      SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
+		                      SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier,
+		globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.OmittedAsContaining,
+		typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+		genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters);
+
 	public static SpecialGenericType GetSpecialType(this ITypeSymbol typeSymbol)
 	{
 		if (typeSymbol.ContainingNamespace is { Name: "System", ContainingNamespace.IsGlobalNamespace: true, })
@@ -87,11 +95,11 @@ internal static class Helpers
 	{
 		if (type.SpecialGenericType == SpecialGenericType.Span)
 		{
-			sb.Append("SpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
+			sb.Append("global::Mockolate.Setup.SpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
 		}
 		else if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
 		{
-			sb.Append("ReadOnlySpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
+			sb.Append("global::Mockolate.Setup.ReadOnlySpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
 		}
 		else
 		{
@@ -105,13 +113,13 @@ internal static class Helpers
 	{
 		if (parameter.Type.SpecialGenericType == SpecialGenericType.Span)
 		{
-			return $"new SpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>({parameter.Name})";
+			return $"new global::Mockolate.Setup.SpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>({parameter.Name})";
 		}
 
 		if (parameter.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
 		{
 			return
-				$"new ReadOnlySpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>({parameter.Name})";
+				$"new global::Mockolate.Setup.ReadOnlySpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>({parameter.Name})";
 		}
 
 		return parameter.Name;
@@ -131,18 +139,20 @@ internal static class Helpers
 	{
 		sb.Append((parameter.RefKind, parameter.Type.SpecialGenericType) switch
 		{
-			(RefKind.Ref, _) => "IVerifyRefParameter<",
-			(RefKind.Out, _) => "IVerifyOutParameter<",
-			(_, SpecialGenericType.Span) => "IVerifySpanParameter<",
-			(_, SpecialGenericType.ReadOnlySpan) => "IVerifyReadOnlySpanParameter<",
-			(_, _) => "IParameter<",
+			(RefKind.Ref, _) => "global::Mockolate.Parameters.IVerifyRefParameter<",
+			(RefKind.Out, _) => "global::Mockolate.Parameters.IVerifyOutParameter<",
+			(_, SpecialGenericType.Span) => "global::Mockolate.Parameters.IVerifySpanParameter<",
+			(_, SpecialGenericType.ReadOnlySpan) => "global::Mockolate.Parameters.IVerifyReadOnlySpanParameter<",
+			(_, _) => "global::Mockolate.Parameters.IParameter<",
 		});
-		sb.Append(parameter.Type.SpecialGenericType switch
-		{
-			SpecialGenericType.Span => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
-			SpecialGenericType.ReadOnlySpan => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
-			_ => parameter.Type.Fullname,
-		}).Append('>');
+		sb.Append((parameter.Type.SpecialGenericType,
+				parameter.IsNullableAnnotated && !parameter.Type.Fullname.EndsWith("?")) switch
+			{
+				(SpecialGenericType.Span, _) => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+				(SpecialGenericType.ReadOnlySpan, _) => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+				(_, false) => parameter.Type.Fullname,
+				(_, true) => $"{parameter.Type.Fullname}?",
+			}).Append('>');
 
 		return sb;
 	}
@@ -151,26 +161,40 @@ internal static class Helpers
 	{
 		return (parameter.RefKind, parameter.Type.SpecialGenericType) switch
 		{
-			(RefKind.Ref, _) => $"IRefParameter<{GetType(parameter)}>",
-			(RefKind.Out, _) => $"IOutParameter<{GetType(parameter)}>",
-			(RefKind.RefReadOnlyParameter, _) => $"IRefParameter<{GetType(parameter)}>",
-			(_, SpecialGenericType.Span) => $"ISpanParameter<{GetType(parameter)}>",
-			(_, SpecialGenericType.ReadOnlySpan) => $"IReadOnlySpanParameter<{GetType(parameter)}>",
-			(_, _) => $"IParameter<{GetType(parameter)}>",
+			(RefKind.Ref, _) => $"global::Mockolate.Parameters.IRefParameter<{GetType(parameter)}>",
+			(RefKind.Out, _) => $"global::Mockolate.Parameters.IOutParameter<{GetType(parameter)}>",
+			(RefKind.RefReadOnlyParameter, _) => $"global::Mockolate.Parameters.IRefParameter<{GetType(parameter)}>",
+			(_, SpecialGenericType.Span) => $"global::Mockolate.Parameters.ISpanParameter<{GetType(parameter)}>",
+			(_, SpecialGenericType.ReadOnlySpan) =>
+				$"global::Mockolate.Parameters.IReadOnlySpanParameter<{GetType(parameter)}>",
+			(_, _) => $"global::Mockolate.Parameters.IParameter<{GetType(parameter)}>",
 		};
 
 		static string GetType(MethodParameter parameter)
 		{
-			return parameter.Type.SpecialGenericType switch
-			{
-				SpecialGenericType.Span => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
-				SpecialGenericType.ReadOnlySpan => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
-				_ => parameter.Type.Fullname,
-			};
+			return (parameter.Type.SpecialGenericType,
+					parameter.IsNullableAnnotated && !parameter.Type.Fullname.EndsWith("?")) switch
+				{
+					(SpecialGenericType.Span, _) => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+					(SpecialGenericType.ReadOnlySpan, _) =>
+						parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+					(_, false) => parameter.Type.Fullname,
+					(_, true) => $"{parameter.Type.Fullname}?",
+				};
 		}
 	}
 
-	public static bool IsNullable(this MethodParameter parameter)
+	public static string ToNullableType(this MethodParameter parameter)
+	{
+		if (parameter.IsNullableAnnotated && !parameter.Type.Fullname.EndsWith("?"))
+		{
+			return $"{parameter.Type.Fullname}?";
+		}
+
+		return parameter.Type.Fullname;
+	}
+
+	public static bool CanBeNullable(this MethodParameter parameter)
 		=> parameter.RefKind is not RefKind.Ref and not RefKind.Out and not RefKind.RefReadOnlyParameter &&
 		   parameter.Type.SpecialGenericType is not (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
 
@@ -183,11 +207,11 @@ internal static class Helpers
 
 		if (type.SpecialGenericType == SpecialGenericType.Span)
 		{
-			sb.Append("SpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
+			sb.Append("global::Mockolate.Setup.SpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
 		}
 		else if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
 		{
-			sb.Append("ReadOnlySpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
+			sb.Append("global::Mockolate.Setup.ReadOnlySpanWrapper<").Append(type.GenericTypeParameters!.Value.First().Fullname).Append(">");
 		}
 		else
 		{
