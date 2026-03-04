@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Mockolate.SourceGenerators.Tests.Sources;
+﻿namespace Mockolate.SourceGenerators.Tests.Sources;
 
 public sealed partial class ForMockTests
 {
@@ -287,7 +285,80 @@ public sealed partial class ForMockTests
 		await That(result.Sources).ContainsKey("MockForMyClassWithSealedProperties.g.cs").WhoseValue
 			.DoesNotContain("override int MyProperty");
 	}
-	
+
+	[Fact]
+	public async Task MethodOrIndexerParametersWithReservedNames_ShouldPrefixAtSymbol()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = Mock.Create<IMyService>();
+			         }
+			     }
+
+			     public interface IMyService
+			     {
+			         string this[int @true] { get; set; }
+			         void DoSomething(int @event);
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+			.Contains("""
+			          public string this[int @true]
+			          """).And
+			.Contains("""
+			          public void DoSomething(int @event)
+			          """);
+
+		await That(result.Sources).ContainsKey("MockForIMyServiceExtensions.g.cs").WhoseValue
+			.Contains("""
+			          		/// <summary>
+			          		///     Setup for the method <see cref="MyCode.IMyService.DoSomething(int)"/> with the given <paramref name="@event"/>.
+			          		/// </summary>
+			          		public global::Mockolate.Setup.IVoidMethodSetup<int> DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
+			          		{
+			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>("MyCode.IMyService.DoSomething", new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>())));
+			          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
+			          			return methodSetup;
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		/// <summary>
+			          		///     Sets up the string indexer on the mock for <see cref="MyCode.IMyService" />.
+			          		/// </summary>
+			          		public global::Mockolate.Setup.IndexerSetup<string, int> Indexer(global::Mockolate.Parameters.IParameter<int>? parameter1)
+			          		{
+			          			var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(parameter1 ?? global::Mockolate.It.IsNull<int>())));
+			          			CastToMockRegistrationOrThrow(setup).SetupIndexer(indexerSetup);
+			          			return indexerSetup;
+			          		}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		/// <summary>
+			          		///     Validates the invocations for the method <see cref="MyCode.IMyService.DoSomething(int)"/> with the given <paramref name="@event"/>.
+			          		/// </summary>
+			          		public global::Mockolate.Verify.VerificationResult<MyCode.IMyService> DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
+			          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.DoSomething", new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>())));
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          		/// <summary>
+			          		///     Verifies the indexer read access for <see cref="MyCode.IMyService"/> on the mock.
+			          		/// </summary>
+			          		public global::Mockolate.Verify.VerificationResult<MyCode.IMyService> GotIndexer(global::Mockolate.Parameters.IParameter<int>? parameter1)
+			          		{
+			          			return CastToMockOrThrow(verify).GotIndexer(new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(parameter1 ?? global::Mockolate.It.IsNull<int>())));
+			          		}
+			          """).IgnoringNewlineStyle();
+	}
+
 	[Fact]
 	public async Task ShouldHandleComplexInheritanceWithSealedAndInternalMembers()
 	{
