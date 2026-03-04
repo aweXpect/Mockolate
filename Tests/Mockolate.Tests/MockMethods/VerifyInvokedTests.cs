@@ -31,7 +31,7 @@ public sealed partial class VerifyInvokedTests
 	[Fact]
 	public async Task Equals_WithOtherOverload_ShouldWork()
 	{
-		System.Object? obj = new();
+		object obj = new();
 		IMethodService mock = Mock.Create<IMethodService>();
 
 		_ = mock.Equals(3);

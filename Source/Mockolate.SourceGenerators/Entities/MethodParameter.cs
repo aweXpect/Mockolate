@@ -9,7 +9,7 @@ internal readonly record struct MethodParameter
 		Type = new Type(parameterSymbol.Type);
 		Name = parameterSymbol.Name;
 		RefKind = parameterSymbol.RefKind;
-		IsNullableAnnotated = parameterSymbol.NullableAnnotation ==  NullableAnnotation.Annotated;
+		IsNullableAnnotated = parameterSymbol.NullableAnnotation == NullableAnnotation.Annotated;
 	}
 
 	public bool IsNullableAnnotated { get; }
