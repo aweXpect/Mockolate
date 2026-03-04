@@ -13,7 +13,7 @@ internal record Type
 	internal Type(ITypeSymbol typeSymbol)
 	{
 		// Removes '*' from multi-dimensional array types
-		Fullname = typeSymbol.ToDisplayString().Replace("*", "");
+		Fullname = typeSymbol.ToDisplayString(Helpers.TypeDisplayFormat).Replace("*", "");
 		Namespace = typeSymbol.ContainingNamespace?.ToString();
 		if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
 		{

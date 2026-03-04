@@ -11,12 +11,7 @@ internal static partial class Sources
 {
 	public static string ForMock(string name, MockClass mockClass)
 	{
-		StringBuilder sb = InitializeBuilder([
-			"System.Diagnostics",
-			"Mockolate.Parameters",
-			"Mockolate.Setup",
-		]);
-
+		StringBuilder sb = InitializeBuilder();
 		sb.Append("""
 		          namespace Mockolate.Generated;
 
@@ -33,19 +28,19 @@ internal static partial class Sources
 			sb.Append("internal class MockFor").Append(name).Append(" : IMockSubject<").Append(mockClass.ClassFullName)
 				.Append(">").AppendLine();
 			sb.Append("{").AppendLine();
-			sb.Append("\t/// <inheritdoc cref=\"IMockSubject{T}.Mock\" />").AppendLine();
-			sb.Append("\tMock<").Append(mockClass.ClassFullName).Append("> IMockSubject<")
+			sb.Append("\t/// <inheritdoc cref=\"global::Mockolate.IMockSubject{T}.Mock\" />").AppendLine();
+			sb.Append("\tglobal::Mockolate.Mock<").Append(mockClass.ClassFullName).Append("> global::Mockolate.IMockSubject<")
 				.Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
-			sb.Append("\tprivate readonly Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
-			sb.Append("\t/// <inheritdoc cref=\"IHasMockRegistration.Registrations\" />").AppendLine();
-			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\tMockRegistration IHasMockRegistration.Registrations => _mock.Registrations;").AppendLine();
+			sb.Append("\tprivate readonly global::Mockolate.Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
+			sb.Append("\t/// <inheritdoc cref=\"global::Mockolate.IHasMockRegistration.Registrations\" />").AppendLine();
+			sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+			sb.Append("\tglobal::Mockolate.MockRegistration global::Mockolate.IHasMockRegistration.Registrations => _mock.Registrations;").AppendLine();
 
 			sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
-			sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior)").AppendLine();
+			sb.Append("\tpublic MockFor").Append(name).Append("(global::Mockolate.MockBehavior mockBehavior)").AppendLine();
 			sb.Append("\t{").AppendLine();
-			sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
-				.Append(">(Invoke, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
+			sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.ClassFullName)
+				.Append(">(Invoke, new global::Mockolate.MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
 				.Append("\"));").AppendLine();
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
@@ -78,7 +73,7 @@ internal static partial class Sources
 
 			foreach (MethodParameter p in mockClass.Delegate.Parameters)
 			{
-				sb.Append(", new NamedParameterValue(\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
+				sb.Append(", new global::Mockolate.Parameters.NamedParameterValue(\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
 				{
 					RefKind.Out => "null",
 					_ => p.ToNameOrWrapper(),
@@ -124,10 +119,10 @@ internal static partial class Sources
 			sb.Append("\tIMockSubject<").Append(mockClass.ClassFullName).Append(">").AppendLine();
 			sb.Append("{").AppendLine();
 			sb.Append("\t/// <inheritdoc cref=\"IMockSubject{T}.Mock\" />").AppendLine();
-			sb.Append("\tMock<").Append(mockClass.ClassFullName).Append("> IMockSubject<")
+			sb.Append("\tglobal::Mockolate.Mock<").Append(mockClass.ClassFullName).Append("> IMockSubject<")
 				.Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
-			sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\tprivate readonly Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
+			sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+			sb.Append("\tprivate readonly global::Mockolate.Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
 			if (mockClass.IsInterface)
 			{
 				sb.Append("\tprivate readonly ").Append(mockClass.ClassFullName).Append("? _wrapped;").AppendLine();
@@ -137,27 +132,27 @@ internal static partial class Sources
 			if (mockClass.Constructors?.Count > 0)
 			{
 				sb.Append(
-						"\tinternal static readonly System.Threading.AsyncLocal<MockRegistration> MockRegistrationsProvider = new System.Threading.AsyncLocal<MockRegistration>();")
+						"\tinternal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistration> MockRegistrationsProvider = new global::System.Threading.AsyncLocal<global::Mockolate.MockRegistration>();")
 					.AppendLine().AppendLine();
-				sb.Append("\t/// <inheritdoc cref=\"IHasMockRegistration.Registrations\" />").AppendLine();
-				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-				sb.Append("\tMockRegistration IHasMockRegistration.Registrations => MockRegistrations;").AppendLine();
-				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-				sb.Append("\tprivate MockRegistration MockRegistrations").AppendLine();
+				sb.Append("\t/// <inheritdoc cref=\"global::Mockolate.IHasMockRegistration.Registrations\" />").AppendLine();
+				sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tglobal::Mockolate.MockRegistration global::Mockolate.IHasMockRegistration.Registrations => MockRegistrations;").AppendLine();
+				sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tprivate global::Mockolate.MockRegistration MockRegistrations").AppendLine();
 				sb.Append("\t{").AppendLine();
 				sb.Append("\t\tget => _mockRegistrations ?? MockRegistrationsProvider.Value!;").AppendLine();
 				sb.Append("\t\tset => _mockRegistrations = value;").AppendLine();
 				sb.Append("\t}").AppendLine();
-				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-				sb.Append("\tprivate MockRegistration? _mockRegistrations;").AppendLine();
+				sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tprivate global::Mockolate.MockRegistration? _mockRegistrations;").AppendLine();
 			}
 			else
 			{
-				sb.Append("\t/// <inheritdoc cref=\"IHasMockRegistration.Registrations\" />").AppendLine();
-				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-				sb.Append("\tMockRegistration IHasMockRegistration.Registrations => _mock.Registrations;").AppendLine();
-				sb.Append("\t[DebuggerBrowsable(DebuggerBrowsableState.Never)]").AppendLine();
-				sb.Append("\tprivate MockRegistration MockRegistrations => _mock.Registrations;").AppendLine();
+				sb.Append("\t/// <inheritdoc cref=\"global::Mockolate.IHasMockRegistration.Registrations\" />").AppendLine();
+				sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tglobal::Mockolate.MockRegistration global::Mockolate.IHasMockRegistration.Registrations => _mock.Registrations;").AppendLine();
+				sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+				sb.Append("\tprivate global::Mockolate.MockRegistration MockRegistrations => _mock.Registrations;").AppendLine();
 			}
 
 			sb.AppendLine();
@@ -165,11 +160,11 @@ internal static partial class Sources
 			if (mockClass.IsInterface)
 			{
 				sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
-				sb.Append("\tpublic MockFor").Append(name).Append("(MockBehavior mockBehavior, ")
+				sb.Append("\tpublic MockFor").Append(name).Append("(global::Mockolate.MockBehavior mockBehavior, ")
 					.Append(mockClass.ClassFullName).Append("? wrapped = null)").AppendLine();
 				sb.Append("\t{").AppendLine();
-				sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
-					.Append(">(this, new MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
+				sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.ClassFullName)
+					.Append(">(this, new global::Mockolate.MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
 					.Append("\"));").AppendLine();
 				sb.Append("\t\tthis._wrapped = wrapped;").AppendLine();
 				sb.Append("\t}").AppendLine();
@@ -209,7 +204,7 @@ internal static partial class Sources
 			sb.Append(", ");
 		}
 
-		sb.Append("MockRegistration mockRegistration)").AppendLine();
+		sb.Append("global::Mockolate.MockRegistration mockRegistration)").AppendLine();
 		sb.Append("\t\t\t: base(");
 		int index = 0;
 		foreach (MethodParameter parameter in constructor.Parameters)
@@ -224,7 +219,7 @@ internal static partial class Sources
 
 		sb.Append(')').AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_mock = new Mock<").Append(mockClass.ClassFullName)
+		sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.ClassFullName)
 			.Append(">(this, mockRegistration, new object?[] { ");
 		index = 0;
 		foreach (MethodParameter parameter in constructor.Parameters)
@@ -670,7 +665,7 @@ internal static partial class Sources
 		if (method.ReturnType != Type.Void)
 		{
 			string parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
-			sb.Append("\t\tMethodSetupResult<")
+			sb.Append("\t\tglobal::Mockolate.Setup.MethodSetupResult<")
 				.AppendTypeOrWrapper(method.ReturnType).Append("> ").Append(methodExecutionVarName)
 				.Append(" = MockRegistrations.InvokeMethod<")
 				.AppendTypeOrWrapper(method.ReturnType).Append(">(").Append(method.GetUniqueNameString())
@@ -680,14 +675,14 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\tMethodSetupResult ").Append(methodExecutionVarName)
+			sb.Append("\t\tglobal::Mockolate.Setup.MethodSetupResult ").Append(methodExecutionVarName)
 				.Append(" = MockRegistrations.InvokeMethod(")
 				.Append(method.GetUniqueNameString());
 		}
 
 		foreach (MethodParameter p in method.Parameters)
 		{
-			sb.Append(", new NamedParameterValue(\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
+			sb.Append(", new global::Mockolate.Parameters.NamedParameterValue(\"").Append(p.Name).Append("\", ").Append(p.RefKind switch
 			{
 				RefKind.Out => "null",
 				_ => p.ToNameOrWrapper(),
@@ -765,10 +760,10 @@ internal static partial class Sources
 					sb.Append("\t\t\t// Persist the HttpContent, because it gets automatically disposed on .NET Framework").AppendLine();
 					sb.Append("\t\t\tif (request.Content != null)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append(
-							"\t\t\t\tvar stream = request.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();")
-						.AppendLine();
-					sb.Append("\t\t\t\tusing System.IO.MemoryStream ms = new();").AppendLine();
+				sb.Append(
+						"\t\t\t\tvar stream = request.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();")
+					.AppendLine();
+				sb.Append("\t\t\t\tusing global::System.IO.MemoryStream ms = new();").AppendLine();
 					sb.Append("\t\t\t\tstream.CopyTo(ms);").AppendLine();
 					sb.Append("\t\t\t\tbyte[] bytes = ms.ToArray();").AppendLine();
 					sb.Append("\t\t\t\tstream.Position = 0L;").AppendLine();
@@ -926,7 +921,7 @@ internal static partial class Sources
 	///     Formats indexer parameters as comma-separated names or wrappers.
 	/// </summary>
 	private static string FormatIndexerParametersAsNameOrWrapper(EquatableArray<MethodParameter> parameters)
-		=> string.Join(", ", parameters.Select(p => $"new NamedParameterValue(\"{p.Name}\", {p.ToNameOrWrapper()})"));
+		=> string.Join(", ", parameters.Select(p => $"new global::Mockolate.Parameters.NamedParameterValue(\"{p.Name}\", {p.ToNameOrWrapper()})"));
 
 	/// <summary>
 	///     Formats indexer parameters as comma-separated names.
@@ -951,11 +946,11 @@ internal static partial class Sources
 	/// </summary>
 	private static void AppendNamedParameter(StringBuilder sb, MethodParameter parameter)
 	{
-		sb.Append("new NamedParameter(\"").Append(parameter.Name).Append("\", (IParameter)(");
+		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name).Append("\", (global::Mockolate.Parameters.IParameter)(");
 		sb.Append(parameter.Name);
-		if (parameter.IsNullable())
+		if (parameter.CanBeNullable())
 		{
-			sb.Append(" ?? It.IsNull<").Append(parameter.Type.Fullname).Append(">()");
+			sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType()).Append(">()");
 		}
 
 		sb.Append("))");

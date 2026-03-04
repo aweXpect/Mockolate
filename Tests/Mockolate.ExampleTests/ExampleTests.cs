@@ -6,7 +6,6 @@ using Mockolate.Verify;
 #if NET8_0_OR_GREATER
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using Mockolate.Web;
 #endif
 

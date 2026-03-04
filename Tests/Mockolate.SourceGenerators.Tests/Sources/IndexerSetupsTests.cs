@@ -33,7 +33,7 @@ public sealed class IndexerSetupsTests
 
 		await That(result.Sources).ContainsKey("IndexerSetups.g.cs").WhoseValue
 			.Contains(
-				"internal class IndexerSetup<TValue, T1, T2, T3, T4, T5>(NamedParameter match1, NamedParameter match2, NamedParameter match3, NamedParameter match4, NamedParameter match5) : IndexerSetup");
+				"internal class IndexerSetup<TValue, T1, T2, T3, T4, T5>(global::Mockolate.Parameters.NamedParameter match1, global::Mockolate.Parameters.NamedParameter match2, global::Mockolate.Parameters.NamedParameter match3, global::Mockolate.Parameters.NamedParameter match4, global::Mockolate.Parameters.NamedParameter match5) : global::Mockolate.Setup.IndexerSetup");
 	}
 
 	[Fact]

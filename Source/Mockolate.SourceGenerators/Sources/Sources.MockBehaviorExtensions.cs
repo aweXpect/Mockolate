@@ -10,18 +10,7 @@ internal static partial class Sources
 	public static string MockBehaviorExtensions(ImmutableArray<MockClass> mockClasses)
 	{
 		bool includeHttpClient = mockClasses.Any(m => m.ClassFullName == "System.Net.Http.HttpClient");
-		StringBuilder sb = InitializeBuilder([
-			"System",
-			"System.Collections.Generic",
-			"System.Collections.Concurrent",
-			"System.Diagnostics",
-			"System.Linq",
-			"System.Net",
-			"System.Net.Http",
-			"System.Threading",
-			"System.Threading.Tasks",
-			"Mockolate",
-		]);
+		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("""
 		          namespace Mockolate;
@@ -29,21 +18,21 @@ internal static partial class Sources
 		          #nullable enable annotations
 
 		          /// <summary>
-		          ///     Extensions for <see cref="MockBehavior" />.
+		          ///     Extensions for <see cref="global::Mockolate.MockBehavior" />.
 		          /// </summary>
 		          internal static partial class Mock
 		          {
-		          	private static readonly MockBehavior _default;
+		          	private static readonly global::Mockolate.MockBehavior _default;
 		          	
 		          	static Mock()
 		          	{
-		          		_default = new MockBehavior(new DefaultValueGenerator())
+		          		_default = new global::Mockolate.MockBehavior(new DefaultValueGenerator())
 		          """);
 		if (includeHttpClient)
 		{
 			sb.AppendLine()
 				.Append("""
-				        			.UseConstructorParametersFor<HttpClient>(() => new object[] { Mock.Create<HttpMessageHandler>() });
+				        			.UseConstructorParametersFor<global::System.Net.Http.HttpClient>(() => new object[] { Mock.Create<global::System.Net.Http.HttpMessageHandler>() });
 				        """).AppendLine();
 		}
 		else
@@ -54,12 +43,12 @@ internal static partial class Sources
 		sb.Append("""
 		          	}
 		          	
-		          	extension(MockBehavior)
+		          	extension(global::Mockolate.MockBehavior)
 		          	{
 		          		/// <summary>
 		          		///     The default mock behavior settings.
 		          		/// </summary>
-		          		public static MockBehavior Default => _default;
+		          		public static global::Mockolate.MockBehavior Default => _default;
 		          	}
 		          	
 		          	/// <summary>
@@ -70,12 +59,12 @@ internal static partial class Sources
 		          		/// <summary>
 		          		///     Determines whether the specified <paramref name="type" /> can be created by this factory.
 		          		/// </summary>
-		          		bool IsMatch(Type type);
+		          		bool IsMatch(global::System.Type type);
 		          	
 		          		/// <summary>
 		          		///     Creates a new instance of the specified type.
 		          		/// </summary>
-		          		object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters);
+		          		object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, object?[] parameters);
 		          	}
 		          	
 		          	/// <summary>
@@ -84,28 +73,28 @@ internal static partial class Sources
 		          	/// </summary>
 		          	internal class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
 		          	{
-		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(Type)" />
-		          		public bool IsMatch(Type type)
+		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+		          		public bool IsMatch(global::System.Type type)
 		          			=> type == typeof(T);
 		          	
-		          		/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
-		          		public object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+		          		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
 		          			=> value;
 		          	}
 		          	
 		          	/// <summary>
-		          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="HttpResponseMessage" /> with the specified
+		          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="global::System.Net.Http.HttpResponseMessage" /> with the specified
 		          	///     <paramref name="statusCode" />.
 		          	/// </summary>
-		          	private sealed class HttpResponseMessageFactory(HttpStatusCode statusCode) : IDefaultValueFactory
+		          	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : IDefaultValueFactory
 		          	{
-		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(Type)" />
-		          		public bool IsMatch(Type type)
-		          			=> type == typeof(HttpResponseMessage);
+		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+		          		public bool IsMatch(global::System.Type type)
+		          			=> type == typeof(global::System.Net.Http.HttpResponseMessage);
 		          	
-		          		/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
-		          		public object? Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
-		          			=> new HttpResponseMessage(statusCode) { Content = new StringContent(string.Empty) };
+		          		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+		          			=> new global::System.Net.Http.HttpResponseMessage(statusCode) { Content = new global::System.Net.Http.StringContent(string.Empty) };
 		          	}
 		          	
 		          	/// <summary>
@@ -113,19 +102,19 @@ internal static partial class Sources
 		          	/// </summary>
 		          	private class DefaultValueGenerator : IDefaultValueGenerator
 		          	{
-		          		private static readonly ConcurrentQueue<IDefaultValueFactory> _factories = new([
+		          		private static readonly global::System.Collections.Concurrent.ConcurrentQueue<IDefaultValueFactory> _factories = new([
 		          			new TypedDefaultValueFactory<string>(""),
-		          			new HttpResponseMessageFactory(HttpStatusCode.NotImplemented),
+		          			new HttpResponseMessageFactory(global::System.Net.HttpStatusCode.NotImplemented),
 		          			new CancellableTaskFactory(),
 		          	#if NET8_0_OR_GREATER
 		          			new CancellableValueTaskFactory(),
 		          	#endif
-		          			new TypedDefaultValueFactory<CancellationToken>(CancellationToken.None),
-		          			new TypedDefaultValueFactory<System.Collections.IEnumerable>(Array.Empty<object?>()),
+		          			new TypedDefaultValueFactory<global::System.Threading.CancellationToken>(global::System.Threading.CancellationToken.None),
+		          			new TypedDefaultValueFactory<System.Collections.IEnumerable>(global::System.Array.Empty<object?>()),
 		          		]);
 		          	
-		          		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(Type, object?[])" />
-		          		public object? GenerateValue(Type type, params object?[] parameters)
+		          		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(global::System.Type, object?[])" />
+		          		public object? GenerateValue(global::System.Type type, params object?[] parameters)
 		          		{
 		          			if (TryGenerate(type, parameters, out object? value))
 		          			{
@@ -144,9 +133,9 @@ internal static partial class Sources
 		          		/// <summary>
 		          		///     Tries to generate a default value for the specified type.
 		          		/// </summary>
-		          		protected virtual bool TryGenerate(Type type, object?[] parameters, out object? value)
+		          		protected virtual bool TryGenerate(global::System.Type type, object?[] parameters, out object? value)
 		          		{
-		          			IDefaultValueFactory? matchingFactory = _factories.FirstOrDefault(f => f.IsMatch(type));
+		          			IDefaultValueFactory? matchingFactory = global::System.Linq.Enumerable.FirstOrDefault(_factories, f => f.IsMatch(type));
 		          			if (matchingFactory is not null)
 		          			{
 		          				value = matchingFactory.Create(type, this, parameters);
@@ -157,52 +146,52 @@ internal static partial class Sources
 		          			return value is not null;
 		          		}
 		          	
-		          		private static bool HasCanceledCancellationToken(object?[] parameters, out CancellationToken cancellationToken)
+		          		private static bool HasCanceledCancellationToken(object?[] parameters, out global::System.Threading.CancellationToken cancellationToken)
 		          		{
-		          			CancellationToken parameter = parameters.OfType<CancellationToken>().FirstOrDefault();
+		          			global::System.Threading.CancellationToken parameter = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken>(parameters));
 		          			if (parameter.IsCancellationRequested)
 		          			{
 		          				cancellationToken = parameter;
 		          				return true;
 		          			}
 		          	
-		          			cancellationToken = CancellationToken.None;
+		          			cancellationToken = global::System.Threading.CancellationToken.None;
 		          			return false;
 		          		}
 		          	
 		          		private sealed class CancellableTaskFactory : IDefaultValueFactory
 		          		{
-		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(Type)" />
-		          			public bool IsMatch(Type type)
-		          				=> type == typeof(Task);
+		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+		          			public bool IsMatch(global::System.Type type)
+		          				=> type == typeof(global::System.Threading.Tasks.Task);
 		          	
-		          			/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
-		          			public object Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+		          			/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		          			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
 		          			{
-		          				if (HasCanceledCancellationToken(parameters, out CancellationToken cancellationToken))
+		          				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
 		          				{
-		          					return Task.FromCanceled(cancellationToken);
+		          					return global::System.Threading.Tasks.Task.FromCanceled(cancellationToken);
 		          				}
 		          	
-		          				return Task.CompletedTask;
+		          				return global::System.Threading.Tasks.Task.CompletedTask;
 		          			}
 		          		}
 		          	#if NET8_0_OR_GREATER
 		          		private sealed class CancellableValueTaskFactory : IDefaultValueFactory
 		          		{
-		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(Type)" />
-		          			public bool IsMatch(Type type)
-		          				=> type == typeof(ValueTask);
+		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+		          			public bool IsMatch(global::System.Type type)
+		          				=> type == typeof(global::System.Threading.Tasks.ValueTask);
 		          	
-		          			/// <inheritdoc cref="IDefaultValueFactory.Create(Type, IDefaultValueGenerator, object[])" />
-		          			public object Create(Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+		          			/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		          			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
 		          			{
-		          				if (HasCanceledCancellationToken(parameters, out CancellationToken cancellationToken))
+		          				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
 		          				{
-		          					return ValueTask.FromCanceled(cancellationToken);
+		          					return global::System.Threading.Tasks.ValueTask.FromCanceled(cancellationToken);
 		          				}
 		          	
-		          				return ValueTask.CompletedTask;
+		          				return global::System.Threading.Tasks.ValueTask.CompletedTask;
 		          			}
 		          		}
 		          	#endif
@@ -220,46 +209,58 @@ internal static partial class Sources
 		          	extension(IDefaultValueGenerator generator)
 		          	{
 		          		/// <summary>
-		          		///     Generates a <see cref="Task" /> of <typeparamref name="T" />, with
+		          		///     Generates a <see cref="global::System.Threading.Tasks.Task" /> of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>
-		          		public Task<T> Generate<T>(Task<T> nullValue, params object?[] parameters)
+		          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, params object?[] parameters)
 		          		{
-		          			CancellationToken cancellationToken = parameters.OfType<object?[]>().FirstOrDefault()?
-		          				.OfType<CancellationToken>().FirstOrDefault() ?? CancellationToken.None;
+		          			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
+		          			var objectParameters = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<object?[]>(parameters));
+		          			if (objectParameters is not null)
+		          			{
+		          				cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
+		          					global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(objectParameters)) ?? cancellationToken;
+		          			}
+		          			
 		          			if (cancellationToken.IsCancellationRequested)
 		          			{
-		          				return Task.FromCanceled<T>(cancellationToken);
+		          				return global::System.Threading.Tasks.Task.FromCanceled<T>(cancellationToken);
 		          			}
 		          			
-		          			if (parameters.Length > 0 && parameters[0] is Func<T> func)
+		          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
 		          			{
-		          				return Task.FromResult(func());
+		          				return global::System.Threading.Tasks.Task.FromResult(func());
 		          			}
 		          			
-		          			return Task.FromResult(generator.Generate(default(T)!, parameters));
+		          			return global::System.Threading.Tasks.Task.FromResult(generator.Generate(default(T)!, parameters));
 		          		}
 
 		          #if NET8_0_OR_GREATER
 		          		/// <summary>
-		          		///     Generates a <see cref="ValueTask" /> of <typeparamref name="T" />, with
+		          		///     Generates a <see cref="global::System.Threading.Tasks.ValueTask" /> of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>
-		          		public ValueTask<T> Generate<T>(ValueTask<T> nullValue, params object?[] parameters)
+		          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, params object?[] parameters)
 		          		{
-		          			CancellationToken cancellationToken = parameters.OfType<object?[]>().FirstOrDefault()?
-		          				.OfType<CancellationToken>().FirstOrDefault() ?? CancellationToken.None;
+		          			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
+		          			var objectParameters = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<object?[]>(parameters));
+		          			if (objectParameters is not null)
+		          			{
+		          				cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
+		          					global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(objectParameters)) ?? cancellationToken;
+		          			}
+		          			
 		          			if (cancellationToken.IsCancellationRequested)
 		          			{
-		          				return ValueTask.FromCanceled<T>(cancellationToken);
+		          				return global::System.Threading.Tasks.ValueTask.FromCanceled<T>(cancellationToken);
 		          			}
 		          			
-		          			if (parameters.Length > 0 && parameters[0] is Func<T> func)
+		          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
 		          			{
-		          				return ValueTask.FromResult(func());
+		          				return global::System.Threading.Tasks.ValueTask.FromResult(func());
 		          			}
 		          			
-		          			return ValueTask.FromResult(generator.Generate(default(T)!, parameters));
+		          			return global::System.Threading.Tasks.ValueTask.FromResult(generator.Generate(default(T)!, parameters));
 		          		}
 		          #endif
 
@@ -269,7 +270,7 @@ internal static partial class Sources
 		          		/// </summary>
 		          		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params object?[] parameters)
 		          		{
-		          			if (parameters.Length >= 2 && parameters[0] is Func<T1> func1 && parameters[1] is Func<T2> func2)
+		          			if (parameters.Length >= 2 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2)
 		          			{
 		          				return (func1(), func2());
 		          			}
@@ -287,7 +288,7 @@ internal static partial class Sources
 			            		/// </summary>
 			            		public ({{ts}}) Generate<{{ts}}>(({{ts}}) nullValue, params object?[] parameters)
 			            		{
-			            			if (parameters.Length >= {{i}} && {{string.Join(" && ", Enumerable.Range(1, i).Select(x => $"parameters[{x - 1}] is Func<T{x}> func{x}"))}})
+			            			if (parameters.Length >= {{i}} && {{string.Join(" && ", Enumerable.Range(1, i).Select(x => $"parameters[{x - 1}] is global::System.Func<T{x}> func{x}"))}})
 			            			{
 			            				return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"func{x}()"))}});
 			            			}
@@ -302,22 +303,22 @@ internal static partial class Sources
 		          		///     Generates an empty enumerable of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>
-		          		public IEnumerable<T> Generate<T>(IEnumerable<T> nullValue, params object?[] parameters)
-		          			=> Array.Empty<T>();
+		          		public global::System.Collections.Generic.IEnumerable<T> Generate<T>(global::System.Collections.Generic.IEnumerable<T> nullValue, params object?[] parameters)
+		          			=> global::System.Array.Empty<T>();
 		          		
 		          		/// <summary>
 		          		///     Generates an empty enumerable of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>
-		          		public List<T> Generate<T>(List<T> nullValue, params object?[] parameters)
-		          			=> new List<T>();
+		          		public global::System.Collections.Generic.List<T> Generate<T>(global::System.Collections.Generic.List<T> nullValue, params object?[] parameters)
+		          			=> new global::System.Collections.Generic.List<T>();
 		          		
 		          		/// <summary>
 		          		///     Generates an empty array of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>
 		          		public T[] Generate<T>(T[] nullValue, params object?[] parameters)
-		          			=> Array.Empty<T>();
+		          			=> global::System.Array.Empty<T>();
 		          		
 		          		/// <summary>
 		          		///     Generates an empty two-dimensional array of <typeparamref name="T" />, with

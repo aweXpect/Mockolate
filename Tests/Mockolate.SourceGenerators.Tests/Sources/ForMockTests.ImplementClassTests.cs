@@ -371,15 +371,15 @@ public sealed partial class ForMockTests
 				          		{
 				          			if (this._wrapped is null)
 				          			{
-				          				return MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          				return MockRegistrations.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
 				          			}
-				          			var indexerResult = MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index));
+				          			var indexerResult = MockRegistrations.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index));
 				          			var baseResult = this._wrapped[index];
 				          			return indexerResult.GetResult(baseResult);
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("index", index));
+				          			MockRegistrations.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue("index", index));
 				          			if (this._wrapped is not null)
 				          			{
 				          				this._wrapped[index] = value;
@@ -395,9 +395,9 @@ public sealed partial class ForMockTests
 				          		{
 				          			if (this._wrapped is null)
 				          			{
-				          				return MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          				return MockRegistrations.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", isReadOnly)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
 				          			}
-				          			var indexerResult = MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly));
+				          			var indexerResult = MockRegistrations.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", isReadOnly));
 				          			var baseResult = this._wrapped[index, isReadOnly];
 				          			return indexerResult.GetResult(baseResult);
 				          		}
@@ -409,7 +409,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("index", index), new NamedParameterValue("isWriteOnly", isWriteOnly));
+				          			MockRegistrations.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isWriteOnly", isWriteOnly));
 				          			if (this._wrapped is not null)
 				          			{
 				          				this._wrapped[index, isWriteOnly] = value;
@@ -463,7 +463,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			var indexerResult = MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index));
+				          			var indexerResult = MockRegistrations.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index));
 				          			if (!indexerResult.SkipBaseClass)
 				          			{
 				          				var baseResult = base[index];
@@ -473,7 +473,7 @@ public sealed partial class ForMockTests
 				          		}
 				          		set
 				          		{
-				          			if (!MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("index", index)))
+				          			if (!MockRegistrations.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue("index", index)))
 				          			{
 				          				base[index] = value;
 				          			}
@@ -486,7 +486,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			var indexerResult = MockRegistrations.GetIndexer<int>(new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly));
+				          			var indexerResult = MockRegistrations.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", isReadOnly));
 				          			if (!indexerResult.SkipBaseClass)
 				          			{
 				          				var baseResult = base[index, isReadOnly];
@@ -502,7 +502,7 @@ public sealed partial class ForMockTests
 				          	{
 				          		set
 				          		{
-				          			if (!MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("index", index), new NamedParameterValue("isWriteOnly", isWriteOnly)))
+				          			if (!MockRegistrations.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isWriteOnly", isWriteOnly)))
 				          			{
 				          				base[index, isWriteOnly] = value;
 				          			}
@@ -516,11 +516,11 @@ public sealed partial class ForMockTests
 				          	{
 				          		get
 				          		{
-				          			return MockRegistrations.GetIndexer<int>(new NamedParameterValue("someAdditionalIndex", someAdditionalIndex)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
+				          			return MockRegistrations.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("someAdditionalIndex", someAdditionalIndex)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));
 				          		}
 				          		set
 				          		{
-				          			MockRegistrations.SetIndexer<int>(value, new NamedParameterValue("someAdditionalIndex", someAdditionalIndex));
+				          			MockRegistrations.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue("someAdditionalIndex", someAdditionalIndex));
 				          		}
 				          	}
 				          """).IgnoringNewlineStyle();
@@ -551,9 +551,9 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
 				.Contains(
-					"return MockRegistrations.GetIndexer<int>(new NamedParameterValue(\"indexerResult\", indexerResult)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));")
+					"return MockRegistrations.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue(\"indexerResult\", indexerResult)).GetResult(() => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!));")
 				.IgnoringNewlineStyle().And
-				.Contains("MockRegistrations.SetIndexer<int>(value, new NamedParameterValue(\"indexerResult\", indexerResult));")
+				.Contains("MockRegistrations.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue(\"indexerResult\", indexerResult));")
 				.IgnoringNewlineStyle();
 		}
 
@@ -576,6 +576,7 @@ public sealed partial class ForMockTests
 
 				     public interface IMyService
 				     {
+				         void TriggerCallbacks(object?[] parameters);
 				         int ProcessData(int methodExecution);
 				     }
 				     """);
@@ -791,7 +792,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod1(int)" />
 				          	public bool MyMethod1(int index)
 				          	{
-				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod1", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new NamedParameterValue("index", index));
+				          		global::Mockolate.Setup.MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod1", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new global::Mockolate.Parameters.NamedParameterValue("index", index));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyMethod1(index);
@@ -809,7 +810,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, bool)" />
 				          	public void MyMethod2(int index, bool isReadOnly)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod2", new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly));
+				          		global::Mockolate.Setup.MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod2", new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", isReadOnly));
 				          		if (this._wrapped is not null)
 				          		{
 				          			this._wrapped.MyMethod2(index, isReadOnly);
@@ -862,7 +863,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyDirectMethod(int)" />
 				          	public int MyDirectMethod(int value)
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyService.MyDirectMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new NamedParameterValue("value", value));
+				          		global::Mockolate.Setup.MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyService.MyDirectMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new global::Mockolate.Parameters.NamedParameterValue("value", value));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyDirectMethod(value);
@@ -880,7 +881,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase1.MyBaseMethod1(int)" />
 				          	public int MyBaseMethod1(int value)
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase1.MyBaseMethod1", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new NamedParameterValue("value", value));
+				          		global::Mockolate.Setup.MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase1.MyBaseMethod1", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new global::Mockolate.Parameters.NamedParameterValue("value", value));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyBaseMethod1(value);
@@ -898,7 +899,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase2.MyBaseMethod2(int)" />
 				          	public int MyBaseMethod2(int value)
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase2.MyBaseMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new NamedParameterValue("value", value));
+				          		global::Mockolate.Setup.MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase2.MyBaseMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new global::Mockolate.Parameters.NamedParameterValue("value", value));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyBaseMethod2(value);
@@ -916,7 +917,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyServiceBase3.MyBaseMethod3(int)" />
 				          	public int MyBaseMethod3(int value)
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase3.MyBaseMethod3", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new NamedParameterValue("value", value));
+				          		global::Mockolate.Setup.MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyServiceBase3.MyBaseMethod3", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p), new global::Mockolate.Parameters.NamedParameterValue("value", value));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyBaseMethod3(value);
@@ -982,7 +983,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.MyService.MyMethod1(int, ref int, out bool)" />
 				          	public override void MyMethod1(int index, ref int value1, out bool flag)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", new NamedParameterValue("index", index), new NamedParameterValue("value1", value1), new NamedParameterValue("flag", null));
+				          		global::Mockolate.Setup.MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.MyService.MyMethod1", new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("value1", value1), new global::Mockolate.Parameters.NamedParameterValue("flag", null));
 				          		if (!methodExecution.SkipBaseClass)
 				          		{
 				          			base.MyMethod1(index, ref value1, out flag);
@@ -1000,7 +1001,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.MyService.MyMethod2(int, bool, ref int, out bool)" />
 				          	protected override bool MyMethod2(int index, bool isReadOnly, ref int value1, out bool flag)
 				          	{
-				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", isReadOnly), new NamedParameterValue("value1", value1), new NamedParameterValue("flag", null));
+				          		global::Mockolate.Setup.MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.MyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", isReadOnly), new global::Mockolate.Parameters.NamedParameterValue("value1", value1), new global::Mockolate.Parameters.NamedParameterValue("flag", null));
 				          		if (!methodExecution.SkipBaseClass)
 				          		{
 				          			var baseResult = base.MyMethod2(index, isReadOnly, ref value1, out flag);
@@ -1035,7 +1036,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyOtherService.SomeOtherMethod()" />
 				          	int MyCode.IMyOtherService.SomeOtherMethod()
 				          	{
-				          		MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyOtherService.SomeOtherMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p));
+				          		global::Mockolate.Setup.MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>("MyCode.IMyOtherService.SomeOtherMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(int)!, p));
 				          		methodExecution.TriggerCallbacks();
 				          		return methodExecution.Result;
 				          	}
@@ -1073,7 +1074,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod1(ref int)" />
 				          	public void MyMethod1(ref int index)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod1", new NamedParameterValue("index", index));
+				          		global::Mockolate.Setup.MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameterValue("index", index));
 				          		if (this._wrapped is not null)
 				          		{
 				          			this._wrapped.MyMethod1(ref index);
@@ -1091,7 +1092,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod2(int, out bool)" />
 				          	public bool MyMethod2(int index, out bool isReadOnly)
 				          	{
-				          		MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new NamedParameterValue("index", index), new NamedParameterValue("isReadOnly", null));
+				          		global::Mockolate.Setup.MethodSetupResult<bool> methodExecution = MockRegistrations.InvokeMethod<bool>("MyCode.IMyService.MyMethod2", p => MockRegistrations.Behavior.DefaultValue.Generate(default(bool)!, p), new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", null));
 				          		if (this._wrapped is not null)
 				          		{
 				          			var baseResult = this._wrapped.MyMethod2(index, out isReadOnly);
@@ -1115,7 +1116,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod3(in MyReadonlyStruct)" />
 				          	public void MyMethod3(in MyReadonlyStruct p1)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod3", new NamedParameterValue("p1", p1));
+				          		global::Mockolate.Setup.MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod3", new global::Mockolate.Parameters.NamedParameterValue("p1", p1));
 				          		if (this._wrapped is not null)
 				          		{
 				          			this._wrapped.MyMethod3(in p1);
@@ -1127,7 +1128,7 @@ public sealed partial class ForMockTests
 				          	/// <inheritdoc cref="MyCode.IMyService.MyMethod4(ref readonly MyReadonlyStruct)" />
 				          	public void MyMethod4(ref readonly MyReadonlyStruct p1)
 				          	{
-				          		MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod4", new NamedParameterValue("p1", p1));
+				          		global::Mockolate.Setup.MethodSetupResult methodExecution = MockRegistrations.InvokeMethod("MyCode.IMyService.MyMethod4", new global::Mockolate.Parameters.NamedParameterValue("p1", p1));
 				          		if (this._wrapped is not null)
 				          		{
 				          			this._wrapped.MyMethod4(in p1);
@@ -1163,28 +1164,28 @@ public sealed partial class ForMockTests
 
 			await That(result.Sources).ContainsKey("MockForIMyServiceExtensions.g.cs").WhoseValue
 				.Contains("""
-				          		public IVoidMethodSetup<SpanWrapper<char>> MyMethod1(ISpanParameter<char> buffer)
+				          		public global::Mockolate.Setup.IVoidMethodSetup<global::Mockolate.Setup.SpanWrapper<char>> MyMethod1(global::Mockolate.Parameters.ISpanParameter<char> buffer)
 				          		{
-				          			var methodSetup = new VoidMethodSetup<SpanWrapper<char>>("MyCode.IMyService.MyMethod1", new NamedParameter("buffer", (IParameter)(buffer)));
+				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<char>>("MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameter("buffer", (global::Mockolate.Parameters.IParameter)(buffer)));
 				          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
 				          			return methodSetup;
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		public IReturnMethodSetup<bool, ReadOnlySpanWrapper<int>> MyMethod2(IReadOnlySpanParameter<int> values)
+				          		public global::Mockolate.Setup.IReturnMethodSetup<bool, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> MyMethod2(global::Mockolate.Parameters.IReadOnlySpanParameter<int> values)
 				          		{
-				          			var methodSetup = new ReturnMethodSetup<bool, ReadOnlySpanWrapper<int>>("MyCode.IMyService.MyMethod2", new NamedParameter("values", (IParameter)(values)));
+				          			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<bool, global::Mockolate.Setup.ReadOnlySpanWrapper<int>>("MyCode.IMyService.MyMethod2", new global::Mockolate.Parameters.NamedParameter("values", (global::Mockolate.Parameters.IParameter)(values)));
 				          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
 				          			return methodSetup;
 				          		}
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		public VerificationResult<MyCode.IMyService> MyMethod1(IVerifySpanParameter<char> buffer)
-				          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.MyMethod1", new NamedParameter("buffer", (IParameter)(buffer)));
+				          		public global::Mockolate.Verify.VerificationResult<MyCode.IMyService> MyMethod1(global::Mockolate.Parameters.IVerifySpanParameter<char> buffer)
+				          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameter("buffer", (global::Mockolate.Parameters.IParameter)(buffer)));
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
-				          		public VerificationResult<MyCode.IMyService> MyMethod2(IVerifyReadOnlySpanParameter<int> values)
-				          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.MyMethod2", new NamedParameter("values", (IParameter)(values)));
+				          		public global::Mockolate.Verify.VerificationResult<MyCode.IMyService> MyMethod2(global::Mockolate.Parameters.IVerifyReadOnlySpanParameter<int> values)
+				          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.MyMethod2", new global::Mockolate.Parameters.NamedParameter("values", (global::Mockolate.Parameters.IParameter)(values)));
 				          """).IgnoringNewlineStyle();
 		}
 

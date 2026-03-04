@@ -36,10 +36,10 @@ public sealed class MethodSetupsTests
 
 		await That(result.Sources).ContainsKey("MethodSetups.g.cs").WhoseValue
 			.Contains(
-				"internal class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5> : MethodSetup")
+				"internal class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup")
 			.And
 			.Contains(
-				"internal class VoidMethodSetup<T1, T2, T3, T4, T5> : MethodSetup");
+				"internal class VoidMethodSetup<T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup");
 	}
 
 	[Fact]
