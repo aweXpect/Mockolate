@@ -132,31 +132,41 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 					token = cts.Token;
 				}
 
-				SemaphoreSlim semaphore = new(0, 1);
+				SemaphoreSlim semaphore = new(0);
 				try
 				{
 					_interactions.InteractionAdded += OnInteractionAdded;
 					do
 					{
-						await semaphore.WaitAsync(token);
-
 						matchingInteractions = _interactions.Interactions.Where(_predicate).ToArray();
 						_interactions.Verified(matchingInteractions);
 						if (predicate(matchingInteractions))
 						{
 							return true;
 						}
+
+						await semaphore.WaitAsync(token).ConfigureAwait(false);
 					} while (true);
 				}
 				finally
 				{
 					_interactions.InteractionAdded -= OnInteractionAdded;
+					cts?.Cancel();
 					cts?.Dispose();
+					semaphore.Dispose();
 				}
 
 				void OnInteractionAdded(object? sender, EventArgs eventArgs)
 				{
-					semaphore.Release();
+					try
+					{
+						// ReSharper disable once AccessToDisposedClosure
+						semaphore.Release();
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore if the semaphore has already been disposed
+					}
 				}
 			}
 			catch (OperationCanceledException ex)
