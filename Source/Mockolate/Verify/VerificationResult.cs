@@ -145,7 +145,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 							return true;
 						}
 
-						await semaphore.WaitAsync(token);
+						await semaphore.WaitAsync(token).ConfigureAwait(false);
 					} while (true);
 				}
 				finally
@@ -158,8 +158,15 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 				void OnInteractionAdded(object? sender, EventArgs eventArgs)
 				{
-					// ReSharper disable once AccessToDisposedClosure
-					semaphore.Release();
+					try
+					{
+						// ReSharper disable once AccessToDisposedClosure
+						semaphore.Release();
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore if the semaphore has already been disposed
+					}
 				}
 			}
 			catch (OperationCanceledException ex)
