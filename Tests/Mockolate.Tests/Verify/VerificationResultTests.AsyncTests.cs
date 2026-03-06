@@ -168,18 +168,7 @@ public sealed partial class VerificationResultTests
 		}
 
 		[Fact]
-		public async Task Within_ShouldReturnAsyncVerificationResult()
-		{
-			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-
-			VerificationResult<IChocolateDispenser> result = sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
-				.Within(TimeSpan.FromMilliseconds(100));
-
-			await That(result).Is<IAsyncVerificationResult>();
-		}
-
-		[Fact]
-		public async Task WithTimeout_ShouldIncludeTimeoutInException()
+		public async Task Within_ShouldIncludeTimeoutInException()
 		{
 			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
 
@@ -192,6 +181,35 @@ public sealed partial class VerificationResultTests
 			await That(Act).Throws<MockVerificationException>()
 				.WithMessage(
 					"Expected that mock invoked method Dispense(Match.AnyParameters()) at least once, but it timed out after 00:00:00.1000000.");
+		}
+
+		[Fact]
+		public async Task Within_ShouldReturnAsyncVerificationResult()
+		{
+			IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+
+			VerificationResult<IChocolateDispenser> result = sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+				.Within(TimeSpan.FromMilliseconds(100));
+
+			await That(result).Is<IAsyncVerificationResult>();
+		}
+
+		[Fact]
+		public async Task Within_WhenInvokedMultipleTimesInBackground_ShouldNotThrow()
+		{
+			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
+
+			Task backgroundTask = Task.Delay(50).ContinueWith(_ =>
+			{
+				for (int i = 0; i < 15; i++)
+				{
+					mock.Dispense("dark", i);
+				}
+			});
+
+			mock.VerifyMock.Invoked.Dispense(Match.AnyParameters()).Within(TimeSpan.FromSeconds(30)).AtLeast(8);
+
+			await backgroundTask;
 		}
 	}
 }
