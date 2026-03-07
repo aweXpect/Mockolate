@@ -1,13 +1,12 @@
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using Imposter.Abstractions;
-using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(HappyCaseBenchmarks.IMyInterface))]
+[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.HappyCaseBenchmarks.IMyInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
