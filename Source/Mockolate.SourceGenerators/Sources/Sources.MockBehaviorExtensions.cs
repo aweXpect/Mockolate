@@ -20,11 +20,11 @@ internal static partial class Sources
 		          /// <summary>
 		          ///     Extensions for <see cref="global::Mockolate.MockBehavior" />.
 		          /// </summary>
-		          internal static partial class Mock
+		          internal static partial class MockCreationExtensions
 		          {
 		          	private static readonly global::Mockolate.MockBehavior _default;
 		          	
-		          	static Mock()
+		          	static MockCreationExtensions()
 		          	{
 		          		_default = new global::Mockolate.MockBehavior(new DefaultValueGenerator())
 		          """);
@@ -51,6 +51,124 @@ internal static partial class Sources
 		          		public static global::Mockolate.MockBehavior Default => _default;
 		          	}
 		          	
+		          	/// <summary>
+		          	///     A <see cref="Mock.IDefaultValueFactory" /> that returns an empty <see cref="global::System.Net.Http.HttpResponseMessage" /> with the specified
+		          	///     <paramref name="statusCode" />.
+		          	/// </summary>
+		          	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : Mock.IDefaultValueFactory
+		          	{
+		          		/// <inheritdoc cref="Mock.IDefaultValueFactory.IsMatch(global::System.Type)" />
+		          		public bool IsMatch(global::System.Type type)
+		          			=> type == typeof(global::System.Net.Http.HttpResponseMessage);
+		          	
+		          		/// <inheritdoc cref="Mock.IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+		          			=> new global::System.Net.Http.HttpResponseMessage(statusCode) { Content = new global::System.Net.Http.StringContent(string.Empty) };
+		          	}
+		          	
+		          	/// <summary>
+		          	///     Provides default values for common types used in mocking scenarios.
+		          	/// </summary>
+		          	private class DefaultValueGenerator : IDefaultValueGenerator
+		          	{
+		          		private static readonly global::System.Collections.Concurrent.ConcurrentQueue<Mock.IDefaultValueFactory> _factories = new([
+		          			new Mock.TypedDefaultValueFactory<string>(""),
+		          			new HttpResponseMessageFactory(global::System.Net.HttpStatusCode.NotImplemented),
+		          			new CancellableTaskFactory(),
+		          	#if NET8_0_OR_GREATER
+		          			new CancellableValueTaskFactory(),
+		          	#endif
+		          			new Mock.TypedDefaultValueFactory<global::System.Threading.CancellationToken>(global::System.Threading.CancellationToken.None),
+		          			new Mock.TypedDefaultValueFactory<System.Collections.IEnumerable>(global::System.Array.Empty<object?>()),
+		          		]);
+		          	
+		          		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(global::System.Type, object?[])" />
+		          		public object? GenerateValue(global::System.Type type, params object?[] parameters)
+		          		{
+		          			if (TryGenerate(type, parameters, out object? value))
+		          			{
+		          				return value;
+		          			}
+		          	
+		          			return null;
+		          		}
+		          	
+		          		/// <summary>
+		          		///     Registers a <paramref name="defaultValueFactory" /> to provide default values for a specific type.
+		          		/// </summary>
+		          		public static void Register(Mock.IDefaultValueFactory defaultValueFactory)
+		          			=> _factories.Enqueue(defaultValueFactory);
+		          	
+		          		/// <summary>
+		          		///     Tries to generate a default value for the specified type.
+		          		/// </summary>
+		          		protected virtual bool TryGenerate(global::System.Type type, object?[] parameters, out object? value)
+		          		{
+		          			Mock.IDefaultValueFactory? matchingFactory = global::System.Linq.Enumerable.FirstOrDefault(_factories, f => f.IsMatch(type));
+		          			if (matchingFactory is not null)
+		          			{
+		          				value = matchingFactory.Create(type, this, parameters);
+		          				return true;
+		          			}
+		          			
+		          			value = new MockGenerator().Get(null, _default, type);
+		          			return value is not null;
+		          		}
+		          	
+		          		private static bool HasCanceledCancellationToken(object?[] parameters, out global::System.Threading.CancellationToken cancellationToken)
+		          		{
+		          			global::System.Threading.CancellationToken parameter = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken>(parameters));
+		          			if (parameter.IsCancellationRequested)
+		          			{
+		          				cancellationToken = parameter;
+		          				return true;
+		          			}
+		          	
+		          			cancellationToken = global::System.Threading.CancellationToken.None;
+		          			return false;
+		          		}
+		          	
+		          		private sealed class CancellableTaskFactory : Mock.IDefaultValueFactory
+		          		{
+		          			/// <inheritdoc cref="Mock.IDefaultValueFactory.IsMatch(global::System.Type)" />
+		          			public bool IsMatch(global::System.Type type)
+		          				=> type == typeof(global::System.Threading.Tasks.Task);
+		          	
+		          			/// <inheritdoc cref="Mock.IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		          			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+		          			{
+		          				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
+		          				{
+		          					return global::System.Threading.Tasks.Task.FromCanceled(cancellationToken);
+		          				}
+		          	
+		          				return global::System.Threading.Tasks.Task.CompletedTask;
+		          			}
+		          		}
+		          	#if NET8_0_OR_GREATER
+		          		private sealed class CancellableValueTaskFactory : Mock.IDefaultValueFactory
+		          		{
+		          			/// <inheritdoc cref="Mock.IDefaultValueFactory.IsMatch(global::System.Type)" />
+		          			public bool IsMatch(global::System.Type type)
+		          				=> type == typeof(global::System.Threading.Tasks.ValueTask);
+		          	
+		          			/// <inheritdoc cref="Mock.IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		          			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+		          			{
+		          				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
+		          				{
+		          					return global::System.Threading.Tasks.ValueTask.FromCanceled(cancellationToken);
+		          				}
+		          	
+		          				return global::System.Threading.Tasks.ValueTask.CompletedTask;
+		          			}
+		          		}
+		          	#endif
+		          	}
+		          }
+		          
+		          internal partial class Mock
+		          {
 		          	/// <summary>
 		          	///     Defines a factory for creating default values for a specified type.
 		          	/// </summary>
@@ -80,121 +198,6 @@ internal static partial class Sources
 		          		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
 		          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
 		          			=> value;
-		          	}
-		          	
-		          	/// <summary>
-		          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="global::System.Net.Http.HttpResponseMessage" /> with the specified
-		          	///     <paramref name="statusCode" />.
-		          	/// </summary>
-		          	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : IDefaultValueFactory
-		          	{
-		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
-		          		public bool IsMatch(global::System.Type type)
-		          			=> type == typeof(global::System.Net.Http.HttpResponseMessage);
-		          	
-		          		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
-		          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
-		          			=> new global::System.Net.Http.HttpResponseMessage(statusCode) { Content = new global::System.Net.Http.StringContent(string.Empty) };
-		          	}
-		          	
-		          	/// <summary>
-		          	///     Provides default values for common types used in mocking scenarios.
-		          	/// </summary>
-		          	private class DefaultValueGenerator : IDefaultValueGenerator
-		          	{
-		          		private static readonly global::System.Collections.Concurrent.ConcurrentQueue<IDefaultValueFactory> _factories = new([
-		          			new TypedDefaultValueFactory<string>(""),
-		          			new HttpResponseMessageFactory(global::System.Net.HttpStatusCode.NotImplemented),
-		          			new CancellableTaskFactory(),
-		          	#if NET8_0_OR_GREATER
-		          			new CancellableValueTaskFactory(),
-		          	#endif
-		          			new TypedDefaultValueFactory<global::System.Threading.CancellationToken>(global::System.Threading.CancellationToken.None),
-		          			new TypedDefaultValueFactory<System.Collections.IEnumerable>(global::System.Array.Empty<object?>()),
-		          		]);
-		          	
-		          		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(global::System.Type, object?[])" />
-		          		public object? GenerateValue(global::System.Type type, params object?[] parameters)
-		          		{
-		          			if (TryGenerate(type, parameters, out object? value))
-		          			{
-		          				return value;
-		          			}
-		          	
-		          			return null;
-		          		}
-		          	
-		          		/// <summary>
-		          		///     Registers a <paramref name="defaultValueFactory" /> to provide default values for a specific type.
-		          		/// </summary>
-		          		public static void Register(IDefaultValueFactory defaultValueFactory)
-		          			=> _factories.Enqueue(defaultValueFactory);
-		          	
-		          		/// <summary>
-		          		///     Tries to generate a default value for the specified type.
-		          		/// </summary>
-		          		protected virtual bool TryGenerate(global::System.Type type, object?[] parameters, out object? value)
-		          		{
-		          			IDefaultValueFactory? matchingFactory = global::System.Linq.Enumerable.FirstOrDefault(_factories, f => f.IsMatch(type));
-		          			if (matchingFactory is not null)
-		          			{
-		          				value = matchingFactory.Create(type, this, parameters);
-		          				return true;
-		          			}
-		          			
-		          			value = new MockGenerator().Get(null, _default, type);
-		          			return value is not null;
-		          		}
-		          	
-		          		private static bool HasCanceledCancellationToken(object?[] parameters, out global::System.Threading.CancellationToken cancellationToken)
-		          		{
-		          			global::System.Threading.CancellationToken parameter = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken>(parameters));
-		          			if (parameter.IsCancellationRequested)
-		          			{
-		          				cancellationToken = parameter;
-		          				return true;
-		          			}
-		          	
-		          			cancellationToken = global::System.Threading.CancellationToken.None;
-		          			return false;
-		          		}
-		          	
-		          		private sealed class CancellableTaskFactory : IDefaultValueFactory
-		          		{
-		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
-		          			public bool IsMatch(global::System.Type type)
-		          				=> type == typeof(global::System.Threading.Tasks.Task);
-		          	
-		          			/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
-		          			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
-		          			{
-		          				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
-		          				{
-		          					return global::System.Threading.Tasks.Task.FromCanceled(cancellationToken);
-		          				}
-		          	
-		          				return global::System.Threading.Tasks.Task.CompletedTask;
-		          			}
-		          		}
-		          	#if NET8_0_OR_GREATER
-		          		private sealed class CancellableValueTaskFactory : IDefaultValueFactory
-		          		{
-		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
-		          			public bool IsMatch(global::System.Type type)
-		          				=> type == typeof(global::System.Threading.Tasks.ValueTask);
-		          	
-		          			/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
-		          			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
-		          			{
-		          				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
-		          				{
-		          					return global::System.Threading.Tasks.ValueTask.FromCanceled(cancellationToken);
-		          				}
-		          	
-		          				return global::System.Threading.Tasks.ValueTask.CompletedTask;
-		          			}
-		          		}
-		          	#endif
 		          	}
 		          }
 

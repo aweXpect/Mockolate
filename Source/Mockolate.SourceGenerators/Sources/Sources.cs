@@ -44,87 +44,171 @@ internal static partial class Sources
 		              ///     If your type is a class without default constructor, you can provide constructor parameters using <see cref="BaseClass.WithConstructorParameters(object?[])" />.
 		              ///     You can also provide a <see cref="global::Mockolate.MockBehavior"/> parameter to customize how the mock should behave in certain scenarios.
 		              /// </remarks>
-		              internal static partial class Mock
+		              internal partial class Mock
 		              {
-		              """);
-		sb.AppendLine("""
 		              	/// <summary>
-		              	///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              	/// This class is not meant to be instantiated. It is not static to allow for extension methods.
 		              	/// </summary>
-		              	/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
-		              	/// <remarks>
-		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-		              	/// </remarks>
-		              	[MockGenerator]
-		              	public static T Create<T>(params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              		where T : class
+		              	private Mock()
 		              	{
-		              		ThrowIfNotMockable(typeof(T));
+		              	}
 
-		              		return new MockGenerator().Get<T>(null, global::Mockolate.MockBehavior.Default, setups)
-		              			?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
-		              	}
-		              """);
-		sb.AppendLine();
-		sb.AppendLine("""
 		              	/// <summary>
-		              	///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              	///     A mock factory to create mocks with a common behavior.
 		              	/// </summary>
-		              	/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
-		              	/// <remarks>
-		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-		              	/// </remarks>
-		              	[MockGenerator]
-		              	public static T Create<T>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              		where T : class
+		              	public partial class Factory
 		              	{
-		              		ThrowIfNotMockable(typeof(T));
+		              		private global::Mockolate.MockBehavior _behavior;
+		              		
+		              		/// <inheritdoc cref="Factory" />
+		              		public Factory(global::Mockolate.MockBehavior behavior)
+		              		{
+		              			_behavior = behavior;
+		              		}
 
-		              		return new MockGenerator().Get<T>(constructorParameters, global::Mockolate.MockBehavior.Default, setups)
-		              			?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		/// </remarks>
+		              		[MockGenerator]
+		              		public T Create<T>(params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              			//where T : class
+		              		{
+		              			return Mock.Create<T>(null, _behavior, setups);
+		              		}
+
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		/// </remarks>
+		              		[MockGenerator]
+		              		public T Create<T>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              			//where T : class
+		              		{
+		              			return Mock.Create<T>(constructorParameters, _behavior, setups);
+		              		}
+		              """);
+		for (int numberOfArguments = 1; numberOfArguments < maxNumberOfArguments; numberOfArguments++)
+		{
+			string types = GetGenericTypeParameters(numberOfArguments, 2);
+			sb.AppendLine();
+			sb.AppendXmlSummary(
+				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.", "\t\t");
+			sb.AppendLine(
+				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t",
+				2);
+
+			sb.AppendLine($$"""
+			                		/// <remarks>
+			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			                		/// </remarks>
+			                		[MockGenerator]
+			                		public T Create<T, {{types}}>(params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+			                			//where T : class
+			                		{
+			                			return Mock.Create<T, {{types}}>(null, _behavior, setups);
+			                		}
+			                """);
+
+			sb.AppendLine();
+			sb.AppendXmlSummary(
+				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.", "\t\t");
+			sb.AppendLine(
+				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
+			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t",
+				2);
+
+			sb.AppendLine($$"""
+			                		/// <remarks>
+			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			                		/// </remarks>
+			                		[MockGenerator]
+			                		public T Create<T, {{types}}>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+			                			//where T : class
+			                		{
+			                			return Mock.Create<T, {{types}}>(constructorParameters, _behavior, setups);
+			                		}
+			                """);
+		}
+
+		sb.AppendLine("""
 		              	}
+		              }
+
+		              internal static partial class MockCreationExtensions
+		              {
+		              	extension(Mock _)
+		              	{
+		              """);
+		sb.AppendLine("""
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		/// </remarks>
+		              		[MockGenerator]
+		              		public static T Create<T>(params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              		{
+		              			throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              		}
 		              """);
 		sb.AppendLine();
 		sb.AppendLine("""
-		              	/// <summary>
-		              	///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
-		              	/// </summary>
-		              	/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
-		              	/// <remarks>
-		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-		              	///     <para />
-		              	///     The behavior of the mock regarding the setups and the actual calls is determined by the <see cref="global::Mockolate.MockBehavior" />.
-		              	/// </remarks>
-		              	[MockGenerator]
-		              	public static T Create<T>(global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              		where T : class
-		              	{
-		              		ThrowIfNotMockable(typeof(T));
-		              	
-		              		return new MockGenerator().Get<T>(null, mockBehavior, setups)
-		              			?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
-		              	}
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		/// </remarks>
+		              		[MockGenerator]
+		              		public static T Create<T>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              		{
+		              			throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              		}
 		              """);
 		sb.AppendLine();
 		sb.AppendLine("""
-		              	/// <summary>
-		              	///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
-		              	/// </summary>
-		              	/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
-		              	/// <remarks>
-		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-		              	///     <para />
-		              	///     The behavior of the mock regarding the setups and the actual calls is determined by the <see cref="global::Mockolate.MockBehavior" />.
-		              	/// </remarks>
-		              	[MockGenerator]
-		              	public static T Create<T>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              		where T : class
-		              	{
-		              		ThrowIfNotMockable(typeof(T));
-		              	
-		              		return new MockGenerator().Get<T>(constructorParameters, mockBehavior, setups)
-		              			?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
-		              	}
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		///     <para />
+		              		///     The behavior of the mock regarding the setups and the actual calls is determined by the <see cref="global::Mockolate.MockBehavior" />.
+		              		/// </remarks>
+		              		[MockGenerator]
+		              		public static T Create<T>(global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              		{
+		              			throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              		}
+		              """);
+		sb.AppendLine();
+		sb.AppendLine("""
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		///     <para />
+		              		///     The behavior of the mock regarding the setups and the actual calls is determined by the <see cref="global::Mockolate.MockBehavior" />.
+		              		/// </remarks>
+		              		[MockGenerator]
+		              		public static T Create<T>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              		{
+		              			throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              		}
 		              """);
 		sb.AppendLine();
 		for (int numberOfArguments = 1; numberOfArguments < maxNumberOfArguments; numberOfArguments++)
@@ -138,18 +222,14 @@ internal static partial class Sources
 				startIndex: 2);
 
 			sb.AppendLine($$"""
-			                	/// <remarks>
-			                	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-			                	/// </remarks>
-			                	[MockGenerator]
-			                	public static T Create<T, {{types}}>(params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-			                		where T : class
-			                	{
-			                		ThrowIfNotMockable(typeof(T));
-
-			                		return new MockGenerator().Get<T, {{types}}>(null, global::Mockolate.MockBehavior.Default, setups)
-			                			?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
-			                	}
+			                		/// <remarks>
+			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			                		/// </remarks>
+			                		[MockGenerator]
+			                		public static T Create<T, {{types}}>(params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+			                		{
+			                			throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
+			                		}
 			                """);
 			sb.AppendLine();
 
@@ -161,18 +241,14 @@ internal static partial class Sources
 				startIndex: 2);
 
 			sb.AppendLine($$"""
-			                	/// <remarks>
-			                	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-			                	/// </remarks>
-			                	[MockGenerator]
-			                	public static T Create<T, {{types}}>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-			                		where T : class
-			                	{
-			                		ThrowIfNotMockable(typeof(T));
-
-			                		return new MockGenerator().Get<T, {{types}}>(constructorParameters, global::Mockolate.MockBehavior.Default, setups)
-			                			?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
-			                	}
+			                		/// <remarks>
+			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			                		/// </remarks>
+			                		[MockGenerator]
+			                		public static T Create<T, {{types}}>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+			                		{
+			                			throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
+			                		}
 			                """);
 			sb.AppendLine();
 
@@ -194,18 +270,14 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine($$"""
-			                	/// <remarks>
-			                	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-			                	/// </remarks>
-			                	[MockGenerator]
-			                	public static T Create<T, {{types}}>(global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-			                		where T : class
-			                	{
-			                		ThrowIfNotMockable(typeof(T));
-
-			                		return new MockGenerator().Get<T, {{types}}>(null, mockBehavior, setups)
-			                			?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
-			                	}
+			                		/// <remarks>
+			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			                		/// </remarks>
+			                		[MockGenerator]
+			                		public static T Create<T, {{types}}>(global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+			                		{
+			                			throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
+			                		}
 			                """);
 			sb.AppendLine();
 
@@ -217,188 +289,78 @@ internal static partial class Sources
 				startIndex: 2);
 
 			sb.AppendLine($$"""
-			                	/// <remarks>
-			                	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-			                	/// </remarks>
-			                	[MockGenerator]
-			                	public static T Create<T, {{types}}>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-			                		where T : class
-			                	{
-			                		ThrowIfNotMockable(typeof(T));
-
-			                		return new MockGenerator().Get<T, {{types}}>(constructorParameters, mockBehavior, setups)
-			                			?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
-			                	}
+			                		/// <remarks>
+			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+			                		/// </remarks>
+			                		[MockGenerator]
+			                		public static T Create<T, {{types}}>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+			                		{
+			                			throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
+			                		}
 			                """);
 			sb.AppendLine();
 		}
 
 		sb.AppendLine("""
-		              	/// <summary>
-		              	///     A mock factory to create mocks with a common behavior.
-		              	/// </summary>
-		              	public partial class Factory
-		              	{
-		              		private global::Mockolate.MockBehavior _behavior;
-		              		
-		              		/// <inheritdoc cref="Factory" />
-		              		public Factory(global::Mockolate.MockBehavior behavior)
-		              		{
-		              			_behavior = behavior;
-		              		}
-		              """);
-		sb.AppendLine();
-		sb.AppendLine("""
 		              		/// <summary>
-		              		///     Create a new mock for <typeparamref name="T" />.
+		              		///     Wraps a concrete instance with a mock proxy that intercepts and delegates method calls,
+		              		///     supporting setup and verification on the wrapped instance.
 		              		/// </summary>
-		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <typeparam name="T">Type to wrap, which must be an interface.</typeparam>
+		              		/// <param name="instance">The concrete instance to wrap.</param>
+		              		/// <param name="setups">Optional setup actions to configure the mock.</param>
 		              		/// <remarks>
-		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		///     When no setup is specified for a method, the call is delegated to the wrapped instance.
+		              		///     Setup and verification work the same as with regular mocks.
 		              		/// </remarks>
 		              		[MockGenerator]
-		              		public T Create<T>(params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              			where T : class
+		              		public static T Wrap<T>(T instance, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              			//where T : class
 		              		{
-		              			ThrowIfNotMockable(typeof(T));
-		              		
-		              			return new MockGenerator().Get<T>(null, _behavior, setups)
-		              				?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              			if (instance == null)
+		              			{
+		              				throw new global::System.ArgumentNullException(nameof(instance));
+		              			}
+
+		              			ThrowIfNotWrappable(typeof(T));
+		              			return new MockGenerator().GetWrapped<T>(instance, global::Mockolate.MockBehavior.Default, setups)
+		              				?? throw new global::Mockolate.Exceptions.MockException("Could not generate wrapped Mock<T>. Did the source generator run correctly?");
 		              		}
 		              """);
 		sb.AppendLine();
+
 		sb.AppendLine("""
 		              		/// <summary>
-		              		///     Create a new mock for <typeparamref name="T" />.
+		              		///     Wraps a concrete instance with a mock proxy that intercepts and delegates method calls,
+		              		///     supporting setup and verification on the wrapped instance.
 		              		/// </summary>
-		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <typeparam name="T">Type to wrap, which must be an interface.</typeparam>
+		              		/// <param name="instance">The concrete instance to wrap.</param>
+		              		/// <param name="mockBehavior">The behavior settings for the mock.</param>
+		              		/// <param name="setups">Optional setup actions to configure the mock.</param>
 		              		/// <remarks>
-		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		///     When no setup is specified for a method, the call is delegated to the wrapped instance.
+		              		///     Setup and verification work the same as with regular mocks.
 		              		/// </remarks>
 		              		[MockGenerator]
-		              		public T Create<T>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              			where T : class
+		              		public static T Wrap<T>(T instance, global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              			//where T : class
 		              		{
-		              			ThrowIfNotMockable(typeof(T));
-		              		
-		              			return new MockGenerator().Get<T>(constructorParameters, _behavior, setups)
-		              				?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T>. Did the source generator run correctly?");
+		              			if (instance == null)
+		              			{
+		              				throw new global::System.ArgumentNullException(nameof(instance));
+		              			}
+
+		              			ThrowIfNotWrappable(typeof(T));
+		              			return new MockGenerator().GetWrapped<T>(instance, mockBehavior, setups)
+		              				?? throw new global::Mockolate.Exceptions.MockException("Could not generate wrapped Mock<T>. Did the source generator run correctly?");
 		              		}
-		              """);
-		for (int numberOfArguments = 1; numberOfArguments < maxNumberOfArguments; numberOfArguments++)
-		{
-			string types = GetGenericTypeParameters(numberOfArguments, 2);
-			sb.AppendLine();
-			sb.AppendXmlSummary(
-				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.", "\t\t");
-			sb.AppendLine(
-				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t",
-				2);
-
-			sb.AppendLine($$"""
-			                		/// <remarks>
-			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-			                		/// </remarks>
-			                		[MockGenerator]
-			                		public T Create<T, {{types}}>(params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-			                			where T : class
-			                		{
-			                			ThrowIfNotMockable(typeof(T));
-
-			                			return new MockGenerator().Get<T, {{types}}>(null, _behavior, setups)
-			                				?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
-			                		}
-			                """);
-
-			sb.AppendLine();
-			sb.AppendXmlSummary(
-				$"Create a new mock for <typeparamref name=\"T\" /> that also implements {GetAdditionalInterfacesDescription(numberOfArguments)}.", "\t\t");
-			sb.AppendLine(
-				"\t\t/// <typeparam name=\"T\">Type to mock, which can be an interface or a class.</typeparam>");
-			sb.AppendTypeParamDocs(numberOfArguments, "Additional interface that is implemented by the mock.", "\t\t",
-				2);
-
-			sb.AppendLine($$"""
-			                		/// <remarks>
-			                		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-			                		/// </remarks>
-			                		[MockGenerator]
-			                		public T Create<T, {{types}}>(global::Mockolate.BaseClass.ConstructorParameters constructorParameters, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-			                			where T : class
-			                		{
-			                			ThrowIfNotMockable(typeof(T));
-
-			                			return new MockGenerator().Get<T, {{types}}>(constructorParameters, _behavior, setups)
-			                				?? throw new global::Mockolate.Exceptions.MockException("Could not generate Mock<T, {{types}}>. Did the source generator run correctly?");
-			                		}
-			                """);
-		}
-
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-
-		sb.AppendLine("""
-		              	/// <summary>
-		              	///     Wraps a concrete instance with a mock proxy that intercepts and delegates method calls,
-		              	///     supporting setup and verification on the wrapped instance.
-		              	/// </summary>
-		              	/// <typeparam name="T">Type to wrap, which must be an interface.</typeparam>
-		              	/// <param name="instance">The concrete instance to wrap.</param>
-		              	/// <param name="setups">Optional setup actions to configure the mock.</param>
-		              	/// <remarks>
-		              	///     When no setup is specified for a method, the call is delegated to the wrapped instance.
-		              	///     Setup and verification work the same as with regular mocks.
-		              	/// </remarks>
-		              	[MockGenerator]
-		              	public static T Wrap<T>(T instance, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              		where T : class
-		              	{
-		              		if (instance == null)
-		              		{
-		              			throw new global::System.ArgumentNullException(nameof(instance));
-		              		}
-		              	
-		              		ThrowIfNotWrappable(typeof(T));
-		              	
-		              		return new MockGenerator().GetWrapped<T>(instance, global::Mockolate.MockBehavior.Default, setups)
-		              			?? throw new global::Mockolate.Exceptions.MockException("Could not generate wrapped Mock<T>. Did the source generator run correctly?");
 		              	}
 		              """);
 		sb.AppendLine();
 
 		sb.AppendLine("""
-		              	/// <summary>
-		              	///     Wraps a concrete instance with a mock proxy that intercepts and delegates method calls,
-		              	///     supporting setup and verification on the wrapped instance.
-		              	/// </summary>
-		              	/// <typeparam name="T">Type to wrap, which must be an interface.</typeparam>
-		              	/// <param name="instance">The concrete instance to wrap.</param>
-		              	/// <param name="mockBehavior">The behavior settings for the mock.</param>
-		              	/// <param name="setups">Optional setup actions to configure the mock.</param>
-		              	/// <remarks>
-		              	///     When no setup is specified for a method, the call is delegated to the wrapped instance.
-		              	///     Setup and verification work the same as with regular mocks.
-		              	/// </remarks>
-		              	[MockGenerator]
-		              	public static T Wrap<T>(T instance, global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              		where T : class
-		              	{
-		              		if (instance == null)
-		              		{
-		              			throw new global::System.ArgumentNullException(nameof(instance));
-		              		}
-		              	
-		              		ThrowIfNotWrappable(typeof(T));
-		              	
-		              		return new MockGenerator().GetWrapped<T>(instance, mockBehavior, setups)
-		              			?? throw new global::Mockolate.Exceptions.MockException("Could not generate wrapped Mock<T>. Did the source generator run correctly?");
-		              	}
-		              """);
-		sb.AppendLine();
-
-		sb.AppendLine("""
-		              	private static void ThrowIfNotMockable(global::System.Type type)
+		              	internal static void ThrowIfNotMockable(global::System.Type type)
 		              	{
 		              		if (type.IsSealed && type.BaseType != typeof(global::System.MulticastDelegate))
 		              		{
@@ -433,10 +395,11 @@ internal static partial class Sources
 		              		}
 
 		              		public T? Get<T>(global::Mockolate.BaseClass.ConstructorParameters? constructorParameters, global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              			where T : class
+		              			//where T : class
 		              		{
 		              			Generate<T>(constructorParameters, mockBehavior, setups, typeof(T));
-		              			return _value as T;
+		              			throw new System.NotSupportedException();
+		              			//return _value as T;
 		              		}
 		              """);
 		for (int i = 1; i < maxNumberOfArguments; i++)
@@ -445,10 +408,11 @@ internal static partial class Sources
 			string typeOfTypes = string.Join(", ", Enumerable.Range(2, i).Select(n => $"typeof(T{n})"));
 			sb.AppendLine($$"""
 			                		public T? Get<T, {{types}}>(global::Mockolate.BaseClass.ConstructorParameters? constructorParameters, global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-			                			where T : class
+			                			//where T : class
 			                		{
 			                			Generate<T>(constructorParameters, mockBehavior, setups, typeof(T), {{typeOfTypes}});
-			                			return _value as T;
+			                			throw new System.NotSupportedException();
+			                			//return _value as T;
 			                		}
 			                """);
 		}
@@ -456,10 +420,11 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.AppendLine("""
 		              		public T? GetWrapped<T>(T instance, global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
-		              			where T : class
+		              			//where T : class
 		              		{
 		              			GenerateWrapped<T>(instance, mockBehavior, setups);
-		              			return _value as T;
+		              			throw new System.NotSupportedException();
+		              			//return _value as T;
 		              		}
 		              """);
 

@@ -142,8 +142,7 @@ public class MockGenerator : IIncrementalGenerator
 
 		context.AddSource("MockRegistration.g.cs",
 			SourceText.From(
-				Sources.Sources.ForMockRegistration(namedMocksToGenerate,
-					namedMocksToGenerate.Any(x => IsValidMockDeclaration(x.MockClass))), Encoding.UTF8));
+				Sources.Sources.ForMockRegistration(namedMocksToGenerate), Encoding.UTF8));
 
 		context.AddSource("MockBehaviorExtensions.g.cs",
 			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate), Encoding.UTF8));
