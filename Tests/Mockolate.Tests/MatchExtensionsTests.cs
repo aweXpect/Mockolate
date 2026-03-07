@@ -17,6 +17,7 @@ public sealed class MatchExtensionsTests
 		mock.MyMethodWithOutParam(out _);
 		mock.MyMethodWithOutParam(out _);
 		mock.MyMethodWithOutParam(out _);
+		mock.MyMethodWithOptionalParameters(5);
 
 		await That(monitor1.Values).IsEqualTo([1, 2, 3,]);
 		await That(monitor2.Values).IsEqualTo([1, 2, 3,]);

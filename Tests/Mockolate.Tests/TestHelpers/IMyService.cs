@@ -20,6 +20,8 @@ internal interface IMyService
 
 	void MyMethodWithOutParam(out int value);
 	void MyMethodWithRefParam(ref int value);
+	bool MyMethodWithParams(int a, params bool[] flags);
+	bool MyMethodWithOptionalParameters(int a, int b = 0, string c = "foo", MyFlavor d = MyFlavor.Dark);
 
 	event EventHandler? MyEvent;
 

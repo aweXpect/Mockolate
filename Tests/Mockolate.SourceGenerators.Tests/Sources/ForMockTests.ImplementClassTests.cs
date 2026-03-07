@@ -1190,6 +1190,90 @@ public sealed partial class ForMockTests
 		}
 
 		[Fact]
+		public async Task Methods_ShouldSupportParamsParameters()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         void MyMethod1(int a, params int[] b);
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+				.Contains("""
+				          public void MyMethod1(int a, params int[] b)
+				          """);
+			await That(result.Sources).ContainsKey("MockForIMyServiceExtensions.g.cs").WhoseValue
+				.Contains("""
+				          		public global::Mockolate.Setup.IVoidMethodSetup<int, int[]> MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int[]>? b)
+				          		{
+				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int[]>("MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameter("a", (global::Mockolate.Parameters.IParameter)(a ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("b", (global::Mockolate.Parameters.IParameter)(b ?? global::Mockolate.It.IsNull<int[]>())));
+				          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
+				          			return methodSetup;
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		public global::Mockolate.Verify.VerificationResult<MyCode.IMyService> MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int[]>? b)
+				          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameter("a", (global::Mockolate.Parameters.IParameter)(a ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("b", (global::Mockolate.Parameters.IParameter)(b ?? global::Mockolate.It.IsNull<int[]>())));
+				          """).IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task Methods_ShouldSupportOptionalParameters()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = Mock.Create<IMyService>();
+				         }
+				     }
+
+				     public interface IMyService
+				     {
+				         void MyMethod1(int a, int b = 1, bool? c = null, string d = "default");
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+				.Contains("""
+				          public void MyMethod1(int a, int b = 1, bool? c = null, string d = "default")
+				          """);
+			await That(result.Sources).ContainsKey("MockForIMyServiceExtensions.g.cs").WhoseValue
+				.Contains("""
+				          		public global::Mockolate.Setup.IVoidMethodSetup<int, int, bool?, string> MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b = null, global::Mockolate.Parameters.IParameter<bool?>? c = null, global::Mockolate.Parameters.IParameter<string>? d = null)
+				          		{
+				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, bool?, string>("MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameter("a", (global::Mockolate.Parameters.IParameter)(a ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("b", (global::Mockolate.Parameters.IParameter)(b ?? global::Mockolate.It.Is<int>(1))), new global::Mockolate.Parameters.NamedParameter("c", (global::Mockolate.Parameters.IParameter)(c ?? global::Mockolate.It.Is<bool?>(null))), new global::Mockolate.Parameters.NamedParameter("d", (global::Mockolate.Parameters.IParameter)(d ?? global::Mockolate.It.Is<string>("default"))));
+				          			CastToMockRegistrationOrThrow(setup).SetupMethod(methodSetup);
+				          			return methodSetup;
+				          		}
+				          """).IgnoringNewlineStyle().And
+				.Contains("""
+				          		public global::Mockolate.Verify.VerificationResult<MyCode.IMyService> MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b = null, global::Mockolate.Parameters.IParameter<bool?>? c = null, global::Mockolate.Parameters.IParameter<string>? d = null)
+				          			=> CastToMockOrThrow(verifyInvoked).Method("MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameter("a", (global::Mockolate.Parameters.IParameter)(a ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("b", (global::Mockolate.Parameters.IParameter)(b ?? global::Mockolate.It.Is<int>(1))), new global::Mockolate.Parameters.NamedParameter("c", (global::Mockolate.Parameters.IParameter)(c ?? global::Mockolate.It.Is<bool?>(null))), new global::Mockolate.Parameters.NamedParameter("d", (global::Mockolate.Parameters.IParameter)(d ?? global::Mockolate.It.Is<string>("default"))));
+				          """).IgnoringNewlineStyle();
+		}
+
+		[Fact]
 		public async Task Properties_MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 		{
 			GeneratorResult result = Generator

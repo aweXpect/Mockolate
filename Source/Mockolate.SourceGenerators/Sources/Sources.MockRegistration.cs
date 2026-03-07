@@ -169,14 +169,26 @@ internal static partial class Sources
 						         .Select(constructor => constructor.Parameters))
 					{
 						constructorIndex++;
-						sb.Append("\t\t\t\telse if (constructorParameters.Parameters.Length == ")
-							.Append(constructorParameters.Count);
+						int requiredParameters = constructorParameters.Count(c => !c.HasExplicitDefaultValue);
+						if (requiredParameters < constructorParameters.Count)
+						{
+							sb.Append("\t\t\t\telse if (constructorParameters.Parameters.Length >= ")
+								.Append(requiredParameters).Append(" && constructorParameters.Parameters.Length <= ")
+								.Append(constructorParameters.Count);
+						}
+						else
+						{
+							sb.Append("\t\t\t\telse if (constructorParameters.Parameters.Length == ")
+								.Append(constructorParameters.Count);
+						}
+
 						int constructorParameterIndex = 0;
 						foreach (MethodParameter parameter in constructorParameters)
 						{
-							sb.AppendLine().Append("\t\t\t\t    && TryCast(constructorParameters.Parameters[")
+							sb.AppendLine().Append("\t\t\t\t    && TryCast(constructorParameters.Parameters, ")
 								.Append(constructorParameterIndex++)
-								.Append("], mockBehavior, out ").Append(parameter.Type.Fullname).Append(" c")
+								.Append(parameter.HasExplicitDefaultValue ? $", {parameter.ExplicitDefaultValue}" : "")
+								.Append(", mockBehavior, out ").Append(parameter.Type.Fullname).Append(" c")
 								.Append(constructorIndex)
 								.Append('p')
 								.Append(constructorParameterIndex).Append(")");
@@ -201,13 +213,13 @@ internal static partial class Sources
 						sb.Append("\t\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
 						sb.Append("\t\t\t\t\t\t}").AppendLine();
 						sb.Append("\t\t\t\t\t}").AppendLine();
-						sb.Append("\t\t\t\t\t_value = new global::Mockolate.Generated.MockFor").Append(mock.Name).Append("(");
+						sb.Append("\t\t\t\t\t_value = new global::Mockolate.Generated.MockFor").Append(mock.Name).Append("(mockRegistration");
 						for (int i = 1; i <= constructorParameters.Count; i++)
 						{
-							sb.Append('c').Append(constructorIndex).Append('p').Append(i).Append(", ");
+							sb.Append(", ").Append('c').Append(constructorIndex).Append('p').Append(i);
 						}
 
-						sb.Append("mockRegistration);").AppendLine();
+						sb.Append(");").AppendLine();
 						sb.Append("\t\t\t\t}").AppendLine();
 					}
 
@@ -284,8 +296,9 @@ internal static partial class Sources
 		}
 
 		sb.Append("""
-		          	private static bool TryCast<TValue>(object? value, global::Mockolate.MockBehavior behavior, out TValue result)
+		          	private static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)
 		          	{
+		          	    var value = values[index];
 		          		if (value is TValue typedValue)
 		          		{
 		          			result = typedValue;
@@ -294,6 +307,17 @@ internal static partial class Sources
 		          		
 		          		result = default!;
 		          		return value is null;
+		          	}
+		          	private static bool TryCast<TValue>(object?[] values, int index, TValue defaultValue, global::Mockolate.MockBehavior behavior, out TValue result)
+		          	{
+		          		if (values.Length > index && values[index] is TValue typedValue)
+		          		{
+		          			result = typedValue;
+		          			return true;
+		          		}
+		          		
+		          		result = defaultValue;
+		          		return true;
 		          	}
 		          """).AppendLine();
 		sb.AppendLine("}");

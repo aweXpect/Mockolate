@@ -1,9 +1,12 @@
 using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Mockolate.SourceGenerators.Entities;
 using Mockolate.SourceGenerators.Internals;
+using Attribute = Mockolate.SourceGenerators.Entities.Attribute;
+using Type = Mockolate.SourceGenerators.Entities.Type;
 
-namespace Mockolate.SourceGenerators.Entities;
+namespace Mockolate.SourceGenerators;
 
 internal static class Helpers
 {
