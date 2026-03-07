@@ -1,9 +1,13 @@
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
+using Imposter.Abstractions;
+using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
+
+[assembly: GenerateImposter(typeof(HappyCaseBenchmarks.IMyInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -67,6 +71,20 @@ public partial class HappyCaseBenchmarks
 		mock.MyFunc(42);
 
 		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).MustHaveHappened(1, FakeItEasy.Times.Exactly);
+	}
+
+	/// <summary>
+	///     <see href="https://github.com/themidnightgospel/Imposter" />
+	/// </summary>
+	[Benchmark]
+	public void Simple_Imposter()
+	{
+		IMyInterfaceImposter imposter = IMyInterface.Imposter();
+		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Returns(true);
+
+		imposter.Instance().MyFunc(42);
+
+		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Once());
 	}
 
 	/// <summary>
