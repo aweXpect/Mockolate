@@ -380,6 +380,10 @@ internal static partial class Sources
 				}
 
 				sb.Append(' ').Append(parameter.Name);
+				if (parameter.HasExplicitDefaultValue)
+				{
+					sb.Append(" = null");
+				}
 			}
 
 			sb.Append(")");
@@ -875,6 +879,10 @@ internal static partial class Sources
 				}
 
 				sb.Append(' ').Append(parameter.Name);
+				if (parameter.HasExplicitDefaultValue)
+				{
+					sb.Append(" = null");
+				}
 			}
 
 			sb.Append(")");

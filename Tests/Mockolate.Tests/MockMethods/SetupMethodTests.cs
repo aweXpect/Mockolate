@@ -737,6 +737,38 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task WithOptionalParameters_ShouldUseOptionalValueWhenNotSet()
+	{
+		IMyService mock = Mock.Create<IMyService>();
+		mock.SetupMock.Method.MyMethodWithOptionalParameters(It.IsAny<int>()).Returns(true);
+
+		bool result1 = mock.MyMethodWithOptionalParameters(5);
+		bool result2 = mock.MyMethodWithOptionalParameters(5, 1);
+		bool result3 = mock.MyMethodWithOptionalParameters(5, c: "bar");
+
+		await That(result1).IsTrue();
+		await That(result2).IsFalse();
+		await That(result3).IsFalse();
+	}
+
+	[Fact]
+	public async Task WithParamsParameters_ShouldUseOptionalValueWhenNotSet()
+	{
+		IMyService mock = Mock.Create<IMyService>();
+		mock.SetupMock.Method.MyMethodWithParams(It.IsAny<int>(), It.Satisfies<bool[]>(x => x.Length > 1)).Returns(true);
+
+		bool result1 = mock.MyMethodWithParams(5);
+		bool result2 = mock.MyMethodWithParams(5, true);
+		bool result3 = mock.MyMethodWithParams(5, true, false);
+		bool result4 = mock.MyMethodWithParams(5, true, false, true);
+
+		await That(result1).IsFalse();
+		await That(result2).IsFalse();
+		await That(result3).IsTrue();
+		await That(result4).IsTrue();
+	}
+
+	[Fact]
 	public async Task WithRefReadonlyParameter_ShouldUseSetup()
 	{
 		IMethodSetupWithInAndRefReadonlyParameter sut = Mock.Create<IMethodSetupWithInAndRefReadonlyParameter>();

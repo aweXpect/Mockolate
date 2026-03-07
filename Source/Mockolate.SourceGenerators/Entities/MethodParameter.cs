@@ -11,7 +11,17 @@ internal readonly record struct MethodParameter
 		Name = SyntaxFacts.GetKeywordKind(parameterSymbol.Name) != SyntaxKind.None ? "@" + parameterSymbol.Name : parameterSymbol.Name;
 		RefKind = parameterSymbol.RefKind;
 		IsNullableAnnotated = parameterSymbol.NullableAnnotation == NullableAnnotation.Annotated;
+		IsParams = parameterSymbol.IsParams;
+		HasExplicitDefaultValue = parameterSymbol.HasExplicitDefaultValue;
+		if (HasExplicitDefaultValue)
+		{
+			ExplicitDefaultValue = SymbolDisplay.FormatPrimitive(parameterSymbol.ExplicitDefaultValue, true, false);
+		}
 	}
+
+	public string? ExplicitDefaultValue { get; }
+	public bool HasExplicitDefaultValue { get; }
+	public bool IsParams { get; }
 
 	public bool IsNullableAnnotated { get; }
 	public Type Type { get; }

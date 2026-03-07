@@ -200,7 +200,17 @@ internal static partial class Sources
 		sb.Append("\tpublic MockFor").Append(name).Append("(");
 		foreach (MethodParameter parameter in constructor.Parameters)
 		{
+			if (parameter.IsParams)
+			{
+				sb.Append("params ");
+			}
+
 			sb.Append(parameter.Type.Fullname).Append(' ').Append(parameter.Name);
+			if (parameter.HasExplicitDefaultValue)
+			{
+				sb.Append(" = ").Append(parameter.ExplicitDefaultValue);
+			}
+
 			sb.Append(", ");
 		}
 
@@ -647,7 +657,16 @@ internal static partial class Sources
 			}
 
 			sb.Append(parameter.RefKind.GetString());
+			if (parameter.IsParams)
+			{
+				sb.Append("params ");
+			}
+
 			sb.Append(parameter.Type.Fullname).Append(' ').Append(parameter.Name);
+			if (parameter.HasExplicitDefaultValue)
+			{
+				sb.Append(" = ").Append(parameter.ExplicitDefaultValue);
+			}
 		}
 
 		sb.Append(')');
@@ -950,7 +969,14 @@ internal static partial class Sources
 		sb.Append(parameter.Name);
 		if (parameter.CanBeNullable())
 		{
-			sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType()).Append(">()");
+			if (parameter.HasExplicitDefaultValue)
+			{
+				sb.Append(" ?? global::Mockolate.It.Is<").Append(parameter.ToNullableType()).Append(">(").Append(parameter.ExplicitDefaultValue).Append(")");
+			}
+			else
+			{
+				sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType()).Append(">()");
+			}
 		}
 
 		sb.Append("))");
