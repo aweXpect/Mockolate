@@ -411,7 +411,7 @@ public class GeneralTests
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          	[System.Obsolete("This constructor is obsolete")]
-			          	public MockForMyBaseClass(int value, global::Mockolate.MockRegistration mockRegistration)
+			          	public MockForMyBaseClass(global::Mockolate.MockRegistration mockRegistration, int value)
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          	[System.Obsolete("This event is obsolete")]

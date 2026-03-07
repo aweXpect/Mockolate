@@ -752,7 +752,7 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
-	public async Task WithParamsParameters_ShouldUseOptionalValueWhenNotSet()
+	public async Task WithParamsParameters_ShouldSupportParams()
 	{
 		IMyService mock = Mock.Create<IMyService>();
 		mock.SetupMock.Method.MyMethodWithParams(It.IsAny<int>(), It.Satisfies<bool[]>(x => x.Length > 1)).Returns(true);

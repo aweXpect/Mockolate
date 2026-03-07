@@ -8,14 +8,25 @@ internal readonly record struct MethodParameter
 	public MethodParameter(IParameterSymbol parameterSymbol)
 	{
 		Type = new Type(parameterSymbol.Type);
-		Name = SyntaxFacts.GetKeywordKind(parameterSymbol.Name) != SyntaxKind.None ? "@" + parameterSymbol.Name : parameterSymbol.Name;
+		Name = SyntaxFacts.GetKeywordKind(parameterSymbol.Name) != SyntaxKind.None
+			? "@" + parameterSymbol.Name
+			: parameterSymbol.Name;
 		RefKind = parameterSymbol.RefKind;
 		IsNullableAnnotated = parameterSymbol.NullableAnnotation == NullableAnnotation.Annotated;
 		IsParams = parameterSymbol.IsParams;
 		HasExplicitDefaultValue = parameterSymbol.HasExplicitDefaultValue;
 		if (HasExplicitDefaultValue)
 		{
-			ExplicitDefaultValue = SymbolDisplay.FormatPrimitive(parameterSymbol.ExplicitDefaultValue, true, false);
+			var explicitDefaultValue = SymbolDisplay.FormatPrimitive(parameterSymbol.ExplicitDefaultValue, true, false);
+			if (parameterSymbol.Type.TypeKind == TypeKind.Enum)
+			{
+				string enumTypeName = parameterSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+				ExplicitDefaultValue = "(" + enumTypeName + ")" + explicitDefaultValue;
+			}
+			else
+			{
+				ExplicitDefaultValue = explicitDefaultValue;
+			}
 		}
 	}
 

@@ -197,9 +197,10 @@ internal static partial class Sources
 	{
 		sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
 		sb.Append(constructor.Attributes, "\t");
-		sb.Append("\tpublic MockFor").Append(name).Append("(");
+		sb.Append("\tpublic MockFor").Append(name).Append("(global::Mockolate.MockRegistration mockRegistration");
 		foreach (MethodParameter parameter in constructor.Parameters)
 		{
+			sb.Append(", ");
 			if (parameter.IsParams)
 			{
 				sb.Append("params ");
@@ -211,10 +212,9 @@ internal static partial class Sources
 				sb.Append(" = ").Append(parameter.ExplicitDefaultValue);
 			}
 
-			sb.Append(", ");
 		}
 
-		sb.Append("global::Mockolate.MockRegistration mockRegistration)").AppendLine();
+		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t: base(");
 		int index = 0;
 		foreach (MethodParameter parameter in constructor.Parameters)
@@ -663,7 +663,7 @@ internal static partial class Sources
 			}
 
 			sb.Append(parameter.Type.Fullname).Append(' ').Append(parameter.Name);
-			if (parameter.HasExplicitDefaultValue)
+			if (!explicitInterfaceImplementation && parameter.HasExplicitDefaultValue)
 			{
 				sb.Append(" = ").Append(parameter.ExplicitDefaultValue);
 			}

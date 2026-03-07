@@ -74,7 +74,7 @@ public sealed partial class ForMockTests
 			          							setup.Invoke(setupTarget);
 			          						}
 			          					}
-			          					_value = new global::Mockolate.Generated.MockForMyBaseClass(c1p1, mockRegistration);
+			          					_value = new global::Mockolate.Generated.MockForMyBaseClass(mockRegistration, c1p1);
 			          				}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
@@ -94,7 +94,7 @@ public sealed partial class ForMockTests
 			          							setup.Invoke(setupTarget);
 			          						}
 			          					}
-			          					_value = new global::Mockolate.Generated.MockForMyBaseClass(c2p1, c2p2, mockRegistration);
+			          					_value = new global::Mockolate.Generated.MockForMyBaseClass(mockRegistration, c2p1, c2p2);
 			          				}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
@@ -106,7 +106,7 @@ public sealed partial class ForMockTests
 
 		await That(result.Sources).ContainsKey("MockForMyBaseClass.g.cs").WhoseValue
 			.Contains("""
-			          	public MockForMyBaseClass(int value, global::Mockolate.MockRegistration mockRegistration)
+			          	public MockForMyBaseClass(global::Mockolate.MockRegistration mockRegistration, int value)
 			          			: base(value)
 			          	{
 			          		_mock = new global::Mockolate.Mock<MyCode.MyBaseClass>(this, mockRegistration, new object?[] { value });
@@ -114,7 +114,7 @@ public sealed partial class ForMockTests
 			          	}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          	public MockForMyBaseClass(int value, bool flag, global::Mockolate.MockRegistration mockRegistration)
+			          	public MockForMyBaseClass(global::Mockolate.MockRegistration mockRegistration, int value, bool flag)
 			          			: base(value, flag)
 			          	{
 			          		_mock = new global::Mockolate.Mock<MyCode.MyBaseClass>(this, mockRegistration, new object?[] { value, flag });
