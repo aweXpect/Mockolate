@@ -60,7 +60,7 @@ public sealed partial class ForMockTests
 		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
 			.Contains("""
 			          				if (constructorParameters.Parameters.Length == 1
-			          				    && TryCast(constructorParameters.Parameters[0], mockBehavior, out int c1p1))
+			          				    && TryCast(constructorParameters.Parameters, 0, mockBehavior, out int c1p1))
 			          				{
 			          					global::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, "MyCode.MyBaseClass");
 			          					global::Mockolate.Generated.MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;
@@ -79,8 +79,8 @@ public sealed partial class ForMockTests
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
 			          				if (constructorParameters.Parameters.Length == 2
-			          				    && TryCast(constructorParameters.Parameters[0], mockBehavior, out int c2p1)
-			          				    && TryCast(constructorParameters.Parameters[1], mockBehavior, out bool c2p2))
+			          				    && TryCast(constructorParameters.Parameters, 0, mockBehavior, out int c2p1)
+			          				    && TryCast(constructorParameters.Parameters, 1, mockBehavior, out bool c2p2))
 			          				{
 			          					global::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, "MyCode.MyBaseClass");
 			          					global::Mockolate.Generated.MockForMyBaseClass.MockRegistrationsProvider.Value = mockRegistration;

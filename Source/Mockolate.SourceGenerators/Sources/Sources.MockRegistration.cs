@@ -173,7 +173,8 @@ internal static partial class Sources
 						if (requiredParameters < constructorParameters.Count)
 						{
 							sb.Append("\t\t\t\telse if (constructorParameters.Parameters.Length >= ")
-								.Append(requiredParameters);
+								.Append(requiredParameters).Append(" && constructorParameters.Parameters.Length <= ")
+								.Append(constructorParameters.Count);
 						}
 						else
 						{
