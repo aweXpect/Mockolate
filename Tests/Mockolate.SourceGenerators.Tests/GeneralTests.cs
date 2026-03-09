@@ -693,4 +693,97 @@ public class GeneralTests
 			          	}
 			          """).IgnoringNewlineStyle();
 	}
+
+	[Fact]
+	public async Task foo()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.ComponentModel;
+			     using System.Diagnostics.CodeAnalysis;
+			     using System.Data;
+			     using Mockolate;
+
+			     namespace MyCode;
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     _ = Mock.Create<IMyService>();
+			     _ = Mock.Create<IMyService>();
+			     _ = Mock.Create<IMyService>();
+			     _ = Mock.Create<IMyService>();
+			         }
+			     }
+
+			     public interface IMyService
+			     {
+			     bool X();
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("MockForIMyService.g.cs").WhoseValue
+			.Contains("""
+			          	/// <inheritdoc cref="MyCode.IMyService.SomeProperty" />
+			          	[System.Diagnostics.CodeAnalysis.AllowNull]
+			          	public string SomeProperty
+			          	{
+			          		get
+			          		{
+			          			return MockRegistrations.GetProperty<string>("MyCode.IMyService.SomeProperty", () => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!), this._wrapped is null ? null : () => this._wrapped.SomeProperty);
+			          		}
+			          		set
+			          		{
+			          			MockRegistrations.SetProperty("MyCode.IMyService.SomeProperty", value);
+			          			if (this._wrapped is not null)
+			          			{
+			          				this._wrapped.SomeProperty = value;
+			          			}
+			          		}
+			          	}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	/// <inheritdoc cref="MyCode.IMyService.MyMethod(string)" />
+			          	[System.ComponentModel.Localizable(false)]
+			          	public string MyMethod(string message)
+			          	{
+			          		global::Mockolate.Setup.MethodSetupResult<string> methodExecution = MockRegistrations.InvokeMethod<string>("MyCode.IMyService.MyMethod", p => MockRegistrations.Behavior.DefaultValue.Generate(default(string)!, p), new global::Mockolate.Parameters.NamedParameterValue("message", message));
+			          		if (this._wrapped is not null)
+			          		{
+			          			var baseResult = this._wrapped.MyMethod(message);
+			          			if (!methodExecution.HasSetupResult)
+			          			{
+			          				methodExecution.TriggerCallbacks(message);
+			          				return baseResult;
+			          			}
+			          		}
+			          		methodExecution.TriggerCallbacks(message);
+			          		return methodExecution.Result;
+			          	}
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          	/// <inheritdoc cref="MyCode.IMyService.MyEvent" />
+			          	[MyCode.CustomAttributeWithWrongName(true, (byte)42, 'X', 3.14, 2.71F, 100, 999L, (sbyte)-10, (short)500, "test", 123u, 456uL, (ushort)789, typeof(string), (MyCode.MyEnum)2, new int[]{1, 2, 3}, null, BoolParam = false, ByteParam = (byte)99, CharParam = 'Y', DoubleParam = 1.23, FloatParam = 4.56F, IntParam = 200, LongParam = 888L, SByteParam = (sbyte)-5, ShortParam = (short)300, StringParam = "named", UIntParam = 111u, ULongParam = 222uL, UShortParam = (ushort)333, ObjectParam = 42, TypeParam = typeof(int), EnumParam = (MyCode.MyFlagEnum)3, ArrayParam = new string[]{"a", "b"}, OptionalIntParam = null)]
+			          	public event System.EventHandler<int>? MyEvent
+			          	{
+			          		add
+			          		{
+			          			MockRegistrations.AddEvent("MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          			if (this._wrapped is not null)
+			          			{
+			          				this._wrapped.MyEvent += value;
+			          			}
+			          		}
+			          		remove
+			          		{
+			          			MockRegistrations.RemoveEvent("MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          			if (this._wrapped is not null)
+			          			{
+			          				this._wrapped.MyEvent -= value;
+			          			}
+			          		}
+			          	}
+			          """).IgnoringNewlineStyle();
+	}
 }

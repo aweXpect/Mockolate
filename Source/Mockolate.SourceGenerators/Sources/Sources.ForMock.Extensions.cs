@@ -167,6 +167,21 @@ internal static partial class Sources
 		{
 			sb.Append("internal static class MockFor").Append(name).Append("Extensions").AppendLine();
 			sb.AppendLine("{");
+			sb.Append("\textension(Mock _)").AppendLine();
+			sb.Append("\t{").AppendLine();
+			sb.AppendXmlSummary($"Create a new mock for <see cref=\"{@class.ClassFullName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
+			sb.Append("\t\tpublic static T Create<T>(global::Mockolate.MockBehavior? mockBehavior = null) where T : ")
+				.AppendLine(@class.ClassFullName);
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tvar value = new global::Mockolate.Generated.MockFor").Append(name).Append("(mockBehavior ?? global::Mockolate.MockBehavior.Default);").AppendLine();
+			sb.Append("\t\t\tif (value is T mock)").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\treturn mock;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"Could not generate Mock<T>. Did the source generator run correctly?\");").AppendLine();
+			sb.Append("\t\t}").AppendLine();
+			sb.Append("\t}").AppendLine();
+			sb.AppendLine();
 			sb.Append("\textension(").Append(@class.ClassFullName).AppendLine(" subject)");
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();

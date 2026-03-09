@@ -17,6 +17,7 @@ public class FooTests
 public interface IMyInterface
 {
 	bool MyFunc(int value);
+	//static abstract void X();
 }
 
 public static class IMyInterfaceImposterExtensions
@@ -27,6 +28,7 @@ public static class IMyInterfaceImposterExtensions
 		{
 			return new MockForHappyCaseBenchmarksIMyInterface(mockBehavior ?? MockBehavior.Default);
 		}
+		
 		/// <summary>
 		///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
 		/// </summary>

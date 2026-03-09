@@ -17,26 +17,10 @@ internal static partial class Sources
 
 		          internal static partial class MockCreationExtensions
 		          {
-		          	extension(Mock _)
-		          	{
 		          """);
 
 		foreach (var mock in mocks.GroupBy(m => m.MockClass.ClassFullName))
 		{
-			var mockClass = mock.First().MockClass;
-			var name = mock.First().Name;
-			sb.AppendXmlSummary($"Create a new mock for <see cref=\"{mockClass.ClassFullName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
-			sb.Append("\t\tpublic static T Create<T>(global::Mockolate.MockBehavior? mockBehavior = null) where T : ")
-				.AppendLine(mockClass.ClassFullName);
-			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tvar value = new global::Mockolate.Generated.MockFor").Append(name).Append("(mockBehavior ?? global::Mockolate.MockBehavior.Default);").AppendLine();
-			sb.Append("\t\t\tif (value is T mock)").AppendLine();
-			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn mock;").AppendLine();
-			sb.Append("\t\t\t}").AppendLine();
-			sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"Could not generate Mock<T>. Did the source generator run correctly?\");").AppendLine();
-			sb.Append("\t\t}").AppendLine();
-			sb.AppendLine();
 		}
 		/*
 		if (mocks.Any())
@@ -318,7 +302,6 @@ internal static partial class Sources
 		*/
 
 		sb.Append("""
-		          	}
 
 		          	private static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)
 		          	{
