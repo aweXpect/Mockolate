@@ -23,12 +23,16 @@ public class SpanWrapper<T>
 	///     Implicitly converts a <see cref="SpanWrapper{T}" /> to a <see cref="Span{T}" />.
 	/// </summary>
 	public static implicit operator Span<T>(SpanWrapper<T> wrapper)
-		=> new(wrapper.SpanValues);
+	{
+		return new Span<T>(wrapper.SpanValues);
+	}
 
 	/// <summary>
 	///     Implicitly converts a <see cref="Span{T}" /> to a <see cref="SpanWrapper{T}" />.
 	/// </summary>
 	public static implicit operator SpanWrapper<T>(Span<T> span)
-		=> new(span);
+	{
+		return new SpanWrapper<T>(span);
+	}
 }
 #endif

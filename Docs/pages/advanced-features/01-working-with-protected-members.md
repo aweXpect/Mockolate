@@ -19,12 +19,12 @@ var sut = Mock.Create<ChocolateDispenser>();
 
 ```csharp
 // Setup protected method
-sut.SetupMock.Protected.Method.DispenseInternal(
+sut.Mock.Setup.Protected.Method.DispenseInternal(
     It.Is("Dark"), It.IsAny<int>())
     .Returns(true);
 
 // Setup protected property
-sut.SetupMock.Protected.Property.InternalStock.InitializeWith(100);
+sut.Mock.Setup.Protected.Property.InternalStock.InitializeWith(100);
 ```
 
 **Notes:**
@@ -36,20 +36,20 @@ sut.SetupMock.Protected.Property.InternalStock.InitializeWith(100);
 
 ```csharp
 // Verify protected method was invoked
-sut.VerifyMock.Invoked.Protected.DispenseInternal(
+sut.Mock.Verify.Invoked.Protected.DispenseInternal(
     It.Is("Dark"), It.IsAny<int>()).Once();
 
 // Verify protected property was read
-sut.VerifyMock.Got.Protected.InternalStock().AtLeastOnce();
+sut.Mock.Verify.Got.Protected.InternalStock().AtLeastOnce();
 
 // Verify protected property was set
-sut.VerifyMock.Set.Protected.InternalStock(It.Is(100)).Once();
+sut.Mock.Verify.Set.Protected.InternalStock(It.Is(100)).Once();
 
 // Verify protected indexer was read
-sut.VerifyMock.GotProtectedIndexer(It.Is(0)).Once();
+sut.Mock.Verify.GotProtectedIndexer(It.Is(0)).Once();
 
 // Verify protected indexer was set
-sut.VerifyMock.SetProtectedIndexer(It.Is(0), It.Is(42)).Once();
+sut.Mock.Verify.SetProtectedIndexer(It.Is(0), It.Is(42)).Once();
 ```
 
 **Note:**

@@ -22,8 +22,8 @@ public sealed partial class ItExtensionsTests
 				new([0x66,]),
 				new([0x62, 0x61, 0x72,]),
 			];
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method.SendAsync(It.IsHttpRequestMessage()
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup.SendAsync(It.IsHttpRequestMessage()
 				.Do(_ => callbackCount++)
 				.Monitor(out IParameterMonitor<HttpRequestMessage> monitor));
 
@@ -48,8 +48,8 @@ public sealed partial class ItExtensionsTests
 		[InlineData(nameof(HttpMethod.Put), false)]
 		public async Task WithMethod_ShouldVerifyMethod(string method, bool expectSuccess)
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.SendAsync(It.IsHttpRequestMessage(new HttpMethod(method)))
 				.ReturnsAsync(HttpStatusCode.OK);
 

@@ -14,9 +14,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount++; })
 					.Returns("a");
 
@@ -29,9 +29,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Do(() => { callCount++; });
+				sut.Mock.Setup.Method0().Do(() => { callCount++; });
 
 				sut.Method1(1);
 				sut.Method0(false);
@@ -43,9 +43,9 @@ public sealed partial class SetupMethodTests
 			public async Task For_InParallel_ShouldLimitMatches()
 			{
 				List<int> callIndices = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(v => { callIndices.Add(v); }).InParallel().When(v => v > 1).For(2)
 					.Returns("a");
 
@@ -64,9 +64,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount1++; })
 					.Do(() => { callCount2++; }).InParallel()
 					.Do(() => { callCount3++; });
@@ -89,9 +89,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount++; }).Only(times);
 
 				sut.Method0();
@@ -106,9 +106,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldLimitMatches()
 			{
 				List<int> callIndices = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(v => { callIndices.Add(v); }).When(v => v > 1).Only(2)
 					.Returns("a");
 
@@ -125,8 +125,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method0()
 					.Do(i => { invocations.Add(i); })
 					.Only(4);
 
@@ -142,8 +142,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method0()
 					.Do(i => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -161,9 +161,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount1++; })
 					.Do(() => { callCount2++; }).OnlyOnce();
 
@@ -181,9 +181,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount1++; })
 					.Do(() => { callCount2++; });
 
@@ -201,8 +201,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method0()
 					.Do(i => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -217,9 +217,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string> setup =
-					(IReturnMethodSetupCallbackBuilder<string>)mock.SetupMock.Method.Method0();
+					(IReturnMethodSetupCallbackBuilder<string>)mock.Mock.Setup.Method0();
 
 				void ActWhen()
 				{
@@ -244,9 +244,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string>)mock.SetupMock.Method.Method0();
+					(IReturnMethodSetupCallbackWhenBuilder<string>)mock.Mock.Setup.Method0();
 
 				void ActFor()
 				{
@@ -269,9 +269,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns("a");
 
@@ -284,9 +284,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method0();
@@ -299,9 +299,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenParameterDoesNotMatch()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.Satisfies<int>(v => v != 1))
+				sut.Mock.Setup.Method1(It.Satisfies<int>(v => v != 1))
 					.Do(() => { callCount++; });
 
 				sut.Method1(1);
@@ -314,9 +314,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount = 0;
 				int receivedValue = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(v =>
 					{
 						callCount++;
@@ -333,9 +333,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(_ => { callCount++; });
 
 				sut.Method0();
@@ -348,9 +348,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenParameterDoesNotMatch()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.Satisfies<int>(v => v != 1))
+				sut.Mock.Setup.Method1(It.Satisfies<int>(v => v != 1))
 					.Do(_ => { callCount++; });
 
 				sut.Method1(1);
@@ -363,11 +363,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method1(It.IsAny<int>())
+					sut.Mock.Setup.Method1(It.IsAny<int>())
 						.Do(() => { }).For(times);
 				}
 
@@ -381,9 +381,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do(p1 => { callCount2 += p1; }).InParallel()
 					.Do(p1 => { callCount3 += p1; });
@@ -403,11 +403,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method1(It.IsAny<int>())
+					sut.Mock.Setup.Method1(It.IsAny<int>())
 						.Do(() => { }).Only(times);
 				}
 
@@ -422,9 +422,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(p1 => { sum += p1; }).Only(times);
 
 				sut.Method1(1);
@@ -439,8 +439,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do((i, _) => { invocations.Add(i); })
 					.Only(4);
 
@@ -456,8 +456,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do((i, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -475,9 +475,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do(p1 => { callCount2 += p1; }).OnlyOnce();
 
@@ -493,9 +493,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(
+				sut.Mock.Setup.Method1(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1));
 
 				sut.Method1(-1);
@@ -511,9 +511,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do(p1 => { callCount2 += p1; });
 
@@ -530,8 +530,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do((i, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -546,9 +546,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int>)mock.SetupMock.Method.Method1(
+					(IReturnMethodSetupCallbackBuilder<string, int>)mock.Mock.Setup.Method1(
 						It.IsAny<int>());
 
 				void ActWhen()
@@ -574,9 +574,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int>)mock.SetupMock.Method.Method1(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int>)mock.Mock.Setup.Method1(
 						It.IsAny<int>());
 
 				void ActFor()
@@ -600,9 +600,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns("a");
 
@@ -618,9 +618,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
+				sut.Mock.Setup.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
 					.Do(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -632,9 +632,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method1(1);
@@ -649,9 +649,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -674,9 +674,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch2)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
+				sut.Mock.Setup.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
 					.Do((_, _) => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -688,9 +688,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((_, _) => { callCount++; });
 
 				sut.Method1(1);
@@ -705,9 +705,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _) => { callCount2 += p1; }).InParallel()
 					.Do((p1, _) => { callCount3 += p1; });
@@ -729,9 +729,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((p1, _) => { sum += p1; }).Only(times);
 
 				sut.Method2(1, 2);
@@ -746,8 +746,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _) => { invocations.Add(i); })
 					.Only(4);
 
@@ -763,8 +763,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -782,9 +782,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _) => { callCount2 += p1; }).OnlyOnce();
 
@@ -800,9 +800,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(
+				sut.Mock.Setup.Method2(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2));
 
@@ -820,9 +820,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _) => { callCount2 += p1; });
 
@@ -839,8 +839,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -855,9 +855,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int, int>)mock.SetupMock.Method.Method2(
+					(IReturnMethodSetupCallbackBuilder<string, int, int>)mock.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -883,9 +883,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int, int>)mock.SetupMock.Method.Method2(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int>)mock.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -909,9 +909,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns("a");
 
@@ -929,9 +929,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3))
 					.Do(() => { callCount++; });
 
@@ -944,9 +944,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -962,9 +962,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((v1, v2, v3) =>
 					{
 						callCount++;
@@ -991,9 +991,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3))
 					.Do((_, _, _) => { callCount++; });
 
@@ -1006,9 +1006,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((_, _, _) => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -1023,9 +1023,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _) => { callCount2 += p1; }).InParallel()
 					.Do((p1, _, _) => { callCount3 += p1; });
@@ -1047,9 +1047,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((p1, _, _) => { sum += p1; }).Only(times);
 
 				sut.Method3(1, 2, 3);
@@ -1064,8 +1064,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _) => { invocations.Add(i); })
 					.Only(4);
 
@@ -1081,8 +1081,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -1100,9 +1100,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _) => { callCount2 += p1; }).OnlyOnce();
 
@@ -1118,9 +1118,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(
+				sut.Mock.Setup.Method3(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3));
@@ -1141,9 +1141,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _) => { callCount2 += p1; });
 
@@ -1160,8 +1160,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -1176,9 +1176,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int, int, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int, int, int>)mock.SetupMock.Method.Method3(
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int>)mock.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1204,9 +1204,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int>)mock.SetupMock.Method.Method3(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int>)mock.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -1230,9 +1230,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns("a");
 
@@ -1251,9 +1251,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3, bool isMatch4)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4))
 					.Do(() => { callCount++; });
 
@@ -1266,9 +1266,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -1285,9 +1285,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -1317,9 +1317,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3, bool isMatch4)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4))
 					.Do((_, _, _, _) => { callCount++; });
 
@@ -1332,9 +1332,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((_, _, _, _) => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -1349,9 +1349,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _) => { callCount2 += p1; }).InParallel()
 					.Do((p1, _, _, _) => { callCount3 += p1; });
@@ -1373,9 +1373,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((p1, _, _, _) => { sum += p1; }).Only(times);
 
 				sut.Method4(1, 2, 3, 4);
@@ -1390,8 +1390,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _, _) => { invocations.Add(i); })
 					.Only(4);
 
@@ -1407,8 +1407,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -1426,9 +1426,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _) => { callCount2 += p1; }).OnlyOnce();
 
@@ -1444,9 +1444,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(
+				sut.Mock.Setup.Method4(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3),
@@ -1471,9 +1471,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _) => { callCount2 += p1; });
 
@@ -1490,8 +1490,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -1506,9 +1506,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int, int, int, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int>)mock.SetupMock.Method.Method4(
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int>)mock.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1534,9 +1534,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int>)mock.SetupMock.Method.Method4(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int>)mock.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -1560,9 +1560,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns("a");
@@ -1583,9 +1583,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3, bool isMatch4, bool isMatch5)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4),
 						It.Satisfies<int>(_ => isMatch5))
 					.Do(() => { callCount++; });
@@ -1599,9 +1599,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount++; });
 
@@ -1620,9 +1620,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((v1, v2, v3, v4, v5) =>
 					{
@@ -1656,9 +1656,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3, bool isMatch4, bool isMatch5)
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4),
 						It.Satisfies<int>(_ => isMatch5))
 					.Do((_, _, _, _, _) => { callCount++; });
@@ -1672,9 +1672,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((_, _, _, _, _) => { callCount++; });
 
@@ -1690,9 +1690,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _, _) => { callCount2 += p1; }).InParallel()
@@ -1715,9 +1715,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((p1, _, _, _, _) => { sum += p1; }).Only(times);
 
@@ -1733,8 +1733,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.Only(4);
@@ -1751,8 +1751,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
@@ -1771,9 +1771,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _, _) => { callCount2 += p1; }).OnlyOnce();
@@ -1790,9 +1790,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(
+				sut.Mock.Setup.Method5(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3),
@@ -1821,9 +1821,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _, _) => { callCount2 += p1; });
@@ -1841,8 +1841,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
@@ -1858,9 +1858,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int, int, int, int, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int, int>)mock.SetupMock.Method.Method5(
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int, int>)mock.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1886,11 +1886,10 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int, int>)mock.SetupMock.Method
-						.Method5(
-							It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int, int>)mock.Mock.Setup.Method5(
+						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
 				{
@@ -1913,9 +1912,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Do(() => { callCount++; });
+				sut.Mock.Setup.Method0().Do(() => { callCount++; });
 
 				sut.Method0();
 
@@ -1926,9 +1925,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Do(() => { callCount++; });
+				sut.Mock.Setup.Method0().Do(() => { callCount++; });
 
 				sut.Method1(1);
 				sut.Method0(false);
@@ -1940,9 +1939,9 @@ public sealed partial class SetupMethodTests
 			public async Task For_InParallel_ShouldLimitMatches()
 			{
 				List<int> callIndices = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(v => { callIndices.Add(v); }).InParallel().When(v => v > 1).For(2);
 
 				sut.Method0();
@@ -1960,9 +1959,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount1++; })
 					.Do(() => { callCount2++; }).InParallel()
 					.Do(() => { callCount3++; });
@@ -1985,9 +1984,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount++; }).Only(times);
 
 				sut.Method0();
@@ -2002,9 +2001,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldLimitMatches()
 			{
 				List<int> callIndices = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(v => { callIndices.Add(v); }).When(v => v > 1).Only(2);
 
 				sut.Method0();
@@ -2020,8 +2019,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method0()
 					.Do(i => { invocations.Add(i); })
 					.Only(4);
 
@@ -2037,8 +2036,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method0()
 					.Do(i => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -2056,9 +2055,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount1++; })
 					.Do(() => { callCount2++; }).OnlyOnce();
 
@@ -2076,9 +2075,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Do(() => { callCount1++; })
 					.Do(() => { callCount2++; });
 
@@ -2096,8 +2095,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method0()
 					.Do(i => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -2112,9 +2111,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder setup =
-					(IVoidMethodSetupCallbackBuilder)mock.SetupMock.Method.Method0();
+					(IVoidMethodSetupCallbackBuilder)mock.Mock.Setup.Method0();
 
 				void ActWhen()
 				{
@@ -2139,9 +2138,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder setup =
-					(IVoidMethodSetupCallbackWhenBuilder)mock.SetupMock.Method.Method0();
+					(IVoidMethodSetupCallbackWhenBuilder)mock.Mock.Setup.Method0();
 
 				void ActFor()
 				{
@@ -2164,9 +2163,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method1(3);
@@ -2178,9 +2177,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method0();
@@ -2193,9 +2192,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenParameterDoesNotMatch()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.Satisfies<int>(v => v != 1))
+				sut.Mock.Setup.Method1(It.Satisfies<int>(v => v != 1))
 					.Do(() => { callCount++; });
 
 				sut.Method1(1);
@@ -2208,9 +2207,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount = 0;
 				int receivedValue = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(v =>
 					{
 						callCount++;
@@ -2227,9 +2226,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(_ => { callCount++; });
 
 				sut.Method0();
@@ -2242,9 +2241,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenParameterDoesNotMatch()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.Satisfies<int>(v => v != 1))
+				sut.Mock.Setup.Method1(It.Satisfies<int>(v => v != 1))
 					.Do(_ => { callCount++; });
 
 				sut.Method1(1);
@@ -2258,9 +2257,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do(p1 => { callCount2 += p1; }).InParallel()
 					.Do(p1 => { callCount3 += p1; });
@@ -2282,9 +2281,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(p1 => { sum += p1; }).Only(times);
 
 				sut.Method1(1);
@@ -2299,8 +2298,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do((i, _) => { invocations.Add(i); })
 					.Only(4);
 
@@ -2316,8 +2315,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do((i, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -2335,9 +2334,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do(p1 => { callCount2 += p1; }).OnlyOnce();
 
@@ -2353,9 +2352,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(
+				sut.Mock.Setup.Method1(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1));
 
 				sut.Method1(-1);
@@ -2371,9 +2370,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do(p1 => { callCount2 += p1; });
 
@@ -2390,8 +2389,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do((i, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -2406,9 +2405,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int> setup =
-					(IVoidMethodSetupCallbackBuilder<int>)mock.SetupMock.Method.Method1(
+					(IVoidMethodSetupCallbackBuilder<int>)mock.Mock.Setup.Method1(
 						It.IsAny<int>());
 
 				void ActWhen()
@@ -2434,9 +2433,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int>)mock.SetupMock.Method.Method1(
+					(IVoidMethodSetupCallbackWhenBuilder<int>)mock.Mock.Setup.Method1(
 						It.IsAny<int>());
 
 				void ActFor()
@@ -2460,9 +2459,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -2477,9 +2476,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenAnyParameterDoesNotMatch(bool isMatch1, bool isMatch2)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
+				sut.Mock.Setup.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
 					.Do(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -2491,9 +2490,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method1(1);
@@ -2508,9 +2507,9 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -2533,9 +2532,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch2)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
+				sut.Mock.Setup.Method2(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2))
 					.Do((_, _) => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -2547,9 +2546,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((_, _) => { callCount++; });
 
 				sut.Method1(1);
@@ -2564,9 +2563,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _) => { callCount2 += p1; }).InParallel()
 					.Do((p1, _) => { callCount3 += p1; });
@@ -2588,9 +2587,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((p1, _) => { sum += p1; }).Only(times);
 
 				sut.Method2(1, 2);
@@ -2605,8 +2604,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _) => { invocations.Add(i); })
 					.Only(4);
 
@@ -2622,8 +2621,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -2641,9 +2640,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _) => { callCount2 += p1; }).OnlyOnce();
 
@@ -2659,9 +2658,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(
+				sut.Mock.Setup.Method2(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2));
 
@@ -2679,9 +2678,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _) => { callCount2 += p1; });
 
@@ -2698,8 +2697,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -2714,9 +2713,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int, int> setup =
-					(IVoidMethodSetupCallbackBuilder<int, int>)mock.SetupMock.Method.Method2(
+					(IVoidMethodSetupCallbackBuilder<int, int>)mock.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -2742,9 +2741,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int, int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int, int>)mock.SetupMock.Method.Method2(
+					(IVoidMethodSetupCallbackWhenBuilder<int, int>)mock.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -2768,9 +2767,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -2787,9 +2786,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3))
 					.Do(() => { callCount++; });
 
@@ -2802,9 +2801,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -2820,9 +2819,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((v1, v2, v3) =>
 					{
 						callCount++;
@@ -2849,9 +2848,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method3(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3))
 					.Do((_, _, _) => { callCount++; });
 
@@ -2864,9 +2863,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((_, _, _) => { callCount++; });
 
 				sut.Method2(1, 2);
@@ -2881,9 +2880,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _) => { callCount2 += p1; }).InParallel()
 					.Do((p1, _, _) => { callCount3 += p1; });
@@ -2905,9 +2904,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((p1, _, _) => { sum += p1; }).Only(times);
 
 				sut.Method3(1, 2, 3);
@@ -2922,8 +2921,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _) => { invocations.Add(i); })
 					.Only(4);
 
@@ -2939,8 +2938,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -2958,9 +2957,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _) => { callCount2 += p1; }).OnlyOnce();
 
@@ -2976,9 +2975,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(
+				sut.Mock.Setup.Method3(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3));
@@ -2999,9 +2998,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _) => { callCount2 += p1; });
 
@@ -3018,8 +3017,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -3034,9 +3033,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int, int, int> setup =
-					(IVoidMethodSetupCallbackBuilder<int, int, int>)mock.SetupMock.Method.Method3(
+					(IVoidMethodSetupCallbackBuilder<int, int, int>)mock.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3062,9 +3061,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int, int, int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int, int, int>)mock.SetupMock.Method.Method3(
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int>)mock.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -3088,9 +3087,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method4(1, 2, 3, 4);
@@ -3108,9 +3107,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3, bool isMatch4)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4))
 					.Do(() => { callCount++; });
 
@@ -3123,9 +3122,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -3142,9 +3141,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -3174,9 +3173,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3, bool isMatch4)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method4(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4))
 					.Do((_, _, _, _) => { callCount++; });
 
@@ -3189,9 +3188,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((_, _, _, _) => { callCount++; });
 
 				sut.Method3(1, 2, 3);
@@ -3206,9 +3205,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _) => { callCount2 += p1; }).InParallel()
 					.Do((p1, _, _, _) => { callCount3 += p1; });
@@ -3230,9 +3229,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((p1, _, _, _) => { sum += p1; }).Only(times);
 
 				sut.Method4(1, 2, 3, 4);
@@ -3247,8 +3246,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _, _) => { invocations.Add(i); })
 					.Only(4);
 
@@ -3264,8 +3263,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
 					.Only(4);
@@ -3283,9 +3282,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _) => { callCount2 += p1; }).OnlyOnce();
 
@@ -3301,9 +3300,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(
+				sut.Mock.Setup.Method4(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3),
@@ -3328,9 +3327,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _) => { callCount2 += p1; });
 
@@ -3347,8 +3346,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do((i, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
 
@@ -3363,9 +3362,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int, int, int, int> setup =
-					(IVoidMethodSetupCallbackBuilder<int, int, int, int>)mock.SetupMock.Method.Method4(
+					(IVoidMethodSetupCallbackBuilder<int, int, int, int>)mock.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3391,9 +3390,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int, int, int, int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int>)mock.SetupMock.Method.Method4(
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int>)mock.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -3417,9 +3416,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount++; });
 
@@ -3439,9 +3438,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3, bool isMatch4, bool isMatch5)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4),
 						It.Satisfies<int>(_ => isMatch5))
 					.Do(() => { callCount++; });
@@ -3455,9 +3454,9 @@ public sealed partial class SetupMethodTests
 			public async Task Callback_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount++; });
 
@@ -3476,9 +3475,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((v1, v2, v3, v4, v5) =>
 					{
@@ -3512,9 +3511,9 @@ public sealed partial class SetupMethodTests
 				bool isMatch3, bool isMatch4, bool isMatch5)
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
+				sut.Mock.Setup.Method5(It.Satisfies<int>(_ => isMatch1), It.Satisfies<int>(_ => isMatch2),
 						It.Satisfies<int>(_ => isMatch3), It.Satisfies<int>(_ => isMatch4),
 						It.Satisfies<int>(_ => isMatch5))
 					.Do((_, _, _, _, _) => { callCount++; });
@@ -3528,9 +3527,9 @@ public sealed partial class SetupMethodTests
 			public async Task CallbackWithValue_ShouldNotExecuteWhenOtherMethodIsInvoked()
 			{
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((_, _, _, _, _) => { callCount++; });
 
@@ -3546,9 +3545,9 @@ public sealed partial class SetupMethodTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _, _) => { callCount2 += p1; }).InParallel()
@@ -3571,9 +3570,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldInvokeCallbacksOnlyTheGivenNumberOfTimes(int times, int expectedValue)
 			{
 				int sum = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((p1, _, _, _, _) => { sum += p1; }).Only(times);
 
@@ -3589,8 +3588,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.Only(4);
@@ -3607,8 +3606,8 @@ public sealed partial class SetupMethodTests
 			public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x > 2)
@@ -3627,9 +3626,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _, _) => { callCount2 += p1; }).OnlyOnce();
@@ -3646,9 +3645,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task ParameterCallbacks_ShouldOnlyBeInvokedWhenAllMatch()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(
+				sut.Mock.Setup.Method5(
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values1),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values2),
 					It.Satisfies<int>(x => x > 0).Monitor(out IParameterMonitor<int> values3),
@@ -3677,9 +3676,9 @@ public sealed partial class SetupMethodTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount1++; })
 					.Do((p1, _, _, _, _) => { callCount2 += p1; });
@@ -3697,8 +3696,8 @@ public sealed partial class SetupMethodTests
 			public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 			{
 				List<int> invocations = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do((i, _, _, _, _, _) => { invocations.Add(i); })
 					.When(x => x is > 3 and < 9);
@@ -3714,9 +3713,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int, int, int, int, int> setup =
-					(IVoidMethodSetupCallbackBuilder<int, int, int, int, int>)mock.SetupMock.Method.Method5(
+					(IVoidMethodSetupCallbackBuilder<int, int, int, int, int>)mock.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3742,9 +3741,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int, int, int, int, int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int, int>)mock.SetupMock.Method.Method5(
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int, int>)mock.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()

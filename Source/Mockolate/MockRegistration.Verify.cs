@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -10,6 +11,19 @@ namespace Mockolate;
 
 public partial class MockRegistration
 {
+	/// <summary>
+	///     Counts the invocations of methods matching the <paramref name="methodSetup" /> on the <paramref name="subject" />.
+	/// </summary>
+	public VerificationResult<T> Method<T>(T subject, IMethodSetup methodSetup)
+	{
+		if (methodSetup is not IVerifiableMethodSetup verifiableMethodSetup)
+		{
+			throw new MockException("The setup is not verifiable.");
+		}
+
+		return Method(subject, verifiableMethodSetup.GetMatch());
+	}
+
 	/// <summary>
 	///     Counts the invocations of methods matching the <paramref name="methodMatch" /> on the <paramref name="subject" />.
 	/// </summary>

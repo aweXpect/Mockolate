@@ -12,11 +12,11 @@ public sealed partial class SetupPropertyTests
 		[InlineData(0)]
 		public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
 			void Act()
 			{
-				sut.SetupMock.Property.MyProperty
+				sut.Mock.Setup.MyProperty
 					.OnGet.Do(() => { }).For(times);
 			}
 
@@ -30,9 +30,9 @@ public sealed partial class SetupPropertyTests
 			int callCount1 = 0;
 			int callCount2 = 0;
 			int callCount3 = 0;
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do(() => { callCount1++; })
 				.OnGet.Do(v => { callCount2 += v; }).InParallel()
 				.OnGet.Do(v => { callCount3 += v; });
@@ -59,9 +59,9 @@ public sealed partial class SetupPropertyTests
 			int expectedValue)
 		{
 			int sum = 0;
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do(v => { sum += v; }).Only(times);
 
 			sut.MyProperty = 1;
@@ -83,9 +83,9 @@ public sealed partial class SetupPropertyTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do(() => { callCount1++; })
 				.OnGet.Do(v => { callCount2 += v; }).OnlyOnce();
 
@@ -107,9 +107,9 @@ public sealed partial class SetupPropertyTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do(() => { callCount1++; })
 				.OnGet.Do(v => { callCount2 += v; });
 
@@ -131,11 +131,11 @@ public sealed partial class SetupPropertyTests
 		[InlineData(0)]
 		public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
 			void Act()
 			{
-				sut.SetupMock.Property.MyProperty
+				sut.Mock.Setup.MyProperty
 					.OnGet.Do(() => { }).Only(times);
 			}
 
@@ -147,8 +147,8 @@ public sealed partial class SetupPropertyTests
 		public async Task Only_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
 			List<int> invocations = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do((i, _) => { invocations.Add(i); }).Only(4);
 
 			for (int i = 0; i < 20; i++)
@@ -163,8 +163,8 @@ public sealed partial class SetupPropertyTests
 		public async Task Only_WithWhen_ShouldStopExecutingCallbackAfterTheGivenTimes()
 		{
 			List<int> invocations = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do((i, _) => { invocations.Add(i); })
 				.When(x => x > 2)
 				.Only(4);
@@ -181,9 +181,9 @@ public sealed partial class SetupPropertyTests
 		public async Task ShouldExecuteWhenPropertyIsRead()
 		{
 			int callCount = 0;
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do(() => { callCount++; });
 
 			_ = sut.MyProperty;
@@ -195,8 +195,8 @@ public sealed partial class SetupPropertyTests
 		public async Task ShouldIncludeIncrementingAccessCounter()
 		{
 			List<int> invocations = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do((i, _) => { invocations.Add(i); });
 
 			for (int i = 0; i < 10; i++)
@@ -211,9 +211,9 @@ public sealed partial class SetupPropertyTests
 		public async Task ShouldNotExecuteWhenPropertyIsWrittenToOrOtherPropertyIsRead()
 		{
 			int callCount = 0;
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do(() => { callCount++; });
 
 			_ = sut.MyOtherProperty;
@@ -226,8 +226,8 @@ public sealed partial class SetupPropertyTests
 		public async Task When_ShouldOnlyExecuteCallbackWhenInvocationCountMatches()
 		{
 			List<int> invocations = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do(p => { invocations.Add(p); })
 				.When(x => x is > 3 and < 9);
 
@@ -243,9 +243,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WithoutCallback_IPropertySetupCallbackBuilder_ShouldNotThrow()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 			IPropertySetupCallbackBuilder<int> setup =
-				(IPropertySetupCallbackBuilder<int>)sut.SetupMock.Property.MyProperty;
+				sut.Mock.Setup.MyProperty;
 
 			void ActWhen()
 			{
@@ -270,9 +270,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WithoutCallback_IPropertySetupWhenBuilder_ShouldNotThrow()
 		{
-			IPropertyService mock = Mock.Create<IPropertyService>();
+			IPropertyService mock = IPropertyService.CreateMock();
 			IPropertySetupCallbackWhenBuilder<int> setup =
-				(IPropertySetupCallbackWhenBuilder<int>)mock.SetupMock.Property.MyProperty;
+				mock.Mock.Setup.MyProperty;
 
 			void ActFor()
 			{
@@ -293,9 +293,9 @@ public sealed partial class SetupPropertyTests
 		{
 			int callCount = 0;
 			int receivedValue = 0;
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.InitializeWith(4)
 				.OnGet.Do(v =>
 				{
@@ -313,9 +313,9 @@ public sealed partial class SetupPropertyTests
 		public async Task WithValue_ShouldNotExecuteWhenPropertyIsWrittenToOrOtherPropertyIsRead()
 		{
 			int callCount = 0;
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.OnGet.Do(_ => { callCount++; });
 
 			_ = sut.MyOtherProperty;

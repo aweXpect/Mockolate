@@ -13,15 +13,30 @@ public sealed partial class ItExtensionsTests
 		{
 			[Theory]
 			[InlineData(new byte[0], 0x1, false)]
-			[InlineData(new byte[] { 0x1, }, 0x1, true)]
-			[InlineData(new byte[] { 0x1, }, 0x2, false)]
-			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x1, true)]
-			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x2, false)]
-			[InlineData(new byte[] { 0x1, 0x2, 0x3, }, 0x3, false)]
+			[InlineData(new byte[]
+			{
+				0x1,
+			}, 0x1, true)]
+			[InlineData(new byte[]
+			{
+				0x1,
+			}, 0x2, false)]
+			[InlineData(new byte[]
+			{
+				0x1, 0x2, 0x3,
+			}, 0x1, true)]
+			[InlineData(new byte[]
+			{
+				0x1, 0x2, 0x3,
+			}, 0x2, false)]
+			[InlineData(new byte[]
+			{
+				0x1, 0x2, 0x3,
+			}, 0x3, false)]
 			public async Task Predicate_ShouldValidatePredicate(byte[] body, byte expectedFirstByte, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(b => b.Length > 0 && b[0] == expectedFirstByte))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -35,14 +50,38 @@ public sealed partial class ItExtensionsTests
 
 			[Theory]
 			[InlineData(new byte[0], new byte[0], true)]
-			[InlineData(new byte[] { 0x66, }, new byte[] { 0x66, }, true)]
-			[InlineData(new byte[] { 0x66, }, new byte[] { 0x67, }, false)]
-			[InlineData(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, }, false)]
-			[InlineData(new byte[] { 0x66, 0x67, }, new byte[] { 0x67, 0x68, 0x69, }, false)]
+			[InlineData(new byte[]
+			{
+				0x66,
+			}, new byte[]
+			{
+				0x66,
+			}, true)]
+			[InlineData(new byte[]
+			{
+				0x66,
+			}, new byte[]
+			{
+				0x67,
+			}, false)]
+			[InlineData(new byte[]
+			{
+				0x66, 0x67,
+			}, new byte[]
+			{
+				0x67,
+			}, false)]
+			[InlineData(new byte[]
+			{
+				0x66, 0x67,
+			}, new byte[]
+			{
+				0x67, 0x68, 0x69,
+			}, false)]
 			public async Task ShouldCheckForEquality(byte[] body, byte[] expected, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(expected))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -58,15 +97,15 @@ public sealed partial class ItExtensionsTests
 			public async Task WhenValidatedAndSetup_ShouldResetStreamPosition()
 			{
 				byte[] body = [0x66, 0x67,];
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(body))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
 					.PostAsync("https://www.aweXpect.com", new ByteArrayContent(body), CancellationToken.None);
 
-				await That(httpClient.VerifyMock.Invoked
+				await That(httpClient.Mock.Verify
 						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(body)))
 					.Once();
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);

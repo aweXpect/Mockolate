@@ -356,14 +356,14 @@ public static class VerificationResultExtensions
 		/// <summary>
 		///     Supports fluent chaining of verifications in a given order.
 		/// </summary>
-		public void Then(params Func<IMockVerify<TMock>, VerificationResult<TMock>>[] orderedChecks)
+		public void Then(params Func<TMock, VerificationResult<TMock>>[] orderedChecks)
 		{
 			string? error = null;
 			List<string> expectations = [];
 			IVerificationResult result = verificationResult;
-			IMockVerify<TMock> mockVerify = GetMockVerify(((IVerificationResult<TMock>)verificationResult).Object);
+			TMock mockVerify = ((IVerificationResult<TMock>)verificationResult).Object;
 			int after = -1;
-			foreach (Func<IMockVerify<TMock>, VerificationResult<TMock>> check in orderedChecks)
+			foreach (Func<TMock, VerificationResult<TMock>> check in orderedChecks)
 			{
 				expectations.Add(result.Expectation);
 				IVerificationResult currentResult = result;
@@ -378,16 +378,6 @@ public static class VerificationResultExtensions
 				string separator = ", then ";
 				throw new MockVerificationException(
 					$"Expected that mock {string.Join(separator, expectations)} in order, but it {error}.");
-			}
-
-			static IMockVerify<TMock> GetMockVerify(TMock subject)
-			{
-				if (subject is IMockSubject<TMock> mockSubject)
-				{
-					return mockSubject.Mock;
-				}
-
-				throw new MockException("The subject is no mock subject.");
 			}
 
 

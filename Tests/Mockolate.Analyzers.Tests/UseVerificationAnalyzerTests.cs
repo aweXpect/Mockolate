@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Xunit;
-using Verifier =
-	Mockolate.Analyzers.Tests.Verifiers.CSharpAnalyzerVerifier<Mockolate.Analyzers.UseVerificationAnalyzer>;
+using Verifier = Mockolate.Analyzers.Tests.Verifiers.CSharpAnalyzerVerifier<Mockolate.Analyzers.UseVerificationAnalyzer>;
 
 namespace Mockolate.Analyzers.Tests;
 

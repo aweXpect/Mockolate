@@ -8,7 +8,7 @@ public sealed partial class MockBehaviorTests
 		public async Task DefaultBehavior_ForRefAndOutParameter_WhenMethodNotSetup_ShouldUseDefaultValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 			int value1 = 5;
 
 			int sum = mock.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
@@ -23,9 +23,9 @@ public sealed partial class MockBehaviorTests
 		public async Task DefaultBehavior_ForRefAndOutParameter_WhenMethodSetup_ShouldUseSetupValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 			int value1 = 5;
-			mock.SetupMock.Method.VirtualMethodWithRefAndOutParameters(It.IsRef<int>(x => x + 1), It.IsOut(() => 8))
+			mock.Mock.Setup.VirtualMethodWithRefAndOutParameters(It.IsRef<int>(x => x + 1), It.IsOut(() => 8))
 				.Returns(10);
 
 			int sum = mock.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
@@ -40,7 +40,7 @@ public sealed partial class MockBehaviorTests
 		public async Task DefaultBehavior_WhenIndexerNotSetup_ShouldInitializeIndexerValuesFromBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 
 			int result = mock[4];
 			mock[4] = 42;
@@ -58,8 +58,8 @@ public sealed partial class MockBehaviorTests
 		public async Task DefaultBehavior_WhenIndexerSetup_ShouldUseSetupValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
-			mock.SetupMock.Indexer(It.IsAny<int>()).Returns(15);
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
+			mock.Mock.Setup[It.IsAny<int>()].Returns(15);
 
 			int result = mock[1];
 			mock[1] = 42;
@@ -75,7 +75,7 @@ public sealed partial class MockBehaviorTests
 		public async Task DefaultBehavior_WhenMethodNotSetup_ShouldReturnBaseValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 
 			int[] value = mock.VirtualMethod();
 
@@ -87,8 +87,8 @@ public sealed partial class MockBehaviorTests
 		public async Task DefaultBehavior_WhenMethodSetup_ShouldReturnSetupValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
-			mock.SetupMock.Method.VirtualMethod().Returns([10, 20,]);
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
+			mock.Mock.Setup.VirtualMethod().Returns([10, 20,]);
 
 			int[] value = mock.VirtualMethod();
 
@@ -100,7 +100,7 @@ public sealed partial class MockBehaviorTests
 		public async Task DefaultBehavior_WhenPropertyNotSetup_ShouldInitializePropertyWithValueFromBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 
 			int result = mock.VirtualProperty;
 			mock.VirtualProperty = 42;
@@ -117,8 +117,8 @@ public sealed partial class MockBehaviorTests
 		public async Task DefaultBehavior_WhenPropertySetup_ShouldUseSetupValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default);
-			mock.SetupMock.Property.VirtualProperty.Returns(15);
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
+			mock.Mock.Setup.VirtualProperty.Returns(15);
 
 			int result = mock.VirtualProperty;
 			mock.VirtualProperty = 42;
@@ -136,7 +136,7 @@ public sealed partial class MockBehaviorTests
 			SkippingBaseClass_ForRefAndOutParameter_WhenMethodNotSetup_ShouldSetToPreviousOrDefaultValues()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default.SkippingBaseClass());
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default.SkippingBaseClass());
 			int value1 = 5;
 
 			int sum = mock.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
@@ -151,7 +151,7 @@ public sealed partial class MockBehaviorTests
 		public async Task SkippingBaseClass_ShouldNotCallIndexersOfBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default.SkippingBaseClass());
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default.SkippingBaseClass());
 
 			int result = mock[1];
 			mock[1] = 2;
@@ -167,7 +167,7 @@ public sealed partial class MockBehaviorTests
 		public async Task SkippingBaseClass_ShouldNotCallMethodOfBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default.SkippingBaseClass());
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default.SkippingBaseClass());
 
 			_ = mock.VirtualMethod();
 
@@ -178,7 +178,7 @@ public sealed partial class MockBehaviorTests
 		public async Task SkippingBaseClass_ShouldNotCallPropertiesOfBaseClass()
 		{
 			MyBaseClassWithVirtualCalls mock =
-				Mock.Create<MyBaseClassWithVirtualCalls>(MockBehavior.Default.SkippingBaseClass());
+				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default.SkippingBaseClass());
 
 			int result = mock.VirtualProperty;
 			mock.VirtualProperty = 42;

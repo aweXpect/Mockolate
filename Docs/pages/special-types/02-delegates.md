@@ -9,11 +9,11 @@ Use `SetupMock.Delegate(…)` to configure delegate behavior.
 ```csharp
 // Mock Action delegate
 Action myAction = Mock.Create<Action>();
-myAction.SetupMock.Delegate().Do(() => Console.WriteLine("Action invoked!"));
+myAction.Mock.Setup.Delegate().Do(() => Console.WriteLine("Action invoked!"));
 
 // Mock Func<T> delegate
 Func<int> myFunc = Mock.Create<Func<int>>();
-myFunc.SetupMock.Delegate().Returns(42);
+myFunc.Mock.Setup.Delegate().Returns(42);
 ```
 
 For custom delegates with parameters:
@@ -24,7 +24,7 @@ public delegate int Calculate(int x, string operation);
 
 // Create and setup the mock
 Calculate calculator = Mock.Create<Calculate>();
-calculator.SetupMock.Delegate(It.IsAny<int>(), It.Is("add"))
+calculator.Mock.Setup.Delegate(It.IsAny<int>(), It.Is("add"))
     .Returns((x, operation) => x + 10);
 ```
 
@@ -36,7 +36,7 @@ public delegate void ProcessData(int input, ref int value, out int result);
 
 // Create and setup the mock
 ProcessData processor = Mock.Create<ProcessData>();
-processor.SetupMock.Delegate(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 100));
+processor.Mock.Setup.Delegate(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 100));
 ```
 
 - Use `.Do(…)` to run code when the delegate is invoked.
@@ -54,12 +54,12 @@ You can verify that delegates were invoked with specific arguments:
 // Verify Action was invoked at least once
 Action myAction = Mock.Create<Action>();
 myAction.Invoke();
-myAction.VerifyMock.Invoked().AtLeastOnce();
+myAction.Mock.Verify.Invoked().AtLeastOnce();
 
 // Verify Func<T> was invoked exactly once
 Func<int> myFunc = Mock.Create<Func<int>>();
 _ = myFunc();
-myFunc.VerifyMock.Invoked().Once();
+myFunc.Mock.Verify.Invoked().Once();
 ```
 
 For custom delegates with parameters:
@@ -71,7 +71,7 @@ public delegate int Calculate(int x, string operation);
 // Create, invoke, and verify the mock
 Calculate calculator = Mock.Create<Calculate>();
 _ = calculator(5, "add");
-calculator.VerifyMock.Invoked(It.IsAny<int>(), It.Is("add")).Once();
+calculator.Mock.Verify.Invoked(It.IsAny<int>(), It.Is("add")).Once();
 ```
 
 Delegates with `ref` and `out` parameters are also supported:
@@ -84,7 +84,7 @@ public delegate void ProcessData(int input, ref int value, out int result);
 ProcessData processor = Mock.Create<ProcessData>();
 int val = 0;
 processor(1, ref val, out int res);
-processor.VerifyMock.Invoked(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).Once();
+processor.Mock.Verify.Invoked(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).Once();
 ```
 
 **Note:**  

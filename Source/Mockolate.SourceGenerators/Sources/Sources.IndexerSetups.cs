@@ -245,7 +245,7 @@ internal static partial class Sources
 		sb.Append("\tinternal interface IIndexerSetupCallbackWhenBuilder<TValue, ").Append(outTypeParams)
 			.Append("> : global::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		
+
 		sb.AppendXmlSummary("Repeats the callback for the given number of <paramref name=\"times\" />.");
 		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams).Append("> For(int times);")

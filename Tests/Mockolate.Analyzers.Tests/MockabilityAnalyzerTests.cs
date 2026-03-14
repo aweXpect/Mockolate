@@ -74,7 +74,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.Mock.Create<MyBaseClass>();
+			  			Mockolate.MyBaseClass.CreateMock();
 			  		}
 			  	}
 			  }
@@ -97,7 +97,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.Mock.Create<MyDelegate>();
+			  			Mockolate.MyDelegate.CreateMock();
 			  		}
 			  	}
 			  }
@@ -182,7 +182,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mock.Create<IMyInterface>();
+			  			IMyInterface.CreateMock();
 			  		}
 			  	}
 			  }

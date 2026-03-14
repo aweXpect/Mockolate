@@ -20,7 +20,7 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<MyService>();
+			     			_ = MyService.CreateMock();
 			             }
 			         }
 
@@ -29,14 +29,49 @@ public class MockGeneratorTests
 			     """);
 
 		await ThatAll(
-			That(result.Sources.Keys).IsEqualTo([
-				"Mock.g.cs",
-				"MockBehaviorExtensions.g.cs",
-				"MockGeneratorAttribute.g.cs",
-				"MockRegistration.g.cs",
-			]).InAnyOrder().IgnoringCase(),
+			That(result.Sources.Keys).DoesNotContain("Mock.MyService.g.cs"),
 			That(result.Diagnostics).IsEmpty()
 		);
+	}
+
+	[Fact]
+	public async Task WhenImplementingAdditionalClass_ShouldCreateCombinationMock()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			                 _ = MyService.CreateMock()
+			                     .Implementing<IMyInterface1>()
+			                     .Implementing<IMyInterface2>();
+			             }
+			         }
+
+			     	public interface IMyInterface1 { }
+			     	public class MyService { }
+			     	public interface IMyInterface2 { }
+			     }
+			     """);
+
+		await That(result.Sources.Keys).IsEqualTo([
+			"Mock.g.cs",
+			"MockBehaviorExtensions.g.cs",
+			"MockGeneratorAttribute.g.cs",
+			"Mock.IMyInterface1.g.cs",
+			"Mock.IMyInterface2.g.cs",
+			"Mock.MyService.g.cs",
+			"Mock.MyService__IMyInterface1.g.cs",
+			"Mock.MyService__IMyInterface1__IMyInterface2.g.cs",
+		]).InAnyOrder();
 	}
 
 	[Fact]
@@ -55,7 +90,7 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -75,7 +110,7 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
-	public async Task WhenNamesConflict_ShouldAppendAnIndex()
+	public async Task WhenNamesConflict_ShouldBeDistinguishable()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -90,9 +125,9 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInt>();
-			     			_ = Mock.Create<I.MyInt>();
-			     			_ = Mock.Create<IMy<int>>();
+			     			_ = IMyInt.CreateMock();
+			     			_ = I.MyInt.CreateMock();
+			     			_ = IMy<int>.CreateMock();
 			             }
 			         }
 
@@ -109,19 +144,16 @@ public class MockGeneratorTests
 
 		await ThatAll(
 			That(result.Sources.Keys).Contains([
-				"MockForIMyInt.g.cs",
-				"MockForIMyInt_1.g.cs",
-				"MockForIMyInt_2.g.cs",
-				"MockForIMyIntExtensions.g.cs",
-				"MockForIMyInt_1Extensions.g.cs",
-				"MockForIMyInt_2Extensions.g.cs",
+				"Mock.IMyInt.g.cs",
+				"Mock.I_MyInt.g.cs",
+				"Mock.IMy_int.g.cs",
 			]).InAnyOrder().IgnoringCase(),
 			That(result.Diagnostics).IsEmpty()
 		);
 	}
 
 	[Fact]
-	public async Task WhenNamesConflictForAdditionalClasses_ShouldAppendAnIndex()
+	public async Task WhenNamesConflictForAdditionalClasses_ShouldBeDistinguishable()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -136,7 +168,10 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<I, IMyInt, I.MyInt, IMy<int>>();
+			     			_ = I.CreateMock()
+			     				.Implementing<IMyInt>()
+			     				.Implementing<I.MyInt>()
+			     				.Implementing<IMy<int>>();
 			             }
 			         }
 
@@ -153,14 +188,19 @@ public class MockGeneratorTests
 
 		await ThatAll(
 			That(result.Sources.Keys).Contains([
-				"MockForI_IMyInt_IMyInt_IMyint.g.cs",
-				"MockForI_IMyInt_IMyInt_IMyintExtensions.g.cs",
+				"Mock.I.g.cs",
+				"Mock.IMyInt.g.cs",
+				"Mock.I_MyInt.g.cs",
+				"Mock.IMy_int.g.cs",
+				"Mock.I__IMyInt__I_MyInt__IMy_int.g.cs",
+				"Mock.I__IMyInt__I_MyInt.g.cs",
+				"Mock.I__IMyInt.g.cs",
 			]).InAnyOrder().IgnoringCase()
 		);
 	}
 
 	[Fact]
-	public async Task WhenNamesConflictForAdditionalClassesInDifferentNamespaces_ShouldAppendAnIndex()
+	public async Task WhenNamesConflictForAdditionalClassesInDifferentNamespaces_ShouldBeDistinguishable()
 	{
 		GeneratorResult result = Generator
 			.Run("""
@@ -175,8 +215,10 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyService, MyCode.IMyInt>();
-			     			_ = Mock.Create<IMyService, OtherNamespace.IMyInt>();
+			     			_ = IMyService.CreateMock()
+			     				.Implementing<MyCode.IMyInt>();
+			     			_ = IMyService.CreateMock()
+			     				.Implementing<OtherNamespace.IMyInt>();
 			             }
 			         }
 
@@ -192,19 +234,88 @@ public class MockGeneratorTests
 
 		await ThatAll(
 			That(result.Sources.Keys).Contains([
-				"MockForIMyService_IMyInt.g.cs",
-				"MockForIMyService_IMyInt_1.g.cs",
-				"MockForIMyService_IMyIntExtensions.g.cs",
-				"MockForIMyService_IMyInt_1Extensions.g.cs",
+				"Mock.IMyService.g.cs",
+				"Mock.IMyInt.g.cs",
+				"Mock.IMyInt_1.g.cs",
+				"Mock.IMyService__IMyInt.g.cs",
+				"Mock.IMyService__IMyInt_1.g.cs",
 			]).InAnyOrder(),
-			That(result.Sources["MockForIMyService_IMyIntExtensions.g.cs"])
-				.Contains("public global::Mockolate.Setup.IMockSetup<MyCode.IMyInt> Setup_IMyInt_Mock").And
-				.Contains("public global::Mockolate.Verify.IMockVerify<MyCode.IMyInt> VerifyOn_IMyInt_Mock"),
-			That(result.Sources["MockForIMyService_IMyInt_1Extensions.g.cs"])
-				.Contains("public global::Mockolate.Setup.IMockSetup<OtherNamespace.IMyInt> Setup_OtherNamespace_IMyInt_Mock").And
-				.Contains("public global::Mockolate.Verify.IMockVerify<OtherNamespace.IMyInt> VerifyOn_OtherNamespace_IMyInt_Mock"),
+			That(result.Sources["Mock.IMyService__IMyInt.g.cs"])
+				.Contains("global::MyCode.IMyInt, IMockForIMyInt, IMockSetupForIMyInt, IMockVerifyForIMyInt,"),
+			That(result.Sources["Mock.IMyService__IMyInt_1.g.cs"])
+				.Contains("global::OtherNamespace.IMyInt, IMockForIMyInt_1, IMockSetupForIMyInt_1, IMockVerifyForIMyInt_1,"),
 			That(result.Diagnostics).IsEmpty()
 		);
+	}
+
+	[Fact]
+	public async Task WhenSameTypeImplementsDifferentCombinationsOfSameInterface_ShouldGenerateAllCombinations()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Threading;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = IBaseInterface.CreateMock().Implementing<ICommonInterface>();
+			     			_ = IBaseInterface.CreateMock().Implementing<ICommonInterface>().Implementing<IAdditionalInterface1>();
+			     			_ = IBaseInterface.CreateMock().Implementing<IAdditionalInterface2>().Implementing<ICommonInterface>();
+			     			_ = IBaseInterface.CreateMock().Implementing<IAdditionalInterface1>().Implementing<IAdditionalInterface2>().Implementing<ICommonInterface>();
+			             }
+			         }
+
+			         public interface IBaseInterface { }
+			         public interface ICommonInterface { }
+			         public interface IAdditionalInterface1 { }
+			         public interface IAdditionalInterface2 { }
+			     }
+			     """);
+
+		await That(result.Sources)
+			.ContainsKey("Mock.IBaseInterface__ICommonInterface.g.cs").And
+			.ContainsKey("Mock.IBaseInterface__ICommonInterface__IAdditionalInterface1.g.cs").And
+			.ContainsKey("Mock.IBaseInterface__IAdditionalInterface2__ICommonInterface.g.cs").And
+			.ContainsKey("Mock.IBaseInterface__IAdditionalInterface1__IAdditionalInterface2__ICommonInterface.g.cs").And
+			.ContainsKey("Mock.IBaseInterface__IAdditionalInterface1__IAdditionalInterface2.g.cs").And
+			.ContainsKey("Mock.IBaseInterface__IAdditionalInterface1.g.cs");
+	}
+
+	[Fact]
+	public async Task WhenStaticNonGenericMethodWithMockGeneratorAttribute_ShouldGenerateMockForReturnType()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			                 var instance = MyMockFactory.CreateMyInterface();
+			             }
+			         }
+
+			         public interface IMyInterface { }
+
+			         public static class MyMockFactory
+			         {
+			             [MockGenerator]
+			             public static IMyInterface CreateMyInterface() => null!;
+			         }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
 	}
 
 	[Fact]
@@ -240,10 +351,8 @@ public class MockGeneratorTests
 			That(result.Sources.Keys).IsEqualTo([
 				"Mock.g.cs",
 				"MockBehaviorExtensions.g.cs",
-				"MockForIMyInterface.g.cs",
-				"MockForIMyInterfaceExtensions.g.cs",
+				"Mock.IMyInterface.g.cs",
 				"MockGeneratorAttribute.g.cs",
-				"MockRegistration.g.cs",
 			]).InAnyOrder().IgnoringCase(),
 			That(result.Diagnostics).IsEmpty()
 		);
@@ -291,43 +400,9 @@ public class MockGeneratorTests
 				"Mock.g.cs",
 				"MockBehaviorExtensions.g.cs",
 				"MockGeneratorAttribute.g.cs",
-				"MockRegistration.g.cs",
 			]).InAnyOrder().IgnoringCase(),
 			That(result.Diagnostics).IsEmpty()
 		);
-	}
-
-	[Fact]
-	public async Task WhenUsingMockFactory_ShouldGenerateMocksAndExtensions()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using System.Threading.Tasks;
-			     using Mockolate;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			                var factory = new Mock.Factory(MockBehavior.Default);
-			     			_ = factory.Create<IMyInterface>();
-			             }
-			         }
-
-			         public interface IMyInterface
-			         {
-			             void MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7);
-			         }
-			     }
-			     """, typeof(DateTime), typeof(Task));
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).HasCount().AtLeast(5);
-		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs");
-		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs");
 	}
 
 	[Fact]
@@ -345,7 +420,7 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>(setup => setup.Method.MyMethod().Returns(42));
+			     			_ = IMyInterface.CreateMock(setup => setup.Method.MyMethod().Returns(42));
 			             }
 			         }
 
@@ -356,9 +431,8 @@ public class MockGeneratorTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(HttpResponseMessage));
 
-		await That(result.Sources).HasCount().AtLeast(5);
-		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs");
-		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs");
+		await That(result.Sources).HasCount().AtLeast(4);
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
 	}
 
 	[Fact]
@@ -377,7 +451,10 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			                 _ = Mock.Create<IMyInterface1, MyService, IMyInterface2, MyOtherService>();
+			                 _ = IMyInterface1.CreateMock()
+			                    .Implementing<MyService>()
+			                    .Implementing<IMyInterface2>()
+			                    .Implementing<MyOtherService>();
 			             }
 			         }
 
@@ -392,52 +469,8 @@ public class MockGeneratorTests
 			"Mock.g.cs",
 			"MockBehaviorExtensions.g.cs",
 			"MockGeneratorAttribute.g.cs",
-			"MockForIMyInterface1Extensions.g.cs",
-			"MockForIMyInterface2Extensions.g.cs",
-			"MockRegistration.g.cs",
+			"Mock.IMyInterface1.g.cs",
 		]).InAnyOrder();
-	}
-
-	[Fact]
-	public async Task WithCustomGenerator_ShouldWork()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using System.Threading.Tasks;
-			     using Mockolate;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			                 MyGenerator.Create<IMyInterface>();
-			             }
-			         }
-
-			         public static class MyGenerator
-			         {
-			             [MockGenerator]
-			             public static void Create<T>()
-			                 where T : class
-			             {
-			                 _ = Mock.Create<T>();
-			             }
-			         }
-
-			         public interface IMyInterface
-			         {
-			             void MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7);
-			         }
-			     }
-			     """, typeof(DateTime), typeof(Task));
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).HasCount().AtLeast(5);
-		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs");
-		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs");
 	}
 
 	[Fact]
@@ -456,66 +489,13 @@ public class MockGeneratorTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<HttpClient>();
+			     			_ = HttpClient.CreateMock();
 			             }
 			         }
 			     }
 			     """, typeof(HttpClient));
 
-		await That(result.Sources).ContainsKey("MockForHttpMessageHandler.g.cs").And
-			.ContainsKey("MockForHttpClient.g.cs");
-	}
-
-	[Fact]
-	public async Task WhenSameTypeImplementsDifferentCombinationsOfSameInterface_ShouldNotGenerateDuplicates()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using System.Threading;
-			     using System.Threading.Tasks;
-			     using Mockolate;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			_ = Mock.Create<IBaseInterface, ICommonInterface>();
-			     			_ = Mock.Create<IBaseInterface, ICommonInterface, IAdditionalInterface1>();
-			     			_ = Mock.Create<IBaseInterface, IAdditionalInterface2, ICommonInterface>();
-			     			_ = Mock.Create<IBaseInterface, IAdditionalInterface1, IAdditionalInterface2, ICommonInterface>();
-			             }
-			         }
-
-			         public interface IBaseInterface { }
-			         public interface ICommonInterface { }
-			         public interface IAdditionalInterface1 { }
-			         public interface IAdditionalInterface2 { }
-			     }
-			     """);
-
-		await That(result.Sources)
-			.ContainsKey("MockForIBaseInterface_ICommonInterfaceExtensions.g.cs").And
-			.ContainsKey("MockForIBaseInterface_ICommonInterface_IAdditionalInterface1Extensions.g.cs").And
-			.ContainsKey("MockForIBaseInterface_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs").And
-			.DoesNotContainKey("MockForIBaseInterface_IAdditionalInterface1_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs");
-		
-		await That(result.Sources["MockForIBaseInterface_ICommonInterfaceExtensions.g.cs"])
-			.Contains("Setup_ICommonInterface_Mock").And
-			.Contains("VerifyOn_ICommonInterface_Mock");
-		
-		await That(result.Sources["MockForIBaseInterface_ICommonInterface_IAdditionalInterface1Extensions.g.cs"])
-			.DoesNotContain("Setup_ICommonInterface_Mock").And
-			.DoesNotContain("VerifyOn_ICommonInterface_Mock").And
-			.Contains("Setup_IAdditionalInterface1_Mock").And
-			.Contains("VerifyOn_IAdditionalInterface1_Mock");
-		
-		await That(result.Sources["MockForIBaseInterface_IAdditionalInterface2_ICommonInterfaceExtensions.g.cs"])
-			.DoesNotContain("Setup_ICommonInterface_Mock").And
-			.DoesNotContain("VerifyOn_ICommonInterface_Mock").And
-			.Contains("Setup_IAdditionalInterface2_Mock").And
-			.Contains("VerifyOn_IAdditionalInterface2_Mock");
+		await That(result.Sources).ContainsKey("Mock.HttpMessageHandler.g.cs").And
+			.ContainsKey("Mock.HttpClient.g.cs");
 	}
 }

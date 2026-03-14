@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
-using Mockolate.Exceptions;
 using Mockolate.Interactions;
-using Mockolate.Verify;
 
 namespace Mockolate.Monitor;
 
@@ -108,21 +106,15 @@ public abstract class MockMonitor
 public sealed class MockMonitor<T> : MockMonitor
 {
 	/// <inheritdoc cref="MockMonitor{T}" />
-	public MockMonitor(T mock) : this(mock as IMockSubject<T>)
+	public MockMonitor(MockInteractions interactions, Func<MockInteractions, T> verify) : base(interactions)
 	{
-	}
-
-	private MockMonitor(IMockSubject<T>? mockSubject)
-		: base(mockSubject?.Mock.Interactions ?? throw new MockException("The subject is no mock."))
-	{
-		Verify = new Mock<T>(mockSubject.Mock.Subject,
-			new MockRegistration(mockSubject.Registrations.Behavior, mockSubject.Registrations.Prefix, Interactions));
+		Verify = verify(Interactions);
 	}
 
 	/// <summary>
 	///     Verifies the interactions with the mocked subject of <typeparamref name="T" />.
 	/// </summary>
-	public IMockVerify<T> Verify
+	public T Verify
 	{
 		get
 		{

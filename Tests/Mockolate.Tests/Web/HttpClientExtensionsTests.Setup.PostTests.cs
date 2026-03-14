@@ -19,8 +19,8 @@ public sealed partial class HttpClientExtensionsTests
 			[InlineData("application/txt", false)]
 			public async Task StringUri_ShouldVerifyHttpContent(string mediaType, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent("application/json"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -39,8 +39,8 @@ public sealed partial class HttpClientExtensionsTests
 			[InlineData(nameof(HttpMethod.Put), false)]
 			public async Task StringUri_ShouldVerifyHttpMethod(string method, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.Matches("*aweXpect.com*"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -59,8 +59,8 @@ public sealed partial class HttpClientExtensionsTests
 			[InlineData("*foo*", false)]
 			public async Task StringUri_ShouldVerifyUriString(string pattern, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.Matches(pattern))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -77,8 +77,8 @@ public sealed partial class HttpClientExtensionsTests
 			[InlineData(false)]
 			public async Task StringUri_WithCancellationToken_ShouldVerifyCancellationToken(bool tokenMatches)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(
 						It.Matches("*aweXpect.com*"),
 						It.IsAny<HttpContent>(),
@@ -96,11 +96,11 @@ public sealed partial class HttpClientExtensionsTests
 			[Fact]
 			public async Task StringUri_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+				HttpClient httpClient = HttpClient.CreateMock(constructorParameters: []);
 
 				void Act()
 				{
-					httpClient.SetupMock.Method
+					httpClient.Mock.Setup
 						.PostAsync(It.Matches("*aweXpect.com*"))
 						.ReturnsAsync(HttpStatusCode.OK);
 				}
@@ -116,8 +116,8 @@ public sealed partial class HttpClientExtensionsTests
 			[InlineData("application/txt", false)]
 			public async Task Uri_ShouldVerifyHttpContent(string mediaType, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent("application/json"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -136,8 +136,8 @@ public sealed partial class HttpClientExtensionsTests
 			[InlineData(nameof(HttpMethod.Put), false)]
 			public async Task Uri_ShouldVerifyHttpMethod(string method, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsUri("*aweXpect.com*"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -156,8 +156,8 @@ public sealed partial class HttpClientExtensionsTests
 			[InlineData("*foo*", false)]
 			public async Task Uri_ShouldVerifyUri(string pattern, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsUri(pattern))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -174,8 +174,8 @@ public sealed partial class HttpClientExtensionsTests
 			[InlineData(false)]
 			public async Task Uri_WithCancellationToken_ShouldVerifyCancellationToken(bool tokenMatches)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(
 						It.IsUri("*aweXpect.com*"),
 						It.IsAny<HttpContent>(),
@@ -193,11 +193,11 @@ public sealed partial class HttpClientExtensionsTests
 			[Fact]
 			public async Task Uri_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+				HttpClient httpClient = HttpClient.CreateMock(constructorParameters: []);
 
 				void Act()
 				{
-					httpClient.SetupMock.Method
+					httpClient.Mock.Setup
 						.PostAsync(It.IsUri("*aweXpect.com*"))
 						.ReturnsAsync(HttpStatusCode.OK);
 				}

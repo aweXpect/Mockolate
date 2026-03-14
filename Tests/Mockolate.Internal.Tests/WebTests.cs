@@ -35,15 +35,15 @@ public class WebTests
 	public async Task WhenParameterDoesNotImplementIHttpRequestMessagePropertyParameter_ShouldFallbackToParameterMatch()
 	{
 		ItExtensions.IHttpContentParameter parameter =
-			Mock.Create<ItExtensions.IHttpContentParameter, IParameter>();
-		parameter.Setup_Mockolate_Parameters_IParameter_Mock.Method.Matches(It.IsAny<object?>()).Returns(true);
+			ItExtensions.IHttpContentParameter.CreateMock().Implementing<IParameter>();
+		parameter.Mock.As<IParameter>().Setup.Matches(It.IsAny<object?>()).Returns(true);
 
 		ItExtensions.IStringContentBodyParameter sut = parameter.WithString("foo");
 
 		bool result = ((IHttpRequestMessagePropertyParameter<HttpContent?>)sut).Matches(null, null);
 
 		await That(result).IsTrue();
-		await That(parameter.VerifyOn_Mockolate_Parameters_IParameter_Mock.Invoked
+		await That(parameter.Mock.As<IParameter>().Verify
 				.Matches(It.IsNull<object?>()))
 			.Once();
 	}
@@ -51,11 +51,11 @@ public class WebTests
 	[Fact]
 	public async Task WhenParameterImplementsIHttpRequestMessagePropertyParameter_ShouldUseThisMatch()
 	{
-		ItExtensions.IHttpContentParameter parameter =
-			Mock.Create<ItExtensions.IHttpContentParameter, IParameter,
-				IHttpRequestMessagePropertyParameter<HttpContent?>>();
-		parameter.Setup_Mockolate_Parameters_IParameter_Mock.Method.Matches(It.IsAny<object?>()).Returns(false);
-		parameter.Setup_IHttpRequestMessagePropertyParameter_HttpContent__Mock.Method
+		ItExtensions.IHttpContentParameter parameter = ItExtensions.IHttpContentParameter.CreateMock()
+			.Implementing<IParameter>()
+			.Implementing<IHttpRequestMessagePropertyParameter<HttpContent?>>();
+		parameter.Mock.As<IParameter>().Setup.Matches(It.IsAny<object?>()).Returns(false);
+		parameter.Mock.As<IHttpRequestMessagePropertyParameter<HttpContent?>>().Setup
 			.Matches(It.IsAny<HttpContent?>(), It.IsAny<HttpRequestMessage?>()).Returns(true);
 
 		ItExtensions.IStringContentBodyParameter sut = parameter.WithString("foo");
@@ -63,10 +63,10 @@ public class WebTests
 		bool result = ((IHttpRequestMessagePropertyParameter<HttpContent?>)sut).Matches(null, null);
 
 		await That(result).IsTrue();
-		await That(parameter.VerifyOn_IHttpRequestMessagePropertyParameter_HttpContent__Mock.Invoked
+		await That(parameter.Mock.As<IHttpRequestMessagePropertyParameter<HttpContent?>>().Verify
 				.Matches(It.IsNull<HttpContent?>(), It.IsNull<HttpRequestMessage?>()))
 			.Once();
-		await That(parameter.VerifyOn_Mockolate_Parameters_IParameter_Mock.Invoked
+		await That(parameter.Mock.As<IParameter>().Verify
 				.Matches(It.IsNull<object?>()))
 			.Never();
 	}

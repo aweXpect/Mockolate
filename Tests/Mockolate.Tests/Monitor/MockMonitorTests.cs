@@ -1,4 +1,3 @@
-using Mockolate.Exceptions;
 using Mockolate.Monitor;
 using Mockolate.Tests.TestHelpers;
 
@@ -9,36 +8,22 @@ public sealed class MockMonitorTests
 	[Fact]
 	public async Task ClearAllInteractions_WhenMonitorIsRunning_ShouldClearInternalCollection()
 	{
-		IMyService sut = Mock.Create<IMyService>();
-		MockMonitor<IMyService> monitor = new(sut);
+		IMyService sut = IMyService.CreateMock();
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
 
 		sut.IsValid(1);
 		using IDisposable disposable = monitor.Run();
 		sut.IsValid(1);
-		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
-		sut.SetupMock.ClearAllInteractions();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Never();
-	}
-
-	[Fact]
-	public async Task Constructor_WithoutMock_ShouldThrowMockException()
-	{
-		MyServiceBase sut = new();
-
-		void Act()
-		{
-			_ = new MockMonitor<MyServiceBase>(sut);
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The subject is no mock.");
+		await That(monitor.Verify.IsValid(It.Is(1))).Once();
+		sut.Mock.ClearAllInteractions();
+		await That(monitor.Verify.IsValid(It.Is(1))).Never();
 	}
 
 	[Fact]
 	public async Task DisposeTwice_ShouldNotIncludeMoreInvocations()
 	{
-		IMyService sut = Mock.Create<IMyService>();
-		MockMonitor<IMyService> monitor = new(sut);
+		IMyService sut = IMyService.CreateMock();
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
 
 		sut.IsValid(1);
 		sut.IsValid(2);
@@ -52,21 +37,21 @@ public sealed class MockMonitorTests
 		sut.IsValid(7);
 		sut.IsValid(8);
 
-		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(5))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(6))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(7))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(8))).Never();
+		await That(monitor.Verify.IsValid(It.Is(1))).Never();
+		await That(monitor.Verify.IsValid(It.Is(2))).Never();
+		await That(monitor.Verify.IsValid(It.Is(3))).Once();
+		await That(monitor.Verify.IsValid(It.Is(4))).Once();
+		await That(monitor.Verify.IsValid(It.Is(5))).Never();
+		await That(monitor.Verify.IsValid(It.Is(6))).Never();
+		await That(monitor.Verify.IsValid(It.Is(7))).Never();
+		await That(monitor.Verify.IsValid(It.Is(8))).Never();
 	}
 
 	[Fact]
 	public async Task MultipleRun_ShouldMonitorInvocationsDuringTheRun()
 	{
-		IMyService sut = Mock.Create<IMyService>();
-		MockMonitor<IMyService> monitor = new(sut);
+		IMyService sut = IMyService.CreateMock();
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
 
 		sut.IsValid(1);
 		sut.IsValid(2);
@@ -87,23 +72,23 @@ public sealed class MockMonitorTests
 		sut.IsValid(9);
 		sut.IsValid(10);
 
-		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(5))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(6))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(7))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(8))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(9))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(10))).Never();
+		await That(monitor.Verify.IsValid(It.Is(1))).Never();
+		await That(monitor.Verify.IsValid(It.Is(2))).Never();
+		await That(monitor.Verify.IsValid(It.Is(3))).Once();
+		await That(monitor.Verify.IsValid(It.Is(4))).Once();
+		await That(monitor.Verify.IsValid(It.Is(5))).Never();
+		await That(monitor.Verify.IsValid(It.Is(6))).Never();
+		await That(monitor.Verify.IsValid(It.Is(7))).Once();
+		await That(monitor.Verify.IsValid(It.Is(8))).Once();
+		await That(monitor.Verify.IsValid(It.Is(9))).Never();
+		await That(monitor.Verify.IsValid(It.Is(10))).Never();
 	}
 
 	[Fact]
 	public async Task NestedRun_ShouldThrowInvalidOperationException()
 	{
-		IMyService sut = Mock.Create<IMyService>();
-		MockMonitor<IMyService> monitor = new(sut);
+		IMyService sut = IMyService.CreateMock();
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
 
 		void Act()
 		{
@@ -123,8 +108,8 @@ public sealed class MockMonitorTests
 	[Fact]
 	public async Task Run_ShouldIncludeAllInvocations()
 	{
-		IMyService sut = Mock.Create<IMyService>();
-		MockMonitor<IMyService> monitor = new(sut);
+		IMyService sut = IMyService.CreateMock();
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
 
 		using (monitor.Run())
 		{
@@ -134,17 +119,17 @@ public sealed class MockMonitorTests
 			sut.IsValid(4);
 		}
 
-		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Once();
+		await That(monitor.Verify.IsValid(It.Is(1))).Once();
+		await That(monitor.Verify.IsValid(It.Is(2))).Once();
+		await That(monitor.Verify.IsValid(It.Is(3))).Once();
+		await That(monitor.Verify.IsValid(It.Is(4))).Once();
 	}
 
 	[Fact]
 	public async Task Run_ShouldMonitorInvocationsDuringTheRun()
 	{
-		IMyService sut = Mock.Create<IMyService>();
-		MockMonitor<IMyService> monitor = new(sut);
+		IMyService sut = IMyService.CreateMock();
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
 
 		sut.IsValid(1);
 		sut.IsValid(2);
@@ -156,43 +141,64 @@ public sealed class MockMonitorTests
 
 		sut.IsValid(5);
 
-		await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Never();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Once();
-		await That(monitor.Verify.Invoked.IsValid(It.Is(5))).Never();
-		await That(sut.VerifyMock.Invoked.IsValid(It.Is(1))).Once();
-		await That(sut.VerifyMock.Invoked.IsValid(It.Is(2))).Once();
-		await That(sut.VerifyMock.Invoked.IsValid(It.Is(3))).Once();
-		await That(sut.VerifyMock.Invoked.IsValid(It.Is(4))).Once();
-		await That(sut.VerifyMock.Invoked.IsValid(It.Is(5))).Once();
+		await That(monitor.Verify.IsValid(It.Is(1))).Never();
+		await That(monitor.Verify.IsValid(It.Is(2))).Never();
+		await That(monitor.Verify.IsValid(It.Is(3))).Once();
+		await That(monitor.Verify.IsValid(It.Is(4))).Once();
+		await That(monitor.Verify.IsValid(It.Is(5))).Never();
+		await That(sut.Mock.Verify.IsValid(It.Is(1))).Once();
+		await That(sut.Mock.Verify.IsValid(It.Is(2))).Once();
+		await That(sut.Mock.Verify.IsValid(It.Is(3))).Once();
+		await That(sut.Mock.Verify.IsValid(It.Is(4))).Once();
+		await That(sut.Mock.Verify.IsValid(It.Is(5))).Once();
 	}
 
 	[Fact]
 	public async Task Verify_WhileRunning_ShouldBeUpToDate()
 	{
-		IMyService sut = Mock.Create<IMyService>();
-		MockMonitor<IMyService> monitor = new(sut);
+		IMyService sut = IMyService.CreateMock();
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
 
 		using (monitor.Run())
 		{
 			sut.IsValid(1);
-			await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Never();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Never();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Never();
+			await That(monitor.Verify.IsValid(It.Is(1))).Once();
+			await That(monitor.Verify.IsValid(It.Is(2))).Never();
+			await That(monitor.Verify.IsValid(It.Is(3))).Never();
+			await That(monitor.Verify.IsValid(It.Is(4))).Never();
 
 			sut.IsValid(2);
-			await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Once();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Never();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Never();
+			await That(monitor.Verify.IsValid(It.Is(1))).Once();
+			await That(monitor.Verify.IsValid(It.Is(2))).Once();
+			await That(monitor.Verify.IsValid(It.Is(3))).Never();
+			await That(monitor.Verify.IsValid(It.Is(4))).Never();
 
 			sut.IsValid(3);
-			await That(monitor.Verify.Invoked.IsValid(It.Is(1))).Once();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(2))).Once();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(3))).Once();
-			await That(monitor.Verify.Invoked.IsValid(It.Is(4))).Never();
+			await That(monitor.Verify.IsValid(It.Is(1))).Once();
+			await That(monitor.Verify.IsValid(It.Is(2))).Once();
+			await That(monitor.Verify.IsValid(It.Is(3))).Once();
+			await That(monitor.Verify.IsValid(It.Is(4))).Never();
 		}
+	}
+
+	[Fact]
+	public async Task WhenMonitoringIsNotDisposed_ShouldStillVerify()
+	{
+		IMyService sut = IMyService.CreateMock();
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
+
+		sut.IsValid(1);
+		sut.IsValid(2);
+		using IDisposable disposable = monitor.Run();
+		sut.IsValid(3);
+		sut.IsValid(4);
+
+		await That(monitor.Verify.IsValid(It.Is(1))).Never();
+		await That(monitor.Verify.IsValid(It.Is(2))).Never();
+		await That(monitor.Verify.IsValid(It.Is(3))).Once();
+		sut.IsValid(5);
+		await That(monitor.Verify.IsValid(It.Is(4))).Once();
+		await That(monitor.Verify.IsValid(It.Is(5))).Once();
+		await That(monitor.Verify.IsValid(It.Is(6))).Never();
 	}
 }

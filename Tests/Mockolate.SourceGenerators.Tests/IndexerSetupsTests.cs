@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Mockolate.SourceGenerators.Tests.Sources;
+namespace Mockolate.SourceGenerators.Tests;
 
 public sealed class IndexerSetupsTests
 {
@@ -20,7 +20,7 @@ public sealed class IndexerSetupsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -52,7 +52,7 @@ public sealed class IndexerSetupsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -85,7 +85,7 @@ public sealed class IndexerSetupsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Mockolate.SourceGenerators.Tests.Sources;
+namespace Mockolate.SourceGenerators.Tests;
 
 public sealed class ReturnsThrowsAsyncExtensionsTests
 {
@@ -20,7 +20,7 @@ public sealed class ReturnsThrowsAsyncExtensionsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -50,7 +50,7 @@ public sealed class ReturnsThrowsAsyncExtensionsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -115,7 +115,7 @@ public sealed class ReturnsThrowsAsyncExtensionsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -151,7 +151,7 @@ public sealed class ReturnsThrowsAsyncExtensionsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 

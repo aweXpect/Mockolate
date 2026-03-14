@@ -9,11 +9,11 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task Initialize_DirectSetupsTakePrecedence()
 		{
-			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>((_, setup)
-				=> setup.Indexer(It.Satisfies<string>(s => s.StartsWith("da"))).InitializeWith(5));
+			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>(setup
+				=> setup[It.Satisfies<string>(s => s.StartsWith("da"))].InitializeWith(5));
 
-			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(behavior,
-				setup => setup.Indexer(It.Satisfies<string>(s => s.EndsWith("rk"))).InitializeWith(16));
+			IChocolateDispenser mock = IChocolateDispenser.CreateMock(behavior,
+				setup => setup[It.Satisfies<string>(s => s.EndsWith("rk"))].InitializeWith(16));
 
 			int bothMatchResult = mock["dark"];
 			int directMatchResult = mock["--rk"];
@@ -31,11 +31,11 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior behavior =
 				MockBehavior.Default.Initialize<IChocolateDispenser>(setup
-					=> setup.Indexer(It.Is("Dark")).InitializeWith(15));
+					=> setup[It.Is("Dark")].InitializeWith(15));
 
 			void Act()
 			{
-				_ = Mock.Create<IMyService>(behavior);
+				_ = IMyService.CreateMock(behavior);
 			}
 
 			await That(Act).DoesNotThrow();
@@ -46,35 +46,15 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior behavior =
 				MockBehavior.Default.Initialize<IChocolateDispenser>(setup
-					=> setup.Indexer(It.Is("Dark")).InitializeWith(15));
+					=> setup[It.Is("Dark")].InitializeWith(15));
 
-			IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(behavior);
+			IChocolateDispenser mock = IChocolateDispenser.CreateMock(behavior);
 
 			int setupResult = mock["Dark"];
 			int otherResult = mock["Light"];
 
 			await That(setupResult).IsEqualTo(15);
 			await That(otherResult).IsEqualTo(0);
-		}
-
-		[Fact]
-		public async Task WithCounter_ShouldIncrementForEachCreatedMock()
-		{
-			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>((counter, setup)
-				=> setup.Indexer(It.Is("Dark")).InitializeWith(counter));
-
-			IChocolateDispenser mockA = Mock.Create<IChocolateDispenser>(behavior);
-			IChocolateDispenser mockB = Mock.Create<IChocolateDispenser>(behavior);
-
-			int resultA1 = mockA["Dark"];
-			int resultA2 = mockA["Light"];
-			int resultB1 = mockB["Dark"];
-			int resultB2 = mockB["Light"];
-
-			await That(resultA1).IsEqualTo(1);
-			await That(resultA2).IsEqualTo(0);
-			await That(resultB1).IsEqualTo(2);
-			await That(resultB2).IsEqualTo(0);
 		}
 	}
 }

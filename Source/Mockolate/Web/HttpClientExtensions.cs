@@ -21,7 +21,7 @@ namespace Mockolate;
 public static partial class HttpClientExtensions
 {
 	/// <inheritdoc cref="HttpClientExtensions" />
-	extension(IMockMethodSetup<HttpClient> setup)
+	extension(IMockSetup<HttpClient> setup)
 	{
 		/// <summary>
 		///     Setup for the method
@@ -32,14 +32,14 @@ public static partial class HttpClientExtensions
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> SendAsync(
 			IParameter<HttpRequestMessage> request)
 		{
-			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
+			if (setup is IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
-					new("System.Net.Http.HttpMessageHandler.SendAsync",
+					new("global::System.Net.Http.HttpMessageHandler.SendAsync",
 						new NamedParameter("request", (IParameter)request),
 						new NamedParameter("cancellationToken", (IParameter)It.IsAny<CancellationToken>()));
-				httpMessageHandlerMock.Mock.Registrations.SetupMethod(methodSetup);
+				httpMessageHandlerMock.Registrations.SetupMethod(methodSetup);
 				return methodSetup;
 			}
 
@@ -56,19 +56,19 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		public VerificationResult<HttpClient> InvokedSetup(IMethodSetup setup)
 		{
-			if (verify is not Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock ||
-			    httpClientMock.ConstructorParameters[0] is not IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
+			if (verify is HttpClient httpClient and IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
-				throw new MockException("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
+				if (setup is not IVerifiableMethodSetup verifiableMethodSetup)
+				{
+					throw new MockException("The setup is not verifiable.");
+				}
+
+				return httpMessageHandlerMock.Registrations.Method(httpClient,
+					verifiableMethodSetup.GetMatch());
 			}
 
-			if (setup is not IVerifiableMethodSetup verifiableMethodSetup)
-			{
-				throw new MockException("The setup is not verifiable.");
-			}
-
-			return httpMessageHandlerMock.Registrations.Method(httpClientMock.Subject,
-				verifiableMethodSetup.GetMatch());
+			throw new MockException("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
 		}
 	}
 

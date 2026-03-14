@@ -19,8 +19,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", 442, false)]
 			public async Task ShouldVerifyPort(string uri, int port, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().WithPort(port))
 					.ReturnsAsync(HttpStatusCode.OK);
 

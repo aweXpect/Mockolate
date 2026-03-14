@@ -7,41 +7,41 @@ public sealed partial class RaiseTests
 		[Fact]
 		public async Task Subscription_ShouldBeRegistered()
 		{
-			MyRaiseEvent mock = Mock.Create<MyRaiseEvent>();
+			MyRaiseEvent mock = MyRaiseEvent.CreateMock();
 			EventHandler handler = (_, _) => { };
 
 			mock.SubscribeToSomeEvent += handler;
 			mock.SubscribeToSomeEvent += handler;
 
-			await That(mock.VerifyMock.SubscribedTo.Protected.SomeEvent()).Exactly(2);
-			await That(mock.VerifyMock.UnsubscribedFrom.Protected.SomeEvent()).Never();
+			await That(mock.Mock.Verify.SomeEvent.Subscribed()).Exactly(2);
+			await That(mock.Mock.Verify.SomeEvent.Unsubscribed()).Never();
 		}
 
 		[Fact]
 		public async Task Unsubscription_ShouldBeRegistered()
 		{
-			MyRaiseEvent mock = Mock.Create<MyRaiseEvent>();
+			MyRaiseEvent mock = MyRaiseEvent.CreateMock();
 			EventHandler handler = (_, _) => { };
 
 			mock.SubscribeToSomeEvent -= handler;
 
-			await That(mock.VerifyMock.SubscribedTo.Protected.SomeEvent()).Never();
-			await That(mock.VerifyMock.UnsubscribedFrom.Protected.SomeEvent()).Once();
+			await That(mock.Mock.Verify.SomeEvent.Subscribed()).Never();
+			await That(mock.Mock.Verify.SomeEvent.Unsubscribed()).Once();
 		}
 
 		[Fact]
 		public async Task WhenUsingRaise_AnyParameters_ShouldInvokeEvent()
 		{
 			int callCount = 0;
-			MyRaiseEvent mock = Mock.Create<MyRaiseEvent>();
+			MyRaiseEvent mock = MyRaiseEvent.CreateMock();
 			EventHandler handler = (_, _) => { callCount++; };
 
 			mock.SubscribeToSomeEvent += handler;
-			mock.RaiseOnMock.Protected.SomeEvent(Match.WithDefaultParameters());
-			mock.RaiseOnMock.Protected.SomeEvent(Match.WithDefaultParameters());
+			mock.Mock.Raise.SomeEvent(Match.WithDefaultParameters());
+			mock.Mock.Raise.SomeEvent(Match.WithDefaultParameters());
 			mock.SubscribeToSomeEvent -= handler;
-			mock.RaiseOnMock.Protected.SomeEvent(Match.WithDefaultParameters());
-			mock.RaiseOnMock.Protected.SomeEvent(Match.WithDefaultParameters());
+			mock.Mock.Raise.SomeEvent(Match.WithDefaultParameters());
+			mock.Mock.Raise.SomeEvent(Match.WithDefaultParameters());
 
 			await That(callCount).IsEqualTo(2);
 		}
@@ -50,15 +50,15 @@ public sealed partial class RaiseTests
 		public async Task WhenUsingRaise_ShouldInvokeEvent()
 		{
 			int callCount = 0;
-			MyRaiseEvent mock = Mock.Create<MyRaiseEvent>();
+			MyRaiseEvent mock = MyRaiseEvent.CreateMock();
 			EventHandler handler = (_, _) => { callCount++; };
 
 			mock.SubscribeToSomeEvent += handler;
-			mock.RaiseOnMock.Protected.SomeEvent(this, EventArgs.Empty);
-			mock.RaiseOnMock.Protected.SomeEvent(this, EventArgs.Empty);
+			mock.Mock.Raise.SomeEvent(this, EventArgs.Empty);
+			mock.Mock.Raise.SomeEvent(this, EventArgs.Empty);
 			mock.SubscribeToSomeEvent -= handler;
-			mock.RaiseOnMock.Protected.SomeEvent(this, EventArgs.Empty);
-			mock.RaiseOnMock.Protected.SomeEvent(this, EventArgs.Empty);
+			mock.Mock.Raise.SomeEvent(this, EventArgs.Empty);
+			mock.Mock.Raise.SomeEvent(this, EventArgs.Empty);
 
 			await That(callCount).IsEqualTo(2);
 		}

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Parameters;
+using Mockolate.Setup;
 using Mockolate.Verify;
 
 // ReSharper disable once CheckNamespace
@@ -13,7 +14,7 @@ namespace Mockolate;
 public static partial class HttpClientExtensions
 {
 	/// <inheritdoc cref="HttpClientExtensions" />
-	extension(IMockVerifyInvokedWithToStringWithEqualsWithGetHashCode<HttpClient> verifyInvoked)
+	extension(IMockVerify<HttpClient> verify)
 	{
 		/// <summary>
 		///     Validates the invocations for the method
@@ -23,7 +24,7 @@ public static partial class HttpClientExtensions
 		public VerificationResult<HttpClient> PatchAsync(
 			IParameter<string?> requestUri,
 			IParameter<HttpContent?>? content = null)
-			=> verifyInvoked.PatchAsync(
+			=> verify.PatchAsync(
 				requestUri,
 				content ?? It.IsAny<HttpContent?>(),
 				It.IsAny<CancellationToken>());
@@ -36,7 +37,7 @@ public static partial class HttpClientExtensions
 		public VerificationResult<HttpClient> PatchAsync(
 			IParameter<Uri?> requestUri,
 			IParameter<HttpContent?>? content = null)
-			=> verifyInvoked.PatchAsync(
+			=> verify.PatchAsync(
 				requestUri,
 				content ?? It.IsAny<HttpContent?>(),
 				It.IsAny<CancellationToken>());
@@ -51,15 +52,18 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (verifyInvoked is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
+			if (verify is HttpClient httpClient and IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
-				return httpMessageHandlerMock.Mock.Method("System.Net.Http.HttpMessageHandler.SendAsync",
-						new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Patch,
-							new HttpStringUriParameter(requestUri),
-							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
-						new NamedParameter("cancellationToken", (IParameter)cancellationToken))
-					.Map(httpClientMock.Subject);
+				return httpMessageHandlerMock.Registrations.Method(
+						httpClientMock.ConstructorParameters[0],
+						new MethodParameterMatch("global::System.Net.Http.HttpMessageHandler.SendAsync", [
+							new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Patch,
+								new HttpStringUriParameter(requestUri),
+								new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
+							new NamedParameter("cancellationToken", (IParameter)cancellationToken),
+						]))
+					.Map(httpClient);
 			}
 
 			throw new MockException(
@@ -76,15 +80,18 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (verifyInvoked is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
+			if (verify is HttpClient httpClient and IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
-				return httpMessageHandlerMock.Mock.Method("System.Net.Http.HttpMessageHandler.SendAsync",
-						new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Patch,
-							new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),
-							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
-						new NamedParameter("cancellationToken", (IParameter)cancellationToken))
-					.Map(httpClientMock.Subject);
+				return httpMessageHandlerMock.Registrations.Method(
+						httpClientMock.ConstructorParameters[0],
+						new MethodParameterMatch("global::System.Net.Http.HttpMessageHandler.SendAsync", [
+							new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Patch,
+								new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),
+								new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
+							new NamedParameter("cancellationToken", (IParameter)cancellationToken),
+						]))
+					.Map(httpClient);
 			}
 
 			throw new MockException(

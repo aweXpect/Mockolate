@@ -10,7 +10,7 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WhenFalse_ShouldReturnDefaultValueInNotSetupMethods()
 		{
-			IMyService mock = Mock.Create<IMyService>(MockBehavior.Default with
+			IMyService mock = IMyService.CreateMock(MockBehavior.Default with
 			{
 				ThrowWhenNotSetup = false,
 			});
@@ -23,7 +23,7 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WhenTrue_ShouldThrowMockNotSetupException()
 		{
-			IMyService mock = Mock.Create<IMyService>(MockBehavior.Default with
+			IMyService mock = IMyService.CreateMock(MockBehavior.Default with
 			{
 				ThrowWhenNotSetup = true,
 			});
@@ -35,7 +35,7 @@ public sealed partial class MockBehaviorTests
 
 			await That(Act).Throws<MockNotSetupException>()
 				.WithMessage(
-					"The method 'Mockolate.Tests.TestHelpers.IMyService.DoSomethingAndReturn(int)' was invoked without prior setup.");
+					"The method 'global::Mockolate.Tests.TestHelpers.IMyService.DoSomethingAndReturn(int)' was invoked without prior setup.");
 		}
 	}
 }

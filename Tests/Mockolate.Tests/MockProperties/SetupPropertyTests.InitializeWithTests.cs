@@ -10,9 +10,9 @@ public sealed partial class SetupPropertyTests
 		public async Task Returns_PredicateIsFalse_ShouldUseInitializedDefaultValue()
 		{
 			List<int> results = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.InitializeWith(2)
 				.Returns(() => 4).When(i => i > 3);
 
@@ -31,8 +31,8 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WhenRead_ShouldReturnInitializedValue()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty.InitializeWith(42);
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyProperty.InitializeWith(42);
 
 			int result = sut.MyProperty;
 
@@ -42,8 +42,8 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WhenSet_ShouldUpdateValue_ShouldReturnInitializedValue()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty.InitializeWith(42);
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyProperty.InitializeWith(42);
 
 			int result1 = sut.MyProperty;
 			sut.MyProperty = 100;
@@ -56,8 +56,8 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WithNull_ShouldReturnNull()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyStringProperty.InitializeWith(null!);
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyStringProperty.InitializeWith(null!);
 
 			string? result = sut.MyStringProperty;
 

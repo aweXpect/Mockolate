@@ -14,11 +14,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method0()
+					sut.Mock.Setup.Method0()
 						.Returns("").For(times);
 				}
 
@@ -29,9 +29,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -48,9 +48,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Returns("d")
 					.Returns("c")
 					.Returns(() => "b");
@@ -69,11 +69,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method0()
+					sut.Mock.Setup.Method0()
 						.Returns("").Only(times);
 				}
 
@@ -85,9 +85,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldLimitMatches()
 			{
 				List<string> results = [];
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Returns("a").When(v => v > 1).Only(2);
 
 				results.Add(sut.Method0());
@@ -102,9 +102,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Returns(() => "d");
+				sut.Mock.Setup.Method0().Returns(() => "d");
 
 				string result = sut.Method0();
 
@@ -114,9 +114,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -132,9 +132,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -151,9 +151,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Returns("foo").Only(2)
 					.Returns("bar").Only(3);
 
@@ -169,9 +169,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Returns("d");
+				sut.Mock.Setup.Method0().Returns("d");
 
 				string result = sut.Method0();
 
@@ -181,9 +181,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut.Method0();
@@ -198,9 +198,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3).OnlyOnce();
@@ -219,7 +219,7 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				string result = sut.Method0();
 
@@ -229,8 +229,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithoutReturn_ShouldUseBaseValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method0().Do(() => { });
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method0().Do(() => { });
 
 				string result = sut.Method0();
 
@@ -240,8 +240,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithReturn_ShouldReturnSetupValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method0()
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method0()
 					.Returns("bar");
 
 				string result = sut.Method0();
@@ -252,9 +252,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Throws(() => new Exception("foo"));
+				sut.Mock.Setup.Method0().Throws(() => new Exception("foo"));
 
 				void Act()
 				{
@@ -267,9 +267,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Throws<ArgumentNullException>();
+				sut.Mock.Setup.Method0().Throws<ArgumentNullException>();
 
 				void Act()
 				{
@@ -282,9 +282,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Throws(new Exception("foo"));
+				sut.Mock.Setup.Method0().Throws(new Exception("foo"));
 
 				void Act()
 				{
@@ -297,9 +297,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnBuilder<string> setup =
-					(IReturnMethodSetupReturnBuilder<string>)mock.SetupMock.Method.Method0();
+					(IReturnMethodSetupReturnBuilder<string>)mock.Mock.Setup.Method0();
 
 				void ActWhen()
 				{
@@ -318,9 +318,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnWhenBuilder<string> setup =
-					(IReturnMethodSetupReturnWhenBuilder<string>)mock.SetupMock.Method.Method0();
+					(IReturnMethodSetupReturnWhenBuilder<string>)mock.Mock.Setup.Method0();
 
 				void ActFor()
 				{
@@ -344,11 +344,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method1(It.IsAny<int>())
+					sut.Mock.Setup.Method1(It.IsAny<int>())
 						.Returns("").For(times);
 				}
 
@@ -359,9 +359,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -378,9 +378,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns(v => $"foo-{v}");
@@ -399,11 +399,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method1(It.IsAny<int>())
+					sut.Mock.Setup.Method1(It.IsAny<int>())
 						.Returns("").Only(times);
 				}
 
@@ -414,9 +414,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>()).Returns(() => "d");
+				sut.Mock.Setup.Method1(It.IsAny<int>()).Returns(() => "d");
 
 				string result = sut.Method1(3);
 
@@ -426,9 +426,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>()).Returns(x => $"foo-{x}");
+				sut.Mock.Setup.Method1(It.IsAny<int>()).Returns(x => $"foo-{x}");
 
 				string result = sut.Method1(3);
 
@@ -438,9 +438,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -456,9 +456,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -475,9 +475,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Returns("foo").Only(2)
 					.Returns("bar").Only(3);
 
@@ -493,9 +493,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>()).Returns("d");
+				sut.Mock.Setup.Method1(It.IsAny<int>()).Returns("d");
 
 				string result = sut.Method1(3);
 
@@ -505,9 +505,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut.Method1(1);
@@ -522,9 +522,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3).OnlyOnce();
@@ -543,7 +543,7 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				string result = sut.Method1(3);
 
@@ -553,8 +553,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithoutReturn_ShouldUseBaseValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>()).Do(() => { });
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method1(It.IsAny<int>()).Do(() => { });
 
 				string result = sut.Method1(1);
 
@@ -564,8 +564,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithReturn_ShouldReturnSetupValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Returns("bar");
 
 				string result = sut.Method1(1);
@@ -576,9 +576,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -592,9 +592,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(v1 => new Exception("foo-" + v1));
 
 				void Act()
@@ -608,9 +608,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -624,9 +624,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -641,9 +641,9 @@ public sealed partial class SetupMethodTests
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -656,9 +656,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnBuilder<string, int> setup =
-					(IReturnMethodSetupReturnBuilder<string, int>)mock.SetupMock.Method.Method1(It.IsAny<int>());
+					(IReturnMethodSetupReturnBuilder<string, int>)mock.Mock.Setup.Method1(It.IsAny<int>());
 
 				void ActWhen()
 				{
@@ -677,9 +677,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnWhenBuilder<string, int> setup =
-					(IReturnMethodSetupReturnWhenBuilder<string, int>)mock.SetupMock.Method.Method1(It.IsAny<int>());
+					(IReturnMethodSetupReturnWhenBuilder<string, int>)mock.Mock.Setup.Method1(It.IsAny<int>());
 
 				void ActFor()
 				{
@@ -703,11 +703,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 						.Returns("").For(times);
 				}
 
@@ -718,9 +718,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -737,9 +737,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2) => $"foo-{v1}-{v2}");
@@ -758,11 +758,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 						.Returns("").Only(times);
 				}
 
@@ -773,9 +773,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>()).Returns(() => "d");
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>()).Returns(() => "d");
 
 				string result = sut.Method2(2, 3);
 
@@ -785,9 +785,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>()).Returns((x, y) => $"foo-{x}-{y}");
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>()).Returns((x, y) => $"foo-{x}-{y}");
 
 				string result = sut.Method2(2, 3);
 
@@ -797,9 +797,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -815,9 +815,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -834,9 +834,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").Only(2)
 					.Returns("bar").Only(3);
 
@@ -852,9 +852,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>()).Returns("d");
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>()).Returns("d");
 
 				string result = sut.Method2(2, 3);
 
@@ -864,9 +864,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut.Method2(1, 2);
@@ -881,9 +881,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3).OnlyOnce();
@@ -902,7 +902,7 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				string result = sut.Method2(2, 3);
 
@@ -912,8 +912,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithoutReturn_ShouldUseBaseValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>()).Do(() => { });
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>()).Do(() => { });
 
 				string result = sut.Method2(1, 2);
 
@@ -923,8 +923,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithReturn_ShouldReturnSetupValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Returns("bar");
 
 				string result = sut.Method2(1, 2);
@@ -935,9 +935,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -951,9 +951,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
 
 				void Act()
@@ -967,9 +967,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -983,9 +983,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -1000,9 +1000,9 @@ public sealed partial class SetupMethodTests
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -1015,9 +1015,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnBuilder<string, int, int> setup =
-					(IReturnMethodSetupReturnBuilder<string, int, int>)mock.SetupMock.Method.Method2(
+					(IReturnMethodSetupReturnBuilder<string, int, int>)mock.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1037,9 +1037,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnWhenBuilder<string, int, int> setup =
-					(IReturnMethodSetupReturnWhenBuilder<string, int, int>)mock.SetupMock.Method.Method2(
+					(IReturnMethodSetupReturnWhenBuilder<string, int, int>)mock.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -1064,11 +1064,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 						.Returns("").For(times);
 				}
 
@@ -1079,9 +1079,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -1098,9 +1098,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2, v3) => $"foo-{v1}-{v2}-{v3}");
@@ -1120,11 +1120,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 						.Returns("").Only(times);
 				}
 
@@ -1135,9 +1135,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns(() => "d");
 
 				string result = sut.Method3(1, 2, 3);
@@ -1148,9 +1148,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns((x, y, z) => $"foo-{x}-{y}-{z}");
 
 				string result = sut.Method3(2, 3, 4);
@@ -1161,9 +1161,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -1179,9 +1179,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -1198,9 +1198,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").Only(2)
 					.Returns("bar").Only(3);
 
@@ -1216,9 +1216,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("d");
 
 				string result = sut.Method3(1, 2, 3);
@@ -1229,9 +1229,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut.Method3(1, 2, 3);
@@ -1246,9 +1246,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3).OnlyOnce();
@@ -1267,7 +1267,7 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				string result = sut.Method3(2, 3, 4);
 
@@ -1277,8 +1277,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithoutReturn_ShouldUseBaseValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Do(() => { });
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()).Do(() => { });
 
 				string result = sut.Method3(1, 2, 3);
 
@@ -1288,8 +1288,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithReturn_ShouldReturnSetupValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("bar");
 
 				string result = sut.Method3(1, 2, 3);
@@ -1300,9 +1300,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1316,9 +1316,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
 
 				void Act()
@@ -1332,9 +1332,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -1348,9 +1348,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -1365,9 +1365,9 @@ public sealed partial class SetupMethodTests
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -1380,9 +1380,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnBuilder<string, int, int, int> setup =
-					(IReturnMethodSetupReturnBuilder<string, int, int, int>)mock.SetupMock.Method.Method3(
+					(IReturnMethodSetupReturnBuilder<string, int, int, int>)mock.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1402,9 +1402,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnWhenBuilder<string, int, int, int> setup =
-					(IReturnMethodSetupReturnWhenBuilder<string, int, int, int>)mock.SetupMock.Method.Method3(
+					(IReturnMethodSetupReturnWhenBuilder<string, int, int, int>)mock.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -1429,11 +1429,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 						.Returns("").For(times);
 				}
 
@@ -1444,9 +1444,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
 					.Returns(() => "b");
@@ -1463,9 +1463,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
 					.Returns((v1, v2, v3, v4) => $"foo-{v1}-{v2}-{v3}-{v4}");
@@ -1486,11 +1486,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 						.Returns("").Only(times);
 				}
 
@@ -1501,9 +1501,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns(() => "d");
 
 				string result = sut.Method4(1, 2, 3, 4);
@@ -1514,9 +1514,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns((x, y, z, a) => $"foo-{x}-{y}-{z}-{a}");
 
 				string result = sut.Method4(2, 3, 4, 5);
@@ -1527,9 +1527,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
 
@@ -1545,9 +1545,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
 					.Returns("c").Forever();
@@ -1564,9 +1564,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").Only(2)
 					.Returns("bar").Only(3);
 
@@ -1582,9 +1582,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("d");
 
 				string result = sut.Method4(1, 2, 3, 4);
@@ -1595,9 +1595,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
 				string result1 = sut.Method4(1, 2, 3, 4);
@@ -1612,9 +1612,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
 					.Returns("bar").For(3).OnlyOnce();
@@ -1633,7 +1633,7 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				string result = sut.Method4(2, 3, 4, 5);
 
@@ -1643,8 +1643,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithoutReturn_ShouldUseBaseValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { });
 
 				string result = sut.Method4(1, 2, 3, 4);
@@ -1655,8 +1655,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns("bar");
 
 				string result = sut.Method4(1, 2, 3, 4);
@@ -1667,9 +1667,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -1683,9 +1683,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
 
 				void Act()
@@ -1699,9 +1699,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -1715,9 +1715,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -1732,9 +1732,9 @@ public sealed partial class SetupMethodTests
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns((string?)null!);
 
@@ -1747,9 +1747,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnBuilder<string, int, int, int, int> setup =
-					(IReturnMethodSetupReturnBuilder<string, int, int, int, int>)mock.SetupMock.Method.Method4(
+					(IReturnMethodSetupReturnBuilder<string, int, int, int, int>)mock.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1769,9 +1769,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnWhenBuilder<string, int, int, int, int> setup =
-					(IReturnMethodSetupReturnWhenBuilder<string, int, int, int, int>)mock.SetupMock.Method.Method4(
+					(IReturnMethodSetupReturnWhenBuilder<string, int, int, int, int>)mock.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -1796,11 +1796,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+					sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 							It.IsAny<int>())
 						.Returns("").For(times);
 				}
@@ -1812,9 +1812,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("d")
 					.Throws(new Exception("foo"))
@@ -1832,9 +1832,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("d")
 					.Returns(() => "c")
@@ -1856,11 +1856,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+					sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 							It.IsAny<int>())
 						.Returns("").Only(times);
 				}
@@ -1872,9 +1872,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Callback_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns(() => "d");
 
@@ -1886,9 +1886,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns((x, y, z, a, b) => $"foo-{x}-{y}-{z}-{a}-{b}");
 
@@ -1900,9 +1900,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("foo").For(2)
 					.Returns("bar").For(3);
@@ -1919,9 +1919,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("a")
 					.Returns("b")
@@ -1939,9 +1939,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("foo").Only(2)
 					.Returns("bar").Only(3);
@@ -1958,9 +1958,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_ShouldReturnExpectedValue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("d");
 
@@ -1972,9 +1972,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("foo").When(i => i > 0);
 
@@ -1990,9 +1990,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("foo").When(i => i > 0).For(2)
 					.Returns("baz")
@@ -2012,7 +2012,7 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WithoutSetup_ShouldReturnDefault()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				string result = sut.Method5(2, 3, 4, 5, 6);
 
@@ -2022,8 +2022,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithoutReturn_ShouldUseBaseValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Do(() => { });
 
@@ -2035,8 +2035,8 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task SetupWithReturn_ShouldIgnoreBaseValue()
 			{
-				ReturnMethodSetupTest sut = Mock.Create<ReturnMethodSetupTest>();
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				ReturnMethodSetupTest sut = ReturnMethodSetupTest.CreateMock();
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Returns("bar");
 
@@ -2048,9 +2048,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
@@ -2065,9 +2065,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
@@ -2082,9 +2082,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
@@ -2099,9 +2099,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
@@ -2117,9 +2117,9 @@ public sealed partial class SetupMethodTests
 			public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 			{
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Do(() => { callCount++; })
 					.Returns((string?)null!);
@@ -2133,9 +2133,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnBuilder<string, int, int, int, int, int> setup =
-					(IReturnMethodSetupReturnBuilder<string, int, int, int, int, int>)mock.SetupMock.Method.Method5(
+					(IReturnMethodSetupReturnBuilder<string, int, int, int, int, int>)mock.Mock.Setup.Method5(
 						It.IsAny<int>(),
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
@@ -2156,9 +2156,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IReturnMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupReturnWhenBuilder<string, int, int, int, int, int> setup =
-					(IReturnMethodSetupReturnWhenBuilder<string, int, int, int, int, int>)mock.SetupMock.Method.Method5(
+					(IReturnMethodSetupReturnWhenBuilder<string, int, int, int, int, int>)mock.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -2183,11 +2183,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method0()
+					sut.Mock.Setup.Method0()
 						.Throws<Exception>().For(times);
 				}
 
@@ -2198,9 +2198,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -2221,11 +2221,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method0()
+					sut.Mock.Setup.Method0()
 						.Throws<Exception>().Only(times);
 				}
 
@@ -2237,9 +2237,9 @@ public sealed partial class SetupMethodTests
 			public async Task Only_ShouldLimitMatches()
 			{
 				List<string> results = [];
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Throws(new Exception("a")).When(v => v > 1).Only(2);
 
 				for (int i = 0; i < 5; i++)
@@ -2261,9 +2261,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Throws(new Exception("foo")).For(2)
 					.Throws(new Exception("bar")).For(3);
 
@@ -2287,9 +2287,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Throws(new Exception("a"))
 					.Throws(new Exception("b"))
 					.Throws(new Exception("c")).Forever();
@@ -2314,9 +2314,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Throws(new Exception("foo")).Only(2)
 					.Throws(new Exception("bar")).Only(3);
 
@@ -2340,9 +2340,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Throws(new Exception("foo")).When(i => i > 0);
 
 				await That(() => sut.Method0()).DoesNotThrow();
@@ -2353,9 +2353,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0()
+				sut.Mock.Setup.Method0()
 					.Throws(new Exception("foo")).When(i => i > 0).For(2)
 					.Throws(new Exception("baz"))
 					.Throws(new Exception("bar")).For(3).OnlyOnce();
@@ -2382,9 +2382,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Throws(() => new Exception("foo"));
+				sut.Mock.Setup.Method0().Throws(() => new Exception("foo"));
 
 				void Act()
 				{
@@ -2397,9 +2397,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Throws<ArgumentNullException>();
+				sut.Mock.Setup.Method0().Throws<ArgumentNullException>();
 
 				void Act()
 				{
@@ -2412,9 +2412,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method0().Throws(new Exception("foo"));
+				sut.Mock.Setup.Method0().Throws(new Exception("foo"));
 
 				void Act()
 				{
@@ -2427,9 +2427,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnBuilder setup =
-					(IVoidMethodSetupReturnBuilder)mock.SetupMock.Method.Method0();
+					(IVoidMethodSetupReturnBuilder)mock.Mock.Setup.Method0();
 
 				void ActWhen()
 				{
@@ -2448,9 +2448,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnWhenBuilder setup =
-					(IVoidMethodSetupReturnWhenBuilder)mock.SetupMock.Method.Method0();
+					(IVoidMethodSetupReturnWhenBuilder)mock.Mock.Setup.Method0();
 
 				void ActFor()
 				{
@@ -2474,11 +2474,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method1(It.IsAny<int>())
+					sut.Mock.Setup.Method1(It.IsAny<int>())
 						.Throws<Exception>().For(times);
 				}
 
@@ -2489,9 +2489,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -2512,11 +2512,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method1(It.IsAny<int>())
+					sut.Mock.Setup.Method1(It.IsAny<int>())
 						.Throws<Exception>().Only(times);
 				}
 
@@ -2527,9 +2527,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(new Exception("foo")).For(2)
 					.Throws(new Exception("bar")).For(3);
 
@@ -2553,9 +2553,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(new Exception("a"))
 					.Throws(new Exception("b"))
 					.Throws(new Exception("c")).Forever();
@@ -2580,9 +2580,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(new Exception("foo")).Only(2)
 					.Throws(new Exception("bar")).Only(3);
 
@@ -2606,9 +2606,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0);
 
 				await That(() => sut.Method1(1)).DoesNotThrow();
@@ -2619,9 +2619,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0).For(2)
 					.Throws(new Exception("baz"))
 					.Throws(new Exception("bar")).For(3).OnlyOnce();
@@ -2648,9 +2648,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>()).Throws(() => new Exception("foo"));
+				sut.Mock.Setup.Method1(It.IsAny<int>()).Throws(() => new Exception("foo"));
 
 				void Act()
 				{
@@ -2663,9 +2663,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>()).Throws(v1 => new Exception($"foo-{v1}"));
+				sut.Mock.Setup.Method1(It.IsAny<int>()).Throws(v1 => new Exception($"foo-{v1}"));
 
 				void Act()
 				{
@@ -2678,9 +2678,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -2694,9 +2694,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1(It.IsAny<int>())
+				sut.Mock.Setup.Method1(It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -2710,9 +2710,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnBuilder<int> setup =
-					(IVoidMethodSetupReturnBuilder<int>)mock.SetupMock.Method.Method1(It.IsAny<int>());
+					(IVoidMethodSetupReturnBuilder<int>)mock.Mock.Setup.Method1(It.IsAny<int>());
 
 				void ActWhen()
 				{
@@ -2731,9 +2731,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnWhenBuilder<int> setup =
-					(IVoidMethodSetupReturnWhenBuilder<int>)mock.SetupMock.Method.Method1(It.IsAny<int>());
+					(IVoidMethodSetupReturnWhenBuilder<int>)mock.Mock.Setup.Method1(It.IsAny<int>());
 
 				void ActFor()
 				{
@@ -2757,11 +2757,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 						.Throws<Exception>().For(times);
 				}
 
@@ -2772,9 +2772,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -2795,11 +2795,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 						.Throws<Exception>().Only(times);
 				}
 
@@ -2810,9 +2810,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).For(2)
 					.Throws(new Exception("bar")).For(3);
 
@@ -2836,9 +2836,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("a"))
 					.Throws(new Exception("b"))
 					.Throws(new Exception("c")).Forever();
@@ -2863,9 +2863,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).Only(2)
 					.Throws(new Exception("bar")).Only(3);
 
@@ -2889,9 +2889,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0);
 
 				await That(() => sut.Method2(1, 2)).DoesNotThrow();
@@ -2902,9 +2902,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0).For(2)
 					.Throws(new Exception("baz"))
 					.Throws(new Exception("bar")).For(3).OnlyOnce();
@@ -2931,9 +2931,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -2947,9 +2947,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws((v1, v2) => new Exception($"foo-{v1}-{v2}"));
 
 				void Act()
@@ -2963,9 +2963,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -2979,9 +2979,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2(It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -2995,9 +2995,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnBuilder<int, int> setup =
-					(IVoidMethodSetupReturnBuilder<int, int>)mock.SetupMock.Method.Method2(
+					(IVoidMethodSetupReturnBuilder<int, int>)mock.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3017,9 +3017,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnWhenBuilder<int, int> setup =
-					(IVoidMethodSetupReturnWhenBuilder<int, int>)mock.SetupMock.Method.Method2(
+					(IVoidMethodSetupReturnWhenBuilder<int, int>)mock.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -3044,11 +3044,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 						.Throws<Exception>().For(times);
 				}
 
@@ -3059,9 +3059,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -3082,11 +3082,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 						.Throws<Exception>().Only(times);
 				}
 
@@ -3097,9 +3097,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).For(2)
 					.Throws(new Exception("bar")).For(3);
 
@@ -3123,9 +3123,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("a"))
 					.Throws(new Exception("b"))
 					.Throws(new Exception("c")).Forever();
@@ -3150,9 +3150,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).Only(2)
 					.Throws(new Exception("bar")).Only(3);
 
@@ -3176,9 +3176,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0);
 
 				await That(() => sut.Method3(1, 2, 3)).DoesNotThrow();
@@ -3189,9 +3189,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0).For(2)
 					.Throws(new Exception("baz"))
 					.Throws(new Exception("bar")).For(3).OnlyOnce();
@@ -3218,9 +3218,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -3234,9 +3234,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws((v1, v2, v3) => new Exception($"foo-{v1}-{v2}-{v3}"));
 
 				void Act()
@@ -3250,9 +3250,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -3266,9 +3266,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -3282,9 +3282,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnBuilder<int, int, int> setup =
-					(IVoidMethodSetupReturnBuilder<int, int, int>)mock.SetupMock.Method.Method3(
+					(IVoidMethodSetupReturnBuilder<int, int, int>)mock.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3304,9 +3304,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnWhenBuilder<int, int, int> setup =
-					(IVoidMethodSetupReturnWhenBuilder<int, int, int>)mock.SetupMock.Method.Method3(
+					(IVoidMethodSetupReturnWhenBuilder<int, int, int>)mock.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -3331,11 +3331,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 						.Throws<Exception>().For(times);
 				}
 
@@ -3346,9 +3346,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
 					.DoesNotThrow();
@@ -3369,11 +3369,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+					sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 						.Throws<Exception>().Only(times);
 				}
 
@@ -3384,9 +3384,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).For(2)
 					.Throws(new Exception("bar")).For(3);
 
@@ -3410,9 +3410,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("a"))
 					.Throws(new Exception("b"))
 					.Throws(new Exception("c")).Forever();
@@ -3437,9 +3437,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).Only(2)
 					.Throws(new Exception("bar")).Only(3);
 
@@ -3463,9 +3463,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0);
 
 				await That(() => sut.Method4(1, 2, 3, 4)).DoesNotThrow();
@@ -3476,9 +3476,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0).For(2)
 					.Throws(new Exception("baz"))
 					.Throws(new Exception("bar")).For(3).OnlyOnce();
@@ -3505,9 +3505,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
 				void Act()
@@ -3521,9 +3521,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws((v1, v2, v3, v4) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}"));
 
 				void Act()
@@ -3537,9 +3537,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
 				void Act()
@@ -3553,9 +3553,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
 				void Act()
@@ -3569,9 +3569,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnBuilder<int, int, int, int> setup =
-					(IVoidMethodSetupReturnBuilder<int, int, int, int>)mock.SetupMock.Method.Method4(
+					(IVoidMethodSetupReturnBuilder<int, int, int, int>)mock.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3591,9 +3591,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnWhenBuilder<int, int, int, int> setup =
-					(IVoidMethodSetupReturnWhenBuilder<int, int, int, int>)mock.SetupMock.Method.Method4(
+					(IVoidMethodSetupReturnWhenBuilder<int, int, int, int>)mock.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -3618,11 +3618,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task For_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+					sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 							It.IsAny<int>())
 						.Throws<Exception>().For(times);
 				}
@@ -3634,9 +3634,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task MixDoesNotThrowAndThrow_ShouldIterateThroughBoth()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.DoesNotThrow()
 					.Throws(new Exception("foo"))
@@ -3658,11 +3658,11 @@ public sealed partial class SetupMethodTests
 			[InlineData(0)]
 			public async Task Only_LessThanOne_ShouldThrowArgumentOutOfRangeException(int times)
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
 				void Act()
 				{
-					sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+					sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 							It.IsAny<int>())
 						.Throws<Exception>().Only(times);
 				}
@@ -3674,9 +3674,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_For_ShouldRepeatUsage_ForTheSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(new Exception("foo")).For(2)
 					.Throws(new Exception("bar")).For(3);
@@ -3701,9 +3701,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Forever_ShouldUseTheLastValueForever()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(new Exception("a"))
 					.Throws(new Exception("b"))
@@ -3729,9 +3729,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_Only_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(new Exception("foo")).Only(2)
 					.Throws(new Exception("bar")).Only(3);
@@ -3756,9 +3756,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0);
 
@@ -3770,9 +3770,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(new Exception("foo")).When(i => i > 0).For(2)
 					.Throws(new Exception("baz"))
@@ -3800,9 +3800,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Callback_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(() => new Exception("foo"));
 
@@ -3817,9 +3817,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_CallbackWithValue_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws((v1, v2, v3, v4, v5) => new Exception($"foo-{v1}-{v2}-{v3}-{v4}-{v5}"));
 
@@ -3834,9 +3834,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_Generic_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws<ArgumentNullException>();
 
@@ -3851,9 +3851,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task Throws_ShouldThrowException()
 			{
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>())
 					.Throws(new Exception("foo"));
 
@@ -3868,9 +3868,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnBuilder<int, int, int, int, int> setup =
-					(IVoidMethodSetupReturnBuilder<int, int, int, int, int>)mock.SetupMock.Method.Method5(
+					(IVoidMethodSetupReturnBuilder<int, int, int, int, int>)mock.Mock.Setup.Method5(
 						It.IsAny<int>(),
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
@@ -3891,9 +3891,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupReturnWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupReturnWhenBuilder<int, int, int, int, int> setup =
-					(IVoidMethodSetupReturnWhenBuilder<int, int, int, int, int>)mock.SetupMock.Method.Method5(
+					(IVoidMethodSetupReturnWhenBuilder<int, int, int, int, int>)mock.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()

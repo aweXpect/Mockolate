@@ -31,8 +31,8 @@ public sealed partial class ItExtensionsTests
 					values.Add((rawValues[i], new HttpFormDataValue(rawValues[i + 1])));
 				}
 
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values).Exactly())
 					.ReturnsAsync(HttpStatusCode.OK);
 				MultipartFormDataContent content = new()
@@ -57,8 +57,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("x<>", "1<2> 3 ")]
 			public async Task ShouldEncodeValues(string key, string value)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(key, value))
 					.ReturnsAsync(HttpStatusCode.OK);
 				MultipartFormDataContent content = new()
@@ -88,8 +88,8 @@ public sealed partial class ItExtensionsTests
 					values.Add((rawValues[i], new HttpFormDataValue(rawValues[i + 1])));
 				}
 
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values))
 					.ReturnsAsync(HttpStatusCode.OK);
 				MultipartFormDataContent content = new()
@@ -111,8 +111,8 @@ public sealed partial class ItExtensionsTests
 				HttpResponseMessage result =
 					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
 
-				await That(httpClient.VerifyMock.Invoked
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values)))
+				await That(httpClient.Mock.Verify
+						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values)))
 					.Once();
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
@@ -127,8 +127,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", "", true)]
 			public async Task WithFormDataParameter_ShouldVerifyParameters(string key, string value, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(key, value))
 					.ReturnsAsync(HttpStatusCode.OK);
 				MultipartFormDataContent content = new()
@@ -168,8 +168,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", true)]
 			public async Task WithFormDataString_ShouldVerifyParameters(string values, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values))
 					.ReturnsAsync(HttpStatusCode.OK);
 				MultipartFormDataContent content = new()

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Mockolate.SourceGenerators.Entities;
 using Type = Mockolate.SourceGenerators.Entities.Type;
@@ -25,7 +26,7 @@ public class MockGenerator : IIncrementalGenerator
 
 		IncrementalValueProvider<ImmutableArray<MockClass>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
-				static (s, _) => s.IsCreateMethodInvocation(),
+				static (s, _) => s is InvocationExpressionSyntax,
 				(ctx, _) => ctx.Node.ExtractMockOrMockFactoryCreateSyntaxOrDefault(ctx.SemanticModel))
 			.SelectMany(static (mocks, _) => mocks)
 			.Collect();
@@ -37,58 +38,26 @@ public class MockGenerator : IIncrementalGenerator
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
 	{
-		(string Name, MockClass MockClass)[] namedMocksToGenerate = CreateNames(mocksToGenerate);
-		Dictionary<(string? Namespace, string ClassName), HashSet<string>> allUsedNames = [];
-		HashSet<(string? BaseNamespace, string BaseClassName, string? Namespace, string ClassName)>
-			generatedAdditionalInterfacesByBaseType = new();
+		IEnumerable<(string FileName, string Name, Class Class, (string Name, Class Class)[]? AdditionalClasses)> namedMocksToGenerate = CreateNames(mocksToGenerate);
 
-		foreach ((string Name, MockClass MockClass) mockToGenerate in namedMocksToGenerate
-			         .OrderBy(m => m.MockClass.AdditionalImplementations.Count)
-			         .ThenBy(m => m.Name))
+		HashSet<(string, string)> combinationSet = new();
+		foreach ((string FileName, string Name, Class Class, (string Name, Class Class)[]? AdditionalClasses) mockToGenerate in namedMocksToGenerate)
 		{
-			if (!IsValidMockDeclaration(mockToGenerate.MockClass))
+			if (mockToGenerate.Class is MockClass { Delegate: not null, } mockClass)
 			{
-				continue;
+				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
+					SourceText.From(Sources.Sources.MockDelegate(mockToGenerate.Name, mockClass, mockClass.Delegate), Encoding.UTF8));
 			}
-
-			context.AddSource($"MockFor{mockToGenerate.Name}.g.cs",
-				SourceText.From(Sources.Sources.ForMock(mockToGenerate.Name, mockToGenerate.MockClass), Encoding.UTF8));
-			if (mockToGenerate.MockClass.AdditionalImplementations.Any() && mockToGenerate.MockClass.Delegate is null)
+			else if (mockToGenerate.AdditionalClasses is null)
 			{
-				Class[] interfacesToGenerate = mockToGenerate.MockClass.DistinctAdditionalImplementations()
-					.Where(impl => generatedAdditionalInterfacesByBaseType.Add(
-						(mockToGenerate.MockClass.Namespace, mockToGenerate.MockClass.ClassName,
-							impl.Namespace, impl.ClassName)))
-					.ToArray();
-
-				if (interfacesToGenerate.Length > 0)
-				{
-					(string? Namespace, string ClassName) key = (mockToGenerate.MockClass.Namespace,
-						mockToGenerate.MockClass.ClassName);
-					HashSet<string> usedNames;
-					if (allUsedNames.ContainsKey(key))
-					{
-						usedNames = allUsedNames[key];
-					}
-					else
-					{
-						usedNames = new HashSet<string>();
-						allUsedNames.Add(key, usedNames);
-					}
-
-					context.AddSource($"MockFor{mockToGenerate.Name}Extensions.g.cs",
-						SourceText.From(
-							Sources.Sources.ForMockCombinationExtensions(mockToGenerate.Name, mockToGenerate.MockClass,
-								interfacesToGenerate, usedNames),
-							Encoding.UTF8));
-				}
+				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
+					SourceText.From(Sources.Sources.MockClass(mockToGenerate.Name, mockToGenerate.Class), Encoding.UTF8));
 			}
-		}
-
-		foreach ((string name, Class extensionToGenerate) in GetDistinctExtensions(mocksToGenerate))
-		{
-			context.AddSource($"MockFor{name}Extensions.g.cs",
-				SourceText.From(Sources.Sources.ForMockExtensions(name, extensionToGenerate), Encoding.UTF8));
+			else
+			{
+				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
+					SourceText.From(Sources.Sources.MockCombinationClass(mockToGenerate.FileName, mockToGenerate.Name, mockToGenerate.Class, mockToGenerate.AdditionalClasses, combinationSet), Encoding.UTF8));
+			}
 		}
 
 		HashSet<int> indexerSetups = new();
@@ -140,77 +109,56 @@ public class MockGenerator : IIncrementalGenerator
 					.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
 		}
 
-		context.AddSource("MockRegistration.g.cs",
-			SourceText.From(
-				Sources.Sources.ForMockRegistration(namedMocksToGenerate,
-					namedMocksToGenerate.Any(x => IsValidMockDeclaration(x.MockClass))), Encoding.UTF8));
-
 		context.AddSource("MockBehaviorExtensions.g.cs",
 			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate), Encoding.UTF8));
 	}
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
-	private static List<(string Name, Class Class)> GetDistinctExtensions(ImmutableArray<MockClass> mocksToGenerate)
+	private static IEnumerable<(string FileName, string Name, Class Class, (string Name, Class Class)[]? AdditionalClasses)> CreateNames(ImmutableArray<MockClass> mocksToGenerate)
 	{
-		HashSet<(string?, string)> classNames = new();
-		List<(string Name, Class MockClass)> result = new();
-		foreach (MockClass mockToGenerate in mocksToGenerate)
+		HashSet<string> classNames = new(StringComparer.OrdinalIgnoreCase);
+		Dictionary<Class, string> baseClassNames = new(Class.EqualityComparer);
+		foreach (Class @class in mocksToGenerate.Where(IsValidMockDeclaration).SelectMany(x => x.AllImplementations()).Distinct(Class.EqualityComparer))
 		{
-			if (classNames.Add((mockToGenerate.Namespace, mockToGenerate.ClassName)))
-			{
-				int suffix = 1;
-				string actualName = mockToGenerate.GetClassNameWithoutDots();
-				while (result.Any(r => r.Name.Equals(actualName, StringComparison.OrdinalIgnoreCase)))
-				{
-					actualName = $"{mockToGenerate.GetClassNameWithoutDots()}_{suffix++}";
-				}
-
-				result.Add((actualName, mockToGenerate));
-			}
-
-			foreach (Class item in mockToGenerate.AdditionalImplementations.Where(x => x.IsInterface))
-			{
-				if (classNames.Add((item.Namespace, item.ClassName)))
-				{
-					int suffix = 1;
-					string actualName = item.GetClassNameWithoutDots();
-					while (result.Any(r => r.Name.Equals(actualName, StringComparison.OrdinalIgnoreCase)))
-					{
-						actualName = $"{item.GetClassNameWithoutDots()}_{suffix++}";
-					}
-
-					result.Add((actualName, item));
-				}
-			}
-		}
-
-		return result;
-	}
-
-	private static (string Name, MockClass MockClass)[] CreateNames(ImmutableArray<MockClass> mocksToGenerate)
-	{
-		(string Name, MockClass MockClass)[] result = new (string Name, MockClass MockClass)[mocksToGenerate.Length];
-		for (int i = 0; i < mocksToGenerate.Length; i++)
-		{
-			MockClass mockClass = mocksToGenerate[i];
-			string name = mockClass.GetClassNameWithoutDots();
-			if (mockClass.AdditionalImplementations.Any())
-			{
-				name += "_" + string.Join("_",
-					mockClass.AdditionalImplementations.Select(t => t.GetClassNameWithoutDots()));
-			}
-
+			string name = @class.GetClassNameWithoutDots();
 			int suffix = 1;
 			string actualName = name;
-			while (result.Any(r => actualName.Equals(r.Name, StringComparison.OrdinalIgnoreCase)))
+			while (!classNames.Add(actualName))
 			{
 				actualName = $"{name}_{suffix++}";
 			}
 
-			result[i] = (actualName, mockClass);
+			baseClassNames.Add(@class, actualName);
+			yield return (actualName, actualName, @class, null);
 		}
 
-		return result;
+		foreach (MockClass mockClass in mocksToGenerate.Where(IsValidMockDeclaration).Where(x => x.AdditionalImplementations.Any()))
+		{
+			string name = mockClass.GetClassNameWithoutDots() + "__" +
+			              string.Join("__", mockClass.AdditionalImplementations.Select(t => t.GetClassNameWithoutDots()));
+
+			int suffix = 1;
+			string actualName = name;
+			while (!classNames.Add(actualName))
+			{
+				actualName = $"{name}_{suffix++}";
+			}
+
+			yield return (actualName, GetValueOrDefault(baseClassNames, mockClass), mockClass, [
+				..mockClass.AdditionalImplementations
+					.Select(additional => (GetValueOrDefault(baseClassNames, additional), additional)),
+			]);
+		}
+
+		static string GetValueOrDefault(Dictionary<Class, string> dictionary, Class key)
+		{
+			if (dictionary.TryGetValue(key, out string? value))
+			{
+				return value;
+			}
+
+			return "";
+		}
 	}
 
 	private static bool IsValidMockDeclaration(MockClass mockClass)

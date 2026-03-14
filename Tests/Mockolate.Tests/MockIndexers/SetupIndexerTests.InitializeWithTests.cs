@@ -10,8 +10,8 @@ public sealed partial class SetupIndexerTests
 		[Fact]
 		public async Task InitializeWith_Callback_ShouldInitializeMatchingIndexers()
 		{
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4))
+			IIndexerService mock = IIndexerService.CreateMock();
+			mock.Mock.Setup[It.Satisfies<int>(i => i < 4)]
 				.InitializeWith(v => $"foo-{v}");
 
 			string result2 = mock[2];
@@ -26,8 +26,8 @@ public sealed partial class SetupIndexerTests
 		[Fact]
 		public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 		{
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			IIndexerSetup<string, int> setup = mock.SetupMock.Indexer(It.IsAny<int>())
+			IIndexerService mock = IIndexerService.CreateMock();
+			IIndexerSetup<string, int> setup = mock.Mock.Setup[It.IsAny<int>()]
 				.InitializeWith("foo");
 
 			void Act()
@@ -42,8 +42,8 @@ public sealed partial class SetupIndexerTests
 		[Fact]
 		public async Task InitializeWith_ShouldInitializeMatchingIndexers()
 		{
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4))
+			IIndexerService mock = IIndexerService.CreateMock();
+			mock.Mock.Setup[It.Satisfies<int>(i => i < 4)]
 				.InitializeWith("foo");
 
 			string result2 = mock[2];
@@ -58,10 +58,10 @@ public sealed partial class SetupIndexerTests
 		[Fact]
 		public async Task InitializeWith_ShouldSupportNull()
 		{
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			mock.SetupMock.Indexer(It.IsAny<string?>(), It.Is(1), It.Is(2))
+			IIndexerService mock = IIndexerService.CreateMock();
+			mock.Mock.Setup[It.IsAny<string?>(), It.Is(1), It.Is(2)]
 				.InitializeWith(42);
-			mock.SetupMock.Indexer(It.Is("foo"), It.Is(1), It.Is(2))
+			mock.Mock.Setup[It.Is("foo"), It.Is(1), It.Is(2)]
 				.InitializeWith((int?)null);
 
 			int? result1 = mock["bar", 1, 2];
@@ -74,8 +74,8 @@ public sealed partial class SetupIndexerTests
 		[Fact]
 		public async Task InitializeWith_Twice_ShouldThrowMockException()
 		{
-			IIndexerService mock = Mock.Create<IIndexerService>();
-			IIndexerSetup<string, int> setup = mock.SetupMock.Indexer(It.IsAny<int>())
+			IIndexerService mock = IIndexerService.CreateMock();
+			IIndexerSetup<string, int> setup = mock.Mock.Setup[It.IsAny<int>()]
 				.InitializeWith("foo");
 
 			void Act()
@@ -92,8 +92,8 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Callback_ShouldInitializeMatchingIndexers()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4))
+				IIndexerService mock = IIndexerService.CreateMock();
+				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
 					.InitializeWith((v1, v2) => $"foo-{v1}-{v2}");
 
 				string result12 = mock[1, 2];
@@ -110,8 +110,8 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				IIndexerSetup<string, int, int> setup = mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerSetup<string, int, int> setup = mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -126,8 +126,8 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_ShouldInitializeMatchingIndexers()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4))
+				IIndexerService mock = IIndexerService.CreateMock();
+				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
 					.InitializeWith("foo");
 
 				string result12 = mock[1, 2];
@@ -144,8 +144,8 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				IIndexerSetup<string, int, int> setup = mock.SetupMock.Indexer(It.IsAny<int>(), It.IsAny<int>())
+				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerSetup<string, int, int> setup = mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -163,9 +163,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Callback_ShouldInitializeMatchingIndexers()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
-						It.Satisfies<int>(i => i < 4))
+				IIndexerService mock = IIndexerService.CreateMock();
+				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
+						It.Satisfies<int>(i => i < 4)]
 					.InitializeWith((v1, v2, v3) => $"foo-{v1}-{v2}-{v3}");
 
 				string result123 = mock[1, 2, 3];
@@ -184,9 +184,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				IIndexerSetup<string, int, int, int> setup = mock.SetupMock
-					.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerSetup<string, int, int, int> setup = mock
+					.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -201,9 +201,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_ShouldInitializeMatchingIndexers()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
-						It.Satisfies<int>(i => i < 4))
+				IIndexerService mock = IIndexerService.CreateMock();
+				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
+						It.Satisfies<int>(i => i < 4)]
 					.InitializeWith("foo");
 
 				string result123 = mock[1, 2, 3];
@@ -222,9 +222,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				IIndexerSetup<string, int, int, int> setup = mock.SetupMock
-					.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerSetup<string, int, int, int> setup = mock
+					.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -242,9 +242,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Callback_ShouldInitializeMatchingIndexers()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
-						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5))
+				IIndexerService mock = IIndexerService.CreateMock();
+				mock.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
+						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5)]
 					.InitializeWith((v1, v2, v3, v4) => $"foo-{v1}-{v2}-{v3}-{v4}");
 
 				string result1234 = mock[1, 2, 3, 4];
@@ -265,9 +265,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				IIndexerSetup<string, int, int, int, int> setup = mock.SetupMock
-					.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerSetup<string, int, int, int, int> setup = mock
+					.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -282,9 +282,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_ShouldInitializeMatchingIndexers()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
-						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5))
+				IIndexerService mock = IIndexerService.CreateMock();
+				mock.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
+						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5)]
 					.InitializeWith("foo");
 
 				string result1234 = mock[1, 2, 3, 4];
@@ -305,9 +305,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				IIndexerSetup<string, int, int, int, int> setup = mock.SetupMock
-					.Indexer(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerSetup<string, int, int, int, int> setup = mock
+					.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -325,9 +325,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Callback_ShouldInitializeMatchingIndexers()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
-						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6))
+				IIndexerService mock = IIndexerService.CreateMock();
+				mock.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
+						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6)]
 					.InitializeWith((v1, v2, v3, v4, v5) => $"foo-{v1}-{v2}-{v3}-{v4}-{v5}");
 
 				string result12345 = mock[1, 2, 3, 4, 5];
@@ -350,10 +350,10 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				IIndexerSetup<string, int, int, int, int, int> setup = mock.SetupMock.Indexer(It.IsAny<int>(),
+				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerSetup<string, int, int, int, int, int> setup = mock.Mock.Setup[It.IsAny<int>(),
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-						It.IsAny<int>())
+						It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -368,9 +368,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_ShouldInitializeMatchingIndexers()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				mock.SetupMock.Indexer(It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
-						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6))
+				IIndexerService mock = IIndexerService.CreateMock();
+				mock.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
+						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6)]
 					.InitializeWith("foo");
 
 				string result12345 = mock[1, 2, 3, 4, 5];
@@ -393,10 +393,10 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
-				IIndexerService mock = Mock.Create<IIndexerService>();
-				IIndexerSetup<string, int, int, int, int, int> setup = mock.SetupMock.Indexer(It.IsAny<int>(),
+				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerSetup<string, int, int, int, int, int> setup = mock.Mock.Setup[It.IsAny<int>(),
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-						It.IsAny<int>())
+						It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()

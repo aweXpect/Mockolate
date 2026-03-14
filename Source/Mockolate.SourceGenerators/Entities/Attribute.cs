@@ -7,7 +7,7 @@ internal record Attribute
 {
 	public Attribute(AttributeData attributeData)
 	{
-		Name = ToName(attributeData.AttributeClass?.ToDisplayString() ?? "");
+		Name = ToName(attributeData.AttributeClass?.ToDisplayString(Helpers.TypeDisplayFormat) ?? "");
 		if (attributeData.ConstructorArguments.Length > 0)
 		{
 			Parameters = new EquatableArray<AttributeParameter>(attributeData.ConstructorArguments

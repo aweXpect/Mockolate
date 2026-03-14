@@ -14,13 +14,13 @@ the call to happen, e.g. `.AtLeastOnce()`, `.Exactly(n)`, etc. or use the verifi
 var sut = Mock.Create<IChocolateDispenser>();
 sut.Dispense("Dark", 1);
 // Analyzer Mockolate0001: Add a count assertion like .AtLeastOnce() or use the result.
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>());
+sut.Mock.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>());
 ```
 
 The included code fixer suggests to add the `.AtLeastOnce()` count assertion:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
+sut.Mock.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
 ```
 
 ## Mockolate0002

@@ -1,6 +1,6 @@
 # Methods
 
-Use `mock.SetupMock.Method.MethodName(…)` to set up methods. You can specify argument matchers for each parameter.
+Use `mock.Mock.Setup.Method.MethodName(…)` to set up methods. You can specify argument matchers for each parameter.
 
 ## Returns / Throws
 
@@ -14,25 +14,25 @@ on each call).
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
+sut.Mock.Setup.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
     .Returns((type, amount) =>
     {
         var current = sut[type];
         if (current >= amount)
         {
             sut[type] = current - amount;
-            sut.RaiseOnMock.ChocolateDispensed(type, amount);
+            sut.Mock.Raise.ChocolateDispensed(type, amount);
             return true;
         }
         return false;
     });
 
 // Setup method to throw
-sut.SetupMock.Method.Dispense(It.Is("Green"), It.IsAny<int>())
+sut.Mock.Setup.Method.Dispense(It.Is("Green"), It.IsAny<int>())
     .Throws<InvalidChocolateException>();
 
 // Sequence of returns and throws
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Returns(true)
     .Throws(new Exception("Error"))
     .Returns(false);
@@ -44,7 +44,7 @@ For async methods returning `Task`/`Task<T>` or `ValueTask`/`ValueTask<T>`, use 
 respectively:
 
 ```csharp
-sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
     .ReturnsAsync((_, v) => v)            // First execution returns the value of the `int` parameter
     .ThrowsAsync(new TimeoutException())  // Second execution throws a TimeoutException
     .ReturnsAsync(0).Forever();           // Subsequent executions return 0
@@ -56,7 +56,7 @@ Use `.Do(…)` to run code when the method is called. Supports parameterless or 
 
 ```csharp
 // Setup method with callback
-sut.SetupMock.Method.Dispense(It.Is("White"), It.IsAny<int>())
+sut.Mock.Setup.Method.Dispense(It.Is("White"), It.IsAny<int>())
     .Do((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 ```
 

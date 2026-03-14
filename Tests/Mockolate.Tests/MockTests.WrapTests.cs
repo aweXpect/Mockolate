@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Mockolate.Exceptions;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
@@ -12,7 +11,7 @@ public sealed partial class MockTests
 		public async Task Wrap_Events_ForwardEventsFromWrappedInstance()
 		{
 			MyChocolateDispenser myDispenser = new();
-			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+			IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(myDispenser);
 
 			string? eventType = null;
 			int eventAmount = 0;
@@ -33,7 +32,7 @@ public sealed partial class MockTests
 		public async Task Wrap_Events_ForwardsFromWrapper()
 		{
 			MyChocolateDispenser myDispenser = new();
-			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+			IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(myDispenser);
 
 			string? eventType = null;
 			int eventAmount = 0;
@@ -54,7 +53,7 @@ public sealed partial class MockTests
 		public async Task Wrap_Events_Unsubscribe_ShouldRemoveSubscription()
 		{
 			MyChocolateDispenser myDispenser = new();
-			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+			IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(myDispenser);
 
 			string? eventType = null;
 			int eventAmount = -1;
@@ -84,7 +83,7 @@ public sealed partial class MockTests
 		public async Task Wrap_Indexer_ShouldDelegateToWrappedInstance()
 		{
 			MyChocolateDispenser myDispenser = new();
-			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+			IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(myDispenser);
 
 			wrappedDispenser["Dark"] = 12;
 
@@ -98,7 +97,7 @@ public sealed partial class MockTests
 		public async Task Wrap_Method_ShouldDelegateToWrappedInstance()
 		{
 			MyChocolateDispenser myDispenser = new();
-			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+			IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(myDispenser);
 
 			bool result = wrappedDispenser.Dispense("Dark", 4);
 
@@ -111,7 +110,7 @@ public sealed partial class MockTests
 		public async Task Wrap_Property_ShouldDelegateToWrappedInstance()
 		{
 			MyChocolateDispenser myDispenser = new();
-			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
+			IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(myDispenser);
 
 			wrappedDispenser.TotalDispensed = 12;
 
@@ -120,45 +119,11 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
-		public async Task Wrap_WithClass_ShouldThrowMockException()
-		{
-			MyChocolateDispenser instance = new();
-
-			void Act()
-			{
-#pragma warning disable Mockolate0003
-				_ = Mock.Wrap(instance);
-#pragma warning restore Mockolate0003
-			}
-
-			await That(Act).Throws<MockException>()
-				.WithMessage(
-					"Unable to wrap type 'Mockolate.Tests.MockTests+WrapTests+MyChocolateDispenser'. When wrapping a concrete instance, only interfaces can be mocked.");
-		}
-
-		[Fact]
-		public async Task Wrap_WithDelegate_ShouldThrowMockException()
-		{
-			MyDelegate instance = () => { };
-
-			void Act()
-			{
-#pragma warning disable Mockolate0003
-				_ = Mock.Wrap(instance);
-#pragma warning restore Mockolate0003
-			}
-
-			await That(Act).Throws<MockException>()
-				.WithMessage(
-					"Unable to wrap type 'Mockolate.Tests.MockTests+WrapTests+MyDelegate'. When wrapping a concrete instance, only interfaces can be mocked.");
-		}
-
-		[Fact]
 		public async Task Wrap_WithSetup_ShouldOverrideMethod()
 		{
 			MyChocolateDispenser myDispenser = new();
-			IChocolateDispenser wrappedDispenser = Mock.Wrap<IChocolateDispenser>(myDispenser);
-			wrappedDispenser.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>()).Returns(false);
+			IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(myDispenser);
+			wrappedDispenser.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>()).Returns(false);
 
 			bool result = wrappedDispenser.Dispense("Dark", 4);
 

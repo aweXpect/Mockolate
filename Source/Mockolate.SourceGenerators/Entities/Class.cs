@@ -19,9 +19,9 @@ internal record Class
 	{
 		_sourceAssembly = sourceAssembly;
 		Namespace = type.ContainingNamespace.ToString();
-		DisplayString = type.ToDisplayString(Helpers.TypeDisplayFormat);
+		ClassFullName = type.ToDisplayString(Helpers.TypeDisplayFormat);
 		ClassName = GetTypeName(type);
-		ClassFullName = GetTypeFullName(type);
+		DisplayString = GetTypeFullName(type);
 
 		INamedTypeSymbol? containingType = type.ContainingType;
 		if (containingType is not null)
@@ -113,9 +113,11 @@ internal record Class
 
 	public bool IsInterface { get; }
 	public string? Namespace { get; }
-	public string DisplayString { get; }
-	public string ClassName { get; }
 	public string ClassFullName { get; }
+	public string ClassName { get; }
+	public string DisplayString { get; }
+
+	public static IEqualityComparer<Class> EqualityComparer { get; } = new ClassEqualityComparer();
 
 	private string GetTypeName(ITypeSymbol type)
 	{
@@ -245,8 +247,19 @@ internal record Class
 
 	public string GetClassNameWithoutDots()
 		=> ClassName
-			.Replace(",", "")
-			.Replace(".", "")
-			.Replace("<", "")
+			.Replace(",", "_")
+			.Replace(".", "_")
+			.Replace(" ", "")
+			.Replace("<", "_")
 			.Replace(">", "");
+
+	private sealed class ClassEqualityComparer : IEqualityComparer<Class>
+	{
+		public bool Equals(Class? x, Class? y)
+			=> (x is null && y is null) ||
+			   (x is not null && y is not null &&
+			    x.ClassFullName == y.ClassFullName);
+
+		public int GetHashCode(Class obj) => obj.ClassFullName.GetHashCode();
+	}
 }

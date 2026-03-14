@@ -18,8 +18,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("application/txt", false)]
 			public async Task ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithMediaType("application/json"))
 					.ReturnsAsync(HttpStatusCode.OK);
 

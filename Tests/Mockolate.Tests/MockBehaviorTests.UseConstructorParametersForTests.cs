@@ -11,7 +11,7 @@ public sealed partial class MockBehaviorTests
 				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() => [5,]);
 
 			MyServiceWithMultipleConstructors mock
-				= Mock.Create<MyServiceWithMultipleConstructors>(BaseClass.WithConstructorParameters(7), behavior);
+				= MyServiceWithMultipleConstructors.CreateMock([7,], behavior);
 
 			int value = mock.Value;
 
@@ -26,9 +26,9 @@ public sealed partial class MockBehaviorTests
 				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(5);
 
 			MyServiceWithMultipleConstructors mockWithDefaultBehavior
-				= Mock.Create<MyServiceWithMultipleConstructors>();
+				= MyServiceWithMultipleConstructors.CreateMock();
 			MyServiceWithMultipleConstructors mockWithCustomBehavior
-				= Mock.Create<MyServiceWithMultipleConstructors>(behavior);
+				= MyServiceWithMultipleConstructors.CreateMock(behavior);
 
 			int valueWithDefaultBehavior = mockWithDefaultBehavior.Value;
 			int valueWithCustomBehavior = mockWithCustomBehavior.Value;
@@ -44,9 +44,9 @@ public sealed partial class MockBehaviorTests
 				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() => [5,]);
 
 			MyServiceWithMultipleConstructors mockWithDefaultBehavior
-				= Mock.Create<MyServiceWithMultipleConstructors>();
+				= MyServiceWithMultipleConstructors.CreateMock();
 			MyServiceWithMultipleConstructors mockWithCustomBehavior
-				= Mock.Create<MyServiceWithMultipleConstructors>(behavior);
+				= MyServiceWithMultipleConstructors.CreateMock(behavior);
 
 			int valueWithDefaultBehavior = mockWithDefaultBehavior.Value;
 			int valueWithCustomBehavior = mockWithCustomBehavior.Value;

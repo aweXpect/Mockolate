@@ -19,8 +19,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "*baz*", false)]
 			public async Task ShouldVerifyPath(string uri, string pathPattern, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().WithPath(pathPattern))
 					.ReturnsAsync(HttpStatusCode.OK);
 

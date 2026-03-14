@@ -23,8 +23,8 @@ public sealed partial class ItExtensionsTests
 				new([0x66,]),
 				new([0x62, 0x61, 0x72,]),
 			];
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method.PostAsync(It.IsAny<Uri>(),
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup.PostAsync(It.IsAny<Uri>(),
 				It.IsHttpContent()
 					.Do(_ => callbackCount++)
 					.Monitor(out IParameterMonitor<HttpContent?> monitor));
@@ -47,8 +47,8 @@ public sealed partial class ItExtensionsTests
 		public async Task ShouldSupportMultipleCombinations()
 		{
 			byte[] bytes = "foo"u8.ToArray();
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
 					.WithStringMatching("*")
 					.WithString("foo")
@@ -68,8 +68,8 @@ public sealed partial class ItExtensionsTests
 		public async Task ShouldSupportWithHeadersInWrapper()
 		{
 			byte[] bytes = "foo"u8.ToArray();
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
 					.WithStringMatching("*")
 					.WithHeaders("x-my-header", "my-value"))
@@ -90,8 +90,8 @@ public sealed partial class ItExtensionsTests
 		[InlineData("image/gif", false)]
 		public async Task ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent("image/png"))
 				.ReturnsAsync(HttpStatusCode.OK);
 			ByteArrayContent content = new([]);
@@ -111,8 +111,8 @@ public sealed partial class ItExtensionsTests
 		[InlineData("image/gif", false)]
 		public async Task WithMediaType_ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithMediaType("image/png"))
 				.ReturnsAsync(HttpStatusCode.OK);
 			ByteArrayContent content = new([]);

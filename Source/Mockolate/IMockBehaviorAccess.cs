@@ -1,6 +1,4 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
-using Mockolate.Setup;
 
 namespace Mockolate;
 
@@ -10,12 +8,14 @@ namespace Mockolate;
 public interface IMockBehaviorAccess
 {
 	/// <summary>
-	///     Tries to get the initialization setups for a mock of type <typeparamref name="T" />.
+	///     Stores the given <paramref name="value" /> under the <paramref name="key" /> in the <see cref="MockBehavior" />.
 	/// </summary>
-	/// <remarks>
-	///     Returns <see langword="false" />, when no matching initialization is found.
-	/// </remarks>
-	bool TryInitialize<T>([NotNullWhen(true)] out Action<IMockSetup<T>>[]? setups);
+	MockBehavior Set<T>(string key, T value);
+
+	/// <summary>
+	///     Retrieves the <paramref name="value" /> under the <paramref name="key" /> from the <see cref="MockBehavior" />.
+	/// </summary>
+	bool TryGet<T>(string key, [NotNullWhen(true)] out T value);
 
 	/// <summary>
 	///     Tries to get the constructor parameters for a mock of type <typeparamref name="T" />.

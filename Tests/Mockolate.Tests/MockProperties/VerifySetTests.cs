@@ -7,12 +7,12 @@ public sealed class VerifySetTests
 	[Fact]
 	public async Task ShouldIncreaseInvocationCountOfGetter()
 	{
-		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+		MockTests.IMyService sut = MockTests.IMyService.CreateMock();
 
 		sut.Counter = 42;
 
-		await That(sut.VerifyMock.Got.Counter()).Never();
-		await That(sut.VerifyMock.Set.Counter(It.IsAny<int>())).Once();
+		await That(sut.Mock.Verify.Counter.Got()).Never();
+		await That(sut.Mock.Verify.Counter.Set(It.IsAny<int>())).Once();
 	}
 
 	[Theory]
@@ -20,7 +20,7 @@ public sealed class VerifySetTests
 	[InlineData(false)]
 	public async Task ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
-		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
+		MockTests.IMyService sut = MockTests.IMyService.CreateMock(MockBehavior.Default with
 		{
 			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
@@ -32,14 +32,14 @@ public sealed class VerifySetTests
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
-			             The property 'Mockolate.Tests.MockTests.IMyService.IsValid' was accessed without prior setup.
+			             The property 'global::Mockolate.Tests.MockTests.IMyService.IsValid' was accessed without prior setup.
 			             """);
 	}
 
 	[Fact]
 	public async Task ShouldUpdateValueForNextGet()
 	{
-		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+		MockTests.IMyService sut = MockTests.IMyService.CreateMock();
 
 		int result1 = sut.Counter;
 		sut.Counter = 5;
@@ -52,8 +52,8 @@ public sealed class VerifySetTests
 	[Fact]
 	public async Task WithNull_ShouldUpdateValueForNextGet()
 	{
-		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
-		sut.SetupMock.Property.IsValid.InitializeWith(true);
+		MockTests.IMyService sut = MockTests.IMyService.CreateMock();
+		sut.Mock.Setup.IsValid.InitializeWith(true);
 
 		bool? result1 = sut.IsValid;
 		sut.IsValid = null;

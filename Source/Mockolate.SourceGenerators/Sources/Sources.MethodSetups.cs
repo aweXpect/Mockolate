@@ -264,7 +264,7 @@ internal static partial class Sources
 		{
 			sb.Append("\t\tprivate readonly global::Mockolate.Parameters.NamedParameter? _match").Append(i).Append(";").AppendLine();
 		}
-		
+
 		sb.Append("\t\tprivate bool? _skipBaseClass;").AppendLine();
 		sb.Append("\t\tprivate global::Mockolate.Setup.Callback? _currentCallback;").AppendLine();
 		sb.Append("\t\tprivate global::Mockolate.Setup.Callback? _currentReturnCallback;").AppendLine();

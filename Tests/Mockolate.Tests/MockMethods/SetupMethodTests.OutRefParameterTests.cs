@@ -110,9 +110,9 @@ public sealed partial class SetupMethodTests
 			{
 				int receivedValue = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method1WithOutParameter(Match.AnyParameters())
 					.Do(v =>
 					{
 						callCount++;
@@ -131,9 +131,9 @@ public sealed partial class SetupMethodTests
 			{
 				int receivedValue = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1WithOutParameter(It.IsOut(() => 3))
+				sut.Mock.Setup.Method1WithOutParameter(It.IsOut(() => 3))
 					.Do(v =>
 					{
 						callCount++;
@@ -142,7 +142,7 @@ public sealed partial class SetupMethodTests
 
 				sut.Method1WithOutParameter(out int value);
 
-				sut.VerifyMock.Invoked.Method1WithOutParameter(It.IsOut<int>()).Once();
+				sut.Mock.Verify.Method1WithOutParameter(It.IsOut<int>()).Once();
 				await That(callCount).IsEqualTo(1);
 				await That(value).IsEqualTo(3);
 				await That(receivedValue).IsEqualTo(0);
@@ -153,9 +153,9 @@ public sealed partial class SetupMethodTests
 			{
 				int receivedValue = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method1WithRefParameter(Match.AnyParameters())
 					.Do(v =>
 					{
 						callCount++;
@@ -175,9 +175,9 @@ public sealed partial class SetupMethodTests
 			{
 				int receivedValue = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1WithRefParameter(It.IsRef<int>(v => 3))
+				sut.Mock.Setup.Method1WithRefParameter(It.IsRef<int>(v => 3))
 					.Do(v =>
 					{
 						callCount++;
@@ -302,9 +302,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method2WithOutParameter(Match.AnyParameters())
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -327,9 +327,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4))
+				sut.Mock.Setup.Method2WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4))
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -352,9 +352,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method2WithRefParameter(Match.AnyParameters())
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -379,9 +379,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10))
+				sut.Mock.Setup.Method2WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10))
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -539,9 +539,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method3WithOutParameter(Match.AnyParameters())
 					.Do((v1, v2, v3) =>
 					{
 						callCount++;
@@ -568,9 +568,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6))
+				sut.Mock.Setup.Method3WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6))
 					.Do((v1, v2, v3) =>
 					{
 						callCount++;
@@ -597,9 +597,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method3WithRefParameter(Match.AnyParameters())
 					.Do((v1, v2, v3) =>
 					{
 						callCount++;
@@ -629,9 +629,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
+				sut.Mock.Setup.Method3WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
 						It.IsRef<int>(v => v * 10))
 					.Do((v1, v2, v3) =>
 					{
@@ -824,9 +824,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method4WithOutParameter(Match.AnyParameters())
 					.Do((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -857,9 +857,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6),
+				sut.Mock.Setup.Method4WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6),
 						It.IsOut(() => 8))
 					.Do((v1, v2, v3, v4) =>
 					{
@@ -891,9 +891,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method4WithRefParameter(Match.AnyParameters())
 					.Do((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -928,9 +928,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
+				sut.Mock.Setup.Method4WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
 						It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10))
 					.Do((v1, v2, v3, v4) =>
 					{
@@ -1159,9 +1159,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method5WithOutParameter(Match.AnyParameters())
 					.Do((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -1197,9 +1197,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6),
+				sut.Mock.Setup.Method5WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6),
 						It.IsOut(() => 8), It.IsOut(() => 10))
 					.Do((v1, v2, v3, v4, v5) =>
 					{
@@ -1236,9 +1236,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method5WithRefParameter(Match.AnyParameters())
 					.Do((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -1278,9 +1278,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
 				int callCount = 0;
-				IReturnMethodSetupTest sut = Mock.Create<IReturnMethodSetupTest>();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
+				sut.Mock.Setup.Method5WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
 						It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10))
 					.Do((v1, v2, v3, v4, v5) =>
 					{
@@ -1391,9 +1391,9 @@ public sealed partial class SetupMethodTests
 			{
 				int receivedValue = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method1WithOutParameter(Match.AnyParameters())
 					.Do(v =>
 					{
 						callCount++;
@@ -1412,9 +1412,9 @@ public sealed partial class SetupMethodTests
 			{
 				int receivedValue = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1WithOutParameter(It.IsOut(() => 3))
+				sut.Mock.Setup.Method1WithOutParameter(It.IsOut(() => 3))
 					.Do(v =>
 					{
 						callCount++;
@@ -1433,9 +1433,9 @@ public sealed partial class SetupMethodTests
 			{
 				int receivedValue = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method1WithRefParameter(Match.AnyParameters())
 					.Do(v =>
 					{
 						callCount++;
@@ -1455,9 +1455,9 @@ public sealed partial class SetupMethodTests
 			{
 				int receivedValue = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method1WithRefParameter(It.IsRef<int>(v => 3))
+				sut.Mock.Setup.Method1WithRefParameter(It.IsRef<int>(v => 3))
 					.Do(v =>
 					{
 						callCount++;
@@ -1522,9 +1522,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method2WithOutParameter(Match.AnyParameters())
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -1547,9 +1547,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4))
+				sut.Mock.Setup.Method2WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4))
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -1572,9 +1572,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method2WithRefParameter(Match.AnyParameters())
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -1599,9 +1599,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue1 = 0;
 				int receivedValue2 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method2WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10))
+				sut.Mock.Setup.Method2WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10))
 					.Do((v1, v2) =>
 					{
 						callCount++;
@@ -1672,9 +1672,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method3WithOutParameter(Match.AnyParameters())
 					.Do((v1, v2, v3) =>
 					{
 						callCount++;
@@ -1701,9 +1701,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6))
+				sut.Mock.Setup.Method3WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6))
 					.Do((v1, v2, v3) =>
 					{
 						callCount++;
@@ -1730,9 +1730,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method3WithRefParameter(Match.AnyParameters())
 					.Do((v1, v2, v3) =>
 					{
 						callCount++;
@@ -1762,9 +1762,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue2 = 0;
 				int receivedValue3 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method3WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
+				sut.Mock.Setup.Method3WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
 						It.IsRef<int>(v => v * 10))
 					.Do((v1, v2, v3) =>
 					{
@@ -1842,9 +1842,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method4WithOutParameter(Match.AnyParameters())
 					.Do((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -1875,9 +1875,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6),
+				sut.Mock.Setup.Method4WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6),
 						It.IsOut(() => 8))
 					.Do((v1, v2, v3, v4) =>
 					{
@@ -1909,9 +1909,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method4WithRefParameter(Match.AnyParameters())
 					.Do((v1, v2, v3, v4) =>
 					{
 						callCount++;
@@ -1946,9 +1946,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue3 = 0;
 				int receivedValue4 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method4WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
+				sut.Mock.Setup.Method4WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
 						It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10))
 					.Do((v1, v2, v3, v4) =>
 					{
@@ -2032,9 +2032,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5WithOutParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method5WithOutParameter(Match.AnyParameters())
 					.Do((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -2070,9 +2070,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6),
+				sut.Mock.Setup.Method5WithOutParameter(It.IsOut(() => 2), It.IsOut(() => 4), It.IsOut(() => 6),
 						It.IsOut(() => 8), It.IsOut(() => 10))
 					.Do((v1, v2, v3, v4, v5) =>
 					{
@@ -2109,9 +2109,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5WithRefParameter(Match.AnyParameters())
+				sut.Mock.Setup.Method5WithRefParameter(Match.AnyParameters())
 					.Do((v1, v2, v3, v4, v5) =>
 					{
 						callCount++;
@@ -2151,9 +2151,9 @@ public sealed partial class SetupMethodTests
 				int receivedValue4 = 0;
 				int receivedValue5 = 0;
 				int callCount = 0;
-				IVoidMethodSetupTest sut = Mock.Create<IVoidMethodSetupTest>();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.SetupMock.Method.Method5WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
+				sut.Mock.Setup.Method5WithRefParameter(It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10),
 						It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10), It.IsRef<int>(v => v * 10))
 					.Do((v1, v2, v3, v4, v5) =>
 					{

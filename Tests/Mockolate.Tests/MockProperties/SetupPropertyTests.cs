@@ -40,8 +40,8 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
-		IPropertyService mock = Mock.Create<IPropertyService>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IPropertyService mock = IPropertyService.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 
 		int result0 = registration.GetProperty("my.other.property", () => 0, null);
 		PropertySetup<int> setup = new("my.property");
@@ -56,7 +56,7 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task Register_MultipleProperties_ShouldAllStoreValues()
 	{
-		IPropertyService mock = Mock.Create<IPropertyService>();
+		IPropertyService mock = IPropertyService.CreateMock();
 
 		mock.MyProperty = 1;
 		mock.MyOtherProperty = 2;
@@ -79,14 +79,14 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task Register_SamePropertyTwice_ShouldOverwritePreviousSetup()
 	{
-		IPropertyService mock = Mock.Create<IPropertyService>();
-		mock.SetupMock.Property.MyProperty.InitializeWith(4);
+		IPropertyService mock = IPropertyService.CreateMock();
+		mock.Mock.Setup.MyProperty.InitializeWith(4);
 
 		int result1 = mock.MyProperty;
 		mock.MyProperty = 5;
 		int result2 = mock.MyProperty;
 
-		mock.SetupMock.Property.MyProperty.Returns(6);
+		mock.Mock.Setup.MyProperty.Returns(6);
 
 		int result3 = mock.MyProperty;
 		mock.MyProperty = 7;
@@ -101,8 +101,8 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task ShouldStoreLastValue()
 	{
-		IPropertyService mock = Mock.Create<IPropertyService>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IPropertyService mock = IPropertyService.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 
 		string result0 = registration.GetProperty<string>("my.property", () => "", null);
 		registration.SetProperty("my.property", "foo");
@@ -127,13 +127,12 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task WhenMockInheritsPropertyMultipleTimes()
 	{
-		IMyPropertyService mock =
-			Mock.Create<IMyPropertyService, IMyPropertyServiceBase1>();
-		mock.SetupMock.Property.Value.InitializeWith("Hello");
+		IMyPropertyService mock = IMyPropertyService.CreateMock().Implementing<IMyPropertyServiceBase1>();
+		mock.Mock.Setup.Value.InitializeWith("Hello");
 
 		string result = mock.Value;
 
-		await That(mock.VerifyMock.Got.Value()).Once();
+		await That(mock.Mock.Verify.Value.Got()).Once();
 		await That(result).IsEqualTo("Hello");
 	}
 

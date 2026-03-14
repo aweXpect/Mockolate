@@ -6,17 +6,6 @@ public sealed partial class ItTests
 {
 	public sealed class SatisfiesTests
 	{
-		[Fact]
-		public async Task ToString_ShouldReturnExpectedValue()
-		{
-			IParameter<string> sut = It.Satisfies<string>(x => x.Length == 3);
-			string expectedValue = "It.Satisfies<string>(x => x.Length == 3)";
-
-			string? result = sut.ToString();
-
-			await That(result).IsEqualTo(expectedValue);
-		}
-
 		[Theory]
 		[InlineData(null, true)]
 		[InlineData(1, false)]
@@ -56,8 +45,8 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ShouldSupportCovarianceInSetup()
 		{
-			IMyService mock = Mock.Create<IMyService>();
-			mock.SetupMock.Method.DoSomething(It.Satisfies<MyImplementation>(_ => true))
+			IMyService mock = IMyService.CreateMock();
+			mock.Mock.Setup.DoSomething(It.Satisfies<MyImplementation>(_ => true))
 				.Returns(3);
 			MyImplementation value1 = new();
 			MyOtherImplementation value2 = new();
@@ -72,19 +61,30 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ShouldSupportCovarianceInVerify()
 		{
-			IMyService mock = Mock.Create<IMyService>();
-			mock.SetupMock.Method.DoSomething(It.Satisfies<MyImplementation>(_ => true))
+			IMyService mock = IMyService.CreateMock();
+			mock.Mock.Setup.DoSomething(It.Satisfies<MyImplementation>(_ => true))
 				.Do(d => d.DoWork())
 				.Returns(3);
 			MyImplementation value1 = new();
 
 			int result1 = mock.DoSomething(value1);
 
-			await That(mock.VerifyMock.Invoked.DoSomething(It.Satisfies<MyImplementation>(p => p.Progress > 0))).Once();
-			await That(mock.VerifyMock.Invoked.DoSomething(It.Satisfies<MyImplementation>(p => p.Progress > 1))).Never();
+			await That(mock.Mock.Verify.DoSomething(It.Satisfies<MyImplementation>(p => p.Progress > 0))).Once();
+			await That(mock.Mock.Verify.DoSomething(It.Satisfies<MyImplementation>(p => p.Progress > 1))).Never();
 			await That(value1.Progress).IsEqualTo(1);
 			await That(result1).IsEqualTo(3);
-			await That(mock.VerifyMock.Invoked.DoSomething(It.Satisfies<MyOtherImplementation>(_ => true))).Never();
+			await That(mock.Mock.Verify.DoSomething(It.Satisfies<MyOtherImplementation>(_ => true))).Never();
+		}
+
+		[Fact]
+		public async Task ToString_ShouldReturnExpectedValue()
+		{
+			IParameter<string> sut = It.Satisfies<string>(x => x.Length == 3);
+			string expectedValue = "It.Satisfies<string>(x => x.Length == 3)";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
 		}
 
 		public interface IMyBase

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Mockolate.SourceGenerators.Tests.Sources;
+namespace Mockolate.SourceGenerators.Tests;
 
 public sealed class MethodSetupsTests
 {
@@ -20,7 +20,7 @@ public sealed class MethodSetupsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyOutermostInterface>();
+			     			_ = IMyOutermostInterface.CreateMock();
 			             }
 			         }
 
@@ -58,7 +58,7 @@ public sealed class MethodSetupsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -74,36 +74,57 @@ public sealed class MethodSetupsTests
 	}
 
 	[Theory]
-	[InlineData("""
-	            string ToString();
-	            bool Equals(object obj);
-	            int GetHashCode();
-	            """, "IMockMethodSetupWithToStringWithEqualsWithGetHashCode")]
-	[InlineData("""
-	            bool Equals(object obj);
-	            int GetHashCode();
-	            """, "IMockMethodSetupWithEqualsWithGetHashCode")]
-	[InlineData("""
-	            string ToString();
-	            int GetHashCode();
-	            """, "IMockMethodSetupWithToStringWithGetHashCode")]
-	[InlineData("""
-	            string ToString();
-	            bool Equals(object obj);
-	            """, "IMockMethodSetupWithToStringWithEquals")]
-	[InlineData("""
-	            string ToString();
-	            """, "IMockMethodSetupWithToString")]
-	[InlineData("""
-	            bool Equals(object obj);
-	            """, "IMockMethodSetupWithEquals")]
-	[InlineData("""
-	            bool Equals(object? obj);
-	            """, "IMockMethodSetupWithEquals")]
-	[InlineData("""
-	            int GetHashCode();
-	            """, "IMockMethodSetupWithGetHashCode")]
-	public async Task WhenImplementingObjectMethods_ShouldUseSpecialInterfaces(string methods, string expectedType)
+	[InlineData(
+		"""
+		string ToString();
+		bool Equals(object? obj);
+		int GetHashCode();
+		""",
+		"public override string ToString()",
+		"public override int GetHashCode()",
+		"public override bool Equals(object? obj)")]
+	[InlineData(
+		"""
+		bool Equals(object obj);
+		int GetHashCode();
+		""",
+		"public override bool Equals(object obj)",
+		"public override int GetHashCode()")]
+	[InlineData(
+		"""
+		string ToString();
+		int GetHashCode();
+		""",
+		"public override string ToString()",
+		"public override int GetHashCode()")]
+	[InlineData(
+		"""
+		string ToString();
+		bool Equals(object obj);
+		""",
+		"public override string ToString()",
+		"public override bool Equals(object obj)")]
+	[InlineData(
+		"""
+		string ToString();
+		""",
+		"public override string ToString()")]
+	[InlineData(
+		"""
+		bool Equals(object obj);
+		""",
+		"public override bool Equals(object obj)")]
+	[InlineData(
+		"""
+		bool Equals(object? obj);
+		""",
+		"public override bool Equals(object? obj)")]
+	[InlineData(
+		"""
+		int GetHashCode();
+		""",
+		"public override int GetHashCode()")]
+	public async Task WhenImplementingObjectMethods_ShouldUseSpecialInterfaces(string methods, params string[] expectedTypes)
 	{
 		GeneratorResult result = Generator
 			.Run($$"""
@@ -116,7 +137,7 @@ public sealed class MethodSetupsTests
 			           {
 			               public static void Main(string[] args)
 			               {
-			       			_ = Mock.Create<IMyInterface>();
+			       			_ = IMyInterface.CreateMock();
 			               }
 			           }
 
@@ -127,8 +148,11 @@ public sealed class MethodSetupsTests
 			       }
 			       """);
 
-		await That(result.Sources).ContainsKey("MockForIMyInterfaceExtensions.g.cs").WhoseValue
-			.Contains($"{expectedType}<MyCode.IMyInterface> Method");
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
+		foreach (string expectedType in expectedTypes)
+		{
+			await That(result.Sources["Mock.IMyInterface.g.cs"]).Contains(expectedType);
+		}
 	}
 
 	[Fact]
@@ -147,7 +171,7 @@ public sealed class MethodSetupsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -181,7 +205,7 @@ public sealed class MethodSetupsTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
