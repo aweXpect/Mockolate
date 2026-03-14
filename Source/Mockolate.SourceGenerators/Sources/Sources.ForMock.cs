@@ -14,58 +14,232 @@ internal static partial class Sources
 		StringBuilder sb = InitializeBuilder();
 		
 		sb.AppendLine($$"""
+		              #nullable enable annotations
 		              namespace Mockolate
 		              {
+		              	/// <summary>
+		              	///     Mock extensions for <see cref="{{mockClass.DisplayString.EscapeForXmlDoc()}}" />.
+		              	/// </summary>
 		              	internal static partial class MockFor{{name}}Extensions
 		              	{
-		              		/// <summary>
-		              		///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
-		              		/// </summary>
-		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
-		              		/// <remarks>
-		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
-		              		/// </remarks>
-		              		extension({{mockClass.ClassFullName}} _)
+		              		/// <inheritdoc cref="MockFor{{name}}Extensions" />
+		              		extension({{mockClass.DisplayString}} _)
 		              		{
 		              			/// <summary>
-		              			///     Create a new mock for <see cref="{{mockClass.ClassFullName.EscapeForXmlDoc()}}" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              			///     Create a new mock for <see cref="{{mockClass.DisplayString.EscapeForXmlDoc()}}" /> with the given <paramref name="mockBehavior" />.
 		              			/// </summary>
-		              			/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
 		              			/// <remarks>
-		              			///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              			///     All provided <paramref name="setups" /> are immediately applied to the mock.
 		              			/// </remarks>
 		              			[MockGenerator]
-		              			public static {{mockClass.ClassFullName}} CreateMock()
+		              			public static {{mockClass.DisplayString}} CreateMock(global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Setup.IMockSetup<{{mockClass.DisplayString}}>>[] setups)
+		              				=> CreateMock(null, mockBehavior, setups);
+
+		              			/// <summary>
+		              			///     Create a new mock for <see cref="{{mockClass.DisplayString.EscapeForXmlDoc()}}" /> using the <paramref name="constructorParameters" /> with the given <paramref name="mockBehavior" />.
+		              			/// </summary>
+		              			/// <remarks>
+		              			///     All provided <paramref name="setups" /> are immediately applied to the mock.
+		              			/// </remarks>
+		              			[MockGenerator]
+		              			public static {{mockClass.DisplayString}} CreateMock(global::Mockolate.BaseClass.ConstructorParameters? constructorParameters, global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Setup.IMockSetup<{{mockClass.DisplayString}}>>[] setups)
 		              			{
-		              				throw new global::System.NotSupportedException("This met22hod is only meant to be used in the context of Mockolate and should not be called directly.");
-		              			}
-		              		}
-		              	}
-		              }
+		              				mockBehavior ??= global::Mockolate.MockBehavior.Default;
 		              """);
+		if (mockClass.Delegate != null)
+		{
+			sb.Append("\t\t\t\tglobal::Mockolate.Generated.MockFor").Append(name).Append(" mockTarget = new global::Mockolate.Generated.MockFor").Append(name)
+				.Append("(mockBehavior);")
+				.AppendLine();
+			sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mockClass.DisplayString)
+				.Append("> setupTarget = ((global::Mockolate.IMockSubject<").Append(mockClass.DisplayString)
+				.Append(">)mockTarget).Mock;").AppendLine();
+			sb.Append("\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mockClass.DisplayString)
+				.Append(">> setup in setups)").AppendLine();
+			sb.Append("\t\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
+			sb.Append("\t\t\t\t\t}").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
+			sb.Append("\t\t\t\treturn mockTarget.Object;").AppendLine();
+		}
+		else if (mockClass.IsInterface)
+		{
+			sb.Append("\t\t\t\tvar value = new global::Mockolate.Generated.MockFor").Append(name).Append("(mockBehavior);").AppendLine();
+			sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mockClass.DisplayString)
+				.Append("> setupTarget = ((global::Mockolate.IMockSubject<").Append(mockClass.DisplayString)
+				.Append(">)value).Mock;").AppendLine();
+			sb.Append("\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mockClass.DisplayString)
+				.Append(">> setup in setups)").AppendLine();
+			sb.Append("\t\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
+			sb.Append("\t\t\t\t\t}").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
+			sb.Append("\t\t\t\treturn value;").AppendLine();
+		}
+		else if (mockClass.Constructors?.Count > 0)
+		{
+			sb.Append(
+					"\t\t\t\tif (constructorParameters is null || constructorParameters.Parameters.Length == 0)")
+				.AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			if (mockClass.Constructors.Value.Any(m => m.Parameters.Count == 0))
+			{
+				sb.Append("\t\t\t\t\tglobal::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, \"")
+					.Append(mockClass.DisplayString).Append("\");").AppendLine();
+				sb.Append("\t\t\t\t\tglobal::Mockolate.Generated.MockFor").Append(name)
+					.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
+				sb.Append("\t\t\t\t\tif (setups.Length > 0)").AppendLine();
+				sb.Append("\t\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\t\t#pragma warning disable CS0618").AppendLine();
+				sb.Append("\t\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mockClass.DisplayString)
+					.Append("> setupTarget = new global::Mockolate.MockSetup<").Append(mockClass.DisplayString)
+					.Append(">(mockRegistration);").AppendLine();
+				sb.Append("\t\t\t\t\t\t#pragma warning restore CS0618").AppendLine();
+				sb.Append("\t\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mockClass.DisplayString)
+					.Append(">> setup in setups)").AppendLine();
+				sb.Append("\t\t\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
+				sb.Append("\t\t\t\t\t\t}").AppendLine();
+				sb.Append("\t\t\t\t\t}").AppendLine();
+				sb.Append("\t\t\t\t\treturn new global::Mockolate.Generated.MockFor").Append(name).Append("(mockRegistration);")
+					.AppendLine();
+			}
+			else
+			{
+				sb.Append("\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"No parameterless constructor found for '")
+					.Append(mockClass.ClassFullName)
+					.Append("'. Please provide constructor parameters.\");")
+					.AppendLine();
+			}
 
+			sb.Append("\t\t\t\t}").AppendLine();
+			int constructorIndex = 0;
+			foreach (EquatableArray<MethodParameter> constructorParameters in mockClass.Constructors.Value
+				         .Select(constructor => constructor.Parameters))
+			{
+				constructorIndex++;
+				int requiredParameters = constructorParameters.Count(c => !c.HasExplicitDefaultValue);
+				if (requiredParameters < constructorParameters.Count)
+				{
+					sb.Append("\t\t\t\telse if (constructorParameters.Parameters.Length >= ")
+						.Append(requiredParameters).Append(" && constructorParameters.Parameters.Length <= ")
+						.Append(constructorParameters.Count);
+				}
+				else
+				{
+					sb.Append("\t\t\t\telse if (constructorParameters.Parameters.Length == ")
+						.Append(constructorParameters.Count);
+				}
 
+				int constructorParameterIndex = 0;
+				foreach (MethodParameter parameter in constructorParameters)
+				{
+					sb.AppendLine().Append("\t\t\t\t    && ")
+						.Append(parameter.HasExplicitDefaultValue ? "TryCastWithDefaultValue" : "TryCast")
+						.Append("(constructorParameters.Parameters, ")
+						.Append(constructorParameterIndex++)
+						.Append(parameter.HasExplicitDefaultValue ? $", {parameter.ExplicitDefaultValue}" : "")
+						.Append(", mockBehavior, out ").Append(parameter.Type.Fullname).Append(" c")
+						.Append(constructorIndex)
+						.Append('p')
+						.Append(constructorParameterIndex).Append(")");
+				}
+
+				sb.Append(")").AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\tglobal::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, \"")
+					.Append(mockClass.DisplayString).Append("\");").AppendLine();
+				sb.Append("\t\t\t\t\tglobal::Mockolate.Generated.MockFor").Append(name)
+					.Append(".MockRegistrationsProvider.Value = mockRegistration;").AppendLine();
+				sb.Append("\t\t\t\t\tif (setups.Length > 0)").AppendLine();
+				sb.Append("\t\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\t\t#pragma warning disable CS0618").AppendLine();
+				sb.Append("\t\t\t\t\t\tglobal::Mockolate.Setup.IMockSetup<").Append(mockClass.DisplayString)
+					.Append("> setupTarget = new global::Mockolate.MockSetup<").Append(mockClass.DisplayString)
+					.Append(">(mockRegistration);").AppendLine();
+				sb.Append("\t\t\t\t\t\t#pragma warning restore CS0618").AppendLine();
+				sb.Append("\t\t\t\t\t\tforeach (global::System.Action<global::Mockolate.Setup.IMockSetup<").Append(mockClass.DisplayString)
+					.Append(">> setup in setups)").AppendLine();
+				sb.Append("\t\t\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
+				sb.Append("\t\t\t\t\t\t}").AppendLine();
+				sb.Append("\t\t\t\t\t}").AppendLine();
+				sb.Append("\t\t\t\t\treturn new global::Mockolate.Generated.MockFor").Append(name).Append("(mockRegistration");
+				for (int i = 1; i <= constructorParameters.Count; i++)
+				{
+					sb.Append(", ").Append('c').Append(constructorIndex).Append('p').Append(i);
+				}
+
+				sb.Append(");").AppendLine();
+				sb.Append("\t\t\t\t}").AppendLine();
+			}
+
+			sb.Append("\t\t\t\telse").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"Could not find any constructor for '")
+				.Append(mockClass.ClassFullName)
+				.Append(
+					"' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(\", \", constructorParameters.Parameters)}).\");")
+				.AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
+			sb.Append("""
+
+			          				#pragma warning disable CS8321
+			          				static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)
+			          				{
+			          				    var value = values[index];
+			          					if (value is TValue typedValue)
+			          					{
+			          						result = typedValue;
+			          						return true;
+			          					}
+			          					
+			          					result = default!;
+			          					return value is null;
+			          				}
+			          				static bool TryCastWithDefaultValue<TValue>(object?[] values, int index, TValue defaultValue, global::Mockolate.MockBehavior behavior, out TValue result)
+			          				{
+			          					if (values.Length > index && values[index] is TValue typedValue)
+			          					{
+			          						result = typedValue;
+			          						return true;
+			          					}
+			          					
+			          					result = defaultValue;
+			          					return true;
+			          				}
+			          				#pragma warning restore CS8321
+			          """);
+		}
 		sb.Append("""
+		          			}
+		          		}
+		          	}
+		          }
+
 		          namespace Mockolate.Generated
 		          {
 
-		          #nullable enable annotations
 
 		          """);
 		if (mockClass.Delegate is not null)
 		{
 			sb.Append("/// <summary>").AppendLine();
 			sb.Append("///     A mock implementing <see cref=\"")
-				.Append(mockClass.ClassFullName.EscapeForXmlDoc())
+				.Append(mockClass.DisplayString.EscapeForXmlDoc())
 				.Append("\" />.");
 			sb.Append("/// </summary>").AppendLine();
-			sb.Append("internal class MockFor").Append(name).Append(" : IMockSubject<").Append(mockClass.ClassFullName)
+			sb.Append("internal class MockFor").Append(name).Append(" : IMockSubject<").Append(mockClass.DisplayString)
 				.Append(">").AppendLine();
 			sb.Append("{").AppendLine();
 			sb.Append("\t/// <inheritdoc cref=\"global::Mockolate.IMockSubject{T}.Mock\" />").AppendLine();
-			sb.Append("\tglobal::Mockolate.Mock<").Append(mockClass.ClassFullName).Append("> global::Mockolate.IMockSubject<")
-				.Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
-			sb.Append("\tprivate readonly global::Mockolate.Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
+			sb.Append("\tglobal::Mockolate.Mock<").Append(mockClass.DisplayString).Append("> global::Mockolate.IMockSubject<")
+				.Append(mockClass.DisplayString).Append(">.Mock => _mock;").AppendLine();
+			sb.Append("\tprivate readonly global::Mockolate.Mock<").Append(mockClass.DisplayString).Append("> _mock;").AppendLine();
 			sb.Append("\t/// <inheritdoc cref=\"global::Mockolate.IHasMockRegistration.Registrations\" />").AppendLine();
 			sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
 			sb.Append("\tglobal::Mockolate.MockRegistration global::Mockolate.IHasMockRegistration.Registrations => _mock.Registrations;").AppendLine();
@@ -73,12 +247,12 @@ internal static partial class Sources
 			sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
 			sb.Append("\tpublic MockFor").Append(name).Append("(global::Mockolate.MockBehavior mockBehavior)").AppendLine();
 			sb.Append("\t{").AppendLine();
-			sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.ClassFullName)
+			sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.DisplayString)
 				.Append(">(Invoke, new global::Mockolate.MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
 				.Append("\"));").AppendLine();
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
-			sb.Append("\tpublic ").Append(mockClass.ClassFullName).Append(" Object => new(Invoke);").AppendLine();
+			sb.Append("\tpublic ").Append(mockClass.DisplayString).Append(" Object => new(Invoke);").AppendLine();
 			sb.Append("\tprivate ")
 				.Append(mockClass.Delegate.ReturnType == Type.Void
 					? "void"
@@ -134,32 +308,32 @@ internal static partial class Sources
 		{
 			sb.Append("/// <summary>").AppendLine();
 			sb.Append("///     A mock implementing <see cref=\"")
-				.Append(mockClass.ClassFullName.EscapeForXmlDoc())
+				.Append(mockClass.DisplayString.EscapeForXmlDoc())
 				.Append("\" />");
 			foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
 			{
-				sb.Append(" and <see cref=\"").Append(additional.ClassFullName.EscapeForXmlDoc()).Append("\" />");
+				sb.Append(" and <see cref=\"").Append(additional.DisplayString.EscapeForXmlDoc()).Append("\" />");
 			}
 
 			sb.AppendLine(".");
 			sb.Append("/// </summary>").AppendLine();
-			sb.Append("internal class MockFor").Append(name).Append(" : ").Append(mockClass.ClassFullName).Append(",")
+			sb.Append("internal class MockFor").Append(name).Append(" : ").Append(mockClass.DisplayString).Append(",")
 				.AppendLine();
 			foreach (Class? additional in mockClass.DistinctAdditionalImplementations())
 			{
-				sb.Append("\t").Append(additional.ClassFullName).Append(",").AppendLine();
+				sb.Append("\t").Append(additional.DisplayString).Append(",").AppendLine();
 			}
 
-			sb.Append("\tIMockSubject<").Append(mockClass.ClassFullName).Append(">").AppendLine();
+			sb.Append("\tIMockSubject<").Append(mockClass.DisplayString).Append(">").AppendLine();
 			sb.Append("{").AppendLine();
 			sb.Append("\t/// <inheritdoc cref=\"IMockSubject{T}.Mock\" />").AppendLine();
-			sb.Append("\tglobal::Mockolate.Mock<").Append(mockClass.ClassFullName).Append("> IMockSubject<")
-				.Append(mockClass.ClassFullName).Append(">.Mock => _mock;").AppendLine();
+			sb.Append("\tglobal::Mockolate.Mock<").Append(mockClass.DisplayString).Append("> IMockSubject<")
+				.Append(mockClass.DisplayString).Append(">.Mock => _mock;").AppendLine();
 			sb.Append("\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\tprivate readonly global::Mockolate.Mock<").Append(mockClass.ClassFullName).Append("> _mock;").AppendLine();
+			sb.Append("\tprivate readonly global::Mockolate.Mock<").Append(mockClass.DisplayString).Append("> _mock;").AppendLine();
 			if (mockClass.IsInterface)
 			{
-				sb.Append("\tprivate readonly ").Append(mockClass.ClassFullName).Append("? _wrapped;").AppendLine();
+				sb.Append("\tprivate readonly ").Append(mockClass.DisplayString).Append("? _wrapped;").AppendLine();
 			}
 
 			sb.AppendLine();
@@ -195,9 +369,9 @@ internal static partial class Sources
 			{
 				sb.Append("\t/// <inheritdoc cref=\"MockFor").Append(name).Append("\" />").AppendLine();
 				sb.Append("\tpublic MockFor").Append(name).Append("(global::Mockolate.MockBehavior mockBehavior, ")
-					.Append(mockClass.ClassFullName).Append("? wrapped = null)").AppendLine();
+					.Append(mockClass.DisplayString).Append("? wrapped = null)").AppendLine();
 				sb.Append("\t{").AppendLine();
-				sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.ClassFullName)
+				sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.DisplayString)
 					.Append(">(this, new global::Mockolate.MockRegistration(mockBehavior, \"").Append(mockClass.DisplayString)
 					.Append("\"));").AppendLine();
 				sb.Append("\t\tthis._wrapped = wrapped;").AppendLine();
@@ -264,7 +438,7 @@ internal static partial class Sources
 
 		sb.Append(')').AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.ClassFullName)
+		sb.Append("\t\t_mock = new global::Mockolate.Mock<").Append(mockClass.DisplayString)
 			.Append(">(this, mockRegistration, new object?[] { ");
 		index = 0;
 		foreach (MethodParameter parameter in constructor.Parameters)
@@ -286,7 +460,7 @@ internal static partial class Sources
 	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class,
 		MockClass? mockClass)
 	{
-		string className = @class.ClassFullName;
+		string className = @class.DisplayString;
 		sb.Append("\t#region ").Append(className).AppendLine();
 		int count = 0;
 		List<Event>? mockEvents = mockClass?.AllEvents().ToList();
@@ -808,7 +982,7 @@ internal static partial class Sources
 				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
 
 				if (method.Name.StartsWith("Send", StringComparison.Ordinal) &&
-				    @class is { ClassName: "HttpClient", ClassFullName: "System.Net.Http.HttpClient", })
+				    @class is { ClassName: "HttpClient", DisplayString: "System.Net.Http.HttpClient", })
 				{
 					sb.Append("\t\t\t#if NETFRAMEWORK").AppendLine();
 					sb.Append("\t\t\t// Persist the HttpContent, because it gets automatically disposed on .NET Framework").AppendLine();

@@ -14,7 +14,7 @@ internal static class Helpers
 		miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
 		                      SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
 		                      SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier,
-		globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.OmittedAsContaining,
+		globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
 		typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
 		genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters);
 

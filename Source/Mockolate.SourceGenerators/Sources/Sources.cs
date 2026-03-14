@@ -50,7 +50,7 @@ internal static partial class Sources
 		
 		
 		
-		sb.AppendLine("""
+		sb.AppendLine($$"""
 		              	/// <summary>
 		              	///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
 		              	/// </summary>
@@ -61,14 +61,26 @@ internal static partial class Sources
 		              	extension<T>(T _)
 		              	{
 		              		/// <summary>
-		              		///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              		///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
 		              		/// </summary>
 		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
 		              		/// <remarks>
 		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              		/// </remarks>
 		              		[MockGenerator]
-		              		public static T CreateMock()
+		              		public static T CreateMock(global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
+		              		{
+		              			throw new global::System.NotSupportedException("This method is only meant to be used in the context of Mockolate and should not be called directly.");
+		              		}
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" /> using the <paramref name="constructorParameters" /> with the given <paramref name="mockBehavior" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		/// </remarks>
+		              		[MockGenerator]
+		              		public static T CreateMock(global::Mockolate.BaseClass.ConstructorParameters? constructorParameters, global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups)
 		              		{
 		              			throw new global::System.NotSupportedException("This method is only meant to be used in the context of Mockolate and should not be called directly.");
 		              		}

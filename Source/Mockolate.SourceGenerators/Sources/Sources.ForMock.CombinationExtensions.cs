@@ -54,7 +54,7 @@ internal static partial class Sources
 		              """);
 		sb.AppendLine();
 
-		sb.Append("\textension(").Append(mockClass.ClassFullName).AppendLine(" subject)");
+		sb.Append("\textension(").Append(mockClass.DisplayString).AppendLine(" subject)");
 		sb.AppendLine("\t{");
 
 		foreach (Class @class in distinctAdditionalImplementations)
@@ -85,14 +85,14 @@ internal static partial class Sources
 		}
 
 		string mockExpression =
-			$"new global::Mockolate.Mock<{@class.ClassFullName}>(({@class.ClassFullName})subject, GetMockOrThrow(subject).Registrations);";
+			$"new global::Mockolate.Mock<{@class.DisplayString}>(({@class.DisplayString})subject, GetMockOrThrow(subject).Registrations);";
 
 		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+		sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.DisplayString.EscapeForXmlDoc())
 			.Append("\" />")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic global::Mockolate.Setup.IMockSetup<").Append(@class.ClassFullName).Append("> Setup_").Append(name)
+		sb.Append("\t\tpublic global::Mockolate.Setup.IMockSetup<").Append(@class.DisplayString).Append("> Setup_").Append(name)
 			.Append("_Mock")
 			.AppendLine();
 		sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
@@ -102,10 +102,10 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Raise events on the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append("\" />").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Raise.IMockRaises<").Append(@class.ClassFullName).Append("> RaiseOn_")
+			sb.Append("\t\tpublic global::Mockolate.Raise.IMockRaises<").Append(@class.DisplayString).Append("> RaiseOn_")
 				.Append(name).Append("_Mock").AppendLine();
 			sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();
 		}
@@ -113,9 +113,9 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append("\t\t///     Verifies the interactions with the mocked subject of <see cref=\"")
-			.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" /> on the mock.").AppendLine();
+			.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\" /> on the mock.").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> VerifyOn_").Append(name)
+		sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).Append("> VerifyOn_").Append(name)
 			.Append("_Mock")
 			.AppendLine();
 		sb.Append("\t\t\t=> ").Append(mockExpression).AppendLine();

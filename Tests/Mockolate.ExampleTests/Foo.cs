@@ -9,9 +9,10 @@ public class Foo
 	public async Task X()
 	{
 		//IChocolateDispenser? sut = IChocolateDispenser.CreateMock();
-
-		var x = IChocolateDispenser.CreateMock();
-		_ = IChocolateDispenser3.CreateMock();
+		var y = Mock.Create<IChocolateDispenser2>();
+		
+		var x = IChocolateDispenser3.CreateMock();
+		_ = IChocolateDispenser.CreateMock2();
 
 		x.DispenseChocolate("foo");
 	}

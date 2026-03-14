@@ -20,38 +20,38 @@ internal static partial class Sources
 		          """);
 		if (@class is MockClass { Delegate: { } @delegate, })
 		{
-			sb.Append("internal static class MockFor").Append(name).Append("Extensions").AppendLine();
+			sb.Append("internal static partial class MockFor").Append(name).Append("Extensions").AppendLine();
 			sb.AppendLine("{");
-			sb.Append("\textension(").Append(@class.ClassFullName).AppendLine(" subject)");
+			sb.Append("\textension(").Append(@class.DisplayString).AppendLine(" subject)");
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Setup.IMockSetup<").Append(@class.ClassFullName).AppendLine("> SetupMock").AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Setup.IMockSetup<").Append(@class.DisplayString).AppendLine("> SetupMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).AppendLine("> VerifyMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::System.IDisposable MonitorMock(out global::Mockolate.Monitor.MockMonitor<").Append(@class.ClassFullName)
+			sb.Append("\t\tpublic global::System.IDisposable MonitorMock(out global::Mockolate.Monitor.MockMonitor<").Append(@class.DisplayString)
 				.Append("> monitor)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tmonitor = new global::Mockolate.Monitor.MockMonitor<").Append(@class.ClassFullName)
+			sb.Append("\t\t\tmonitor = new global::Mockolate.Monitor.MockMonitor<").Append(@class.DisplayString)
 				.AppendLine(">(subject);").AppendLine();
 			sb.Append("\t\t\treturn monitor.Run();").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
-			sb.Append("\textension(global::Mockolate.Setup.IMockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Setup.IMockSetup<").Append(@class.DisplayString).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			AppendMethodSetup(@class, sb, @delegate, false, "Delegate");
 			sb.AppendLine();
@@ -63,17 +63,17 @@ internal static partial class Sources
 
 			sb.AppendLine("\t}");
 			sb.AppendLine();
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).Append("> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Validates the invocations for the delegate <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append("\"/>").Append(@delegate.Parameters.Count > 0 ? " with the given " : "")
 				.Append(string.Join(", ", @delegate.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>")))
 				.Append(".")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> Invoked")
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> Invoked")
 				.Append("(");
 			int i = 0;
 			foreach (MethodParameter parameter in @delegate.Parameters)
@@ -109,14 +109,14 @@ internal static partial class Sources
 			{
 				sb.Append("\t\t/// <summary>").AppendLine();
 				sb.Append("\t\t///     Validates the invocations for the method <see cref=\"")
-					.Append(@class.ClassFullName.EscapeForXmlDoc())
+					.Append(@class.DisplayString.EscapeForXmlDoc())
 					.Append(".").Append(@delegate.Name.EscapeForXmlDoc()).Append("(")
 					.Append(string.Join(", ",
 						@delegate.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
 					.Append(")\"/> with the given <paramref name=\"parameters\"/>..")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
-				sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> Invoked")
+				sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> Invoked")
 					.Append("(global::Mockolate.Parameters.IParameters parameters)").AppendLine();
 
 				sb.Append("\t\t\t=> CastToMockOrThrow(verify).Method(").Append(@delegate.GetUniqueNameString());
@@ -167,37 +167,37 @@ internal static partial class Sources
 		{
 			sb.Append("internal static partial class MockFor").Append(name).Append("Extensions").AppendLine();
 			sb.AppendLine("{");
-			sb.Append("\textension(").Append(@class.ClassFullName).AppendLine(" subject)");
+			sb.Append("\textension(").Append(@class.DisplayString).AppendLine(" subject)");
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+			sb.Append("\t\t///     Sets up the mock for <see cref=\"").Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Setup.IMockSetup<").Append(@class.ClassFullName).AppendLine("> SetupMock").AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Setup.IMockSetup<").Append(@class.DisplayString).AppendLine("> SetupMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Raise events on the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Raise.IMockRaises<").Append(@class.ClassFullName).AppendLine("> RaiseOnMock").AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Raise.IMockRaises<").Append(@class.DisplayString).AppendLine("> RaiseOnMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).AppendLine("> VerifyMock").AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).AppendLine("> VerifyMock").AppendLine();
 			sb.Append("\t\t\t=> GetMockOrThrow(subject);").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the interactions with the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\" />.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::System.IDisposable MonitorMock(out global::Mockolate.Monitor.MockMonitor<").Append(@class.ClassFullName)
+			sb.Append("\t\tpublic global::System.IDisposable MonitorMock(out global::Mockolate.Monitor.MockMonitor<").Append(@class.DisplayString)
 				.Append("> monitor)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tmonitor = new global::Mockolate.Monitor.MockMonitor<").Append(@class.ClassFullName)
+			sb.Append("\t\t\tmonitor = new global::Mockolate.Monitor.MockMonitor<").Append(@class.DisplayString)
 				.AppendLine(">(subject);").AppendLine();
 			sb.Append("\t\t\treturn monitor.Run();").AppendLine();
 			sb.Append("\t\t}").AppendLine();
@@ -300,7 +300,7 @@ internal static partial class Sources
 		if (methodNameOverride is null)
 		{
 			sb.Append("\t\t///     Setup for the method <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append(".")
 				.Append(method.Name.EscapeForXmlDoc()).Append("(")
 				.Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
@@ -308,7 +308,7 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t///     Setup for the delegate <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+			sb.Append("\t\t///     Setup for the delegate <see cref=\"").Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append("\"/>");
 		}
 
@@ -480,7 +480,7 @@ internal static partial class Sources
 		}
 
 		sb.Append("\textension(global::Mockolate.Raise.I").Append(isProtected ? "Protected" : "").Append("MockRaises<")
-			.Append(@class.ClassFullName).Append("> mockRaises)").AppendLine();
+			.Append(@class.DisplayString).Append("> mockRaises)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
@@ -491,7 +491,7 @@ internal static partial class Sources
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append(".").Append(@event.Name.EscapeForXmlDoc())
 				.Append("\"/> event.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
@@ -518,14 +518,14 @@ internal static partial class Sources
 			}
 
 			sb.Append("\t\t/// <summary>").AppendLine();
-			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+			sb.Append("\t\t///     Raise the <see cref=\"").Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append(".").Append(@event.Name.EscapeForXmlDoc())
 				.Append("\"/> event.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic void ").Append(@event.Name).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters)")
 				.AppendLine();
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\tglobal::Mockolate.Mock<").Append(@class.ClassFullName).Append("> mock = CastToMockOrThrow(mockRaises);")
+			sb.Append("\t\t\tglobal::Mockolate.Mock<").Append(@class.DisplayString).Append("> mock = CastToMockOrThrow(mockRaises);")
 				.AppendLine();
 			sb.Append("\t\t\tglobal::Mockolate.MockBehavior mockBehavior = mock.Registrations.Behavior;").AppendLine();
 			sb.Append("\t\t\tmock.Registrations.Raise(").Append(@event.GetUniqueNameString()).Append(", ")
@@ -561,22 +561,22 @@ internal static partial class Sources
 		if (@class.AllProperties().Any(predicate))
 		{
 			sb.Append("\textension(global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockSetup<")
-				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
+				.Append(@class.DisplayString).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up properties on the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<")
-				.Append(@class.ClassFullName).Append(">")
+				.Append(@class.DisplayString).Append(">")
 				.Append("Property").AppendLine();
 			sb.Append("\t\t\t=> (global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<")
-				.Append(@class.ClassFullName).Append(">)setup;").AppendLine();
+				.Append(@class.DisplayString).Append(">)setup;").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
 			sb.Append("\textension(global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockPropertySetup<")
-				.Append(@class.ClassFullName).Append(">")
+				.Append(@class.DisplayString).Append(">")
 				.Append("setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
@@ -589,7 +589,7 @@ internal static partial class Sources
 
 				sb.Append("\t\t/// <summary>").AppendLine();
 				sb.Append("\t\t///     Setup for the property <see cref=\"")
-					.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".")
+					.Append(@class.DisplayString.EscapeForXmlDoc()).Append(".")
 					.Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
 				sb.Append("\t\tpublic global::Mockolate.Setup.PropertySetup<").Append(property.Type.Fullname).Append("> ")
@@ -634,7 +634,7 @@ internal static partial class Sources
 		if (@class.AllProperties().Any(predicate))
 		{
 			sb.Append("\textension(global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockSetup<")
-				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
+				.Append(@class.DisplayString).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
 			foreach (Property indexer in @class.AllProperties().Where(predicate))
@@ -646,7 +646,7 @@ internal static partial class Sources
 
 				sb.Append("\t\t/// <summary>").AppendLine();
 				sb.Append("\t\t///     Sets up the ").Append(indexer.Type.Fullname)
-					.Append(" indexer on the mock for <see cref=\"").Append(@class.ClassFullName.EscapeForXmlDoc())
+					.Append(" indexer on the mock for <see cref=\"").Append(@class.DisplayString.EscapeForXmlDoc())
 					.Append("\" />.")
 					.AppendLine();
 				sb.Append("\t\t/// </summary>").AppendLine();
@@ -699,26 +699,26 @@ internal static partial class Sources
 			bool hasGetHashCode = !isProtected && methods.Any(m => m.IsGetHashCode());
 			bool hasEquals = !isProtected && methods.Any(m => m.IsEquals());
 			sb.Append("\textension(global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockSetup<")
-				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
+				.Append(@class.DisplayString).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Sets up methods on the mock for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup")
 				.Append(hasToString ? "WithToString" : "").Append(hasEquals ? "WithEquals" : "")
-				.Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.ClassFullName).Append(">")
+				.Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.DisplayString).Append(">")
 				.Append(" Method").AppendLine();
 			sb.Append("\t\t\t=> (global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup")
 				.Append(hasToString ? "WithToString" : "").Append(hasEquals ? "WithEquals" : "")
-				.Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.ClassFullName)
+				.Append(hasGetHashCode ? "WithGetHashCode" : "").Append("<").Append(@class.DisplayString)
 				.Append(">)setup")
 				.Append(";").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
 			sb.Append("\textension(global::Mockolate.Setup.I").Append(isProtected ? "Protected" : "").Append("MockMethodSetup<")
-				.Append(@class.ClassFullName).Append("> setup)").AppendLine();
+				.Append(@class.DisplayString).Append("> setup)").AppendLine();
 			sb.AppendLine("\t{");
 			int count = 0;
 			foreach (Method method in methods)
@@ -769,16 +769,16 @@ internal static partial class Sources
 			return false;
 		}
 
-		sb.Append("\textension(global::Mockolate.Setup.IMockSetup<").Append(@class.ClassFullName).Append("> setup)").AppendLine();
+		sb.Append("\textension(global::Mockolate.Setup.IMockSetup<").Append(@class.DisplayString).Append("> setup)").AppendLine();
 		sb.AppendLine("\t{");
 		sb.Append("\t\t/// <summary>").AppendLine();
 		sb.Append(
 				"\t\t///     Sets up the protected methods or properties of the mock for <see cref=\"")
-			.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\" />.")
+			.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\" />.")
 			.AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tpublic global::Mockolate.Setup.IProtectedMockSetup<").Append(@class.ClassFullName).Append("> Protected").AppendLine();
-		sb.Append("\t\t\t=> (global::Mockolate.Setup.IProtectedMockSetup<").Append(@class.ClassFullName).Append(">)setup;").AppendLine();
+		sb.Append("\t\tpublic global::Mockolate.Setup.IProtectedMockSetup<").Append(@class.DisplayString).Append("> Protected").AppendLine();
+		sb.Append("\t\t\t=> (global::Mockolate.Setup.IProtectedMockSetup<").Append(@class.DisplayString).Append(">)setup;").AppendLine();
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 		return true;
@@ -799,20 +799,20 @@ internal static partial class Sources
 			return;
 		}
 
-		string verifyType = $"global::Mockolate.Verify.IMockVerifyInvoked<{@class.ClassFullName}>";
+		string verifyType = $"global::Mockolate.Verify.IMockVerifyInvoked<{@class.DisplayString}>";
 		if (hasToString || hasGetHashCode || hasEquals)
 		{
 			verifyType =
-				$"global::Mockolate.Verify.IMockVerifyInvoked{(hasToString ? "WithToString" : "")}{(hasEquals ? "WithEquals" : "")}{(hasGetHashCode ? "WithGetHashCode" : "")}<{@class.ClassFullName}>";
+				$"global::Mockolate.Verify.IMockVerifyInvoked{(hasToString ? "WithToString" : "")}{(hasEquals ? "WithEquals" : "")}{(hasGetHashCode ? "WithGetHashCode" : "")}<{@class.DisplayString}>";
 		}
 
 		if (!isProtected)
 		{
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).Append("> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the method invocations for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
 			sb.Append("\t\tpublic ").Append(verifyType).Append(" Invoked").AppendLine();
 			sb.Append("\t\t\t=> (").Append(verifyType).Append(")verify;").AppendLine();
@@ -831,15 +831,15 @@ internal static partial class Sources
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the protected method invocations for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyInvokedProtected<").Append(@class.ClassFullName).Append("> Protected")
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyInvokedProtected<").Append(@class.DisplayString).Append("> Protected")
 				.AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyInvokedProtected<").Append(@class.ClassFullName).Append(">)verify;")
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyInvokedProtected<").Append(@class.DisplayString).Append(">)verify;")
 				.AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
-			verifyType = $"global::Mockolate.Verify.IMockVerifyInvokedProtected<{@class.ClassFullName}>";
+			verifyType = $"global::Mockolate.Verify.IMockVerifyInvokedProtected<{@class.DisplayString}>";
 		}
 
 		sb.Append("\textension(").Append(verifyType).Append(" verifyInvoked)").AppendLine();
@@ -854,7 +854,7 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
 				.Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
@@ -862,7 +862,7 @@ internal static partial class Sources
 				.Append(string.Join(", ", method.Parameters.Select(p => $"<paramref name=\"{p.Name}\"/>"))).Append(".")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(method.Name)
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> ").Append(method.Name)
 				.Append("(");
 			int i = 0;
 			foreach (MethodParameter parameter in method.Parameters)
@@ -921,14 +921,14 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Validates the invocations for the method <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append(".").Append(method.Name.EscapeForXmlDoc()).Append("(")
 				.Append(string.Join(", ",
 					method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())))
 				.Append(")\"/> with the given <paramref name=\"parameters\"/>.")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(method.Name)
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> ").Append(method.Name)
 				.Append("(global::Mockolate.Parameters.IParameters parameters)");
 			if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 			{
@@ -977,14 +977,14 @@ internal static partial class Sources
 
 		if (!isProtected)
 		{
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).Append("> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the property read access for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyGot<").Append(@class.ClassFullName).Append("> Got").AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyGot<").Append(@class.ClassFullName).Append(">)verify;").AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyGot<").Append(@class.DisplayString).Append("> Got").AppendLine();
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyGot<").Append(@class.DisplayString).Append(">)verify;").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}
@@ -996,22 +996,22 @@ internal static partial class Sources
 
 		if (isProtected)
 		{
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerifyGot<").Append(@class.ClassFullName).Append("> verifyGot)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerifyGot<").Append(@class.DisplayString).Append("> verifyGot)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the protected property read access for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyGotProtected<").Append(@class.ClassFullName).Append("> Protected")
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyGotProtected<").Append(@class.DisplayString).Append("> Protected")
 				.AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyGotProtected<").Append(@class.ClassFullName).Append(">)verifyGot;")
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyGotProtected<").Append(@class.DisplayString).Append(">)verifyGot;")
 				.AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}
 
 		sb.Append("\textension(global::Mockolate.Verify.IMockVerifyGot").Append(isProtected ? "Protected" : "").Append("<")
-			.Append(@class.ClassFullName)
+			.Append(@class.DisplayString)
 			.Append("> verifyGot)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
@@ -1024,10 +1024,10 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(property.Name)
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> ").Append(property.Name)
 				.Append("()").AppendLine();
 			sb.Append("\t\t\t=> CastToMockOrThrow(verifyGot).Property(").Append(property.GetUniqueNameString())
 				.Append(");")
@@ -1064,7 +1064,7 @@ internal static partial class Sources
 			return;
 		}
 
-		sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
+		sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).Append("> verify)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (EquatableArray<MethodParameter>? indexerParameters in @class.AllProperties().Where(predicate)
@@ -1082,9 +1082,9 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the indexer read access for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> Got")
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> Got")
 				.Append(isProtected ? "Protected" : "").Append("Indexer")
 				.Append("(").Append(string.Join(", ",
 					indexerParameters.Value.Select((p, i)
@@ -1132,14 +1132,14 @@ internal static partial class Sources
 
 		if (!isProtected)
 		{
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).Append("> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the property write access for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifySet<").Append(@class.ClassFullName).Append("> Set").AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifySet<").Append(@class.ClassFullName).Append(">)verify;").AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifySet<").Append(@class.DisplayString).Append("> Set").AppendLine();
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifySet<").Append(@class.DisplayString).Append(">)verify;").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}
@@ -1151,22 +1151,22 @@ internal static partial class Sources
 
 		if (isProtected)
 		{
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerifySet<").Append(@class.ClassFullName).Append("> verifySet)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerifySet<").Append(@class.DisplayString).Append("> verifySet)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the protected property write access for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifySetProtected<").Append(@class.ClassFullName).Append("> Protected")
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifySetProtected<").Append(@class.DisplayString).Append("> Protected")
 				.AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifySetProtected<").Append(@class.ClassFullName).Append(">)verifySet;")
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifySetProtected<").Append(@class.DisplayString).Append(">)verifySet;")
 				.AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}
 
 		sb.Append("\textension(global::Mockolate.Verify.IMockVerifySet").Append(isProtected ? "Protected" : "").Append("<")
-			.Append(@class.ClassFullName)
+			.Append(@class.DisplayString)
 			.Append("> verifySet)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
@@ -1179,10 +1179,10 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Validates the invocations for the property <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc())
+				.Append(@class.DisplayString.EscapeForXmlDoc())
 				.Append(".").Append(property.Name.EscapeForXmlDoc()).Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> ").Append(property.Name)
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> ").Append(property.Name)
 				.Append("(global::Mockolate.Parameters.IParameter<")
 				.Append(property.Type.Fullname).Append("> value)").AppendLine();
 			sb.Append("\t\t\t=> CastToMockOrThrow(verifySet).Property(").Append(property.GetUniqueNameString())
@@ -1219,7 +1219,7 @@ internal static partial class Sources
 			return;
 		}
 
-		sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
+		sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).Append("> verify)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Property indexer in @class.AllProperties().Where(predicate))
@@ -1236,9 +1236,9 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the indexer write access for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> Set")
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> Set")
 				.Append(isProtected ? "Protected" : "").Append("Indexer")
 				.Append("(")
 				.Append(string.Join(", ",
@@ -1276,24 +1276,24 @@ internal static partial class Sources
 
 		if (!isProtected)
 		{
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append("> verify)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerify<").Append(@class.DisplayString).Append("> verify)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the event subscriptions for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifySubscribedTo<").Append(@class.ClassFullName).Append("> SubscribedTo")
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifySubscribedTo<").Append(@class.DisplayString).Append("> SubscribedTo")
 				.AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifySubscribedTo<").Append(@class.ClassFullName).Append(">)verify;")
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifySubscribedTo<").Append(@class.DisplayString).Append(">)verify;")
 				.AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the event unsubscriptions for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyUnsubscribedFrom<").Append(@class.ClassFullName)
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyUnsubscribedFrom<").Append(@class.DisplayString)
 				.Append("> UnsubscribedFrom").AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyUnsubscribedFrom<").Append(@class.ClassFullName).Append(">)verify;")
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyUnsubscribedFrom<").Append(@class.DisplayString).Append(">)verify;")
 				.AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
@@ -1306,50 +1306,50 @@ internal static partial class Sources
 
 		if (isProtected)
 		{
-			sb.Append("\textension(global::Mockolate.Raise.IMockRaises<").Append(@class.ClassFullName).Append("> raises)").AppendLine();
+			sb.Append("\textension(global::Mockolate.Raise.IMockRaises<").Append(@class.DisplayString).Append("> raises)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Raise protected events on the mock for <typeparamref name=\"TMock\" />.")
 				.AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Raise.IProtectedMockRaises<").Append(@class.ClassFullName).Append("> Protected")
+			sb.Append("\t\tpublic global::Mockolate.Raise.IProtectedMockRaises<").Append(@class.DisplayString).Append("> Protected")
 				.AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Raise.IProtectedMockRaises<").Append(@class.ClassFullName).Append(">)raises;")
+			sb.Append("\t\t\t=> (global::Mockolate.Raise.IProtectedMockRaises<").Append(@class.DisplayString).Append(">)raises;")
 				.AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerifySubscribedTo<").Append(@class.ClassFullName)
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerifySubscribedTo<").Append(@class.DisplayString)
 				.Append("> verifySubscribedTo)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the protected event subscriptions for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifySubscribedToProtected<").Append(@class.ClassFullName).Append("> Protected")
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifySubscribedToProtected<").Append(@class.DisplayString).Append("> Protected")
 				.AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifySubscribedToProtected<").Append(@class.ClassFullName)
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifySubscribedToProtected<").Append(@class.DisplayString)
 				.Append(">)verifySubscribedTo;").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 
-			sb.Append("\textension(global::Mockolate.Verify.IMockVerifyUnsubscribedFrom<").Append(@class.ClassFullName)
+			sb.Append("\textension(global::Mockolate.Verify.IMockVerifyUnsubscribedFrom<").Append(@class.DisplayString)
 				.Append("> verifyUnsubscribedFrom)").AppendLine();
 			sb.AppendLine("\t{");
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Verifies the protected event unsubscriptions for <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append("\"/> on the mock.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyUnsubscribedFromProtected<").Append(@class.ClassFullName)
+			sb.Append("\t\tpublic global::Mockolate.Verify.IMockVerifyUnsubscribedFromProtected<").Append(@class.DisplayString)
 				.Append("> Protected").AppendLine();
-			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyUnsubscribedFromProtected<").Append(@class.ClassFullName)
+			sb.Append("\t\t\t=> (global::Mockolate.Verify.IMockVerifyUnsubscribedFromProtected<").Append(@class.DisplayString)
 				.Append(">)verifyUnsubscribedFrom;").AppendLine();
 			sb.AppendLine("\t}");
 			sb.AppendLine();
 		}
 
 		sb.Append("\textension(global::Mockolate.Verify.IMockVerifySubscribedTo").Append(isProtected ? "Protected" : "").Append("<")
-			.Append(@class.ClassFullName).Append("> verifyEvent)").AppendLine();
+			.Append(@class.DisplayString).Append("> verifyEvent)").AppendLine();
 		sb.AppendLine("\t{");
 		int count = 0;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
@@ -1361,10 +1361,10 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Validates the subscriptions for the event <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".").Append(@event.Name.EscapeForXmlDoc())
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append(".").Append(@event.Name.EscapeForXmlDoc())
 				.Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> ")
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> ")
 				.Append(@event.Name).Append("()").AppendLine();
 			sb.Append("\t\t\t=> CastToMockOrThrow(verifyEvent).SubscribedTo(").Append(@event.GetUniqueNameString())
 				.Append(");")
@@ -1374,7 +1374,7 @@ internal static partial class Sources
 		sb.AppendLine("\t}");
 		sb.AppendLine();
 		sb.Append("\textension(global::Mockolate.Verify.IMockVerifyUnsubscribedFrom").Append(isProtected ? "Protected" : "").Append("<")
-			.Append(@class.ClassFullName).Append("> verifyEvent)").AppendLine();
+			.Append(@class.DisplayString).Append("> verifyEvent)").AppendLine();
 		sb.AppendLine("\t{");
 		count = 0;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
@@ -1386,10 +1386,10 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <summary>").AppendLine();
 			sb.Append("\t\t///     Validates the unsubscription for the event <see cref=\"")
-				.Append(@class.ClassFullName.EscapeForXmlDoc()).Append(".").Append(@event.Name.EscapeForXmlDoc())
+				.Append(@class.DisplayString.EscapeForXmlDoc()).Append(".").Append(@event.Name.EscapeForXmlDoc())
 				.Append("\"/>.").AppendLine();
 			sb.Append("\t\t/// </summary>").AppendLine();
-			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.ClassFullName).Append("> ")
+			sb.Append("\t\tpublic global::Mockolate.Verify.VerificationResult<").Append(@class.DisplayString).Append("> ")
 				.Append(@event.Name).Append("()").AppendLine();
 			sb.Append("\t\t\t=> CastToMockOrThrow(verifyEvent).UnsubscribedFrom(").Append(@event.GetUniqueNameString())
 				.Append(");")
