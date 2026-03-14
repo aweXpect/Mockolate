@@ -16,7 +16,7 @@ internal static class StringExtensionMethods
 	///     rules.
 	/// </summary>
 	/// <returns>
-	///     <see langword="true" /> if the <paramref name="value" /> parameter occurs withing this string; otherwise,
+	///     <see langword="true" /> if the <paramref name="value" /> parameter occurs within this string; otherwise,
 	///     <see langword="false" />.
 	/// </returns>
 	internal static bool Contains(

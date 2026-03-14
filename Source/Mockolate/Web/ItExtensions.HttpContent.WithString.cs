@@ -87,7 +87,7 @@ public static partial class ItExtensions
 						: StringComparison.Ordinal):
 					return false;
 				case (BodyMatchType.Wildcard, _) when
-					!Wildcard.Pattern(value, _ignoringCase, false).Matches(stringContent):
+					!Wildcard.Pattern(value, _ignoringCase, _exactly).Matches(stringContent):
 					return false;
 				case (BodyMatchType.Regex, _):
 					{
