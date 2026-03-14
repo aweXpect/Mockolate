@@ -135,6 +135,39 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
+
+			[Theory]
+			[InlineData(true, "f?o", "foo")]
+			[InlineData(true, "f?o", "bar")]
+			[InlineData(true, "bar", "f?o")]
+			[InlineData(true, "bar", "bar")]
+			[InlineData(true, "f?o", "?oo", "b?r", "?ar")]
+			[InlineData(false, "f?o", "b?r", "baz")]
+			[InlineData(false, "f?o", "baz", "b?r")]
+			[InlineData(false, "?az", "f?o", "b?r")]
+			[InlineData(false, "?az")]
+			public async Task WithMultipleExpectations_ShouldVerifyAll(bool expectSuccess,
+				params string[] expectedValues)
+			{
+				ItExtensions.IHttpContentParameter isHttpContent = It.IsHttpContent();
+				foreach (string expectedValue in expectedValues)
+				{
+					isHttpContent = isHttpContent.WithStringMatching(expectedValue);
+				}
+
+				string body = "foo;bar";
+				HttpClient httpClient = Mock.Create<HttpClient>();
+				httpClient.SetupMock.Method
+					.PostAsync(It.IsAny<Uri>(), isHttpContent)
+					.ReturnsAsync(HttpStatusCode.OK);
+
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+					new StringContent(body),
+					CancellationToken.None);
+
+				await That(result.StatusCode)
+					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
 		}
 	}
 }

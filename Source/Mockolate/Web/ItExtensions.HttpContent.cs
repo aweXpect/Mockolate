@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Mockolate.Parameters;
@@ -62,7 +63,7 @@ public static partial class ItExtensions
 		: IHttpContentHeaderParameter, IHttpRequestMessagePropertyParameter<HttpContent?>, IParameter
 	{
 		private List<Action<HttpContent?>>? _callbacks;
-		private IContentMatcher? _contentMatcher;
+		private List<IContentMatcher>? _contentMatchers;
 		private HttpHeadersMatcher? _headers;
 		private string? _mediaType;
 
@@ -74,13 +75,15 @@ public static partial class ItExtensions
 
 		public IHttpContentParameter WithString(Func<string, bool> predicate)
 		{
-			_contentMatcher = new PredicateStringMatcher(predicate);
+			_contentMatchers ??= [];
+			_contentMatchers.Add(new PredicateStringMatcher(predicate));
 			return this;
 		}
 
 		public IHttpContentParameter WithBytes(Func<byte[], bool> predicate)
 		{
-			_contentMatcher = new BinaryMatcher(predicate);
+			_contentMatchers ??= [];
+			_contentMatchers.Add(new BinaryMatcher(predicate));
 			return this;
 		}
 
@@ -126,8 +129,8 @@ public static partial class ItExtensions
 				return false;
 			}
 
-			if (_contentMatcher is not null &&
-			    !_contentMatcher.Matches(value, requestMessage))
+			if (_contentMatchers is not null &&
+			    _contentMatchers.Any(contentMatcher => !contentMatcher.Matches(value, requestMessage)))
 			{
 				return false;
 			}
