@@ -2,6 +2,9 @@ using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using Mockolate.Internals;
+#if NETSTANDARD2_0
+using Mockolate.Internals.Polyfills;
+#endif
 
 namespace Mockolate.Web;
 
@@ -12,7 +15,7 @@ public static partial class ItExtensions
 	extension(IHttpContentParameter parameter)
 	{
 		/// <summary>
-		///     Expects the content to have a string body equal to the <paramref name="expected" /> value.
+		///     Expects the content to have a string body that contains the <paramref name="expected" /> value.
 		/// </summary>
 		public IStringContentBodyParameter WithString(string expected)
 		{
@@ -54,28 +57,39 @@ public static partial class ItExtensions
 		///     Ignores case when matching the body.
 		/// </summary>
 		IStringContentBodyParameter IgnoringCase();
+
+		/// <summary>
+		///     Requires the body to completely match the given string.
+		/// </summary>
+		IStringContentBodyParameter Exactly();
 	}
 
 	private sealed class StringMatcher(string value, bool isExact)
 	{
 		private BodyMatchType _bodyMatchType = isExact ? BodyMatchType.Exact : BodyMatchType.Wildcard;
+		private bool _exactly;
 		private bool _ignoringCase;
 		private RegexOptions _regexOptions;
 		private TimeSpan? _timeout;
 
 		public bool Matches(string stringContent)
 		{
-			switch (_bodyMatchType)
+			switch (_bodyMatchType, _exactly)
 			{
-				case BodyMatchType.Exact when
+				case (BodyMatchType.Exact, false) when
+					!stringContent.Contains(value, _ignoringCase
+						? StringComparison.OrdinalIgnoreCase
+						: StringComparison.Ordinal):
+					return false;
+				case (BodyMatchType.Exact, true) when
 					!stringContent.Equals(value, _ignoringCase
 						? StringComparison.OrdinalIgnoreCase
 						: StringComparison.Ordinal):
 					return false;
-				case BodyMatchType.Wildcard when
-					!Wildcard.Pattern(value, _ignoringCase, false).Matches(stringContent):
+				case (BodyMatchType.Wildcard, _) when
+					!Wildcard.Pattern(value, _ignoringCase, _exactly).Matches(stringContent):
 					return false;
-				case BodyMatchType.Regex:
+				case (BodyMatchType.Regex, _):
 					{
 						Regex regex = new(value,
 							_ignoringCase ? _regexOptions | RegexOptions.IgnoreCase : _regexOptions,
@@ -101,6 +115,9 @@ public static partial class ItExtensions
 			_bodyMatchType = BodyMatchType.Regex;
 		}
 
+		public void Exactly()
+			=> _exactly = true;
+
 		public void IgnoringCase()
 			=> _ignoringCase = true;
 
@@ -125,6 +142,12 @@ public static partial class ItExtensions
 		public IStringContentBodyParameter IgnoringCase()
 		{
 			_data.IgnoringCase();
+			return this;
+		}
+
+		public IStringContentBodyParameter Exactly()
+		{
+			_data.Exactly();
 			return this;
 		}
 

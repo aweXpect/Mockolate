@@ -1883,6 +1883,7 @@ namespace Mockolate.Web
         }
         public interface IStringContentBodyParameter : Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
         {
+            Mockolate.Web.ItExtensions.IStringContentBodyParameter Exactly();
             Mockolate.Web.ItExtensions.IStringContentBodyParameter IgnoringCase();
         }
         public interface IUriParameter : Mockolate.Parameters.IParameter<System.Uri?>

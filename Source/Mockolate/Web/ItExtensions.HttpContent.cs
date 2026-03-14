@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Mockolate.Parameters;
@@ -61,10 +62,11 @@ public static partial class ItExtensions
 	private sealed class HttpContentParameter
 		: IHttpContentHeaderParameter, IHttpRequestMessagePropertyParameter<HttpContent?>, IParameter
 	{
+		private BinaryMatcher? _binaryContentMatcher;
 		private List<Action<HttpContent?>>? _callbacks;
-		private IContentMatcher? _contentMatcher;
 		private HttpHeadersMatcher? _headers;
 		private string? _mediaType;
+		private PredicateStringMatcher? _stringContentMatcher;
 
 		public IHttpContentParameter IncludingRequestHeaders()
 		{
@@ -74,13 +76,14 @@ public static partial class ItExtensions
 
 		public IHttpContentParameter WithString(Func<string, bool> predicate)
 		{
-			_contentMatcher = new PredicateStringMatcher(predicate);
+			_stringContentMatcher ??= new PredicateStringMatcher();
+			_stringContentMatcher.AddPredicate(predicate);
 			return this;
 		}
 
 		public IHttpContentParameter WithBytes(Func<byte[], bool> predicate)
 		{
-			_contentMatcher = new BinaryMatcher(predicate);
+			_binaryContentMatcher ??= new BinaryMatcher(predicate);
 			return this;
 		}
 
@@ -126,8 +129,14 @@ public static partial class ItExtensions
 				return false;
 			}
 
-			if (_contentMatcher is not null &&
-			    !_contentMatcher.Matches(value, requestMessage))
+			if (_stringContentMatcher is not null &&
+			    !_stringContentMatcher.Matches(value, requestMessage))
+			{
+				return false;
+			}
+
+			if (_binaryContentMatcher is not null &&
+			    !_binaryContentMatcher.Matches(value, requestMessage))
 			{
 				return false;
 			}
@@ -153,8 +162,10 @@ public static partial class ItExtensions
 			bool Matches(HttpContent content, HttpRequestMessage? message);
 		}
 
-		private sealed class PredicateStringMatcher(Func<string, bool> predicate) : IContentMatcher
+		private sealed class PredicateStringMatcher : IContentMatcher
 		{
+			private readonly List<Func<string, bool>> _predicates = [];
+
 			public bool Matches(HttpContent content, HttpRequestMessage? message)
 			{
 				static Encoding GetEncodingFromCharset(string? charset)
@@ -184,8 +195,7 @@ public static partial class ItExtensions
 				stream.Position = position;
 #else
 				string stringContent;
-				if (message?.Properties.TryGetValue("Mockolate:HttpContent", out object value) == true
-				    && value is byte[] bytes)
+				if (message?.Properties.TryGetValue("Mockolate:HttpContent", out object value) == true && value is byte[] bytes)
 				{
 					stringContent = encoding.GetString(bytes);
 				}
@@ -198,8 +208,11 @@ public static partial class ItExtensions
 					stream.Position = position;
 				}
 #endif
-				return predicate.Invoke(stringContent);
+				return _predicates.All(predicate => predicate.Invoke(stringContent));
 			}
+
+			public void AddPredicate(Func<string, bool> predicate)
+				=> _predicates.Add(predicate);
 		}
 
 		private sealed class BinaryMatcher(Func<byte[], bool> predicate) : IContentMatcher
