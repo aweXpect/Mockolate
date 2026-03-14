@@ -12,8 +12,42 @@ internal static partial class Sources
 	public static string ForMock(string name, MockClass mockClass)
 	{
 		StringBuilder sb = InitializeBuilder();
+		
+		sb.AppendLine($$"""
+		              namespace Mockolate
+		              {
+		              	internal static partial class MockFor{{name}}Extensions
+		              	{
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		/// </remarks>
+		              		extension({{mockClass.ClassFullName}} _)
+		              		{
+		              			/// <summary>
+		              			///     Create a new mock for <see cref="{{mockClass.ClassFullName.EscapeForXmlDoc()}}" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              			/// </summary>
+		              			/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              			/// <remarks>
+		              			///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              			/// </remarks>
+		              			[MockGenerator]
+		              			public static {{mockClass.ClassFullName}} CreateMock()
+		              			{
+		              				throw new global::System.NotSupportedException("This met22hod is only meant to be used in the context of Mockolate and should not be called directly.");
+		              			}
+		              		}
+		              	}
+		              }
+		              """);
+
+
 		sb.Append("""
-		          namespace Mockolate.Generated;
+		          namespace Mockolate.Generated
+		          {
 
 		          #nullable enable annotations
 
@@ -188,6 +222,7 @@ internal static partial class Sources
 			sb.AppendLine("}");
 		}
 
+		sb.Append("}").AppendLine();
 		sb.AppendLine("#nullable disable annotations");
 		return sb.ToString();
 	}

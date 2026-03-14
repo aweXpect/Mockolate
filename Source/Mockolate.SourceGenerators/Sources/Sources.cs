@@ -47,6 +47,36 @@ internal static partial class Sources
 		              internal static partial class Mock
 		              {
 		              """);
+		
+		
+		
+		sb.AppendLine("""
+		              	/// <summary>
+		              	///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              	/// </summary>
+		              	/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              	/// <remarks>
+		              	///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              	/// </remarks>
+		              	extension<T>(T _)
+		              	{
+		              		/// <summary>
+		              		///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <remarks>
+		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
+		              		/// </remarks>
+		              		[MockGenerator]
+		              		public static T CreateMock()
+		              		{
+		              			throw new global::System.NotSupportedException("This method is only meant to be used in the context of Mockolate and should not be called directly.");
+		              		}
+		              	}
+		              """);
+		
+		
+		
 		sb.AppendLine("""
 		              	/// <summary>
 		              	///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.

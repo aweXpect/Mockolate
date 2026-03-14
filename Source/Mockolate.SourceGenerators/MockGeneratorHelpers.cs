@@ -35,27 +35,55 @@ internal static class MockGeneratorHelpers
 	internal static IEnumerable<MockClass> ExtractMockOrMockFactoryCreateSyntaxOrDefault(
 		this SyntaxNode syntaxNode, SemanticModel semanticModel)
 	{
-		InvocationExpressionSyntax invocationSyntax = (InvocationExpressionSyntax)syntaxNode;
-		MemberAccessExpressionSyntax memberAccessExpressionSyntax =
-			(MemberAccessExpressionSyntax)invocationSyntax.Expression;
-		GenericNameSyntax genericNameSyntax = (GenericNameSyntax)memberAccessExpressionSyntax.Name;
 		IAssemblySymbol sourceAssembly = semanticModel.Compilation.Assembly;
-		if (semanticModel.GetSymbolInfo(syntaxNode).IsCreateInvocationOnMockOrMockFactory())
-		{
-			ITypeSymbol[] genericTypes = genericNameSyntax.TypeArgumentList.Arguments
-				.Select(t => semanticModel.GetTypeInfo(t).Type)
-				.Where(t => t is not null)
-				.Cast<ITypeSymbol>()
-				.ToArray();
-			if (genericTypes.Length > 0 && IsMockable(genericTypes[0]) &&
-			    // Ignore types from the global namespace, as they are not generated correctly.
-			    genericTypes.All(x => !x.ContainingNamespace.IsGlobalNamespace))
-			{
-				yield return new MockClass(genericTypes, sourceAssembly);
 
-				foreach (MockClass? additionalMockClass in DiscoverMockableTypes(genericTypes, sourceAssembly))
+		// 1. Generische Create-Methoden wie bisher
+		if (syntaxNode is InvocationExpressionSyntax invocationSyntax &&
+			invocationSyntax.Expression is MemberAccessExpressionSyntax memberAccessExpressionSyntax &&
+			memberAccessExpressionSyntax.Name is GenericNameSyntax genericNameSyntax)
+		{
+			if (semanticModel.GetSymbolInfo(syntaxNode).IsCreateInvocationOnMockOrMockFactory())
+			{
+				ITypeSymbol[] genericTypes = genericNameSyntax.TypeArgumentList.Arguments
+					.Select(t => semanticModel.GetTypeInfo(t).Type)
+					.Where(t => t is not null)
+					.Cast<ITypeSymbol>()
+					.ToArray();
+				if (genericTypes.Length > 0 && IsMockable(genericTypes[0]) &&
+				    genericTypes.All(x => !x.ContainingNamespace.IsGlobalNamespace))
 				{
-					yield return additionalMockClass;
+					yield return new MockClass(genericTypes, sourceAssembly);
+
+					foreach (MockClass? additionalMockClass in DiscoverMockableTypes(genericTypes, sourceAssembly))
+					{
+						yield return additionalMockClass;
+					}
+				}
+			}
+		}
+
+		// 2. Statische, nicht-generische Methoden mit MockGenerator-Attribut
+		if (syntaxNode is InvocationExpressionSyntax staticInvocation)
+		{
+			SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(staticInvocation);
+			IMethodSymbol? methodSymbol = symbolInfo.Symbol as IMethodSymbol ?? symbolInfo.CandidateSymbols.OfType<IMethodSymbol>().FirstOrDefault();
+			if (methodSymbol != null && methodSymbol.IsStatic && !methodSymbol.IsGenericMethod)
+			{
+				if (methodSymbol.GetAttributes().Any(a =>
+					a.AttributeClass?.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
+					a.AttributeClass.ContainingNamespace.Name == "Mockolate" &&
+					a.AttributeClass.Name == "MockGeneratorAttribute"))
+				{
+					ITypeSymbol returnType = methodSymbol.ReturnType;
+					if (IsMockable(returnType) && !returnType.ContainingNamespace.IsGlobalNamespace)
+					{
+						yield return new MockClass([returnType], sourceAssembly);
+
+						foreach (MockClass? additionalMockClass in DiscoverMockableTypes([returnType], sourceAssembly))
+						{
+							yield return additionalMockClass;
+						}
+					}
 				}
 			}
 		}

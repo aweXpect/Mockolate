@@ -25,7 +25,11 @@ public class MockGenerator : IIncrementalGenerator
 
 		IncrementalValueProvider<ImmutableArray<MockClass>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
-				static (s, _) => s.IsCreateMethodInvocation(),
+				static (s, _) =>
+				{
+					// Prüfe nur, ob es ein Methodenaufruf ist
+					return s is Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax;
+				},
 				(ctx, _) => ctx.Node.ExtractMockOrMockFactoryCreateSyntaxOrDefault(ctx.SemanticModel))
 			.SelectMany(static (mocks, _) => mocks)
 			.Collect();

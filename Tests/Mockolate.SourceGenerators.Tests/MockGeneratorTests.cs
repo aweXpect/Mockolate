@@ -518,4 +518,33 @@ public class MockGeneratorTests
 			.Contains("Setup_IAdditionalInterface2_Mock").And
 			.Contains("VerifyOn_IAdditionalInterface2_Mock");
 	}
+
+	[Fact]
+	public async Task WhenStaticNonGenericMethodWithMockGeneratorAttribute_ShouldGenerateMockForReturnType()
+	{
+		GeneratorResult result = Generator
+			.Run(@"using System;
+using Mockolate;
+namespace MyCode
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var instance = MyMockFactory.CreateMyInterface();
+        }
+    }
+
+    public interface IMyInterface { }
+
+    public static class MyMockFactory
+    {
+        [MockGenerator]
+        public static IMyInterface CreateMyInterface() => null!;
+    }
+}");
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("MockForIMyInterface.g.cs");
+	}
 }

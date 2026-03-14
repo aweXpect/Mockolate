@@ -165,7 +165,7 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("internal static class MockFor").Append(name).Append("Extensions").AppendLine();
+			sb.Append("internal static partial class MockFor").Append(name).Append("Extensions").AppendLine();
 			sb.AppendLine("{");
 			sb.Append("\textension(").Append(@class.ClassFullName).AppendLine(" subject)");
 			sb.AppendLine("\t{");
