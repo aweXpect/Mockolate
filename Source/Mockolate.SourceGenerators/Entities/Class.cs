@@ -106,7 +106,6 @@ internal record Class
 		}
 	}
 
-
 	public EquatableArray<Method> Methods { get; }
 	public EquatableArray<Class> InheritedTypes { get; }
 	public EquatableArray<Property> Properties { get; }

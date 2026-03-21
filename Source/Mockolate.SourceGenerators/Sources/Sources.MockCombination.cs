@@ -16,7 +16,7 @@ internal static partial class Sources
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
-		bool hasEvents = @class.AllEvents().Any();
+		bool hasEvents = @class.AllEvents().Any(x => !x.IsStatic);
 		bool hasStaticEvents = @class.IsInterface && @class.AllEvents().Any(x => x.IsStatic);
 		bool hasStaticMembers = @class.IsInterface && (@class.AllMethods().Any(x => x.IsStatic) || @class.AllProperties().Any(x => x.IsStatic));
 		StringBuilder sb = InitializeBuilder();

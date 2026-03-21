@@ -846,7 +846,7 @@ internal static partial class Sources
 		sb.Append(@event.Attributes, "\t\t");
 		if (explicitInterfaceImplementation)
 		{
-			sb.Append(@event.IsStatic ? "\t\tstatic event" : "\t\tevent ").Append(@event.Type.Fullname.TrimEnd('?'))
+			sb.Append(@event.IsStatic ? "\t\tstatic event " : "\t\tevent ").Append(@event.Type.Fullname.TrimEnd('?'))
 				.Append("? ").Append(className).Append('.').Append(@event.Name).AppendLine();
 		}
 		else
@@ -868,7 +868,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append(@event.IsStatic ? "\t\tstatic event" : "\t\tevent ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ")
+				sb.Append(@event.IsStatic ? "\t\tstatic event " : "\t\tevent ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ")
 					.Append(@event.ExplicitImplementation).Append('.');
 			}
 
