@@ -11,7 +11,7 @@ public class VerificationPropertyResult<TSubject, TParameter>
 	private readonly MockRegistration _registrations;
 	private readonly TSubject _subject;
 
-	/// <inheritdoc cref="VerificationPropertyResult{TVerify, TParameter}" />
+	/// <inheritdoc cref="VerificationPropertyResult{TSubject, TParameter}" />
 	public VerificationPropertyResult(TSubject subject, MockRegistration registrations, string propertyName)
 	{
 		_subject = subject;

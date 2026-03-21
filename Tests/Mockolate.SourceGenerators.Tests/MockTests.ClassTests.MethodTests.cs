@@ -521,7 +521,7 @@ public sealed partial class MockTests
 					          """);
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
 					.Contains("""
-					          		global::Mockolate.Setup.IVoidMethodSetup<int, int, bool?, string> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b = null, global::Mockolate.Parameters.IParameter<bool?>? c = null, global::Mockolate.Parameters.IParameter<string>? d = null)
+					          		global::Mockolate.Setup.IVoidMethodSetup<int, int, bool?, string> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<bool?>? c, global::Mockolate.Parameters.IParameter<string>? d)
 					          		{
 					          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, bool?, string>("global::MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameter("a", (global::Mockolate.Parameters.IParameter)(a ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("b", (global::Mockolate.Parameters.IParameter)(b ?? global::Mockolate.It.Is<int>(1))), new global::Mockolate.Parameters.NamedParameter("c", (global::Mockolate.Parameters.IParameter)(c ?? global::Mockolate.It.Is<bool?>(null))), new global::Mockolate.Parameters.NamedParameter("d", (global::Mockolate.Parameters.IParameter)(d ?? global::Mockolate.It.Is<string>("default"))));
 					          			this.Registrations.SetupMethod(methodSetup);
@@ -529,7 +529,7 @@ public sealed partial class MockTests
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.Contains("""
-					          		global::Mockolate.Verify.VerificationResult<IMockVerifyForIMyService> IMockVerifyForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b = null, global::Mockolate.Parameters.IParameter<bool?>? c = null, global::Mockolate.Parameters.IParameter<string>? d = null)
+					          		global::Mockolate.Verify.VerificationResult<IMockVerifyForIMyService> IMockVerifyForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<bool?>? c, global::Mockolate.Parameters.IParameter<string>? d)
 					          			=> this.Registrations.Method<IMockVerifyForIMyService>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.IMyService.MyMethod1", [ new global::Mockolate.Parameters.NamedParameter("a", (global::Mockolate.Parameters.IParameter)(a ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("b", (global::Mockolate.Parameters.IParameter)(b ?? global::Mockolate.It.Is<int>(1))), new global::Mockolate.Parameters.NamedParameter("c", (global::Mockolate.Parameters.IParameter)(c ?? global::Mockolate.It.Is<bool?>(null))), new global::Mockolate.Parameters.NamedParameter("d", (global::Mockolate.Parameters.IParameter)(d ?? global::Mockolate.It.Is<string>("default"))), ]));
 					          """).IgnoringNewlineStyle();
 			}

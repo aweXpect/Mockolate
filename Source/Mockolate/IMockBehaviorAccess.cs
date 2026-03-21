@@ -8,14 +8,14 @@ namespace Mockolate;
 public interface IMockBehaviorAccess
 {
 	/// <summary>
-	///     Stores the given <paramref name="value" /> under the <paramref name="key" /> in the <see cref="MockBehavior" />.
+	///     Stores the given <paramref name="value" /> in the <see cref="MockBehavior" />.
 	/// </summary>
-	MockBehavior Set<T>(string key, T value);
+	MockBehavior Set<T>(T value);
 
 	/// <summary>
-	///     Retrieves the <paramref name="value" /> under the <paramref name="key" /> from the <see cref="MockBehavior" />.
+	///     Retrieves the <paramref name="value" /> from the <see cref="MockBehavior" />.
 	/// </summary>
-	bool TryGet<T>(string key, [NotNullWhen(true)] out T value);
+	bool TryGet<T>([NotNullWhen(true)] out T value);
 
 	/// <summary>
 	///     Tries to get the constructor parameters for a mock of type <typeparamref name="T" />.

@@ -121,7 +121,7 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)x.Registrations.Behavior;").AppendLine();
-		sb.Append("\t\t\tif (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(lastInterface.Name).Append(">[]?>(\"Setup[").Append(lastInterface.Name).Append("]\", out var additionalSetups))").AppendLine();
+		sb.Append("\t\t\tif (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(lastInterface.Name).Append(">[]?>(out var additionalSetups))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();

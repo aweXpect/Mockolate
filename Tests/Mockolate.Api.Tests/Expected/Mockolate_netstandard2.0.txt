@@ -78,8 +78,8 @@ namespace Mockolate
     }
     public interface IMockBehaviorAccess
     {
-        Mockolate.MockBehavior Set<T>(string key, T value);
-        bool TryGet<T>(string key, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value);
+        Mockolate.MockBehavior Set<T>(T value);
+        bool TryGet<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value);
         bool TryGetConstructorParameters<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object?[]? parameters);
     }
     public class It
@@ -161,7 +161,7 @@ namespace Mockolate
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Parameters.NamedParameter[] parameters) { }
-        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter? value, params Mockolate.Parameters.NamedParameter[] parameters) { }
+        public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter value, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params Mockolate.Parameters.NamedParameterValue[] parameters) { }
         public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<object?[], TResult> defaultValue, params Mockolate.Parameters.NamedParameterValue[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, Mockolate.Setup.IMethodMatch methodMatch) { }

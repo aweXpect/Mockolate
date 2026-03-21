@@ -17,12 +17,11 @@ internal static partial class Sources
 
 		              #nullable enable
 		              /// <summary>
-		              ///     Create new mocks by calling <c>Mock.Create&lt;T&gt;()</c>.<br />
-		              ///     You can specify up to eight additional interfaces that the mock will also implement.
+		              ///     Create new mocks by calling the static <c>T.CreateMock()</c> method on your type <c>T</c>.
 		              /// </summary>
 		              /// <remarks>
-		              ///     If your type is a class without default constructor, you can provide constructor parameters using <see cref="BaseClass.WithConstructorParameters(object?[])" />.
-		              ///     You can also provide a <see cref="global::Mockolate.MockBehavior"/> parameter to customize how the mock should behave in certain scenarios.
+		              ///     You can also provide a <see cref="global::Mockolate.MockBehavior"/> parameter to customize how the mock should behave in certain scenarios.<br />
+		              ///     If your type is a class without a default constructor, you can provide constructor parameters by passing an <c>object?[]?</c> to the corresponding <c>CreateMock(...)</c> overload.
 		              /// </remarks>
 		              internal static partial class Mock
 		              {

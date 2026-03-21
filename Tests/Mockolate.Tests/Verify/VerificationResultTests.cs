@@ -122,7 +122,7 @@ public sealed partial class VerificationResultTests
 		VerificationResult<Mock.IMockVerifyForVerificationResultTests_IIndexerVerificationService> result = sut.Mock.Verify[It.Is("foo"), null].Set(null);
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("set indexer [\"foo\", It.IsNull<int?>()] to value null");
+			.IsEqualTo("set indexer [\"foo\", It.IsNull<int?>()] to value It.IsNull<int?>()");
 	}
 
 	[Fact]

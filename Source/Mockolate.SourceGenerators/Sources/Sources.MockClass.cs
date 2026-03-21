@@ -82,7 +82,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
 		sb.Append("\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;").AppendLine();
-		sb.Append("\t\t\tif (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[]?>(\"Setup[").Append(name).Append("]\", out var additionalSetups))").AppendLine();
+		sb.Append("\t\t\tif (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[]?>(out var additionalSetups))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
@@ -288,7 +288,7 @@ internal static partial class Sources
 		sb.Append("\t\t\twhere T : ").Append(@class.ClassFullName).AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;").AppendLine();
-		sb.Append("\t\t\treturn behaviorAccess.Set(\"Setup[").Append(name).Append("]\", setups);").AppendLine();
+		sb.Append("\t\t\treturn behaviorAccess.Set(setups);").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 
 		sb.Append("\t}").AppendLine();

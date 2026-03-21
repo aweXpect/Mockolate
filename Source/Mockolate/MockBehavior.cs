@@ -48,7 +48,7 @@ public record MockBehavior : IMockBehaviorAccess
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
 
-	MockBehavior IMockBehaviorAccess.Set<T>(string key, T value)
+	MockBehavior IMockBehaviorAccess.Set<T>(T value)
 	{
 		MockBehavior behavior = this with
 		{
@@ -58,7 +58,7 @@ public record MockBehavior : IMockBehaviorAccess
 		return behavior;
 	}
 
-	bool IMockBehaviorAccess.TryGet<T>(string key, [NotNullWhen(true)] out T value)
+	bool IMockBehaviorAccess.TryGet<T>([NotNullWhen(true)] out T value)
 	{
 		if (_values?.FirstOrDefault(i => i is T)
 		    is not T typedValue)

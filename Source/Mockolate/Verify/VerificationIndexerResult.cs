@@ -11,7 +11,7 @@ public class VerificationIndexerResult<TSubject, TParameter>
 	private readonly MockRegistration _registrations;
 	private readonly TSubject _subject;
 
-	/// <inheritdoc cref="VerificationIndexerResult{TVerify, TParameter}" />
+	/// <inheritdoc cref="VerificationIndexerResult{TSubject, TParameter}" />
 	public VerificationIndexerResult(TSubject subject, MockRegistration registrations, params NamedParameter[] parameters)
 	{
 		_subject = subject;
@@ -29,5 +29,5 @@ public class VerificationIndexerResult<TSubject, TParameter>
 	///     Verifies the indexer write access on the mock with the given <paramref name="value" />.
 	/// </summary>
 	public VerificationResult<TSubject> Set(IParameter<TParameter>? value)
-		=> _registrations.Indexer(_subject, value as IParameter, _parameters);
+		=> _registrations.Indexer(_subject, (IParameter)(value ?? It.IsNull<TParameter>()), _parameters);
 }
