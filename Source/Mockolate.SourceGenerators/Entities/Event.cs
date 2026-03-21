@@ -14,6 +14,7 @@ internal record Event
 		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Delegate = new Method(delegateInvokeMethod, null);
 		Attributes = eventSymbol.GetAttributes().ToAttributeArray();
+		IsStatic = eventSymbol.IsStatic;
 
 		if (alreadyDefinedEvents is not null)
 		{
@@ -38,6 +39,7 @@ internal record Event
 	public Type Type { get; }
 	public string ContainingType { get; }
 	public bool UseOverride { get; }
+	public bool IsStatic { get; }
 
 	public Accessibility Accessibility { get; }
 	public string Name { get; }

@@ -10,6 +10,7 @@ internal record Method
 		Accessibility = methodSymbol.DeclaredAccessibility;
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
 		IsAbstract = methodSymbol.IsAbstract;
+		IsStatic = methodSymbol.IsStatic;
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : new Type(methodSymbol.ReturnType);
 		Name = methodSymbol.Name;
 		ContainingType = methodSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
@@ -48,6 +49,7 @@ internal record Method
 
 	public bool UseOverride { get; }
 	public bool IsAbstract { get; }
+	public bool IsStatic { get; }
 	public Accessibility Accessibility { get; }
 	public Type ReturnType { get; }
 	public string Name { get; }

@@ -38,6 +38,7 @@ internal record Class
 			// Exclude getter/setter methods
 			.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Where(x => x.MethodKind == MethodKind.Ordinary)
 			.Where(x => ShouldIncludeMember(x))
 			.Select(x => new Method(x, alreadyDefinedMethods))
 			.Distinct(), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);
@@ -108,7 +109,6 @@ internal record Class
 	public EquatableArray<Method> Methods { get; }
 	public EquatableArray<Class> InheritedTypes { get; }
 	public EquatableArray<Property> Properties { get; }
-
 	public EquatableArray<Event> Events { get; }
 
 	public bool IsInterface { get; }

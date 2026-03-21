@@ -16,7 +16,9 @@ internal static partial class Sources
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
-		bool hasEvents = @class.AllEvents().Any();
+		bool hasEvents = @class.AllEvents().Any(x => !x.IsStatic);
+		bool hasStaticEvents = @class.IsInterface && @class.AllEvents().Any(x => x.IsStatic);
+		bool hasStaticMembers = @class.IsInterface && (@class.AllMethods().Any(x => x.IsStatic) || @class.AllProperties().Any(x => x.IsStatic));
 		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("#nullable enable annotations").AppendLine();
@@ -281,10 +283,10 @@ internal static partial class Sources
 		sb.Append("\t\tprivate global::Mockolate.MockRegistration Registrations { get; }").AppendLine();
 		sb.AppendLine();
 
-		ImplementMockForInterface(sb, name, hasEvents);
+		ImplementMockForInterface(sb, name, hasEvents, hasStaticMembers, hasStaticEvents);
 		foreach ((string additionalInterfaceName, Class additionalInterface) in additionalInterfaces)
 		{
-			ImplementMockForInterface(sb, additionalInterfaceName, additionalInterface.AllEvents().Any());
+			ImplementMockForInterface(sb, additionalInterfaceName, additionalInterface.AllEvents().Any(x => !x.IsStatic), additionalInterface.AllMethods().Any(x => x.IsStatic) || additionalInterface.AllProperties().Any(x => x.IsStatic), additionalInterface.AllEvents().Any(x => x.IsStatic));
 		}
 
 		if (@class.IsInterface)
