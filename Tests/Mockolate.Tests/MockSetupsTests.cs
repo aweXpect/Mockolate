@@ -12,12 +12,12 @@ public sealed class MockSetupsTests
 	[Fact]
 	public async Task ClearAllInteractions_ShouldResetIndex()
 	{
-		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-		MockInteractions interactions = ((IMockSubject<IChocolateDispenser>)sut).Mock.Interactions;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockInteractions interactions = ((IMock)sut).Registrations.Interactions;
 
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Light", 2);
-		sut.SetupMock.ClearAllInteractions();
+		sut.Mock.ClearAllInteractions();
 		sut.Dispense("Dark", 3);
 		sut.Dispense("Light", 4);
 		sut.Dispense("Milk", 5);
@@ -41,8 +41,8 @@ public sealed class MockSetupsTests
 	public async Task ToString_Empty_ShouldReturnExpectedValue(
 		int methodCount, int propertyCount, int eventCount, int indexerCount, string expected)
 	{
-		IMyService mock = Mock.Create<IMyService>();
-		Mock<IMyService> sut = ((IMockSubject<IMyService>)mock).Mock;
+		IMyService mock = IMyService.CreateMock();
+		IMock sut = (IMock)mock;
 
 		for (int i = 0; i < methodCount; i++)
 		{

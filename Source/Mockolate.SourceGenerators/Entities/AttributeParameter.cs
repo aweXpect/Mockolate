@@ -17,7 +17,7 @@ internal record AttributeParameter
 		}
 		else if (value.Kind == TypedConstantKind.Enum)
 		{
-			Value = $"({value.Type}){value.Value}";
+			Value = $"({value.Type?.ToDisplayString(Helpers.TypeDisplayFormat)}){value.Value}";
 		}
 		else
 		{

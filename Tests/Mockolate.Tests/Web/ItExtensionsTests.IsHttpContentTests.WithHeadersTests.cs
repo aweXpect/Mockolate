@@ -15,9 +15,9 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task IncludingRequestHeaders_ShouldMatchRequestHeadersFromContentAndRequest()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(("foo", "my-value"), ("Authorization", "Basic abcdef")).IncludingRequestHeaders())
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -34,9 +34,9 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task IncludingRequestHeaders_WhenNotSet_ShouldOnlyMatchRequestHeadersFromContent()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(("foo", "my-value"), ("Authorization", "Basic abcdef")))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -58,8 +58,8 @@ public sealed partial class ItExtensionsTests
 			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(
 				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(key1, value1).WithHeaders(key2, value2))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -84,8 +84,8 @@ public sealed partial class ItExtensionsTests
 			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(
 				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders((key1, value1)).WithHeaders((key2, value2)))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -110,8 +110,8 @@ public sealed partial class ItExtensionsTests
 			public async Task MultipleCalls_ShouldVerifyStringHeaders(
 				string headers1, string headers2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(headers1).WithHeaders(headers2))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -131,8 +131,8 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task ShouldOnlyRequireOneMatchingValue()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent().WithHeaders("x-myHeader", "foo"))
 					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("");
@@ -153,8 +153,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("FOO", true)]
 			public async Task ShouldVerifyHeaderKeyCaseInsensitive(string key, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent().WithHeaders("foo", "my-value"))
 					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("");
@@ -174,8 +174,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("FOO", false)]
 			public async Task ShouldVerifyHeaderValueCaseSensitive(string value, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent().WithHeaders("x-myHeader", "foo"))
 					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("");
@@ -195,8 +195,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("FOO", true)]
 			public async Task ShouldVerifyMultipleHeaderKeyCaseInsensitive(string key, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(
 							("foo", "my-foo-value"),
@@ -221,8 +221,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("FOO", false)]
 			public async Task ShouldVerifyMultipleHeaderValueCaseSensitive(string value, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(
 							("x-myHeader1", "foo"),
@@ -256,8 +256,8 @@ public sealed partial class ItExtensionsTests
 			            """, false)]
 			public async Task ShouldVerifyStringHeaders(string headers, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<string>(), It.IsHttpContent()
 						.WithHeaders(headers))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -277,11 +277,11 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task WithInvalidStringHeader_ShouldThrowArgumentException()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 
 				void Act()
 				{
-					httpClient.SetupMock.Method
+					httpClient.Mock.Setup
 						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
 							.WithHeaders("""
 							             x-myHeader1: foo

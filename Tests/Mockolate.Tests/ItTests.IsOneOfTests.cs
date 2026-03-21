@@ -27,11 +27,11 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ShouldSupportCovarianceInSetup()
 		{
-			IMyService mock = Mock.Create<IMyService>();
+			IMyService mock = IMyService.CreateMock();
 			MyImplementation value1 = new();
 			MyImplementation value2 = new();
 			MyOtherImplementation other1 = new();
-			mock.SetupMock.Method.DoSomething(It.IsOneOf(value1, value2))
+			mock.Mock.Setup.DoSomething(It.IsOneOf(value1, value2))
 				.Returns(3);
 
 			int result1 = mock.DoSomething(value1);
@@ -44,8 +44,8 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ShouldSupportCovarianceInVerify()
 		{
-			IMyService mock = Mock.Create<IMyService>();
-			mock.SetupMock.Method.DoSomething(It.Satisfies<MyImplementation>(_ => true))
+			IMyService mock = IMyService.CreateMock();
+			mock.Mock.Setup.DoSomething(It.Satisfies<MyImplementation>(_ => true))
 				.Do(d => d.DoWork())
 				.Returns(3);
 			MyImplementation value1 = new();
@@ -55,10 +55,10 @@ public sealed partial class ItTests
 
 			int result1 = mock.DoSomething(value1);
 
-			await That(mock.VerifyMock.Invoked.DoSomething(It.IsOneOf(value1, value2))).Once();
+			await That(mock.Mock.Verify.DoSomething(It.IsOneOf(value1, value2))).Once();
 			await That(value1.Progress).IsEqualTo(1);
 			await That(result1).IsEqualTo(3);
-			await That(mock.VerifyMock.Invoked.DoSomething(It.IsOneOf(other1, other2))).Never();
+			await That(mock.Mock.Verify.DoSomething(It.IsOneOf(other1, other2))).Never();
 		}
 
 		[Fact]

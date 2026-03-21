@@ -1,4 +1,6 @@
-﻿namespace Mockolate.Tests.MockDelegates;
+﻿using Mockolate.Exceptions;
+
+namespace Mockolate.Tests.MockDelegates;
 
 public class DelegateTests
 {
@@ -6,41 +8,67 @@ public class DelegateTests
 	public async Task Action_ShouldBeTreatedAsVoidDelegate()
 	{
 		bool isCalled = false;
-		Action mock = Mock.Create<Action>();
-		mock.SetupMock.Delegate().Do(() => isCalled = true);
+		Action sut = Action.CreateMock();
+		sut.Mock.Setup().Do(() => isCalled = true);
 
-		mock.Invoke();
+		sut.Invoke();
 
-		await That(mock.VerifyMock.Invoked()).Once();
-		Assert.True(isCalled);
+		await That(sut.Mock.Verify()).Once();
+		await That(isCalled).IsTrue();
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public async Task CreateMockWithBehavior_ShouldApplyBehavior(bool throwWhenNotSetup)
+	{
+		Func<int> sut = Func<int>.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup(throwWhenNotSetup));
+
+		void Act()
+		{
+			_ = sut();
+		}
+
+		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
+			.WithMessage("The method 'global::System.Func<int>.Invoke()' was invoked without prior setup.");
+	}
+
+	[Fact]
+	public async Task CreateMockWithSetup_ShouldApplySetups()
+	{
+		Func<int> sut = Func<int>.CreateMock(mock => mock.Setup().Returns(3));
+
+		int result = sut();
+
+		await That(result).IsEqualTo(3);
 	}
 
 	[Fact]
 	public async Task Func_ShouldBeTreatedAsReturnDelegate()
 	{
 		bool isCalled = false;
-		Func<int> mock = Mock.Create<Func<int>>();
-		mock.SetupMock.Delegate().Do(() => isCalled = true).Returns(3);
+		Func<int> sut = Func<int>.CreateMock();
+		sut.Mock.Setup().Do(() => isCalled = true).Returns(3);
 
-		int result = mock();
+		int result = sut();
 
-		await That(mock.VerifyMock.Invoked()).Once();
-		Assert.True(isCalled);
-		Assert.Equal(3, result);
+		await That(sut.Mock.Verify()).Once();
+		await That(isCalled).IsTrue();
+		await That(result).IsEqualTo(3);
 	}
 
 	[Fact]
 	public async Task WithCustomDelegate_SetupShouldWork()
 	{
-		DoSomething mock = Mock.Create<DoSomething>();
-		mock.SetupMock.Delegate(It.IsAny<int>(), It.IsAny<string>(), It.IsTrue())
+		DoSomething sut = DoSomething.CreateMock();
+		sut.Mock.Setup(It.IsAny<int>(), It.IsAny<string>(), It.IsTrue())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
 
-		int result1 = mock(1, "foo", true);
-		await That(() => mock(2, "foo", true)).Throws<Exception>().WithMessage("foobar");
-		int result3 = mock(2, "bar", true);
+		int result1 = sut(1, "foo", true);
+		await That(() => sut(2, "foo", true)).Throws<Exception>().WithMessage("foobar");
+		int result3 = sut(2, "bar", true);
 
 		await That(result1).IsEqualTo(1);
 		await That(result3).IsEqualTo(3);
@@ -49,24 +77,24 @@ public class DelegateTests
 	[Fact]
 	public async Task WithCustomDelegate_VerifyShouldWork()
 	{
-		DoSomething mock = Mock.Create<DoSomething>();
+		DoSomething sut = DoSomething.CreateMock();
 
-		_ = mock(1, "foo", true);
-		_ = mock(2, "bar", true);
+		_ = sut(1, "foo", true);
+		_ = sut(2, "bar", true);
 
-		await That(mock.VerifyMock.Invoked(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>())).Twice();
+		await That(sut.Mock.Verify(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>())).Twice();
 	}
 
 	[Fact]
 	public async Task WithCustomDelegateWithRefAndOut_SetupShouldWork()
 	{
-		DoSomethingWithRefAndOut mock = Mock.Create<DoSomethingWithRefAndOut>();
+		DoSomethingWithRefAndOut sut = DoSomethingWithRefAndOut.CreateMock();
 		int value = 5;
-		mock.SetupMock.Delegate(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 10));
+		sut.Mock.Setup(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 10));
 
-		mock(1, ref value, out int value2);
+		sut(1, ref value, out int value2);
 
-		await That(mock.VerifyMock.Invoked(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>())).Once();
+		await That(sut.Mock.Verify(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>())).Once();
 		await That(value).IsEqualTo(6);
 		await That(value2).IsEqualTo(10);
 	}
@@ -74,27 +102,27 @@ public class DelegateTests
 	[Fact]
 	public async Task WithCustomDelegateWithRefAndOut_VerifyShouldWork()
 	{
-		DoSomethingWithRefAndOut mock = Mock.Create<DoSomethingWithRefAndOut>();
+		DoSomethingWithRefAndOut sut = DoSomethingWithRefAndOut.CreateMock();
 		int value = 5;
 
-		mock(1, ref value, out int _);
+		sut(1, ref value, out int _);
 
-		await That(mock.VerifyMock.Invoked(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>())).Once();
+		await That(sut.Mock.Verify(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>())).Once();
 		await That(value).IsEqualTo(5);
 	}
 
 	[Fact]
 	public async Task WithCustomGenericDelegate_SetupShouldWork()
 	{
-		DoGeneric<long, string> mock = Mock.Create<DoGeneric<long, string>>();
-		mock.SetupMock.Delegate(It.IsAny<long>(), It.IsAny<string>())
+		DoGeneric<long, string> sut = DoGeneric<long, string>.CreateMock();
+		sut.Mock.Setup(It.IsAny<long>(), It.IsAny<string>())
 			.Returns(1)
 			.Throws(new Exception("foobar"))
 			.Returns(3);
 
-		int result1 = mock(1L, "foo");
-		await That(() => mock(2L, "foo")).Throws<Exception>().WithMessage("foobar");
-		int result3 = mock(2L, "bar");
+		int result1 = sut(1L, "foo");
+		await That(() => sut(2L, "foo")).Throws<Exception>().WithMessage("foobar");
+		int result3 = sut(2L, "bar");
 
 		await That(result1).IsEqualTo(1);
 		await That(result3).IsEqualTo(3);
@@ -103,12 +131,12 @@ public class DelegateTests
 	[Fact]
 	public async Task WithCustomGenericDelegate_VerifyShouldWork()
 	{
-		DoGeneric<short, string> mock = Mock.Create<DoGeneric<short, string>>();
+		DoGeneric<short, string> sut = DoGeneric<short, string>.CreateMock();
 
-		_ = mock(1, "foo");
-		_ = mock(2, "bar");
+		_ = sut(1, "foo");
+		_ = sut(2, "bar");
 
-		await That(mock.VerifyMock.Invoked(It.IsAny<short>(), It.IsAny<string>())).Twice();
+		await That(sut.Mock.Verify(It.IsAny<short>(), It.IsAny<string>())).Twice();
 	}
 
 	internal delegate int DoSomething(int x, string y, bool p);

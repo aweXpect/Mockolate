@@ -9,7 +9,7 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task AccessWithoutSetup_ShouldThrowMockNotSetupException()
 		{
-			IPropertyService mock = Mock.Create<IPropertyService>(MockBehavior.Default.ThrowingWhenNotSetup());
+			IPropertyService mock = IPropertyService.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 
 			void Act()
 			{
@@ -18,15 +18,15 @@ public sealed partial class SetupPropertyTests
 
 			await That(Act).Throws<MockNotSetupException>()
 				.WithMessage(
-					"The property 'Mockolate.Tests.MockProperties.SetupPropertyTests.IPropertyService.MyStringProperty' was accessed without prior setup.");
+					"The property 'global::Mockolate.Tests.MockProperties.SetupPropertyTests.IPropertyService.MyStringProperty' was accessed without prior setup.");
 		}
 
 		[Fact]
 		public async Task RegisterBeforeAccess_ShouldNotThrowAndReturnDefaultValue()
 		{
-			IPropertyService mock = Mock.Create<IPropertyService>(MockBehavior.Default.ThrowingWhenNotSetup());
+			IPropertyService mock = IPropertyService.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 
-			mock.SetupMock.Property.MyStringProperty.Register();
+			mock.Mock.Setup.MyStringProperty.Register();
 
 			string? initialResult = mock.MyStringProperty;
 			mock.MyStringProperty = "foo";

@@ -16,8 +16,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("http://www.aweXpect.com", false)]
 			public async Task ShouldSupportPatternWithUriConfiguration(string uri, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage().WhoseUriIs("*awexpect*", u => u.ForHttps()))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -32,8 +32,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("http://www.aweXpect.com", false)]
 			public async Task ShouldSupportUriConfiguration(string uri, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage().WhoseUriIs(u => u.ForHttps()))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -60,8 +60,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https*", true)]
 			public async Task ShouldVerifyFullUriWithWildcardMatch(string uri, string pattern, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage().WhoseUriIs(pattern))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -76,8 +76,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("*aweXpect.com/")]
 			public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WhoseUriIs(matchPattern))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -92,8 +92,8 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task TrailingSlash_WhenNotPresent_ShouldNotBeAdded()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WhoseUriIs("*www.aweXpect.com/foo/"))
 					.ReturnsAsync(HttpStatusCode.OK);

@@ -34,7 +34,7 @@ internal static partial class Sources
 				.Append(types).Append("> setup, TReturn returnValue)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(global::System.Threading.Tasks.Task.FromResult(returnValue));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
@@ -45,7 +45,7 @@ internal static partial class Sources
 				.Append(types).Append("> setup, global::System.Func<TReturn> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(() => global::System.Threading.Tasks.Task.FromResult(callback()));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
@@ -57,7 +57,7 @@ internal static partial class Sources
 			sb.Append("\t\t=> setup.Returns((").Append(variables).Append(") => global::System.Threading.Tasks.Task.FromResult(callback(")
 				.Append(variables).Append(")));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers an <paramref name=\"exception\" /> to throw when the <see langword=\"async\" /> method is awaited.")
@@ -68,7 +68,7 @@ internal static partial class Sources
 				.Append(types).Append("> setup, global::System.Exception exception)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(global::System.Threading.Tasks.Task.FromException<TReturn>(exception));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers a <paramref name=\"callback\" /> that calculates the exception to throw when the <see langword=\"async\" /> method is awaited.")
@@ -79,7 +79,7 @@ internal static partial class Sources
 				.Append(types).Append("> setup, global::System.Func<global::System.Exception> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(() => global::System.Threading.Tasks.Task.FromException<TReturn>(callback()));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers a <paramref name=\"callback\" /> that calculates the exception to throw when the <see langword=\"async\" /> method is awaited.")
@@ -110,7 +110,7 @@ internal static partial class Sources
 				.Append("> setup, TReturn returnValue)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(global::System.Threading.Tasks.ValueTask.FromResult(returnValue));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
@@ -122,7 +122,7 @@ internal static partial class Sources
 				.Append("> setup, global::System.Func<TReturn> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(() => global::System.Threading.Tasks.ValueTask.FromResult(callback()));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
@@ -135,7 +135,7 @@ internal static partial class Sources
 			sb.Append("\t\t=> setup.Returns((").Append(variables).Append(") => global::System.Threading.Tasks.ValueTask.FromResult(callback(")
 				.Append(variables).Append(")));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers an <paramref name=\"exception\" /> to throw when the <see langword=\"async\" /> method is awaited.")
@@ -147,7 +147,7 @@ internal static partial class Sources
 				.Append("> setup, global::System.Exception exception)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(global::System.Threading.Tasks.ValueTask.FromException<TReturn>(exception));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers a <paramref name=\"callback\" /> that calculates the exception to throw when the <see langword=\"async\" /> method is awaited.")
@@ -159,7 +159,7 @@ internal static partial class Sources
 				.Append("> setup, global::System.Func<global::System.Exception> callback)").AppendLine();
 			sb.Append("\t\t=> setup.Returns(() => global::System.Threading.Tasks.ValueTask.FromException<TReturn>(callback()));").AppendLine();
 			sb.AppendLine();
-			
+
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
 					"\t///     Registers a <paramref name=\"callback\" /> that calculates the exception to throw when the <see langword=\"async\" /> method is awaited.")

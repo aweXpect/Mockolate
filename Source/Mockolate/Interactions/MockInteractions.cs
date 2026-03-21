@@ -8,7 +8,7 @@ using System.Threading;
 namespace Mockolate.Interactions;
 
 /// <summary>
-///     Keeps track of the interactions on the <see cref="Mock{T}" /> and its verifications.
+///     Keeps track of the interactions on the mock and its verifications.
 /// </summary>
 [DebuggerDisplay("{_interactions}")]
 public class MockInteractions : IMockInteractions

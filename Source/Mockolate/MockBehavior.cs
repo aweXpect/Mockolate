@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using Mockolate.Behavior;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -13,7 +14,7 @@ namespace Mockolate;
 public record MockBehavior : IMockBehaviorAccess
 {
 	private ConcurrentStack<IConstructorParameters> _constructorParameters = [];
-	private ConcurrentStack<IInitializer>? _initializers;
+	private ConcurrentStack<object?>? _values;
 
 	/// <inheritdoc cref="MockBehavior" />
 	public MockBehavior(IDefaultValueGenerator defaultValue)
@@ -47,17 +48,26 @@ public record MockBehavior : IMockBehaviorAccess
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
 
-	/// <inheritdoc cref="IMockBehaviorAccess.TryInitialize{T}(out Action{IMockSetup{T}}[])" />
-	bool IMockBehaviorAccess.TryInitialize<T>([NotNullWhen(true)] out Action<IMockSetup<T>>[]? setups)
+	MockBehavior IMockBehaviorAccess.Set<T>(T value)
 	{
-		if (_initializers?.FirstOrDefault(i => i is IInitializer<T>)
-		    is not IInitializer<T> initializer)
+		MockBehavior behavior = this with
 		{
-			setups = null;
+			_values = new ConcurrentStack<object?>(_values ?? []),
+		};
+		behavior._values.Push(value);
+		return behavior;
+	}
+
+	bool IMockBehaviorAccess.TryGet<T>([NotNullWhen(true)] out T value)
+	{
+		if (_values?.FirstOrDefault(i => i is T)
+		    is not T typedValue)
+		{
+			value = default!;
 			return false;
 		}
 
-		setups = initializer.GetSetups();
+		value = typedValue;
 		return true;
 	}
 
@@ -73,35 +83,6 @@ public record MockBehavior : IMockBehaviorAccess
 
 		parameters = constructorParameters.GetParameters();
 		return true;
-	}
-
-	/// <summary>
-	///     Initialize all mocks of type <typeparamref name="T" /> with the given <paramref name="setups" />.
-	/// </summary>
-	public MockBehavior Initialize<T>(params Action<IMockSetup<T>>[] setups)
-	{
-		MockBehavior behavior = this with
-		{
-			_initializers = new ConcurrentStack<IInitializer>(_initializers ?? []),
-		};
-		behavior._initializers.Push(new SimpleInitializer<T>(setups));
-		return behavior;
-	}
-
-	/// <summary>
-	///     Initialize all mocks of type <typeparamref name="T" /> with the given <paramref name="setups" />.
-	/// </summary>
-	/// <remarks>
-	///     Provides a unique counter for each generated mock as first parameter.
-	/// </remarks>
-	public MockBehavior Initialize<T>(params Action<int, IMockSetup<T>>[] setups)
-	{
-		MockBehavior behavior = this with
-		{
-			_initializers = new ConcurrentStack<IInitializer>(_initializers ?? []),
-		};
-		behavior._initializers.Push(new CounterInitializer<T>(setups));
-		return behavior;
 	}
 
 	/// <summary>
@@ -147,14 +128,6 @@ public record MockBehavior : IMockBehaviorAccess
 		};
 		return behavior;
 	}
-
-	private interface IInitializer;
-
-	private interface IInitializer<in T> : IInitializer
-	{
-		Action<IMockSetup<T>>[] GetSetups();
-	}
-
 	private interface IConstructorParameters;
 
 #pragma warning disable S2326
@@ -164,23 +137,6 @@ public record MockBehavior : IMockBehaviorAccess
 		public object?[] GetParameters() => parameters();
 	}
 #pragma warning restore S2326
-
-	private sealed class SimpleInitializer<T>(Action<IMockSetup<T>>[] setups) : IInitializer<T>
-	{
-		public Action<IMockSetup<T>>[] GetSetups()
-			=> setups;
-	}
-
-	private sealed class CounterInitializer<T>(Action<int, IMockSetup<T>>[] setups) : IInitializer<T>
-	{
-		private int _counter;
-
-		public Action<IMockSetup<T>>[] GetSetups()
-		{
-			int index = Interlocked.Increment(ref _counter);
-			return setups.Select(a => new Action<IMockSetup<T>>(s => a(index, s))).ToArray();
-		}
-	}
 
 	private sealed class DefaultValueGeneratorWithFactories(
 		IDefaultValueGenerator inner,

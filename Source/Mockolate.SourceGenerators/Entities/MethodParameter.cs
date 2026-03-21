@@ -17,7 +17,7 @@ internal readonly record struct MethodParameter
 		HasExplicitDefaultValue = parameterSymbol.HasExplicitDefaultValue;
 		if (HasExplicitDefaultValue)
 		{
-			var explicitDefaultValue = SymbolDisplay.FormatPrimitive(parameterSymbol.ExplicitDefaultValue, true, false);
+			string? explicitDefaultValue = SymbolDisplay.FormatPrimitive(parameterSymbol.ExplicitDefaultValue, true, false);
 			if (parameterSymbol.Type.TypeKind == TypeKind.Enum)
 			{
 				string enumTypeName = parameterSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);

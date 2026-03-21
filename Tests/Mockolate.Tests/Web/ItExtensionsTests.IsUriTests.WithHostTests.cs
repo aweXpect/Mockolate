@@ -18,8 +18,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "mockolate.com", false)]
 			public async Task ShouldVerifyHost(string uri, string hostPattern, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().WithHost(hostPattern))
 					.ReturnsAsync(HttpStatusCode.OK);
 

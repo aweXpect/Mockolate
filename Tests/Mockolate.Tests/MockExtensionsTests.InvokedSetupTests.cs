@@ -12,12 +12,12 @@ public sealed partial class MockExtensionsTests
 		[Fact]
 		public async Task WhenMethodSetupIsNotVerifiable_ShouldThrowMockException()
 		{
-			MyServiceBase mock = Mock.Create<MyServiceBase>();
+			MyServiceBase sut = MyServiceBase.CreateMock();
 			IMethodSetup setup = new MyMethodSetup();
 
 			void Act()
 			{
-				mock.VerifyMock.InvokedSetup(setup).Never();
+				sut.Mock.VerifySetup(setup).Never();
 			}
 
 			await That(Act).Throws<MockException>()
@@ -27,26 +27,17 @@ public sealed partial class MockExtensionsTests
 		[Fact]
 		public async Task WhenSubjectIsNoMock_ShouldThrowMockException()
 		{
-			MyServiceBase mock = Mock.Create<MyServiceBase>();
-			IMockVerify<MyServiceBase> verify = new MyMockVerify<MyServiceBase>();
-			IMethodSetup setup = mock.SetupMock.Method.DoSomething(Match.AnyParameters());
+			MyServiceBase mock = MyServiceBase.CreateMock();
+			IMethodSetup setup = mock.Mock.Setup.DoSomething(Match.AnyParameters());
+			MyServiceBase sut = new();
 
 			void Act()
 			{
-				verify.InvokedSetup(setup).Never();
+				sut.Mock.VerifySetup(setup).Never();
 			}
 
 			await That(Act).Throws<MockException>()
-				.WithMessage("The subject is no mock subject.");
-		}
-
-		private sealed class MyMockVerify<T> : IMockVerify<T>
-		{
-			public bool ThatAllInteractionsAreVerified()
-				=> throw new NotSupportedException();
-
-			public bool ThatAllSetupsAreUsed()
-				=> throw new NotSupportedException();
+				.WithMessage("The subject is no mock.");
 		}
 
 		private sealed class MyMethodSetup : IMethodSetup

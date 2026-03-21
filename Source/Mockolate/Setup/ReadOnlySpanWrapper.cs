@@ -23,12 +23,16 @@ public class ReadOnlySpanWrapper<T>
 	///     Implicitly converts a <see cref="ReadOnlySpanWrapper{T}" /> to a <see cref="ReadOnlySpan{T}" />.
 	/// </summary>
 	public static implicit operator ReadOnlySpan<T>(ReadOnlySpanWrapper<T> wrapper)
-		=> new(wrapper.ReadOnlySpanValues);
+	{
+		return new ReadOnlySpan<T>(wrapper.ReadOnlySpanValues);
+	}
 
 	/// <summary>
 	///     Implicitly converts a <see cref="ReadOnlySpan{T}" /> to a <see cref="ReadOnlySpanWrapper{T}" />.
 	/// </summary>
 	public static implicit operator ReadOnlySpanWrapper<T>(ReadOnlySpan<T> span)
-		=> new(span);
+	{
+		return new ReadOnlySpanWrapper<T>(span);
+	}
 }
 #endif

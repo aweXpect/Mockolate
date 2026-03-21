@@ -21,8 +21,8 @@ public sealed partial class ItExtensionsTests
 			public async Task Exactly_IgnoringCase_ShouldCheckCaseInsensitiveForFullContentBody(
 				string body, string expected, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected).Exactly().IgnoringCase())
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -42,8 +42,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("baz ", "baz", false)]
 			public async Task Exactly_ShouldCheckForFullContentBody(string body, string expected, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected).Exactly())
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -64,8 +64,8 @@ public sealed partial class ItExtensionsTests
 			public async Task IgnoringCase_ShouldCheckForCaseInsensitiveEquality(string body,
 				string expected, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected).IgnoringCase())
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -85,8 +85,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("BAR", false)]
 			public async Task Predicate_ShouldValidatePredicate(string content, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent()
 						.WithString(c => c.Equals(c.ToLowerInvariant(), StringComparison.Ordinal)))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -107,8 +107,8 @@ public sealed partial class ItExtensionsTests
 			public async Task ShouldCheckForEquality(string body, string expected,
 				bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -125,8 +125,8 @@ public sealed partial class ItExtensionsTests
 			{
 				string expectedValue = "foo";
 				byte[] bytes = Encoding.UTF8.GetBytes(expectedValue);
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -148,8 +148,8 @@ public sealed partial class ItExtensionsTests
 					new("something-different"),
 					new("foo-baz"),
 				];
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method.PostAsync(It.IsAny<Uri>(),
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup.PostAsync(It.IsAny<Uri>(),
 					It.IsHttpContent().WithStringMatching("foo*")
 						.Do(_ => callbackCount++)
 						.Monitor(out IParameterMonitor<HttpContent?> monitor));
@@ -173,8 +173,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("text/csv", false)]
 			public async Task ShouldVerifyMediaType(string mediaType, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching("*").WithMediaType(mediaType))
 					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("foo", Encoding.UTF8, "text/plain");
@@ -194,8 +194,8 @@ public sealed partial class ItExtensionsTests
 				Encoding encoding = Encoding.UTF8;
 				byte[] bytes = encoding.GetBytes(original);
 
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(original))
 					.ReturnsAsync(HttpStatusCode.OK);
 				ByteArrayContent content = new(bytes);
@@ -219,8 +219,8 @@ public sealed partial class ItExtensionsTests
 				Encoding encoding = Encoding.GetEncoding("iso-8859-1");
 				byte[] bytes = encoding.GetBytes(original);
 
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(original))
 					.ReturnsAsync(HttpStatusCode.OK);
 				ByteArrayContent content = new(bytes);
@@ -236,15 +236,15 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task WhenValidatedAndSetup_ShouldResetStreamPosition()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
 					.PostAsync("https://www.aweXpect.com", new StringContent("foo"), CancellationToken.None);
 
-				await That(httpClient.VerifyMock.Invoked
+				await That(httpClient.Mock.Verify
 						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo")))
 					.Once();
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
@@ -258,8 +258,8 @@ public sealed partial class ItExtensionsTests
 				Encoding encoding = Encoding.UTF8;
 				byte[] bytes = encoding.GetBytes(original);
 
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(original))
 					.ReturnsAsync(HttpStatusCode.OK);
 				ByteArrayContent content = new(bytes);
@@ -295,8 +295,8 @@ public sealed partial class ItExtensionsTests
 				}
 
 				string body = "foo;bar";
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), isHttpContent)
 					.ReturnsAsync(HttpStatusCode.OK);
 

@@ -17,12 +17,12 @@ public sealed partial class ItExtensionsTests
 			[InlineData("z", "345", "x", "123", true)]
 			[InlineData("x", "123", "y", "345", false)]
 			[InlineData("y", "345", "x", "123", false)]
-			public async Task MultipleCalls_ShouldVerifyKeyValueQueryParameters(
+			public async Task MultipleCalls_ShouldVerifyKeyValuePairQueryParameters(
 				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
-					.GetAsync(It.IsUri().WithQuery(key1, value1).WithQuery(key2, value2))
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
+					.GetAsync(It.IsUri().WithQuery((key1, value1)).WithQuery((key2, value2)))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
@@ -37,12 +37,12 @@ public sealed partial class ItExtensionsTests
 			[InlineData("z", "345", "x", "123", true)]
 			[InlineData("x", "123", "y", "345", false)]
 			[InlineData("y", "345", "x", "123", false)]
-			public async Task MultipleCalls_ShouldVerifyKeyValuePairQueryParameters(
+			public async Task MultipleCalls_ShouldVerifyKeyValueQueryParameters(
 				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
-					.GetAsync(It.IsUri().WithQuery((key1, value1)).WithQuery((key2, value2)))
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
+					.GetAsync(It.IsUri().WithQuery(key1, value1).WithQuery(key2, value2))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
@@ -60,8 +60,8 @@ public sealed partial class ItExtensionsTests
 			public async Task MultipleCalls_ShouldVerifyStringQueryParameters(
 				string query1, string query2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().WithQuery(query1).WithQuery(query2))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -76,8 +76,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("x<>", "1<2> 3")]
 			public async Task ShouldEncodeValues(string key, string value)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().WithQuery(key, value))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -99,8 +99,8 @@ public sealed partial class ItExtensionsTests
 			public async Task WithQueryParameter_ShouldVerifyQueryParameters(string uri, string key, string value,
 				bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().WithQuery(key, value))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -121,8 +121,8 @@ public sealed partial class ItExtensionsTests
 					queryParameters.Add((query[i], new HttpQueryParameterValue(query[i + 1])));
 				}
 
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().WithQuery(queryParameters))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -145,8 +145,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&foo&y=234", "foo", true)]
 			public async Task WithQueryString_ShouldVerifyQueryParameters(string uri, string query, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().WithQuery(query))
 					.ReturnsAsync(HttpStatusCode.OK);
 

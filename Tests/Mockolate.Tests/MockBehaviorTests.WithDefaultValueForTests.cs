@@ -12,7 +12,7 @@ public sealed partial class MockBehaviorTests
 				.WithDefaultValueFor(() => new MyInheritedSpecialValue(6, 7));
 
 			IMyServiceForMySpecialValue mockWithBehavior
-				= Mock.Create<IMyServiceForMySpecialValue>(behavior);
+				= IMyServiceForMySpecialValue.CreateMock(behavior);
 
 			await That(mockWithBehavior.Value.Value).IsEqualTo(5);
 			await That(mockWithBehavior.InheritedValue)
@@ -30,7 +30,7 @@ public sealed partial class MockBehaviorTests
 				.WithDefaultValueFor(defaultValueFactory);
 
 			IMyServiceForMySpecialValue mockWithBehavior
-				= Mock.Create<IMyServiceForMySpecialValue>(behavior);
+				= IMyServiceForMySpecialValue.CreateMock(behavior);
 
 			await That(mockWithBehavior.Value.Value).IsEqualTo(6);
 			await That(mockWithBehavior.InheritedValue)
@@ -47,9 +47,9 @@ public sealed partial class MockBehaviorTests
 				.WithDefaultValueFor(() => new MyInheritedSpecialValue(6, 7));
 
 			IMyServiceForMySpecialValue mockWithBehavior1
-				= Mock.Create<IMyServiceForMySpecialValue>(behavior1);
+				= IMyServiceForMySpecialValue.CreateMock(behavior1);
 			IMyServiceForMySpecialValue mockWithBehavior2
-				= Mock.Create<IMyServiceForMySpecialValue>(behavior2);
+				= IMyServiceForMySpecialValue.CreateMock(behavior2);
 
 			await That(mockWithBehavior1.InheritedValue).IsNull();
 			await That(mockWithBehavior1.Value.Value).IsEqualTo(5);
@@ -66,9 +66,9 @@ public sealed partial class MockBehaviorTests
 				.WithDefaultValueFor(() => new MySpecialValue(5));
 
 			IMyServiceForMySpecialValue mockWithDefaultBehavior
-				= Mock.Create<IMyServiceForMySpecialValue>();
+				= IMyServiceForMySpecialValue.CreateMock();
 			IMyServiceForMySpecialValue mockWithCustomBehavior
-				= Mock.Create<IMyServiceForMySpecialValue>(behavior);
+				= IMyServiceForMySpecialValue.CreateMock(behavior);
 
 			await That(mockWithDefaultBehavior.Value).IsNull();
 			await That(mockWithCustomBehavior.Value.Value).IsEqualTo(5);

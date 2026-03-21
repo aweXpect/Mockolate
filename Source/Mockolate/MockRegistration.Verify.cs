@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -10,6 +11,19 @@ namespace Mockolate;
 
 public partial class MockRegistration
 {
+	/// <summary>
+	///     Counts the invocations of methods matching the <paramref name="methodSetup" /> on the <paramref name="subject" />.
+	/// </summary>
+	public VerificationResult<T> Method<T>(T subject, IMethodSetup methodSetup)
+	{
+		if (methodSetup is not IVerifiableMethodSetup verifiableMethodSetup)
+		{
+			throw new MockException("The setup is not verifiable.");
+		}
+
+		return Method(subject, verifiableMethodSetup.GetMatch());
+	}
+
 	/// <summary>
 	///     Counts the invocations of methods matching the <paramref name="methodMatch" /> on the <paramref name="subject" />.
 	/// </summary>
@@ -62,17 +76,17 @@ public partial class MockRegistration
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
-	public VerificationResult<T> Indexer<T>(T subject, IParameter? value,
+	public VerificationResult<T> Indexer<T>(T subject, IParameter value,
 		params NamedParameter[] parameters)
 		=> new(subject,
 			Interactions,
 			interaction => interaction is IndexerSetterAccess indexer &&
 			               indexer.Parameters.Length == parameters.Length &&
-			               (value?.Matches(indexer.Value) ?? indexer.Value is null) &&
+			               value.Matches(indexer.Value) &&
 			               !parameters
 				               .Where((parameter, i) => !parameter.Matches(indexer.Parameters[i]))
 				               .Any(),
-			$"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}] to value {value?.ToString() ?? "null"}");
+			$"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}] to value {value}");
 
 	/// <summary>
 	///     Counts the subscriptions to the event <paramref name="eventName" /> on the <paramref name="subject" />.

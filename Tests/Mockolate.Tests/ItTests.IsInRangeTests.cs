@@ -17,11 +17,11 @@ public sealed partial class ItTests
 		public async Task ExecuteWith5_Exclusive_ShouldMatchWhenRangeContains5(int minimum, int maximum,
 			bool expectFound)
 		{
-			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
+			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
 
 			mock.DoSomethingWithInt(5);
 
-			await That(mock.VerifyMock.Invoked.DoSomethingWithInt(It.IsInRange(minimum, maximum).Exclusive()))
+			await That(mock.Mock.Verify.DoSomethingWithInt(It.IsInRange(minimum, maximum).Exclusive()))
 				.Exactly(expectFound ? 1 : 0);
 		}
 
@@ -36,13 +36,13 @@ public sealed partial class ItTests
 		public async Task ExecuteWith5_Inclusive_ShouldMatchWhenRangeContains5(int minimum, int maximum,
 			bool expectFound)
 		{
-			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
+			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
 			It.IInRangeParameter<int> range = It.IsInRange(minimum, maximum);
 			range.Exclusive();
 
 			mock.DoSomethingWithInt(5);
 
-			await That(mock.VerifyMock.Invoked.DoSomethingWithInt(range.Inclusive()))
+			await That(mock.Mock.Verify.DoSomethingWithInt(range.Inclusive()))
 				.Exactly(expectFound ? 1 : 0);
 		}
 
@@ -56,11 +56,11 @@ public sealed partial class ItTests
 		[InlineData(6, 7, false)]
 		public async Task ExecuteWith5_ShouldMatchWhenRangeContains5(int minimum, int maximum, bool expectFound)
 		{
-			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
+			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
 
 			mock.DoSomethingWithInt(5);
 
-			await That(mock.VerifyMock.Invoked.DoSomethingWithInt(It.IsInRange(minimum, maximum)))
+			await That(mock.Mock.Verify.DoSomethingWithInt(It.IsInRange(minimum, maximum)))
 				.Exactly(expectFound ? 1 : 0);
 		}
 

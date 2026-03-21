@@ -20,10 +20,10 @@ public sealed partial class ItExtensionsTests
 			public async Task MultipleCalls_ShouldVerifyKeyValueHeaders(
 				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders(key1, value1).WithHeaders(key2, value2))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -46,10 +46,10 @@ public sealed partial class ItExtensionsTests
 			public async Task MultipleCalls_ShouldVerifyKeyValuePairHeaders(
 				string key1, string value1, string key2, string value2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders((key1, value1)).WithHeaders((key2, value2)))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -72,10 +72,10 @@ public sealed partial class ItExtensionsTests
 			public async Task MultipleCalls_ShouldVerifyStringHeaders(
 				string headers1, string headers2, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders(headers1).WithHeaders(headers2))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -93,10 +93,10 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task ShouldAlsoMatchContentHeaders()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders("""
 						             x-myHeader1 : foo
@@ -119,10 +119,10 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task ShouldMatchAgainstDefaultRequestHeaders()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders("""
 						             Authorization: Basic abcdef
@@ -143,10 +143,10 @@ public sealed partial class ItExtensionsTests
 			[InlineData("Authentication", false)]
 			public async Task ShouldVerifyHeaderKeyCaseInsensitive(string key, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "abcdef");
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage().WithHeaders(key, "Basic abcdef"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -164,10 +164,10 @@ public sealed partial class ItExtensionsTests
 			[InlineData("FOO", false)]
 			public async Task ShouldVerifyHeaderValueCaseSensitive(string value, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "foo");
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage().WithHeaders("Authorization", $"Basic {value}"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -185,10 +185,10 @@ public sealed partial class ItExtensionsTests
 			[InlineData("Authentication", false)]
 			public async Task ShouldVerifyMultipleHeaderKeyCaseInsensitive(string key, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "foo");
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders(
 							(key, "Basic foo"),
@@ -209,10 +209,10 @@ public sealed partial class ItExtensionsTests
 			[InlineData("FOO", false)]
 			public async Task ShouldVerifyMultipleHeaderValueCaseSensitive(string value, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", value);
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.SetupMock.Method
+				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage()
 						.WithHeaders(
 							("Authorization", "Basic foo"),
@@ -230,11 +230,11 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task WithInvalidStringHeader_ShouldThrowArgumentException()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
+				HttpClient httpClient = HttpClient.CreateMock();
 
 				void Act()
 				{
-					httpClient.SetupMock.Method
+					httpClient.Mock.Setup
 						.SendAsync(It.IsHttpRequestMessage()
 							.WithHeaders("""
 							             x-myHeader1: foo

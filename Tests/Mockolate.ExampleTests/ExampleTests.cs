@@ -17,28 +17,33 @@ public class ExampleTests
 	public async Task Any_ShouldAlwaysMatch()
 	{
 		Guid id = Guid.NewGuid();
-		MyClass mock =
-			Mock.Create<MyClass, IExampleRepository, IOrderRepository>(BaseClass.WithConstructorParameters(3));
-		mock.Setup_IExampleRepository_Mock.Method.AddUser(
-				It.IsAny<string>())
-			.Returns(new User(id, "Alice"));
+		MyClass sut = MyClass.CreateMock([3,])
+			.Implementing<IExampleRepository>(setup => setup.AddUser(
+					It.IsAny<string>())
+				.Returns(new User(id, "Alice")))
+			.Implementing<IOrderRepository>(setup => setup.AddOrder(
+					It.IsAny<string>())
+				.Returns(new Order(id, "Foo")));
 
-		User result = ((IExampleRepository)mock).AddUser("Bob");
+		User result1 = ((IExampleRepository)sut).AddUser("Bob");
+		Order result2 = ((IOrderRepository)sut).AddOrder("Bar");
 
-		await That(result).IsEqualTo(new User(id, "Alice"));
-		mock.VerifyOn_IExampleRepository_Mock.Invoked.AddUser(It.Is("Bob")).Once();
+		await That(result1).IsEqualTo(new User(id, "Alice"));
+		await That(result2).IsEqualTo(new Order(id, "Foo"));
+		sut.Mock.As<IExampleRepository>().Verify.AddUser(It.Is("Bob")).Once();
+		sut.Mock.As<IOrderRepository>().Verify.AddOrder(It.Is("Bar")).Once();
 	}
 
 	[Fact]
 	public async Task BaseClassWithConstructorParameters()
 	{
-		MyClass mock = Mock.Create<MyClass>(BaseClass.WithConstructorParameters(3));
+		MyClass sut = MyClass.CreateMock([3,]);
 
-		mock.SetupMock.Method.MyMethod(It.IsAny<int>()).Returns(5);
+		sut.Mock.Setup.MyMethod(It.IsAny<int>()).Returns(5);
 
-		int result = mock.MyMethod(3);
+		int result = sut.MyMethod(3);
 
-		VerificationResult<MyClass> check = mock.VerifyMock.Invoked.MyMethod(It.IsAny<int>());
+		VerificationResult<Mock.IMockVerifyForMyClass> check = sut.Mock.Verify.MyMethod(It.IsAny<int>());
 		await That(result).IsEqualTo(5);
 		check.Once();
 	}
@@ -50,9 +55,8 @@ public class ExampleTests
 	[InlineData(HttpStatusCode.ServiceUnavailable)]
 	public async Task HttpClientTest(HttpStatusCode statusCode)
 	{
-		HttpClient httpClient = Mock.Create<HttpClient>();
-		httpClient.SetupMock.Method
-			.PostAsync(It.Matches("*example.com*"), It.IsHttpContent())
+		HttpClient httpClient = HttpClient.CreateMock();
+		httpClient.Mock.Setup.PostAsync(It.Matches("*example.com*"), It.IsHttpContent())
 			.ReturnsAsync(new HttpResponseMessage(statusCode));
 
 		HttpResponseMessage result = await httpClient.PostAsync("https://www.example.com", new StringContent(""));
@@ -64,12 +68,12 @@ public class ExampleTests
 	[Fact]
 	public async Task MockIFileSystem_ShouldWork()
 	{
-		IFileSystem mock = Mock.Create<IFileSystem>(MockBehavior.Default.SkippingBaseClass());
-		mock.SetupMock.Property.Path.Returns(Mock.Create<IPath>());
+		IFileSystem sut = IFileSystem.CreateMock(MockBehavior.Default.SkippingBaseClass());
+		sut.Mock.Setup.Path.Returns(IPath.CreateMock());
 
-		mock.Path.SetupMock.Property.DirectorySeparatorChar.Returns('a');
+		sut.Path.Mock.Setup.DirectorySeparatorChar.Returns('a');
 
-		char result = mock.Path.DirectorySeparatorChar;
+		char result = sut.Path.DirectorySeparatorChar;
 
 		await That(result).IsEqualTo('a');
 	}
@@ -78,30 +82,40 @@ public class ExampleTests
 	public async Task SimpleInterfaceMock()
 	{
 		Guid id = Guid.NewGuid();
-		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.SetupMock.Method
-			.AddUser(It.IsAny<string>())
+		IExampleRepository sut = IExampleRepository.CreateMock().Implementing<IOrderRepository>();
+		sut.Mock.Setup.AddUser(It.IsAny<string>())
 			.Returns(new User(id, "Alice"));
-		User result = mock.AddUser("Bob");
+		User result = sut.AddUser("Bob");
 		await That(result).IsEqualTo(new User(id, "Alice"));
-		mock.VerifyMock.Invoked.AddUser(It.IsAny<string>()).Once();
+		sut.Mock.Verify.AddUser(It.IsAny<string>()).Once();
 	}
 
 	[Fact]
 	public async Task WithAdditionalInterface_ShouldWork()
 	{
 		Guid id = Guid.NewGuid();
-		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.Setup_IOrderRepository_Mock.Method
-			.AddOrder(It.IsAny<string>())
+		IExampleRepository sut = IExampleRepository.CreateMock().Implementing<IOrderRepository>();
+		sut.Mock.As<IOrderRepository>().Setup.AddOrder(It.IsAny<string>())
 			.Returns(new Order(id, "Order1"));
 
-		Order result = ((IOrderRepository)mock).AddOrder("foo");
+		Order result = ((IOrderRepository)sut).AddOrder("foo");
 
 		await That(result.Name).IsEqualTo("Order1");
-		mock.VerifyOn_IOrderRepository_Mock.Invoked.AddOrder(It.Is("foo")).Once();
-		await That(mock).Is<IExampleRepository>();
-		await That(mock).Is<IOrderRepository>();
+		sut.Mock.As<IOrderRepository>().Verify.AddOrder(It.Is("foo")).Once();
+		await That(sut).Is<IExampleRepository>();
+		await That(sut).Is<IOrderRepository>();
+	}
+
+	[Fact]
+	public async Task WithAdditionalInterfaceInOtherOrder_ShouldWork()
+	{
+		Guid id = Guid.NewGuid();
+		IOrderRepository sut = IOrderRepository.CreateMock().Implementing<IExampleRepository>();
+		sut.Mock.As<IExampleRepository>().Setup.AddUser(It.IsAny<string>())
+			.Returns(new User(id, "Alice"));
+		User result = ((IExampleRepository)sut).AddUser("Bob");
+		await That(result).IsEqualTo(new User(id, "Alice"));
+		sut.Mock.As<IExampleRepository>().Verify.AddUser(It.IsAny<string>()).Once();
 	}
 
 	[Fact]
@@ -109,14 +123,14 @@ public class ExampleTests
 	{
 		EventArgs eventArgs = EventArgs.Empty;
 		int raiseCount = 0;
-		IExampleRepository mock = Mock.Create<IExampleRepository>();
+		IExampleRepository sut = IExampleRepository.CreateMock();
 
-		mock.RaiseOnMock.UsersChanged(this, eventArgs);
-		mock.UsersChanged += Register;
-		mock.RaiseOnMock.UsersChanged(this, eventArgs);
-		mock.RaiseOnMock.UsersChanged(this, eventArgs);
-		mock.UsersChanged -= Register;
-		mock.RaiseOnMock.UsersChanged(this, eventArgs);
+		sut.Mock.Raise.UsersChanged(this, eventArgs);
+		sut.UsersChanged += Register;
+		sut.Mock.Raise.UsersChanged(this, eventArgs);
+		sut.Mock.Raise.UsersChanged(this, eventArgs);
+		sut.UsersChanged -= Register;
+		sut.Mock.Raise.UsersChanged(this, eventArgs);
 
 		await That(raiseCount).IsEqualTo(2);
 
@@ -133,34 +147,33 @@ public class ExampleTests
 	public async Task WithExplicitCastToAdditionalInterfaceSetup_ShouldWork()
 	{
 		Guid id = Guid.NewGuid();
-		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		((IOrderRepository)mock).SetupMock.Method
-			.AddOrder(It.IsAny<string>())
+		IExampleRepository sut = IExampleRepository.CreateMock().Implementing<IOrderRepository>();
+		((IOrderRepository)sut).Mock.Setup.AddOrder(It.IsAny<string>())
 			.Returns(new Order(id, "Order1"));
 
-		Order result = ((IOrderRepository)mock).AddOrder("foo");
+		Order result = ((IOrderRepository)sut).AddOrder("foo");
 
 		await That(result.Name).IsEqualTo("Order1");
-		mock.VerifyOn_IOrderRepository_Mock.Invoked.AddOrder(It.Is("foo")).Once();
-		await That(mock).Is<IExampleRepository>();
-		await That(mock).Is<IOrderRepository>();
+		sut.Mock.As<IOrderRepository>().Verify.AddOrder(It.Is("foo")).Once();
+		await That(sut).Is<IExampleRepository>();
+		await That(sut).Is<IOrderRepository>();
 	}
 
 	[Fact]
 	public async Task WithExplicitCastToAdditionalInterfaceVerify_ShouldWork()
 	{
 		Guid id = Guid.NewGuid();
-		IExampleRepository mock = Mock.Create<IExampleRepository, IOrderRepository>();
-		mock.Setup_IOrderRepository_Mock.Method
+		IExampleRepository sut = IExampleRepository.CreateMock().Implementing<IOrderRepository>();
+		sut.Mock.As<IOrderRepository>().Setup
 			.AddOrder(It.IsAny<string>())
 			.Returns(new Order(id, "Order1"));
 
-		Order result = ((IOrderRepository)mock).AddOrder("foo");
+		Order result = ((IOrderRepository)sut).AddOrder("foo");
 
 		await That(result.Name).IsEqualTo("Order1");
-		((IOrderRepository)mock).VerifyMock.Invoked.AddOrder(It.Is("foo")).Once();
-		await That(mock).Is<IExampleRepository>();
-		await That(mock).Is<IOrderRepository>();
+		((IOrderRepository)sut).Mock.Verify.AddOrder(It.Is("foo")).Once();
+		await That(sut).Is<IExampleRepository>();
+		await That(sut).Is<IOrderRepository>();
 	}
 
 	[Theory]
@@ -169,16 +182,16 @@ public class ExampleTests
 	public async Task WithMatching_ShouldAlwaysMatch(string name, bool expectResult)
 	{
 		Guid id = Guid.NewGuid();
-		IExampleRepository mock = Mock.Create<IExampleRepository>();
+		IExampleRepository sut = IExampleRepository.CreateMock();
 
-		mock.SetupMock.Method.AddUser(
+		sut.Mock.Setup.AddUser(
 				It.Satisfies<string>(x => x == "Alice"))
 			.Returns(new User(id, "Alice"));
 
-		User result = mock.AddUser(name);
+		User result = sut.AddUser(name);
 
 		await That(result).IsEqualTo(expectResult ? new User(id, "Alice") : null);
-		mock.VerifyMock.Invoked.AddUser(It.Is(name)).Once();
+		sut.Mock.Verify.AddUser(It.Is(name)).Once();
 	}
 
 	[Theory]
@@ -187,17 +200,17 @@ public class ExampleTests
 	public async Task WithOut_ShouldSupportOutParameter(bool returnValue)
 	{
 		Guid id = Guid.NewGuid();
-		IExampleRepository mock = Mock.Create<IExampleRepository>();
+		IExampleRepository sut = IExampleRepository.CreateMock();
 
-		mock.SetupMock.Method.TryDelete(
+		sut.Mock.Setup.TryDelete(
 				It.IsAny<Guid>(),
 				It.IsOut<User?>(() => new User(id, "Alice")))
 			.Returns(returnValue);
 
-		bool result = mock.TryDelete(id, out User? deletedUser);
+		bool result = sut.TryDelete(id, out User? deletedUser);
 
 		await That(deletedUser).IsEqualTo(new User(id, "Alice"));
 		await That(result).IsEqualTo(returnValue);
-		mock.VerifyMock.Invoked.TryDelete(It.Is(id), It.IsOut<User?>()).Once();
+		sut.Mock.Verify.TryDelete(It.Is(id), It.IsOut<User?>()).Once();
 	}
 }

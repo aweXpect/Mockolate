@@ -9,7 +9,7 @@ public sealed partial class InteractionsTests
 		[Fact]
 		public async Task WithMultipleParameters_WhenOneIsCanceled_ShouldReturnCanceledTask()
 		{
-			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
 			CancellationToken canceledToken = new(true);
 
 			Task<int> result = sut.MultipleParametersMethod("test", 123, canceledToken);
@@ -20,7 +20,7 @@ public sealed partial class InteractionsTests
 		[Fact]
 		public async Task WithNonCanceledToken_ShouldReturnDefaultValue()
 		{
-			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
 			CancellationToken nonCanceledToken = new(false);
 
 			Task result = sut.TaskMethod(nonCanceledToken);
@@ -32,9 +32,9 @@ public sealed partial class InteractionsTests
 		[Fact]
 		public async Task WithSetup_ShouldUseSetupValue()
 		{
-			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
 			CancellationToken canceledToken = new(true);
-			sut.SetupMock.Method.TaskOfIntMethod(It.IsAny<CancellationToken>()).Returns(Task.FromResult(42));
+			sut.Mock.Setup.TaskOfIntMethod(It.IsAny<CancellationToken>()).Returns(Task.FromResult(42));
 
 			Task<int> result = sut.TaskOfIntMethod(canceledToken);
 
@@ -46,7 +46,7 @@ public sealed partial class InteractionsTests
 		[Fact]
 		public async Task WithTask_ShouldReturnCanceledTask()
 		{
-			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
 			CancellationToken canceledToken = new(true);
 
 			Task result = sut.TaskMethod(canceledToken);
@@ -57,7 +57,7 @@ public sealed partial class InteractionsTests
 		[Fact]
 		public async Task WithTaskOfInt_ShouldReturnCanceledTask()
 		{
-			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
 			CancellationToken canceledToken = new(true);
 
 			Task<int> result = sut.TaskOfIntMethod(canceledToken);
@@ -68,7 +68,7 @@ public sealed partial class InteractionsTests
 		[Fact]
 		public async Task WithTaskOfString_ShouldReturnCanceledTask()
 		{
-			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
 			CancellationToken canceledToken = new(true);
 
 			Task<string> result = sut.TaskOfStringMethod(canceledToken);
@@ -80,7 +80,7 @@ public sealed partial class InteractionsTests
 		[Fact]
 		public async Task WithValueTask_ShouldReturnCanceledTask()
 		{
-			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
 			CancellationToken canceledToken = new(true);
 
 			ValueTask result = sut.ValueTaskMethod(canceledToken);
@@ -93,7 +93,7 @@ public sealed partial class InteractionsTests
 		[Fact]
 		public async Task WithValueTaskOfInt_ShouldReturnCanceledTask()
 		{
-			IMockWithCancellationToken sut = Mock.Create<IMockWithCancellationToken>();
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
 			CancellationToken canceledToken = new(true);
 
 			ValueTask<int> result = sut.ValueTaskOfIntMethod(canceledToken);

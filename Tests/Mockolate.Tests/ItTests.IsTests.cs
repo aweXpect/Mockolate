@@ -6,6 +6,36 @@ public sealed partial class ItTests
 {
 	public sealed class IsTests
 	{
+		[Theory]
+		[InlineData(1, false)]
+		[InlineData(5, true)]
+		[InlineData(-5, false)]
+		[InlineData(42, false)]
+		public async Task ShouldMatchWhenEqual(int value, bool expectMatch)
+		{
+			IParameter<int> sut = It.Is(5);
+
+			bool result = ((IParameter)sut).Matches(value);
+
+			await That(result).IsEqualTo(expectMatch);
+		}
+
+		[Fact]
+		public async Task ShouldSupportCovarianceInSetup()
+		{
+			IMyService mock = IMyService.CreateMock();
+			MyImplementation value1 = new();
+			MyOtherImplementation value2 = new();
+			mock.Mock.Setup.DoSomething(It.Is(value1))
+				.Returns(3);
+
+			int result1 = mock.DoSomething(value1);
+			int result2 = mock.DoSomething(value2);
+
+			await That(result1).IsEqualTo(3);
+			await That(result2).IsEqualTo(0);
+		}
+
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
@@ -26,36 +56,6 @@ public sealed partial class ItTests
 			string? result = sut.ToString();
 
 			await That(result).IsEqualTo(expectedValue);
-		}
-
-		[Theory]
-		[InlineData(1, false)]
-		[InlineData(5, true)]
-		[InlineData(-5, false)]
-		[InlineData(42, false)]
-		public async Task ShouldMatchWhenEqual(int value, bool expectMatch)
-		{
-			IParameter<int> sut = It.Is(5);
-
-			bool result = ((IParameter)sut).Matches(value);
-
-			await That(result).IsEqualTo(expectMatch);
-		}
-
-		[Fact]
-		public async Task ShouldSupportCovarianceInSetup()
-		{
-			IMyService mock = Mock.Create<IMyService>();
-			MyImplementation value1 = new();
-			MyOtherImplementation value2 = new();
-			mock.SetupMock.Method.DoSomething(It.Is(value1))
-				.Returns(3);
-
-			int result1 = mock.DoSomething(value1);
-			int result2 = mock.DoSomething(value2);
-
-			await That(result1).IsEqualTo(3);
-			await That(result2).IsEqualTo(0);
 		}
 
 		[Theory]

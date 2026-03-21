@@ -1,7 +1,7 @@
 namespace Mockolate.Interactions;
 
 /// <summary>
-///     Keeps track of the interactions on the <see cref="Mock{T}" /> and its verifications.
+///     Keeps track of the interactions on the mock and its verifications.
 /// </summary>
 public interface IMockInteractions
 {

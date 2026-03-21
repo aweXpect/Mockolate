@@ -10,7 +10,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MyServiceBaseWithMultipleConstructors>(BaseClass.WithConstructorParameters(5));
+			_ = MyServiceBaseWithMultipleConstructors.CreateMock([5,]);
 		}
 
 		await That(Act).DoesNotThrow();
@@ -21,50 +21,51 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MyBaseClassWithoutConstructor>();
+			_ = MyBaseClassWithoutConstructor.CreateMock();
 		}
 
 		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Could not find any constructor at all for the base type 'Mockolate.Tests.MockTests.MyBaseClassWithoutConstructor'. Therefore mocking is not supported!");
+			.WithMessage("This method should not be called directly. Either 'Mockolate.Tests.MockTests+MyBaseClassWithoutConstructor' is not mockable or the source generator did not run correctly.");
 	}
 
 	[Fact]
 	public async Task Create_BaseClassWithVirtualCallsInConstructor_AllowExplicitSetup()
 	{
 		MyServiceBaseWithVirtualCallsInConstructor mock =
-			Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(setup
-				=> setup.Method.VirtualMethod().Returns([5, 6,]));
+			MyServiceBaseWithVirtualCallsInConstructor.CreateMock(setups: setup
+				=> setup.VirtualMethod().Returns([5, 6,]));
 
 		int value = mock.VirtualProperty;
 
-		await That(mock.VerifyMock.Invoked.VirtualMethod()).Once();
+		await That(mock.Mock.Verify.VirtualMethod()).Once();
 		await That(value).IsEqualTo(5);
-	}
-
-	[Fact]
-	public async Task
-		Create_BaseClassWithVirtualCallsInConstructor_DirectSubjectAccessInCreateSetups_ShouldThrowMockException()
-	{
-		void Act()
-		{
-			_ = Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>(setup => setup.Subject.VirtualProperty = 10);
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("Subject is not yet available. You can only access the subject in callbacks!");
 	}
 
 	[Fact]
 	public async Task
 		Create_BaseClassWithVirtualCallsInConstructor_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
 	{
-		MyServiceBaseWithVirtualCallsInConstructor mock = Mock.Create<MyServiceBaseWithVirtualCallsInConstructor>();
+		MyServiceBaseWithVirtualCallsInConstructor mock = MyServiceBaseWithVirtualCallsInConstructor.CreateMock();
 
 		int value = mock.VirtualProperty;
 
-		await That(mock.VerifyMock.Invoked.VirtualMethod()).Once();
+		await That(mock.Mock.Verify.VirtualMethod()).Once();
 		await That(value).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task Create_SealedClass_ImplementingAdditionalInterface_ShouldThrowMockException()
+	{
+		void Act()
+		{
+#pragma warning disable Mockolate0002
+			_ = MySealedClass.CreateMock().Implementing<IMyService>();
+#pragma warning restore Mockolate0002
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage(
+				"This method should not be called directly. Either 'Mockolate.Tests.MockTests+MySealedClass' is not mockable or the source generator did not run correctly.");
 	}
 
 	[Fact]
@@ -73,135 +74,13 @@ public sealed partial class MockTests
 		void Act()
 		{
 #pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass>();
+			_ = MySealedClass.CreateMock();
 #pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_SealedClass_With1AdditionalInterface_ShouldThrowMockException()
-	{
-		void Act()
-		{
-#pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass, IMyService>();
-#pragma warning restore Mockolate0002
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_SealedClass_With2AdditionalInterfaces_ShouldThrowMockException()
-	{
-		void Act()
-		{
-#pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass, IMyService, IMyService>();
-#pragma warning restore Mockolate0002
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_SealedClass_With3AdditionalInterfaces_ShouldThrowMockException()
-	{
-		void Act()
-		{
-#pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService>();
-#pragma warning restore Mockolate0002
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_SealedClass_With4AdditionalInterfaces_ShouldThrowMockException()
-	{
-		void Act()
-		{
-#pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService>();
-#pragma warning restore Mockolate0002
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_SealedClass_With5AdditionalInterfaces_ShouldThrowMockException()
-	{
-		void Act()
-		{
-#pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService>();
-#pragma warning restore Mockolate0002
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_SealedClass_With6AdditionalInterfaces_ShouldThrowMockException()
-	{
-		void Act()
-		{
-#pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
-#pragma warning restore Mockolate0002
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_SealedClass_With7AdditionalInterfaces_ShouldThrowMockException()
-	{
-		void Act()
-		{
-#pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass,
-				IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
-#pragma warning restore Mockolate0002
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
-	}
-
-	[Fact]
-	public async Task Create_SealedClass_With8AdditionalInterfaces_ShouldThrowMockException()
-	{
-		void Act()
-		{
-#pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass,
-				IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService, IMyService>();
-#pragma warning restore Mockolate0002
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
+				"This method should not be called directly. Either 'Mockolate.Tests.MockTests+MySealedClass' is not mockable or the source generator did not run correctly.");
 	}
 
 	[Fact]
@@ -210,21 +89,21 @@ public sealed partial class MockTests
 		void Act()
 		{
 #pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass>(BaseClass.WithConstructorParameters());
+			_ = MySealedClass.CreateMock([]);
 #pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
+				"This method should not be called directly. Either 'Mockolate.Tests.MockTests+MySealedClass' is not mockable or the source generator did not run correctly.");
 	}
 
 	[Fact]
 	public async Task Create_WithConstructorParametersAndSetups_ShouldApplySetups()
 	{
-		MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor>(
-			BaseClass.WithConstructorParameters("foo"),
-			setup => setup.Method.VirtualMethod().Returns("bar"));
+		MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
+			["foo",],
+			setups: setup => setup.VirtualMethod().Returns("bar"));
 
 		string result = mock.VirtualMethod();
 
@@ -234,9 +113,9 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
 	{
-		MyBaseClassWithConstructor mock = Mock.Create<MyBaseClassWithConstructor>(
-			BaseClass.WithConstructorParameters("foo"), MockBehavior.Default,
-			setup => setup.Method.VirtualMethod().Returns("bar"));
+		MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
+			["foo",], MockBehavior.Default,
+			setup => setup.VirtualMethod().Returns("bar"));
 
 		string result = mock.VirtualMethod();
 
@@ -248,7 +127,7 @@ public sealed partial class MockTests
 	{
 		MyBaseClassWithConstructor Act()
 		{
-			return _ = Mock.Create<MyBaseClassWithConstructor>(BaseClass.WithConstructorParameters("foo"));
+			return _ = MyBaseClassWithConstructor.CreateMock(["foo",]);
 		}
 
 		await That(Act).DoesNotThrow().AndWhoseResult.IsNotNull();
@@ -260,13 +139,13 @@ public sealed partial class MockTests
 		void Act()
 		{
 #pragma warning disable Mockolate0002
-			_ = Mock.Create<MySealedClass>(MockBehavior.Default);
+			_ = MySealedClass.CreateMock(MockBehavior.Default);
 #pragma warning restore Mockolate0002
 		}
 
 		await That(Act).Throws<MockException>()
 			.WithMessage(
-				"Unable to mock type 'Mockolate.Tests.MockTests+MySealedClass'. The type is sealed and therefore not mockable.");
+				"This method should not be called directly. Either 'Mockolate.Tests.MockTests+MySealedClass' is not mockable or the source generator did not run correctly.");
 	}
 
 	[Fact]
@@ -274,7 +153,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MyBaseClassWithConstructor>(BaseClass.WithConstructorParameters());
+			_ = MyBaseClassWithConstructor.CreateMock(constructorParameters: []);
 		}
 
 		await That(Act).Throws<MockException>()
@@ -287,7 +166,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MyBaseClassWithConstructor>();
+			_ = MyBaseClassWithConstructor.CreateMock();
 		}
 
 		await That(Act).Throws<MockException>()
@@ -298,9 +177,8 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithSetups_ShouldAllowChangingTheSetupSubjectInCallback()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>(setup => setup.Method
-			.Dispense(It.IsAny<string>(), It.IsAny<int>())
-			.Do((s, i) => setup.Subject[s] -= i));
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock(setups: setup => setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
+			.Do((s, i) => ((IChocolateDispenser)setup)[s] -= i));
 
 		mock["Dark"] = 10;
 		mock.Dispense("Dark", 3);
@@ -312,10 +190,11 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithSetups_ShouldApplySetups()
 	{
-		IMyService mock = Mock.Create<IMyService>(
-			setup => setup.Method.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2),
-			setup => setup.Method.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4),
-			setup => setup.Method.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8));
+		IMyService mock = IMyService.CreateMock([], null,
+			setup => setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2),
+			setup => setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4),
+			setup => setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8)
+		);
 
 		int result1 = mock.Multiply(1, null);
 		int result2 = mock.Multiply(2, null);
@@ -331,7 +210,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = Mock.Create<MyBaseClassWithConstructor>(BaseClass.WithConstructorParameters("foo", 1, 2));
+			_ = MyBaseClassWithConstructor.CreateMock(["foo", 1, 2,]);
 		}
 
 		await That(Act).Throws<MockException>()
@@ -342,8 +221,8 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task DoubleNestedInterfaces_ShouldStillWork()
 	{
-		Nested.Nested2.IMyDoubleNestedService mock = Mock.Create<Nested.Nested2.IMyDoubleNestedService>();
-		mock.SetupMock.Property.IsValid.InitializeWith(true);
+		Nested.Nested2.IMyDoubleNestedService mock = Nested.Nested2.IMyDoubleNestedService.CreateMock();
+		mock.Mock.Setup.IsValid.InitializeWith(true);
 
 		bool result = mock.IsValid;
 
@@ -351,13 +230,37 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task WhenTypeHasMockAndMockolate_MockProperty_ShouldAppendNumbers()
+	{
+		MyInterfaceWithMockAndMockolate_MockProperty sut = MyInterfaceWithMockAndMockolate_MockProperty.CreateMock();
+
+		sut.Mockolate_Mock__2.Setup.Mock.Returns(4);
+		sut.Mockolate_Mock__2.Setup.Mockolate_Mock.Returns(true);
+		sut.Mockolate_Mock__2.Setup.Mockolate_Mock__1.Returns("foo");
+
+		await That(sut.Mock).IsEqualTo(4);
+		await That(sut.Mockolate_Mock).IsTrue();
+		await That(sut.Mockolate_Mock__1).IsEqualTo("foo");
+	}
+
+	[Fact]
+	public async Task WhenTypeHasMockProperty_ShouldUseMockolate_MockInstead()
+	{
+		MyInterfaceWithMockProperty sut = MyInterfaceWithMockProperty.CreateMock();
+
+		sut.Mockolate_Mock.Setup.Mock.Returns(4);
+
+		int result = sut.Mock;
+
+		await That(result).IsEqualTo(4);
+	}
+
+	[Fact]
 	public async Task WithConstructorParameters_ShouldBeAccessibleViaMock()
 	{
-		MyBaseClassWithConstructor sut = Mock.Create<MyBaseClassWithConstructor>(
-			BaseClass.WithConstructorParameters("foo"));
+		MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(["foo",]);
 
-		Mock<MyBaseClassWithConstructor> mock
-			= ((IMockSubject<MyBaseClassWithConstructor>)sut).Mock;
+		IMock mock = (IMock)sut;
 
 		await That(mock.ConstructorParameters).HasCount(1).And.Contains("foo");
 	}
@@ -365,11 +268,23 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task WithoutConstructorParameters_MockConstructorParametersShouldBeEmpty()
 	{
-		IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
-		Mock<IChocolateDispenser> mock = ((IMockSubject<IChocolateDispenser>)sut).Mock;
+		IMock mock = (IMock)sut;
 
 		await That(mock.ConstructorParameters).IsEmpty();
+	}
+
+	public interface MyInterfaceWithMockProperty
+	{
+		int Mock { get; }
+	}
+
+	public interface MyInterfaceWithMockAndMockolate_MockProperty
+	{
+		int Mock { get; }
+		bool Mockolate_Mock { get; }
+		string Mockolate_Mock__1 { get; }
 	}
 
 	public class MyServiceBaseWithVirtualCallsInConstructor

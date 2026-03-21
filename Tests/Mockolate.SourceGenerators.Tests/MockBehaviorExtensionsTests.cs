@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 
-namespace Mockolate.SourceGenerators.Tests.Sources;
+namespace Mockolate.SourceGenerators.Tests;
 
-public sealed class MockRegistrationTests
+public sealed class MockBehaviorExtensionsTests
 {
 	[Fact]
 	public async Task DefaultValueGenerator_ShouldRegisterArrays()
@@ -19,7 +18,7 @@ public sealed class MockRegistrationTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -66,7 +65,7 @@ public sealed class MockRegistrationTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -105,7 +104,7 @@ public sealed class MockRegistrationTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -160,7 +159,7 @@ public sealed class MockRegistrationTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -214,7 +213,7 @@ public sealed class MockRegistrationTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			_ = Mock.Create<IMyInterface>();
+			     			_ = IMyInterface.CreateMock();
 			             }
 			         }
 
@@ -303,125 +302,6 @@ public sealed class MockRegistrationTests
 			          			}
 			          			
 			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters), generator.Generate(default(T6)!, parameters), generator.Generate(default(T7)!, parameters), generator.Generate(default(T8)!, parameters));
-			          		}
-			          """).IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task ShouldRegisterAllTypesInTheMockGenerator()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using System.Threading;
-			     using System.Threading.Tasks;
-			     using Mockolate;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			var y = Mock.Create<IMyInterface>();
-			     			var z = Mock.Create<MyBaseClass, IMyInterface>();
-			             }
-			         }
-
-			         public interface IMyInterface
-			         {
-			             void MyMethod(int value);
-			         }
-
-			         public class MyBaseClass
-			         {
-			             protected virtual Task<int> MyMethod(int v1, bool v2, double v3, long v4, uint v5, string v6, DateTime v7, TimeSpan v8, CancellationToken v9)
-			             {
-			                 return Task.FromResult(1);
-			             }
-			         }
-			     }
-			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
-
-		await That(result.Sources).ContainsKey("MockRegistration.g.cs").WhoseValue
-			.Contains("""
-			          		partial void Generate<T>(global::Mockolate.BaseClass.ConstructorParameters? constructorParameters, global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] setups, params global::System.Type[] types)
-			          		{
-			          			IMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;
-			          			if (mockBehaviorAccess.TryInitialize<T>(out global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[]? additionalSetups))
-			          			{
-			          				if (setups.Length > 0)
-			          				{
-			          					global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[] concatenatedSetups = new global::System.Action<global::Mockolate.Setup.IMockSetup<T>>[additionalSetups.Length + setups.Length];
-			          					additionalSetups.CopyTo(concatenatedSetups, 0);
-			          					setups.CopyTo(concatenatedSetups, additionalSetups.Length);
-			          					setups = concatenatedSetups;
-			          				}
-			          				else
-			          				{
-			          					setups = additionalSetups;
-			          				}
-			          			}
-
-			          			if (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<T>(out object?[]? parameters))
-			          			{
-			          				constructorParameters = new BaseClass.ConstructorParameters(parameters);
-			          			}
-
-			          			if (types.Length == 1 &&
-			          			    types[0] == typeof(MyCode.IMyInterface))
-			          			{
-			          				_value = new global::Mockolate.Generated.MockForIMyInterface(mockBehavior);
-			          				if (setups.Length > 0)
-			          				{
-			          					global::Mockolate.Setup.IMockSetup<MyCode.IMyInterface> setupTarget = ((global::Mockolate.IMockSubject<MyCode.IMyInterface>)_value).Mock;
-			          					foreach (global::System.Action<global::Mockolate.Setup.IMockSetup<MyCode.IMyInterface>> setup in setups)
-			          					{
-			          						setup.Invoke(setupTarget);
-			          					}
-			          				}
-			          			}
-			          			else if (types.Length == 2 &&
-			          			         types[0] == typeof(MyCode.MyBaseClass) &&
-			          			         types[1] == typeof(MyCode.IMyInterface))
-			          			{
-			          				if (constructorParameters is null || constructorParameters.Parameters.Length == 0)
-			          				{
-			          					global::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, "MyCode.MyBaseClass");
-			          					global::Mockolate.Generated.MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
-			          					if (setups.Length > 0)
-			          					{
-			          						#pragma warning disable CS0618
-			          						global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass> setupTarget = new global::Mockolate.MockSetup<MyCode.MyBaseClass>(mockRegistration);
-			          						#pragma warning restore CS0618
-			          						foreach (global::System.Action<global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass>> setup in setups)
-			          						{
-			          							setup.Invoke(setupTarget);
-			          						}
-			          					}
-			          					_value = new global::Mockolate.Generated.MockForMyBaseClass_IMyInterface(mockRegistration);
-			          				}
-			          				else if (constructorParameters.Parameters.Length == 0)
-			          				{
-			          					global::Mockolate.MockRegistration mockRegistration = new global::Mockolate.MockRegistration(mockBehavior, "MyCode.MyBaseClass");
-			          					global::Mockolate.Generated.MockForMyBaseClass_IMyInterface.MockRegistrationsProvider.Value = mockRegistration;
-			          					if (setups.Length > 0)
-			          					{
-			          						#pragma warning disable CS0618
-			          						global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass> setupTarget = new global::Mockolate.MockSetup<MyCode.MyBaseClass>(mockRegistration);
-			          						#pragma warning restore CS0618
-			          						foreach (global::System.Action<global::Mockolate.Setup.IMockSetup<MyCode.MyBaseClass>> setup in setups)
-			          						{
-			          							setup.Invoke(setupTarget);
-			          						}
-			          					}
-			          					_value = new global::Mockolate.Generated.MockForMyBaseClass_IMyInterface(mockRegistration);
-			          				}
-			          				else
-			          				{
-			          					throw new global::Mockolate.Exceptions.MockException($"Could not find any constructor for 'MyCode.MyBaseClass' that matches the {constructorParameters.Parameters.Length} given parameters ({string.Join(", ", constructorParameters.Parameters)}).");
-			          				}
-			          			}
 			          		}
 			          """).IgnoringNewlineStyle();
 	}

@@ -70,15 +70,14 @@ public class IndexerSetupResult<TResult>(
 			setIndexerValue(indexerAccess.Parameters, value);
 			return value;
 		}
-		else if (_behavior.ThrowWhenNotSetup)
+
+		if (_behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
 				$"The indexer [{string.Join(", ", indexerAccess.Parameters.Select(p => p.Value?.ToString() ?? "null"))}] was accessed without prior setup.");
 		}
-		else
-		{
-			value = defaultValueGenerator();
-		}
+
+		value = defaultValueGenerator();
 
 		TResult result = getIndexerValue(_setup, () => value, indexerAccess.Parameters);
 		setIndexerValue(indexerAccess.Parameters, result);

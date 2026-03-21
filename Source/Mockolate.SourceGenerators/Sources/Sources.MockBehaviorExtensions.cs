@@ -9,7 +9,7 @@ internal static partial class Sources
 {
 	public static string MockBehaviorExtensions(ImmutableArray<MockClass> mockClasses)
 	{
-		bool includeHttpClient = mockClasses.Any(m => m.ClassFullName == "System.Net.Http.HttpClient");
+		bool includeHttpClient = mockClasses.Any(m => m.ClassFullName == "global::System.Net.Http.HttpClient");
 		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("""
@@ -26,21 +26,7 @@ internal static partial class Sources
 		          	
 		          	static Mock()
 		          	{
-		          		_default = new global::Mockolate.MockBehavior(new DefaultValueGenerator())
-		          """);
-		if (includeHttpClient)
-		{
-			sb.AppendLine()
-				.Append("""
-				        			.UseConstructorParametersFor<global::System.Net.Http.HttpClient>(() => new object[] { Mock.Create<global::System.Net.Http.HttpMessageHandler>() });
-				        """).AppendLine();
-		}
-		else
-		{
-			sb.Append(";").AppendLine();
-		}
-
-		sb.Append("""
+		          		_default = new global::Mockolate.MockBehavior(new DefaultValueGenerator());
 		          	}
 		          	
 		          	extension(global::Mockolate.MockBehavior)
@@ -81,21 +67,28 @@ internal static partial class Sources
 		          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
 		          			=> value;
 		          	}
-		          	
-		          	/// <summary>
-		          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="global::System.Net.Http.HttpResponseMessage" /> with the specified
-		          	///     <paramref name="statusCode" />.
-		          	/// </summary>
-		          	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : IDefaultValueFactory
-		          	{
-		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
-		          		public bool IsMatch(global::System.Type type)
-		          			=> type == typeof(global::System.Net.Http.HttpResponseMessage);
-		          	
-		          		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
-		          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
-		          			=> new global::System.Net.Http.HttpResponseMessage(statusCode) { Content = new global::System.Net.Http.StringContent(string.Empty) };
-		          	}
+		          """).AppendLine();
+		if (includeHttpClient)
+		{
+			sb.Append("""
+			          	/// <summary>
+			          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="global::System.Net.Http.HttpResponseMessage" /> with the specified
+			          	///     <paramref name="statusCode" />.
+			          	/// </summary>
+			          	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : IDefaultValueFactory
+			          	{
+			          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+			          		public bool IsMatch(global::System.Type type)
+			          			=> type == typeof(global::System.Net.Http.HttpResponseMessage);
+			          	
+			          		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+			          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params object?[] parameters)
+			          			=> new global::System.Net.Http.HttpResponseMessage(statusCode) { Content = new global::System.Net.Http.StringContent(string.Empty) };
+			          	}
+			          """).AppendLine();
+		}
+
+		sb.Append("""
 		          	
 		          	/// <summary>
 		          	///     Provides default values for common types used in mocking scenarios.
@@ -104,7 +97,15 @@ internal static partial class Sources
 		          	{
 		          		private static readonly global::System.Collections.Concurrent.ConcurrentQueue<IDefaultValueFactory> _factories = new([
 		          			new TypedDefaultValueFactory<string>(""),
-		          			new HttpResponseMessageFactory(global::System.Net.HttpStatusCode.NotImplemented),
+		          """).AppendLine();
+		if (includeHttpClient)
+		{
+			sb.Append("""
+			          			new HttpResponseMessageFactory(global::System.Net.HttpStatusCode.NotImplemented),
+			          """).AppendLine();
+		}
+
+		sb.Append("""
 		          			new CancellableTaskFactory(),
 		          	#if NET8_0_OR_GREATER
 		          			new CancellableValueTaskFactory(),
@@ -141,9 +142,9 @@ internal static partial class Sources
 		          				value = matchingFactory.Create(type, this, parameters);
 		          				return true;
 		          			}
-		          			
-		          			value = new MockGenerator().Get(null, _default, type);
-		          			return value is not null;
+
+		          			value = null;
+		          			return false;
 		          		}
 		          	
 		          		private static bool HasCanceledCancellationToken(object?[] parameters, out global::System.Threading.CancellationToken cancellationToken)

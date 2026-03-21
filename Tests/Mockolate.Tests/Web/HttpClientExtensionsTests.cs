@@ -15,14 +15,14 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task InvalidParameter_ShouldReturnTrue()
 	{
-		HttpClient httpClient = Mock.Create<HttpClient>();
+		HttpClient httpClient = HttpClient.CreateMock();
 		IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> setup = httpClient
-			.SetupMock.Method
+			.Mock.Setup
 			.GetAsync(new InvalidParameter())
 			.ReturnsAsync(HttpStatusCode.OK);
 		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
 
-		bool result = interactiveSetup.Matches(new MethodInvocation(0, "System.Net.Http.HttpMessageHandler.SendAsync",
+		bool result = interactiveSetup.Matches(new MethodInvocation(0, "global::System.Net.Http.HttpMessageHandler.SendAsync",
 		[
 			new NamedParameterValue("request", new HttpRequestMessage()),
 			new NamedParameterValue("cancellationToken", CancellationToken.None),
@@ -34,28 +34,27 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task InvokedSetup_ShouldWorkForHttpClient()
 	{
-		HttpClient httpClient = Mock.Create<HttpClient>();
+		HttpClient httpClient = HttpClient.CreateMock();
 		IMethodSetup setup = httpClient
-			.SetupMock.Method.GetAsync(It.IsUri("https://www.aweXpect.com"))
+			.Mock.Setup.GetAsync(It.IsUri("https://www.aweXpect.com"))
 			.ReturnsAsync(HttpStatusCode.Accepted);
-
 		HttpResponseMessage result =
 			await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
 
 		await That(result.StatusCode)
 			.IsEqualTo(HttpStatusCode.Accepted);
-		await That(httpClient.VerifyMock.InvokedSetup(setup)).Once();
+		await That(httpClient.Mock.VerifySetup(setup)).Once();
 	}
 
 	[Fact]
 	public async Task InvokedSetup_WhenMethodSetupIsNotVerifiable_ShouldThrowMockException()
 	{
-		HttpClient mock = Mock.Create<HttpClient>();
+		HttpClient mock = HttpClient.CreateMock();
 		IMethodSetup setup = new MyMethodSetup();
 
 		void Act()
 		{
-			mock.VerifyMock.InvokedSetup(setup).Never();
+			mock.Mock.VerifySetup(setup).Never();
 		}
 
 		await That(Act).Throws<MockException>()
@@ -63,11 +62,11 @@ public sealed partial class HttpClientExtensionsTests
 	}
 
 	[Fact]
-	public async Task InvokedSetup_WhenSubjectIsNoMock_ShouldThrowMockException()
+	public async Task InvokedSetup_WhenSubjectIsMockedWithoutConstructorParameters_ShouldThrowMockException()
 	{
-		HttpClient mock = Mock.Create<HttpClient>();
-		IMockVerify<HttpClient> verify = new MyMockVerify<HttpClient>();
-		IMethodSetup setup = mock.SetupMock.Method.SendAsync(Match.AnyParameters());
+		HttpClient mock = HttpClient.CreateMock(constructorParameters: []);
+		IMockVerify<HttpClient> verify = mock.Mock.Verify;
+		IMethodSetup setup = mock.Mock.Setup.SendAsync(Match.AnyParameters());
 
 		void Act()
 		{
@@ -79,11 +78,11 @@ public sealed partial class HttpClientExtensionsTests
 	}
 
 	[Fact]
-	public async Task InvokedSetup_WhenSubjectIsMockedWithoutConstructorParameters_ShouldThrowMockException()
+	public async Task InvokedSetup_WhenSubjectIsNoMock_ShouldThrowMockException()
 	{
-		HttpClient mock = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
-		IMockVerify<HttpClient> verify = mock.VerifyMock;
-		IMethodSetup setup = mock.SetupMock.Method.SendAsync(Match.AnyParameters());
+		HttpClient mock = HttpClient.CreateMock();
+		IMockVerify<HttpClient> verify = new MyMockVerify<HttpClient>();
+		IMethodSetup setup = mock.Mock.Setup.SendAsync(Match.AnyParameters());
 
 		void Act()
 		{
@@ -97,9 +96,9 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task NullUri_ShouldReturnFalse()
 	{
-		HttpClient httpClient = Mock.Create<HttpClient>();
+		HttpClient httpClient = HttpClient.CreateMock();
 		IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> setup = httpClient
-			.SetupMock.Method
+			.Mock.Setup
 			.GetAsync(It.IsAny<string?>())
 			.ReturnsAsync(HttpStatusCode.OK);
 		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
@@ -116,11 +115,11 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task SendAsync_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
 	{
-		HttpClient httpClient = Mock.Create<HttpClient>(BaseClass.WithConstructorParameters());
+		HttpClient httpClient = HttpClient.CreateMock(constructorParameters: []);
 
 		void Act()
 		{
-			httpClient.SetupMock.Method
+			httpClient.Mock.Setup
 				.SendAsync(It.IsHttpRequestMessage())
 				.ReturnsAsync(HttpStatusCode.OK);
 		}
@@ -134,8 +133,8 @@ public sealed partial class HttpClientExtensionsTests
 	public async Task ShouldSupportMonitoring()
 	{
 		int callbackCount = 0;
-		HttpClient httpClient = Mock.Create<HttpClient>();
-		httpClient.SetupMock.Method
+		HttpClient httpClient = HttpClient.CreateMock();
+		httpClient.Mock.Setup
 			.GetAsync(It.Matches("*")
 				.Do(_ => callbackCount++)
 				.Monitor(out IParameterMonitor<string> monitor))
@@ -157,8 +156,8 @@ public sealed partial class HttpClientExtensionsTests
 	[InlineData("*aweXpect.com/")]
 	public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
 	{
-		HttpClient httpClient = Mock.Create<HttpClient>();
-		httpClient.SetupMock.Method
+		HttpClient httpClient = HttpClient.CreateMock();
+		httpClient.Mock.Setup
 			.GetAsync(It.Matches(matchPattern))
 			.ReturnsAsync(HttpStatusCode.OK);
 
@@ -172,8 +171,8 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task TrailingSlash_WhenNotPresent_ShouldNotBeAdded()
 	{
-		HttpClient httpClient = Mock.Create<HttpClient>();
-		httpClient.SetupMock.Method
+		HttpClient httpClient = HttpClient.CreateMock();
+		httpClient.Mock.Setup
 			.GetAsync(It.Matches("*www.aweXpect.com/foo/"))
 			.ReturnsAsync(HttpStatusCode.OK);
 

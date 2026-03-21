@@ -7,19 +7,19 @@ public sealed class VerifyGotTests
 	[Fact]
 	public async Task ShouldIncreaseInvocationCountOfGetter()
 	{
-		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
+		MockTests.IMyService sut = MockTests.IMyService.CreateMock();
 
 		_ = sut.Counter;
 
-		await That(sut.VerifyMock.Got.Counter()).Once();
-		await That(sut.VerifyMock.Set.Counter(It.IsAny<int>())).Never();
+		await That(sut.Mock.Verify.Counter.Got()).Once();
+		await That(sut.Mock.Verify.Counter.Set(It.IsAny<int>())).Never();
 	}
 
 	[Fact]
 	public async Task ShouldReturnInitializedValue()
 	{
-		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>();
-		sut.SetupMock.Property.Counter.InitializeWith(24);
+		MockTests.IMyService sut = MockTests.IMyService.CreateMock();
+		sut.Mock.Setup.Counter.InitializeWith(24);
 
 		int result = sut.Counter;
 
@@ -31,7 +31,7 @@ public sealed class VerifyGotTests
 	[InlineData(false)]
 	public async Task ShouldThrowMockNotSetupExceptionWhenBehaviorIsSetToThrow(bool throwWhenNotSetup)
 	{
-		MockTests.IMyService sut = Mock.Create<MockTests.IMyService>(MockBehavior.Default with
+		MockTests.IMyService sut = MockTests.IMyService.CreateMock(MockBehavior.Default with
 		{
 			ThrowWhenNotSetup = throwWhenNotSetup,
 		});
@@ -43,7 +43,7 @@ public sealed class VerifyGotTests
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
-			             The property 'Mockolate.Tests.MockTests.IMyService.IsValid' was accessed without prior setup.
+			             The property 'global::Mockolate.Tests.MockTests.IMyService.IsValid' was accessed without prior setup.
 			             """);
 	}
 }

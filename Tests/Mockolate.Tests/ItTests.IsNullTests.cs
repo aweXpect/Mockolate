@@ -11,12 +11,12 @@ public sealed partial class ItTests
 		[InlineData(1, 0)]
 		public async Task Null_ShouldMatchWhenNull(int? value, int expectedCount)
 		{
-			IMyServiceWithNullable mock = Mock.Create<IMyServiceWithNullable>();
-			mock.SetupMock.Method.DoSomething(null, It.Is(true));
+			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
+			mock.Mock.Setup.DoSomething(null, It.Is(true));
 
 			mock.DoSomething(value, true);
 
-			await That(mock.VerifyMock.Invoked.DoSomething(null, It.Is(true))).Exactly(expectedCount);
+			await That(mock.Mock.Verify.DoSomething(null, It.Is(true))).Exactly(expectedCount);
 		}
 
 		[Fact]

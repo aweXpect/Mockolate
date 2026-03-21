@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
-using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
 
@@ -17,8 +16,8 @@ public sealed partial class HttpClientExtensionsTests
 		[InlineData(HttpStatusCode.Forbidden)]
 		public async Task WithStatusCode_ShouldReturnHttpResponseMessageWithStatusCode(HttpStatusCode statusCode)
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode);
 
@@ -39,8 +38,8 @@ public sealed partial class HttpClientExtensionsTests
 			HttpStatusCode statusCode, string stringContent)
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(stringContent);
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, bytes);
 
@@ -61,8 +60,8 @@ public sealed partial class HttpClientExtensionsTests
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(stringContent);
 			ByteArrayContent content = new(bytes);
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, content);
 
@@ -80,8 +79,8 @@ public sealed partial class HttpClientExtensionsTests
 		public async Task WithStatusCodeAndString_ShouldReturnHttpResponseMessageWithStatusCodeAndStringContent(
 			HttpStatusCode statusCode, string content)
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, content);
 
@@ -101,8 +100,8 @@ public sealed partial class HttpClientExtensionsTests
 				HttpStatusCode statusCode, string stringContent, string mediaType)
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(stringContent);
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, bytes, mediaType);
 
@@ -121,8 +120,8 @@ public sealed partial class HttpClientExtensionsTests
 			WithStatusCodeStringContentAndMediaType_ShouldReturnHttpResponseMessageWithStatusCodeAndStringContent(
 				HttpStatusCode statusCode, string content, string mediaType)
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, content, mediaType);
 

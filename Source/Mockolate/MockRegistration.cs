@@ -29,7 +29,7 @@ public partial class MockRegistration
 	}
 
 	/// <inheritdoc cref="MockRegistration" />
-	internal MockRegistration(MockBehavior behavior, string prefix, MockInteractions interactions)
+	public MockRegistration(MockBehavior behavior, string prefix, MockInteractions interactions)
 	{
 		Behavior = behavior;
 		Prefix = prefix;

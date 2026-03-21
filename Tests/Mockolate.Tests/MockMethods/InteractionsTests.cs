@@ -11,8 +11,8 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task Method_WhenNameAndValueMatches_ShouldReturnOnce()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
@@ -25,8 +25,8 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task Method_WhenOnlyNameMatches_ShouldReturnNever()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
@@ -39,8 +39,8 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task Method_WhenOnlyValueMatches_ShouldReturnNever()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
@@ -53,8 +53,8 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task Method_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 
 		VerificationResult<IChocolateDispenser> result =
 			registration.Method(mock,

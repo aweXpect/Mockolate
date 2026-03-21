@@ -13,7 +13,7 @@ namespace Mockolate;
 public static partial class HttpClientExtensions
 {
 	/// <inheritdoc cref="HttpClientExtensions" />
-	extension(IMockMethodSetup<HttpClient> setup)
+	extension(IMockSetup<HttpClient> setup)
 	{
 		/// <summary>
 		///     Setup for the method
@@ -51,16 +51,16 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
+			if (setup is IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
-					new("System.Net.Http.HttpMessageHandler.SendAsync",
+					new("global::System.Net.Http.HttpMessageHandler.SendAsync",
 						new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Post,
 							new HttpStringUriParameter(requestUri),
 							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
 						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				httpMessageHandlerMock.Mock.Registrations.SetupMethod(methodSetup);
+				httpMessageHandlerMock.Registrations.SetupMethod(methodSetup);
 				return methodSetup;
 			}
 
@@ -78,16 +78,16 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (setup is Mock<HttpClient> { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMockSubject<HttpMessageHandler> httpMessageHandlerMock)
+			if (setup is IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
-					new("System.Net.Http.HttpMessageHandler.SendAsync",
+					new("global::System.Net.Http.HttpMessageHandler.SendAsync",
 						new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Post,
 							new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),
 							new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content))),
 						new NamedParameter("cancellationToken", (IParameter)cancellationToken));
-				httpMessageHandlerMock.Mock.Registrations.SetupMethod(methodSetup);
+				httpMessageHandlerMock.Registrations.SetupMethod(methodSetup);
 				return methodSetup;
 			}
 

@@ -2,7 +2,7 @@
 
 ### New Rules
 
- Rule ID       | Category | Severity | Notes                       
----------------|----------|----------|-----------------------------
- Mockolate0001 | Usage    | Error    | Verifications must be used
- Mockolate0002 | Usage    | Error    | Mock arguments must be mockable
+ Rule ID       | Category | Severity | Notes                           
+---------------|----------|----------|---------------------------------
+ Mockolate0001 | Usage    | Error    | Verifications must be used      
+ Mockolate0002 | Usage    | Error    | Mock arguments must be mockable 

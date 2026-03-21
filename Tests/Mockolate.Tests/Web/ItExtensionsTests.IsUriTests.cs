@@ -15,8 +15,8 @@ public sealed partial class ItExtensionsTests
 		public async Task ShouldSupportMonitoring()
 		{
 			int callbackCount = 0;
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method.GetAsync(It.IsUri()
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup.GetAsync(It.IsUri()
 				.Do(_ => callbackCount++)
 				.Monitor(out IParameterMonitor<Uri?> monitor));
 
@@ -47,8 +47,8 @@ public sealed partial class ItExtensionsTests
 		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https*", true)]
 		public async Task ShouldVerifyFullUriWithWildcardMatch(string uri, string pattern, bool expectMatch)
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsUri(pattern))
 				.ReturnsAsync(HttpStatusCode.OK);
 
@@ -62,8 +62,8 @@ public sealed partial class ItExtensionsTests
 		[InlineData("*aweXpect.com/")]
 		public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsUri(matchPattern))
 				.ReturnsAsync(HttpStatusCode.OK);
 
@@ -77,8 +77,8 @@ public sealed partial class ItExtensionsTests
 		[Fact]
 		public async Task TrailingSlash_WhenNotPresent_ShouldNotBeAdded()
 		{
-			HttpClient httpClient = Mock.Create<HttpClient>();
-			httpClient.SetupMock.Method
+			HttpClient httpClient = HttpClient.CreateMock();
+			httpClient.Mock.Setup
 				.GetAsync(It.IsUri("*www.aweXpect.com/foo/"))
 				.ReturnsAsync(HttpStatusCode.OK);
 

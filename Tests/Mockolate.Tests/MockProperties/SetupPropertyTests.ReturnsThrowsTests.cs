@@ -10,9 +10,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task MixReturnsAndThrows_ShouldIterateThroughBoth()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Returns(4)
 				.Throws(new Exception("foo"))
 				.Returns(() => 2);
@@ -29,9 +29,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task MultipleReturns_ShouldIterateThroughAllRegisteredValues()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Returns(4)
 				.Returns(() => 3)
 				.Returns(v => 10 * v);
@@ -48,9 +48,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_Callback_ShouldReturnExpectedValue()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Returns(() => 4);
 
 			int result = sut.MyProperty;
@@ -61,9 +61,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_CallbackWithValue_ShouldReturnExpectedValue()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.InitializeWith(3)
 				.Returns(x => 4 * x);
 
@@ -75,9 +75,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_CallbackWithWhen_ShouldReturnDefaultValueWhenPredicateIsFalse()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Returns(() => 4).When(i => i > 0);
 
 			int result1 = sut.MyProperty;
@@ -90,9 +90,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_For_OnlyOnce_ShouldLimitUsage_ToSpecifiedNumber()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyStringProperty
+			sut.Mock.Setup.MyStringProperty
 				.Returns("foo").For(2).OnlyOnce()
 				.Returns("bar").For(3).OnlyOnce();
 
@@ -109,9 +109,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_For_ShouldRepeatUsage_ToSpecifiedNumber()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyStringProperty
+			sut.Mock.Setup.MyStringProperty
 				.Returns("foo").For(2)
 				.Returns("bar").For(3);
 
@@ -129,9 +129,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_Forever_ShouldUseTheLastValueForever()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Returns(2)
 				.Returns(3)
 				.Returns(4).Forever();
@@ -148,8 +148,8 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_OnlyOnce_ShouldKeepLastUsedValue()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty.Returns(1).OnlyOnce();
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyProperty.Returns(1).OnlyOnce();
 
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
@@ -167,8 +167,8 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_OnlyOnce_ShouldUseReturnValueOnlyOnce()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
-			sut.SetupMock.Property.MyProperty.Returns(1).OnlyOnce();
+			IPropertyService sut = IPropertyService.CreateMock();
+			sut.Mock.Setup.MyProperty.Returns(1).OnlyOnce();
 
 			int[] values = new int[10];
 			for (int i = 0; i < 10; i++)
@@ -184,9 +184,9 @@ public sealed partial class SetupPropertyTests
 		public async Task Returns_PredicateIsFalse_ShouldUseInitializedDefaultValue()
 		{
 			List<int> results = [];
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Returns(() => 4).When(i => i is > 3 and < 6);
 
 			results.Add(sut.MyProperty);
@@ -204,9 +204,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_ShouldReturnExpectedValue()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Returns(4);
 
 			int result = sut.MyProperty;
@@ -217,9 +217,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_When_ShouldOnlyUseValueWhenPredicateIsTrue()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyStringProperty
+			sut.Mock.Setup.MyStringProperty
 				.Returns("foo").When(i => i > 0);
 
 			string? result1 = sut.MyStringProperty;
@@ -234,9 +234,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_WhenFor_ShouldLimitUsage_ToSpecifiedNumber()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyStringProperty
+			sut.Mock.Setup.MyStringProperty
 				.Returns("foo").When(i => i > 0).For(2)
 				.Returns("baz")
 				.Returns("bar").For(3).OnlyOnce();
@@ -255,7 +255,7 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Returns_WithoutSetup_ShouldReturnDefault()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
 			int result = sut.MyProperty;
 
@@ -265,9 +265,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Throws_Callback_ShouldThrowException()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Throws(() => new Exception("foo"));
 
 			void Act()
@@ -281,9 +281,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Throws_CallbackWithValue_ShouldThrowException()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.InitializeWith(42)
 				.Throws(v => new Exception($"foo-{v}"));
 
@@ -298,9 +298,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Throws_Generic_ShouldThrowException()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Throws<ArgumentNullException>();
 
 			void Act()
@@ -314,9 +314,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task Throws_ShouldThrowException()
 		{
-			IPropertyService sut = Mock.Create<IPropertyService>();
+			IPropertyService sut = IPropertyService.CreateMock();
 
-			sut.SetupMock.Property.MyProperty
+			sut.Mock.Setup.MyProperty
 				.Throws(new Exception("foo"));
 
 			void Act()
@@ -330,9 +330,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WithoutCallback_IPropertySetupReturnBuilder_ShouldNotThrow()
 		{
-			IPropertyService mock = Mock.Create<IPropertyService>();
+			IPropertyService mock = IPropertyService.CreateMock();
 			IPropertySetupReturnBuilder<int> setup =
-				(IPropertySetupReturnBuilder<int>)mock.SetupMock.Property.MyProperty;
+				mock.Mock.Setup.MyProperty;
 
 			void ActWhen()
 			{
@@ -351,9 +351,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WithoutCallback_IPropertySetupReturnWhenBuilder_ShouldNotThrow()
 		{
-			IPropertyService mock = Mock.Create<IPropertyService>();
+			IPropertyService mock = IPropertyService.CreateMock();
 			IPropertySetupReturnWhenBuilder<int> setup =
-				(IPropertySetupReturnWhenBuilder<int>)mock.SetupMock.Property.MyProperty;
+				mock.Mock.Setup.MyProperty;
 
 			void ActFor()
 			{

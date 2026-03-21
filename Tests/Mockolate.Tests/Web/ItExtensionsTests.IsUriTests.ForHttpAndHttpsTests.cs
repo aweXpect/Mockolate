@@ -17,8 +17,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", false)]
 			public async Task ForHttp_ShouldVerifyHttpScheme(string uri, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().ForHttp())
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -34,8 +34,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", false)]
 			public async Task ForHttps_ShouldVerifyHttpsScheme(string uri, bool expectMatch)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.GetAsync(It.IsUri().ForHttps())
 					.ReturnsAsync(HttpStatusCode.OK);
 

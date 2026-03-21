@@ -126,13 +126,13 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	private readonly List<Callback<Action<int, T1, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, TValue, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T1, TValue>>> _setterCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private Func<T1, TValue>? _initialization;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action callback)
@@ -473,13 +473,13 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 	private readonly List<Callback<Action<int, T1, T2, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, TValue, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T1, T2, TValue>>> _setterCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, TValue>? _initialization;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action callback)
@@ -832,13 +832,13 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private readonly List<Callback<Action<int, T1, T2, T3, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, TValue, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T1, T2, T3, TValue>>> _setterCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, T3, TValue>? _initialization;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(Action callback)
@@ -1205,13 +1205,13 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private readonly List<Callback<Action<int, T1, T2, T3, T4, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, T4, TValue, TValue>>> _returnCallbacks = [];
 	private readonly List<Callback<Action<int, T1, T2, T3, T4, TValue>>> _setterCallbacks = [];
-	private bool? _skipBaseClass;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
 	private Func<T1, T2, T3, T4, TValue>? _initialization;
+	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)

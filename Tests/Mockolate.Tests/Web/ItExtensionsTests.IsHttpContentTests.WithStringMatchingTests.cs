@@ -19,8 +19,8 @@ public sealed partial class ItExtensionsTests
 			public async Task AsRegex_IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching(pattern).AsRegex().IgnoringCase())
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -38,8 +38,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", ".a.", false)]
 			public async Task AsRegex_ShouldCheckForMatchingWildcard(string body, string pattern, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching(pattern).AsRegex())
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -54,8 +54,8 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task AsRegex_ShouldUseProvidedOptions()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(),
 						It.IsHttpContent().WithStringMatching("F[A-Z]*").AsRegex(RegexOptions.IgnoreCase))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -70,8 +70,8 @@ public sealed partial class ItExtensionsTests
 			[Fact]
 			public async Task AsRegex_ShouldUseTimeout()
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(),
 						It.IsHttpContent().WithStringMatching("F[A-Z]*").AsRegex(timeout: TimeSpan.FromSeconds(0)))
 					.ReturnsAsync(HttpStatusCode.OK);
@@ -98,8 +98,8 @@ public sealed partial class ItExtensionsTests
 			public async Task IgnoringCase_ShouldCheckForCaseInsensitiveMatchingWildcard(
 				string body, string pattern, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching(pattern).IgnoringCase())
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -123,8 +123,8 @@ public sealed partial class ItExtensionsTests
 			[InlineData("foo", "*a*", false)]
 			public async Task ShouldCheckForMatchingWildcard(string body, string pattern, bool expectSuccess)
 			{
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithStringMatching(pattern))
 					.ReturnsAsync(HttpStatusCode.OK);
 
@@ -156,8 +156,8 @@ public sealed partial class ItExtensionsTests
 				}
 
 				string body = "foo;bar";
-				HttpClient httpClient = Mock.Create<HttpClient>();
-				httpClient.SetupMock.Method
+				HttpClient httpClient = HttpClient.CreateMock();
+				httpClient.Mock.Setup
 					.PostAsync(It.IsAny<Uri>(), isHttpContent)
 					.ReturnsAsync(HttpStatusCode.OK);
 

@@ -27,8 +27,8 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Subscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 		registration.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
 		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(mock, "baz.bar");
@@ -39,8 +39,8 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Subscribed_WhenNameMatches_ShouldReturnOnce()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 		registration.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
 		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(mock, "foo.bar");
@@ -51,8 +51,8 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Subscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 
 		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(mock, "baz.bar");
 
@@ -63,8 +63,8 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Unsubscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 		registration.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
 
 		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(mock, "baz.bar");
@@ -75,8 +75,8 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Unsubscribed_WhenNameMatches_ShouldReturnOnce()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 		registration.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
 
 		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(mock, "foo.bar");
@@ -87,8 +87,8 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Unsubscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		IChocolateDispenser mock = Mock.Create<IChocolateDispenser>();
-		MockRegistration registration = ((IHasMockRegistration)mock).Registrations;
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)mock).Registrations;
 
 		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(mock, "baz.bar");
 
