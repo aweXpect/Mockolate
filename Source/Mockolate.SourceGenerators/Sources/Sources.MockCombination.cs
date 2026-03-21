@@ -35,7 +35,7 @@ internal static partial class Sources
 
 		#region Implementing
 
-		(string Name, Class Class) lastInterface = additionalInterfaces.Last();
+		(string Name, Class Class) lastInterface = additionalInterfaces[additionalInterfaces.Length - 1];
 		sb.AppendXmlSummary($"Create a mock that also implements <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 		sb.Append("\t\t[global::Mockolate.MockGeneratorImplementing]").AppendLine();
 		sb.Append("\t\tpublic ").Append(@class.ClassFullName).Append(" Implementing<TInterface>(params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(lastInterface.Name).Append(">[] setups)").AppendLine();
@@ -353,7 +353,7 @@ internal static partial class Sources
 			ImplementRaiseInterface(sb, @class, name);
 			sb.Append("\t\t#endregion IMockRaiseOn").Append(name).AppendLine();
 		}
-
+#pragma warning disable S3267 // Loops should be simplified using the "Where" LINQ method
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			if (item.Class.AllEvents().Any())
@@ -365,6 +365,7 @@ internal static partial class Sources
 				sb.Append("\t\t#endregion IMockRaiseOn").Append(item.Name).AppendLine();
 			}
 		}
+#pragma warning restore S3267 // Loops should be simplified using the "Where" LINQ method
 
 		#endregion IMockRaiseOnXXX
 

@@ -9,7 +9,7 @@ public class VerificationEventResult<TSubject>
 	private readonly MockRegistration _registrations;
 	private readonly TSubject _subject;
 
-	/// <inheritdoc cref="VerificationEventResult{TVerify}" />
+	/// <inheritdoc cref="VerificationEventResult{TSubject}" />
 	public VerificationEventResult(TSubject subject, MockRegistration registrations, string name)
 	{
 		_subject = subject;

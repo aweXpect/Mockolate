@@ -34,6 +34,7 @@ internal static class MockGeneratorHelpers
 			a.AttributeClass.Name is "MockGeneratorImplementingAttribute"));
 	}
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	internal static IEnumerable<MockClass> ExtractMockOrMockFactoryCreateSyntaxOrDefault(
 		this SyntaxNode syntaxNode, SemanticModel semanticModel)
 	{
@@ -166,7 +167,7 @@ internal static class MockGeneratorHelpers
 			}
 		}
 	}
-
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes,

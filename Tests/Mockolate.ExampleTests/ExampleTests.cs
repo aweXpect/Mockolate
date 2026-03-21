@@ -37,7 +37,7 @@ public class ExampleTests
 	[Fact]
 	public async Task BaseClassWithConstructorParameters()
 	{
-		Mock.MyClass sut = MyClass.CreateMock([3,]);
+		MyClass sut = MyClass.CreateMock([3,]);
 
 		sut.Mock.Setup.MyMethod(It.IsAny<int>()).Returns(5);
 
@@ -68,7 +68,7 @@ public class ExampleTests
 	[Fact]
 	public async Task MockIFileSystem_ShouldWork()
 	{
-		Mock.IFileSystem sut = IFileSystem.CreateMock(MockBehavior.Default.SkippingBaseClass());
+		IFileSystem sut = IFileSystem.CreateMock(MockBehavior.Default.SkippingBaseClass());
 		sut.Mock.Setup.Path.Returns(IPath.CreateMock());
 
 		sut.Path.Mock.Setup.DirectorySeparatorChar.Returns('a');
@@ -123,7 +123,7 @@ public class ExampleTests
 	{
 		EventArgs eventArgs = EventArgs.Empty;
 		int raiseCount = 0;
-		Mock.IExampleRepository sut = IExampleRepository.CreateMock();
+		IExampleRepository sut = IExampleRepository.CreateMock();
 
 		sut.Mock.Raise.UsersChanged(this, eventArgs);
 		sut.UsersChanged += Register;
@@ -182,7 +182,7 @@ public class ExampleTests
 	public async Task WithMatching_ShouldAlwaysMatch(string name, bool expectResult)
 	{
 		Guid id = Guid.NewGuid();
-		Mock.IExampleRepository sut = IExampleRepository.CreateMock();
+		IExampleRepository sut = IExampleRepository.CreateMock();
 
 		sut.Mock.Setup.AddUser(
 				It.Satisfies<string>(x => x == "Alice"))
@@ -200,7 +200,7 @@ public class ExampleTests
 	public async Task WithOut_ShouldSupportOutParameter(bool returnValue)
 	{
 		Guid id = Guid.NewGuid();
-		Mock.IExampleRepository sut = IExampleRepository.CreateMock();
+		IExampleRepository sut = IExampleRepository.CreateMock();
 
 		sut.Mock.Setup.TryDelete(
 				It.IsAny<Guid>(),

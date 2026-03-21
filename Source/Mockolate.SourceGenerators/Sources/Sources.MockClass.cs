@@ -57,28 +57,28 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Create a new mock for <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
-		sb.Append("\t\tpublic static global::Mockolate.Mock.").Append(name).Append(" CreateMock()").AppendLine();
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock()").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, []);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Create a new mock for <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlRemarks("All provided <paramref name=\"setups\" /> are immediately applied to the mock.");
 		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
-		sb.Append("\t\tpublic static global::Mockolate.Mock.").Append(name).Append(" CreateMock(params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[] setups)").AppendLine();
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[] setups)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, setups);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Create a new mock for <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("All provided <paramref name=\"setups\" /> are immediately applied to the mock.");
 		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
-		sb.Append("\t\tpublic static global::Mockolate.Mock.").Append(name).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[] setups)").AppendLine();
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[] setups)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, setups);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Create a new mock for <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("All provided <paramref name=\"setups\" /> are immediately applied to the mock.");
 		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
-		sb.Append("\t\tpublic static global::Mockolate.Mock.").Append(name).Append(" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[] setups)").AppendLine();
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[] setups)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
 		sb.Append("\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;").AppendLine();
@@ -259,7 +259,7 @@ internal static partial class Sources
 		{
 			sb.AppendXmlSummary("Create a mock that wraps the given <paramref name=\"instance\" />.");
 			sb.AppendXmlRemarks("All interactions are forwarded to the <paramref name=\"instance\" />.");
-			sb.Append("\t\tpublic global::Mockolate.Mock.").Append(name).Append(" Wrapping(").Append(@class.ClassFullName).Append(" instance)").AppendLine();
+			sb.Append("\t\tpublic ").Append(@class.ClassFullName).Append(" Wrapping(").Append(@class.ClassFullName).Append(" instance)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tif (mock is global::Mockolate.IMock mockInterface)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -1635,15 +1635,16 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		foreach (Event @event in @class.AllEvents()
+		foreach (string? eventName in @class.AllEvents()
 			         .Where(predicate)
 			         .GroupBy(m => m.Name)
 			         .Where(g => g.Count() == 1)
 			         .Select(g => g.Single())
-			         .Where(m => m.Delegate.Parameters.Count > 0))
+			         .Where(m => m.Delegate.Parameters.Count > 0)
+			         .Select(x => x.Name))
 		{
-			sb.AppendXmlSummary($"Raise the <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{@event.Name.EscapeForXmlDoc()}\"/> event.");
-			sb.Append("\t\tvoid ").Append(@event.Name).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters);").AppendLine();
+			sb.AppendXmlSummary($"Raise the <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{eventName.EscapeForXmlDoc()}\"/> event.");
+			sb.Append("\t\tvoid ").Append(eventName).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters);").AppendLine();
 			sb.AppendLine();
 		}
 	}
@@ -1746,12 +1747,10 @@ internal static partial class Sources
 
 		Func<Event, bool> eventPredicate =
 			indexer => indexer.ExplicitImplementation is null;
-		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
+		foreach (string? eventName in @class.AllEvents().Where(eventPredicate).Select(x => x.Name))
 		{
-			sb.AppendXmlSummary(
-				$"Verify subscription on the {@event.Name} event <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{@event.Name}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<IMockVerifyFor").Append(name).Append("> ").Append(@event.Name)
-				.Append(" { get; }").AppendLine();
+			sb.AppendXmlSummary($"Verify subscription on the {eventName} event <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{eventName}\" />.");
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<IMockVerifyFor").Append(name).Append("> ").Append(eventName).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
 

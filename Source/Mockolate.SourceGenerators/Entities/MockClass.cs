@@ -31,9 +31,6 @@ internal record MockClass : Class
 
 	public EquatableArray<Class> AdditionalImplementations { get; }
 
-	public IEnumerable<Class> DistinctAdditionalImplementations()
-		=> AdditionalImplementations.Distinct().Where(x => x.DisplayString != DisplayString);
-
 	public IEnumerable<Class> AllImplementations()
 	{
 		yield return this;

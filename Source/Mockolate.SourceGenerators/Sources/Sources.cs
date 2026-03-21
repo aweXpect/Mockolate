@@ -190,10 +190,12 @@ internal static partial class Sources
 	private static string CreateUniqueParameterName(EquatableArray<MethodParameter> parameters, string name)
 	{
 		string usedName = name;
+#pragma warning disable S1994
 		for (int index = 1; parameters.Any(x => x.Name == usedName); index++)
 		{
 			usedName = $"{usedName}_{index}";
 		}
+#pragma warning restore S1994
 
 		return usedName;
 	}

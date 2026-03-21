@@ -128,12 +128,6 @@ public record MockBehavior : IMockBehaviorAccess
 		};
 		return behavior;
 	}
-
-	private interface IInitializer<in T> : IMockBehaviorInitializer
-	{
-		Action<IMockSetup<T>>[] GetSetups();
-	}
-
 	private interface IConstructorParameters;
 
 #pragma warning disable S2326
@@ -143,23 +137,6 @@ public record MockBehavior : IMockBehaviorAccess
 		public object?[] GetParameters() => parameters();
 	}
 #pragma warning restore S2326
-
-	private sealed class SimpleInitializer<T>(Action<IMockSetup<T>>[] setups) : IInitializer<T>
-	{
-		public Action<IMockSetup<T>>[] GetSetups()
-			=> setups;
-	}
-
-	private sealed class CounterInitializer<T>(Action<int, IMockSetup<T>>[] setups) : IInitializer<T>
-	{
-		private int _counter;
-
-		public Action<IMockSetup<T>>[] GetSetups()
-		{
-			int index = Interlocked.Increment(ref _counter);
-			return setups.Select(a => new Action<IMockSetup<T>>(s => a(index, s))).ToArray();
-		}
-	}
 
 	private sealed class DefaultValueGeneratorWithFactories(
 		IDefaultValueGenerator inner,
