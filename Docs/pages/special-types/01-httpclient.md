@@ -7,7 +7,7 @@ verify HTTP interactions just like with any other interface or class.
 
 ```csharp
 HttpClient httpClient = Mock.Create<HttpClient>();
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent())
@@ -19,7 +19,7 @@ HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/ap
                       """, Encoding.UTF8, "application/json"));
 
 await That(result.IsSuccessStatusCode).IsTrue();
-httpClient.Mock.Verify.Invoked.PostAsync(
+httpClient.VerifyMock.Invoked.PostAsync(
     It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
     It.IsHttpContent("application/json").WithStringMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
 ```
@@ -37,27 +37,27 @@ Mockolate supports all standard HTTP methods:
 
 ```csharp
 // GET
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .GetAsync(It.IsAny<string>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NoContent));
 
 // POST
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 // PUT
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PutAsync(It.IsAny<string>(), It.IsAny<HttpContent>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 // DELETE
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .DeleteAsync(It.IsAny<string>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NoContent));
 
 // PATCH
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PatchAsync(It.IsAny<string>(), It.IsAny<HttpContent>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 ```
@@ -67,7 +67,7 @@ If no parameter is provided, it matches any `CancellationToken`:
 
 ```csharp
 var cts = new CancellationTokenSource();
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .GetAsync(It.IsAny<string>(), It.Is(cts.Token))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
@@ -85,12 +85,12 @@ Filter requests by URI scheme using `.ForHttps()` or `.ForHttp()`:
 
 ```csharp
 // Match only HTTPS requests
-httpClient.Mock.Verify.Invoked
+httpClient.VerifyMock.Invoked
     .GetAsync(It.IsUri("*aweXpect.com*").ForHttps())
     .Once();
 
 // Match only HTTP requests
-httpClient.Mock.Verify.Invoked
+httpClient.VerifyMock.Invoked
     .GetAsync(It.IsUri("*aweXpect.com*").ForHttp())
     .Never();
 ```
@@ -100,7 +100,7 @@ httpClient.Mock.Verify.Invoked
 Filter requests by host using `.WithHost(string)`. You can provide a wildcard pattern to match against the host name:
 
 ```csharp
-httpClient.Mock.Verify.Invoked
+httpClient.VerifyMock.Invoked
     .GetAsync(It.IsUri().WithHost("*aweXpect.com*"))
     .Once();
 ```
@@ -110,7 +110,7 @@ httpClient.Mock.Verify.Invoked
 Filter requests on a specific port using `.WithPort(int)`:
 
 ```csharp
-httpClient.Mock.Verify.Invoked
+httpClient.VerifyMock.Invoked
     .GetAsync(It.IsUri().WithPort(443))
     .Once();
 ```
@@ -120,7 +120,7 @@ httpClient.Mock.Verify.Invoked
 Filter requests by path using `.WithPath(string)`. You can provide a wildcard pattern to match against the path:
 
 ```csharp
-httpClient.Mock.Verify.Invoked
+httpClient.VerifyMock.Invoked
     .GetAsync(It.IsUri().WithPath("/foo/*"))
     .Once();
 ```
@@ -132,15 +132,15 @@ string to match against the query parameters. The order of the key-value pairs d
 
 ```csharp
 // Match query string containing "x=42"
-httpClient.Mock.Verify.Invoked
+httpClient.VerifyMock.Invoked
     .GetAsync(It.IsUri().WithQuery("x", "42"))
     .Once();
 // Match query string containing "x=42" and "y=foo" (in any order)
-httpClient.Mock.Verify.Invoked
+httpClient.VerifyMock.Invoked
     .GetAsync(It.IsUri().WithQuery(("x", "42"), ("y", "foo")))
     .Once();
 // Match query string containing "x=42" and "y=foo" (in any order)
-httpClient.Mock.Verify.Invoked
+httpClient.VerifyMock.Invoked
     .GetAsync(It.IsUri().WithQuery("x=42&y=foo"))
     .Once();
 ```
@@ -150,7 +150,7 @@ httpClient.Mock.Verify.Invoked
 Use `It.IsHttpContent(string?)` to match the HTTP content, optionally providing an expected media type header value:
 
 ```csharp
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent("application/json"))
@@ -167,7 +167,7 @@ To verify against the string content, use the following methods:
 - `.WithStringMatching(string).AsRegex()`: to match the content using regular expressions
 
 ```csharp
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent("application/json").WithStringMatching("*\"type\": \"Dark\"*"))
@@ -186,7 +186,7 @@ To verify against the binary content, use the following methods:
 - `.WithBytes(byte[])`: to match the content exactly as provided
 
 ```csharp
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent("application/octet-stream").WithBytes([0x01, 0x02, 0x03, ]))
@@ -203,7 +203,7 @@ To verify against the URL-encoded form data content, use the following methods:
 - `.WithFormData(string)`: checks that the form-data content contains the provided raw form data string
 
 ```csharp
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent("application/x-www-form-urlencoded").WithFormData("my-key", "my-value"))
@@ -224,12 +224,12 @@ To verify against the HTTP content headers, use the following methods:
 - `.WithHeaders(string)`: checks that the content headers contain the provided raw headers
 
 ```csharp
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent().WithHeaders(("Content-Type", "application/json"), ("X-My-Header", "my-value")))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-httpClient.Mock.Setup.Method
+httpClient.SetupMock.Method
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent().WithHeaders("""
@@ -249,25 +249,25 @@ httpClient.Mock.Setup.Method
 Overloads of `.ReturnsAsync` simplify specifying the return value for HTTP method setups.
 
 ```csharp
-httpClient.Mock.Setup.Method.GetAsync(It.IsAny<Uri>())
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and no content
     .ReturnsAsync(HttpStatusCode.OK);
 
-httpClient.Mock.Setup.Method.GetAsync(It.IsAny<Uri>())
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a string content "some string content"
     .ReturnsAsync(HttpStatusCode.OK, "some string content");
 
-httpClient.Mock.Setup.Method.GetAsync(It.IsAny<Uri>())
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a JSON content {"foo":"bar"}
     .ReturnsAsync(HttpStatusCode.OK, "{\"foo\":\"bar\"}", "application/json");
 
 byte[] bytes = new byte[] { /* ... */ };
 
-httpClient.Mock.Setup.Method.GetAsync(It.IsAny<Uri>())
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a binary content with the provided bytes
     .ReturnsAsync(HttpStatusCode.OK, bytes);
 
-httpClient.Mock.Setup.Method.GetAsync(It.IsAny<Uri>())
+httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a PNG image content with the provided bytes
     .ReturnsAsync(HttpStatusCode.OK, bytes, "image/png");
 ```

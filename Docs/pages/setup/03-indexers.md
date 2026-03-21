@@ -3,11 +3,11 @@
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-sut.Mock.Setup.Indexer(It.IsAny<string>())
+sut.SetupMock.Indexer(It.IsAny<string>())
     .InitializeWith(type => 20)
     .OnGet.Do(type => Console.WriteLine($"Stock for {type} was read"));
 
-sut.Mock.Setup.Indexer(It.Is("Dark"))
+sut.SetupMock.Indexer(It.Is("Dark"))
     .InitializeWith(10)
     .OnSet.Do((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
 ```
@@ -18,7 +18,7 @@ You can initialize indexers so they work like normal indexers (setter changes th
 value):
 
 ```csharp
-sut.Mock.Setup.Indexer(It.IsAny<string>()).InitializeWith(42);
+sut.SetupMock.Indexer(It.IsAny<string>()).InitializeWith(42);
 ```
 
 ## Returns / Throws
@@ -26,7 +26,7 @@ sut.Mock.Setup.Indexer(It.IsAny<string>()).InitializeWith(42);
 Set up indexers with `Returns` and `Throws` (supports sequences):
 
 ```csharp
-sut.Mock.Setup.Indexer(It.IsAny<string>())
+sut.SetupMock.Indexer(It.IsAny<string>())
     .Returns(1)
     .Returns(2)
     .Throws(new Exception("Error"))
@@ -36,7 +36,7 @@ sut.Mock.Setup.Indexer(It.IsAny<string>())
 You can also return a value based on the previous value:
 
 ```csharp
-sut.Mock.Setup.Indexer(It.IsAny<string>())
+sut.SetupMock.Indexer(It.IsAny<string>())
     .Returns(current => current + 10);  // Increment by 10 each read
 ```
 
@@ -45,9 +45,9 @@ sut.Mock.Setup.Indexer(It.IsAny<string>())
 Register callbacks on the setter or getter of the indexer:
 
 ```csharp
-sut.Mock.Setup.Indexer(It.IsAny<string>()).OnGet
+sut.SetupMock.Indexer(It.IsAny<string>()).OnGet
     .Do(() => Console.WriteLine("Indexer was read!"));
-sut.Mock.Setup.Indexer(It.IsAny<string>()).OnSet
+sut.SetupMock.Indexer(It.IsAny<string>()).OnSet
     .Do(newValue => Console.WriteLine($"Changed indexer to {newValue}!") );
 ```
 
@@ -55,12 +55,12 @@ Callbacks can also receive the indexer parameters and the current value:
 
 ```csharp
 // Getter with the current value
-sut.Mock.Setup.Indexer(It.IsAny<string>())
+sut.SetupMock.Indexer(It.IsAny<string>())
     .OnGet.Do((string index, int value) => 
         Console.WriteLine($"Read this[{index}] current value: {value}"));
 
 // Setter with the new value
-sut.Mock.Setup.Indexer(It.IsAny<string>())
+sut.SetupMock.Indexer(It.IsAny<string>())
     .OnSet.Do((string index, int newValue) => 
         Console.WriteLine($"Set this[{index}] to {newValue}"));
 ```
@@ -68,7 +68,7 @@ sut.Mock.Setup.Indexer(It.IsAny<string>())
 Callbacks also support sequences, similar to `Returns` and `Throws`:
 
 ```csharp
-sut.Mock.Setup.Indexer(It.IsAny<string>()).OnGet
+sut.SetupMock.Indexer(It.IsAny<string>()).OnGet
     .Do(() => Console.WriteLine("Execute on all even read interactions"))
     .Do(() => Console.WriteLine("Execute on all odd read interactions"));
 ```

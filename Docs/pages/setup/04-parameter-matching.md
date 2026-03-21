@@ -25,13 +25,13 @@ Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
 
 ```csharp
 // Example: Match email addresses
-sut.Mock.Setup.Method.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
+sut.SetupMock.Method.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
   .Returns(true);
 
 bool result = sut.ValidateEmail("user@example.com");
 
 // Case-sensitive regex
-sut.Mock.Setup.Method.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
+sut.SetupMock.Method.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
   .Returns(1);
 ```
 
@@ -47,7 +47,7 @@ sut.Mock.Setup.Method.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
 
 ```csharp
 // Example: Setup with out parameter
-sut.Mock.Setup.Method.TryParse(It.IsAny<string>(), It.IsOut(() => 42))
+sut.SetupMock.Method.TryParse(It.IsAny<string>(), It.IsOut(() => 42))
     .Returns(true);
 
 int result;
@@ -55,7 +55,7 @@ bool success = sut.TryParse("abc", out result);
 // result == 42, success == true
 
 // Example: Setup with ref parameter
-sut.Mock.Setup.Method.Increment(It.IsRef<int>(v => v + 1))
+sut.SetupMock.Method.Increment(It.IsRef<int>(v => v + 1))
     .Returns(true);
 
 int value = 5;
@@ -76,7 +76,7 @@ this array for evaluation.
 
 ```csharp
 // Example: Setup with Span parameter
-sut.Mock.Setup.Method.Process(It.IsSpan<byte>(data => data.Length > 0))
+sut.SetupMock.Method.Process(It.IsSpan<byte>(data => data.Length > 0))
     .Returns(true);
 
 Span<byte> buffer = new byte[] { 1, 2, 3 };
@@ -91,7 +91,7 @@ Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It
 ```csharp
 // Example: Case-insensitive string comparison
 var comparer = StringComparer.OrdinalIgnoreCase;
-sut.Mock.Setup.Method.Process(It.Is("hello").Using(comparer))
+sut.SetupMock.Method.Process(It.Is("hello").Using(comparer))
     .Returns(42);
 
 int result = sut.Process("HELLO");
@@ -107,7 +107,7 @@ When the method name is unique (no overloads), you can use flexible parameter ma
 
 ```csharp
 // Example: Custom parameter predicate
-sut.Mock.Setup.Method.Process(Match.Parameters(args => 
+sut.SetupMock.Method.Process(Match.Parameters(args => 
     args.Length == 2 && 
     args[0].Value is string s && s.StartsWith("test") &&
     args[1].Value is int i && i > 0))
@@ -128,7 +128,7 @@ effects or checks directly when the method or indexer is called.
 
 ```csharp
 int lastAmount = 0;
-sut.Mock.Setup.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Do(amount => lastAmount = amount));
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Do(amount => lastAmount = amount));
 sut.Dispense("Dark", 42);
 // lastAmount == 42
 ```
@@ -142,7 +142,7 @@ values passed during test execution and analyze them afterward.
 
 ```csharp
 Mockolate.ParameterMonitor<int> monitor;
-sut.Mock.Setup.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Monitor(out monitor));
+sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Monitor(out monitor));
 sut.Dispense("Dark", 5);
 sut.Dispense("Dark", 7);
 // monitor.Values == [5, 7]

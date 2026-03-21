@@ -106,7 +106,7 @@ var wrappedDispenser = Mock.Wrap<IChocolateDispenser>(realDispenser);
 wrappedDispenser.Dispense("Dark", 5);
 
 // But you can still verify interactions
-wrappedDispenser.Mock.Verify.Invoked.Dispense(It.Is("Dark"), It.Is(5)).Once();
+wrappedDispenser.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).Once();
 ```
 
 **Notes:**

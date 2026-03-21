@@ -6,7 +6,7 @@ You can check if all interactions with the mock have been verified using `ThatAl
 
 ```csharp
 // Returns true if all interactions have been verified before
-bool allVerified = sut.Mock.Verify.ThatAllInteractionsAreVerified();
+bool allVerified = sut.VerifyMock.ThatAllInteractionsAreVerified();
 ```
 
 This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.
@@ -18,7 +18,7 @@ You can check if all registered setups on the mock have been used using `ThatAll
 
 ```csharp
 // Returns true if all setups have been used
-bool allUsed = sut.Mock.Verify.ThatAllSetupsAreUsed();
+bool allUsed = sut.VerifyMock.ThatAllSetupsAreUsed();
 ```
 
 This is useful for ensuring that your test setup and test execution match.

@@ -43,8 +43,8 @@ var sut = Mock.Create<IChocolateDispenser>();
 
 sut.Dispense("Dark", 1);
 // Clears all previously recorded interactions
-sut.Mock.Setup.ClearAllInteractions();
+sut.SetupMock.ClearAllInteractions();
 sut.Dispense("Dark", 2);
 
-sut.Mock.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
+sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
 ```

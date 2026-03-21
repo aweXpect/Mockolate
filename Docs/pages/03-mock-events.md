@@ -12,7 +12,7 @@ method signature matches the event delegate.
 sut.ChocolateDispensed += (type, amount) => { /* handler code */ };
 
 // Act: raise the event
-sut.Mock.Raise.ChocolateDispensed("Dark", 5);
+sut.RaiseOnMock.ChocolateDispensed("Dark", 5);
 ```
 
 - Use the `Raise` property to trigger events declared on the mocked interface or class.
@@ -25,8 +25,8 @@ sut.Mock.Raise.ChocolateDispensed("Dark", 5);
 int dispensedAmount = 0;
 sut.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
 
-sut.Mock.Raise.ChocolateDispensed("Dark", 3);
-sut.Mock.Raise.ChocolateDispensed("Milk", 2);
+sut.RaiseOnMock.ChocolateDispensed("Dark", 3);
+sut.RaiseOnMock.ChocolateDispensed("Milk", 2);
 
 // dispensedAmount == 5
 ```
