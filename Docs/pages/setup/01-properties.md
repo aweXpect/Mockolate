@@ -8,16 +8,16 @@ You can initialize properties so they work like normal properties (setter change
 value):
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed.InitializeWith(42);
+sut.Mock.Setup.TotalDispensed.InitializeWith(42);
 ```
 
 You can also register a setup without providing a value (useful when `ThrowWhenNotSetup` is enabled):
 
 ```csharp
-var strictMock = Mock.Create<IChocolateDispenser>(MockBehavior.Default.ThrowingWhenNotSetup());
+var strictMock = IChocolateDispenser.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 
 // Register property without value - won't throw
-strictMock.SetupMock.Property.TotalDispensed.Register();
+strictMock.Mock.Setup.TotalDispensed.Register();
 ```
 
 ## Returns / Throws
@@ -25,7 +25,7 @@ strictMock.SetupMock.Property.TotalDispensed.Register();
 Set up properties with `Returns` and `Throws` (supports sequences):
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .Returns(1)
     .Returns(2)
     .Throws(new Exception("Error"))
@@ -35,7 +35,7 @@ sut.SetupMock.Property.TotalDispensed
 You can also return a value based on the previous value:
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .Returns(current => current + 10);  // Increment by 10 each read
 ```
 
@@ -44,9 +44,9 @@ sut.SetupMock.Property.TotalDispensed
 Register callbacks on the setter or getter:
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed.OnGet
+sut.Mock.Setup.TotalDispensed.OnGet
     .Do(() => Console.WriteLine("TotalDispensed was read!"));
-sut.SetupMock.Property.TotalDispensed.OnSet
+sut.Mock.Setup.TotalDispensed.OnSet
     .Do(newValue => Console.WriteLine($"Changed to {newValue}!") );
 ```
 
@@ -54,12 +54,12 @@ Callbacks can also receive the current value:
 
 ```csharp
 // Getter with the current value
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .OnGet.Do(value => 
         Console.WriteLine($"Read TotalDispensed current value: {value}"));
 
 // Setter with the new value
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .OnSet.Do(newValue => 
         Console.WriteLine($"Set TotalDispensed to {newValue}"));
 ```
@@ -67,7 +67,7 @@ sut.SetupMock.Property.TotalDispensed
 Callbacks also support sequences, similar to `Returns` and `Throws`:
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed.OnGet
+sut.Mock.Setup.TotalDispensed.OnGet
     .Do(() => Console.WriteLine("Execute on all even read interactions"))
     .Do(() => Console.WriteLine("Execute on all odd read interactions"));
 ```
