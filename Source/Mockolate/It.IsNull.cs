@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 
@@ -13,6 +14,7 @@ public partial class It
 	public static IParameter<T> IsNull<T>()
 		=> new NullParameterMatch<T>();
 
+	[DebuggerNonUserCode]
 	private sealed class NullParameterMatch<T> : TypedMatch<T>
 	{
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />

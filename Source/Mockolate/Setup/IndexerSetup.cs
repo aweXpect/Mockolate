@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -10,6 +11,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for indexer setups.
 /// </summary>
+[DebuggerNonUserCode]
 public abstract class IndexerSetup : IInteractiveIndexerSetup
 {
 	/// <inheritdoc cref="IInteractiveIndexerSetup.Matches(IndexerAccess)" />
@@ -119,6 +121,7 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>,
 	IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
@@ -466,6 +469,7 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter match2) : IndexerSetup
 	, IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>,
 	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>
@@ -822,6 +826,7 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class IndexerSetup<TValue, T1, T2, T3>(
 	NamedParameter match1,
 	NamedParameter match2,
@@ -1193,6 +1198,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	NamedParameter match1,
 	NamedParameter match2,

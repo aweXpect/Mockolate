@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics;
 
 namespace Mockolate;
 
 /// <summary>
 ///     Extension methods for <see cref="MockBehavior" />.
 /// </summary>
+[DebuggerNonUserCode]
 public static class MockBehaviorExtensions
 {
 	/// <inheritdoc cref="MockBehaviorExtensions" />

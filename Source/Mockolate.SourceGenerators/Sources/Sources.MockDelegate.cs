@@ -19,6 +19,7 @@ internal static partial class Sources
 		#region MockForXXXExtensions
 
 		sb.AppendXmlSummary($"Mock extensions for <see cref=\"{escapedClassName}\" />.", "");
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 		sb.Append("internal static partial class MockExtensionsFor").Append(name).AppendLine();
 		sb.Append("{").AppendLine();
 
@@ -100,6 +101,7 @@ internal static partial class Sources
 		sb.Append("\t///     A mock implementation for <see cref=\"").Append(escapedClassName).Append("\" />.").AppendLine();
 		sb.Append("\t/// </summary>").AppendLine();
 		sb.Append("\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").AppendLine();
+		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 		sb.Append("\tinternal class ").Append(name).Append(" :").AppendLine();
 		sb.Append("\t\tIMockFor").Append(name).Append(',').AppendLine();
 		sb.Append("\t\tglobal::Mockolate.IMock").AppendLine();
@@ -214,6 +216,7 @@ internal static partial class Sources
 		sb.AppendLine("\t}");
 
 		sb.AppendLine();
+		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 		sb.Append("\tprivate sealed class VerifyMonitor").Append(name).Append("(global::Mockolate.MockRegistration registrations) : global::Mockolate.Mock.IMockVerifyFor").Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tprivate global::Mockolate.MockRegistration Registrations { get; } = registrations;").AppendLine();

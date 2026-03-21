@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Mockolate.Exceptions;
@@ -10,6 +11,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     The expectation contains the matching interactions for verification.
 /// </summary>
+[DebuggerNonUserCode]
 public static class VerificationResultExtensions
 {
 	private static string ToTimes(this int amount, string verb = "")

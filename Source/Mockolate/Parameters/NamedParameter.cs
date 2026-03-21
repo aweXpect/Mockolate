@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Mockolate.Parameters;
 
@@ -7,6 +8,7 @@ namespace Mockolate.Parameters;
 /// </summary>
 /// <param name="Name">The name of the <paramref name="Parameter" />.</param>
 /// <param name="Parameter">The actual <see cref="IParameter" />.</param>
+[DebuggerNonUserCode]
 public record NamedParameter(string Name, IParameter Parameter)
 {
 	/// <inheritdoc cref="object.ToString()" />

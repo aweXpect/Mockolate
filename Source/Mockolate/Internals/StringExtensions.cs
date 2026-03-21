@@ -1,5 +1,8 @@
-﻿namespace Mockolate.Internals;
+﻿using System.Diagnostics;
 
+namespace Mockolate.Internals;
+
+[DebuggerNonUserCode]
 internal static class StringExtensions
 {
 	internal static string SubstringUntilFirst(this string name, char c)

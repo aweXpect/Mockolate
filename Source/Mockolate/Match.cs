@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Mockolate;
@@ -6,6 +7,7 @@ namespace Mockolate;
 /// <summary>
 ///     Specify a matching condition for a list of parameter.
 /// </summary>
+[DebuggerNonUserCode]
 public partial class Match
 {
 	/// <summary>

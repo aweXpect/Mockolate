@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Mockolate.Internals;
 
+[DebuggerNonUserCode]
 internal readonly struct Wildcard
 {
 	public Regex Regex { get; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -8,6 +9,7 @@ namespace Mockolate;
 /// <summary>
 ///     The behavior of the mock.
 /// </summary>
+[DebuggerNonUserCode]
 public record MockBehavior : IMockBehaviorAccess
 {
 	private ConcurrentStack<IConstructorParameters> _constructorParameters = [];

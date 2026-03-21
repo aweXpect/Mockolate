@@ -8,6 +8,7 @@ namespace Mockolate.Interactions;
 ///     An access of an indexer getter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+[DebuggerNonUserCode]
 public class IndexerGetterAccess(int index, NamedParameterValue[] parameters) : IndexerAccess(index, parameters)
 {
 	/// <inheritdoc cref="object.ToString()" />

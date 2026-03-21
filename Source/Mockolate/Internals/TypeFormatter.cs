@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Mockolate.Internals;
 
+[DebuggerNonUserCode]
 internal static class TypeFormatter
 {
 	private static readonly Dictionary<Type, string> Aliases = new()

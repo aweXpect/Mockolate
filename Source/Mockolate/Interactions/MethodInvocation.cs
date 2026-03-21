@@ -8,6 +8,7 @@ namespace Mockolate.Interactions;
 ///     An invocation of a method.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+[DebuggerNonUserCode]
 public class MethodInvocation(int index, string name, NamedParameterValue[] parameters) : IInteraction
 {
 	/// <summary>

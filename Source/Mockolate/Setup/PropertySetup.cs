@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -10,6 +11,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for property setups.
 /// </summary>
+[DebuggerNonUserCode]
 public abstract class PropertySetup : IInteractivePropertySetup
 {
 	/// <summary>
@@ -63,6 +65,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	/// </summary>
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
+	[DebuggerNonUserCode]
 	internal class Default(string name, object? initialValue) : PropertySetup
 	{
 		private object? _value = initialValue;
@@ -106,6 +109,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
+[DebuggerNonUserCode]
 public class PropertySetup<T>(string name) : PropertySetup,
 	IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>,
 	IPropertyGetterSetup<T>, IPropertySetterSetup<T>
@@ -231,14 +235,19 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		{
 			Callback<Action<int, T>> setterCallback =
 				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, newValue)))
+			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, Callback))
 			{
 				wasInvoked = true;
 			}
 		}
 
 		_value = newValue;
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T> @delegate)
+		{
+			@delegate(invocationCount, newValue);
+		}
 	}
 
 	/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />

@@ -1,5 +1,6 @@
 #if NETSTANDARD2_0
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Mockolate.Internals.Polyfills;
@@ -8,6 +9,7 @@ namespace Mockolate.Internals.Polyfills;
 ///     Provides polyfill extension methods on <see langword="string" />.
 /// </summary>
 [ExcludeFromCodeCoverage]
+[DebuggerNonUserCode]
 internal static class StringExtensionMethods
 {
 	/// <summary>

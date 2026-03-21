@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Mockolate.Internals;
@@ -40,6 +41,7 @@ public partial class It
 			[CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "");
 	}
 
+	[DebuggerNonUserCode]
 	private sealed class MatchesAsWildcardMatch(string pattern) : TypedMatch<string>, IParameterMatches
 	{
 		private bool _caseSensitive;

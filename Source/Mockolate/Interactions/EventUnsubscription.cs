@@ -7,6 +7,7 @@ namespace Mockolate.Interactions;
 ///     An unsubscription from an event.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+[DebuggerNonUserCode]
 public class EventUnsubscription(int index, string name, object? target, MethodInfo method) : IInteraction
 {
 	/// <summary>

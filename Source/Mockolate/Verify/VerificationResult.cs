@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     The result of a verification containing the matching interactions.
 /// </summary>
+[DebuggerNonUserCode]
 public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult
 {
 	private readonly string _expectation;

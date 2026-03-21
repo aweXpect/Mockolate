@@ -25,7 +25,15 @@ public partial class MockRegistration
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	private MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
-		=> _methodSetups.GetLatestOrDefault(setup => ((IInteractiveMethodSetup)setup).Matches(methodInvocation));
+	{
+		return _methodSetups.GetLatestOrDefault(Predicate);
+
+		[DebuggerNonUserCode]
+		bool Predicate(MethodSetup setup)
+		{
+			return ((IInteractiveMethodSetup)setup).Matches(methodInvocation);
+		}
+	}
 
 	/// <summary>
 	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
@@ -37,6 +45,7 @@ public partial class MockRegistration
 	///     retrievals,
 	///     so that getter and setter work in tandem.
 	/// </remarks>
+	[DebuggerNonUserCode]
 	private PropertySetup GetPropertySetup(string propertyName, Func<bool, object?> defaultValueGenerator)
 	{
 		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
@@ -91,6 +100,7 @@ public partial class MockRegistration
 		=> _propertySetups.Add(propertySetup);
 
 	[DebuggerDisplay("{ToString()}")]
+	[DebuggerNonUserCode]
 	private sealed class MethodSetups
 	{
 		private ConcurrentStack<MethodSetup>? _storage;
@@ -147,6 +157,7 @@ public partial class MockRegistration
 	}
 
 	[DebuggerDisplay("{ToString()}")]
+	[DebuggerNonUserCode]
 	private sealed class PropertySetups
 	{
 		private ConcurrentDictionary<string, PropertySetup>? _storage;
@@ -157,7 +168,13 @@ public partial class MockRegistration
 		{
 			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
 			_storage.AddOrUpdate(setup.Name, setup, (_, _) => setup);
-			Count = _storage.Count(x => x.Value is not PropertySetup.Default);
+			Count = _storage.Count(NotDefaultPredicate);
+
+			[DebuggerNonUserCode]
+			static bool NotDefaultPredicate(KeyValuePair<string, PropertySetup> x)
+			{
+				return x.Value is not PropertySetup.Default;
+			}
 		}
 
 		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out PropertySetup? setup)
@@ -207,6 +224,7 @@ public partial class MockRegistration
 	}
 
 	[DebuggerDisplay("{ToString()}")]
+	[DebuggerNonUserCode]
 	private sealed class IndexerSetups
 	{
 		private ConcurrentStack<IndexerSetup>? _storage;
@@ -293,6 +311,7 @@ public partial class MockRegistration
 				.All(indexerAccess => !((IInteractiveIndexerSetup)indexerSetup).Matches(indexerAccess)));
 		}
 
+		[DebuggerNonUserCode]
 		private sealed class ValueStorage
 		{
 			private ConcurrentDictionary<NamedParameterValue, ValueStorage>? _storage;
@@ -308,6 +327,7 @@ public partial class MockRegistration
 		}
 
 		[ExcludeFromCodeCoverage]
+		[DebuggerNonUserCode]
 		private sealed class NamedParameterValueComparer : IEqualityComparer<NamedParameterValue>
 		{
 			public static readonly NamedParameterValueComparer Instance = new();
@@ -327,6 +347,7 @@ public partial class MockRegistration
 	}
 
 	[DebuggerDisplay("{ToString()}")]
+	[DebuggerNonUserCode]
 	private sealed class EventSetups
 	{
 		/// <summary>

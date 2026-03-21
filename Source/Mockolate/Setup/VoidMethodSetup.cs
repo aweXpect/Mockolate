@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -9,6 +10,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class VoidMethodSetup(string name)
 	: MethodSetup(new MethodParameterMatch(name, [])),
 		IVoidMethodSetupCallbackBuilder, IVoidMethodSetupReturnBuilder
@@ -192,6 +194,7 @@ public class VoidMethodSetup(string name)
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <see langword="void" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1>, IVoidMethodSetupReturnBuilder<T1>
 {
@@ -429,6 +432,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 ///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
 ///     <see langword="void" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2>, IVoidMethodSetupReturnBuilder<T1, T2>
 {
@@ -669,6 +673,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <see langword="void" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3>, IVoidMethodSetupReturnBuilder<T1, T2, T3>
 {
@@ -918,6 +923,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <see langword="void" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>
 {

@@ -34,6 +34,7 @@ internal static partial class Sources
 		#region Extensions
 
 		sb.AppendXmlSummary($"Mock extensions for <see cref=\"{escapedClassName}\" /> that also implements<br />\n///      - {string.Join("<br />\n///      - ", additionalInterfaces.Select(x => $"<see cref=\"{x.Class.ClassFullName.EscapeForXmlDoc()}\" />"))}.", "");
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 		sb.Append("internal static partial class MockExtensionsFor").Append(fileName).AppendLine();
 		sb.Append("{").AppendLine();
 
@@ -251,6 +252,7 @@ internal static partial class Sources
 		sb.Append("{").AppendLine();
 		sb.AppendXmlSummary($"A mock implementation for <see cref=\"{escapedClassName}\" /> that also implements<br />\n\t///      - {string.Join("<br />\n\t///      - ", additionalInterfaces.Select(x => $"<see cref=\"{x.Class.ClassFullName.EscapeForXmlDoc()}\" />"))}.", "\t");
 		sb.Append("\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").AppendLine();
+		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 		sb.Append("\tinternal class ").Append(fileName).Append(" :").AppendLine();
 		sb.Append("\t\t").Append(@class.ClassFullName).Append(", ").Append("IMockFor").Append(name).Append(", IMockSetupFor").Append(name);
 		if (hasProtectedMembers)

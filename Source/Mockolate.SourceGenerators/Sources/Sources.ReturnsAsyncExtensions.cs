@@ -18,6 +18,7 @@ internal static partial class Sources
 		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Extensions for setting up return values and throwing exceptions for <see langword=\"async\" /> methods.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 		sb.Append("internal static class ReturnsThrowsAsyncExtensions2").AppendLine();
 		sb.Append("{").AppendLine();
 		foreach (int number in numberOfParameters)

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -12,6 +13,7 @@ public partial class It
 	public static IParameter<bool> IsTrue()
 		=> new TrueParameterMatch();
 
+	[DebuggerNonUserCode]
 	private sealed class TrueParameterMatch : TypedMatch<bool>
 	{
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />

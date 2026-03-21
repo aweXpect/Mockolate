@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Mockolate.Interactions;
 
@@ -13,6 +14,7 @@ namespace Mockolate.Monitor;
 ///     which events were subscribed to, during a test session. Monitoring is session-based; begin a session with the Run
 ///     method and dispose the returned scope to finalize monitoring.
 /// </remarks>
+[DebuggerNonUserCode]
 public abstract class MockMonitor
 {
 	private readonly MockInteractions _monitoredInvocations;
@@ -103,6 +105,7 @@ public abstract class MockMonitor
 ///     Monitoring is session-based: begin a session with the <see cref="MockMonitor.Run()" /> method and
 ///     dispose the returned scope to finalize monitoring.
 /// </remarks>
+[DebuggerNonUserCode]
 public sealed class MockMonitor<T> : MockMonitor
 {
 	/// <inheritdoc cref="MockMonitor{T}" />

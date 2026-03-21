@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -13,15 +14,24 @@ namespace Mockolate.Setup;
 ///     and the <paramref name="parameters" /> are matched one by one against the corresponding parameter in the method
 ///     invocation.
 /// </remarks>
+[DebuggerNonUserCode]
 public readonly struct MethodParameterMatch(string methodName, NamedParameter[] parameters) : IMethodMatch
 {
 	/// <inheritdoc cref="IMethodMatch.Matches(MethodInvocation)" />
 	public bool Matches(MethodInvocation methodInvocation)
-		=> methodInvocation.Name.Equals(methodName) &&
-		   methodInvocation.Parameters.Length == parameters.Length &&
-		   !parameters
-			   .Where((parameter, i) => !parameter.Matches(methodInvocation.Parameters[i]))
-			   .Any();
+	{
+		return methodInvocation.Name.Equals(methodName) &&
+		       methodInvocation.Parameters.Length == parameters.Length &&
+		       !parameters
+			       .Where(Predicate)
+			       .Any();
+
+		[DebuggerNonUserCode]
+		bool Predicate(NamedParameter parameter, int i)
+		{
+			return !parameter.Matches(methodInvocation.Parameters[i]);
+		}
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -9,6 +10,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     A result of an indexer setup.
 /// </summary>
+[DebuggerNonUserCode]
 public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior behavior)
 {
 	/// <summary>
@@ -21,6 +23,7 @@ public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior be
 /// <summary>
 ///     A result of an indexer setup with return type <typeparamref name="TResult" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class IndexerSetupResult<TResult>(
 	IInteractiveIndexerSetup? setup,
 	IndexerGetterAccess indexerAccess,
