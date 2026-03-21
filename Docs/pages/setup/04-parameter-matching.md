@@ -90,7 +90,7 @@ Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It
 
 ```csharp
 // Example: Case-insensitive string comparison
-var comparer = StringComparer.OrdinalIgnoreCase;
+StringComparer comparer = StringComparer.OrdinalIgnoreCase;
 sut.Mock.Setup.Process(It.Is("hello").Using(comparer))
     .Returns(42);
 

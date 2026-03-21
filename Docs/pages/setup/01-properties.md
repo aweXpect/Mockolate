@@ -14,7 +14,7 @@ sut.Mock.Setup.TotalDispensed.InitializeWith(42);
 You can also register a setup without providing a value (useful when `ThrowWhenNotSetup` is enabled):
 
 ```csharp
-var strictMock = IChocolateDispenser.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
+IChocolateDispenser strictMock = IChocolateDispenser.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 
 // Register property without value - won't throw
 strictMock.Mock.Setup.TotalDispensed.Register();

@@ -66,7 +66,7 @@ For all HTTP methods you can add an optional cancellation token parameter.
 If no parameter is provided, it matches any `CancellationToken`:
 
 ```csharp
-var cts = new CancellationTokenSource();
+CancellationTokenSource cts = new CancellationTokenSource();
 httpClient.Mock.Setup
     .GetAsync(It.IsAny<string>(), It.Is(cts.Token))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));

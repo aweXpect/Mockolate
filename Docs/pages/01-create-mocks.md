@@ -96,7 +96,7 @@ You can wrap an existing instance with mock tracking using `.Wrapping()`. This a
 a real object:
 
 ```csharp
-var realDispenser = new MyChocolateDispenser();
+MyChocolateDispenser realDispenser = new MyChocolateDispenser();
 IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(realDispenser);
 
 // Calls are forwarded to the real instance
