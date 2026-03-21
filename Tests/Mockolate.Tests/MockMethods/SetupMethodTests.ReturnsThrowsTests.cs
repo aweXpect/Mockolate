@@ -595,14 +595,14 @@ public sealed partial class SetupMethodTests
 				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
 				sut.Mock.Setup.Method1(It.IsAny<int>())
-					.Throws(v1 => new Exception($"foo-{v1}"));
+					.Throws(v1 => new Exception("foo-" + v1));
 
 				void Act()
 				{
-					sut.Method1(1);
+					sut.Method1(42);
 				}
 
-				await That(Act).ThrowsException().WithMessage("foo-1");
+				await That(Act).ThrowsException().WithMessage("foo-42");
 			}
 
 			[Fact]
@@ -1152,9 +1152,9 @@ public sealed partial class SetupMethodTests
 				sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 					.Returns((x, y, z) => $"foo-{x}-{y}-{z}");
 
-				string result = sut.Method3(1, 2, 3);
+				string result = sut.Method3(2, 3, 4);
 
-				await That(result).IsEqualTo("foo-1-2-3");
+				await That(result).IsEqualTo("foo-2-3-4");
 			}
 
 			[Fact]
@@ -1267,7 +1267,7 @@ public sealed partial class SetupMethodTests
 			{
 				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				string result = sut.Method3(1, 2, 3);
+				string result = sut.Method3(2, 3, 4);
 
 				await That(result).IsEmpty();
 			}
