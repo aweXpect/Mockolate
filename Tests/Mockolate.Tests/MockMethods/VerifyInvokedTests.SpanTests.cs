@@ -9,73 +9,73 @@ public sealed partial class VerifyInvokedTests
 		[Fact]
 		public async Task Memory_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = SpanMock.CreateMock();
+			SpanMock sut = SpanMock.CreateMock();
 
-			mock.MyMethod(new Memory<int>([1, 2, 3,]));
+			sut.MyMethod(new Memory<int>([1, 2, 3,]));
 
-			await That(mock.Mock.Verify.MyMethod(It.Satisfies<Memory<int>>(v => v.Length == 2))).Never();
-			await That(mock.Mock.Verify.MyMethod(It.Satisfies<Memory<int>>(v => v.Length == 3))).Once();
-			await That(mock.Mock.Verify.MyMethod(It.Satisfies<Memory<int>>(v => v.Length == 4))).Never();
+			await That(sut.Mock.Verify.MyMethod(It.Satisfies<Memory<int>>(v => v.Length == 2))).Never();
+			await That(sut.Mock.Verify.MyMethod(It.Satisfies<Memory<int>>(v => v.Length == 3))).Once();
+			await That(sut.Mock.Verify.MyMethod(It.Satisfies<Memory<int>>(v => v.Length == 4))).Never();
 		}
 
 		[Fact]
 		public async Task Memory_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = SpanMock.CreateMock();
+			SpanMock sut = SpanMock.CreateMock();
 
-			mock.MyMethod(new Memory<int>());
-			mock.MyMethod(new Span<int>([1, 2, 3,]));
-			mock.MyMethod(new Memory<int>([1, 2,]));
+			sut.MyMethod(new Memory<int>());
+			sut.MyMethod(new Span<int>([1, 2, 3,]));
+			sut.MyMethod(new Memory<int>([1, 2,]));
 
-			await That(mock.Mock.Verify.MyMethod(It.IsAny<Memory<int>>())).Twice();
+			await That(sut.Mock.Verify.MyMethod(It.IsAny<Memory<int>>())).Twice();
 		}
 
 		[Fact]
 		public async Task ReadOnlySpan_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = SpanMock.CreateMock();
+			SpanMock sut = SpanMock.CreateMock();
 
-			mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
+			sut.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
 
-			await That(mock.Mock.Verify.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 2))).Never();
-			await That(mock.Mock.Verify.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 3))).Once();
-			await That(mock.Mock.Verify.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 4))).Never();
+			await That(sut.Mock.Verify.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 2))).Never();
+			await That(sut.Mock.Verify.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 3))).Once();
+			await That(sut.Mock.Verify.MyMethod(It.IsReadOnlySpan<int>(v => v.Length == 4))).Never();
 		}
 
 		[Fact]
 		public async Task ReadOnlySpan_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = SpanMock.CreateMock();
+			SpanMock sut = SpanMock.CreateMock();
 
-			mock.MyMethod(new ReadOnlySpan<int>());
-			mock.MyMethod(new Span<int>([1, 2, 3,]));
-			mock.MyMethod(new ReadOnlySpan<int>([1, 2,]));
+			sut.MyMethod(new ReadOnlySpan<int>());
+			sut.MyMethod(new Span<int>([1, 2, 3,]));
+			sut.MyMethod(new ReadOnlySpan<int>([1, 2,]));
 
-			await That(mock.Mock.Verify.MyMethod(It.IsAnyReadOnlySpan<int>())).Twice();
+			await That(sut.Mock.Verify.MyMethod(It.IsAnyReadOnlySpan<int>())).Twice();
 		}
 
 		[Fact]
 		public async Task Span_WhenPredicateMatches_ShouldApplySetup()
 		{
-			SpanMock mock = SpanMock.CreateMock();
+			SpanMock sut = SpanMock.CreateMock();
 
-			mock.MyMethod(new Span<int>([1, 2, 3,]));
+			sut.MyMethod(new Span<int>([1, 2, 3,]));
 
-			await That(mock.Mock.Verify.MyMethod(It.IsSpan<int>(v => v.Length == 2))).Never();
-			await That(mock.Mock.Verify.MyMethod(It.IsSpan<int>(v => v.Length == 3))).Once();
-			await That(mock.Mock.Verify.MyMethod(It.IsSpan<int>(v => v.Length == 4))).Never();
+			await That(sut.Mock.Verify.MyMethod(It.IsSpan<int>(v => v.Length == 2))).Never();
+			await That(sut.Mock.Verify.MyMethod(It.IsSpan<int>(v => v.Length == 3))).Once();
+			await That(sut.Mock.Verify.MyMethod(It.IsSpan<int>(v => v.Length == 4))).Never();
 		}
 
 		[Fact]
 		public async Task Span_WithoutPredicate_ShouldApplyAllCalls()
 		{
-			SpanMock mock = SpanMock.CreateMock();
+			SpanMock sut = SpanMock.CreateMock();
 
-			mock.MyMethod(new Span<int>());
-			mock.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
-			mock.MyMethod(new Span<int>([1, 2,]));
+			sut.MyMethod(new Span<int>());
+			sut.MyMethod(new ReadOnlySpan<int>([1, 2, 3,]));
+			sut.MyMethod(new Span<int>([1, 2,]));
 
-			await That(mock.Mock.Verify.MyMethod(It.IsAnySpan<int>())).Twice();
+			await That(sut.Mock.Verify.MyMethod(It.IsAnySpan<int>())).Twice();
 		}
 
 		internal class SpanMock

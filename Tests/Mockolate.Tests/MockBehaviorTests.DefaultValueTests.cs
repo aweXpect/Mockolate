@@ -13,9 +13,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task Recursive_ShouldReturnNull()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			IMyRecursiveService result = mock.RecursiveService;
+			IMyRecursiveService result = sut.RecursiveService;
 
 			await That(result).IsNull();
 		}
@@ -23,9 +23,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithArray_ShouldReturnEmptyArray()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			int[] result = mock.SimpleArray;
+			int[] result = sut.SimpleArray;
 
 			await That(result).HasCount(0);
 		}
@@ -43,9 +43,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithCombination_ShouldReturnNotNullValues()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			(int, int[], string) result = await mock.ComplexTask();
+			(int, int[], string) result = await sut.ComplexTask();
 
 			await That(result.Item1).IsEqualTo(0);
 			await That(result.Item2).IsEmpty();
@@ -55,9 +55,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithHttpResponseMessage_ShouldReturnEmptyResponseWithNotImplementedStatusCode()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			HttpResponseMessage result = mock.HttpResponseMessage;
+			HttpResponseMessage result = sut.HttpResponseMessage;
 
 			await That(result.StatusCode).IsEqualTo(HttpStatusCode.NotImplemented);
 			await That(result.Content.ReadAsStringAsync()).IsEmpty();
@@ -66,9 +66,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithIEnumerable_ShouldReturnEmptyEnumerable()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			IEnumerable result = mock.IEnumerable;
+			IEnumerable result = sut.IEnumerable;
 
 			await That(result).HasCount(0);
 		}
@@ -76,9 +76,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithIEnumerableOfInt_ShouldReturnEmptyEnumerable()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			IEnumerable<int> result = mock.IEnumerableOfInt;
+			IEnumerable<int> result = sut.IEnumerableOfInt;
 
 			await That(result).HasCount(0);
 		}
@@ -98,9 +98,9 @@ public sealed partial class MockBehaviorTests
 		{
 			MockBehavior.Default.DefaultValue.Generate(default(int[,])!);
 
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			int[,,][,][] result = mock.MultiDimensionalArray;
+			int[,,][,][] result = sut.MultiDimensionalArray;
 
 			await That(result).HasCount(0);
 		}
@@ -160,9 +160,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithTaskInt_ShouldReturnZero()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			Task<int> result = mock.IntTask;
+			Task<int> result = sut.IntTask;
 
 			await That(result.IsCompleted).IsTrue();
 			await That(result).IsEqualTo(0);
@@ -171,9 +171,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithTaskIntArray_ShouldReturnZero()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			Task<int[]> result = mock.IntArrayTask;
+			Task<int[]> result = sut.IntArrayTask;
 
 			await That(result.IsCompleted).IsTrue();
 			await That(result).IsEmpty();
@@ -182,9 +182,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithValueTaskInt_ShouldReturnZero()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			ValueTask<int> result = mock.IntValueTask;
+			ValueTask<int> result = sut.IntValueTask;
 
 			await That(result.IsCompleted).IsTrue();
 			await That(await result).IsEqualTo(0);
@@ -194,9 +194,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithValueTaskIntArray_ShouldReturnZero()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			ValueTask<int[]> result = mock.IntArrayValueTask;
+			ValueTask<int[]> result = sut.IntArrayValueTask;
 
 			await That(result.IsCompleted).IsTrue();
 			await That(await result).IsEmpty();
@@ -206,9 +206,9 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithValueTuple_ShouldReturnValueTupleWithDefaultValues()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
-			(int V1, string V2) result = mock.NamedValueTuple;
+			(int V1, string V2) result = sut.NamedValueTuple;
 
 			await That(result.V1).IsEqualTo(0);
 			await That(result.V2).IsEqualTo("");
@@ -217,10 +217,10 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WithValueTuple8_ShouldReturnValueTupleWithDefaultValues()
 		{
-			IDefaultValueGeneratorProperties mock = IDefaultValueGeneratorProperties.CreateMock();
+			IDefaultValueGeneratorProperties sut = IDefaultValueGeneratorProperties.CreateMock();
 
 			(int V1, string V2, int V3, string V4, int V5, string V6, int V7, string V8) result =
-				mock.ValueTuple8;
+				sut.ValueTuple8;
 
 			await That(result.V1).IsEqualTo(0);
 			await That(result.V2).IsEqualTo("");

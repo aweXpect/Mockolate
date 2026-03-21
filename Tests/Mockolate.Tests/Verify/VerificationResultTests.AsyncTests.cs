@@ -197,18 +197,18 @@ public sealed partial class VerificationResultTests
 		[Fact]
 		public async Task Within_WhenInvokedMultipleTimesInBackground_ShouldNotThrow()
 		{
-			IChocolateDispenser mock = IChocolateDispenser.CreateMock();
+			IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
 			Task backgroundTask = Task.Delay(50, CancellationToken.None)
 				.ContinueWith(_ =>
 				{
 					for (int i = 0; i < 15; i++)
 					{
-						mock.Dispense("dark", i);
+						sut.Dispense("dark", i);
 					}
 				}, CancellationToken.None);
 
-			mock.Mock.Verify.Dispense(Match.AnyParameters()).Within(TimeSpan.FromSeconds(30)).AtLeast(8);
+			sut.Mock.Verify.Dispense(Match.AnyParameters()).Within(TimeSpan.FromSeconds(30)).AtLeast(8);
 
 			await backgroundTask;
 		}

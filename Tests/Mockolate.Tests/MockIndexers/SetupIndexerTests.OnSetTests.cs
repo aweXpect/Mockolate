@@ -12,17 +12,17 @@ public sealed partial class SetupIndexerTests
 			int callCount1 = 0;
 			int callCount2 = 0;
 			int callCount3 = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
+			IIndexerService sut = IIndexerService.CreateMock();
 
-			mock.Mock.Setup[It.IsAny<int>()]
+			sut.Mock.Setup[It.IsAny<int>()]
 				.OnSet.Do(() => { callCount1++; })
 				.OnSet.Do((p1, _) => { callCount2 += p1; }).InParallel()
 				.OnSet.Do((p1, _) => { callCount3 += p1; });
 
-			mock[4] = "foo";
-			mock[6] = "foo";
-			mock[8] = "foo";
-			mock[10] = "foo";
+			sut[4] = "foo";
+			sut[6] = "foo";
+			sut[8] = "foo";
+			sut[10] = "foo";
 
 			await That(callCount1).IsEqualTo(2);
 			await That(callCount2).IsEqualTo(4 + 6 + 8 + 10);
@@ -37,16 +37,16 @@ public sealed partial class SetupIndexerTests
 			int expectedValue)
 		{
 			int sum = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
+			IIndexerService sut = IIndexerService.CreateMock();
 
-			mock.Mock.Setup[It.IsAny<int>()]
+			sut.Mock.Setup[It.IsAny<int>()]
 				.OnSet.Do((p1, _) => { sum += p1; }).Only(times);
 
-			mock[1] = "foo";
-			mock[2] = "foo";
-			mock[3] = "foo";
-			mock[4] = "foo";
-			mock[5] = "foo";
+			sut[1] = "foo";
+			sut[2] = "foo";
+			sut[3] = "foo";
+			sut[4] = "foo";
+			sut[5] = "foo";
 
 			await That(sum).IsEqualTo(expectedValue);
 		}
@@ -91,16 +91,16 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount = 0;
 			int sum = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
+			IIndexerService sut = IIndexerService.CreateMock();
 
-			mock.Mock.Setup[It.IsAny<int>()]
+			sut.Mock.Setup[It.IsAny<int>()]
 				.OnSet.Do(() => { callCount++; })
 				.OnSet.Do((p1, _) => { sum += p1; }).OnlyOnce();
 
-			mock[1] = "foo";
-			mock[2] = "foo";
-			mock[3] = "foo";
-			mock[4] = "foo";
+			sut[1] = "foo";
+			sut[2] = "foo";
+			sut[3] = "foo";
+			sut[4] = "foo";
 
 			await That(callCount).IsEqualTo(3);
 			await That(sum).IsEqualTo(2);
@@ -110,16 +110,16 @@ public sealed partial class SetupIndexerTests
 		public async Task ShouldExecuteSetterCallbacks()
 		{
 			int callCount = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
-			mock.Mock.Setup[It.Satisfies<int>(i => i < 4)]
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[It.Satisfies<int>(i => i < 4)]
 				.OnSet.Do(_ => { callCount++; });
 
-			mock[1] = "";
-			mock[2] = "";
-			mock[3] = "";
-			mock[4] = "";
-			mock[5] = "";
-			mock[6] = "";
+			sut[1] = "";
+			sut[2] = "";
+			sut[3] = "";
+			sut[4] = "";
+			sut[5] = "";
+			sut[6] = "";
 
 			await That(callCount).IsEqualTo(3);
 		}
@@ -128,15 +128,15 @@ public sealed partial class SetupIndexerTests
 		public async Task ShouldExecuteSetterCallbacksWithoutAnyValue()
 		{
 			int callCount = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
-			mock.Mock.Setup[It.Satisfies<int>(i => i < 4)]
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[It.Satisfies<int>(i => i < 4)]
 				.OnSet.Do(() => { callCount++; });
 
-			mock[1] = "";
-			mock[2] = "";
-			mock[3] = "";
-			mock[4] = "";
-			mock[5] = "";
+			sut[1] = "";
+			sut[2] = "";
+			sut[3] = "";
+			sut[4] = "";
+			sut[5] = "";
 
 			await That(callCount).IsEqualTo(3);
 		}
@@ -162,16 +162,16 @@ public sealed partial class SetupIndexerTests
 		{
 			int callCount1 = 0;
 			int callCount2 = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
+			IIndexerService sut = IIndexerService.CreateMock();
 
-			mock.Mock.Setup[It.IsAny<int>()]
+			sut.Mock.Setup[It.IsAny<int>()]
 				.OnSet.Do(() => { callCount1++; })
 				.OnSet.Do((p1, _) => { callCount2 += p1; });
 
-			mock[4] = "foo";
-			mock[6] = "foo";
-			mock[8] = "foo";
-			mock[10] = "foo";
+			sut[4] = "foo";
+			sut[6] = "foo";
+			sut[8] = "foo";
+			sut[10] = "foo";
 
 			await That(callCount1).IsEqualTo(2);
 			await That(callCount2).IsEqualTo(6 + 10);
@@ -202,17 +202,17 @@ public sealed partial class SetupIndexerTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount1++; })
 					.OnSet.Do((p1, _, _) => { callCount2 += p1; }).InParallel()
 					.OnSet.Do((p1, _, _) => { callCount3 += p1; });
 
-				mock[4, 2] = "foo";
-				mock[6, 2] = "foo";
-				mock[8, 2] = "foo";
-				mock[10, 2] = "foo";
+				sut[4, 2] = "foo";
+				sut[6, 2] = "foo";
+				sut[8, 2] = "foo";
+				sut[10, 2] = "foo";
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(4 + 6 + 8 + 10);
@@ -227,16 +227,16 @@ public sealed partial class SetupIndexerTests
 				int expectedValue)
 			{
 				int sum = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do((p1, _, _) => { sum += p1; }).Only(times);
 
-				mock[1, 2] = "foo";
-				mock[2, 2] = "foo";
-				mock[3, 2] = "foo";
-				mock[4, 2] = "foo";
-				mock[5, 2] = "foo";
+				sut[1, 2] = "foo";
+				sut[2, 2] = "foo";
+				sut[3, 2] = "foo";
+				sut[4, 2] = "foo";
+				sut[5, 2] = "foo";
 
 				await That(sum).IsEqualTo(expectedValue);
 			}
@@ -281,16 +281,16 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				int sum = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount++; })
 					.OnSet.Do((p1, _, _) => { sum += p1; }).OnlyOnce();
 
-				mock[1, 2] = "foo";
-				mock[2, 2] = "foo";
-				mock[3, 2] = "foo";
-				mock[4, 2] = "foo";
+				sut[1, 2] = "foo";
+				sut[2, 2] = "foo";
+				sut[3, 2] = "foo";
+				sut[4, 2] = "foo";
 
 				await That(callCount).IsEqualTo(3);
 				await That(sum).IsEqualTo(2);
@@ -300,19 +300,19 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteSetterCallbacks()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
 					.OnSet.Do(v => { callCount += v.Length; });
 
-				mock[1, 1] = "a"; // yes (1)
-				mock[1, 2] = "bb"; // yes (2)
-				mock[1, 3] = "ccc"; // yes (3)
-				mock[1, 4] = "dddd"; // no
-				mock[1, 5] = "eeeee"; // no
-				mock[6, 1] = "ffffff"; // no
-				mock[6, 7] = "ggggggg"; // no
-				mock[8, -9] = "hhhhhhhh"; // no
-				mock[3, 3] = "iiiiiiiii"; // yes (9)
+				sut[1, 1] = "a"; // yes (1)
+				sut[1, 2] = "bb"; // yes (2)
+				sut[1, 3] = "ccc"; // yes (3)
+				sut[1, 4] = "dddd"; // no
+				sut[1, 5] = "eeeee"; // no
+				sut[6, 1] = "ffffff"; // no
+				sut[6, 7] = "ggggggg"; // no
+				sut[8, -9] = "hhhhhhhh"; // no
+				sut[3, 3] = "iiiiiiiii"; // yes (9)
 
 				await That(callCount).IsEqualTo(15);
 			}
@@ -321,16 +321,16 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteSetterCallbacksWithoutAnyValue()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
 					.OnSet.Do(() => { callCount++; });
 
-				mock[1, 1] = ""; // yes
-				mock[1, 2] = ""; // yes
-				mock[1, 3] = ""; // yes
-				mock[1, 4] = ""; // no
-				mock[5, 1] = ""; // no
-				mock[2, 1] = ""; // yes
+				sut[1, 1] = ""; // yes
+				sut[1, 2] = ""; // yes
+				sut[1, 3] = ""; // yes
+				sut[1, 4] = ""; // no
+				sut[5, 1] = ""; // no
+				sut[2, 1] = ""; // yes
 
 				await That(callCount).IsEqualTo(4);
 			}
@@ -356,16 +356,16 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount1++; })
 					.OnSet.Do((p1, _, _) => { callCount2 += p1; });
 
-				mock[4, 2] = "foo";
-				mock[6, 2] = "foo";
-				mock[8, 2] = "foo";
-				mock[10, 2] = "foo";
+				sut[4, 2] = "foo";
+				sut[6, 2] = "foo";
+				sut[8, 2] = "foo";
+				sut[10, 2] = "foo";
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(6 + 10);
@@ -397,17 +397,17 @@ public sealed partial class SetupIndexerTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount1++; })
 					.OnSet.Do((p1, _, _, _) => { callCount2 += p1; }).InParallel()
 					.OnSet.Do((p1, _, _, _) => { callCount3 += p1; });
 
-				mock[4, 2, 3] = "foo";
-				mock[6, 2, 3] = "foo";
-				mock[8, 2, 3] = "foo";
-				mock[10, 2, 3] = "foo";
+				sut[4, 2, 3] = "foo";
+				sut[6, 2, 3] = "foo";
+				sut[8, 2, 3] = "foo";
+				sut[10, 2, 3] = "foo";
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(4 + 6 + 8 + 10);
@@ -422,16 +422,16 @@ public sealed partial class SetupIndexerTests
 				int expectedValue)
 			{
 				int sum = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do((p1, _, _, _) => { sum += p1; }).Only(times);
 
-				mock[1, 2, 3] = "foo";
-				mock[2, 2, 3] = "foo";
-				mock[3, 2, 3] = "foo";
-				mock[4, 2, 3] = "foo";
-				mock[5, 2, 3] = "foo";
+				sut[1, 2, 3] = "foo";
+				sut[2, 2, 3] = "foo";
+				sut[3, 2, 3] = "foo";
+				sut[4, 2, 3] = "foo";
+				sut[5, 2, 3] = "foo";
 
 				await That(sum).IsEqualTo(expectedValue);
 			}
@@ -476,16 +476,16 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				int sum = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount++; })
 					.OnSet.Do((p1, _, _, _) => { sum += p1; }).OnlyOnce();
 
-				mock[1, 2, 3] = "foo";
-				mock[2, 2, 3] = "foo";
-				mock[3, 2, 3] = "foo";
-				mock[4, 2, 3] = "foo";
+				sut[1, 2, 3] = "foo";
+				sut[2, 2, 3] = "foo";
+				sut[3, 2, 3] = "foo";
+				sut[4, 2, 3] = "foo";
 
 				await That(callCount).IsEqualTo(3);
 				await That(sum).IsEqualTo(2);
@@ -495,20 +495,20 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteSetterCallbacks()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
 						It.Satisfies<int>(i => i < 4)]
 					.OnSet.Do(v => { callCount += v.Length; });
 
-				mock[1, 1, 1] = "a"; // yes (1)
-				mock[1, 2, 1] = "bb"; // yes (2)
-				mock[3, 1, 2] = "ccc"; // yes (3)
-				mock[1, 1, 4] = "dddd"; // no
-				mock[1, 5, 1] = "eeeee"; // no
-				mock[6, 1, 1] = "ffffff"; // no
-				mock[6, 7, 8] = "ggggggg"; // no
-				mock[8, -9, 1] = "hhhhhhhh"; // no
-				mock[3, 3, 3] = "iiiiiiiii"; // yes (9)
+				sut[1, 1, 1] = "a"; // yes (1)
+				sut[1, 2, 1] = "bb"; // yes (2)
+				sut[3, 1, 2] = "ccc"; // yes (3)
+				sut[1, 1, 4] = "dddd"; // no
+				sut[1, 5, 1] = "eeeee"; // no
+				sut[6, 1, 1] = "ffffff"; // no
+				sut[6, 7, 8] = "ggggggg"; // no
+				sut[8, -9, 1] = "hhhhhhhh"; // no
+				sut[3, 3, 3] = "iiiiiiiii"; // yes (9)
 
 				await That(callCount).IsEqualTo(15);
 			}
@@ -517,18 +517,18 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteSetterCallbacksWithoutAnyValue()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
 						It.Satisfies<int>(i => i < 4)]
 					.OnSet.Do(() => { callCount++; });
 
-				mock[1, 1, 1] = ""; // yes
-				mock[1, 1, 2] = ""; // yes
-				mock[1, 3, 1] = ""; // yes
-				mock[1, 1, 4] = ""; // no
-				mock[1, 5, 1] = ""; // no
-				mock[6, 1, 1] = ""; // no
-				mock[2, 1, 1] = ""; // yes
+				sut[1, 1, 1] = ""; // yes
+				sut[1, 1, 2] = ""; // yes
+				sut[1, 3, 1] = ""; // yes
+				sut[1, 1, 4] = ""; // no
+				sut[1, 5, 1] = ""; // no
+				sut[6, 1, 1] = ""; // no
+				sut[2, 1, 1] = ""; // yes
 
 				await That(callCount).IsEqualTo(4);
 			}
@@ -554,16 +554,16 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount1++; })
 					.OnSet.Do((p1, _, _, _) => { callCount2 += p1; });
 
-				mock[4, 2, 3] = "foo";
-				mock[6, 2, 3] = "foo";
-				mock[8, 2, 3] = "foo";
-				mock[10, 2, 3] = "foo";
+				sut[4, 2, 3] = "foo";
+				sut[6, 2, 3] = "foo";
+				sut[8, 2, 3] = "foo";
+				sut[10, 2, 3] = "foo";
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(6 + 10);
@@ -595,17 +595,17 @@ public sealed partial class SetupIndexerTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount1++; })
 					.OnSet.Do((p1, _, _, _, _) => { callCount2 += p1; }).InParallel()
 					.OnSet.Do((p1, _, _, _, _) => { callCount3 += p1; });
 
-				mock[4, 2, 3, 4] = "foo";
-				mock[6, 2, 3, 4] = "foo";
-				mock[8, 2, 3, 4] = "foo";
-				mock[10, 2, 3, 4] = "foo";
+				sut[4, 2, 3, 4] = "foo";
+				sut[6, 2, 3, 4] = "foo";
+				sut[8, 2, 3, 4] = "foo";
+				sut[10, 2, 3, 4] = "foo";
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(4 + 6 + 8 + 10);
@@ -620,16 +620,16 @@ public sealed partial class SetupIndexerTests
 				int expectedValue)
 			{
 				int sum = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do((p1, _, _, _, _) => { sum += p1; }).Only(times);
 
-				mock[1, 2, 3, 4] = "foo";
-				mock[2, 2, 3, 4] = "foo";
-				mock[3, 2, 3, 4] = "foo";
-				mock[4, 2, 3, 4] = "foo";
-				mock[5, 2, 3, 4] = "foo";
+				sut[1, 2, 3, 4] = "foo";
+				sut[2, 2, 3, 4] = "foo";
+				sut[3, 2, 3, 4] = "foo";
+				sut[4, 2, 3, 4] = "foo";
+				sut[5, 2, 3, 4] = "foo";
 
 				await That(sum).IsEqualTo(expectedValue);
 			}
@@ -674,16 +674,16 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				int sum = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount++; })
 					.OnSet.Do((p1, _, _, _, _) => { sum += p1; }).OnlyOnce();
 
-				mock[1, 2, 3, 4] = "foo";
-				mock[2, 2, 3, 4] = "foo";
-				mock[3, 2, 3, 4] = "foo";
-				mock[4, 2, 3, 4] = "foo";
+				sut[1, 2, 3, 4] = "foo";
+				sut[2, 2, 3, 4] = "foo";
+				sut[3, 2, 3, 4] = "foo";
+				sut[4, 2, 3, 4] = "foo";
 
 				await That(callCount).IsEqualTo(3);
 				await That(sum).IsEqualTo(2);
@@ -693,20 +693,20 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteSetterCallbacks()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
 						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5)]
 					.OnSet.Do(v => { callCount += v.Length; });
 
-				mock[1, 1, 1, 1] = "a"; // yes (1)
-				mock[1, 2, 1, 3] = "bb"; // yes (2)
-				mock[3, 1, 2, 4] = "ccc"; // yes (3)
-				mock[1, 1, 4, 3] = "dddd"; // yes (4)
-				mock[1, 5, 1, 1] = "eeeee"; // no
-				mock[6, 1, 1, 1] = "ffffff"; // no
-				mock[6, 7, 8, 9] = "ggggggg"; // no
-				mock[8, -9, 1, 3] = "hhhhhhhh"; // no
-				mock[4, 4, 4, 4] = "iiiiiiiii"; // yes (9)
+				sut[1, 1, 1, 1] = "a"; // yes (1)
+				sut[1, 2, 1, 3] = "bb"; // yes (2)
+				sut[3, 1, 2, 4] = "ccc"; // yes (3)
+				sut[1, 1, 4, 3] = "dddd"; // yes (4)
+				sut[1, 5, 1, 1] = "eeeee"; // no
+				sut[6, 1, 1, 1] = "ffffff"; // no
+				sut[6, 7, 8, 9] = "ggggggg"; // no
+				sut[8, -9, 1, 3] = "hhhhhhhh"; // no
+				sut[4, 4, 4, 4] = "iiiiiiiii"; // yes (9)
 
 				await That(callCount).IsEqualTo(19);
 			}
@@ -715,18 +715,18 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteSetterCallbacksWithoutAnyValue()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
 						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5)]
 					.OnSet.Do(() => { callCount++; });
 
-				mock[1, 1, 1, 1] = ""; // yes
-				mock[1, 1, 2, 2] = ""; // yes
-				mock[1, 3, 1, 3] = ""; // yes
-				mock[1, 1, 4, 4] = ""; // yes
-				mock[1, 5, 1, 1] = ""; // no
-				mock[6, 1, 1, 1] = ""; // no
-				mock[2, 1, 1, 3] = ""; // yes
+				sut[1, 1, 1, 1] = ""; // yes
+				sut[1, 1, 2, 2] = ""; // yes
+				sut[1, 3, 1, 3] = ""; // yes
+				sut[1, 1, 4, 4] = ""; // yes
+				sut[1, 5, 1, 1] = ""; // no
+				sut[6, 1, 1, 1] = ""; // no
+				sut[2, 1, 1, 3] = ""; // yes
 
 				await That(callCount).IsEqualTo(5);
 			}
@@ -752,16 +752,16 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount1++; })
 					.OnSet.Do((p1, _, _, _, _) => { callCount2 += p1; });
 
-				mock[4, 2, 3, 4] = "foo";
-				mock[6, 2, 3, 4] = "foo";
-				mock[8, 2, 3, 4] = "foo";
-				mock[10, 2, 3, 4] = "foo";
+				sut[4, 2, 3, 4] = "foo";
+				sut[6, 2, 3, 4] = "foo";
+				sut[8, 2, 3, 4] = "foo";
+				sut[10, 2, 3, 4] = "foo";
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(6 + 10);
@@ -793,17 +793,17 @@ public sealed partial class SetupIndexerTests
 				int callCount1 = 0;
 				int callCount2 = 0;
 				int callCount3 = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount1++; })
 					.OnSet.Do((p1, _, _, _, _, _) => { callCount2 += p1; }).InParallel()
 					.OnSet.Do((p1, _, _, _, _, _) => { callCount3 += p1; });
 
-				mock[4, 2, 3, 4, 5] = "foo";
-				mock[6, 2, 3, 4, 5] = "foo";
-				mock[8, 2, 3, 4, 5] = "foo";
-				mock[10, 2, 3, 4, 5] = "foo";
+				sut[4, 2, 3, 4, 5] = "foo";
+				sut[6, 2, 3, 4, 5] = "foo";
+				sut[8, 2, 3, 4, 5] = "foo";
+				sut[10, 2, 3, 4, 5] = "foo";
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(4 + 6 + 8 + 10);
@@ -818,16 +818,16 @@ public sealed partial class SetupIndexerTests
 				int expectedValue)
 			{
 				int sum = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do((p1, _, _, _, _, _) => { sum += p1; }).Only(times);
 
-				mock[1, 2, 3, 4, 5] = "foo";
-				mock[2, 2, 3, 4, 5] = "foo";
-				mock[3, 2, 3, 4, 5] = "foo";
-				mock[4, 2, 3, 4, 5] = "foo";
-				mock[5, 2, 3, 4, 5] = "foo";
+				sut[1, 2, 3, 4, 5] = "foo";
+				sut[2, 2, 3, 4, 5] = "foo";
+				sut[3, 2, 3, 4, 5] = "foo";
+				sut[4, 2, 3, 4, 5] = "foo";
+				sut[5, 2, 3, 4, 5] = "foo";
 
 				await That(sum).IsEqualTo(expectedValue);
 			}
@@ -872,16 +872,16 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount = 0;
 				int sum = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount++; })
 					.OnSet.Do((p1, _, _, _, _, _) => { sum += p1; }).OnlyOnce();
 
-				mock[1, 2, 3, 4, 5] = "foo";
-				mock[2, 2, 3, 4, 5] = "foo";
-				mock[3, 2, 3, 4, 5] = "foo";
-				mock[4, 2, 3, 4, 5] = "foo";
+				sut[1, 2, 3, 4, 5] = "foo";
+				sut[2, 2, 3, 4, 5] = "foo";
+				sut[3, 2, 3, 4, 5] = "foo";
+				sut[4, 2, 3, 4, 5] = "foo";
 
 				await That(callCount).IsEqualTo(3);
 				await That(sum).IsEqualTo(2);
@@ -891,20 +891,20 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteSetterCallbacks()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
 						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6)]
 					.OnSet.Do(v => { callCount += v.Length; });
 
-				mock[1, 1, 1, 1, 1] = "a"; // yes (1)
-				mock[4, 1, 2, 1, 3] = "bb"; // yes (2)
-				mock[1, 3, 1, 2, 4] = "ccc"; // yes (3)
-				mock[2, 1, 1, 4, 3] = "dddd"; // yes (4)
-				mock[1, 1, 5, 1, 1] = "eeeee"; // yes (5)
-				mock[1, 6, 1, 1, 1] = "ffffff"; // no
-				mock[5, 6, 7, 8, 9] = "ggggggg"; // no
-				mock[8, 8, -9, 1, 3] = "hhhhhhhh"; // no
-				mock[5, 5, 5, 5, 5] = "iiiiiiiii"; // yes (9)
+				sut[1, 1, 1, 1, 1] = "a"; // yes (1)
+				sut[4, 1, 2, 1, 3] = "bb"; // yes (2)
+				sut[1, 3, 1, 2, 4] = "ccc"; // yes (3)
+				sut[2, 1, 1, 4, 3] = "dddd"; // yes (4)
+				sut[1, 1, 5, 1, 1] = "eeeee"; // yes (5)
+				sut[1, 6, 1, 1, 1] = "ffffff"; // no
+				sut[5, 6, 7, 8, 9] = "ggggggg"; // no
+				sut[8, 8, -9, 1, 3] = "hhhhhhhh"; // no
+				sut[5, 5, 5, 5, 5] = "iiiiiiiii"; // yes (9)
 
 				await That(callCount).IsEqualTo(24);
 			}
@@ -913,18 +913,18 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteSetterCallbacksWithoutAnyValue()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
 						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6)]
 					.OnSet.Do(() => { callCount++; });
 
-				mock[1, 1, 1, 1, 1] = ""; // yes
-				mock[1, 1, 1, 2, 2] = ""; // yes
-				mock[1, 1, 3, 1, 3] = ""; // yes
-				mock[1, 1, 1, 4, 4] = ""; // yes
-				mock[1, 1, 6, 1, 1] = ""; // no
-				mock[1, 6, 1, 1, 1] = ""; // no
-				mock[1, 2, 1, 1, 3] = ""; // yes
+				sut[1, 1, 1, 1, 1] = ""; // yes
+				sut[1, 1, 1, 2, 2] = ""; // yes
+				sut[1, 1, 3, 1, 3] = ""; // yes
+				sut[1, 1, 1, 4, 4] = ""; // yes
+				sut[1, 1, 6, 1, 1] = ""; // no
+				sut[1, 6, 1, 1, 1] = ""; // no
+				sut[1, 2, 1, 1, 3] = ""; // yes
 
 				await That(callCount).IsEqualTo(5);
 			}
@@ -950,16 +950,16 @@ public sealed partial class SetupIndexerTests
 			{
 				int callCount1 = 0;
 				int callCount2 = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnSet.Do(() => { callCount1++; })
 					.OnSet.Do((p1, _, _, _, _, _) => { callCount2 += p1; });
 
-				mock[4, 2, 3, 4, 5] = "foo";
-				mock[6, 2, 3, 4, 5] = "foo";
-				mock[8, 2, 3, 4, 5] = "foo";
-				mock[10, 2, 3, 4, 5] = "foo";
+				sut[4, 2, 3, 4, 5] = "foo";
+				sut[6, 2, 3, 4, 5] = "foo";
+				sut[8, 2, 3, 4, 5] = "foo";
+				sut[10, 2, 3, 4, 5] = "foo";
 
 				await That(callCount1).IsEqualTo(2);
 				await That(callCount2).IsEqualTo(6 + 10);

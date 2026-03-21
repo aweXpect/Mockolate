@@ -43,19 +43,19 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task MultipleValues_ShouldAllStoreValues()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
+		IIndexerService sut = IIndexerService.CreateMock();
 
-		mock[1] = "a";
-		mock[2] = "b";
+		sut[1] = "a";
+		sut[2] = "b";
 
-		string result1A = mock[1];
-		string result2A = mock[2];
+		string result1A = sut[1];
+		string result2A = sut[2];
 
-		mock[1] = "x";
-		mock[2] = "y";
+		sut[1] = "x";
+		sut[2] = "y";
 
-		string result1B = mock[1];
-		string result2B = mock[2];
+		string result1B = sut[1];
+		string result2B = sut[2];
 
 		await That(result1A).IsEqualTo("a");
 		await That(result2A).IsEqualTo("b");
@@ -66,13 +66,13 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.IsAny<int>()].InitializeWith("foo");
-		mock.Mock.Setup[It.Is(2)].InitializeWith("bar");
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.IsAny<int>()].InitializeWith("foo");
+		sut.Mock.Setup[It.Is(2)].InitializeWith("bar");
 
-		string result1 = mock[1];
-		string result2 = mock[2];
-		string result3 = mock[3];
+		string result1 = sut[1];
+		string result2 = sut[2];
+		string result3 = sut[3];
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEqualTo("bar");
@@ -82,13 +82,13 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task OverlappingSetups_WhenGeneralSetupIsLater_ShouldOnlyUseGeneralSetup()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.Is(2)].InitializeWith("bar");
-		mock.Mock.Setup[It.IsAny<int>()].InitializeWith("foo");
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.Is(2)].InitializeWith("bar");
+		sut.Mock.Setup[It.IsAny<int>()].InitializeWith("foo");
 
-		string result1 = mock[1];
-		string result2 = mock[2];
-		string result3 = mock[3];
+		string result1 = sut[1];
+		string result2 = sut[2];
+		string result3 = sut[3];
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEqualTo("foo");
@@ -99,12 +99,12 @@ public sealed partial class SetupIndexerTests
 	public async Task Parameter_Do_ShouldExecuteCallback()
 	{
 		List<string> capturedValues = [];
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)]
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)]
 			.InitializeWith(42);
 
-		_ = mock["foo", 1, 2];
-		_ = mock["bar", 1, 2];
+		_ = sut["foo", 1, 2];
+		_ = sut["bar", 1, 2];
 
 		await That(capturedValues).IsEqualTo(["foo", "bar",]);
 	}
@@ -113,12 +113,12 @@ public sealed partial class SetupIndexerTests
 	public async Task Parameter_Do_ShouldOnlyExecuteCallbackWhenAllParametersMatch()
 	{
 		List<string> capturedValues = [];
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)]
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)]
 			.InitializeWith(42);
 
-		_ = mock["foo", 1, 2];
-		_ = mock["bar", 2, 2];
+		_ = sut["foo", 1, 2];
+		_ = sut["bar", 2, 2];
 
 		await That(capturedValues).IsEqualTo(["foo",]);
 	}
@@ -126,11 +126,11 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task SetOnDifferentLevel_ShouldNotBeUsed()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
+		IIndexerService sut = IIndexerService.CreateMock();
 
-		mock[1] = "foo";
-		string result1 = mock[1, 2];
-		string result2 = mock[2, 1];
+		sut[1] = "foo";
+		string result1 = sut[1, 2];
+		string result2 = sut[2, 1];
 
 		await That(result1).IsEmpty();
 		await That(result2).IsEmpty();
@@ -139,11 +139,11 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task ShouldSupportNullAsParameter()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
+		IIndexerService sut = IIndexerService.CreateMock();
 
-		mock[null, 2, 1] = 42;
-		int? result1 = mock[null, 2, 1];
-		int? result2 = mock["", 0, 2];
+		sut[null, 2, 1] = 42;
+		int? result1 = sut[null, 2, 1];
+		int? result2 = sut["", 0, 2];
 
 		await That(result1).IsEqualTo(42);
 		await That(result2).IsNull();
@@ -152,11 +152,11 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task ShouldUseInitializedValue()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.Is(2)].InitializeWith("foo");
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.Is(2)].InitializeWith("foo");
 
-		string result1 = mock[2];
-		string result2 = mock[3];
+		string result1 = sut[2];
+		string result2 = sut[3];
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEmpty();
@@ -165,11 +165,11 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task ThreeLevels_ShouldUseInitializedValue()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.Is("foo"), It.Is(1), It.Is(2)].InitializeWith(42);
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.Is("foo"), It.Is(1), It.Is(2)].InitializeWith(42);
 
-		int? result1 = mock["foo", 1, 2];
-		int? result2 = mock["bar", 1, 2];
+		int? result1 = sut["foo", 1, 2];
+		int? result2 = sut["bar", 1, 2];
 
 		await That(result1).IsEqualTo(42);
 		await That(result2).IsNull();
@@ -178,18 +178,18 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task ThreeLevels_WithoutSetup_ShouldStoreLastValue()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IIndexerService sut = IIndexerService.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 
-		int? result0 = mock["foo", 1, 2];
+		int? result0 = sut["foo", 1, 2];
 		registration.SetIndexer(42,
 			new NamedParameterValue("index1", "foo"),
 			new NamedParameterValue("index2", 1),
 			new NamedParameterValue("index3", 2));
-		int? result1 = mock["foo", 1, 2];
-		int? result2 = mock["bar", 1, 2];
-		int? result3 = mock["foo", 2, 2];
-		int? result4 = mock["foo", 1, 3];
+		int? result1 = sut["foo", 1, 2];
+		int? result2 = sut["bar", 1, 2];
+		int? result3 = sut["foo", 2, 2];
+		int? result4 = sut["foo", 1, 3];
 
 		await That(result0).IsNull();
 		await That(result1).IsEqualTo(42);
@@ -201,11 +201,11 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task TwoLevels_ShouldUseInitializedValue()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.Is(2), It.Is(3)].InitializeWith("foo");
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.Is(2), It.Is(3)].InitializeWith("foo");
 
-		string result1 = mock[2, 3];
-		string result2 = mock[1, 4];
+		string result1 = sut[2, 3];
+		string result2 = sut[1, 4];
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEmpty();
@@ -214,12 +214,12 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task TwoLevels_WithoutSetup_ShouldStoreLastValue()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
+		IIndexerService sut = IIndexerService.CreateMock();
 
-		string result0 = mock[1, 2];
-		mock[1, 2] = "foo";
-		string result1 = mock[1, 2];
-		string result2 = mock[2, 2];
+		string result0 = sut[1, 2];
+		sut[1, 2] = "foo";
+		string result1 = sut[1, 2];
+		string result2 = sut[2, 2];
 
 		await That(result0).IsEmpty();
 		await That(result1).IsEqualTo("foo");
@@ -229,9 +229,9 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task WhenNameOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.IsAny<int>()].Returns("foo");
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
+		MockRegistration registration = ((IMock)sut).Registrations;
 
 		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue("index", 1));
 		IndexerSetupResult<string> result2 = registration.GetIndexer<string>(new NamedParameterValue("other", 1));
@@ -243,9 +243,9 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task WhenTypeOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
-		mock.Mock.Setup[It.IsAny<int>()].Returns("foo");
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IIndexerService sut = IIndexerService.CreateMock();
+		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
+		MockRegistration registration = ((IMock)sut).Registrations;
 
 		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue("index", 1));
 		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(new NamedParameterValue("index", 1));
@@ -257,12 +257,12 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task WithoutSetup_ShouldStoreLastValue()
 	{
-		IIndexerService mock = IIndexerService.CreateMock();
+		IIndexerService sut = IIndexerService.CreateMock();
 
-		string result0 = mock[1];
-		mock[1] = "foo";
-		string result1 = mock[1];
-		string result2 = mock[2];
+		string result0 = sut[1];
+		sut[1] = "foo";
+		string result1 = sut[1];
+		string result2 = sut[2];
 
 		await That(result0).IsEmpty();
 		await That(result1).IsEqualTo("foo");

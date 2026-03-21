@@ -41,31 +41,31 @@ public sealed class MockSetupsTests
 	public async Task ToString_Empty_ShouldReturnExpectedValue(
 		int methodCount, int propertyCount, int eventCount, int indexerCount, string expected)
 	{
-		IMyService mock = IMyService.CreateMock();
-		IMock sut = (IMock)mock;
+		IMyService sut = IMyService.CreateMock();
+		IMock mock = (IMock)sut;
 
 		for (int i = 0; i < methodCount; i++)
 		{
-			sut.Registrations.SetupMethod(new ReturnMethodSetup<int>($"my.method{i}"));
+			mock.Registrations.SetupMethod(new ReturnMethodSetup<int>($"my.method{i}"));
 		}
 
 		for (int i = 0; i < propertyCount; i++)
 		{
-			sut.Registrations.SetupProperty(new PropertySetup<int>($"my.property{i}"));
+			mock.Registrations.SetupProperty(new PropertySetup<int>($"my.property{i}"));
 		}
 
 		for (int i = 0; i < eventCount; i++)
 		{
-			sut.Registrations.AddEvent($"my.event{i}", this, Helper.GetMethodInfo());
+			mock.Registrations.AddEvent($"my.event{i}", this, Helper.GetMethodInfo());
 		}
 
 		for (int i = 0; i < indexerCount; i++)
 		{
-			sut.Registrations.SetupIndexer(new IndexerSetup<string, int>(
+			mock.Registrations.SetupIndexer(new IndexerSetup<string, int>(
 				new NamedParameter("index1", (IParameter)It.IsAny<int>())));
 		}
 
-		string result = sut.Registrations.ToString();
+		string result = mock.Registrations.ToString();
 
 		await That(result).IsEqualTo(expected);
 	}

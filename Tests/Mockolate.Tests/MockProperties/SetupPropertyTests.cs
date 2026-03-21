@@ -40,8 +40,8 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
-		IPropertyService mock = IPropertyService.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IPropertyService sut = IPropertyService.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 
 		int result0 = registration.GetProperty("my.other.property", () => 0, null);
 		PropertySetup<int> setup = new("my.property");
@@ -56,19 +56,19 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task Register_MultipleProperties_ShouldAllStoreValues()
 	{
-		IPropertyService mock = IPropertyService.CreateMock();
+		IPropertyService sut = IPropertyService.CreateMock();
 
-		mock.MyProperty = 1;
-		mock.MyOtherProperty = 2;
+		sut.MyProperty = 1;
+		sut.MyOtherProperty = 2;
 
-		int myResult1 = mock.MyProperty;
-		int myOtherResult1 = mock.MyOtherProperty;
+		int myResult1 = sut.MyProperty;
+		int myOtherResult1 = sut.MyOtherProperty;
 
-		mock.MyProperty = 10;
-		mock.MyOtherProperty = 20;
+		sut.MyProperty = 10;
+		sut.MyOtherProperty = 20;
 
-		int myResult2 = mock.MyProperty;
-		int myOtherResult2 = mock.MyOtherProperty;
+		int myResult2 = sut.MyProperty;
+		int myOtherResult2 = sut.MyOtherProperty;
 
 		await That(myResult1).IsEqualTo(1);
 		await That(myOtherResult1).IsEqualTo(2);
@@ -79,18 +79,18 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task Register_SamePropertyTwice_ShouldOverwritePreviousSetup()
 	{
-		IPropertyService mock = IPropertyService.CreateMock();
-		mock.Mock.Setup.MyProperty.InitializeWith(4);
+		IPropertyService sut = IPropertyService.CreateMock();
+		sut.Mock.Setup.MyProperty.InitializeWith(4);
 
-		int result1 = mock.MyProperty;
-		mock.MyProperty = 5;
-		int result2 = mock.MyProperty;
+		int result1 = sut.MyProperty;
+		sut.MyProperty = 5;
+		int result2 = sut.MyProperty;
 
-		mock.Mock.Setup.MyProperty.Returns(6);
+		sut.Mock.Setup.MyProperty.Returns(6);
 
-		int result3 = mock.MyProperty;
-		mock.MyProperty = 7;
-		int result4 = mock.MyProperty;
+		int result3 = sut.MyProperty;
+		sut.MyProperty = 7;
+		int result4 = sut.MyProperty;
 
 		await That(result1).IsEqualTo(4);
 		await That(result2).IsEqualTo(5);
@@ -101,8 +101,8 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task ShouldStoreLastValue()
 	{
-		IPropertyService mock = IPropertyService.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IPropertyService sut = IPropertyService.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 
 		string result0 = registration.GetProperty<string>("my.property", () => "", null);
 		registration.SetProperty("my.property", "foo");
@@ -127,12 +127,12 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task WhenMockInheritsPropertyMultipleTimes()
 	{
-		IMyPropertyService mock = IMyPropertyService.CreateMock().Implementing<IMyPropertyServiceBase1>();
-		mock.Mock.Setup.Value.InitializeWith("Hello");
+		IMyPropertyService sut = IMyPropertyService.CreateMock().Implementing<IMyPropertyServiceBase1>();
+		sut.Mock.Setup.Value.InitializeWith("Hello");
 
-		string result = mock.Value;
+		string result = sut.Value;
 
-		await That(mock.Mock.Verify.Value.Got()).Once();
+		await That(sut.Mock.Verify.Value.Got()).Once();
 		await That(result).IsEqualTo("Hello");
 	}
 

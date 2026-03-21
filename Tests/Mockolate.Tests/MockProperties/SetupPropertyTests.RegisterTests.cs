@@ -24,13 +24,13 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task RegisterBeforeAccess_ShouldNotThrowAndReturnDefaultValue()
 		{
-			IPropertyService mock = IPropertyService.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
+			IPropertyService sut = IPropertyService.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 
-			mock.Mock.Setup.MyStringProperty.Register();
+			sut.Mock.Setup.MyStringProperty.Register();
 
-			string? initialResult = mock.MyStringProperty;
-			mock.MyStringProperty = "foo";
-			string? otherResult = mock.MyStringProperty;
+			string? initialResult = sut.MyStringProperty;
+			sut.MyStringProperty = "foo";
+			string? otherResult = sut.MyStringProperty;
 
 			await That(initialResult).IsEmpty();
 			await That(otherResult).IsEqualTo("foo");

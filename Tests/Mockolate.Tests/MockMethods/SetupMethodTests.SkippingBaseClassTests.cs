@@ -10,12 +10,12 @@ public sealed partial class SetupMethodTests
 		public async Task MyReturnMethodWith1Parameter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyReturnMethodWith1Parameter(It.IsAny<int>()).SkippingBaseClass(skipBaseClass);
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyReturnMethodWith1Parameter(It.IsAny<int>()).SkippingBaseClass(skipBaseClass);
 
-			mock.MyReturnMethodWith1Parameter(1);
+			sut.MyReturnMethodWith1Parameter(1);
 
-			await That(mock.MyReturnMethodWith1ParameterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyReturnMethodWith1ParameterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -24,12 +24,12 @@ public sealed partial class SetupMethodTests
 		public async Task MyReturnMethodWith2Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyReturnMethodWith2Parameters(It.IsAny<int>(), It.IsAny<int>()).SkippingBaseClass(skipBaseClass);
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyReturnMethodWith2Parameters(It.IsAny<int>(), It.IsAny<int>()).SkippingBaseClass(skipBaseClass);
 
-			mock.MyReturnMethodWith2Parameters(1, 2);
+			sut.MyReturnMethodWith2Parameters(1, 2);
 
-			await That(mock.MyReturnMethodWith2ParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyReturnMethodWith2ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -38,13 +38,13 @@ public sealed partial class SetupMethodTests
 		public async Task MyReturnMethodWith3Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyReturnMethodWith3Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyReturnMethodWith3Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.SkippingBaseClass(skipBaseClass);
 
-			mock.MyReturnMethodWith3Parameters(1, 2, 3);
+			sut.MyReturnMethodWith3Parameters(1, 2, 3);
 
-			await That(mock.MyReturnMethodWith3ParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyReturnMethodWith3ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -53,13 +53,13 @@ public sealed partial class SetupMethodTests
 		public async Task MyReturnMethodWith4Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyReturnMethodWith4Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyReturnMethodWith4Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.SkippingBaseClass(skipBaseClass);
 
-			mock.MyReturnMethodWith4Parameters(1, 2, 3, 4);
+			sut.MyReturnMethodWith4Parameters(1, 2, 3, 4);
 
-			await That(mock.MyReturnMethodWith4ParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyReturnMethodWith4ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -68,13 +68,13 @@ public sealed partial class SetupMethodTests
 		public async Task MyReturnMethodWith5Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyReturnMethodWith5Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyReturnMethodWith5Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.SkippingBaseClass(skipBaseClass);
 
-			mock.MyReturnMethodWith5Parameters(1, 2, 3, 4, 5);
+			sut.MyReturnMethodWith5Parameters(1, 2, 3, 4, 5);
 
-			await That(mock.MyReturnMethodWith5ParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyReturnMethodWith5ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -83,12 +83,12 @@ public sealed partial class SetupMethodTests
 		public async Task MyReturnMethodWithoutParameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyReturnMethodWithoutParameters().SkippingBaseClass(skipBaseClass);
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyReturnMethodWithoutParameters().SkippingBaseClass(skipBaseClass);
 
-			mock.MyReturnMethodWithoutParameters();
+			sut.MyReturnMethodWithoutParameters();
 
-			await That(mock.MyReturnMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyReturnMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -97,12 +97,12 @@ public sealed partial class SetupMethodTests
 		public async Task MyVoidMethodWith1Parameter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyVoidMethodWith1Parameter(It.IsAny<int>()).SkippingBaseClass(skipBaseClass);
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyVoidMethodWith1Parameter(It.IsAny<int>()).SkippingBaseClass(skipBaseClass);
 
-			mock.MyVoidMethodWith1Parameter(1);
+			sut.MyVoidMethodWith1Parameter(1);
 
-			await That(mock.MyVoidMethodWith1ParameterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyVoidMethodWith1ParameterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -111,12 +111,12 @@ public sealed partial class SetupMethodTests
 		public async Task MyVoidMethodWith2Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyVoidMethodWith2Parameters(It.IsAny<int>(), It.IsAny<int>()).SkippingBaseClass(skipBaseClass);
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyVoidMethodWith2Parameters(It.IsAny<int>(), It.IsAny<int>()).SkippingBaseClass(skipBaseClass);
 
-			mock.MyVoidMethodWith2Parameters(1, 2);
+			sut.MyVoidMethodWith2Parameters(1, 2);
 
-			await That(mock.MyVoidMethodWith2ParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyVoidMethodWith2ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -125,13 +125,13 @@ public sealed partial class SetupMethodTests
 		public async Task MyVoidMethodWith3Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyVoidMethodWith3Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyVoidMethodWith3Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.SkippingBaseClass(skipBaseClass);
 
-			mock.MyVoidMethodWith3Parameters(1, 2, 3);
+			sut.MyVoidMethodWith3Parameters(1, 2, 3);
 
-			await That(mock.MyVoidMethodWith3ParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyVoidMethodWith3ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -140,13 +140,13 @@ public sealed partial class SetupMethodTests
 		public async Task MyVoidMethodWith4Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyVoidMethodWith4Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyVoidMethodWith4Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.SkippingBaseClass(skipBaseClass);
 
-			mock.MyVoidMethodWith4Parameters(1, 2, 3, 4);
+			sut.MyVoidMethodWith4Parameters(1, 2, 3, 4);
 
-			await That(mock.MyVoidMethodWith4ParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyVoidMethodWith4ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -155,13 +155,13 @@ public sealed partial class SetupMethodTests
 		public async Task MyVoidMethodWith5Parameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyVoidMethodWith5Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyVoidMethodWith5Parameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.SkippingBaseClass(skipBaseClass);
 
-			mock.MyVoidMethodWith5Parameters(1, 2, 3, 4, 5);
+			sut.MyVoidMethodWith5Parameters(1, 2, 3, 4, 5);
 
-			await That(mock.MyVoidMethodWith5ParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyVoidMethodWith5ParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -170,21 +170,21 @@ public sealed partial class SetupMethodTests
 		public async Task MyVoidMethodWithoutParameters_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyVoidMethodWithoutParameters().SkippingBaseClass(skipBaseClass);
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyVoidMethodWithoutParameters().SkippingBaseClass(skipBaseClass);
 
-			mock.MyVoidMethodWithoutParameters();
+			sut.MyVoidMethodWithoutParameters();
 
-			await That(mock.MyVoidMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyVoidMethodWithoutParametersCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Fact]
 		public async Task SetupSkippingBaseClassWithoutParameter_ShouldReturnDefaultValue()
 		{
-			MyMethodService mock = MyMethodService.CreateMock();
-			mock.Mock.Setup.MyMethodReturning2().SkippingBaseClass();
+			MyMethodService sut = MyMethodService.CreateMock();
+			sut.Mock.Setup.MyMethodReturning2().SkippingBaseClass();
 
-			int result = mock.MyMethodReturning2();
+			int result = sut.MyMethodReturning2();
 
 			await That(result).IsEqualTo(0);
 		}

@@ -330,9 +330,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WithoutCallback_IPropertySetupReturnBuilder_ShouldNotThrow()
 		{
-			IPropertyService mock = IPropertyService.CreateMock();
+			IPropertyService sut = IPropertyService.CreateMock();
 			IPropertySetupReturnBuilder<int> setup =
-				mock.Mock.Setup.MyProperty;
+				sut.Mock.Setup.MyProperty;
 
 			void ActWhen()
 			{
@@ -351,9 +351,9 @@ public sealed partial class SetupPropertyTests
 		[Fact]
 		public async Task WithoutCallback_IPropertySetupReturnWhenBuilder_ShouldNotThrow()
 		{
-			IPropertyService mock = IPropertyService.CreateMock();
+			IPropertyService sut = IPropertyService.CreateMock();
 			IPropertySetupReturnWhenBuilder<int> setup =
-				mock.Mock.Setup.MyProperty;
+				sut.Mock.Setup.MyProperty;
 
 			void ActFor()
 			{

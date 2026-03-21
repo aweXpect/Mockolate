@@ -23,14 +23,14 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ShouldSupportCovarianceInSetup()
 		{
-			IMyService mock = IMyService.CreateMock();
+			IMyService sut = IMyService.CreateMock();
 			MyImplementation value1 = new();
 			MyOtherImplementation value2 = new();
-			mock.Mock.Setup.DoSomething(It.Is(value1))
+			sut.Mock.Setup.DoSomething(It.Is(value1))
 				.Returns(3);
 
-			int result1 = mock.DoSomething(value1);
-			int result2 = mock.DoSomething(value2);
+			int result1 = sut.DoSomething(value1);
+			int result2 = sut.DoSomething(value2);
 
 			await That(result1).IsEqualTo(3);
 			await That(result2).IsEqualTo(0);
