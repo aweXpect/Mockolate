@@ -330,6 +330,7 @@ internal static partial class Sources
 		sb.Append("internal static partial class Mock").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.AppendXmlSummary($"A mock implementation for <see cref=\"{escapedClassName}\" />.", "\t");
+		sb.Append("\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").AppendLine();
 		sb.Append("\tinternal class ").Append(name).Append(" :").AppendLine();
 		sb.Append("\t\t").Append(@class.ClassFullName);
 		sb.Append(", IMockFor").Append(name).Append(", IMockSetupFor").Append(name);
