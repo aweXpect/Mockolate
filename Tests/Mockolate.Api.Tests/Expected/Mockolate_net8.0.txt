@@ -84,6 +84,7 @@ namespace Mockolate
     {
         object?[] ConstructorParameters { get; }
         Mockolate.MockRegistration Registrations { get; }
+        string ToString();
     }
     public interface IMockBehaviorAccess
     {

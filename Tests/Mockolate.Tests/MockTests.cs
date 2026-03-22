@@ -230,6 +230,26 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task ToString_ShouldReturnImplementedType()
+	{
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+		string result = ((IMock)sut).ToString();
+
+		await That(result).IsEqualTo("Mockolate.Tests.TestHelpers.IChocolateDispenser mock");
+	}
+
+	[Fact]
+	public async Task ToString_WithAdditionalImplementations_ShouldReturnImplementedType()
+	{
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock().Implementing<IMyService>();
+
+		string result = ((IMock)sut).ToString();
+
+		await That(result).IsEqualTo("Mockolate.Tests.TestHelpers.IChocolateDispenser mock that also implements Mockolate.Tests.MockTests.IMyService");
+	}
+
+	[Fact]
 	public async Task WhenTypeHasMockAndMockolate_MockProperty_ShouldAppendNumbers()
 	{
 		MyInterfaceWithMockAndMockolate_MockProperty sut = MyInterfaceWithMockAndMockolate_MockProperty.CreateMock();

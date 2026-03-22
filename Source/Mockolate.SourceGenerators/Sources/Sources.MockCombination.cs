@@ -289,6 +289,11 @@ internal static partial class Sources
 		{
 			ImplementMockForInterface(sb, additionalInterfaceName, additionalInterface.AllEvents().Any(x => !x.IsStatic), additionalInterface.AllMethods().Any(x => x.IsStatic) || additionalInterface.AllProperties().Any(x => x.IsStatic), additionalInterface.AllEvents().Any(x => x.IsStatic));
 		}
+		
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
+		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock that also implements ").Append(string.Join(", ", additionalInterfaces.Select(x => x.Class.DisplayString))).Append("\";").AppendLine();
+		sb.AppendLine();
 
 		if (@class.IsInterface)
 		{
