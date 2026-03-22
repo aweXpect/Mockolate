@@ -4,13 +4,12 @@
 
 [![Nuget](https://img.shields.io/nuget/v/Mockolate)](https://www.nuget.org/packages/Mockolate)
 
-[**Mockolate**](https://github.com/aweXpect/Mockolate) is a modern, strongly-typed, AOT-compatible mocking library
-for .NET, powered by source generators.
+[**Mockolate**](https://github.com/aweXpect/Mockolate) is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators.
 It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, .NET 10 and .NET Framework 4.8.
 
 - **Source generator-based**: No runtime proxy generation.
 - **Strongly-typed**: Compile-time safety and IntelliSense support.
-- **AOT compatible**: Works with NativeAOT and trimming.
+- **AOT compatible**: Works with Native AOT and trimming.
 
 ## Getting Started
 
@@ -37,19 +36,19 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    }
    
    // Create a mock for IChocolateDispenser
-   IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+   IChocolateDispenser sut = IChocolateDispenser.CreateMock();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   sut.SetupMock.Indexer(It.Is("Dark")).InitializeWith(10);
+   sut.Mock.Setup[It.Is("Dark")].InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
+   sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>())
        .Returns((type, amount) =>
        {
            int current = sut[type];
            if (current >= amount)
            {
                sut[type] = current - amount;
-               sut.RaiseOnMock.ChocolateDispensed(type, amount);
+               sut.Mock.Raise.ChocolateDispensed(type, amount);
                return true;
            }
            return false;
@@ -68,7 +67,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    bool gotChoc3 = sut.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Exactly(3);
+   sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");

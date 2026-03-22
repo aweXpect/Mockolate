@@ -4,8 +4,8 @@ Mockolate tracks all interactions with mocks on the mock object. To only track i
 can use a `MockMonitor<T>`:
 
 ```csharp
-var sut = Mock.Create<IChocolateDispenser>();
-var monitor = new MockMonitor<IChocolateDispenser>(sut);
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+MockMonitor<Mock.IMockVerifyForIChocolateDispenser> monitor = sut.Mock.Monitor();
 
 sut.Dispense("Dark", 1); // Not monitored
 using (monitor.Run())
@@ -15,22 +15,22 @@ using (monitor.Run())
 sut.Dispense("Dark", 3); // Not monitored
 
 // Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
-monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
+monitor.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
 ```
 
-Alternatively, you can use the `MonitorMock()` extension method to create an already running monitor directly from the
-mock:
+Alternatively, you can create an already running monitor using `sut.Mock.Monitor()` and start it immediately:
 
 ```csharp
-var sut = Mock.Create<IChocolateDispenser>();
+var sut = IChocolateDispenser.CreateMock();
+var monitor = sut.Mock.Monitor();
 
 sut.Dispense("Dark", 1); // Not monitored
-using var scope = sut.MonitorMock(out var monitor);
+using var scope = monitor.Run();
 sut.Dispense("Dark", 2); // Monitored
 sut.Dispense("Dark", 3); // Monitored
 
 // Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
-monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Twice();
+monitor.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Twice();
 ```
 
 ## Clear all interactions
@@ -39,12 +39,12 @@ For simpler scenarios you can directly clear all recorded interactions on a mock
 setup:
 
 ```csharp
-var sut = Mock.Create<IChocolateDispenser>();
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
 sut.Dispense("Dark", 1);
 // Clears all previously recorded interactions
-sut.SetupMock.ClearAllInteractions();
+sut.Mock.ClearAllInteractions();
 sut.Dispense("Dark", 2);
 
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
 ```

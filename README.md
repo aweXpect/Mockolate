@@ -13,7 +13,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
 
 - **Source generator-based**: No runtime proxy generation.
 - **Strongly-typed**: Compile-time safety and IntelliSense support.
-- **AOT compatible**: Works with NativeAOT and trimming.
+- **AOT compatible**: Works with Native AOT and trimming.
 
 ## Getting Started
 
@@ -40,19 +40,19 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    }
    
    // Create a mock for IChocolateDispenser
-   IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+   IChocolateDispenser sut = IChocolateDispenser.CreateMock();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   sut.SetupMock.Indexer(It.Is("Dark")).InitializeWith(10);
+   sut.Mock.Setup[It.Is("Dark")].InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
+   sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>())
        .Returns((type, amount) =>
        {
            int current = sut[type];
            if (current >= amount)
            {
                sut[type] = current - amount;
-               sut.RaiseOnMock.ChocolateDispensed(type, amount);
+               sut.Mock.Raise.ChocolateDispensed(type, amount);
                return true;
            }
            return false;
@@ -71,7 +71,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    bool gotChoc3 = sut.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Exactly(3);
+   sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
@@ -79,46 +79,30 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
 
 ## Create mocks
 
-You can create mocks for interfaces and classes. For classes without a default constructor, use
-`BaseClass.WithConstructorParameters(…)` to provide constructor arguments:
+You can create mocks for interfaces and classes. For classes without a default constructor, provide constructor
+arguments as an array to `CreateMock([…])`:
 
 ```csharp
 // Create a mock for an interface
-IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
 // Create a mock for a class
-MyChocolateDispenser classMock = Mock.Create<MyChocolateDispenser>();
+MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock();
 
 // For classes without a default constructor:
-MyChocolateDispenserWithCtor classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
-    BaseClass.WithConstructorParameters("Dark", 42)
-);
+MyChocolateDispenserWithCtor classWithArgsMock = MyChocolateDispenserWithCtor.CreateMock(["Dark", 42]);
 ```
-
-You can specify up to eight additional interfaces that the mock also implements (beyond the first type):
-
-```csharp
-// return type is a MyChocolateDispenser that also implements ILemonadeDispenser
-var sut = Mock.Create<MyChocolateDispenser, ILemonadeDispenser>();
-```
-
-**Notes:**
-
-- Only the first generic type can be a class; additional types must be interfaces.
-- Sealed classes cannot be mocked and will throw a `MockException`.
 
 ### Customizing mock behavior
 
 You can control the default behavior of the mock by providing a `MockBehavior`:
 
 ```csharp
-var strictMock = Mock.Create<IChocolateDispenser>(MockBehavior.Default with { ThrowWhenNotSetup = true });
+IChocolateDispenser strictMock = IChocolateDispenser.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 
 // For classes with constructor parameters and custom behavior:
-var classMock = Mock.Create<MyChocolateDispenser>(
-    BaseClass.WithConstructorParameters("Dark", 42),
-    new MockBehavior { ThrowWhenNotSetup = true }
-);
+MockBehavior behavior = new MockBehavior { ThrowWhenNotSetup = true };
+MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(["Dark", 42], behavior);
 ```
 
 **`MockBehavior` options**
@@ -140,10 +124,10 @@ var classMock = Mock.Create<MyChocolateDispenser>(
     - `null` for other reference types
   - You can add custom default value factories for specific types using `.WithDefaultValueFor<T>()`:
     ```csharp
-    var behavior = MockBehavior.Default
+    MockBehavior behavior = MockBehavior.Default
       .WithDefaultValueFor<string>(() => "default")
       .WithDefaultValueFor<int>(() => 42);
-    var sut = Mock.Create<IChocolateDispenser>(behavior);
+    IChocolateDispenser sut = IChocolateDispenser.CreateMock(behavior);
     ```
     This is useful when you want mocks to return specific default values for certain types instead of the standard
     defaults.
@@ -155,42 +139,62 @@ var classMock = Mock.Create<MyChocolateDispenser>(
     connection strings to each mock so they can be verified independently.
 - `UseConstructorParametersFor<T>(object?[])`:
   - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
-    during mock creation via `BaseClass.WithConstructorParameters(…)`.
+    during mock creation via `CreateMock([…])`.
 
-### Using a factory for shared behavior
+**Using a shared behavior**
 
-Use `Mock.Factory` to create multiple mocks with a shared behavior:
+You can reuse a `MockBehavior` instance across multiple mock creations to apply consistent, centrally configured
+behavior:
 
 ```csharp
-var behavior = MockBehavior.Default with { ThrowWhenNotSetup = true };
-var factory = new Mock.Factory(behavior);
+MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
-var sut1 = factory.Create<IChocolateDispenser>();
-var sut2 = factory.Create<ILemonadeDispenser>();
+IChocolateDispenser sut1 = IChocolateDispenser.CreateMock(behavior);
+ILemonadeDispenser sut2 = ILemonadeDispenser.CreateMock(behavior);
 ```
 
-Using a factory allows you to create multiple mocks with identical, centrally configured behavior. This is especially
-useful when you need consistent mock setups across multiple tests or for different types.
+This is especially useful when you need consistent mock setups across multiple tests or for different types.
+
+### Setups
+
+Specify setups during mock creation using the `CreateMock` overload with a setup callback. These setups also apply to virtual interactions in the constructor.
+
+### Implementing additional interfaces
+
+You can specify additional interfaces that the mock also implements using `.Implementing<T>()`:
+
+```csharp
+// return type is a MyChocolateDispenser that also implements ILemonadeDispenser
+MyChocolateDispenser sut = MyChocolateDispenser.CreateMock().Implementing<ILemonadeDispenser>();
+
+// Create a mock implementing multiple interfaces with inline setups
+IChocolateDispenser sut2 = IChocolateDispenser.CreateMock()
+    .Implementing<ILemonadeDispenser>(setup => setup.DispenseLemonade(It.IsAny<int>()).Returns(true));
+```
+
+**Notes:**
+
+- Only the first type can be a class; additional types must be interfaces.
 
 ### Wrapping existing instances
 
-You can wrap an existing instance with mock tracking using `Mock.Wrap<T>()`. This allows you to track interactions with
-a real object:
+You can wrap an existing instance with mock tracking using `.Wrapping(instance)`. This allows you to track interactions
+with a real object:
 
 ```csharp
-var realDispenser = new MyChocolateDispenser();
-var wrappedDispenser = Mock.Wrap<IChocolateDispenser>(realDispenser);
+MyChocolateDispenser realDispenser = new MyChocolateDispenser();
+IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(realDispenser);
 
 // Calls are forwarded to the real instance
 wrappedDispenser.Dispense("Dark", 5);
 
 // But you can still verify interactions
-wrappedDispenser.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).Once();
+wrappedDispenser.Mock.Verify.Dispense(It.Is("Dark"), It.Is(5)).Once();
 ```
 
 **Notes:**
 
-- Only interface types can be wrapped with `Mock.Wrap<T>()`.
+- Only interface types can be wrapped.
 - All calls are forwarded to the wrapped instance.
 - You can still set up custom behavior that overrides the wrapped instance's behavior.
 - You cannot override protected members of the wrapped instance.
@@ -211,16 +215,16 @@ You can initialize properties so they work like normal properties (setter change
 value):
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed.InitializeWith(42);
+sut.Mock.Setup.TotalDispensed.InitializeWith(42);
 ```
 
 You can also register a setup without providing a value (useful when `ThrowWhenNotSetup` is enabled):
 
 ```csharp
-var strictMock = Mock.Create<IChocolateDispenser>(MockBehavior.Default.ThrowingWhenNotSetup());
+IChocolateDispenser sut = IChocolateDispenser.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 
 // Register property without value - won't throw
-strictMock.SetupMock.Property.TotalDispensed.Register();
+sut.Mock.Setup.TotalDispensed.Register();
 ```
 
 **Returns / Throws**
@@ -228,7 +232,7 @@ strictMock.SetupMock.Property.TotalDispensed.Register();
 Set up properties with `Returns` and `Throws` (supports sequences):
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .Returns(1)
     .Returns(2)
     .Throws(new Exception("Error"))
@@ -238,7 +242,7 @@ sut.SetupMock.Property.TotalDispensed
 You can also return a value based on the previous value:
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .Returns(current => current + 10);  // Increment by 10 each read
 ```
 
@@ -247,9 +251,9 @@ sut.SetupMock.Property.TotalDispensed
 Register callbacks on the setter or getter:
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed.OnGet
+sut.Mock.Setup.TotalDispensed.OnGet
     .Do(() => Console.WriteLine("TotalDispensed was read!"));
-sut.SetupMock.Property.TotalDispensed.OnSet
+sut.Mock.Setup.TotalDispensed.OnSet
     .Do(newValue => Console.WriteLine($"Changed to {newValue}!") );
 ```
 
@@ -257,12 +261,12 @@ Callbacks can also receive the current value:
 
 ```csharp
 // Getter with the current value
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .OnGet.Do(value => 
         Console.WriteLine($"Read TotalDispensed current value: {value}"));
 
 // Setter with the new value
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .OnSet.Do(newValue => 
         Console.WriteLine($"Set TotalDispensed to {newValue}"));
 ```
@@ -270,7 +274,7 @@ sut.SetupMock.Property.TotalDispensed
 Callbacks also support sequences, similar to `Returns` and `Throws`:
 
 ```csharp
-sut.SetupMock.Property.TotalDispensed.OnGet
+sut.Mock.Setup.TotalDispensed.OnGet
     .Do(() => Console.WriteLine("Execute on all even read interactions"))
     .Do(() => Console.WriteLine("Execute on all odd read interactions"));
 ```
@@ -284,7 +288,7 @@ sut.SetupMock.Property.TotalDispensed.OnGet
 
 ### Methods
 
-Use `mock.SetupMock.Method.MethodName(…)` to set up methods. You can specify argument matchers for each parameter.
+Use `sut.Mock.Setup.MethodName(…)` to set up methods. You can specify argument matchers for each parameter.
 
 **Returns / Throws**
 
@@ -298,25 +302,25 @@ on each call).
 
 ```csharp
 // Setup Dispense to decrease stock and raise event
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>())
     .Returns((type, amount) =>
     {
         var current = sut[type];
         if (current >= amount)
         {
             sut[type] = current - amount;
-            sut.RaiseOnMock.ChocolateDispensed(type, amount);
+            sut.Mock.Raise.ChocolateDispensed(type, amount);
             return true;
         }
         return false;
     });
 
 // Setup method to throw
-sut.SetupMock.Method.Dispense(It.Is("Green"), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.Is("Green"), It.IsAny<int>())
     .Throws<InvalidChocolateException>();
 
 // Sequence of returns and throws
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Returns(true)
     .Throws(new Exception("Error"))
     .Returns(false);
@@ -328,7 +332,7 @@ For async methods returning `Task`/`Task<T>` or `ValueTask`/`ValueTask<T>`, use 
 respectively:
 
 ```csharp
-sut.SetupMock.Method.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.DispenseAsync(It.IsAny<string>(), It.IsAny<int>())
     .ReturnsAsync((_, v) => v)            // First execution returns the value of the `int` parameter
     .ThrowsAsync(new TimeoutException())  // Second execution throws a TimeoutException
     .ReturnsAsync(0).Forever();           // Subsequent executions return 0
@@ -340,7 +344,7 @@ Use `.Do(…)` to run code when the method is called. Supports parameterless or 
 
 ```csharp
 // Setup method with callback
-sut.SetupMock.Method.Dispense(It.Is("White"), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.Is("White"), It.IsAny<int>())
     .Do((type, amount) => Console.WriteLine($"Dispensed {amount} {type} chocolate."));
 ```
 
@@ -357,11 +361,11 @@ sut.SetupMock.Method.Dispense(It.Is("White"), It.IsAny<int>())
 Set up indexers with argument matchers. Supports initialization, returns/throws sequences, and callbacks.
 
 ```csharp
-sut.SetupMock.Indexer(It.IsAny<string>())
+sut.Mock.Setup[It.IsAny<string>()]
     .InitializeWith(type => 20)
     .OnGet.Do(type => Console.WriteLine($"Stock for {type} was read"));
 
-sut.SetupMock.Indexer(It.Is("Dark"))
+sut.Mock.Setup[It.Is("Dark")]
     .InitializeWith(10)
     .OnSet.Do((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
 ```
@@ -372,7 +376,7 @@ You can initialize indexers so they work like normal indexers (setter changes th
 value):
 
 ```csharp
-sut.SetupMock.Indexer(It.IsAny<string>()).InitializeWith(42);
+sut.Mock.Setup[It.IsAny<string>()].InitializeWith(42);
 ```
 
 **Returns / Throws**
@@ -380,7 +384,7 @@ sut.SetupMock.Indexer(It.IsAny<string>()).InitializeWith(42);
 Set up indexers with `Returns` and `Throws` (supports sequences):
 
 ```csharp
-sut.SetupMock.Indexer(It.IsAny<string>())
+sut.Mock.Setup[It.IsAny<string>()]
     .Returns(1)
     .Returns(2)
     .Throws(new Exception("Error"))
@@ -390,7 +394,7 @@ sut.SetupMock.Indexer(It.IsAny<string>())
 You can also return a value based on the previous value:
 
 ```csharp
-sut.SetupMock.Indexer(It.IsAny<string>())
+sut.Mock.Setup[It.IsAny<string>()]
     .Returns(current => current + 10);  // Increment by 10 each read
 ```
 
@@ -399,9 +403,9 @@ sut.SetupMock.Indexer(It.IsAny<string>())
 Register callbacks on the setter or getter of the indexer:
 
 ```csharp
-sut.SetupMock.Indexer(It.IsAny<string>()).OnGet
+sut.Mock.Setup[It.IsAny<string>()].OnGet
     .Do(() => Console.WriteLine("Indexer was read!"));
-sut.SetupMock.Indexer(It.IsAny<string>()).OnSet
+sut.Mock.Setup[It.IsAny<string>()].OnSet
     .Do(newValue => Console.WriteLine($"Changed indexer to {newValue}!") );
 ```
 
@@ -409,12 +413,12 @@ Callbacks can also receive the indexer parameters and the current value:
 
 ```csharp
 // Getter with the current value
-sut.SetupMock.Indexer(It.IsAny<string>())
+sut.Mock.Setup[It.IsAny<string>()]
     .OnGet.Do((string index, int value) => 
         Console.WriteLine($"Read this[{index}] current value: {value}"));
 
 // Setter with the new value
-sut.SetupMock.Indexer(It.IsAny<string>())
+sut.Mock.Setup[It.IsAny<string>()]
     .OnSet.Do((string index, int newValue) => 
         Console.WriteLine($"Set this[{index}] to {newValue}"));
 ```
@@ -422,7 +426,7 @@ sut.SetupMock.Indexer(It.IsAny<string>())
 Callbacks also support sequences, similar to `Returns` and `Throws`:
 
 ```csharp
-sut.SetupMock.Indexer(It.IsAny<string>()).OnGet
+sut.Mock.Setup[It.IsAny<string>()].OnGet
     .Do(() => Console.WriteLine("Execute on all even read interactions"))
     .Do(() => Console.WriteLine("Execute on all odd read interactions"));
 ```
@@ -465,13 +469,13 @@ Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
 
   ```csharp
   // Example: Match email addresses
-  sut.SetupMock.Method.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
+  sut.Mock.Setup.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
       .Returns(true);
   
   bool result = sut.ValidateEmail("user@example.com");
   
   // Case-sensitive regex
-  sut.SetupMock.Method.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
+  sut.Mock.Setup.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
       .Returns(1);
   ```
 
@@ -487,7 +491,7 @@ Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
 
 ```csharp
 // Example: Setup with out parameter
-sut.SetupMock.Method.TryParse(It.IsAny<string>(), It.IsOut(() => 42))
+sut.Mock.Setup.TryParse(It.IsAny<string>(), It.IsOut(() => 42))
     .Returns(true);
 
 int result;
@@ -495,7 +499,7 @@ bool success = sut.TryParse("abc", out result);
 // result == 42, success == true
 
 // Example: Setup with ref parameter
-sut.SetupMock.Method.Increment(It.IsRef<int>(v => v + 1))
+sut.Mock.Setup.Increment(It.IsRef<int>(v => v + 1))
     .Returns(true);
 
 int value = 5;
@@ -516,7 +520,7 @@ this array for evaluation.
 
 ```csharp
 // Example: Setup with Span parameter
-sut.SetupMock.Method.Process(It.IsSpan<byte>(data => data.Length > 0))
+sut.Mock.Setup.Process(It.IsSpan<byte>(data => data.Length > 0))
     .Returns(true);
 
 Span<byte> buffer = new byte[] { 1, 2, 3 };
@@ -530,8 +534,8 @@ Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It
 
 ```csharp
 // Example: Case-insensitive string comparison
-var comparer = StringComparer.OrdinalIgnoreCase;
-sut.SetupMock.Method.Process(It.Is("hello").Using(comparer))
+StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+sut.Mock.Setup.Process(It.Is("hello").Using(comparer))
     .Returns(42);
 
 int result = sut.Process("HELLO");
@@ -547,7 +551,7 @@ When the method name is unique (no overloads), you can use flexible parameter ma
 
 ```csharp
 // Example: Custom parameter predicate
-sut.SetupMock.Method.Process(Match.Parameters(args => 
+sut.Mock.Setup.Process(Match.Parameters(args => 
     args.Length == 2 && 
     args[0].Value is string s && s.StartsWith("test") &&
     args[1].Value is int i && i > 0))
@@ -568,7 +572,7 @@ effects or checks directly when the method or indexer is called.
 
 ```csharp
 int lastAmount = 0;
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Do(amount => lastAmount = amount));
+sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>().Do(amount => lastAmount = amount));
 sut.Dispense("Dark", 42);
 // lastAmount == 42
 ```
@@ -582,7 +586,7 @@ values passed during test execution and analyze them afterward.
 
 ```csharp
 Mockolate.ParameterMonitor<int> monitor;
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Monitor(out monitor));
+sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>().Monitor(out monitor));
 sut.Dispense("Dark", 5);
 sut.Dispense("Dark", 7);
 // monitor.Values == [5, 7]
@@ -602,7 +606,7 @@ method signature matches the event delegate.
 sut.ChocolateDispensed += (type, amount) => { /* handler code */ };
 
 // Act: raise the event
-sut.RaiseOnMock.ChocolateDispensed("Dark", 5);
+sut.Mock.Raise.ChocolateDispensed("Dark", 5);
 ```
 
 - Use the `Raise` property to trigger events declared on the mocked interface or class.
@@ -615,8 +619,8 @@ sut.RaiseOnMock.ChocolateDispensed("Dark", 5);
 int dispensedAmount = 0;
 sut.ChocolateDispensed += (type, amount) => dispensedAmount += amount;
 
-sut.RaiseOnMock.ChocolateDispensed("Dark", 3);
-sut.RaiseOnMock.ChocolateDispensed("Milk", 2);
+sut.Mock.Raise.ChocolateDispensed("Dark", 3);
+sut.Mock.Raise.ChocolateDispensed("Milk", 2);
 
 // dispensedAmount == 5
 ```
@@ -629,7 +633,7 @@ called.
 You can verify that methods, properties, indexers, or events were called or accessed with specific arguments and how
 many times, using the `Verify` API:
 
-Supported call count verifications in the `Mockolate.VerifyMock` namespace:
+Supported call count verifications (in the `Mockolate.Verify` namespace):
 
 - `.Never()`: The interaction never occurred
 - `.Once()`: The interaction occurred exactly once
@@ -649,7 +653,7 @@ the expected interactions to occur:
 
 ```csharp
 // Wait up to 1 second for Dispense("Dark", 5) to be invoked
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5))
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.Is(5))
     .Within(TimeSpan.FromSeconds(1))
     .AtLeastOnce();
 ```
@@ -666,10 +670,10 @@ You can verify access to property getter and setter:
 
 ```csharp
 // Verify that the property 'TotalDispensed' was read at least once
-sut.VerifyMock.Got.TotalDispensed().AtLeastOnce();
+sut.Mock.Verify.TotalDispensed.Got().AtLeastOnce();
 
 // Verify that the property 'TotalDispensed' was set to 42 exactly once
-sut.VerifyMock.Set.TotalDispensed(It.Is(42)).Once();
+sut.Mock.Verify.TotalDispensed.Set(It.Is(42)).Once();
 ```
 
 **Note:**  
@@ -681,32 +685,32 @@ You can verify that methods were invoked with specific arguments and how many ti
 
 ```csharp
 // Verify that Dispense("Dark", 5) was invoked at least once
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5))
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.Is(5))
     .AtLeastOnce();
 
 // Verify that Dispense was never invoked with "White" and any amount
-sut.VerifyMock.Invoked.Dispense(It.Is("White"), It.IsAny<int>())
+sut.Mock.Verify.Dispense(It.Is("White"), It.IsAny<int>())
     .Never();
 
 // Verify that Dispense was invoked exactly twice with any type and any amount
-sut.VerifyMock.Invoked.Dispense(Match.AnyParameters())
+sut.Mock.Verify.Dispense(Match.AnyParameters())
     .Exactly(2);
 
 // Verify that Dispense was invoked between 3 and 5 times (inclusive)
-sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Between(3, 5);
 
 // Verify that Dispense was invoked an even number of times
-sut.VerifyMock.Invoked.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Times(count => count % 2 == 0);
 ```
 
 You can also verify that a specific setup was invoked a specific number of times:
 
 ```csharp
-var setup = sut.SetupMock.Method.Dispense(It.Is("Dark"), It.Is(5)).Returns(true);
+IMockSetup setup = sut.Mock.Setup.Dispense(It.Is("Dark"), It.Is(5)).Returns(true);
 // Act
-sut.VerifyMock.InvokedSetup(setup).AtLeastOnce();
+sut.Mock.VerifySetup(setup).AtLeastOnce();
 ```
 
 ### Indexers
@@ -715,10 +719,10 @@ You can verify access to indexer getter and setter:
 
 ```csharp
 // Verify that the indexer was read with key "Dark" exactly once
-sut.VerifyMock.GotIndexer(It.Is("Dark")).Once();
+sut.Mock.Verify[It.Is("Dark")].Got().Once();
 
 // Verify that the indexer was set with key "Milk" to value 7 at least once
-sut.VerifyMock.SetIndexer(It.Is("Milk"), 7).AtLeastOnce();
+sut.Mock.Verify[It.Is("Milk")].Set(7).AtLeastOnce();
 ```
 
 **Note:**  
@@ -730,10 +734,10 @@ You can verify event subscriptions and unsubscriptions:
 
 ```csharp
 // Verify that the event 'ChocolateDispensed' was subscribed to at least once
-sut.VerifyMock.SubscribedTo.ChocolateDispensed().AtLeastOnce();
+sut.Mock.Verify.ChocolateDispensed.Subscribed().AtLeastOnce();
 
 // Verify that the event 'ChocolateDispensed' was unsubscribed from exactly once
-sut.VerifyMock.UnsubscribedFrom.ChocolateDispensed().Once();
+sut.Mock.Verify.ChocolateDispensed.Unsubscribed().Once();
 ```
 
 ### Argument Matchers
@@ -758,8 +762,8 @@ You can use argument matchers from the `With` class to verify calls with flexibl
 **Example:**
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is<string>(t => t.StartsWith("D")), It.IsAny<int>()).Once();
-sut.VerifyMock.Invoked.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
+sut.Mock.Verify.Dispense(It.Is<string>(t => t.StartsWith("D")), It.IsAny<int>()).Once();
+sut.Mock.Verify.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
 ```
 
 ### Call Ordering
@@ -767,17 +771,17 @@ sut.VerifyMock.Invoked.Dispense(It.Is("Milk"), It.IsAny<int>()).AtLeastOnce();
 Use `Then` to verify that calls occurred in a specific order:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(2)).Then(
-    m => m.Invoked.Dispense(It.Is("Dark"), It.Is(3))
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.Is(2)).Then(
+    m => m.Dispense(It.Is("Dark"), It.Is(3))
 );
 ```
 
 You can chain multiple calls for strict order verification:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(1)).Then(
-    m => m.Invoked.Dispense(It.Is("Milk"), It.Is(2)),
-    m => m.Invoked.Dispense(It.Is("White"), It.Is(3)));
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.Is(1)).Then(
+    m => m.Dispense(It.Is("Milk"), It.Is(2)),
+    m => m.Dispense(It.Is("White"), It.Is(3)));
 ```
 
 If the order is incorrect or a call is missing, a `MockVerificationException` will be thrown with a descriptive message.
@@ -786,8 +790,8 @@ If the order is incorrect or a call is missing, a `MockVerificationException` wi
 
 ### Working with protected members
 
-Mockolate allows you to set up and verify protected virtual members on class mocks. Access protected members using the
-`.Protected` property:
+Mockolate allows you to set up and verify protected virtual members on class mocks. Protected members are accessed
+the same way as public members, through `sut.Mock.Setup.MemberName(…)` and `sut.Mock.Verify.MemberName(…)`:
 
 **Example**
 
@@ -798,51 +802,50 @@ public abstract class ChocolateDispenser
     protected virtual int InternalStock { get; set; }
 }
 
-var sut = Mock.Create<ChocolateDispenser>();
+ChocolateDispenser sut = ChocolateDispenser.CreateMock();
 ```
 
 #### Setup
 
 ```csharp
 // Setup protected method
-sut.SetupMock.Protected.Method.DispenseInternal(
+sut.Mock.Setup.DispenseInternal(
     It.Is("Dark"), It.IsAny<int>())
     .Returns(true);
 
 // Setup protected property
-sut.SetupMock.Protected.Property.InternalStock.InitializeWith(100);
+sut.Mock.Setup.InternalStock.InitializeWith(100);
 ```
 
 **Notes:**
 
-- Protected members can be set up and verified just like public members, using the `.Protected` accessor.
+- Protected members can be set up and verified just like public members.
 - All setup options (`.Returns()`, `.Throws()`, `.Do()`, `.InitializeWith()`, etc.) work with protected members.
 
 #### Verification
 
 ```csharp
 // Verify protected method was invoked
-sut.VerifyMock.Invoked.Protected.DispenseInternal(
+sut.Mock.Verify.DispenseInternal(
     It.Is("Dark"), It.IsAny<int>()).Once();
 
 // Verify protected property was read
-sut.VerifyMock.Got.Protected.InternalStock().AtLeastOnce();
+sut.Mock.Verify.InternalStock.Got().AtLeastOnce();
 
 // Verify protected property was set
-sut.VerifyMock.Set.Protected.InternalStock(It.Is(100)).Once();
+sut.Mock.Verify.InternalStock.Set(It.Is(100)).Once();
 
 // Verify protected indexer was read
-sut.VerifyMock.GotProtectedIndexer(It.Is(0)).Once();
+sut.Mock.Verify[It.Is(0)].Got().Once();
 
 // Verify protected indexer was set
-sut.VerifyMock.SetProtectedIndexer(It.Is(0), It.Is(42)).Once();
+sut.Mock.Verify[It.Is(0)].Set(It.Is(42)).Once();
 ```
 
 **Note:**
 
 - All verification options (argument matchers, count assertions) work the same for protected members as for public
   members.
-- Protected indexers are supported using `.GotProtectedIndexer()`/`.SetProtectedIndexer()` for verification.
 
 ### Advanced callback features
 
@@ -851,7 +854,7 @@ sut.VerifyMock.SetProtectedIndexer(It.Is(0), It.Is(42)).Once();
 Execute callbacks conditionally based on the zero-based invocation counter using `.When()`:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>())
     .Do(() => Console.WriteLine("Called!")).When(count => count >= 2);  // The first two calls are skipped
 ```
 
@@ -861,11 +864,11 @@ Control after how many times a callback should no longer be executed:
 
 ```csharp
 // Execute up to 3 times
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do(() => Console.WriteLine("Up to 3 times")).Only(3);
 
 // Executes the callback only once
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .Throws(new Exception("This exception is thrown only once")).OnlyOnce();
 ```
 
@@ -874,11 +877,11 @@ sut.SetupMock.Property.TotalDispensed
 Control how many times a callback should be repeated:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do(() => Console.WriteLine("First three times")).For(3)
     .Do(() => Console.WriteLine("Next three times")).For(3);
 
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .Returns(10).For(1)
     .Returns(20).For(2)
     .Returns(30).For(3);
@@ -891,7 +894,7 @@ If you have a sequence of callbacks, you can mark the last one to repeat indefin
 repeating the sequence from start:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Returns(true).For(2)      // Returns true the first two times
     .Returns(false).Forever(); // Then always returns false
 ```
@@ -902,7 +905,7 @@ When you specify multiple callbacks, they are executed sequentially by default. 
 run specific callbacks in parallel using `.InParallel()`:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do(() => { Console.WriteLine("Runs every second iteration"); })
     .Do(() => { Console.WriteLine("Runs always in parallel"); }).InParallel()
     .Do(() => { Console.WriteLine("Runs every other iteration"); });
@@ -917,10 +920,10 @@ Parallel execution via `.InParallel()` only applies to callbacks defined via `Do
 Access the zero-based invocation counter in callbacks:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do((count, _, _) => Console.WriteLine($"Call #{count}"));
 
-sut.SetupMock.Property.TotalDispensed.OnGet
+sut.Mock.Setup.TotalDispensed.OnGet
     .Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
 ```
 
@@ -930,8 +933,8 @@ Mockolate tracks all interactions with mocks on the mock object. To only track i
 can use a `MockMonitor<T>`:
 
 ```csharp
-var sut = Mock.Create<IChocolateDispenser>();
-var monitor = new MockMonitor<IChocolateDispenser>(sut);
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+MockMonitor<Mock.IMockVerifyForIChocolateDispenser> monitor = sut.Mock.Monitor();
 
 sut.Dispense("Dark", 1); // Not monitored
 using (monitor.Run())
@@ -941,22 +944,22 @@ using (monitor.Run())
 sut.Dispense("Dark", 3); // Not monitored
 
 // Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
-monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
+monitor.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
 ```
 
-Alternatively, you can use the `MonitorMock()` extension method to create an already running monitor directly from the
-mock:
+Alternatively, you can create an already running monitor using `sut.Mock.Monitor()` and start it immediately:
 
 ```csharp
-var sut = Mock.Create<IChocolateDispenser>();
+var sut = IChocolateDispenser.CreateMock();
+var monitor = sut.Mock.Monitor();
 
 sut.Dispense("Dark", 1); // Not monitored
-using var scope = sut.MonitorMock(out var monitor);
+using var scope = monitor.Run();
 sut.Dispense("Dark", 2); // Monitored
 sut.Dispense("Dark", 3); // Monitored
 
 // Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
-monitor.Verify.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Twice();
+monitor.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Twice();
 ```
 
 #### Clear all interactions
@@ -965,14 +968,14 @@ For simpler scenarios you can directly clear all recorded interactions on a mock
 setup:
 
 ```csharp
-var sut = Mock.Create<IChocolateDispenser>();
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
 sut.Dispense("Dark", 1);
 // Clears all previously recorded interactions
-sut.SetupMock.ClearAllInteractions();
+sut.Mock.ClearAllInteractions();
 sut.Dispense("Dark", 2);
 
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
 ```
 
 ### Check for unexpected interactions
@@ -983,7 +986,7 @@ You can check if all interactions with the mock have been verified using `ThatAl
 
 ```csharp
 // Returns true if all interactions have been verified before
-bool allVerified = sut.VerifyMock.ThatAllInteractionsAreVerified();
+bool allVerified = sut.Mock.VerifyThatAllInteractionsAreVerified();
 ```
 
 This is useful for ensuring that your test covers all interactions and that no unexpected calls were made.
@@ -991,15 +994,43 @@ If any interaction was not verified, this method returns `false`.
 
 #### That all setups are used
 
-You can check if all registered setups on the mock have been used using `ThatAllSetupsAreUsed`:
+You can check if all registered setups on the mock have been used with `ThatAllSetupsAreUsed`:
 
 ```csharp
 // Returns true if all setups have been used
-bool allUsed = sut.VerifyMock.ThatAllSetupsAreUsed();
+bool allUsed = sut.Mock.VerifyThatAllSetupsAreUsed();
 ```
 
 This is useful for ensuring that your test setup and test execution match.
 If any setup was not used, this method returns `false`.
+
+### Static interface members (.NET 8+)
+
+Mockolate supports mocking static abstract and static virtual members on interfaces (.NET 8+). Static member
+invocations use async-flow scoping, meaning each mock instance has its own isolated static member context, this makes parallel test execution safe.
+
+Static members can be set up, raised, and verified just like instance members, but through the `Mock.SetupStatic`, `Mock.RaiseStatic`, and `Mock.VerifyStatic` properties:
+
+```csharp
+// Setup static members
+sut.Mock.SetupStatic.AbstractStaticMethod().Returns("some-value");
+sut.Mock.SetupStatic.AbstractStaticProperty.Returns("some-value");
+
+// Raise static events
+sut.Mock.RaiseStatic.AbstractStaticEvent(value);
+
+// Verify static interactions
+sut.Mock.VerifyStatic.AbstractStaticMethod().Once();
+sut.Mock.VerifyStatic.AbstractStaticProperty.Got().Once();
+sut.Mock.VerifyStatic.AbstractStaticEvent.Subscribed().Once();
+```
+
+**Notes:**
+
+- Static member scoping is implemented via `AsyncLocal<MockRegistration>`. When you call
+  `sut.Mock.SetupStatic.Method()`, it creates an async-flow scope that routes static member invocations to that
+  specific mock instance.
+- Each mock instance has an independent static member context, so parallel tests will not interfere with each other.
 
 ## Special Types
 
@@ -1011,8 +1042,8 @@ verify HTTP interactions just like with any other interface or class.
 **Example: Mocking HttpClient for a Chocolate Dispenser Service**
 
 ```csharp
-HttpClient httpClient = Mock.Create<HttpClient>();
-httpClient.SetupMock.Method
+HttpClient httpClient = HttpClient.CreateMock();
+httpClient.Mock.Setup
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent())
@@ -1024,7 +1055,7 @@ HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/ap
                       """, Encoding.UTF8, "application/json"));
 
 await That(result.IsSuccessStatusCode).IsTrue();
-httpClient.VerifyMock.Invoked.PostAsync(
+httpClient.Mock.Verify.PostAsync(
     It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
     It.IsHttpContent("application/json").WithStringMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
 ```
@@ -1042,27 +1073,27 @@ Mockolate supports all standard HTTP methods:
 
 ```csharp
 // GET
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .GetAsync(It.IsAny<string>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NoContent));
 
 // POST
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 // PUT
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PutAsync(It.IsAny<string>(), It.IsAny<HttpContent>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
 // DELETE
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .DeleteAsync(It.IsAny<string>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NoContent));
 
 // PATCH
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PatchAsync(It.IsAny<string>(), It.IsAny<HttpContent>())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 ```
@@ -1072,7 +1103,7 @@ If no parameter is provided, it matches any `CancellationToken`:
 
 ```csharp
 var cts = new CancellationTokenSource();
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .GetAsync(It.IsAny<string>(), It.Is(cts.Token))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
@@ -1090,12 +1121,12 @@ Filter requests by URI scheme using `.ForHttps()` or `.ForHttp()`:
 
 ```csharp
 // Match only HTTPS requests
-httpClient.VerifyMock.Invoked
+httpClient.Mock.Verify
     .GetAsync(It.IsUri("*aweXpect.com*").ForHttps())
     .Once();
 
 // Match only HTTP requests
-httpClient.VerifyMock.Invoked
+httpClient.Mock.Verify
     .GetAsync(It.IsUri("*aweXpect.com*").ForHttp())
     .Never();
 ```
@@ -1105,7 +1136,7 @@ httpClient.VerifyMock.Invoked
 Filter requests by host using `.WithHost(string)`. You can provide a wildcard pattern to match against the host name:
 
 ```csharp
-httpClient.VerifyMock.Invoked
+httpClient.Mock.Verify
     .GetAsync(It.IsUri().WithHost("*aweXpect.com*"))
     .Once();
 ```
@@ -1115,7 +1146,7 @@ httpClient.VerifyMock.Invoked
 Filter requests on a specific port using `.WithPort(int)`:
 
 ```csharp
-httpClient.VerifyMock.Invoked
+httpClient.Mock.Verify
     .GetAsync(It.IsUri().WithPort(443))
     .Once();
 ```
@@ -1125,7 +1156,7 @@ httpClient.VerifyMock.Invoked
 Filter requests by path using `.WithPath(string)`. You can provide a wildcard pattern to match against the path:
 
 ```csharp
-httpClient.VerifyMock.Invoked
+httpClient.Mock.Verify
     .GetAsync(It.IsUri().WithPath("/foo/*"))
     .Once();
 ```
@@ -1137,15 +1168,15 @@ string to match against the query parameters. The order of the key-value pairs d
 
 ```csharp
 // Match query string containing "x=42"
-httpClient.VerifyMock.Invoked
+httpClient.Mock.Verify
     .GetAsync(It.IsUri().WithQuery("x", "42"))
     .Once();
 // Match query string containing "x=42" and "y=foo" (in any order)
-httpClient.VerifyMock.Invoked
+httpClient.Mock.Verify
     .GetAsync(It.IsUri().WithQuery(("x", "42"), ("y", "foo")))
     .Once();
 // Match query string containing "x=42" and "y=foo" (in any order)
-httpClient.VerifyMock.Invoked
+httpClient.Mock.Verify
     .GetAsync(It.IsUri().WithQuery("x=42&y=foo"))
     .Once();
 ```
@@ -1155,7 +1186,7 @@ httpClient.VerifyMock.Invoked
 Use `It.IsHttpContent(string?)` to match the HTTP content, optionally providing an expected media type header value:
 
 ```csharp
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent("application/json"))
@@ -1172,7 +1203,7 @@ To verify against the string content, use the following methods:
 - `.WithStringMatching(string).AsRegex()`: to match the content using regular expressions
 
 ```csharp
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent("application/json").WithStringMatching("*\"type\": \"Dark\"*"))
@@ -1191,7 +1222,7 @@ To verify against the binary content, use the following methods:
 - `.WithBytes(byte[])`: to match the content exactly as provided
 
 ```csharp
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent("application/octet-stream").WithBytes([0x01, 0x02, 0x03, ]))
@@ -1208,7 +1239,7 @@ To verify against the URL-encoded form data content, use the following methods:
 - `.WithFormData(string)`: checks that the form-data content contains the provided raw form data string
 
 ```csharp
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent("application/x-www-form-urlencoded").WithFormData("my-key", "my-value"))
@@ -1229,12 +1260,12 @@ To verify against the HTTP content headers, use the following methods:
 - `.WithHeaders(string)`: checks that the content headers contain the provided raw headers
 
 ```csharp
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent().WithHeaders(("Content-Type", "application/json"), ("X-My-Header", "my-value")))
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-httpClient.SetupMock.Method
+httpClient.Mock.Setup
     .PostAsync(
         It.IsAny<string>(),
         It.IsHttpContent().WithHeaders("""
@@ -1254,25 +1285,25 @@ httpClient.SetupMock.Method
 Overloads of `.ReturnsAsync` simplify specifying the return value for HTTP method setups.
 
 ```csharp
-httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+httpClient.Mock.Setup.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and no content
     .ReturnsAsync(HttpStatusCode.OK);
 
-httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+httpClient.Mock.Setup.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a string content "some string content"
     .ReturnsAsync(HttpStatusCode.OK, "some string content");
 
-httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+httpClient.Mock.Setup.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a JSON content {"foo":"bar"}
     .ReturnsAsync(HttpStatusCode.OK, "{\"foo\":\"bar\"}", "application/json");
 
 byte[] bytes = new byte[] { /* ... */ };
 
-httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+httpClient.Mock.Setup.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a binary content with the provided bytes
     .ReturnsAsync(HttpStatusCode.OK, bytes);
 
-httpClient.SetupMock.Method.GetAsync(It.IsAny<Uri>())
+httpClient.Mock.Setup.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a PNG image content with the provided bytes
     .ReturnsAsync(HttpStatusCode.OK, bytes, "image/png");
 ```
@@ -1283,16 +1314,16 @@ Mockolate supports mocking delegates including `Action`, `Func<T>`, and custom d
 
 **Setup**
 
-Use `SetupMock.Delegate(…)` to configure delegate behavior.
+Use `sut.Mock.Setup(…)` to configure delegate behavior.
 
 ```csharp
 // Mock Action delegate
-Action myAction = Mock.Create<Action>();
-myAction.SetupMock.Delegate().Do(() => Console.WriteLine("Action invoked!"));
+Action myAction = Action.CreateMock();
+myAction.Mock.Setup().Do(() => Console.WriteLine("Action invoked!"));
 
 // Mock Func<T> delegate
-Func<int> myFunc = Mock.Create<Func<int>>();
-myFunc.SetupMock.Delegate().Returns(42);
+Func<int> myFunc = Func<int>.CreateMock();
+myFunc.Mock.Setup().Returns(42);
 ```
 
 For custom delegates with parameters:
@@ -1302,8 +1333,8 @@ For custom delegates with parameters:
 public delegate int Calculate(int x, string operation);
 
 // Create and setup the mock
-Calculate calculator = Mock.Create<Calculate>();
-calculator.SetupMock.Delegate(It.IsAny<int>(), It.Is("add"))
+Calculate calculator = Calculate.CreateMock();
+calculator.Mock.Setup(It.IsAny<int>(), It.Is("add"))
     .Returns((x, operation) => x + 10);
 ```
 
@@ -1314,8 +1345,8 @@ Delegates with `ref` and `out` parameters are also supported:
 public delegate void ProcessData(int input, ref int value, out int result);
 
 // Create and setup the mock
-ProcessData processor = Mock.Create<ProcessData>();
-processor.SetupMock.Delegate(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 100));
+ProcessData processor = ProcessData.CreateMock();
+processor.Mock.Setup(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 100));
 ```
 
 - Use `.Do(…)` to run code when the delegate is invoked.
@@ -1331,14 +1362,14 @@ You can verify that delegates were invoked with specific arguments:
 
 ```csharp
 // Verify Action was invoked at least once
-Action myAction = Mock.Create<Action>();
+Action myAction = Action.CreateMock();
 myAction.Invoke();
-myAction.VerifyMock.Invoked().AtLeastOnce();
+myAction.Mock.Verify().AtLeastOnce();
 
 // Verify Func<T> was invoked exactly once
-Func<int> myFunc = Mock.Create<Func<int>>();
+Func<int> myFunc = Func<int>.CreateMock();
 _ = myFunc();
-myFunc.VerifyMock.Invoked().Once();
+myFunc.Mock.Verify().Once();
 ```
 
 For custom delegates with parameters:
@@ -1348,9 +1379,9 @@ For custom delegates with parameters:
 public delegate int Calculate(int x, string operation);
 
 // Create, invoke, and verify the mock
-Calculate calculator = Mock.Create<Calculate>();
+Calculate calculator = Calculate.CreateMock();
 _ = calculator(5, "add");
-calculator.VerifyMock.Invoked(It.IsAny<int>(), It.Is("add")).Once();
+calculator.Mock.Verify(It.IsAny<int>(), It.Is("add")).Once();
 ```
 
 Delegates with `ref` and `out` parameters are also supported:
@@ -1360,10 +1391,10 @@ Delegates with `ref` and `out` parameters are also supported:
 public delegate void ProcessData(int input, ref int value, out int result);
 
 // Create, invoke, and verify the mock
-ProcessData processor = Mock.Create<ProcessData>();
+ProcessData processor = ProcessData.CreateMock();
 int val = 0;
 processor(1, ref val, out int res);
-processor.VerifyMock.Invoked(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).Once();
+processor.Mock.Verify(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).Once();
 ```
 
 **Note:**  
@@ -1382,24 +1413,24 @@ the call to happen, e.g. `.AtLeastOnce()`, `.Exactly(n)`, etc. or use the verifi
 **Example:**
 
 ```csharp
-var sut = Mock.Create<IChocolateDispenser>();
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 sut.Dispense("Dark", 1);
 // Analyzer Mockolate0001: Add a count assertion like .AtLeastOnce() or use the result.
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>());
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>());
 ```
 
 The included code fixer suggests to add the `.AtLeastOnce()` count assertion:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
 ```
 
 ### Mockolate0002
 
 Mock arguments must be mockable (interfaces or supported classes).
-This rule will prevent you from using unsupported types (e.g. sealed classes) when using `Mock.Create<T>()`.
+This rule will prevent you from using unsupported types (e.g. sealed classes) when using `CreateMock()`.
 
 ### Mockolate0003
 
 Wrap type arguments must be interfaces.
-This rule will prevent you from using non-interface types as the type parameter when using `Mock.Wrap<T>(T instance)`.
+This rule will prevent you from using non-interface types as the type parameter when using `T.CreateMock().Wrapping(instance)`.

@@ -11,24 +11,24 @@ the call to happen, e.g. `.AtLeastOnce()`, `.Exactly(n)`, etc. or use the verifi
 **Example:**
 
 ```csharp
-var sut = Mock.Create<IChocolateDispenser>();
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 sut.Dispense("Dark", 1);
 // Analyzer Mockolate0001: Add a count assertion like .AtLeastOnce() or use the result.
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>());
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>());
 ```
 
 The included code fixer suggests to add the `.AtLeastOnce()` count assertion:
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
 ```
 
 ## Mockolate0002
 
 Mock arguments must be mockable (interfaces or supported classes).
-This rule will prevent you from using unsupported types (e.g. sealed classes) when using `Mock.Create<T>()`.
+This rule will prevent you from using unsupported types (e.g. sealed classes) when using `CreateMock()`.
 
 ## Mockolate0003
 
 Wrap type arguments must be interfaces.
-This rule will prevent you from using non-interface types as the type parameter when using `Mock.Wrap<T>(T instance)`.
+This rule will prevent you from using non-interface types as the type parameter when using `T.CreateMock().Wrapping(instance)`.
