@@ -42,7 +42,6 @@ internal static partial class Sources
 		              		/// <summary>
 		              		///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
 		              		/// </summary>
-		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
 		              		/// <remarks>
 		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              		/// </remarks>
@@ -55,7 +54,6 @@ internal static partial class Sources
 		              		/// <summary>
 		              		///     Create a new mock for <typeparamref name="T" /> using the <paramref name="constructorParameters" /> with the given <paramref name="mockBehavior" />.
 		              		/// </summary>
-		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
 		              		/// <remarks>
 		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              		/// </remarks>

@@ -647,11 +647,6 @@ namespace Mockolate.Parameters
         public object? Value { get; init; }
     }
 }
-namespace Mockolate.Raise
-{
-    public interface IMockRaises<out T> : Mockolate.IInteractiveMock<T> { }
-    public interface IProtectedMockRaises<out T> : Mockolate.IInteractiveMock<T> { }
-}
 namespace Mockolate.Setup
 {
     public class Callback
