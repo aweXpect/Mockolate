@@ -13,7 +13,7 @@ namespace Mockolate.Interactions;
 [DebuggerDisplay("{_interactions}")]
 public class MockInteractions : IMockInteractions
 {
-	private readonly ConcurrentDictionary<int, IInteraction> _interactions = [];
+	private readonly ConcurrentQueue<IInteraction> _interactions = [];
 	private int _index = -1;
 	private List<IInteraction>? _missingVerification;
 
@@ -27,13 +27,13 @@ public class MockInteractions : IMockInteractions
 	///     The registered interactions of the mock.
 	/// </summary>
 	public IEnumerable<IInteraction> Interactions
-		=> _interactions.Values.OrderBy(x => x.Index);
+		=> _interactions.OrderBy(x => x.Index);
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{
 		_missingVerification?.Add(interaction);
-		_interactions.TryAdd(interaction.Index, interaction);
+		_interactions.Enqueue(interaction);
 		InteractionAdded?.Invoke(this, EventArgs.Empty);
 		return interaction;
 	}
@@ -43,7 +43,7 @@ public class MockInteractions : IMockInteractions
 	/// </summary>
 	public IReadOnlyCollection<IInteraction> GetUnverifiedInteractions()
 	{
-		_missingVerification ??= _interactions.Values.OrderBy(x => x.Index).ToList();
+		_missingVerification ??= _interactions.OrderBy(x => x.Index).ToList();
 		return _missingVerification;
 	}
 
@@ -55,7 +55,7 @@ public class MockInteractions : IMockInteractions
 
 	internal void Verified(IEnumerable<IInteraction> interactions)
 	{
-		_missingVerification ??= _interactions.Values.OrderBy(x => x.Index).ToList();
+		_missingVerification ??= _interactions.OrderBy(x => x.Index).ToList();
 		foreach (IInteraction interaction in interactions)
 		{
 			_missingVerification.Remove(interaction);

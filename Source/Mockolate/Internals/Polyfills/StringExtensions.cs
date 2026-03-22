@@ -5,12 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace Mockolate.Internals.Polyfills;
 
 /// <summary>
-///     Provides extension methods to simplify writing platform independent tests.
+///     Provides polyfill extension methods on <see langword="string" />.
 /// </summary>
 [ExcludeFromCodeCoverage]
 internal static class StringExtensionMethods
 {
-
 	/// <summary>
 	///     Returns a value indicating whether a specified character occurs within this string, using the specified comparison
 	///     rules.
@@ -30,7 +29,7 @@ internal static class StringExtensionMethods
 			StringComparison.CurrentCultureIgnoreCase => @this.ToLower().Contains(value.ToLower()),
 			_ => @this.Contains(value),
 		};
-	
+
 	/// <summary>
 	///     Determines whether the end of this string instance matches the specified character.
 	/// </summary>

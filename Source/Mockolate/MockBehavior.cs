@@ -2,9 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
-using Mockolate.Behavior;
-using Mockolate.Setup;
 
 namespace Mockolate;
 
