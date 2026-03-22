@@ -169,8 +169,13 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t\t}").AppendLine();
-
 		sb.AppendLine();
+		
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
+		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock\";").AppendLine();
+		sb.AppendLine();
+		
 		AppendMethodSetupImplementation(sb, delegateMethod, name, false, "Setup");
 		if (delegateMethod.Parameters.Count > 0)
 		{

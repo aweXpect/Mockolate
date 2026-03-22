@@ -397,9 +397,9 @@ internal static partial class Sources
 
 		ImplementMockForInterface(sb, name, hasEvents, hasStaticMembers, hasStaticEvents);
 		
-		sb.Append("\t\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
-		sb.Append("\t\t\t=> \"").Append(@class.ClassFullName.TrimStart("global::").ToString()).Append(" mock\";").AppendLine();
+		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock\";").AppendLine();
 		sb.AppendLine();
 
 		if (@class.IsInterface)
