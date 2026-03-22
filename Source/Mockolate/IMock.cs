@@ -14,4 +14,9 @@ public interface IMock
 	///     The mock registrations to store setups and interactions with the mock.
 	/// </summary>
 	MockRegistration Registrations { get; }
+
+	/// <summary>
+	///     A string representation of the mock, which includes the type of the mocked object and any additional interfaces it implements.
+	/// </summary>
+	string ToString();
 }
