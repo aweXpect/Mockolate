@@ -64,14 +64,7 @@ public class MockInteractions : IMockInteractions
 
 	internal void Clear()
 	{
-#if NETSTANDARD2_0
-		while (_interactions.TryDequeue(out _))
-		{
-			
-		}
-#else
 		_interactions.Clear();
-#endif
 		OnClearing?.Invoke(this, EventArgs.Empty);
 		_index = -1;
 	}
