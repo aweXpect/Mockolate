@@ -4,8 +4,8 @@ Mockolate tracks all interactions with mocks on the mock object. To only track i
 can use a `MockMonitor<T>`:
 
 ```csharp
-IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-MockMonitor<Mock.IMockVerifyForIChocolateDispenser> monitor = sut.Mock.Monitor();
+var sut = IChocolateDispenser.CreateMock();
+var monitor = sut.Mock.Monitor();
 
 sut.Dispense("Dark", 1); // Not monitored
 using (monitor.Run())
@@ -16,21 +16,6 @@ sut.Dispense("Dark", 3); // Not monitored
 
 // Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
 monitor.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
-```
-
-Alternatively, you can create an already running monitor using `sut.Mock.Monitor()` and start it immediately:
-
-```csharp
-var sut = IChocolateDispenser.CreateMock();
-var monitor = sut.Mock.Monitor();
-
-sut.Dispense("Dark", 1); // Not monitored
-using var scope = monitor.Run();
-sut.Dispense("Dark", 2); // Monitored
-sut.Dispense("Dark", 3); // Monitored
-
-// Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
-monitor.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Twice();
 ```
 
 ## Clear all interactions

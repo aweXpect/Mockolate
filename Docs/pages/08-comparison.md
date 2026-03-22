@@ -91,7 +91,7 @@ fake.ChocolateDispensed += Raise.FreeForm.It.Is("Dark", 2);
 
 ```csharp
 sut.Mock.Verify.Dispense(It.Is("Dark"), It.Is(2)).Once();
-sut.Mock.Verify[It.Is("Dark")].Once().Got();
+sut.Mock.Verify[It.Is("Dark")].Got().Once();
 ```
 
 **Moq**
