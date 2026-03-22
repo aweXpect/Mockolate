@@ -100,7 +100,7 @@ int result = sut.Process("HELLO");
 
 ## Parameter Predicates
 
-When the method name is unique (no overloads), you can use flexible parameter matching:
+When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible parameters matching:
 
 - `Match.AnyParameters()`: Matches any parameter combination.
 - `Match.Parameters(Func<NamedParameterValue[], bool> predicate)`: Matches parameters based on a custom predicate.

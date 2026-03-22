@@ -112,7 +112,7 @@ sut.Mock.Verify.ChocolateDispensed.Unsubscribed().Once();
 
 ## Argument Matchers
 
-You can use argument matchers from the `With` class to verify calls with flexible conditions:
+You can use argument matchers from the `It` class to verify calls with flexible conditions:
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality

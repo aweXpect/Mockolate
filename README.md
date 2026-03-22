@@ -544,7 +544,7 @@ int result = sut.Process("HELLO");
 
 #### Parameter Predicates
 
-When the method name is unique (no overloads), you can use flexible parameter matching:
+When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible parameters matching:
 
 - `Match.AnyParameters()`: Matches any parameter combination.
 - `Match.Parameters(Func<NamedParameterValue[], bool> predicate)`: Matches parameters based on a custom predicate.
@@ -742,7 +742,7 @@ sut.Mock.Verify.ChocolateDispensed.Unsubscribed().Once();
 
 ### Argument Matchers
 
-You can use argument matchers from the `With` class to verify calls with flexible conditions:
+You can use argument matchers from the `It` class to verify calls with flexible conditions:
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
