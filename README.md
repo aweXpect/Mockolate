@@ -467,17 +467,17 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 **Regular Expressions**  
 Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
 
-  ```csharp
-  // Example: Match email addresses
-  sut.Mock.Setup.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
-      .Returns(true);
-  
-  bool result = sut.ValidateEmail("user@example.com");
-  
-  // Case-sensitive regex
-  sut.Mock.Setup.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
-      .Returns(1);
-  ```
+```csharp
+// Example: Match email addresses
+sut.Mock.Setup.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
+    .Returns(true);
+
+bool result = sut.ValidateEmail("user@example.com");
+
+// Case-sensitive regex
+sut.Mock.Setup.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
+    .Returns(1);
+```
 
 **Ref and Out Parameters**
 
@@ -534,7 +534,7 @@ Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It
 
 ```csharp
 // Example: Case-insensitive string comparison
-StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+var comparer = StringComparer.OrdinalIgnoreCase;
 sut.Mock.Setup.Process(It.Is("hello").Using(comparer))
     .Returns(42);
 
