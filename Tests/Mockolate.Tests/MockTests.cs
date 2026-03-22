@@ -190,7 +190,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithSetups_ShouldApplySetups()
 	{
-		IMyService mock = IMyService.CreateMock([], null,
+		IMyService mock = IMyService.CreateMock(
 			setup => setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2),
 			setup => setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4),
 			setup => setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8)
