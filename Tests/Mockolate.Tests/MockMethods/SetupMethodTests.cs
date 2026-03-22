@@ -1427,7 +1427,7 @@ public sealed partial class SetupMethodTests
 		void UniqueMethodWithParameters(int p1, int p2);
 	}
 
-#if DEBUG // TODO: re-enable after https://github.com/actions/runner-images/issues/13544 is fixed
+#if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed
 	[Fact]
 	public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
@@ -1473,7 +1473,7 @@ public sealed partial class SetupMethodTests
 	}
 #endif
 
-#if DEBUG // TODO: re-enable after https://github.com/actions/runner-images/issues/13544 is fixed
+#if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed
 	[Fact]
 	public async Task VoidMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
