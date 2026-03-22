@@ -217,9 +217,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string> setup =
-					(IReturnMethodSetupCallbackBuilder<string>)mock.Mock.Setup.Method0();
+					(IReturnMethodSetupCallbackBuilder<string>)sut.Mock.Setup.Method0();
 
 				void ActWhen()
 				{
@@ -244,9 +244,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string>)mock.Mock.Setup.Method0();
+					(IReturnMethodSetupCallbackWhenBuilder<string>)sut.Mock.Setup.Method0();
 
 				void ActFor()
 				{
@@ -546,9 +546,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int>)mock.Mock.Setup.Method1(
+					(IReturnMethodSetupCallbackBuilder<string, int>)sut.Mock.Setup.Method1(
 						It.IsAny<int>());
 
 				void ActWhen()
@@ -574,9 +574,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int>)mock.Mock.Setup.Method1(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int>)sut.Mock.Setup.Method1(
 						It.IsAny<int>());
 
 				void ActFor()
@@ -855,9 +855,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int, int>)mock.Mock.Setup.Method2(
+					(IReturnMethodSetupCallbackBuilder<string, int, int>)sut.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -883,9 +883,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int, int>)mock.Mock.Setup.Method2(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int>)sut.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -1176,9 +1176,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int, int, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int, int, int>)mock.Mock.Setup.Method3(
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int>)sut.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1204,9 +1204,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int>)mock.Mock.Setup.Method3(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int>)sut.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -1506,9 +1506,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int, int, int, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int>)mock.Mock.Setup.Method4(
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int>)sut.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1534,9 +1534,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int>)mock.Mock.Setup.Method4(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int>)sut.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -1858,9 +1858,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackBuilder<string, int, int, int, int, int> setup =
-					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int, int>)mock.Mock.Setup.Method5(
+					(IReturnMethodSetupCallbackBuilder<string, int, int, int, int, int>)sut.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -1886,9 +1886,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IReturnMethodSetupTest mock = IReturnMethodSetupTest.CreateMock();
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 				IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int, int> setup =
-					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int, int>)mock.Mock.Setup.Method5(
+					(IReturnMethodSetupCallbackWhenBuilder<string, int, int, int, int, int>)sut.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -2111,9 +2111,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder setup =
-					(IVoidMethodSetupCallbackBuilder)mock.Mock.Setup.Method0();
+					(IVoidMethodSetupCallbackBuilder)sut.Mock.Setup.Method0();
 
 				void ActWhen()
 				{
@@ -2138,9 +2138,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder setup =
-					(IVoidMethodSetupCallbackWhenBuilder)mock.Mock.Setup.Method0();
+					(IVoidMethodSetupCallbackWhenBuilder)sut.Mock.Setup.Method0();
 
 				void ActFor()
 				{
@@ -2405,9 +2405,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int> setup =
-					(IVoidMethodSetupCallbackBuilder<int>)mock.Mock.Setup.Method1(
+					(IVoidMethodSetupCallbackBuilder<int>)sut.Mock.Setup.Method1(
 						It.IsAny<int>());
 
 				void ActWhen()
@@ -2433,9 +2433,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int>)mock.Mock.Setup.Method1(
+					(IVoidMethodSetupCallbackWhenBuilder<int>)sut.Mock.Setup.Method1(
 						It.IsAny<int>());
 
 				void ActFor()
@@ -2713,9 +2713,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int, int> setup =
-					(IVoidMethodSetupCallbackBuilder<int, int>)mock.Mock.Setup.Method2(
+					(IVoidMethodSetupCallbackBuilder<int, int>)sut.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -2741,9 +2741,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int, int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int, int>)mock.Mock.Setup.Method2(
+					(IVoidMethodSetupCallbackWhenBuilder<int, int>)sut.Mock.Setup.Method2(
 						It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -3033,9 +3033,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int, int, int> setup =
-					(IVoidMethodSetupCallbackBuilder<int, int, int>)mock.Mock.Setup.Method3(
+					(IVoidMethodSetupCallbackBuilder<int, int, int>)sut.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3061,9 +3061,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int, int, int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int, int, int>)mock.Mock.Setup.Method3(
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int>)sut.Mock.Setup.Method3(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -3362,9 +3362,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int, int, int, int> setup =
-					(IVoidMethodSetupCallbackBuilder<int, int, int, int>)mock.Mock.Setup.Method4(
+					(IVoidMethodSetupCallbackBuilder<int, int, int, int>)sut.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3390,9 +3390,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int, int, int, int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int>)mock.Mock.Setup.Method4(
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int>)sut.Mock.Setup.Method4(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()
@@ -3713,9 +3713,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackBuilder<int, int, int, int, int> setup =
-					(IVoidMethodSetupCallbackBuilder<int, int, int, int, int>)mock.Mock.Setup.Method5(
+					(IVoidMethodSetupCallbackBuilder<int, int, int, int, int>)sut.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActWhen()
@@ -3741,9 +3741,9 @@ public sealed partial class SetupMethodTests
 			[Fact]
 			public async Task WithoutCallback_IVoidMethodSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IVoidMethodSetupTest mock = IVoidMethodSetupTest.CreateMock();
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 				IVoidMethodSetupCallbackWhenBuilder<int, int, int, int, int> setup =
-					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int, int>)mock.Mock.Setup.Method5(
+					(IVoidMethodSetupCallbackWhenBuilder<int, int, int, int, int>)sut.Mock.Setup.Method5(
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
 				void ActFor()

@@ -10,12 +10,12 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WhenFalse_ShouldReturnDefaultValueInNotSetupMethods()
 		{
-			IMyService mock = IMyService.CreateMock(MockBehavior.Default with
+			IMyService sut = IMyService.CreateMock(MockBehavior.Default with
 			{
 				ThrowWhenNotSetup = false,
 			});
 
-			string result = mock.DoSomethingAndReturn(5);
+			string result = sut.DoSomethingAndReturn(5);
 
 			await That(result).IsEqualTo("");
 		}
@@ -23,14 +23,14 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task WhenTrue_ShouldThrowMockNotSetupException()
 		{
-			IMyService mock = IMyService.CreateMock(MockBehavior.Default with
+			IMyService sut = IMyService.CreateMock(MockBehavior.Default with
 			{
 				ThrowWhenNotSetup = true,
 			});
 
 			void Act()
 			{
-				mock.DoSomethingAndReturn(5);
+				sut.DoSomethingAndReturn(5);
 			}
 
 			await That(Act).Throws<MockNotSetupException>()

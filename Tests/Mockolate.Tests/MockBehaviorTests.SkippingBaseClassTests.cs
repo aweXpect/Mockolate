@@ -7,187 +7,187 @@ public sealed partial class MockBehaviorTests
 		[Fact]
 		public async Task DefaultBehavior_ForRefAndOutParameter_WhenMethodNotSetup_ShouldUseDefaultValues()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 			int value1 = 5;
 
-			int sum = mock.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
+			int sum = sut.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
 
 			await That(value1).IsEqualTo(15);
 			await That(value2).IsEqualTo(30);
 			await That(sum).IsEqualTo(45);
-			await That(mock.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(1);
+			await That(sut.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(1);
 		}
 
 		[Fact]
 		public async Task DefaultBehavior_ForRefAndOutParameter_WhenMethodSetup_ShouldUseSetupValues()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 			int value1 = 5;
-			mock.Mock.Setup.VirtualMethodWithRefAndOutParameters(It.IsRef<int>(x => x + 1), It.IsOut(() => 8))
+			sut.Mock.Setup.VirtualMethodWithRefAndOutParameters(It.IsRef<int>(x => x + 1), It.IsOut(() => 8))
 				.Returns(10);
 
-			int sum = mock.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
+			int sum = sut.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
 
 			await That(value1).IsEqualTo(16);
 			await That(value2).IsEqualTo(8);
 			await That(sum).IsEqualTo(10);
-			await That(mock.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(1);
+			await That(sut.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(1);
 		}
 
 		[Fact]
 		public async Task DefaultBehavior_WhenIndexerNotSetup_ShouldInitializeIndexerValuesFromBaseClass()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 
-			int result = mock[4];
-			mock[4] = 42;
-			int result2 = mock[4];
-			int result3 = mock[3];
+			int result = sut[4];
+			sut[4] = 42;
+			int result2 = sut[4];
+			int result3 = sut[3];
 
 			await That(result).IsEqualTo(8);
 			await That(result2).IsEqualTo(42);
 			await That(result3).IsEqualTo(6);
-			await That(mock.VirtualIndexerGetterCallCount).IsEqualTo(3);
-			await That(mock.VirtualIndexerSetterCallCount).IsEqualTo(1);
+			await That(sut.VirtualIndexerGetterCallCount).IsEqualTo(3);
+			await That(sut.VirtualIndexerSetterCallCount).IsEqualTo(1);
 		}
 
 		[Fact]
 		public async Task DefaultBehavior_WhenIndexerSetup_ShouldUseSetupValues()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
-			mock.Mock.Setup[It.IsAny<int>()].Returns(15);
+			sut.Mock.Setup[It.IsAny<int>()].Returns(15);
 
-			int result = mock[1];
-			mock[1] = 42;
-			int result2 = mock[1];
+			int result = sut[1];
+			sut[1] = 42;
+			int result2 = sut[1];
 
 			await That(result).IsEqualTo(15);
 			await That(result2).IsEqualTo(15);
-			await That(mock.VirtualIndexerGetterCallCount).IsEqualTo(2);
-			await That(mock.VirtualIndexerSetterCallCount).IsEqualTo(1);
+			await That(sut.VirtualIndexerGetterCallCount).IsEqualTo(2);
+			await That(sut.VirtualIndexerSetterCallCount).IsEqualTo(1);
 		}
 
 		[Fact]
 		public async Task DefaultBehavior_WhenMethodNotSetup_ShouldReturnBaseValues()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 
-			int[] value = mock.VirtualMethod();
+			int[] value = sut.VirtualMethod();
 
 			await That(value).IsEqualTo([4, 5,]);
-			await That(mock.VirtualMethodCallCount).IsEqualTo(1);
+			await That(sut.VirtualMethodCallCount).IsEqualTo(1);
 		}
 
 		[Fact]
 		public async Task DefaultBehavior_WhenMethodSetup_ShouldReturnSetupValues()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
-			mock.Mock.Setup.VirtualMethod().Returns([10, 20,]);
+			sut.Mock.Setup.VirtualMethod().Returns([10, 20,]);
 
-			int[] value = mock.VirtualMethod();
+			int[] value = sut.VirtualMethod();
 
 			await That(value).IsEqualTo([10, 20,]);
-			await That(mock.VirtualMethodCallCount).IsEqualTo(1);
+			await That(sut.VirtualMethodCallCount).IsEqualTo(1);
 		}
 
 		[Fact]
 		public async Task DefaultBehavior_WhenPropertyNotSetup_ShouldInitializePropertyWithValueFromBaseClass()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
 
-			int result = mock.VirtualProperty;
-			mock.VirtualProperty = 42;
-			int result2 = mock.VirtualProperty;
+			int result = sut.VirtualProperty;
+			sut.VirtualProperty = 42;
+			int result2 = sut.VirtualProperty;
 
 			await That(result).IsEqualTo(8);
-			await That(mock.VirtualPropertyValue).IsEqualTo(42);
+			await That(sut.VirtualPropertyValue).IsEqualTo(42);
 			await That(result2).IsEqualTo(42);
-			await That(mock.VirtualPropertyGetterCallCount).IsEqualTo(2);
-			await That(mock.VirtualPropertySetterCallCount).IsEqualTo(1);
+			await That(sut.VirtualPropertyGetterCallCount).IsEqualTo(2);
+			await That(sut.VirtualPropertySetterCallCount).IsEqualTo(1);
 		}
 
 		[Fact]
 		public async Task DefaultBehavior_WhenPropertySetup_ShouldUseSetupValues()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default);
-			mock.Mock.Setup.VirtualProperty.Returns(15);
+			sut.Mock.Setup.VirtualProperty.Returns(15);
 
-			int result = mock.VirtualProperty;
-			mock.VirtualProperty = 42;
-			int result2 = mock.VirtualProperty;
+			int result = sut.VirtualProperty;
+			sut.VirtualProperty = 42;
+			int result2 = sut.VirtualProperty;
 
 			await That(result).IsEqualTo(15);
-			await That(mock.VirtualPropertyValue).IsEqualTo(42);
+			await That(sut.VirtualPropertyValue).IsEqualTo(42);
 			await That(result2).IsEqualTo(15);
-			await That(mock.VirtualPropertyGetterCallCount).IsEqualTo(2);
-			await That(mock.VirtualPropertySetterCallCount).IsEqualTo(1);
+			await That(sut.VirtualPropertyGetterCallCount).IsEqualTo(2);
+			await That(sut.VirtualPropertySetterCallCount).IsEqualTo(1);
 		}
 
 		[Fact]
 		public async Task
 			SkippingBaseClass_ForRefAndOutParameter_WhenMethodNotSetup_ShouldSetToPreviousOrDefaultValues()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default.SkippingBaseClass());
 			int value1 = 5;
 
-			int sum = mock.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
+			int sum = sut.VirtualMethodWithRefAndOutParameters(ref value1, out int value2);
 
 			await That(value1).IsEqualTo(5);
 			await That(value2).IsEqualTo(0);
 			await That(sum).IsEqualTo(0);
-			await That(mock.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(0);
+			await That(sut.VirtualMethodWithRefAndOutParametersCallCount).IsEqualTo(0);
 		}
 
 		[Fact]
 		public async Task SkippingBaseClass_ShouldNotCallIndexersOfBaseClass()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default.SkippingBaseClass());
 
-			int result = mock[1];
-			mock[1] = 2;
-			int result2 = mock[1];
+			int result = sut[1];
+			sut[1] = 2;
+			int result2 = sut[1];
 
 			await That(result).IsEqualTo(0);
 			await That(result2).IsEqualTo(2);
-			await That(mock.VirtualIndexerGetterCallCount).IsEqualTo(0);
-			await That(mock.VirtualIndexerSetterCallCount).IsEqualTo(0);
+			await That(sut.VirtualIndexerGetterCallCount).IsEqualTo(0);
+			await That(sut.VirtualIndexerSetterCallCount).IsEqualTo(0);
 		}
 
 		[Fact]
 		public async Task SkippingBaseClass_ShouldNotCallMethodOfBaseClass()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default.SkippingBaseClass());
 
-			_ = mock.VirtualMethod();
+			_ = sut.VirtualMethod();
 
-			await That(mock.VirtualMethodCallCount).IsEqualTo(0);
+			await That(sut.VirtualMethodCallCount).IsEqualTo(0);
 		}
 
 		[Fact]
 		public async Task SkippingBaseClass_ShouldNotCallPropertiesOfBaseClass()
 		{
-			MyBaseClassWithVirtualCalls mock =
+			MyBaseClassWithVirtualCalls sut =
 				MyBaseClassWithVirtualCalls.CreateMock(MockBehavior.Default.SkippingBaseClass());
 
-			int result = mock.VirtualProperty;
-			mock.VirtualProperty = 42;
-			int result2 = mock.VirtualProperty;
+			int result = sut.VirtualProperty;
+			sut.VirtualProperty = 42;
+			int result2 = sut.VirtualProperty;
 
 			await That(result).IsEqualTo(0);
 			await That(result2).IsEqualTo(42);
-			await That(mock.VirtualPropertyGetterCallCount).IsEqualTo(0);
-			await That(mock.VirtualPropertySetterCallCount).IsEqualTo(0);
+			await That(sut.VirtualPropertyGetterCallCount).IsEqualTo(0);
+			await That(sut.VirtualPropertySetterCallCount).IsEqualTo(0);
 		}
 
 		public class MyBaseClassWithVirtualCalls

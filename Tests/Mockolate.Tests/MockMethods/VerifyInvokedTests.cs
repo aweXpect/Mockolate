@@ -10,43 +10,43 @@ public sealed partial class VerifyInvokedTests
 	public async Task Equals_ShouldWork()
 	{
 		object obj = new();
-		IMethodService mock = IMethodService.CreateMock();
+		IMethodService sut = IMethodService.CreateMock();
 
-		_ = mock.Equals(obj);
+		_ = sut.Equals(obj);
 
-		await That(mock.Mock.Verify.Equals(It.Is(obj))).Once();
+		await That(sut.Mock.Verify.Equals(It.Is(obj))).Once();
 	}
 
 	[Fact]
 	public async Task Equals_ShouldWorkWithNull()
 	{
 		object? obj = null;
-		IMethodService mock = IMethodService.CreateMock();
+		IMethodService sut = IMethodService.CreateMock();
 
-		_ = mock.Equals(null);
+		_ = sut.Equals(null);
 
-		await That(mock.Mock.Verify.Equals(It.Is(obj))).Once();
+		await That(sut.Mock.Verify.Equals(It.Is(obj))).Once();
 	}
 
 	[Fact]
 	public async Task Equals_WithOtherOverload_ShouldWork()
 	{
 		object obj = new();
-		IMethodService mock = IMethodService.CreateMock();
+		IMethodService sut = IMethodService.CreateMock();
 
-		_ = mock.Equals(3);
+		_ = sut.Equals(3);
 
-		await That(mock.Mock.Verify.Equals(It.Is(obj))).Never();
+		await That(sut.Mock.Verify.Equals(It.Is(obj))).Never();
 	}
 
 	[Fact]
 	public async Task GetHashCode_ShouldWork()
 	{
-		IMethodService mock = IMethodService.CreateMock();
+		IMethodService sut = IMethodService.CreateMock();
 
-		_ = mock.GetHashCode();
+		_ = sut.GetHashCode();
 
-		await That(mock.Mock.Verify.GetHashCode()).Once();
+		await That(sut.Mock.Verify.GetHashCode()).Once();
 	}
 
 	[Theory]
@@ -116,11 +116,11 @@ public sealed partial class VerifyInvokedTests
 	[Fact]
 	public async Task ToString_ShouldWork()
 	{
-		IMethodService mock = IMethodService.CreateMock();
+		IMethodService sut = IMethodService.CreateMock();
 
-		_ = mock.ToString();
+		_ = sut.ToString();
 
-		await That(mock.Mock.Verify.ToString()).Once();
+		await That(sut.Mock.Verify.ToString()).Once();
 	}
 
 	[Theory]

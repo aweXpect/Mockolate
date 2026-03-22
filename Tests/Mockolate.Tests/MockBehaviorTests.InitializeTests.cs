@@ -12,13 +12,13 @@ public sealed partial class MockBehaviorTests
 			MockBehavior behavior = MockBehavior.Default.Initialize<IChocolateDispenser>(setup
 				=> setup[It.Satisfies<string>(s => s.StartsWith("da"))].InitializeWith(5));
 
-			IChocolateDispenser mock = IChocolateDispenser.CreateMock(behavior,
+			IChocolateDispenser sut = IChocolateDispenser.CreateMock(behavior,
 				setup => setup[It.Satisfies<string>(s => s.EndsWith("rk"))].InitializeWith(16));
 
-			int bothMatchResult = mock["dark"];
-			int directMatchResult = mock["--rk"];
-			int behaviorMatchResult = mock["da--"];
-			int noneMatchResult = mock["foo"];
+			int bothMatchResult = sut["dark"];
+			int directMatchResult = sut["--rk"];
+			int behaviorMatchResult = sut["da--"];
+			int noneMatchResult = sut["foo"];
 
 			await That(bothMatchResult).IsEqualTo(16);
 			await That(directMatchResult).IsEqualTo(16);
@@ -48,10 +48,10 @@ public sealed partial class MockBehaviorTests
 				MockBehavior.Default.Initialize<IChocolateDispenser>(setup
 					=> setup[It.Is("Dark")].InitializeWith(15));
 
-			IChocolateDispenser mock = IChocolateDispenser.CreateMock(behavior);
+			IChocolateDispenser sut = IChocolateDispenser.CreateMock(behavior);
 
-			int setupResult = mock["Dark"];
-			int otherResult = mock["Light"];
+			int setupResult = sut["Dark"];
+			int otherResult = sut["Light"];
 
 			await That(setupResult).IsEqualTo(15);
 			await That(otherResult).IsEqualTo(0);

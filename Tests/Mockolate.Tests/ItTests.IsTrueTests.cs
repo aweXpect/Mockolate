@@ -22,12 +22,12 @@ public sealed partial class ItTests
 		[InlineData(false, 0)]
 		public async Task True_ShouldMatchWhenTrue(bool value, int expectedCount)
 		{
-			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
-			mock.Mock.Setup.DoSomething(null, It.IsTrue());
+			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
+			sut.Mock.Setup.DoSomething(null, It.IsTrue());
 
-			mock.DoSomething(null, value);
+			sut.DoSomething(null, value);
 
-			await That(mock.Mock.Verify.DoSomething(null, It.IsTrue())).Exactly(expectedCount);
+			await That(sut.Mock.Verify.DoSomething(null, It.IsTrue())).Exactly(expectedCount);
 		}
 	}
 }

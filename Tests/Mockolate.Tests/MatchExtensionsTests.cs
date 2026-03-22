@@ -9,15 +9,15 @@ public sealed class MatchExtensionsTests
 	public async Task OutParameterMonitor_MultipleMonitors_ShouldAllMonitorValues()
 	{
 		int idx = 1;
-		IMyService mock = IMyService.CreateMock();
-		mock.Mock.Setup.MyMethodWithOutParam(It.IsOut(() => idx++)
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.MyMethodWithOutParam(It.IsOut(() => idx++)
 			.Monitor(out IParameterMonitor<int> monitor1)
 			.Monitor(out IParameterMonitor<int> monitor2));
 
-		mock.MyMethodWithOutParam(out _);
-		mock.MyMethodWithOutParam(out _);
-		mock.MyMethodWithOutParam(out _);
-		mock.MyMethodWithOptionalParameters(5);
+		sut.MyMethodWithOutParam(out _);
+		sut.MyMethodWithOutParam(out _);
+		sut.MyMethodWithOutParam(out _);
+		sut.MyMethodWithOptionalParameters(5);
 
 		await That(monitor1.Values).IsEqualTo([1, 2, 3,]);
 		await That(monitor2.Values).IsEqualTo([1, 2, 3,]);
@@ -27,12 +27,12 @@ public sealed class MatchExtensionsTests
 	public async Task OutParameterMonitor_ShouldMonitorReceivedValues()
 	{
 		int idx = 1;
-		IMyService mock = IMyService.CreateMock();
-		mock.Mock.Setup.MyMethodWithOutParam(
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.MyMethodWithOutParam(
 			It.IsOut(() => idx++).Monitor(out IParameterMonitor<int> monitor));
 
-		mock.MyMethodWithOutParam(out _);
-		mock.MyMethodWithOutParam(out _);
+		sut.MyMethodWithOutParam(out _);
+		sut.MyMethodWithOutParam(out _);
 
 		await That(monitor.Values).IsEqualTo([1, 2,]);
 	}
@@ -40,16 +40,16 @@ public sealed class MatchExtensionsTests
 	[Fact]
 	public async Task ParameterMonitor_MultipleMonitors_ShouldAllMonitorValues()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		mock.Mock.Setup.Dispense(
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		sut.Mock.Setup.Dispense(
 			It.IsAny<string>()
 				.Monitor(out IParameterMonitor<string> monitorA),
 			It.IsAny<int>()
 				.Monitor(out IParameterMonitor<int> monitorB1)
 				.Monitor(out IParameterMonitor<int> monitorB2));
 
-		mock.Dispense("Dark", 5);
-		mock.Dispense("White", 6);
+		sut.Dispense("Dark", 5);
+		sut.Dispense("White", 6);
 
 		await That(monitorA.Values).IsEqualTo(["Dark", "White",]);
 		await That(monitorB1.Values).IsEqualTo([5, 6,]);
@@ -59,11 +59,11 @@ public sealed class MatchExtensionsTests
 	[Fact]
 	public async Task ParameterMonitor_ShouldMonitorReceivedValues()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		mock.Mock.Setup.Dispense(It.IsAny<string>().Monitor(out IParameterMonitor<string> monitor), It.IsAny<int>());
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		sut.Mock.Setup.Dispense(It.IsAny<string>().Monitor(out IParameterMonitor<string> monitor), It.IsAny<int>());
 
-		mock.Dispense("Dark", 5);
-		mock.Dispense("White", 5);
+		sut.Dispense("Dark", 5);
+		sut.Dispense("White", 5);
 
 		await That(monitor.Values).IsEqualTo(["Dark", "White",]);
 	}
@@ -71,17 +71,17 @@ public sealed class MatchExtensionsTests
 	[Fact]
 	public async Task ParameterMonitor_WithFilter_ShouldMonitorMatchingValues()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		mock.Mock.Setup.Dispense(It.IsAny<string>(),
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		sut.Mock.Setup.Dispense(It.IsAny<string>(),
 			It.Satisfies<int>(x => x > 4).Monitor(out IParameterMonitor<int> monitor));
 
-		mock.Dispense("Dark", 3);
-		mock.Dispense("White", 5);
-		mock.Dispense("White", 4);
-		mock.Dispense("White", 6);
-		mock.Dispense("White", 7);
-		mock.Dispense("White", 1);
-		mock.Dispense("White", 8);
+		sut.Dispense("Dark", 3);
+		sut.Dispense("White", 5);
+		sut.Dispense("White", 4);
+		sut.Dispense("White", 6);
+		sut.Dispense("White", 7);
+		sut.Dispense("White", 1);
+		sut.Dispense("White", 8);
 
 		await That(monitor.Values).IsEqualTo([5, 6, 7, 8,]);
 	}
@@ -89,15 +89,15 @@ public sealed class MatchExtensionsTests
 	[Fact]
 	public async Task RefParameterMonitor_MultipleMonitors_ShouldAllMonitorValues()
 	{
-		IMyService mock = IMyService.CreateMock();
-		mock.Mock.Setup.MyMethodWithRefParam(It.IsRef<int>(v => 2 * v)
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.MyMethodWithRefParam(It.IsRef<int>(v => 2 * v)
 			.Monitor(out IParameterMonitor<int> monitor1)
 			.Monitor(out IParameterMonitor<int> monitor2));
 		int value1 = 3;
 		int value2 = 7;
 
-		mock.MyMethodWithRefParam(ref value1);
-		mock.MyMethodWithRefParam(ref value2);
+		sut.MyMethodWithRefParam(ref value1);
+		sut.MyMethodWithRefParam(ref value2);
 
 		await That(monitor1.Values).IsEqualTo([6, 14,]);
 		await That(monitor2.Values).IsEqualTo([6, 14,]);
@@ -106,14 +106,14 @@ public sealed class MatchExtensionsTests
 	[Fact]
 	public async Task RefParameterMonitor_ShouldMonitorReceivedValues()
 	{
-		IMyService mock = IMyService.CreateMock();
-		mock.Mock.Setup.MyMethodWithRefParam(It.IsRef<int>(v => 2 * v)
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.MyMethodWithRefParam(It.IsRef<int>(v => 2 * v)
 			.Monitor(out IParameterMonitor<int> monitor));
 		int value1 = 3;
 		int value2 = 7;
 
-		mock.MyMethodWithRefParam(ref value1);
-		mock.MyMethodWithRefParam(ref value2);
+		sut.MyMethodWithRefParam(ref value1);
+		sut.MyMethodWithRefParam(ref value2);
 
 		await That(monitor.Values).IsEqualTo([6, 14,]);
 	}
@@ -121,15 +121,15 @@ public sealed class MatchExtensionsTests
 	[Fact]
 	public async Task RefParameterMonitor_WithFilter_ShouldMonitorMatchingValues()
 	{
-		IMyService mock = IMyService.CreateMock();
-		mock.Mock.Setup.MyMethodWithRefParam(It.IsRef<int>(i => i > 4, v => 2 * v)
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.MyMethodWithRefParam(It.IsRef<int>(i => i > 4, v => 2 * v)
 			.Monitor(out IParameterMonitor<int> monitor));
 
 		int[] values = [3, 5, 4, 6, 7, 1, 8,];
 		foreach (int value in values)
 		{
 			int refValue = value;
-			mock.MyMethodWithRefParam(ref refValue);
+			sut.MyMethodWithRefParam(ref refValue);
 		}
 
 		await That(monitor.Values).IsEqualTo([10, 12, 14, 16,]);

@@ -16,11 +16,11 @@ public sealed partial class ItTests
 		public async Task AsRegex_CaseSensitive_ShouldMatchRegexCaseSensitive(
 			string value, string regex, int expectedCount)
 		{
-			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
+			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
 
-			mock.DoSomethingWithString(value);
+			sut.DoSomethingWithString(value);
 
-			await That(mock.Mock.Verify.DoSomethingWithString(It.Matches(regex).AsRegex().CaseSensitive()))
+			await That(sut.Mock.Verify.DoSomethingWithString(It.Matches(regex).AsRegex().CaseSensitive()))
 				.Exactly(expectedCount);
 		}
 
@@ -31,22 +31,22 @@ public sealed partial class ItTests
 		[InlineData("foobar", "f[aeiou]*BAR", 1)]
 		public async Task AsRegex_ShouldMatchRegexCaseInsensitive(string value, string regex, int expectedCount)
 		{
-			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
+			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
 
-			mock.DoSomethingWithString(value);
+			sut.DoSomethingWithString(value);
 
-			await That(mock.Mock.Verify.DoSomethingWithString(It.Matches(regex).AsRegex()))
+			await That(sut.Mock.Verify.DoSomethingWithString(It.Matches(regex).AsRegex()))
 				.Exactly(expectedCount);
 		}
 
 		[Fact]
 		public async Task AsRegex_WithRegexOptions_ShouldUseRegexOption()
 		{
-			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
+			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
 
-			mock.DoSomethingWithString("foo");
+			sut.DoSomethingWithString("foo");
 
-			await That(mock.Mock.Verify.DoSomethingWithString(
+			await That(sut.Mock.Verify.DoSomethingWithString(
 					It.Matches("F[aeiou]+o").AsRegex(RegexOptions.IgnoreCase)))
 				.Exactly(1);
 		}
@@ -54,12 +54,12 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task AsRegex_WithTimeout_ShouldApplyTimeoutToRegex()
 		{
-			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
-			mock.DoSomethingWithString("foo");
+			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
+			sut.DoSomethingWithString("foo");
 
 			void Act()
 			{
-				mock.Mock.Verify.DoSomethingWithString(
+				sut.Mock.Verify.DoSomethingWithString(
 					It.Matches("F[aeiou]+o").AsRegex(timeout: TimeSpan.FromSeconds(0))).AtLeastOnce();
 			}
 
@@ -78,11 +78,11 @@ public sealed partial class ItTests
 		public async Task CaseSensitive_ShouldMatchWildcardCaseSensitive(
 			string value, string wildcard, int expectedCount)
 		{
-			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
+			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
 
-			mock.DoSomethingWithString(value);
+			sut.DoSomethingWithString(value);
 
-			await That(mock.Mock.Verify.DoSomethingWithString(It.Matches(wildcard).CaseSensitive()))
+			await That(sut.Mock.Verify.DoSomethingWithString(It.Matches(wildcard).CaseSensitive()))
 				.Exactly(expectedCount);
 		}
 
@@ -112,11 +112,11 @@ public sealed partial class ItTests
 		[InlineData("foobar", "f??bar", 1)]
 		public async Task ShouldMatchWildcardCaseInsensitive(string value, string wildcard, int expectedCount)
 		{
-			IMyServiceWithNullable mock = IMyServiceWithNullable.CreateMock();
+			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
 
-			mock.DoSomethingWithString(value);
+			sut.DoSomethingWithString(value);
 
-			await That(mock.Mock.Verify.DoSomethingWithString(It.Matches(wildcard))).Exactly(expectedCount);
+			await That(sut.Mock.Verify.DoSomethingWithString(It.Matches(wildcard))).Exactly(expectedCount);
 		}
 
 		[Fact]

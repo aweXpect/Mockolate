@@ -27,11 +27,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Subscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 		registration.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
-		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(mock, "baz.bar");
+		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(sut, "baz.bar");
 
 		await That(result).Never();
 	}
@@ -39,11 +39,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Subscribed_WhenNameMatches_ShouldReturnOnce()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 		registration.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
-		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(mock, "foo.bar");
+		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(sut, "foo.bar");
 
 		await That(result).Once();
 	}
@@ -51,10 +51,10 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Subscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 
-		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(mock, "baz.bar");
+		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(sut, "baz.bar");
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event bar");
@@ -63,11 +63,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Unsubscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 		registration.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
 
-		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(mock, "baz.bar");
+		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(sut, "baz.bar");
 
 		await That(result).Never();
 	}
@@ -75,11 +75,11 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Unsubscribed_WhenNameMatches_ShouldReturnOnce()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 		registration.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
 
-		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(mock, "foo.bar");
+		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(sut, "foo.bar");
 
 		await That(result).Once();
 	}
@@ -87,10 +87,10 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task Unsubscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 
-		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(mock, "baz.bar");
+		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(sut, "baz.bar");
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event bar");

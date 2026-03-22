@@ -233,16 +233,16 @@ public sealed partial class SetupIndexerTests
 		public async Task ShouldExecuteGetterCallbacks()
 		{
 			int callCount = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
-			mock.Mock.Setup[It.Satisfies<int>(i => i < 4)]
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[It.Satisfies<int>(i => i < 4)]
 				.OnGet.Do(() => { callCount++; });
 
-			_ = mock[1];
-			_ = mock[2];
-			_ = mock[3];
-			_ = mock[4];
-			_ = mock[5];
-			_ = mock[6];
+			_ = sut[1];
+			_ = sut[2];
+			_ = sut[3];
+			_ = sut[4];
+			_ = sut[5];
+			_ = sut[6];
 
 			await That(callCount).IsEqualTo(3);
 		}
@@ -251,15 +251,15 @@ public sealed partial class SetupIndexerTests
 		public async Task ShouldExecuteGetterCallbacksWithValue()
 		{
 			int callCount = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
-			mock.Mock.Setup[It.Satisfies<int>(i => i < 4)]
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[It.Satisfies<int>(i => i < 4)]
 				.OnGet.Do(v => { callCount += v; });
 
-			_ = mock[1];
-			_ = mock[2];
-			_ = mock[3];
-			_ = mock[4];
-			_ = mock[5];
+			_ = sut[1];
+			_ = sut[2];
+			_ = sut[3];
+			_ = sut[4];
+			_ = sut[5];
 
 			await That(callCount).IsEqualTo(6);
 		}
@@ -321,13 +321,13 @@ public sealed partial class SetupIndexerTests
 		public async Task WhenLengthDoesNotMatch_ShouldIgnore()
 		{
 			int callCount = 0;
-			IIndexerService mock = IIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>()]
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>()]
 				.OnGet.Do(() => { callCount++; });
 
-			_ = mock[1];
-			_ = mock[2, 2];
-			_ = mock[3, 3, 3];
+			_ = sut[1];
+			_ = sut[2, 2];
+			_ = sut[3, 3, 3];
 
 			await That(callCount).IsEqualTo(1);
 		}
@@ -335,9 +335,9 @@ public sealed partial class SetupIndexerTests
 		[Fact]
 		public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
 		{
-			IIndexerService mock = IIndexerService.CreateMock();
+			IIndexerService sut = IIndexerService.CreateMock();
 			IIndexerSetupCallbackBuilder<string, int> setup =
-				mock.Mock.Setup[It.IsAny<int>()];
+				sut.Mock.Setup[It.IsAny<int>()];
 
 			void ActWhen()
 			{
@@ -362,9 +362,9 @@ public sealed partial class SetupIndexerTests
 		[Fact]
 		public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
 		{
-			IIndexerService mock = IIndexerService.CreateMock();
+			IIndexerService sut = IIndexerService.CreateMock();
 			IIndexerSetupCallbackWhenBuilder<string, int> setup =
-				mock.Mock.Setup[It.IsAny<int>()];
+				sut.Mock.Setup[It.IsAny<int>()];
 
 			void ActFor()
 			{
@@ -399,13 +399,13 @@ public sealed partial class SetupIndexerTests
 			public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.OnGet.Do(() => { callCount++; });
 
-				_ = mock[1];
-				_ = mock[2, 2];
-				_ = mock[3, 3, 3];
+				_ = sut[1];
+				_ = sut[2, 2];
+				_ = sut[3, 3, 3];
 
 				await That(callCount).IsEqualTo(1);
 			}
@@ -652,16 +652,16 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteGetterCallbacks()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
 					.OnGet.Do(() => { callCount++; });
 
-				_ = mock[5, 1]; // no
-				_ = mock[3, 2]; // yes
-				_ = mock[2, 3]; // yes
-				_ = mock[1, 4]; // no
-				_ = mock[1, -4]; // yes
-				_ = mock[8, 6]; // no
+				_ = sut[5, 1]; // no
+				_ = sut[3, 2]; // yes
+				_ = sut[2, 3]; // yes
+				_ = sut[1, 4]; // no
+				_ = sut[1, -4]; // yes
+				_ = sut[8, 6]; // no
 
 				await That(callCount).IsEqualTo(3);
 			}
@@ -670,16 +670,16 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteGetterCallbacksWithValue()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4)]
 					.OnGet.Do((v1, v2) => { callCount += v1 * v2; });
 
-				_ = mock[5, 1]; // no
-				_ = mock[3, 2]; // yes (6)
-				_ = mock[2, 3]; // yes (6)
-				_ = mock[1, 4]; // no
-				_ = mock[1, -4]; // yes (-4)
-				_ = mock[8, 6]; // no
+				_ = sut[5, 1]; // no
+				_ = sut[3, 2]; // yes (6)
+				_ = sut[2, 3]; // yes (6)
+				_ = sut[1, 4]; // no
+				_ = sut[1, -4]; // yes (-4)
+				_ = sut[8, 6]; // no
 
 				await That(callCount).IsEqualTo(8);
 			}
@@ -740,9 +740,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 				IIndexerSetupCallbackBuilder<string, int, int> setup =
-					mock.Mock.Setup[It.IsAny<int>(),
+					sut.Mock.Setup[It.IsAny<int>(),
 						It.IsAny<int>()];
 
 				void ActWhen()
@@ -768,9 +768,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 				IIndexerSetupCallbackWhenBuilder<string, int, int> setup =
-					mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()];
+					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActFor()
 				{
@@ -807,14 +807,14 @@ public sealed partial class SetupIndexerTests
 			public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnGet.Do(() => { callCount++; });
 
-				_ = mock[1];
-				_ = mock[2, 2];
-				_ = mock[3, 3, 3];
-				_ = mock[4, 4, 4, 4];
+				_ = sut[1];
+				_ = sut[2, 2];
+				_ = sut[3, 3, 3];
+				_ = sut[4, 4, 4, 4];
 
 				await That(callCount).IsEqualTo(1);
 			}
@@ -1071,18 +1071,18 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteGetterCallbacks()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
 						It.Satisfies<int>(i => i < 4)]
 					.OnGet.Do(() => { callCount++; });
 
-				_ = mock[1, 5, 1]; // no
-				_ = mock[3, 1, 2]; // yes
-				_ = mock[2, 2, 3]; // yes
-				_ = mock[1, 1, 4]; // no
-				_ = mock[1, 1, -4]; // yes
-				_ = mock[6, 2, 1]; // no
-				_ = mock[6, 7, 8]; // no
+				_ = sut[1, 5, 1]; // no
+				_ = sut[3, 1, 2]; // yes
+				_ = sut[2, 2, 3]; // yes
+				_ = sut[1, 1, 4]; // no
+				_ = sut[1, 1, -4]; // yes
+				_ = sut[6, 2, 1]; // no
+				_ = sut[6, 7, 8]; // no
 
 				await That(callCount).IsEqualTo(3);
 			}
@@ -1091,18 +1091,18 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteGetterCallbacksWithValue()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 4), It.Satisfies<int>(i => i < 4),
 						It.Satisfies<int>(i => i < 4)]
 					.OnGet.Do((v1, v2, v3) => { callCount += v1 * v2 * v3; });
 
-				_ = mock[1, 5, 1]; // no
-				_ = mock[3, 1, 2]; // yes (6)
-				_ = mock[2, 2, 3]; // yes (12)
-				_ = mock[1, 1, 4]; // no
-				_ = mock[1, 1, -4]; // yes (-4)
-				_ = mock[6, 2, 1]; // no
-				_ = mock[6, 7, 8]; // no
+				_ = sut[1, 5, 1]; // no
+				_ = sut[3, 1, 2]; // yes (6)
+				_ = sut[2, 2, 3]; // yes (12)
+				_ = sut[1, 1, 4]; // no
+				_ = sut[1, 1, -4]; // yes (-4)
+				_ = sut[6, 2, 1]; // no
+				_ = sut[6, 7, 8]; // no
 
 				await That(callCount).IsEqualTo(14);
 			}
@@ -1163,9 +1163,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 				IIndexerSetupCallbackBuilder<string, int, int, int> setup =
-					mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
+					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActWhen()
 				{
@@ -1190,9 +1190,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 				IIndexerSetupCallbackWhenBuilder<string, int, int, int> setup =
-					mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
+					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActFor()
 				{
@@ -1230,14 +1230,14 @@ public sealed partial class SetupIndexerTests
 			public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.OnGet.Do(() => { callCount++; });
 
-				_ = mock[1];
-				_ = mock[2, 2];
-				_ = mock[3, 3, 3];
-				_ = mock[4, 4, 4, 4];
+				_ = sut[1];
+				_ = sut[2, 2];
+				_ = sut[3, 3, 3];
+				_ = sut[4, 4, 4, 4];
 
 				await That(callCount).IsEqualTo(1);
 			}
@@ -1504,19 +1504,19 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteGetterCallbacks()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
 						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5)]
 					.OnGet.Do(() => { callCount++; });
 
-				_ = mock[1, 1, 5, 1]; // no
-				_ = mock[3, 1, 2, 4]; // yes
-				_ = mock[4, 2, 2, 3]; // yes
-				_ = mock[1, 1, 1, 5]; // no
-				_ = mock[1, 5, 1, 1]; // no
-				_ = mock[1, 1, 1, -4]; // yes
-				_ = mock[6, 2, 1, 3]; // no
-				_ = mock[6, 7, 8, 9]; // no
+				_ = sut[1, 1, 5, 1]; // no
+				_ = sut[3, 1, 2, 4]; // yes
+				_ = sut[4, 2, 2, 3]; // yes
+				_ = sut[1, 1, 1, 5]; // no
+				_ = sut[1, 5, 1, 1]; // no
+				_ = sut[1, 1, 1, -4]; // yes
+				_ = sut[6, 2, 1, 3]; // no
+				_ = sut[6, 7, 8, 9]; // no
 
 				await That(callCount).IsEqualTo(3);
 			}
@@ -1525,18 +1525,18 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteGetterCallbacksWithValue()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5),
 						It.Satisfies<int>(i => i < 5), It.Satisfies<int>(i => i < 5)]
 					.OnGet.Do((v1, v2, v3, v4) => { callCount += v1 * v2 * v3 * v4; });
 
-				_ = mock[1, 5, 1, 3]; // no
-				_ = mock[3, 1, 2, 4]; // yes (24)
-				_ = mock[2, 2, 3, 1]; // yes (12)
-				_ = mock[1, 1, 5, 3]; // no
-				_ = mock[1, 1, -4, 2]; // yes (-8)
-				_ = mock[6, 2, 1, 3]; // no
-				_ = mock[6, 7, 8, 9]; // no
+				_ = sut[1, 5, 1, 3]; // no
+				_ = sut[3, 1, 2, 4]; // yes (24)
+				_ = sut[2, 2, 3, 1]; // yes (12)
+				_ = sut[1, 1, 5, 3]; // no
+				_ = sut[1, 1, -4, 2]; // yes (-8)
+				_ = sut[6, 2, 1, 3]; // no
+				_ = sut[6, 7, 8, 9]; // no
 
 				await That(callCount).IsEqualTo(28);
 			}
@@ -1597,9 +1597,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 				IIndexerSetupCallbackBuilder<string, int, int, int, int> setup =
-					mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
+					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActWhen()
 				{
@@ -1624,9 +1624,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 				IIndexerSetupCallbackWhenBuilder<string, int, int, int, int> setup =
-					mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
+					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActFor()
 				{
@@ -1665,16 +1665,16 @@ public sealed partial class SetupIndexerTests
 			public async Task Callback_WhenLengthDoesNotMatch_ShouldIgnore()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>()]
 					.OnGet.Do(() => { callCount++; });
 
-				_ = mock[1];
-				_ = mock[2, 2];
-				_ = mock[3, 3, 3];
-				_ = mock[4, 4, 4, 4];
-				_ = mock[5, 5, 5, 5, 5];
+				_ = sut[1];
+				_ = sut[2, 2];
+				_ = sut[3, 3, 3];
+				_ = sut[4, 4, 4, 4];
+				_ = sut[5, 5, 5, 5, 5];
 
 				await That(callCount).IsEqualTo(1);
 			}
@@ -1951,19 +1951,19 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteGetterCallbacks()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
 						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6)]
 					.OnGet.Do(() => { callCount++; });
 
-				_ = mock[1, 1, 1, 6, 1]; // no
-				_ = mock[1, 3, 1, 2, 4]; // yes
-				_ = mock[2, 4, 2, 1, 3]; // yes
-				_ = mock[1, 1, 1, 1, 6]; // no
-				_ = mock[1, 1, 6, 1, 1]; // no
-				_ = mock[1, 1, 1, 1, -4]; // yes
-				_ = mock[1, 6, 2, 1, 3]; // no
-				_ = mock[6, 7, 8, 9, 10]; // no
+				_ = sut[1, 1, 1, 6, 1]; // no
+				_ = sut[1, 3, 1, 2, 4]; // yes
+				_ = sut[2, 4, 2, 1, 3]; // yes
+				_ = sut[1, 1, 1, 1, 6]; // no
+				_ = sut[1, 1, 6, 1, 1]; // no
+				_ = sut[1, 1, 1, 1, -4]; // yes
+				_ = sut[1, 6, 2, 1, 3]; // no
+				_ = sut[6, 7, 8, 9, 10]; // no
 
 				await That(callCount).IsEqualTo(3);
 			}
@@ -1972,19 +1972,19 @@ public sealed partial class SetupIndexerTests
 			public async Task ShouldExecuteGetterCallbacksWithValue()
 			{
 				int callCount = 0;
-				IIndexerService mock = IIndexerService.CreateMock();
-				mock.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
+				IIndexerService sut = IIndexerService.CreateMock();
+				sut.Mock.Setup[It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6),
 						It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6), It.Satisfies<int>(i => i < 6)]
 					.OnGet.Do((v1, v2, v3, v4, v5) => { callCount += v1 * v2 * v3 * v4 * v5; });
 
-				_ = mock[1, 1, 1, 7, 1]; // no
-				_ = mock[1, 3, 1, 2, 4]; // yes (24)
-				_ = mock[2, 4, 2, 1, 3]; // yes (48)
-				_ = mock[1, 1, 1, 1, 7]; // no
-				_ = mock[1, 1, 7, 1, 1]; // no
-				_ = mock[1, 3, 3, 1, -4]; // yes (-36)
-				_ = mock[1, 7, 2, 1, 3]; // no
-				_ = mock[6, 7, 8, 9, 10]; // no
+				_ = sut[1, 1, 1, 7, 1]; // no
+				_ = sut[1, 3, 1, 2, 4]; // yes (24)
+				_ = sut[2, 4, 2, 1, 3]; // yes (48)
+				_ = sut[1, 1, 1, 1, 7]; // no
+				_ = sut[1, 1, 7, 1, 1]; // no
+				_ = sut[1, 3, 3, 1, -4]; // yes (-36)
+				_ = sut[1, 7, 2, 1, 3]; // no
+				_ = sut[6, 7, 8, 9, 10]; // no
 
 				await That(callCount).IsEqualTo(36);
 			}
@@ -2045,9 +2045,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
 			{
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 				IIndexerSetupCallbackBuilder<string, int, int, int, int, int> setup =
-					mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
+					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActWhen()
 				{
@@ -2072,9 +2072,9 @@ public sealed partial class SetupIndexerTests
 			[Fact]
 			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
-				IIndexerService mock = IIndexerService.CreateMock();
+				IIndexerService sut = IIndexerService.CreateMock();
 				IIndexerSetupCallbackWhenBuilder<string, int, int, int, int, int> setup =
-					mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
+					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActFor()
 				{

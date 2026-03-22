@@ -223,8 +223,8 @@ public class GeneralTests
 			         {
 			             public static void Main(string[] args)
 			             {
-			     			var mock = HttpMessageHandler.CreateMock();
-			     			var httpClient = new HttpClient(mock);
+			     			var messageHandler = HttpMessageHandler.CreateMock();
+			     			var httpClient = new HttpClient(messageHandler);
 			             }
 			         }
 			     }

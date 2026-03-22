@@ -10,12 +10,12 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith1Key_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
 
-			_ = mock[1];
+			_ = sut[1];
 
-			await That(mock.MyIndexerWith1KeyGetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith1KeyGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -24,12 +24,12 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith1Key_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
 
-			mock[1] = 1;
+			sut[1] = 1;
 
-			await That(mock.MyIndexerWith1KeySetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith1KeySetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -38,12 +38,12 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith2Keys_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
 
-			_ = mock[1, 2];
+			_ = sut[1, 2];
 
-			await That(mock.MyIndexerWith2KeysGetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith2KeysGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -52,12 +52,12 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith2Keys_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
 
-			mock[1, 2] = 1;
+			sut[1, 2] = 1;
 
-			await That(mock.MyIndexerWith2KeysSetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith2KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -66,12 +66,12 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith3Keys_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
 
-			_ = mock[1, 2, 3];
+			_ = sut[1, 2, 3];
 
-			await That(mock.MyIndexerWith3KeysGetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith3KeysGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -80,12 +80,12 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith3Keys_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
 
-			mock[1, 2, 3] = 1;
+			sut[1, 2, 3] = 1;
 
-			await That(mock.MyIndexerWith3KeysSetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith3KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -94,12 +94,12 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith4Keys_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
 
-			_ = mock[1, 2, 3, 4];
+			_ = sut[1, 2, 3, 4];
 
-			await That(mock.MyIndexerWith4KeysGetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith4KeysGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -108,12 +108,12 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith4Keys_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()].SkippingBaseClass(skipBaseClass);
 
-			mock[1, 2, 3, 4] = 1;
+			sut[1, 2, 3, 4] = 1;
 
-			await That(mock.MyIndexerWith4KeysSetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith4KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -122,13 +122,13 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith5Keys_Getter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 				.SkippingBaseClass(skipBaseClass);
 
-			_ = mock[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
 
-			await That(mock.MyIndexerWith5KeysGetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith5KeysGetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Theory]
@@ -137,23 +137,23 @@ public sealed partial class SetupIndexerTests
 		public async Task IndexerWith5Keys_Setter_ShouldSkipCallingBaseWhenRequested(bool skipBaseClass,
 			int expectedCallCount)
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 				.SkippingBaseClass(skipBaseClass);
 
-			mock[1, 2, 3, 4, 5] = 1;
+			sut[1, 2, 3, 4, 5] = 1;
 
-			await That(mock.MyIndexerWith5KeysSetterCallCount).IsEqualTo(expectedCallCount);
+			await That(sut.MyIndexerWith5KeysSetterCallCount).IsEqualTo(expectedCallCount);
 		}
 
 		[Fact]
 		public async Task SetupSkippingBaseClassWithoutParameter_ShouldReturnDefaultValue()
 		{
-			MyIndexerService mock = MyIndexerService.CreateMock();
-			mock.Mock.Setup[It.IsAny<string>()]
+			MyIndexerService sut = MyIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<string>()]
 				.SkippingBaseClass();
 
-			int result = mock["returning 2"];
+			int result = sut["returning 2"];
 
 			await That(result).IsEqualTo(0);
 		}

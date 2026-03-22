@@ -11,12 +11,12 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task Method_WhenNameAndValueMatches_ShouldReturnOnce()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Method(mock,
+			registration.Method(sut,
 				new MethodParameterMatch("foo.bar", [new NamedParameter("p1", (IParameter)It.IsAny<int>()),]));
 
 		await That(result).Once();
@@ -25,12 +25,12 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task Method_WhenOnlyNameMatches_ShouldReturnNever()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Method(mock,
+			registration.Method(sut,
 				new MethodParameterMatch("foo.bar", [new NamedParameter("p1", (IParameter)It.IsAny<string>()),]));
 
 		await That(result).Never();
@@ -39,12 +39,12 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task Method_WhenOnlyValueMatches_ShouldReturnNever()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Method(mock,
+			registration.Method(sut,
 				new MethodParameterMatch("baz.bar", [new NamedParameter("p1", (IParameter)It.IsAny<int>()),]));
 
 		await That(result).Never();
@@ -53,11 +53,11 @@ public sealed partial class InteractionsTests
 	[Fact]
 	public async Task Method_WithoutInteractions_ShouldReturnNeverResult()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)mock).Registrations;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		MockRegistration registration = ((IMock)sut).Registrations;
 
 		VerificationResult<IChocolateDispenser> result =
-			registration.Method(mock,
+			registration.Method(sut,
 				new MethodParameterMatch("foo.bar", [new NamedParameter("p1", (IParameter)It.IsAny<int>()),]));
 
 		await That(result).Never();

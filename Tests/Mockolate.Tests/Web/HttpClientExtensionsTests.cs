@@ -49,12 +49,12 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task InvokedSetup_WhenMethodSetupIsNotVerifiable_ShouldThrowMockException()
 	{
-		HttpClient mock = HttpClient.CreateMock();
+		HttpClient sut = HttpClient.CreateMock();
 		IMethodSetup setup = new MyMethodSetup();
 
 		void Act()
 		{
-			mock.Mock.VerifySetup(setup).Never();
+			sut.Mock.VerifySetup(setup).Never();
 		}
 
 		await That(Act).Throws<MockException>()
@@ -64,9 +64,9 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task InvokedSetup_WhenSubjectIsMockedWithoutConstructorParameters_ShouldThrowMockException()
 	{
-		HttpClient mock = HttpClient.CreateMock(constructorParameters: []);
-		IMockVerify<HttpClient> verify = mock.Mock.Verify;
-		IMethodSetup setup = mock.Mock.Setup.SendAsync(Match.AnyParameters());
+		HttpClient sut = HttpClient.CreateMock(constructorParameters: []);
+		IMockVerify<HttpClient> verify = sut.Mock.Verify;
+		IMethodSetup setup = sut.Mock.Setup.SendAsync(Match.AnyParameters());
 
 		void Act()
 		{
@@ -80,9 +80,9 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task InvokedSetup_WhenSubjectIsNoMock_ShouldThrowMockException()
 	{
-		HttpClient mock = HttpClient.CreateMock();
+		HttpClient sut = HttpClient.CreateMock();
 		IMockVerify<HttpClient> verify = new MyMockVerify<HttpClient>();
-		IMethodSetup setup = mock.Mock.Setup.SendAsync(Match.AnyParameters());
+		IMethodSetup setup = sut.Mock.Setup.SendAsync(Match.AnyParameters());
 
 		void Act()
 		{

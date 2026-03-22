@@ -6,43 +6,43 @@ public sealed class ProtectedMockTests
 	public async Task CanAccessProtectedEvents()
 	{
 		int callCount = 0;
-		MyProtectedClass mock = MyProtectedClass.CreateMock();
+		MyProtectedClass sut = MyProtectedClass.CreateMock();
 		MyProtectedClass.MyEventHandler handler = (_, _) => callCount++;
 
-		mock.RegisterEvent(handler);
-		mock.Mock.Raise.MyEvent(this, EventArgs.Empty);
+		sut.RegisterEvent(handler);
+		sut.Mock.Raise.MyEvent(this, EventArgs.Empty);
 
-		await That(mock.Mock.Verify.MyEvent.Subscribed()).Once();
-		await That(mock.Mock.Verify.MyEvent.Unsubscribed()).Never();
-		mock.UnregisterEvent(handler);
-		await That(mock.Mock.Verify.MyEvent.Unsubscribed()).Once();
+		await That(sut.Mock.Verify.MyEvent.Subscribed()).Once();
+		await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Never();
+		sut.UnregisterEvent(handler);
+		await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Once();
 		await That(callCount).IsEqualTo(1);
 	}
 
 	[Fact]
 	public async Task CanAccessProtectedMethods()
 	{
-		MyProtectedClass mock = MyProtectedClass.CreateMock();
+		MyProtectedClass sut = MyProtectedClass.CreateMock();
 
-		mock.Mock.Setup.MyProtectedMethod(It.IsAny<string>())
+		sut.Mock.Setup.MyProtectedMethod(It.IsAny<string>())
 			.Returns(v => $"Hello, {v}!");
 
-		string result = mock.InvokeMyProtectedMethod("foo");
+		string result = sut.InvokeMyProtectedMethod("foo");
 
-		await That(mock.Mock.Verify.MyProtectedMethod(It.Is("foo"))).Once();
+		await That(sut.Mock.Verify.MyProtectedMethod(It.Is("foo"))).Once();
 		await That(result).IsEqualTo("Hello, foo!");
 	}
 
 	[Fact]
 	public async Task CanAccessProtectedProperties()
 	{
-		MyProtectedClass mock = MyProtectedClass.CreateMock();
+		MyProtectedClass sut = MyProtectedClass.CreateMock();
 
-		mock.Mock.Setup.MyProtectedProperty.InitializeWith(42);
+		sut.Mock.Setup.MyProtectedProperty.InitializeWith(42);
 
-		int result = mock.GetMyProtectedProperty();
+		int result = sut.GetMyProtectedProperty();
 
-		await That(mock.Mock.Verify.MyProtectedProperty.Got()).Once();
+		await That(sut.Mock.Verify.MyProtectedProperty.Got()).Once();
 		await That(result).IsEqualTo(42);
 	}
 
@@ -50,13 +50,13 @@ public sealed class ProtectedMockTests
 	public async Task CanReadProtectedIndexers()
 	{
 		int callCount = 0;
-		MyProtectedClass mock = MyProtectedClass.CreateMock();
+		MyProtectedClass sut = MyProtectedClass.CreateMock();
 
-		mock.Mock.Setup[It.IsAny<int>()].InitializeWith(42).OnGet.Do(() => callCount++);
+		sut.Mock.Setup[It.IsAny<int>()].InitializeWith(42).OnGet.Do(() => callCount++);
 
-		int result = mock.GetMyProtectedIndexer(3);
+		int result = sut.GetMyProtectedIndexer(3);
 
-		await That(mock.Mock.Verify[It.Is(3)].Got()).Once();
+		await That(sut.Mock.Verify[It.Is(3)].Got()).Once();
 		await That(result).IsEqualTo(42);
 		await That(callCount).IsEqualTo(1);
 	}
@@ -65,27 +65,27 @@ public sealed class ProtectedMockTests
 	public async Task CanWriteProtectedIndexers()
 	{
 		int callCount = 0;
-		MyProtectedClass mock = MyProtectedClass.CreateMock();
+		MyProtectedClass sut = MyProtectedClass.CreateMock();
 
-		mock.Mock.Setup[It.IsAny<int>()].OnSet.Do(() => callCount++);
+		sut.Mock.Setup[It.IsAny<int>()].OnSet.Do(() => callCount++);
 
-		mock.SetMyProtectedIndexer(3, 4);
+		sut.SetMyProtectedIndexer(3, 4);
 
-		await That(mock.Mock.Verify[It.Is(3)].Set(It.Is(4))).Once();
-		await That(mock.GetMyProtectedIndexer(3)).IsEqualTo(4);
+		await That(sut.Mock.Verify[It.Is(3)].Set(It.Is(4))).Once();
+		await That(sut.GetMyProtectedIndexer(3)).IsEqualTo(4);
 		await That(callCount).IsEqualTo(1);
 	}
 
 	[Fact]
 	public async Task OnlyProtectedVirtualMembers()
 	{
-		OnlyProtectedVirtualMembersService mock = OnlyProtectedVirtualMembersService.CreateMock();
+		OnlyProtectedVirtualMembersService sut = OnlyProtectedVirtualMembersService.CreateMock();
 
-		bool result1 = mock.DoValidate(-1);
+		bool result1 = sut.DoValidate(-1);
 
-		mock.Mock.Setup.Validate(It.IsAny<int>()).Returns(true);
+		sut.Mock.Setup.Validate(It.IsAny<int>()).Returns(true);
 
-		bool result2 = mock.DoValidate(-1);
+		bool result2 = sut.DoValidate(-1);
 
 		await That(result1).IsFalse();
 		await That(result2).IsTrue();

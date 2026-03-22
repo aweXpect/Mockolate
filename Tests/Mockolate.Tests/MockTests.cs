@@ -31,13 +31,13 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_BaseClassWithVirtualCallsInConstructor_AllowExplicitSetup()
 	{
-		MyServiceBaseWithVirtualCallsInConstructor mock =
+		MyServiceBaseWithVirtualCallsInConstructor sut =
 			MyServiceBaseWithVirtualCallsInConstructor.CreateMock(setups: setup
 				=> setup.VirtualMethod().Returns([5, 6,]));
 
-		int value = mock.VirtualProperty;
+		int value = sut.VirtualProperty;
 
-		await That(mock.Mock.Verify.VirtualMethod()).Once();
+		await That(sut.Mock.Verify.VirtualMethod()).Once();
 		await That(value).IsEqualTo(5);
 	}
 
@@ -45,11 +45,11 @@ public sealed partial class MockTests
 	public async Task
 		Create_BaseClassWithVirtualCallsInConstructor_WithUseBaseClassAsDefaultValue_ShouldUseBaseClassValuesInConstructor()
 	{
-		MyServiceBaseWithVirtualCallsInConstructor mock = MyServiceBaseWithVirtualCallsInConstructor.CreateMock();
+		MyServiceBaseWithVirtualCallsInConstructor sut = MyServiceBaseWithVirtualCallsInConstructor.CreateMock();
 
-		int value = mock.VirtualProperty;
+		int value = sut.VirtualProperty;
 
-		await That(mock.Mock.Verify.VirtualMethod()).Once();
+		await That(sut.Mock.Verify.VirtualMethod()).Once();
 		await That(value).IsEqualTo(1);
 	}
 
@@ -221,10 +221,10 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task DoubleNestedInterfaces_ShouldStillWork()
 	{
-		Nested.Nested2.IMyDoubleNestedService mock = Nested.Nested2.IMyDoubleNestedService.CreateMock();
-		mock.Mock.Setup.IsValid.InitializeWith(true);
+		Nested.Nested2.IMyDoubleNestedService sut = Nested.Nested2.IMyDoubleNestedService.CreateMock();
+		sut.Mock.Setup.IsValid.InitializeWith(true);
 
-		bool result = mock.IsValid;
+		bool result = sut.IsValid;
 
 		await That(result).IsTrue();
 	}
