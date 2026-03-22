@@ -61,13 +61,11 @@ public sealed partial class MockTests
 			          			    && TryCast(constructorParameters, 0, mockBehavior, out int c1p1))
 			          			{
 			          				global::Mockolate.Mock.MyBaseClass.MockRegistrationsProvider.Value = registrations;
-			          				if (setups.Length > 0)
+			          				global::Mockolate.MockExtensionsForMyBaseClass.MockSetup? setupTarget = null;
+			          				foreach (var setup in setups)
 			          				{
-			          					var setupTarget = new global::Mockolate.MockExtensionsForMyBaseClass.MockSetup(registrations);
-			          					foreach (var setup in setups)
-			          					{
-			          						setup.Invoke(setupTarget);
-			          					}
+			          					setupTarget ??= new(registrations);
+			          					setup.Invoke(setupTarget);
 			          				}
 			          				return new global::Mockolate.Mock.MyBaseClass(registrations, c1p1);
 			          			}
@@ -78,13 +76,11 @@ public sealed partial class MockTests
 			          			    && TryCast(constructorParameters, 1, mockBehavior, out bool c2p2))
 			          			{
 			          				global::Mockolate.Mock.MyBaseClass.MockRegistrationsProvider.Value = registrations;
-			          				if (setups.Length > 0)
+			          				global::Mockolate.MockExtensionsForMyBaseClass.MockSetup? setupTarget = null;
+			          				foreach (var setup in setups)
 			          				{
-			          					var setupTarget = new global::Mockolate.MockExtensionsForMyBaseClass.MockSetup(registrations);
-			          					foreach (var setup in setups)
-			          					{
-			          						setup.Invoke(setupTarget);
-			          					}
+			          					setupTarget ??= new(registrations);
+			          					setup.Invoke(setupTarget);
 			          				}
 			          				return new global::Mockolate.Mock.MyBaseClass(registrations, c2p1, c2p2);
 			          			}
