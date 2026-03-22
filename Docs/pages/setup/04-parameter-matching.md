@@ -25,14 +25,14 @@ Use `.AsRegex()` to enable regular expression matching for `It.Matches()`:
 
 ```csharp
 // Example: Match email addresses
-sut.SetupMock.Method.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
-  .Returns(true);
+sut.Mock.Setup.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
+    .Returns(true);
 
 bool result = sut.ValidateEmail("user@example.com");
 
 // Case-sensitive regex
-sut.SetupMock.Method.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
-  .Returns(1);
+sut.Mock.Setup.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
+    .Returns(1);
 ```
 
 ### Ref and Out Parameters
@@ -47,7 +47,7 @@ sut.SetupMock.Method.Process(It.Matches("^[A-Z]+$").AsRegex().CaseSensitive())
 
 ```csharp
 // Example: Setup with out parameter
-sut.SetupMock.Method.TryParse(It.IsAny<string>(), It.IsOut(() => 42))
+sut.Mock.Setup.TryParse(It.IsAny<string>(), It.IsOut(() => 42))
     .Returns(true);
 
 int result;
@@ -55,7 +55,7 @@ bool success = sut.TryParse("abc", out result);
 // result == 42, success == true
 
 // Example: Setup with ref parameter
-sut.SetupMock.Method.Increment(It.IsRef<int>(v => v + 1))
+sut.Mock.Setup.Increment(It.IsRef<int>(v => v + 1))
     .Returns(true);
 
 int value = 5;
@@ -76,7 +76,7 @@ this array for evaluation.
 
 ```csharp
 // Example: Setup with Span parameter
-sut.SetupMock.Method.Process(It.IsSpan<byte>(data => data.Length > 0))
+sut.Mock.Setup.Process(It.IsSpan<byte>(data => data.Length > 0))
     .Returns(true);
 
 Span<byte> buffer = new byte[] { 1, 2, 3 };
@@ -91,7 +91,7 @@ Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It
 ```csharp
 // Example: Case-insensitive string comparison
 var comparer = StringComparer.OrdinalIgnoreCase;
-sut.SetupMock.Method.Process(It.Is("hello").Using(comparer))
+sut.Mock.Setup.Process(It.Is("hello").Using(comparer))
     .Returns(42);
 
 int result = sut.Process("HELLO");
@@ -100,14 +100,14 @@ int result = sut.Process("HELLO");
 
 ## Parameter Predicates
 
-When the method name is unique (no overloads), you can use flexible parameter matching:
+When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible parameters matching:
 
 - `Match.AnyParameters()`: Matches any parameter combination.
 - `Match.Parameters(Func<NamedParameterValue[], bool> predicate)`: Matches parameters based on a custom predicate.
 
 ```csharp
 // Example: Custom parameter predicate
-sut.SetupMock.Method.Process(Match.Parameters(args => 
+sut.Mock.Setup.Process(Match.Parameters(args => 
     args.Length == 2 && 
     args[0].Value is string s && s.StartsWith("test") &&
     args[1].Value is int i && i > 0))
@@ -128,7 +128,7 @@ effects or checks directly when the method or indexer is called.
 
 ```csharp
 int lastAmount = 0;
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Do(amount => lastAmount = amount));
+sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>().Do(amount => lastAmount = amount));
 sut.Dispense("Dark", 42);
 // lastAmount == 42
 ```
@@ -142,7 +142,7 @@ values passed during test execution and analyze them afterward.
 
 ```csharp
 Mockolate.ParameterMonitor<int> monitor;
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>().Monitor(out monitor));
+sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>().Monitor(out monitor));
 sut.Dispense("Dark", 5);
 sut.Dispense("Dark", 7);
 // monitor.Values == [5, 7]

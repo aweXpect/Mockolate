@@ -5,7 +5,7 @@
 Execute callbacks conditionally based on the zero-based invocation counter using `.When()`:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>())
     .Do(() => Console.WriteLine("Called!")).When(count => count >= 2);  // The first two calls are skipped
 ```
 
@@ -15,11 +15,11 @@ Control after how many times a callback should no longer be executed:
 
 ```csharp
 // Execute up to 3 times
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do(() => Console.WriteLine("Up to 3 times")).Only(3);
 
 // Executes the callback only once
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .Throws(new Exception("This exception is thrown only once")).OnlyOnce();
 ```
 
@@ -28,15 +28,15 @@ sut.SetupMock.Property.TotalDispensed
 Control how many times a callback should be repeated:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do(() => Console.WriteLine("First three times")).For(3)
     .Do(() => Console.WriteLine("Next three times")).For(3);
 
-sut.SetupMock.Property.TotalDispensed
+sut.Mock.Setup.TotalDispensed
     .Returns(10).For(1)
     .Returns(20).For(2)
     .Returns(30).For(3);
-// Reads: 10, 20, 20, 30, 30, 30, 10, 20, 20, 30, 30, 30 …
+// Reads: 10, 20, 20, 30, 30, 30, 0, 0, 0, 0 …
 ```
 
 ### Repeat `Forever`
@@ -45,7 +45,7 @@ If you have a sequence of callbacks, you can mark the last one to repeat indefin
 repeating the sequence from start:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Returns(true).For(2)      // Returns true the first two times
     .Returns(false).Forever(); // Then always returns false
 ```
@@ -56,7 +56,7 @@ When you specify multiple callbacks, they are executed sequentially by default. 
 run specific callbacks in parallel using `.InParallel()`:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do(() => { Console.WriteLine("Runs every second iteration"); })
     .Do(() => { Console.WriteLine("Runs always in parallel"); }).InParallel()
     .Do(() => { Console.WriteLine("Runs every other iteration"); });
@@ -71,9 +71,9 @@ Parallel execution via `.InParallel()` only applies to callbacks defined via `Do
 Access the zero-based invocation counter in callbacks:
 
 ```csharp
-sut.SetupMock.Method.Dispense(It.IsAny<string>(), It.IsAny<int>())
+sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
     .Do((count, _, _) => Console.WriteLine($"Call #{count}"));
 
-sut.SetupMock.Property.TotalDispensed.OnGet
+sut.Mock.Setup.TotalDispensed.OnGet
     .Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
 ```

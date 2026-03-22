@@ -22,9 +22,9 @@ public interface IChocolateDispenser
 **Mockolate**
 
 ```csharp
-IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
-sut.SetupMock.Method.Dispense(It.Is("Dark"), It.Is(2)).Returns(true);
-sut.SetupMock.Indexer(It.Is("Dark")).Returns(10);
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+sut.Mock.Setup.Dispense(It.Is("Dark"), It.Is(2)).Returns(true);
+sut.Mock.Setup[It.Is("Dark")].Returns(10);
 ```
 
 **Moq**
@@ -58,7 +58,7 @@ A.CallTo(() => fake["Dark"]).Returns(10);
 ```csharp
 int available = sut["Dark"];
 bool success = sut.Dispense("Dark", 2);
-sut.RaiseOnMock.ChocolateDispensed("Dark", 2);
+sut.Mock.Raise.ChocolateDispensed("Dark", 2);
 ```
 
 **Moq**
@@ -90,8 +90,8 @@ fake.ChocolateDispensed += Raise.FreeForm.It.Is("Dark", 2);
 **Mockolate**
 
 ```csharp
-sut.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(2)).Once();
-sut.VerifyMock.GotIndexer(It.Is("Dark")).Once();
+sut.Mock.Verify.Dispense(It.Is("Dark"), It.Is(2)).Once();
+sut.Mock.Verify[It.Is("Dark")].Once().Got();
 ```
 
 **Moq**

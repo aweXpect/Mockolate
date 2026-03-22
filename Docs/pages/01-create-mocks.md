@@ -1,48 +1,32 @@
 # Create mocks
 
-You can create mocks for interfaces and classes. For classes without a default constructor, use
-`BaseClass.WithConstructorParameters(…)` to provide constructor arguments:
+You can create mocks for interfaces and classes. For classes without a default constructor, provide constructor
+arguments as an array to `CreateMock([…])`:
 
 ```csharp
 // Create a mock for an interface
-IChocolateDispenser sut = Mock.Create<IChocolateDispenser>();
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
 // Create a mock for a class
-MyChocolateDispenser classMock = Mock.Create<MyChocolateDispenser>();
+MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock();
 
 // For classes without a default constructor:
-MyChocolateDispenserWithCtor classWithArgsMock = Mock.Create<MyChocolateDispenserWithCtor>(
-    BaseClass.WithConstructorParameters("Dark", 42)
-);
+MyChocolateDispenserWithCtor classWithArgsMock = MyChocolateDispenserWithCtor.CreateMock(["Dark", 42]);
 ```
-
-You can specify up to eight additional interfaces that the mock also implements (beyond the first type):
-
-```csharp
-// return type is a MyChocolateDispenser that also implements ILemonadeDispenser
-var sut = Mock.Create<MyChocolateDispenser, ILemonadeDispenser>();
-```
-
-**Notes:**
-
-- Only the first generic type can be a class; additional types must be interfaces.
-- Sealed classes cannot be mocked and will throw a `MockException`.
 
 ## Customizing mock behavior
 
 You can control the default behavior of the mock by providing a `MockBehavior`:
 
 ```csharp
-var strictMock = Mock.Create<IChocolateDispenser>(MockBehavior.Default with { ThrowWhenNotSetup = true });
+IChocolateDispenser strictMock = IChocolateDispenser.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 
 // For classes with constructor parameters and custom behavior:
-var classMock = Mock.Create<MyChocolateDispenser>(
-    BaseClass.WithConstructorParameters("Dark", 42),
-    new MockBehavior { ThrowWhenNotSetup = true }
-);
+MockBehavior behavior = new MockBehavior { ThrowWhenNotSetup = true };
+MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(["Dark", 42], behavior);
 ```
 
-### `MockBehavior` options
+**`MockBehavior` options**
 
 - `SkipBaseClass` (bool):
   - If `false` (default), the mock will call the base class implementation and use its return values as default
@@ -61,10 +45,10 @@ var classMock = Mock.Create<MyChocolateDispenser>(
     - `null` for other reference types
   - You can add custom default value factories for specific types using `.WithDefaultValueFor<T>()`:
     ```csharp
-    var behavior = MockBehavior.Default
-        .WithDefaultValueFor<string>(() => "default")
-        .WithDefaultValueFor<int>(() => 42);
-    var sut = Mock.Create<IChocolateDispenser>(behavior);
+    MockBehavior behavior = MockBehavior.Default
+      .WithDefaultValueFor<string>(() => "default")
+      .WithDefaultValueFor<int>(() => 42);
+    IChocolateDispenser sut = IChocolateDispenser.CreateMock(behavior);
     ```
     This is useful when you want mocks to return specific default values for certain types instead of the standard
     defaults.
@@ -76,42 +60,62 @@ var classMock = Mock.Create<MyChocolateDispenser>(
     connection strings to each mock so they can be verified independently.
 - `UseConstructorParametersFor<T>(object?[])`:
   - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
-    during mock creation via `BaseClass.WithConstructorParameters(…)`.
+    during mock creation via `CreateMock([…])`.
 
-## Using a factory for shared behavior
+**Using a shared behavior**
 
-Use `Mock.Factory` to create multiple mocks with a shared behavior:
+You can reuse a `MockBehavior` instance across multiple mock creations to apply consistent, centrally configured
+behavior:
 
 ```csharp
-var behavior = MockBehavior.Default with { ThrowWhenNotSetup = true };
-var factory = new Mock.Factory(behavior);
+MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
-var sut1 = factory.Create<IChocolateDispenser>();
-var sut2 = factory.Create<ILemonadeDispenser>();
+IChocolateDispenser sut1 = IChocolateDispenser.CreateMock(behavior);
+ILemonadeDispenser sut2 = ILemonadeDispenser.CreateMock(behavior);
 ```
 
-Using a factory allows you to create multiple mocks with identical, centrally configured behavior. This is especially
-useful when you need consistent mock setups across multiple tests or for different types.
+This is especially useful when you need consistent mock setups across multiple tests or for different types.
+
+## Setups
+
+Specify setups during mock creation using the `CreateMock` overload with a setup callback. These setups also apply to virtual interactions in the constructor.
+
+## Implementing additional interfaces
+
+You can specify additional interfaces that the mock also implements using `.Implementing<T>()`:
+
+```csharp
+// return type is a MyChocolateDispenser that also implements ILemonadeDispenser
+MyChocolateDispenser sut = MyChocolateDispenser.CreateMock().Implementing<ILemonadeDispenser>();
+
+// Create a mock implementing multiple interfaces with inline setups
+IChocolateDispenser sut2 = IChocolateDispenser.CreateMock()
+    .Implementing<ILemonadeDispenser>(setup => setup.DispenseLemonade(It.IsAny<int>()).Returns(true));
+```
+
+**Notes:**
+
+- Only the first type can be a class; additional types must be interfaces.
 
 ## Wrapping existing instances
 
-You can wrap an existing instance with mock tracking using `Mock.Wrap<T>()`. This allows you to track interactions with
-a real object:
+You can wrap an existing instance with mock tracking using `.Wrapping(instance)`. This allows you to track interactions
+with a real object:
 
 ```csharp
-var realDispenser = new MyChocolateDispenser();
-var wrappedDispenser = Mock.Wrap<IChocolateDispenser>(realDispenser);
+MyChocolateDispenser realDispenser = new MyChocolateDispenser();
+IChocolateDispenser wrappedDispenser = IChocolateDispenser.CreateMock().Wrapping(realDispenser);
 
 // Calls are forwarded to the real instance
 wrappedDispenser.Dispense("Dark", 5);
 
 // But you can still verify interactions
-wrappedDispenser.VerifyMock.Invoked.Dispense(It.Is("Dark"), It.Is(5)).Once();
+wrappedDispenser.Mock.Verify.Dispense(It.Is("Dark"), It.Is(5)).Once();
 ```
 
 **Notes:**
 
-- Only interface types can be wrapped with `Mock.Wrap<T>()`.
+- Only interface types can be wrapped.
 - All calls are forwarded to the wrapped instance.
 - You can still set up custom behavior that overrides the wrapped instance's behavior.
 - You cannot override protected members of the wrapped instance.
