@@ -133,10 +133,6 @@ MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(["Dark", 42], b
     defaults.
 - `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
   - Automatically initialize all mocks of type T with the given setups when they are created.
-  - The callback can optionally receive an additional counter parameter, allowing you to differentiate between multiple
-    automatically created instances.
-    For example, when initializing `IDbConnection` mocks, you can use the counter to assign different database names or
-    connection strings to each mock so they can be verified independently.
 - `UseConstructorParametersFor<T>(object?[])`:
   - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
     during mock creation via `CreateMock([…])`.
@@ -664,6 +660,9 @@ token is canceled. If you combine this with the `Within` method, both the timeou
 In both cases, it will block the test execution until the expected interaction occurs or the timeout is reached.
 If the interaction does not occur within the specified time, a `MockVerificationException` will be thrown.
 
+If you need truly asynchronous verification without blocking the test thread, you can use the
+[aweXpect.Mockolate](https://awexpect.com/aweXpect.Mockolate) extension package which has an asynchronous `Within(TimeSpan)` variant.
+
 ### Properties
 
 You can verify access to property getter and setter:
@@ -933,8 +932,8 @@ Mockolate tracks all interactions with mocks on the mock object. To only track i
 can use a `MockMonitor<T>`:
 
 ```csharp
-IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-MockMonitor<Mock.IMockVerifyForIChocolateDispenser> monitor = sut.Mock.Monitor();
+var sut = IChocolateDispenser.CreateMock();
+var monitor = sut.Mock.Monitor();
 
 sut.Dispense("Dark", 1); // Not monitored
 using (monitor.Run())
@@ -945,21 +944,6 @@ sut.Dispense("Dark", 3); // Not monitored
 
 // Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
 monitor.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
-```
-
-Alternatively, you can create an already running monitor using `sut.Mock.Monitor()` and start it immediately:
-
-```csharp
-var sut = IChocolateDispenser.CreateMock();
-var monitor = sut.Mock.Monitor();
-
-sut.Dispense("Dark", 1); // Not monitored
-using var scope = monitor.Run();
-sut.Dispense("Dark", 2); // Monitored
-sut.Dispense("Dark", 3); // Monitored
-
-// Verifications on the monitor only count interactions during the lifetime scope of the `IDisposable`
-monitor.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Twice();
 ```
 
 #### Clear all interactions
@@ -982,7 +966,7 @@ sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Once();
 
 #### That all interactions are verified
 
-You can check if all interactions with the mock have been verified using `ThatAllInteractionsAreVerified`:
+You can check if all interactions with the mock have been verified using `VerifyThatAllInteractionsAreVerified`:
 
 ```csharp
 // Returns true if all interactions have been verified before
@@ -994,7 +978,7 @@ If any interaction was not verified, this method returns `false`.
 
 #### That all setups are used
 
-You can check if all registered setups on the mock have been used with `ThatAllSetupsAreUsed`:
+You can check if all registered setups on the mock have been used with `VerifyThatAllSetupsAreUsed`:
 
 ```csharp
 // Returns true if all setups have been used

@@ -2,7 +2,7 @@
 
 ## That all interactions are verified
 
-You can check if all interactions with the mock have been verified using `ThatAllInteractionsAreVerified`:
+You can check if all interactions with the mock have been verified using `VerifyThatAllInteractionsAreVerified`:
 
 ```csharp
 // Returns true if all interactions have been verified before
@@ -14,7 +14,7 @@ If any interaction was not verified, this method returns `false`.
 
 ## That all setups are used
 
-You can check if all registered setups on the mock have been used with `ThatAllSetupsAreUsed`:
+You can check if all registered setups on the mock have been used with `VerifyThatAllSetupsAreUsed`:
 
 ```csharp
 // Returns true if all setups have been used
