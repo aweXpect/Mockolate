@@ -10,12 +10,12 @@ public sealed class ProtectedMockTests
 		MyProtectedClass.MyEventHandler handler = (_, _) => callCount++;
 
 		sut.RegisterEvent(handler);
-		sut.Mock.Raise.MyEvent(this, EventArgs.Empty);
+		sut.Mock.RaiseProtected.MyEvent(this, EventArgs.Empty);
 
-		await That(sut.Mock.Verify.MyEvent.Subscribed()).Once();
-		await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Never();
+		await That(sut.Mock.VerifyProtected.MyEvent.Subscribed()).Once();
+		await That(sut.Mock.VerifyProtected.MyEvent.Unsubscribed()).Never();
 		sut.UnregisterEvent(handler);
-		await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Once();
+		await That(sut.Mock.VerifyProtected.MyEvent.Unsubscribed()).Once();
 		await That(callCount).IsEqualTo(1);
 	}
 
@@ -24,12 +24,12 @@ public sealed class ProtectedMockTests
 	{
 		MyProtectedClass sut = MyProtectedClass.CreateMock();
 
-		sut.Mock.Setup.MyProtectedMethod(It.IsAny<string>())
+		sut.Mock.SetupProtected.MyProtectedMethod(It.IsAny<string>())
 			.Returns(v => $"Hello, {v}!");
 
 		string result = sut.InvokeMyProtectedMethod("foo");
 
-		await That(sut.Mock.Verify.MyProtectedMethod(It.Is("foo"))).Once();
+		await That(sut.Mock.VerifyProtected.MyProtectedMethod(It.Is("foo"))).Once();
 		await That(result).IsEqualTo("Hello, foo!");
 	}
 
@@ -38,11 +38,11 @@ public sealed class ProtectedMockTests
 	{
 		MyProtectedClass sut = MyProtectedClass.CreateMock();
 
-		sut.Mock.Setup.MyProtectedProperty.InitializeWith(42);
+		sut.Mock.SetupProtected.MyProtectedProperty.InitializeWith(42);
 
 		int result = sut.GetMyProtectedProperty();
 
-		await That(sut.Mock.Verify.MyProtectedProperty.Got()).Once();
+		await That(sut.Mock.VerifyProtected.MyProtectedProperty.Got()).Once();
 		await That(result).IsEqualTo(42);
 	}
 
@@ -52,11 +52,11 @@ public sealed class ProtectedMockTests
 		int callCount = 0;
 		MyProtectedClass sut = MyProtectedClass.CreateMock();
 
-		sut.Mock.Setup[It.IsAny<int>()].InitializeWith(42).OnGet.Do(() => callCount++);
+		sut.Mock.SetupProtected[It.IsAny<int>()].InitializeWith(42).OnGet.Do(() => callCount++);
 
 		int result = sut.GetMyProtectedIndexer(3);
 
-		await That(sut.Mock.Verify[It.Is(3)].Got()).Once();
+		await That(sut.Mock.VerifyProtected[It.Is(3)].Got()).Once();
 		await That(result).IsEqualTo(42);
 		await That(callCount).IsEqualTo(1);
 	}
@@ -67,11 +67,11 @@ public sealed class ProtectedMockTests
 		int callCount = 0;
 		MyProtectedClass sut = MyProtectedClass.CreateMock();
 
-		sut.Mock.Setup[It.IsAny<int>()].OnSet.Do(() => callCount++);
+		sut.Mock.SetupProtected[It.IsAny<int>()].OnSet.Do(() => callCount++);
 
 		sut.SetMyProtectedIndexer(3, 4);
 
-		await That(sut.Mock.Verify[It.Is(3)].Set(It.Is(4))).Once();
+		await That(sut.Mock.VerifyProtected[It.Is(3)].Set(It.Is(4))).Once();
 		await That(sut.GetMyProtectedIndexer(3)).IsEqualTo(4);
 		await That(callCount).IsEqualTo(1);
 	}
@@ -83,7 +83,7 @@ public sealed class ProtectedMockTests
 
 		bool result1 = sut.DoValidate(-1);
 
-		sut.Mock.Setup.Validate(It.IsAny<int>()).Returns(true);
+		sut.Mock.SetupProtected.Validate(It.IsAny<int>()).Returns(true);
 
 		bool result2 = sut.DoValidate(-1);
 

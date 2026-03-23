@@ -31,7 +31,7 @@ internal static partial class Sources
 		              	internal interface IMockGeneration {}
 
 		              	/// <summary>
-		              	///     Create a new mock for <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
+		              	///     Create a new mock of <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
 		              	/// </summary>
 		              	/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
 		              	/// <remarks>
@@ -40,7 +40,7 @@ internal static partial class Sources
 		              	extension<T>(T _)
 		              	{
 		              		/// <summary>
-		              		///     Create a new mock for <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
+		              		///     Create a new mock of <typeparamref name="T" /> with the given <paramref name="mockBehavior" />.
 		              		/// </summary>
 		              		/// <remarks>
 		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
@@ -52,7 +52,7 @@ internal static partial class Sources
 		              		}
 
 		              		/// <summary>
-		              		///     Create a new mock for <typeparamref name="T" /> using the <paramref name="constructorParameters" /> with the given <paramref name="mockBehavior" />.
+		              		///     Create a new mock of <typeparamref name="T" /> using the <paramref name="constructorParameters" /> with the given <paramref name="mockBehavior" />.
 		              		/// </summary>
 		              		/// <remarks>
 		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.

@@ -13,8 +13,8 @@ public sealed partial class RaiseTests
 			sut.SubscribeToSomeEvent += handler;
 			sut.SubscribeToSomeEvent += handler;
 
-			await That(sut.Mock.Verify.SomeEvent.Subscribed()).Exactly(2);
-			await That(sut.Mock.Verify.SomeEvent.Unsubscribed()).Never();
+			await That(sut.Mock.VerifyProtected.SomeEvent.Subscribed()).Exactly(2);
+			await That(sut.Mock.VerifyProtected.SomeEvent.Unsubscribed()).Never();
 		}
 
 		[Fact]
@@ -25,8 +25,8 @@ public sealed partial class RaiseTests
 
 			sut.SubscribeToSomeEvent -= handler;
 
-			await That(sut.Mock.Verify.SomeEvent.Subscribed()).Never();
-			await That(sut.Mock.Verify.SomeEvent.Unsubscribed()).Once();
+			await That(sut.Mock.VerifyProtected.SomeEvent.Subscribed()).Never();
+			await That(sut.Mock.VerifyProtected.SomeEvent.Unsubscribed()).Once();
 		}
 
 		[Fact]
@@ -37,11 +37,11 @@ public sealed partial class RaiseTests
 			EventHandler handler = (_, _) => { callCount++; };
 
 			sut.SubscribeToSomeEvent += handler;
-			sut.Mock.Raise.SomeEvent(Match.WithDefaultParameters());
-			sut.Mock.Raise.SomeEvent(Match.WithDefaultParameters());
+			sut.Mock.RaiseProtected.SomeEvent(Match.WithDefaultParameters());
+			sut.Mock.RaiseProtected.SomeEvent(Match.WithDefaultParameters());
 			sut.SubscribeToSomeEvent -= handler;
-			sut.Mock.Raise.SomeEvent(Match.WithDefaultParameters());
-			sut.Mock.Raise.SomeEvent(Match.WithDefaultParameters());
+			sut.Mock.RaiseProtected.SomeEvent(Match.WithDefaultParameters());
+			sut.Mock.RaiseProtected.SomeEvent(Match.WithDefaultParameters());
 
 			await That(callCount).IsEqualTo(2);
 		}
@@ -54,11 +54,11 @@ public sealed partial class RaiseTests
 			EventHandler handler = (_, _) => { callCount++; };
 
 			sut.SubscribeToSomeEvent += handler;
-			sut.Mock.Raise.SomeEvent(this, EventArgs.Empty);
-			sut.Mock.Raise.SomeEvent(this, EventArgs.Empty);
+			sut.Mock.RaiseProtected.SomeEvent(this, EventArgs.Empty);
+			sut.Mock.RaiseProtected.SomeEvent(this, EventArgs.Empty);
 			sut.SubscribeToSomeEvent -= handler;
-			sut.Mock.Raise.SomeEvent(this, EventArgs.Empty);
-			sut.Mock.Raise.SomeEvent(this, EventArgs.Empty);
+			sut.Mock.RaiseProtected.SomeEvent(this, EventArgs.Empty);
+			sut.Mock.RaiseProtected.SomeEvent(this, EventArgs.Empty);
 
 			await That(callCount).IsEqualTo(2);
 		}

@@ -77,7 +77,9 @@ internal static partial class Sources
 	///     Formats indexer parameters as comma-separated names or wrappers.
 	/// </summary>
 	private static string FormatIndexerParametersAsNameOrWrapper(EquatableArray<MethodParameter> parameters)
-		=> string.Join(", ", parameters.Select(p => $"new global::Mockolate.Parameters.NamedParameterValue(\"{p.Name}\", {p.ToNameOrWrapper()})"));
+		=> string.Join(", ",
+			parameters.Select(p
+				=> $"new global::Mockolate.Parameters.NamedParameterValue(\"{p.Name}\", {p.ToNameOrWrapper()})"));
 
 	/// <summary>
 	///     Formats indexer parameters as comma-separated names.
@@ -102,13 +104,15 @@ internal static partial class Sources
 	/// </summary>
 	private static void AppendNamedParameter(StringBuilder sb, MethodParameter parameter)
 	{
-		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name).Append("\", (global::Mockolate.Parameters.IParameter)(");
+		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name)
+			.Append("\", (global::Mockolate.Parameters.IParameter)(");
 		sb.Append(parameter.Name);
 		if (parameter.CanBeNullable())
 		{
 			if (parameter.HasExplicitDefaultValue)
 			{
-				sb.Append(" ?? global::Mockolate.It.Is<").Append(parameter.ToNullableType()).Append(">(").Append(parameter.ExplicitDefaultValue).Append(")");
+				sb.Append(" ?? global::Mockolate.It.Is<").Append(parameter.ToNullableType()).Append(">(")
+					.Append(parameter.ExplicitDefaultValue).Append(")");
 			}
 			else
 			{
@@ -198,6 +202,26 @@ internal static partial class Sources
 #pragma warning restore S1994
 
 		return usedName;
+	}
+
+	private static string CreateUniquePropertyName(Class @class, string initialValue)
+	{
+		string propertyName = initialValue;
+		if (@class.Properties.Any(m => m.Name == propertyName))
+		{
+			propertyName = $"Mockolate_{initialValue}";
+		}
+
+		if (@class.Properties.Any(m => m.Name == propertyName))
+		{
+			int index = 1;
+			do
+			{
+				propertyName = $"Mockolate_{initialValue}__" + index++;
+			} while (@class.Properties.Any(m => m.Name == propertyName));
+		}
+
+		return propertyName;
 	}
 
 	extension(Accessibility accessibility)

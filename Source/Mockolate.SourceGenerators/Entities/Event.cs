@@ -40,7 +40,14 @@ internal record Event
 	public string ContainingType { get; }
 	public bool UseOverride { get; }
 	public bool IsStatic { get; }
+	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal;
 
+	public MemberType MemberType => (IsStatic, IsProtected) switch
+	{
+		(true, _) => MemberType.Static,
+		(_, true) => MemberType.Protected,
+		(_, _) => MemberType.Public
+	};
 	public Accessibility Accessibility { get; }
 	public string Name { get; }
 	public string? ExplicitImplementation { get; }

@@ -39,7 +39,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
        event ChocolateDispensedDelegate ChocolateDispensed;
    }
    
-   // Create a mock for IChocolateDispenser
+   // Create a mock of IChocolateDispenser
    IChocolateDispenser sut = IChocolateDispenser.CreateMock();
    
    // Setup: Initial stock of 10 for Dark chocolate
@@ -83,10 +83,10 @@ You can create mocks for interfaces and classes. For classes without a default c
 arguments as an array to `CreateMock([…])`:
 
 ```csharp
-// Create a mock for an interface
+// Create a mock of an interface
 IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
-// Create a mock for a class
+// Create a mock of a class
 MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock();
 
 // For classes without a default constructor:
@@ -789,8 +789,10 @@ If the order is incorrect or a call is missing, a `MockVerificationException` wi
 
 ### Working with protected members
 
-Mockolate allows you to set up and verify protected virtual members on class mocks. Protected members are accessed
-the same way as public members, through `sut.Mock.Setup.MemberName(…)` and `sut.Mock.Verify.MemberName(…)`:
+Mockolate allows you to set up and verify protected virtual members on class mocks.
+
+Protected members can be set up, raised, and verified just like instance members, but through the `Mock.SetupProtected`,
+`Mock.RaiseProtected`, and `Mock.VerifyProtected` properties:
 
 **Example**
 
@@ -808,12 +810,12 @@ ChocolateDispenser sut = ChocolateDispenser.CreateMock();
 
 ```csharp
 // Setup protected method
-sut.Mock.Setup.DispenseInternal(
+sut.Mock.SetupProtected.DispenseInternal(
     It.Is("Dark"), It.IsAny<int>())
     .Returns(true);
 
 // Setup protected property
-sut.Mock.Setup.InternalStock.InitializeWith(100);
+sut.Mock.SetupProtected.InternalStock.InitializeWith(100);
 ```
 
 **Notes:**
@@ -825,20 +827,20 @@ sut.Mock.Setup.InternalStock.InitializeWith(100);
 
 ```csharp
 // Verify protected method was invoked
-sut.Mock.Verify.DispenseInternal(
+sut.Mock.VerifyProtected.DispenseInternal(
     It.Is("Dark"), It.IsAny<int>()).Once();
 
 // Verify protected property was read
-sut.Mock.Verify.InternalStock.Got().AtLeastOnce();
+sut.Mock.VerifyProtected.InternalStock.Got().AtLeastOnce();
 
 // Verify protected property was set
-sut.Mock.Verify.InternalStock.Set(It.Is(100)).Once();
+sut.Mock.VerifyProtected.InternalStock.Set(It.Is(100)).Once();
 
 // Verify protected indexer was read
-sut.Mock.Verify[It.Is(0)].Got().Once();
+sut.Mock.VerifyProtected[It.Is(0)].Got().Once();
 
 // Verify protected indexer was set
-sut.Mock.Verify[It.Is(0)].Set(It.Is(42)).Once();
+sut.Mock.VerifyProtected[It.Is(0)].Set(It.Is(42)).Once();
 ```
 
 **Note:**
@@ -991,9 +993,11 @@ If any setup was not used, this method returns `false`.
 ### Static interface members (.NET 8+)
 
 Mockolate supports mocking static abstract and static virtual members on interfaces (.NET 8+). Static member
-invocations use async-flow scoping, meaning each mock instance has its own isolated static member context, this makes parallel test execution safe.
+invocations use async-flow scoping, meaning each mock instance has its own isolated static member context,
+this makes parallel test execution safe.
 
-Static members can be set up, raised, and verified just like instance members, but through the `Mock.SetupStatic`, `Mock.RaiseStatic`, and `Mock.VerifyStatic` properties:
+Static members can be set up, raised, and verified just like instance members, but through the `Mock.SetupStatic`,
+`Mock.RaiseStatic`, and `Mock.VerifyStatic` properties:
 
 ```csharp
 // Setup static members

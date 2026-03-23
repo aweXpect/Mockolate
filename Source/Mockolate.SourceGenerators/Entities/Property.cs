@@ -45,6 +45,14 @@ internal record Property
 	public bool IsIndexer { get; }
 	public bool IsAbstract { get; }
 	public bool IsStatic { get; }
+	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal;
+
+	public MemberType MemberType => (IsStatic, IsProtected) switch
+	{
+		(true, _) => MemberType.Static,
+		(_, true) => MemberType.Protected,
+		(_, _) => MemberType.Public
+	};
 	public EquatableArray<MethodParameter>? IndexerParameters { get; }
 	public Type Type { get; }
 	public string ContainingType { get; }
