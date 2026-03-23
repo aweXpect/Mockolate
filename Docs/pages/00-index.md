@@ -35,7 +35,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
        event ChocolateDispensedDelegate ChocolateDispensed;
    }
    
-   // Create a mock for IChocolateDispenser
+   // Create a mock of IChocolateDispenser
    IChocolateDispenser sut = IChocolateDispenser.CreateMock();
    
    // Setup: Initial stock of 10 for Dark chocolate
