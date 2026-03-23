@@ -20,7 +20,6 @@ internal record Class
 		List<Event>? exceptEvents = null)
 	{
 		_sourceAssembly = sourceAssembly;
-		Namespace = type.ContainingNamespace.ToString();
 		ClassFullName = type.ToDisplayString(Helpers.TypeDisplayFormat);
 		ClassName = GetTypeName(type);
 		DisplayString = GetTypeFullName(type);
@@ -38,26 +37,26 @@ internal record Class
 		IsInterface = type.TypeKind == TypeKind.Interface;
 		List<Method> methods = ToListExcept(type.GetMembers().OfType<IMethodSymbol>()
 			// Exclude getter/setter methods
-			.Where(x => x.MethodKind is MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation)
+			.Where(x => x.MethodKind is MethodKind.Ordinary)
 			.Where(x => !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract || x.ExplicitInterfaceImplementations.Length > 0)
-			.Where(x => ShouldIncludeMember(x, x.ExplicitInterfaceImplementations.Length))
+			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Where(ShouldIncludeMember)
 			.Select(x => new Method(x, alreadyDefinedMethods))
 			.Distinct(), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);
 		Methods = new EquatableArray<Method>(methods.ToArray());
 
 		List<Property> properties = ToListExcept(type.GetMembers().OfType<IPropertySymbol>()
 			.Where(x => !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract || x.ExplicitInterfaceImplementations.Length > 0)
-			.Where(x => ShouldIncludeMember(x, x.ExplicitInterfaceImplementations.Length))
+			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Where(ShouldIncludeMember)
 			.Select(x => new Property(x, alreadyDefinedProperties))
 			.Distinct(), exceptProperties, Property.ContainingTypeIndependentEqualityComparer);
 		Properties = new EquatableArray<Property>(properties.ToArray());
 
 		List<Event> events = ToListExcept(type.GetMembers().OfType<IEventSymbol>()
 			.Where(x => !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract || x.ExplicitInterfaceImplementations.Length > 0)
-			.Where(x => ShouldIncludeMember(x, x.ExplicitInterfaceImplementations.Length))
+			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Where(ShouldIncludeMember)
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
 			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, alreadyDefinedEvents))
@@ -90,15 +89,14 @@ internal record Class
 						exceptEvents))
 				.ToArray());
 
-		bool ShouldIncludeMember(ISymbol member, int explicitInterfaceImplementations)
+		bool ShouldIncludeMember(ISymbol member)
 		{
-			if (IsInterface || member.IsAbstract || explicitInterfaceImplementations > 0)
+			if (IsInterface || member.IsAbstract)
 			{
 				return true;
 			}
 
-			if ((member.DeclaredAccessibility == Accessibility.Internal ||
-			     member.DeclaredAccessibility == Accessibility.ProtectedOrInternal) &&
+			if (member.DeclaredAccessibility is Accessibility.Internal or Accessibility.ProtectedOrInternal &&
 			    !SymbolEqualityComparer.Default.Equals(member.ContainingAssembly, _sourceAssembly))
 			{
 				return false;
@@ -114,7 +112,6 @@ internal record Class
 	public EquatableArray<Event> Events { get; }
 
 	public bool IsInterface { get; }
-	public string? Namespace { get; }
 	public string ClassFullName { get; }
 	public string ClassName { get; }
 	public string DisplayString { get; }
