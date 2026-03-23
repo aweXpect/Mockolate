@@ -166,7 +166,6 @@ namespace Mockolate
         public MockRegistration(Mockolate.MockBehavior behavior, string prefix) { }
         public MockRegistration(Mockolate.MockBehavior behavior, string prefix, Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.MockBehavior Behavior { get; }
-        [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         public Mockolate.Interactions.MockInteractions Interactions { get; }
         public string Prefix { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
