@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
+[DebuggerDisplay("{ContainingType}.{Name}({Parameters})")]
 internal record Method
 {
 	public Method(IMethodSymbol methodSymbol, List<Method>? alreadyDefinedMethods)
@@ -12,7 +14,7 @@ internal record Method
 		IsAbstract = methodSymbol.IsAbstract;
 		IsStatic = methodSymbol.IsStatic;
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : new Type(methodSymbol.ReturnType);
-		Name = methodSymbol.Name;
+		Name = methodSymbol.ExplicitInterfaceImplementations.Length > 0 ? methodSymbol.ExplicitInterfaceImplementations[0].Name : methodSymbol.Name;
 		ContainingType = methodSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());

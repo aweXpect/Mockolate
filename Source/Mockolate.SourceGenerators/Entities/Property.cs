@@ -1,15 +1,17 @@
+using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
+[DebuggerDisplay("{ContainingType}.{Name}")]
 internal record Property
 {
 	public Property(IPropertySymbol propertySymbol, List<Property>? alreadyDefinedProperties)
 	{
 		Accessibility = propertySymbol.DeclaredAccessibility;
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
-		Name = propertySymbol.Name;
+		Name = propertySymbol.ExplicitInterfaceImplementations.Length > 0 ? propertySymbol.ExplicitInterfaceImplementations[0].Name : propertySymbol.Name;
 		Type = new Type(propertySymbol.Type);
 		ContainingType = propertySymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		IsIndexer = propertySymbol.IsIndexer;
