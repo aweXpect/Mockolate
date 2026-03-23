@@ -50,7 +50,6 @@ public partial class MockRegistration
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	public MockInteractions Interactions { get; }
 
 	/// <summary>
