@@ -27,7 +27,7 @@ internal static partial class Sources
 		              internal static partial class Mock
 		              {
 		              	/// <summary>
-		              	///     This interface should never be used. If it is, this is an indication that the Mockolate source generator did not run correctly.
+		              	///     This interface should never be used. If it is, this is an indication that the Mockolate source generator did not run correctly or that the used type is not mockable.
 		              	/// </summary>
 		              	/// <remarks>
 		              	///     The source generator creates overloads with correct return values.
