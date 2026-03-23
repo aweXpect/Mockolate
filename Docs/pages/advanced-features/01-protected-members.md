@@ -1,7 +1,9 @@
-# Working with protected members
+# Protected members
 
-Mockolate allows you to set up and verify protected virtual members on class mocks. Protected members are accessed
-the same way as public members, through `sut.Mock.Setup.MemberName(…)` and `sut.Mock.Verify.MemberName(…)`:
+Mockolate allows you to set up and verify protected virtual members on class mocks.
+
+Protected members can be set up, raised, and verified just like instance members, but through the `Mock.SetupProtected`,
+`Mock.RaiseProtected`, and `Mock.VerifyProtected` properties:
 
 **Example**
 
@@ -19,12 +21,12 @@ ChocolateDispenser sut = ChocolateDispenser.CreateMock();
 
 ```csharp
 // Setup protected method
-sut.Mock.Setup.DispenseInternal(
+sut.Mock.SetupProtected.DispenseInternal(
     It.Is("Dark"), It.IsAny<int>())
     .Returns(true);
 
 // Setup protected property
-sut.Mock.Setup.InternalStock.InitializeWith(100);
+sut.Mock.SetupProtected.InternalStock.InitializeWith(100);
 ```
 
 **Notes:**
@@ -36,20 +38,20 @@ sut.Mock.Setup.InternalStock.InitializeWith(100);
 
 ```csharp
 // Verify protected method was invoked
-sut.Mock.Verify.DispenseInternal(
+sut.Mock.VerifyProtected.DispenseInternal(
     It.Is("Dark"), It.IsAny<int>()).Once();
 
 // Verify protected property was read
-sut.Mock.Verify.InternalStock.Got().AtLeastOnce();
+sut.Mock.VerifyProtected.InternalStock.Got().AtLeastOnce();
 
 // Verify protected property was set
-sut.Mock.Verify.InternalStock.Set(It.Is(100)).Once();
+sut.Mock.VerifyProtected.InternalStock.Set(It.Is(100)).Once();
 
 // Verify protected indexer was read
-sut.Mock.Verify[It.Is(0)].Got().Once();
+sut.Mock.VerifyProtected[It.Is(0)].Got().Once();
 
 // Verify protected indexer was set
-sut.Mock.Verify[It.Is(0)].Set(It.Is(42)).Once();
+sut.Mock.VerifyProtected[It.Is(0)].Set(It.Is(42)).Once();
 ```
 
 **Note:**

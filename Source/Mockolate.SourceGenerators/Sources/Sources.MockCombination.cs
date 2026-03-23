@@ -18,7 +18,13 @@ internal static partial class Sources
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
 		bool hasEvents = @class.AllEvents().Any(x => !x.IsStatic);
 		bool hasStaticEvents = @class.IsInterface && @class.AllEvents().Any(x => x.IsStatic);
-		bool hasStaticMembers = @class.IsInterface && (@class.AllMethods().Any(x => x.IsStatic) || @class.AllProperties().Any(x => x.IsStatic));
+		bool hasStaticMembers = @class.IsInterface &&
+		                        (@class.AllMethods().Any(x => x.IsStatic) ||
+		                         @class.AllProperties().Any(x => x.IsStatic));
+		bool hasProtectedEvents = !@class.IsInterface && @class.AllEvents().Any(@event => @event.IsProtected);
+		bool hasProtectedMembers = !@class.IsInterface &&
+		                           (@class.AllMethods().Any(method => method.IsProtected)
+		                            || @class.AllProperties().Any(property => property.IsProtected));
 		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("#nullable enable annotations").AppendLine();
@@ -203,7 +209,7 @@ internal static partial class Sources
 			sb.Append("{").AppendLine();
 			sb.Append("\textension(global::Mockolate.Mock.IMockFor").Append(source.Name).Append(" mock)").AppendLine();
 			sb.Append("\t{").AppendLine();
-			sb.AppendXmlSummary($"Interprets the mock as a mock for <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
+			sb.AppendXmlSummary($"Interprets the mock as a mock of <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.AppendXmlRemarks($"Throws a <see cref=\"global::Mockolate.Exceptions.MockException\" /> if the subject does not implement <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(lastInterface.Name).Append(" As<T>() where T : ").Append(lastInterface.Class.ClassFullName).AppendLine();
 			sb.Append("\t\t{").AppendLine();
@@ -220,7 +226,7 @@ internal static partial class Sources
 			sb.Append("{").AppendLine();
 			sb.Append("\textension(global::Mockolate.Mock.IMockFor").Append(lastInterface.Name).Append(" mock)").AppendLine();
 			sb.Append("\t{").AppendLine();
-			sb.AppendXmlSummary($"Interprets the mock as a mock for <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
+			sb.AppendXmlSummary($"Interprets the mock as a mock of <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.AppendXmlRemarks($"Throws a <see cref=\"global::Mockolate.Exceptions.MockException\" /> if the subject does not implement <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(source.Name).Append(" As<T>() where T : ").Append(source.Class.ClassFullName).AppendLine();
 			sb.Append("\t\t{").AppendLine();
@@ -247,12 +253,38 @@ internal static partial class Sources
 		sb.Append("\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").AppendLine();
 		sb.Append("\tinternal class ").Append(fileName).Append(" :").AppendLine();
 		sb.Append("\t\t").Append(@class.ClassFullName).Append(", ").Append("IMockFor").Append(name).Append(", IMockSetupFor").Append(name);
+		if (hasProtectedMembers)
+		{
+			sb.Append(", IMockProtectedSetupFor").Append(name);
+		}
+		if (hasStaticMembers)
+		{
+			sb.Append(", IMockStaticSetupFor").Append(name);
+		}
 		if (hasEvents)
 		{
 			sb.Append(", IMockRaiseOn").Append(name);
 		}
+		if (hasProtectedEvents)
+		{
+			sb.Append(", IMockProtectedRaiseOn").Append(name);
+		}
+		if (hasStaticEvents)
+		{
+			sb.Append(", IMockStaticRaiseOn").Append(name);
+		}
 
-		sb.Append(", IMockVerifyFor").Append(name).Append(',').AppendLine();
+		sb.Append(", IMockVerifyFor").Append(name);
+		if (hasProtectedMembers || hasProtectedEvents)
+		{
+			sb.Append(", IMockProtectedVerifyFor").Append(name);
+		}
+		if (hasStaticMembers || hasStaticEvents)
+		{
+			sb.Append(", IMockStaticVerifyFor").Append(name);
+		}
+
+		sb.Append(',').AppendLine();
 		foreach ((string Name, Class Class) additional in additionalInterfaces)
 		{
 			sb.Append("\t\t").Append(additional.Class.ClassFullName).Append(", ").Append("IMockFor").Append(additional.Name).Append(", IMockSetupFor").Append(additional.Name);
@@ -284,10 +316,15 @@ internal static partial class Sources
 		sb.Append("\t\tprivate global::Mockolate.MockRegistration Registrations { get; }").AppendLine();
 		sb.AppendLine();
 
-		ImplementMockForInterface(sb, name, hasEvents, hasStaticMembers, hasStaticEvents);
+		ImplementMockForInterface(sb, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents);
 		foreach ((string additionalInterfaceName, Class additionalInterface) in additionalInterfaces)
 		{
-			ImplementMockForInterface(sb, additionalInterfaceName, additionalInterface.AllEvents().Any(x => !x.IsStatic), additionalInterface.AllMethods().Any(x => x.IsStatic) || additionalInterface.AllProperties().Any(x => x.IsStatic), additionalInterface.AllEvents().Any(x => x.IsStatic));
+			ImplementMockForInterface(sb, additionalInterfaceName,
+				additionalInterface.AllEvents().Any(x => !x.IsStatic),
+				false /* Interfaces cannot have protected members */,
+				false /* Interfaces cannot have protected events */,
+				additionalInterface.AllMethods().Any(x => x.IsStatic) || additionalInterface.AllProperties().Any(x => x.IsStatic),
+				additionalInterface.AllEvents().Any(x => x.IsStatic));
 		}
 		
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -338,14 +375,30 @@ internal static partial class Sources
 
 		sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementSetupInterface(sb, @class, name);
+		ImplementSetupInterface(sb, @class, name, $"IMockSetupFor{name}", MemberType.Public);
 		sb.Append("\t\t#endregion IMockSetupFor").Append(name).AppendLine();
+		if (hasProtectedMembers)
+		{
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockProtectedSetupFor").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementSetupInterface(sb, @class, name, $"IMockProtectedSetupFor{name}", MemberType.Protected);
+			sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
+		}
+		if (hasStaticMembers)
+		{
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockStaticSetupFor").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementSetupInterface(sb, @class, name, $"IMockStaticSetupFor{name}", MemberType.Static);
+			sb.Append("\t\t#endregion IMockStaticSetupFor").Append(name).AppendLine();
+		}
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockSetupFor").Append(item.Name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, item.Class, item.Name);
+			ImplementSetupInterface(sb, item.Class, item.Name, $"IMockSetupFor{item.Name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockSetupFor").Append(item.Name).AppendLine();
 		}
 
@@ -353,13 +406,37 @@ internal static partial class Sources
 
 		#region IMockRaiseOnXXX
 
-		if (@class.AllEvents().Any())
+		if (hasEvents)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockRaiseOn").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementRaiseInterface(sb, @class, name);
+			ImplementRaiseInterface(sb, @class, name, $"IMockRaiseOn{name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockRaiseOn").Append(name).AppendLine();
+		}
+		if (hasProtectedEvents)
+		{
+			#region IMockProtectedRaiseOnXXX
+
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockProtectedRaiseOn").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementRaiseInterface(sb, @class, name, $"IMockProtectedRaiseOn{name}", MemberType.Protected);
+			sb.Append("\t\t#endregion IMockProtectedRaiseOn").Append(name).AppendLine();
+
+			#endregion IMockProtectedRaiseOnXXX
+		}
+		if (hasStaticEvents)
+		{
+			#region IMockStaticRaiseOnXXX
+
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockStaticRaiseOn").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementRaiseInterface(sb, @class, name, $"IMockStaticRaiseOn{name}", MemberType.Static);
+			sb.Append("\t\t#endregion IMockStaticRaiseOn").Append(name).AppendLine();
+
+			#endregion IMockStaticRaiseOnXXX
 		}
 #pragma warning disable S3267 // Loops should be simplified using the "Where" LINQ method
 		foreach ((string Name, Class Class) item in additionalInterfaces)
@@ -369,7 +446,7 @@ internal static partial class Sources
 				sb.AppendLine();
 				sb.Append("\t\t#region IMockRaiseOn").Append(item.Name).AppendLine();
 				sb.AppendLine();
-				ImplementRaiseInterface(sb, item.Class, item.Name);
+				ImplementRaiseInterface(sb, item.Class, item.Name, $"IMockRaiseOn{item.Name}", MemberType.Public);
 				sb.Append("\t\t#endregion IMockRaiseOn").Append(item.Name).AppendLine();
 			}
 		}
@@ -382,14 +459,31 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementVerifyInterface(sb, @class, name);
+		ImplementVerifyInterface(sb, @class, name, $"IMockVerifyFor{name}", MemberType.Public);
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
+		if (hasProtectedMembers || hasProtectedEvents)
+		{
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockProtectedVerifyFor").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementVerifyInterface(sb, @class, name, $"IMockProtectedVerifyFor{name}", MemberType.Protected);
+			sb.Append("\t\t#endregion IMockProtectedVerifyFor").Append(name).AppendLine();
+		}
+		
+		if (hasStaticMembers || hasStaticEvents)
+		{
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockStaticVerifyFor").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementVerifyInterface(sb, @class, name, $"IMockStaticVerifyFor{name}", MemberType.Static);
+			sb.Append("\t\t#endregion IMockStaticVerifyFor").Append(name).AppendLine();
+		}
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockVerifyFor").Append(item.Name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, item.Class, item.Name);
+			ImplementVerifyInterface(sb, item.Class, item.Name, $"IMockVerifyFor{item.Name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockVerifyFor").Append(item.Name).AppendLine();
 		}
 

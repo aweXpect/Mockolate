@@ -15,8 +15,15 @@ internal static partial class Sources
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
 		bool hasEvents = @class.AllEvents().Any(x => !x.IsStatic);
-		bool hasStaticEvents = @class.IsInterface && @class.AllEvents().Any(x => x.IsStatic);
-		bool hasStaticMembers = @class.IsInterface && (@class.AllMethods().Any(x => x.IsStatic) || @class.AllProperties().Any(x => x.IsStatic));
+		bool hasStaticEvents = @class.IsInterface &&
+		                       @class.AllEvents().Any(@event => @event.IsStatic);
+		bool hasStaticMembers = @class.IsInterface &&
+		                        (@class.AllMethods().Any(method => method.IsStatic) ||
+		                         @class.AllProperties().Any(property => property.IsStatic));
+		bool hasProtectedEvents = !@class.IsInterface && @class.AllEvents().Any(@event => @event.IsProtected);
+		bool hasProtectedMembers = !@class.IsInterface &&
+		                           (@class.AllMethods().Any(method => method.IsProtected)
+		                            || @class.AllProperties().Any(property => property.IsProtected));
 		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("#nullable enable annotations").AppendLine();
@@ -39,7 +46,7 @@ internal static partial class Sources
 
 		string mockPropertyName = CreateUniquePropertyName(@class, "Mock");
 
-		sb.AppendXmlSummary($"Get access to the mock for <see cref=\"{escapedClassName}\" />.");
+		sb.AppendXmlSummary($"Get access to the mock of <see cref=\"{escapedClassName}\" />.");
 		sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(name).Append(' ').Append(mockPropertyName).AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tget").AppendLine();
@@ -57,27 +64,27 @@ internal static partial class Sources
 
 		#region CreateMock
 
-		sb.AppendXmlSummary($"Create a new mock for <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
+		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock()").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, []);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Create a new mock for <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
+		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlRemarks("All provided <paramref name=\"setups\" /> are immediately applied to the mock.");
 		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(params global::System.Collections.Generic.IEnumerable<global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">> setups)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, setups);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Create a new mock for <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
+		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("All provided <paramref name=\"setups\" /> are immediately applied to the mock.");
 		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, params global::System.Collections.Generic.IEnumerable<global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">> setups)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, setups);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Create a new mock for <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
+		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("All provided <paramref name=\"setups\" /> are immediately applied to the mock.");
 		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\t").Append(@class.IsInterface ? "private" : "public").Append(" static ").Append(@class.ClassFullName).Append(" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Collections.Generic.IEnumerable<global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">> setups)").AppendLine();
@@ -300,7 +307,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, @class, name);
+			ImplementSetupInterface(sb, @class, name, $"IMockSetupFor{name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockSetupFor").Append(name).AppendLine();
 			sb.Append("\t}").AppendLine();
 		}
@@ -322,6 +329,11 @@ internal static partial class Sources
 		sb.Append("\tinternal class ").Append(name).Append(" :").AppendLine();
 		sb.Append("\t\t").Append(@class.ClassFullName);
 		sb.Append(", IMockFor").Append(name).Append(", IMockSetupFor").Append(name);
+		if (hasProtectedMembers)
+		{
+			sb.Append(", IMockProtectedSetupFor").Append(name);
+		}
+
 		if (hasStaticMembers)
 		{
 			sb.Append(", IMockStaticSetupFor").Append(name);
@@ -332,13 +344,24 @@ internal static partial class Sources
 			sb.Append(", IMockRaiseOn").Append(name);
 		}
 
+		if (hasProtectedEvents)
+		{
+			sb.Append(", IMockProtectedRaiseOn").Append(name);
+		}
+
 		if (hasStaticEvents)
 		{
 			sb.Append(", IMockStaticRaiseOn").Append(name);
 		}
 
 		sb.Append(", IMockVerifyFor").Append(name);
-		if (hasStaticMembers)
+
+		if (hasProtectedMembers || hasProtectedEvents)
+		{
+			sb.Append(", IMockProtectedVerifyFor").Append(name);
+		}
+		
+		if (hasStaticMembers || hasStaticEvents)
 		{
 			sb.Append(", IMockStaticVerifyFor").Append(name);
 		}
@@ -383,7 +406,7 @@ internal static partial class Sources
 
 		sb.AppendLine();
 
-		ImplementMockForInterface(sb, name, hasEvents, hasStaticMembers, hasStaticEvents);
+		ImplementMockForInterface(sb, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents);
 		
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
@@ -432,15 +455,24 @@ internal static partial class Sources
 
 		sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementSetupInterface(sb, @class, name);
+		ImplementSetupInterface(sb, @class, name, $"IMockSetupFor{name}", MemberType.Public);
 		sb.Append("\t\t#endregion IMockSetupFor").Append(name).AppendLine();
 
+		if (hasProtectedMembers)
+		{
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockProtectedSetupFor").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementSetupInterface(sb, @class, name, $"IMockProtectedSetupFor{name}", MemberType.Protected);
+			sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
+		}
+		
 		if (hasStaticMembers)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, @class, name, true);
+			ImplementSetupInterface(sb, @class, name, $"IMockStaticSetupFor{name}", MemberType.Static);
 			sb.Append("\t\t#endregion IMockStaticSetupFor").Append(name).AppendLine();
 		}
 
@@ -453,12 +485,25 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockRaiseOn").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementRaiseInterface(sb, @class, name);
+			ImplementRaiseInterface(sb, @class, name, $"IMockRaiseOn{name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockRaiseOn").Append(name).AppendLine();
 
 			#endregion IMockRaiseOnXXX
 		}
 
+		if (hasProtectedEvents)
+		{
+			#region IMockProtectedRaiseOnXXX
+
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockProtectedRaiseOn").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementRaiseInterface(sb, @class, name, $"IMockProtectedRaiseOn{name}", MemberType.Protected);
+			sb.Append("\t\t#endregion IMockProtectedRaiseOn").Append(name).AppendLine();
+
+			#endregion IMockProtectedRaiseOnXXX
+		}
+		
 		if (hasStaticEvents)
 		{
 			#region IMockStaticRaiseOnXXX
@@ -466,7 +511,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticRaiseOn").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementRaiseInterface(sb, @class, name, true);
+			ImplementRaiseInterface(sb, @class, name, $"IMockStaticRaiseOn{name}", MemberType.Static);
 			sb.Append("\t\t#endregion IMockStaticRaiseOn").Append(name).AppendLine();
 
 			#endregion IMockStaticRaiseOnXXX
@@ -477,15 +522,24 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementVerifyInterface(sb, @class, name);
+		ImplementVerifyInterface(sb, @class, name, $"IMockVerifyFor{name}", MemberType.Public);
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
 
-		if (hasStaticMembers)
+		if (hasProtectedMembers || hasProtectedEvents)
+		{
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockProtectedVerifyFor").Append(name).AppendLine();
+			sb.AppendLine();
+			ImplementVerifyInterface(sb, @class, name, $"IMockProtectedVerifyFor{name}", MemberType.Protected);
+			sb.Append("\t\t#endregion IMockProtectedVerifyFor").Append(name).AppendLine();
+		}
+		
+		if (hasStaticMembers || hasStaticEvents)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, @class, name, true);
+			ImplementVerifyInterface(sb, @class, name, $"IMockStaticVerifyFor{name}", MemberType.Static);
 			sb.Append("\t\t#endregion IMockStaticVerifyFor").Append(name).AppendLine();
 		}
 
@@ -500,7 +554,7 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementVerifyInterface(sb, @class, name);
+		ImplementVerifyInterface(sb, @class, name, $"IMockVerifyFor{name}", MemberType.Public);
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
 		sb.Append("\t}").AppendLine();
 
@@ -510,39 +564,57 @@ internal static partial class Sources
 
 		#region IMockForXXX
 
-		sb.AppendXmlSummary($"Accesses the mock for <see cref=\"{escapedClassName}\" />.", "\t");
+		sb.AppendXmlSummary($"Accesses the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\tinternal interface IMockFor").Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.AppendXmlSummary($"Set up the mock for <see cref=\"{escapedClassName}\" />.");
+		sb.AppendXmlSummary($"Set up the mock of <see cref=\"{escapedClassName}\" />.");
 		sb.Append("\t\tIMockSetupFor").Append(name).Append(" Setup { get; }").AppendLine();
 		sb.AppendLine();
+		if (hasProtectedMembers)
+		{
+			sb.AppendXmlSummary($"Set up protected members on the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" SetupProtected { get; }").AppendLine();
+			sb.AppendLine();
+		}
 		if (hasStaticMembers)
 		{
-			sb.AppendXmlSummary($"Set up static members on the mock for <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Set up static members on the mock of <see cref=\"{escapedClassName}\" />.");
 			sb.Append("\t\tIMockStaticSetupFor").Append(name).Append(" SetupStatic { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
 		if (hasEvents)
 		{
-			sb.AppendXmlSummary($"Raise events on the mock for <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Raise events on the mock of <see cref=\"{escapedClassName}\" />.");
 			sb.Append("\t\tIMockRaiseOn").Append(name).Append(" Raise { get; }").AppendLine();
+			sb.AppendLine();
+		}
+		if (hasProtectedEvents)
+		{
+			sb.AppendXmlSummary($"Raise protected events on the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.Append("\t\tIMockProtectedRaiseOn").Append(name).Append(" RaiseProtected { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
 		if (hasStaticEvents)
 		{
-			sb.AppendXmlSummary($"Raise static events on the mock for <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Raise static events on the mock of <see cref=\"{escapedClassName}\" />.");
 			sb.Append("\t\tIMockStaticRaiseOn").Append(name).Append(" RaiseStatic { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
-		sb.AppendXmlSummary($"Verify interactions with the mock for <see cref=\"{escapedClassName}\" />.");
+		sb.AppendXmlSummary($"Verify interactions with the mock of <see cref=\"{escapedClassName}\" />.");
 		sb.Append("\t\tIMockVerifyFor").Append(name).Append(" Verify { get; }").AppendLine();
 		sb.AppendLine();
-		if (hasStaticMembers)
+		if (hasProtectedMembers || hasProtectedEvents)
 		{
-			sb.AppendXmlSummary($"Verify static interactions with the mock for <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Verify protected interactions with the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.Append("\t\tIMockProtectedVerifyFor").Append(name).Append(" VerifyProtected { get; }").AppendLine();
+			sb.AppendLine();
+		}
+		if (hasStaticMembers || hasStaticEvents)
+		{
+			sb.AppendXmlSummary($"Verify static interactions with the mock of <see cref=\"{escapedClassName}\" />.");
 			sb.Append("\t\tIMockStaticVerifyFor").Append(name).Append(" VerifyStatic { get; }").AppendLine();
 			sb.AppendLine();
 		}
@@ -569,7 +641,7 @@ internal static partial class Sources
 
 		#region IMockSetupForXXX
 
-		sb.AppendXmlSummary($"Set up the mock for <see cref=\"{escapedClassName}\" />.", "\t");
+		sb.AppendXmlSummary($"Set up the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\tinternal interface IMockSetupFor").Append(name);
 		if (!hasStaticMembers)
 		{
@@ -581,16 +653,25 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t{").AppendLine();
-		DefineSetupInterface(sb, @class);
+		DefineSetupInterface(sb, @class, MemberType.Public);
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
+		if (hasProtectedMembers)
+		{
+			sb.AppendXmlSummary($"Set up protected members for the mock of <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.Append("\tinternal interface IMockProtectedSetupFor").Append(name).AppendLine();
+			sb.Append("\t{").AppendLine();
+			DefineSetupInterface(sb, @class, MemberType.Protected);
+			sb.Append("\t}").AppendLine();
+			sb.AppendLine();
+		}
 		if (hasStaticMembers)
 		{
-			sb.AppendXmlSummary($"Set up the mock for <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.AppendXmlSummary($"Set up static members for the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 			sb.Append("\tinternal interface IMockStaticSetupFor").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineSetupInterface(sb, @class, true);
+			DefineSetupInterface(sb, @class, MemberType.Static);
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
 		}
@@ -601,24 +682,38 @@ internal static partial class Sources
 		{
 			#region IMockRaiseOnXXX
 
-			sb.AppendXmlSummary($"Raise events on the mock for <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.AppendXmlSummary($"Raise events on the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 			sb.Append("\tinternal interface IMockRaiseOn").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineRaiseInterface(sb, @class);
+			DefineRaiseInterface(sb, @class, MemberType.Public);
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
 
 			#endregion IMockRaiseOnXXX
 		}
 
+		if (hasProtectedEvents)
+		{
+			#region IMockProtectedRaiseOnXXX
+
+			sb.AppendXmlSummary($"Raise protected events on the mock of <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.Append("\tinternal interface IMockProtectedRaiseOn").Append(name).AppendLine();
+			sb.Append("\t{").AppendLine();
+			DefineRaiseInterface(sb, @class, MemberType.Protected);
+			sb.Append("\t}").AppendLine();
+			sb.AppendLine();
+
+			#endregion IMockProtectedRaiseOnXXX
+		}
+		
 		if (hasStaticEvents)
 		{
 			#region IMockStaticRaiseOnXXX
 
-			sb.AppendXmlSummary($"Raise static events on the mock for <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.AppendXmlSummary($"Raise static events on the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 			sb.Append("\tinternal interface IMockStaticRaiseOn").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineRaiseInterface(sb, @class, true);
+			DefineRaiseInterface(sb, @class, MemberType.Static);
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
 
@@ -627,7 +722,7 @@ internal static partial class Sources
 
 		#region IMockVerifyForXXX
 
-		sb.AppendXmlSummary($"Verify interactions with the mock for <see cref=\"{escapedClassName}\" />.", "\t");
+		sb.AppendXmlSummary($"Verify interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\tinternal interface IMockVerifyFor").Append(name);
 		if (!hasStaticMembers)
 		{
@@ -639,16 +734,25 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t{").AppendLine();
-		DefineVerifyInterface(sb, @class, name);
+		DefineVerifyInterface(sb, @class, name, $"IMockVerifyFor{name}", MemberType.Public);
 		sb.Append("\t}").AppendLine();
 
-		if (hasStaticMembers)
+		if (hasProtectedMembers || hasProtectedEvents)
 		{
 			sb.AppendLine();
-			sb.AppendXmlSummary($"Verify static interactions with the mock for <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.AppendXmlSummary($"Verify protected interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.Append("\tinternal interface IMockProtectedVerifyFor").Append(name).AppendLine();
+			sb.Append("\t{").AppendLine();
+			DefineVerifyInterface(sb, @class, name, $"IMockProtectedVerifyFor{name}", MemberType.Protected);
+			sb.Append("\t}").AppendLine();
+		}
+		if (hasStaticMembers || hasStaticEvents)
+		{
+			sb.AppendLine();
+			sb.AppendXmlSummary($"Verify static interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 			sb.Append("\tinternal interface IMockStaticVerifyFor").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineVerifyInterface(sb, @class, name, true);
+			DefineVerifyInterface(sb, @class, name, $"IMockStaticVerifyFor{name}", MemberType.Static);
 			sb.Append("\t}").AppendLine();
 		}
 
@@ -660,32 +764,18 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	private static string CreateUniquePropertyName(Class @class, string initialValue)
-	{
-		string propertyName = initialValue;
-		if (@class.Properties.Any(m => m.Name == propertyName))
-		{
-			propertyName = $"Mockolate_{initialValue}";
-		}
-
-		if (@class.Properties.Any(m => m.Name == propertyName))
-		{
-			int index = 1;
-			do
-			{
-				propertyName = $"Mockolate_{initialValue}__" + index++;
-			} while (@class.Properties.Any(m => m.Name == propertyName));
-		}
-
-		return propertyName;
-	}
-
-	private static void ImplementMockForInterface(StringBuilder sb, string name, bool hasEvents, bool hasStaticMembers, bool hasStaticEvents)
+	private static void ImplementMockForInterface(StringBuilder sb, string name, bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents)
 	{
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tIMockSetupFor").Append(name).Append(" IMockFor").Append(name).Append(".Setup").AppendLine();
 		sb.Append("\t\t\t=> this;").AppendLine();
 
+		if (hasProtectedMembers)
+		{
+			sb.Append("\t\t/// <inheritdoc />").AppendLine();
+			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" IMockFor").Append(name).Append(".SetupProtected").AppendLine();
+			sb.Append("\t\t\t=> this;").AppendLine();
+		}
 		if (hasStaticMembers)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -700,6 +790,13 @@ internal static partial class Sources
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
 
+		if (hasProtectedEvents)
+		{
+			sb.Append("\t\t/// <inheritdoc />").AppendLine();
+			sb.Append("\t\tIMockProtectedRaiseOn").Append(name).Append(" IMockFor").Append(name).Append(".RaiseProtected").AppendLine();
+			sb.Append("\t\t\t=> this;").AppendLine();
+		}
+
 		if (hasStaticEvents)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -711,7 +808,13 @@ internal static partial class Sources
 		sb.Append("\t\tIMockVerifyFor").Append(name).Append(" IMockFor").Append(name).Append(".Verify").AppendLine();
 		sb.Append("\t\t\t=> this;").AppendLine();
 
-		if (hasStaticMembers)
+		if (hasProtectedMembers || hasProtectedEvents)
+		{
+			sb.Append("\t\t/// <inheritdoc />").AppendLine();
+			sb.Append("\t\tIMockProtectedVerifyFor").Append(name).Append(" IMockFor").Append(name).Append(".VerifyProtected").AppendLine();
+			sb.Append("\t\t\t=> this;").AppendLine();
+		}
+		if (hasStaticMembers || hasStaticEvents)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
 			sb.Append("\t\tIMockStaticVerifyFor").Append(name).Append(" IMockFor").Append(name).Append(".VerifyStatic").AppendLine();
@@ -1416,13 +1519,13 @@ internal static partial class Sources
 
 	#region Setup Helpers
 
-	private static void DefineSetupInterface(StringBuilder sb, Class @class, bool isStatic = false)
+	private static void DefineSetupInterface(StringBuilder sb, Class @class, MemberType memberType)
 	{
 		#region Properties
 
 		Func<Property, bool> propertyPredicate = property
 			=> property.ExplicitImplementation is null && property is { IsIndexer: false, } &&
-			   property.IsStatic == isStatic;
+			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
 			sb.AppendXmlSummary($"Setup for the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{property.Name.EscapeForXmlDoc()}\" />.");
@@ -1436,7 +1539,7 @@ internal static partial class Sources
 
 		Func<Property, bool> indexerPredicate =
 			indexer => indexer.ExplicitImplementation is null && indexer is { IsIndexer: true, } &&
-			           indexer.IsStatic == isStatic;
+			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
 			sb.AppendXmlSummary(
@@ -1460,7 +1563,7 @@ internal static partial class Sources
 		#region Methods
 
 		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
-		                                               method.IsStatic == isStatic;
+		                                               method.MemberType == memberType;
 		foreach (Method method in @class.AllMethods().Where(methodPredicate))
 		{
 			AppendMethodSetupDefinition(sb, @class, method, false);
@@ -1589,18 +1692,18 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void ImplementSetupInterface(StringBuilder sb, Class @class, string name, bool isStatic = false)
+	private static void ImplementSetupInterface(StringBuilder sb, Class @class, string name, string setupName, MemberType memberType)
 	{
 		#region Properties
 
 		Func<Property, bool> propertyPredicate = property
 			=> property.ExplicitImplementation is null && property is { IsIndexer: false, } &&
-			   property.IsStatic == isStatic;
+			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
 			sb.Append("\t\tglobal::Mockolate.Setup.PropertySetup<").Append(property.Type.Fullname)
-				.Append("> global::Mockolate.Mock.").Append(property.IsStatic ? "IMockStaticSetupFor" : "IMockSetupFor").Append(name).Append('.').Append(property.Name).AppendLine();
+				.Append("> global::Mockolate.Mock.").Append(setupName).Append('.').Append(property.Name).AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -1620,7 +1723,7 @@ internal static partial class Sources
 
 		Func<Property, bool> indexerPredicate =
 			indexer => indexer.ExplicitImplementation is null && indexer is { IsIndexer: true, } &&
-			           indexer.IsStatic == isStatic;
+			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -1631,7 +1734,7 @@ internal static partial class Sources
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
 			}
 
-			sb.Append("> global::Mockolate.Mock.IMockSetupFor").Append(name).Append(".this[").Append(string.Join(", ",
+			sb.Append("> global::Mockolate.Mock.").Append(setupName).Append(".this[").Append(string.Join(", ",
 					indexer.IndexerParameters.Value.Select((p, i)
 						=> p.ToParameter() + (p.CanBeNullable() ? "?" : "") + $" parameter{i + 1}"))).Append("]")
 				.AppendLine();
@@ -1663,10 +1766,10 @@ internal static partial class Sources
 		#region Methods
 
 		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
-		                                               method.IsStatic == isStatic;
+		                                               method.MemberType == memberType;
 		foreach (Method method in @class.AllMethods().Where(methodPredicate))
 		{
-			AppendMethodSetupImplementation(sb, method, name, false);
+			AppendMethodSetupImplementation(sb, method, name, setupName, false);
 		}
 
 		foreach (Method method in @class.AllMethods()
@@ -1676,13 +1779,13 @@ internal static partial class Sources
 			         .Select(g => g.Single())
 			         .Where(m => m.Parameters.Count > 0))
 		{
-			AppendMethodSetupImplementation(sb, method, name, true);
+			AppendMethodSetupImplementation(sb, method, name, setupName, true);
 		}
 
 		#endregion
 	}
 
-	private static void AppendMethodSetupImplementation(StringBuilder sb, Method method, string name,
+	private static void AppendMethodSetupImplementation(StringBuilder sb, Method method, string name, string setupName,
 		bool useParameters, string? methodNameOverride = null)
 	{
 		string methodName = methodNameOverride ?? method.Name;
@@ -1695,7 +1798,7 @@ internal static partial class Sources
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
 			}
 
-			sb.Append("> global::Mockolate.Mock.").Append(method.IsStatic ? "IMockStaticSetupFor" : "IMockSetupFor").Append(name).Append('.');
+			sb.Append("> global::Mockolate.Mock.").Append(setupName).Append('.');
 			sb.Append(methodName).Append("(");
 		}
 		else
@@ -1718,7 +1821,7 @@ internal static partial class Sources
 				sb.Append('>');
 			}
 
-			sb.Append(" global::Mockolate.Mock.").Append(method.IsStatic ? "IMockStaticSetupFor" : "IMockSetupFor").Append(name).Append('.').Append(methodName).Append("(");
+			sb.Append(" global::Mockolate.Mock.").Append(setupName).Append('.').Append(methodName).Append("(");
 		}
 
 		if (useParameters)
@@ -1820,10 +1923,10 @@ internal static partial class Sources
 
 	#region Raise Helpers
 
-	private static void DefineRaiseInterface(StringBuilder sb, Class @class, bool isStatic = false)
+	private static void DefineRaiseInterface(StringBuilder sb, Class @class, MemberType memberType)
 	{
 		Func<Event, bool> predicate = @event => @event.ExplicitImplementation is null &&
-		                                        @event.IsStatic == isStatic;
+		                                        @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
 			sb.AppendXmlSummary($"Raise the <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{@event.Name.EscapeForXmlDoc()}\"/> event.");
@@ -1845,15 +1948,15 @@ internal static partial class Sources
 		}
 	}
 
-	private static void ImplementRaiseInterface(StringBuilder sb, Class @class, string name, bool isStatic = false)
+	private static void ImplementRaiseInterface(StringBuilder sb, Class @class, string name, string raiseOnName, MemberType memberType)
 	{
-		string registrations = isStatic ? "MockRegistrationsProvider.Value" : "this.Registrations";
+		string registrations = memberType == MemberType.Static ? "MockRegistrationsProvider.Value" : "this.Registrations";
 		Func<Event, bool> predicate = @event => @event.ExplicitImplementation is null &&
-		                                        @event.IsStatic == isStatic;
+		                                        @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\tvoid ").Append(@event.IsStatic ? "IMockStaticRaiseOn" : "IMockRaiseOn").Append(name).Append('.').Append(@event.Name).Append("(")
+			sb.Append("\t\tvoid ").Append(raiseOnName).Append('.').Append(@event.Name).Append("(")
 				.Append(FormatParametersWithTypeAndName(@event.Delegate.Parameters))
 				.Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
@@ -1875,7 +1978,7 @@ internal static partial class Sources
 			         .Where(m => m.Delegate.Parameters.Count > 0))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\tvoid ").Append(@event.IsStatic ? "IMockStaticRaiseOn" : "IMockRaiseOn").Append(name).Append('.').Append(@event.Name).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters)")
+			sb.Append("\t\tvoid ").Append(raiseOnName).Append('.').Append(@event.Name).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters)")
 				.AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tglobal::Mockolate.MockBehavior mockBehavior = this.Registrations.Behavior;").AppendLine();
@@ -1896,17 +1999,17 @@ internal static partial class Sources
 
 	#region Verify Helpers
 
-	private static void DefineVerifyInterface(StringBuilder sb, Class @class, string name, bool isStatic = false)
+	private static void DefineVerifyInterface(StringBuilder sb, Class @class, string name, string verifyName, MemberType memberType)
 	{
 		#region Properties
 
 		Func<Property, bool> propertyPredicate = property
 			=> property.ExplicitImplementation is null && property is { IsIndexer: false, } &&
-			   property.IsStatic == isStatic;
+			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
 			sb.AppendXmlSummary($"Verify interactions with the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{property.Name.EscapeForXmlDoc()}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(property.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append(", ").Append(property.Type.Fullname).Append("> ").Append(property.Name).Append(" { get; }").AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ").Append(property.Type.Fullname).Append("> ").Append(property.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
@@ -1916,12 +2019,12 @@ internal static partial class Sources
 
 		Func<Property, bool> indexerPredicate =
 			indexer => indexer.ExplicitImplementation is null && indexer is { IsIndexer: true, } &&
-			           indexer.IsStatic == isStatic;
+			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
 			sb.AppendXmlSummary(
 				$"Verify interactions with the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />.");
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<IMockVerifyFor").Append(name).Append(", ").AppendTypeOrWrapper(indexer.Type).Append("> this[")
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ").AppendTypeOrWrapper(indexer.Type).Append("> this[")
 				.Append(string.Join(", ", indexer.IndexerParameters.Value.Select(p => p.ToParameter() + (p.CanBeNullable() ? "? " : " ") + p.Name)))
 				.Append("] { get; }").AppendLine();
 			sb.AppendLine();
@@ -1932,10 +2035,10 @@ internal static partial class Sources
 		#region Methods
 
 		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
-		                                               method.IsStatic == isStatic;
+		                                               method.MemberType == memberType;
 		foreach (Method method in @class.AllMethods().Where(methodPredicate))
 		{
-			AppendMethodVerifyDefinition(sb, @class, method, name, false);
+			AppendMethodVerifyDefinition(sb, @class, method, name, verifyName, false);
 		}
 
 		foreach (Method method in @class.AllMethods()
@@ -1945,7 +2048,7 @@ internal static partial class Sources
 			         .Select(g => g.Single())
 			         .Where(m => m.Parameters.Count > 0))
 		{
-			AppendMethodVerifyDefinition(sb, @class, method, name, true);
+			AppendMethodVerifyDefinition(sb, @class, method, name, verifyName, true);
 		}
 
 		#endregion
@@ -1953,18 +2056,18 @@ internal static partial class Sources
 		#region Events
 
 		Func<Event, bool> eventPredicate = @event => @event.ExplicitImplementation is null &&
-		                                             @event.IsStatic == isStatic;
+		                                             @event.MemberType == memberType;
 		foreach (var @event in @class.AllEvents().Where(eventPredicate))
 		{
 			sb.AppendXmlSummary($"Verify subscription on the {@event.Name} event <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{@event.Name}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(@event.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append("> ").Append(@event.Name).Append(" { get; }").AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append("> ").Append(@event.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
 		#endregion
 	}
 
-	private static void AppendMethodVerifyDefinition(StringBuilder sb, Class @class, Method method, string name,
+	private static void AppendMethodVerifyDefinition(StringBuilder sb, Class @class, Method method, string name, string verifyName,
 		bool useParameters, string? methodNameOverride = null)
 	{
 		string methodName = methodNameOverride ?? method.Name;
@@ -1986,7 +2089,7 @@ internal static partial class Sources
 
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(method.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append("> ").Append(methodName)
+		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(methodName)
 			.Append("(");
 		if (useParameters)
 		{
@@ -2029,20 +2132,20 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void ImplementVerifyInterface(StringBuilder sb, Class @class, string name, bool isStatic = false)
+	private static void ImplementVerifyInterface(StringBuilder sb, Class @class, string name, string verifyName, MemberType memberType)
 	{
 		#region Properties
 
 		Func<Property, bool> propertyPredicate = property => property.ExplicitImplementation is null && property is { IsIndexer: false, } &&
-		                                                     property.IsStatic == isStatic;
+		                                                     property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(property.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append(", ").Append(property.Type.Fullname).Append("> ").Append(property.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append('.').Append(property.Name).AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ").Append(property.Type.Fullname).Append("> ").Append(verifyName).Append('.').Append(property.Name).AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationPropertyResult<").Append(property.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append(", ").Append(property.Type.Fullname).Append(">(this, this.Registrations, ").Append(property.GetUniqueNameString()).Append(");").AppendLine();
+			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ").Append(property.Type.Fullname).Append(">(this, this.Registrations, ").Append(property.GetUniqueNameString()).Append(");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -2053,15 +2156,15 @@ internal static partial class Sources
 		#region Indexers
 
 		Func<Property, bool> indexerPredicate = indexer => indexer.ExplicitImplementation is null && indexer is { IsIndexer: true, IndexerParameters: not null, } &&
-		                                                   indexer.IsStatic == isStatic;
+		                                                   indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<IMockVerifyFor").Append(name).Append(", ").AppendTypeOrWrapper(indexer.Type).Append("> IMockVerifyFor").Append(name).Append(".this[").Append(string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.ToParameter() + (p.CanBeNullable() ? "? " : " ") + p.Name))).Append("]").AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ").AppendTypeOrWrapper(indexer.Type).Append("> ").Append(verifyName).Append(".this[").Append(string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.ToParameter() + (p.CanBeNullable() ? "? " : " ") + p.Name))).Append("]").AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyFor").Append(name).Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.Registrations, [ ");
+			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.Registrations, [ ");
 			foreach (MethodParameter parameter in indexer.IndexerParameters)
 			{
 				AppendNamedParameter(sb, parameter);
@@ -2079,10 +2182,10 @@ internal static partial class Sources
 		#region Methods
 
 		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
-		                                               method.IsStatic == isStatic;
+		                                               method.MemberType == memberType;
 		foreach (Method method in @class.AllMethods().Where(methodPredicate))
 		{
-			AppendMethodVerifyImplementation(sb, method, name, false);
+			AppendMethodVerifyImplementation(sb, method, name, verifyName, false);
 		}
 
 		foreach (Method method in @class.AllMethods()
@@ -2092,7 +2195,7 @@ internal static partial class Sources
 			         .Select(g => g.Single())
 			         .Where(m => m.Parameters.Count > 0))
 		{
-			AppendMethodVerifyImplementation(sb, method, name, true);
+			AppendMethodVerifyImplementation(sb, method, name, verifyName, true);
 		}
 
 		#endregion
@@ -2100,16 +2203,16 @@ internal static partial class Sources
 		#region Events
 
 		Func<Event, bool> eventPredicate = @event => @event.ExplicitImplementation is null &&
-		                                             @event.IsStatic == isStatic;
+		                                             @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
 		{
 			sb.AppendXmlSummary(
 				$"Verify subscription on the {@event.Name} event <see cref=\"{@class.ClassFullName.EscapeForXmlDoc()}.{@event.Name}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(@event.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append("> ").Append(@event.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append('.').Append(@event.Name).AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(@event.Name).AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationEventResult<").Append(@event.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append(">(this, this.Registrations, ").Append(@event.GetUniqueNameString()).Append(");").AppendLine();
+			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append(">(this, this.Registrations, ").Append(@event.GetUniqueNameString()).Append(");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -2118,12 +2221,12 @@ internal static partial class Sources
 		#endregion
 	}
 
-	private static void AppendMethodVerifyImplementation(StringBuilder sb, Method method, string name,
+	private static void AppendMethodVerifyImplementation(StringBuilder sb, Method method, string name, string verifyName,
 		bool useParameters, string? methodNameOverride = null)
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(method.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append("> ").Append(method.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append('.').Append(methodName).Append("(");
+		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(methodName).Append("(");
 		if (useParameters)
 		{
 			sb.Append("global::Mockolate.Parameters.IParameters parameters");
@@ -2159,7 +2262,7 @@ internal static partial class Sources
 
 		sb.AppendLine();
 
-		sb.Append("\t\t\t=> this.Registrations.Method<").Append(method.IsStatic ? "IMockStaticVerifyFor" : "IMockVerifyFor").Append(name).Append(">(this, ");
+		sb.Append("\t\t\t=> this.Registrations.Method<").Append(verifyName).Append(">(this, ");
 
 		if (useParameters)
 		{
