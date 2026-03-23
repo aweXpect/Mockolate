@@ -38,9 +38,9 @@ internal record Class
 		IsInterface = type.TypeKind == TypeKind.Interface;
 		List<Method> methods = ToListExcept(type.GetMembers().OfType<IMethodSymbol>()
 			// Exclude getter/setter methods
-			.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
+			.Where(x => x.MethodKind is MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation)
+			.Where(x => !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract || x.ExplicitInterfaceImplementations.Length > 0)
-			.Where(x => x.MethodKind == MethodKind.Ordinary)
 			.Where(x => ShouldIncludeMember(x, x.ExplicitInterfaceImplementations.Length))
 			.Select(x => new Method(x, alreadyDefinedMethods))
 			.Distinct(), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);

@@ -17,25 +17,41 @@ public sealed partial class MockTests
 			     public interface INestedInterface
 			     {
 			     	int NestedValue { get; }
+			     	int NestedMethod();
+			     	event EventHandler NestedEvent;
 			     }
 			     public interface IParentInterface : INestedInterface
 			     {
 			     	int ParentValue { get; }
+			     	int ParentMethod();
+			     	event EventHandler ParentEvent;
 			     }
 			     public interface IDirectInterface
 			     {
 			     	int DirectValue { get; }
+			     	int DirectMethod();
+			     	event EventHandler DirectEvent;
 			     }
 			     public abstract class BaseClass : IParentInterface
 			     {
 			     	public virtual int BaseClassValue { get; } = 1;
+			     	public virtual int BaseClassMethod() => 1;
+			     	public virtual event EventHandler? BaseClassEvent;
 			     	int IParentInterface.ParentValue { get; } = 2;
+			     	int IParentInterface.ParentMethod() => 2;
+			     	event EventHandler IParentInterface.ParentEvent;
 			     	int INestedInterface.NestedValue { get; } = 3;
+			     	int INestedInterface.NestedMethod() => 3;
+			     	event EventHandler INestedInterface.NestedEvent;
 			     }
 			     public class OuterClass : BaseClass, IDirectInterface
 			     {
 			     	public virtual int OuterValue { get; } = 4;
+			     	public virtual int OuterMethod() => 1;
+			     	public virtual event EventHandler? OuterEvent;
 			     	int IDirectInterface.DirectValue { get; } = 5;
+			     	int IDirectInterface.DirectMethod() => 5;
+			     	event EventHandler IDirectInterface.DirectEvent;
 			     }
 			     public class Program
 			     {
@@ -52,11 +68,31 @@ public sealed partial class MockTests
 			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.DirectValue").And
 			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.ParentValue").And
 			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.NestedValue").And
+			.Contains("global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.OuterMethod()").And
+			.Contains("global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.BaseClassMethod()").And
+			.Contains("global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.DirectMethod()").And
+			.Contains("global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.ParentMethod()").And
+			.Contains("global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.NestedMethod()").And
+			.Contains("void IMockRaiseOnOuterClass.OuterEvent(object? sender, global::System.EventArgs e)").And
+			.Contains("void IMockRaiseOnOuterClass.BaseClassEvent(object? sender, global::System.EventArgs e)").And
+			.Contains("void IMockRaiseOnOuterClass.DirectEvent(object? sender, global::System.EventArgs e)").And
+			.Contains("void IMockRaiseOnOuterClass.ParentEvent(object? sender, global::System.EventArgs e)").And
+			.Contains("void IMockRaiseOnOuterClass.NestedEvent(object? sender, global::System.EventArgs e)").And
 			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.OuterValue").And
 			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.BaseClassValue").And
 			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.DirectValue").And
 			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.ParentValue").And
-			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.NestedValue");
+			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.NestedValue").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.OuterMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.BaseClassMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.DirectMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.ParentMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.NestedMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.OuterEvent").And
+			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.BaseClassEvent").And
+			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.DirectEvent").And
+			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.ParentEvent").And
+			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.NestedEvent");
 	}
 	[Fact]
 	public async Task ForTypesWithAdditionalConstructorsWithParameters_ShouldWorkForAllNonPrivateConstructors()
