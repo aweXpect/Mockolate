@@ -57,6 +57,7 @@ internal static partial class Sources
 		          	///     A <see cref="IDefaultValueFactory" /> that returns a specified <paramref name="value" /> for the given type
 		          	///     parameter <typeparamref name="T" />.
 		          	/// </summary>
+		          	[global::System.Diagnostics.DebuggerNonUserCode]
 		          	internal class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
 		          	{
 		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
@@ -75,6 +76,7 @@ internal static partial class Sources
 			          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="global::System.Net.Http.HttpResponseMessage" /> with the specified
 			          	///     <paramref name="statusCode" />.
 			          	/// </summary>
+			          	[global::System.Diagnostics.DebuggerNonUserCode]
 			          	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : IDefaultValueFactory
 			          	{
 			          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
@@ -93,6 +95,7 @@ internal static partial class Sources
 		          	/// <summary>
 		          	///     Provides default values for common types used in mocking scenarios.
 		          	/// </summary>
+		          	[global::System.Diagnostics.DebuggerNonUserCode]
 		          	private class DefaultValueGenerator : IDefaultValueGenerator
 		          	{
 		          		private static readonly global::System.Collections.Concurrent.ConcurrentQueue<IDefaultValueFactory> _factories = new([
@@ -136,7 +139,7 @@ internal static partial class Sources
 		          		/// </summary>
 		          		protected virtual bool TryGenerate(global::System.Type type, object?[] parameters, out object? value)
 		          		{
-		          			IDefaultValueFactory? matchingFactory = global::System.Linq.Enumerable.FirstOrDefault(_factories, f => f.IsMatch(type));
+		          			IDefaultValueFactory? matchingFactory = global::System.Linq.Enumerable.FirstOrDefault(_factories, Predicate);
 		          			if (matchingFactory is not null)
 		          			{
 		          				value = matchingFactory.Create(type, this, parameters);
@@ -145,6 +148,10 @@ internal static partial class Sources
 
 		          			value = null;
 		          			return false;
+
+		          			[global::System.Diagnostics.DebuggerNonUserCode]
+		          			bool Predicate(global::Mockolate.Mock.IDefaultValueFactory f)
+		          				=> f.IsMatch(type);
 		          		}
 		          	
 		          		private static bool HasCanceledCancellationToken(object?[] parameters, out global::System.Threading.CancellationToken cancellationToken)
@@ -159,7 +166,8 @@ internal static partial class Sources
 		          			cancellationToken = global::System.Threading.CancellationToken.None;
 		          			return false;
 		          		}
-		          	
+
+		          		[global::System.Diagnostics.DebuggerNonUserCode]
 		          		private sealed class CancellableTaskFactory : IDefaultValueFactory
 		          		{
 		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
@@ -178,6 +186,7 @@ internal static partial class Sources
 		          			}
 		          		}
 		          	#if NET8_0_OR_GREATER
+		          		[global::System.Diagnostics.DebuggerNonUserCode]
 		          		private sealed class CancellableValueTaskFactory : IDefaultValueFactory
 		          		{
 		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
@@ -202,6 +211,7 @@ internal static partial class Sources
 		          /// <summary>
 		          ///     Extensions on <see cref="IDefaultValueGenerator" />
 		          /// </summary>
+		          [global::System.Diagnostics.DebuggerNonUserCode]
 		          internal static class DefaultValueGeneratorExtensions
 		          {
 		          	/// <summary>

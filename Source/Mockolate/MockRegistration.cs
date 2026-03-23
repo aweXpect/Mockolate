@@ -18,6 +18,7 @@ namespace Mockolate;
 ///     The registration class for mocks.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+[DebuggerNonUserCode]
 public partial class MockRegistration
 {
 	/// <inheritdoc cref="MockRegistration" />
@@ -76,16 +77,28 @@ public partial class MockRegistration
 			if (Behavior.ThrowWhenNotSetup)
 			{
 				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(", ", parameters.Select(x => x.Value?.GetType().FormatType() ?? "<null>"))})' was invoked without prior setup.");
+					$"The method '{methodName}({string.Join(", ", parameters.Select(TypeStringOrNullSelector))})' was invoked without prior setup.");
 			}
 
 			return new MethodSetupResult<TResult>(null, Behavior,
-				defaultValue(parameters.Select(x => x.Value).ToArray()));
+				defaultValue(parameters.Select(ValueSelector).ToArray()));
 		}
 
 		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
 			matchingSetup.Invoke(methodInvocation, Behavior,
-				() => defaultValue(parameters.Select(x => x.Value).ToArray())));
+				() => defaultValue(parameters.Select(ValueSelector).ToArray())));
+
+		[DebuggerNonUserCode]
+		object? ValueSelector(NamedParameterValue x)
+		{
+			return x.Value;
+		}
+
+		[DebuggerNonUserCode]
+		string TypeStringOrNullSelector(NamedParameterValue x)
+		{
+			return x.Value?.GetType().FormatType() ?? "<null>";
+		}
 	}
 
 	/// <summary>
@@ -118,11 +131,16 @@ public partial class MockRegistration
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
 				propertyName));
-		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName,
-			skipBase => skipBase || baseValueAccessor is null
-				? defaultValueGenerator()
-				: baseValueAccessor.Invoke());
+		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, DefaultValueGenerator);
 		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
+
+		[DebuggerNonUserCode]
+		object? DefaultValueGenerator(bool skipBase)
+		{
+			return skipBase || baseValueAccessor is null
+				? defaultValueGenerator()
+				: baseValueAccessor.Invoke();
+		}
 	}
 
 	/// <summary>
@@ -137,9 +155,15 @@ public partial class MockRegistration
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(Interactions.GetNextIndex(),
 				propertyName, value));
-		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, _ => null);
+		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, NoDefaultValue);
 		matchingSetup.InvokeSetter(interaction, value, Behavior);
 		return matchingSetup.SkipBaseClass() ?? Behavior.SkipBaseClass;
+
+		[DebuggerNonUserCode]
+		static object? NoDefaultValue(bool _)
+		{
+			return null;
+		}
 	}
 
 	/// <summary>

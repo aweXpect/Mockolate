@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
@@ -29,6 +30,7 @@ public partial class It
 			string doNotPopulateThisValue = "");
 	}
 
+	[DebuggerNonUserCode]
 	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>
 	{
 		private readonly T _value;

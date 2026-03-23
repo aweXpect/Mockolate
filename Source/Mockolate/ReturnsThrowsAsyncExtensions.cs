@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Mockolate.Setup;
 
@@ -8,6 +9,7 @@ namespace Mockolate;
 /// <summary>
 ///     Extensions for setting up return values and throwing exceptions for <see langword="async" /> methods.
 /// </summary>
+[DebuggerNonUserCode]
 public static class ReturnsThrowsAsyncExtensions
 {
 	/// <summary>

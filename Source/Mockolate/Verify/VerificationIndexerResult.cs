@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate.Verify;
@@ -5,6 +6,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Verifications on an indexer of type <typeparamref name="TParameter" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class VerificationIndexerResult<TSubject, TParameter>
 {
 	private readonly NamedParameter[] _parameters;

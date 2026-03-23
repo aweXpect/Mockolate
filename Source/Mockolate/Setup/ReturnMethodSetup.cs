@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -9,6 +10,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn>(string name)
 	: MethodSetup(new MethodParameterMatch(name, [])),
 		IReturnMethodSetupCallbackBuilder<TReturn>, IReturnMethodSetupReturnBuilder<TReturn>
@@ -31,10 +33,16 @@ public class ReturnMethodSetup<TReturn>(string name)
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn> Do(Action callback)
 	{
-		Callback<Action<int>> currentCallback = new(_ => callback());
+		Callback<Action<int>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Do(Action{int})" />
@@ -49,47 +57,77 @@ public class ReturnMethodSetup<TReturn>(string name)
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Returns(Func<TReturn> callback)
 	{
-		Callback<Func<int, TReturn>> currentCallback = new(_ => callback());
+		Callback<Func<int, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Returns(TReturn returnValue)
 	{
-		Callback<Func<int, TReturn>> currentCallback = new(_ => returnValue);
+		Callback<Func<int, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, TReturn>> currentCallback = new(_ => throw new TException());
+		Callback<Func<int, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Throws(Exception exception)
 	{
-		Callback<Func<int, TReturn>> currentCallback = new(_ => throw exception);
+		Callback<Func<int, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, TReturn>> currentCallback = new(_ => throw callback());
+		Callback<Func<int, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn}.InParallel()" />
@@ -153,11 +191,16 @@ public class ReturnMethodSetup<TReturn>(string name)
 		{
 			Callback<Action<int>> callback =
 				_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-			if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount)))
+			if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 			{
 				wasInvoked = true;
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int> @delegate)
+		{
+			@delegate(invocationCount);
 		}
 	}
 
@@ -170,8 +213,7 @@ public class ReturnMethodSetup<TReturn>(string name)
 		{
 			Callback<Func<int, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount), out TReturn? newValue))
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback, out TReturn? newValue))
 			{
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
@@ -184,6 +226,12 @@ public class ReturnMethodSetup<TReturn>(string name)
 		}
 
 		return defaultValueGenerator();
+
+		[DebuggerNonUserCode]
+		TReturn Callback(int invocationCount, Func<int, TReturn> @delegate)
+		{
+			return @delegate(invocationCount);
+		}
 	}
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
@@ -209,12 +257,14 @@ public class ReturnMethodSetup<TReturn>(string name)
 		=> value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"{FormatType(typeof(TReturn))} {name}()";
+	public override string ToString()
+		=> $"{FormatType(typeof(TReturn))} {name}()";
 }
 
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <typeparamref name="TReturn" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>
 {
@@ -255,19 +305,31 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action callback)
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, _) => callback());
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action{T1})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<T1> callback)
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback(p1));
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+			callback(p1);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action{int, T1})" />
@@ -282,65 +344,107 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(Func{T1, TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback)
 	{
-		Callback<Func<int, T1, TReturn>> currentCallback = new((_, p1) => callback(p1));
+		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1)
+		{
+			return callback(p1);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<TReturn> callback)
 	{
-		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => callback());
+		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(TReturn returnValue)
 	{
-		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => returnValue);
+		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => throw new TException());
+		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Exception exception)
 	{
-		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => throw exception);
+		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T1, TReturn>> currentCallback = new((_, _) => throw callback());
+		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Func{T1, Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<T1, Exception> callback)
 	{
-		Callback<Func<int, T1, TReturn>> currentCallback = new((_, p1) => throw callback(p1));
+		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1)
+		{
+			throw callback(p1);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1}.InParallel()" />
@@ -405,12 +509,17 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			{
 				Callback<Action<int, T1>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1)))
+				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 				{
 					wasInvoked = true;
 				}
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T1> @delegate)
+		{
+			@delegate(invocationCount, p1);
 		}
 	}
 
@@ -429,8 +538,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		{
 			Callback<Func<int, T1, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, p1), out TReturn? newValue))
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback, out TReturn? newValue))
 			{
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
@@ -443,6 +551,12 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		}
 
 		return defaultValueGenerator();
+
+		[DebuggerNonUserCode]
+		TReturn Callback(int invocationCount, Func<int, T1, TReturn> @delegate)
+		{
+			return @delegate(invocationCount, p1);
+		}
 	}
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
@@ -490,6 +604,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 ///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
 ///     <typeparamref name="TReturn" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>
 {
@@ -532,19 +647,31 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => callback());
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Do(Action{T1, T2})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<T1, T2> callback)
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => callback(p1, p2));
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+			callback(p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Do(Action{int, T1, T2})" />
@@ -559,65 +686,107 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Returns(Func{T1, T2, TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback)
 	{
-		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, p1, p2) => callback(p1, p2));
+		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2)
+		{
+			return callback(p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<TReturn> callback)
 	{
-		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => callback());
+		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(TReturn returnValue)
 	{
-		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => returnValue);
+		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => throw new TException());
+		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Exception exception)
 	{
-		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => throw exception);
+		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, _, _) => throw callback());
+		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws(Func{T1, T2, Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, TReturn>> currentCallback = new((_, p1, p2) => throw callback(p1, p2));
+		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2)
+		{
+			throw callback(p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2}.InParallel()" />
@@ -685,12 +854,17 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2)))
+				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 				{
 					wasInvoked = true;
 				}
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T1, T2> @delegate)
+		{
+			@delegate(invocationCount, p1, p2);
 		}
 	}
 
@@ -715,8 +889,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		{
 			Callback<Func<int, T1, T2, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, p1, p2), out TReturn? newValue))
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback, out TReturn? newValue))
 			{
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
@@ -729,6 +902,12 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		}
 
 		return defaultValueGenerator();
+
+		[DebuggerNonUserCode]
+		TReturn Callback(int invocationCount, Func<int, T1, T2, TReturn> @delegate)
+		{
+			return @delegate(invocationCount, p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
@@ -776,6 +955,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <typeparamref name="TReturn" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>
 {
@@ -824,19 +1004,31 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Do(Action{T1, T2, T3})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<T1, T2, T3> callback)
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			callback(p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
@@ -851,66 +1043,107 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Returns(Func{T1, T2, T3, TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
+		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			return callback(p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<TReturn> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => callback());
+		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(TReturn returnValue)
 	{
-		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => returnValue);
+		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => throw new TException());
+		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Exception exception)
 	{
-		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => throw exception);
+		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new((_, _, _, _) => throw callback());
+		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback =
-			new((_, p1, p2, p3) => throw callback(p1, p2, p3));
+		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			throw callback(p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2, T3}.InParallel()" />
@@ -980,12 +1213,17 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3)))
+				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 				{
 					wasInvoked = true;
 				}
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T1, T2, T3> @delegate)
+		{
+			@delegate(invocationCount, p1, p2, p3);
 		}
 	}
 
@@ -1016,8 +1254,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		{
 			Callback<Func<int, T1, T2, T3, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, p1, p2, p3), out TReturn? newValue))
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback, out TReturn? newValue))
 			{
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
@@ -1030,6 +1267,12 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		}
 
 		return defaultValueGenerator();
+
+		[DebuggerNonUserCode]
+		TReturn Callback(int invocationCount, Func<int, T1, T2, T3, TReturn> @delegate)
+		{
+			return @delegate(invocationCount, p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
@@ -1078,6 +1321,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <typeparamref name="TReturn" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>
 {
@@ -1129,19 +1373,31 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Do(Action)" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
 	public IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			callback(p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
@@ -1156,68 +1412,107 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback =
-			new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
+		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			return callback(p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Returns(Func{TReturn})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Returns(TReturn)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new((_, _, _, _, _) => returnValue);
+		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws{TException}()" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback =
-			new((_, _, _, _, _) => throw new TException());
+		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws(Exception)" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Exception exception)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new((_, _, _, _, _) => throw exception);
+		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws(Func{Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new((_, _, _, _, _) => throw callback());
+		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
 	public IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback =
-			new((_, p1, p2, p3, p4) => throw callback(p1, p2, p3, p4));
+		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TReturn Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			throw callback(p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2, T3, T4}.InParallel()" />
@@ -1293,12 +1588,17 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3, T4>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4)))
+				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 				{
 					wasInvoked = true;
 				}
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T1, T2, T3, T4> @delegate)
+		{
+			@delegate(invocationCount, p1, p2, p3, p4);
 		}
 	}
 
@@ -1335,8 +1635,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		{
 			Callback<Func<int, T1, T2, T3, T4, TReturn>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, p1, p2, p3, p4), out TReturn? newValue))
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback, out TReturn? newValue))
 			{
 				if (!TryCast(newValue, out TResult returnValue, behavior))
 				{
@@ -1349,6 +1648,12 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		}
 
 		return defaultValueGenerator();
+
+		[DebuggerNonUserCode]
+		TReturn Callback(int invocationCount, Func<int, T1, T2, T3, T4, TReturn> @delegate)
+		{
+			return @delegate(invocationCount, p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -11,6 +12,7 @@ public partial class Match
 	public static IDefaultEventParameters WithDefaultParameters()
 		=> new DefaultEventParameters();
 
+	[DebuggerNonUserCode]
 	private sealed class DefaultEventParameters : IDefaultEventParameters
 	{
 		/// <inheritdoc cref="object.ToString()" />

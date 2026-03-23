@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -10,6 +11,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for property setups.
 /// </summary>
+[DebuggerNonUserCode]
 public abstract class PropertySetup : IInteractivePropertySetup
 {
 	/// <summary>
@@ -63,6 +65,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	/// </summary>
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
+	[DebuggerNonUserCode]
 	internal class Default(string name, object? initialValue) : PropertySetup
 	{
 		private object? _value = initialValue;
@@ -106,6 +109,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
+[DebuggerNonUserCode]
 public class PropertySetup<T>(string name) : PropertySetup,
 	IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>,
 	IPropertyGetterSetup<T>, IPropertySetterSetup<T>
@@ -187,8 +191,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		{
 			Callback<Action<int, T>> getterCallback =
 				_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-			if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, _value)))
+			if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, Callback))
 			{
 				wasInvoked = true;
 			}
@@ -198,8 +201,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		{
 			Callback<Func<int, T, T>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, _value), out T? newValue))
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, ReturnCallback, out T? newValue))
 			{
 				_value = newValue;
 				_isInitialized = true;
@@ -214,6 +216,13 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		}
 
 		return result;
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T> @delegate)
+			=> @delegate(invocationCount, _value);
+		[DebuggerNonUserCode]
+		T ReturnCallback(int invocationCount, Func<int, T, T> @delegate)
+			=> @delegate(invocationCount, _value);
 	}
 
 	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
@@ -231,14 +240,19 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		{
 			Callback<Action<int, T>> setterCallback =
 				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount, newValue)))
+			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, Callback))
 			{
 				wasInvoked = true;
 			}
 		}
 
 		_value = newValue;
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T> @delegate)
+		{
+			@delegate(invocationCount, newValue);
+		}
 	}
 
 	/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
@@ -303,19 +317,31 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action)" />
 	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action callback)
 	{
-		Callback<Action<int, T>> item = new((_, _) => callback());
+		Callback<Action<int, T>> item = new(Delegate);
 		_currentCallback = item;
 		_getterCallbacks.Add(item);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T _currentValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action{T})" />
 	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action<T> callback)
 	{
-		Callback<Action<int, T>> item = new((_, v) => callback(v));
+		Callback<Action<int, T>> item = new(Delegate);
 		_currentCallback = item;
 		_getterCallbacks.Add(item);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T v)
+		{
+			callback(v);
+		}
 	}
 
 	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action{int, T})" />
@@ -334,19 +360,31 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action)" />
 	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action callback)
 	{
-		Callback<Action<int, T>> item = new((_, _) => callback());
+		Callback<Action<int, T>> item = new(Delegate);
 		_currentCallback = item;
 		_setterCallbacks.Add(item);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T newValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action{T})" />
 	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action<T> callback)
 	{
-		Callback<Action<int, T>> item = new((_, newValue) => callback(newValue));
+		Callback<Action<int, T>> item = new(Delegate);
 		_currentCallback = item;
 		_setterCallbacks.Add(item);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T newValue)
+		{
+			callback(newValue);
+		}
 	}
 
 	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action{int, T})" />
@@ -361,65 +399,107 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	/// <inheritdoc cref="IPropertySetup{T}.Returns(T)" />
 	public IPropertySetupReturnBuilder<T> Returns(T returnValue)
 	{
-		Callback<Func<int, T, T>> currentCallback = new((_, _) => returnValue);
+		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		T Delegate(int _, T currentValue)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IPropertySetup{T}.Returns(Func{T})" />
 	public IPropertySetupReturnBuilder<T> Returns(Func<T> callback)
 	{
-		Callback<Func<int, T, T>> currentCallback = new((_, _) => callback());
+		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		T Delegate(int _, T currentValue)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IPropertySetup{T}.Returns(Func{T, T})" />
 	public IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback)
 	{
-		Callback<Func<int, T, T>> currentCallback = new((_, p) => callback(p));
+		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		T Delegate(int _, T p)
+		{
+			return callback(p);
+		}
 	}
 
 	/// <inheritdoc cref="IPropertySetup{T}.Throws{TException}()" />
 	public IPropertySetupReturnBuilder<T> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T, T>> currentCallback = new((_, _) => throw new TException());
+		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		T Delegate(int _, T currentValue)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IPropertySetup{T}.Throws(Exception)" />
 	public IPropertySetupReturnBuilder<T> Throws(Exception exception)
 	{
-		Callback<Func<int, T, T>> currentCallback = new((_, _) => throw exception);
+		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		T Delegate(int _, T currentValue)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IPropertySetup{T}.Throws(Func{Exception})" />
 	public IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T, T>> currentCallback = new((_, _) => throw callback());
+		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		T Delegate(int _, T currentValue)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IPropertySetup{T}.Throws(Func{T, Exception})" />
 	public IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback)
 	{
-		Callback<Func<int, T, T>> currentCallback = new((_, p) => throw callback(p));
+		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		T Delegate(int _, T p)
+		{
+			throw callback(p);
+		}
 	}
 
 	#endregion IPropertySetup<T>

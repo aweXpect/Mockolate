@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate.Verify;
@@ -5,6 +6,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Verifications on a property of type <typeparamref name="TParameter" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class VerificationPropertyResult<TSubject, TParameter>
 {
 	private readonly string _propertyName;

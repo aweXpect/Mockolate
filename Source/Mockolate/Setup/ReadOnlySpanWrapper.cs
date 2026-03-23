@@ -1,11 +1,13 @@
 ﻿#if NET8_0_OR_GREATER
 using System;
+using System.Diagnostics;
 
 namespace Mockolate.Setup;
 
 /// <summary>
 ///     Wraps a <see cref="ReadOnlySpan{T}" /> of <typeparamref name="T" /> to be used as a generic type parameter.
 /// </summary>
+[DebuggerNonUserCode]
 public class ReadOnlySpanWrapper<T>
 {
 	/// <inheritdoc cref="ReadOnlySpanWrapper{T}" />

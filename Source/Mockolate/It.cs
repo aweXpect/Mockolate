@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Parameters;
 
@@ -10,6 +11,7 @@ namespace Mockolate;
 /// <summary>
 ///     Specify a matching condition for a parameter.
 /// </summary>
+[DebuggerNonUserCode]
 public partial class It
 {
 	/// <summary>
@@ -42,6 +44,7 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
+	[DebuggerNonUserCode]
 	private abstract class TypedMatch<T> : IParameter<T>, IParameter
 	{
 		private List<Action<T>>? _callbacks;

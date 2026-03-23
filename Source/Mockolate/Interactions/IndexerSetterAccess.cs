@@ -8,6 +8,7 @@ namespace Mockolate.Interactions;
 ///     An access of an indexer setter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+[DebuggerNonUserCode]
 public class IndexerSetterAccess(int index, NamedParameterValue[] parameters, object? value) : IndexerAccess(index, parameters)
 {
 	/// <summary>

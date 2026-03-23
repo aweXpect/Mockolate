@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -9,6 +10,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for method setups.
 /// </summary>
+[DebuggerNonUserCode]
 public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethodSetup, IVerifiableMethodSetup
 {
 	/// <inheritdoc cref="IInteractiveMethodSetup.HasReturnCalls()" />

@@ -2,11 +2,11 @@ using System.Diagnostics;
 using System.Reflection;
 
 namespace Mockolate.Interactions;
-
 /// <summary>
 ///     A subscription to an event.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+[DebuggerNonUserCode]
 public class EventSubscription(int index, string name, object? target, MethodInfo method) : IInteraction
 {
 	/// <summary>

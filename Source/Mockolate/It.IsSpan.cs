@@ -1,5 +1,6 @@
 #if NET8_0_OR_GREATER
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -26,6 +27,7 @@ public partial class It
 		string doNotPopulateThisValue = "")
 		=> new SpanParameterMatch<T>(predicate, doNotPopulateThisValue);
 
+	[DebuggerNonUserCode]
 	private sealed class SpanParameterMatch<T>(Func<T[], bool>? predicate, string? predicateExpression = null)
 		: TypedMatch<SpanWrapper<T>>, IVerifySpanParameter<T>
 	{

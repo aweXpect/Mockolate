@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 
@@ -14,6 +15,7 @@ public partial class It
 	public static IParameter<T> IsAny<T>()
 		=> new AnyParameterMatch<T>();
 
+	[DebuggerNonUserCode]
 	private sealed class AnyParameterMatch<T> : TypedMatch<T>
 	{
 		protected override bool Matches(T value) => true;

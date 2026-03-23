@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -53,6 +54,7 @@ public partial class It
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
+	[DebuggerNonUserCode]
 	private sealed class RefParameterMatch<T>(
 		Func<T, bool> predicate,
 		Func<T, T>? setter,
@@ -87,6 +89,7 @@ public partial class It
 	/// <summary>
 	///     Matches any method <see langword="ref" /> parameter.
 	/// </summary>
+	[DebuggerNonUserCode]
 	private sealed class AnyRefParameterMatch<T> : TypedRefMatch<T>
 	{
 		/// <inheritdoc cref="object.ToString()" />
@@ -101,6 +104,7 @@ public partial class It
 	/// <summary>
 	///     Matches a method <see langword="out" /> parameter against an expectation.
 	/// </summary>
+	[DebuggerNonUserCode]
 	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>, IParameter
 	{
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
@@ -119,6 +123,7 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
+	[DebuggerNonUserCode]
 	private abstract class TypedRefMatch<T> : IRefParameter<T>, IParameter
 	{
 		private List<Action<T>>? _callbacks;

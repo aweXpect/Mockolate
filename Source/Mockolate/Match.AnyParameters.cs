@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -11,6 +12,7 @@ public partial class Match
 	public static IParameters AnyParameters()
 		=> new AnyParametersMatch();
 
+	[DebuggerNonUserCode]
 	private sealed class AnyParametersMatch : IParameters
 	{
 		/// <inheritdoc cref="IParameters.Matches" />

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
@@ -36,6 +37,7 @@ public partial class It
 		IParameter<T> Inclusive();
 	}
 
+	[DebuggerNonUserCode]
 	private sealed class InRangeMatch<T> : TypedMatch<T>, IInRangeParameter<T>
 		where T : IComparable<T>
 	{

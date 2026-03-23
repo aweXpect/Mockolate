@@ -1,4 +1,5 @@
 ﻿#if !NET8_0_OR_GREATER
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 // Licensed to the .NET Foundation under one or more agreements.
@@ -12,6 +13,7 @@ namespace System.Runtime.CompilerServices
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Parameter)]
 	[ExcludeFromCodeCoverage]
+	[DebuggerNonUserCode]
 	internal sealed class CallerArgumentExpressionAttribute : Attribute
 	{
 		/// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -9,6 +10,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     A result of an indexer setup.
 /// </summary>
+[DebuggerNonUserCode]
 public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior behavior)
 {
 	/// <summary>
@@ -21,6 +23,7 @@ public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior be
 /// <summary>
 ///     A result of an indexer setup with return type <typeparamref name="TResult" />.
 /// </summary>
+[DebuggerNonUserCode]
 public class IndexerSetupResult<TResult>(
 	IInteractiveIndexerSetup? setup,
 	IndexerGetterAccess indexerAccess,
@@ -48,7 +51,13 @@ public class IndexerSetupResult<TResult>(
 			value = baseValue;
 		}
 
-		return getIndexerValue(_setup, () => value, indexerAccess.Parameters);
+		return getIndexerValue(_setup, GetValue, indexerAccess.Parameters);
+		
+		[DebuggerNonUserCode]
+		TResult GetValue()
+		{
+			return value;
+		}
 	}
 
 	/// <summary>
@@ -59,13 +68,7 @@ public class IndexerSetupResult<TResult>(
 		TResult value;
 		if (_setup is IndexerSetup indexerSetup)
 		{
-			value = getIndexerValue(_setup,
-				() =>
-				{
-					_setup.GetInitialValue(_behavior, defaultValueGenerator, indexerAccess.Parameters,
-						out var v);
-					return v;
-				}, indexerAccess.Parameters);
+			value = getIndexerValue(_setup, GetInitialValue, indexerAccess.Parameters);
 			value = indexerSetup.InvokeGetter(indexerAccess, value, _behavior);
 			setIndexerValue(indexerAccess.Parameters, value);
 			return value;
@@ -79,8 +82,20 @@ public class IndexerSetupResult<TResult>(
 
 		value = defaultValueGenerator();
 
-		TResult result = getIndexerValue(_setup, () => value, indexerAccess.Parameters);
+		TResult result = getIndexerValue(_setup, GetValue, indexerAccess.Parameters);
 		setIndexerValue(indexerAccess.Parameters, result);
 		return result;
+
+		[DebuggerNonUserCode]
+		TResult GetInitialValue()
+		{
+			_setup.GetInitialValue(_behavior, defaultValueGenerator, indexerAccess.Parameters, out TResult v);
+			return v;
+		}
+		[DebuggerNonUserCode]
+		TResult GetValue()
+		{
+			return value;
+		}
 	}
 }

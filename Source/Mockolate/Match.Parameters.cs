@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
@@ -15,6 +16,7 @@ public partial class Match
 		string doNotPopulateThisValue = "")
 		=> new ParametersMatch(predicate, doNotPopulateThisValue);
 
+	[DebuggerNonUserCode]
 	private sealed class ParametersMatch(Func<NamedParameterValue[], bool> predicate, string predicateExpression) : IParameters
 	{
 		/// <inheritdoc cref="IParameters.Matches" />

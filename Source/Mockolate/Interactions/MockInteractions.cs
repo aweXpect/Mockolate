@@ -11,6 +11,7 @@ namespace Mockolate.Interactions;
 ///     Keeps track of the interactions on the mock and its verifications.
 /// </summary>
 [DebuggerDisplay("{_interactions}")]
+[DebuggerNonUserCode]
 public class MockInteractions : IMockInteractions
 {
 	private readonly ConcurrentQueue<IInteraction> _interactions = [];
@@ -27,7 +28,18 @@ public class MockInteractions : IMockInteractions
 	///     The registered interactions of the mock.
 	/// </summary>
 	public IEnumerable<IInteraction> Interactions
-		=> _interactions.OrderBy(x => x.Index);
+	{
+		get
+		{
+			return _interactions.OrderBy(IndexSelector);
+
+			[DebuggerNonUserCode]
+			int IndexSelector(IInteraction x)
+			{
+				return x.Index;
+			}
+		}
+	}
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
@@ -43,8 +55,14 @@ public class MockInteractions : IMockInteractions
 	/// </summary>
 	public IReadOnlyCollection<IInteraction> GetUnverifiedInteractions()
 	{
-		_missingVerification ??= _interactions.OrderBy(x => x.Index).ToList();
+		_missingVerification ??= _interactions.OrderBy(IndexSelector).ToList();
 		return _missingVerification;
+
+		[DebuggerNonUserCode]
+		int IndexSelector(IInteraction x)
+		{
+			return x.Index;
+		}
 	}
 
 	internal event EventHandler? InteractionAdded;
@@ -55,10 +73,16 @@ public class MockInteractions : IMockInteractions
 
 	internal void Verified(IEnumerable<IInteraction> interactions)
 	{
-		_missingVerification ??= _interactions.OrderBy(x => x.Index).ToList();
+		_missingVerification ??= _interactions.OrderBy(IndexSelector).ToList();
 		foreach (IInteraction interaction in interactions)
 		{
 			_missingVerification.Remove(interaction);
+		}
+
+		[DebuggerNonUserCode]
+		int IndexSelector(IInteraction x)
+		{
+			return x.Index;
 		}
 	}
 

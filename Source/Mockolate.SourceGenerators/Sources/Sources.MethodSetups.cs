@@ -26,12 +26,12 @@ internal static partial class Sources
 				AppendReturnMethodSetup(sb, item.Item1);
 			}
 		}
-
 		sb.Append("""
 		          }
 
 		          namespace Mockolate
 		          {
+		          	[global::System.Diagnostics.DebuggerNonUserCode]
 		          	internal static class MethodSetupExtensions
 		          	{
 		          """).AppendLine();
@@ -248,6 +248,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary(
 			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <see langword=\"void\" />.",
 			"");
+		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 		sb.Append("internal class VoidMethodSetup<").Append(typeParams)
 			.Append("> : global::Mockolate.Setup.MethodSetup,").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupCallbackBuilder<").Append(typeParams).Append(">,").AppendLine();
@@ -789,6 +790,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary(
 			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" />.",
 			"\t");
+		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 		sb.Append("\tinternal class ReturnMethodSetup<TReturn, ").Append(typeParams)
 			.Append("> : global::Mockolate.Setup.MethodSetup,").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append(">,").AppendLine();
