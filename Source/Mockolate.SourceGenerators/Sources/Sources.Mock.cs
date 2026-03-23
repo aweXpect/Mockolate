@@ -27,9 +27,12 @@ internal static partial class Sources
 		              internal static partial class Mock
 		              {
 		              	/// <summary>
-		              	///     This interface should never be used directly. With source generation the correct overloads are created.
+		              	///     This interface should never be used. If it is, this is an indication that the Mockolate source generator did not run correctly or that the used type is not mockable.
 		              	/// </summary>
-		              	internal interface IMockGeneration {}
+		              	/// <remarks>
+		              	///     The source generator creates overloads with correct return values.
+		              	/// </remarks>
+		              	internal interface IMockGenerationDidNotRun {}
 
 		              	/// <summary>
 		              	///     Create a new mock of <typeparamref name="T" /> with the default <see cref="global::Mockolate.MockBehavior" />.
@@ -47,7 +50,7 @@ internal static partial class Sources
 		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              		/// </remarks>
 		              		[global::Mockolate.MockGenerator]
-		              		public static global::Mockolate.Mock.IMockGeneration CreateMock(global::Mockolate.MockBehavior? mockBehavior = null)
+		              		public static global::Mockolate.Mock.IMockGenerationDidNotRun CreateMock(global::Mockolate.MockBehavior? mockBehavior = null)
 		              		{
 		              			throw new global::Mockolate.Exceptions.MockException($"This method should not be called directly. Either '{typeof(T)}' is not mockable or the source generator did not run correctly.");
 		              		}
@@ -59,19 +62,19 @@ internal static partial class Sources
 		              		///     Any interface type can be used for mocking, but for classes, only abstract and virtual members can be mocked.
 		              		/// </remarks>
 		              		[global::Mockolate.MockGenerator]
-		              		public static global::Mockolate.Mock.IMockGeneration CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior = null)
+		              		public static global::Mockolate.Mock.IMockGenerationDidNotRun CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior = null)
 		              		{
 		              			throw new global::Mockolate.Exceptions.MockException($"This method should not be called directly. Either '{typeof(T)}' is not mockable or the source generator did not run correctly.");
 		              		}
 		              	}
 
-		              	extension(global::Mockolate.Mock.IMockGeneration _)
+		              	extension(global::Mockolate.Mock.IMockGenerationDidNotRun _)
 		              	{
 		              		/// <summary>
 		              		///     Add an additional interface <typeparamref name="TInterface" /> that the mock also implements.
 		              		/// </summary>
 		              		[global::Mockolate.MockGeneratorImplementing]
-		              		public global::Mockolate.Mock.IMockGeneration Implementing<TInterface>() where TInterface : class
+		              		public global::Mockolate.Mock.IMockGenerationDidNotRun Implementing<TInterface>() where TInterface : class
 		              		{
 		              			throw new global::Mockolate.Exceptions.MockException($"This method should not be called directly. Either '{typeof(TInterface)}' is not mockable or the source generator did not run correctly.");
 		              		}
