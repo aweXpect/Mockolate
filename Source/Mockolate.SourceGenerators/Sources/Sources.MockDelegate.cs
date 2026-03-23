@@ -176,16 +176,16 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock\";").AppendLine();
 		sb.AppendLine();
 		
-		AppendMethodSetupImplementation(sb, delegateMethod, name, $"IMockSetupFor{name}", false, "Setup");
+		AppendMethodSetupImplementation(sb, delegateMethod, $"IMockSetupFor{name}", false, "Setup");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodSetupImplementation(sb, delegateMethod, name, $"IMockSetupFor{name}", true, "Setup");
+			AppendMethodSetupImplementation(sb, delegateMethod, $"IMockSetupFor{name}", true, "Setup");
 		}
 
-		AppendMethodVerifyImplementation(sb, delegateMethod, name, $"IMockVerifyFor{name}", false, "Verify");
+		AppendMethodVerifyImplementation(sb, delegateMethod, $"IMockVerifyFor{name}", false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodVerifyImplementation(sb, delegateMethod, name, $"IMockVerifyFor{name}", true, "Verify");
+			AppendMethodVerifyImplementation(sb, delegateMethod, $"IMockVerifyFor{name}", true, "Verify");
 		}
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -220,10 +220,10 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		AppendMethodVerifyImplementation(sb, delegateMethod, name, $"IMockVerifyFor{name}", false, "Verify");
+		AppendMethodVerifyImplementation(sb, delegateMethod, $"IMockVerifyFor{name}", false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodVerifyImplementation(sb, delegateMethod, name, $"IMockVerifyFor{name}", true, "Verify");
+			AppendMethodVerifyImplementation(sb, delegateMethod, $"IMockVerifyFor{name}", true, "Verify");
 		}
 
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
@@ -281,10 +281,10 @@ internal static partial class Sources
 		sb.AppendXmlSummary($"Verify interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\tinternal interface IMockVerifyFor").Append(name).Append(" : global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		AppendMethodVerifyDefinition(sb, @class, delegateMethod, name, $"IMockVerifyFor{name}", false, "Verify");
+		AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodVerifyDefinition(sb, @class, delegateMethod, name, $"IMockVerifyFor{name}", true, "Verify");
+			AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", true, "Verify");
 		}
 
 		sb.Append("\t}").AppendLine();

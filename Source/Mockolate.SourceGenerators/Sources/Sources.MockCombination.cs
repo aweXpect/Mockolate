@@ -375,14 +375,14 @@ internal static partial class Sources
 
 		sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementSetupInterface(sb, @class, name, $"IMockSetupFor{name}", MemberType.Public);
+		ImplementSetupInterface(sb, @class, $"IMockSetupFor{name}", MemberType.Public);
 		sb.Append("\t\t#endregion IMockSetupFor").Append(name).AppendLine();
 		if (hasProtectedMembers)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockProtectedSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, @class, name, $"IMockProtectedSetupFor{name}", MemberType.Protected);
+			ImplementSetupInterface(sb, @class, $"IMockProtectedSetupFor{name}", MemberType.Protected);
 			sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 		}
 		if (hasStaticMembers)
@@ -390,7 +390,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, @class, name, $"IMockStaticSetupFor{name}", MemberType.Static);
+			ImplementSetupInterface(sb, @class, $"IMockStaticSetupFor{name}", MemberType.Static);
 			sb.Append("\t\t#endregion IMockStaticSetupFor").Append(name).AppendLine();
 		}
 		foreach ((string Name, Class Class) item in additionalInterfaces)
@@ -398,7 +398,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockSetupFor").Append(item.Name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, item.Class, item.Name, $"IMockSetupFor{item.Name}", MemberType.Public);
+			ImplementSetupInterface(sb, item.Class, $"IMockSetupFor{item.Name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockSetupFor").Append(item.Name).AppendLine();
 		}
 
@@ -411,7 +411,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockRaiseOn").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementRaiseInterface(sb, @class, name, $"IMockRaiseOn{name}", MemberType.Public);
+			ImplementRaiseInterface(sb, @class, $"IMockRaiseOn{name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockRaiseOn").Append(name).AppendLine();
 		}
 		if (hasProtectedEvents)
@@ -421,7 +421,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockProtectedRaiseOn").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementRaiseInterface(sb, @class, name, $"IMockProtectedRaiseOn{name}", MemberType.Protected);
+			ImplementRaiseInterface(sb, @class, $"IMockProtectedRaiseOn{name}", MemberType.Protected);
 			sb.Append("\t\t#endregion IMockProtectedRaiseOn").Append(name).AppendLine();
 
 			#endregion IMockProtectedRaiseOnXXX
@@ -433,7 +433,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticRaiseOn").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementRaiseInterface(sb, @class, name, $"IMockStaticRaiseOn{name}", MemberType.Static);
+			ImplementRaiseInterface(sb, @class, $"IMockStaticRaiseOn{name}", MemberType.Static);
 			sb.Append("\t\t#endregion IMockStaticRaiseOn").Append(name).AppendLine();
 
 			#endregion IMockStaticRaiseOnXXX
@@ -446,7 +446,7 @@ internal static partial class Sources
 				sb.AppendLine();
 				sb.Append("\t\t#region IMockRaiseOn").Append(item.Name).AppendLine();
 				sb.AppendLine();
-				ImplementRaiseInterface(sb, item.Class, item.Name, $"IMockRaiseOn{item.Name}", MemberType.Public);
+				ImplementRaiseInterface(sb, item.Class, $"IMockRaiseOn{item.Name}", MemberType.Public);
 				sb.Append("\t\t#endregion IMockRaiseOn").Append(item.Name).AppendLine();
 			}
 		}
@@ -459,14 +459,14 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementVerifyInterface(sb, @class, name, $"IMockVerifyFor{name}", MemberType.Public);
+		ImplementVerifyInterface(sb, @class, $"IMockVerifyFor{name}", MemberType.Public);
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockProtectedVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, @class, name, $"IMockProtectedVerifyFor{name}", MemberType.Protected);
+			ImplementVerifyInterface(sb, @class, $"IMockProtectedVerifyFor{name}", MemberType.Protected);
 			sb.Append("\t\t#endregion IMockProtectedVerifyFor").Append(name).AppendLine();
 		}
 		
@@ -475,7 +475,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, @class, name, $"IMockStaticVerifyFor{name}", MemberType.Static);
+			ImplementVerifyInterface(sb, @class, $"IMockStaticVerifyFor{name}", MemberType.Static);
 			sb.Append("\t\t#endregion IMockStaticVerifyFor").Append(name).AppendLine();
 		}
 		foreach ((string Name, Class Class) item in additionalInterfaces)
@@ -483,7 +483,7 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockVerifyFor").Append(item.Name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, item.Class, item.Name, $"IMockVerifyFor{item.Name}", MemberType.Public);
+			ImplementVerifyInterface(sb, item.Class, $"IMockVerifyFor{item.Name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockVerifyFor").Append(item.Name).AppendLine();
 		}
 
