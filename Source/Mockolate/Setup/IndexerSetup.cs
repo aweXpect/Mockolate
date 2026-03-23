@@ -140,28 +140,46 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action callback)
 	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => callback());
+		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, TValue currentValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{T1})" />
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1> callback)
 	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, _) => callback(p1));
+		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, TValue currentValue)
+		{
+			callback(p1);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
 	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, v) => callback(p1, v));
+		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, TValue v)
+		{
+			callback(p1, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
@@ -176,28 +194,46 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action callback)
 	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => callback());
+		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, TValue newValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<TValue> callback)
 	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, v) => callback(v));
+		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, TValue v)
+		{
+			callback(v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
 	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, p1, v) => callback(p1, v));
+		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, TValue v)
+		{
+			callback(p1, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
@@ -251,83 +287,137 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Returns(TValue)" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue)
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, _, _) => returnValue);
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue currentValue)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Returns(Func{TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue> callback)
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, _, _) => callback());
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue currentValue)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Returns(Func{T1, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue> callback)
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, p1, _) => callback(p1));
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue currentValue)
+		{
+			return callback(p1);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Returns(Func{T1, TValue, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue, TValue> callback)
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, p1, v) => callback(p1, v));
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue v)
+		{
+			return callback(p1, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Throws{TException}()" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, _, _) => throw new TException());
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue currentValue)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Throws(Exception)" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Exception exception)
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, _, _) => throw exception);
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue currentValue)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Throws(Func{Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, _, _) => throw callback());
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue currentValue)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Throws(Func{T1, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, Exception> callback)
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, p1, _) => throw callback(p1));
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue currentValue)
+		{
+			throw callback(p1);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Throws(Func{T1, TValue, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, TValue, Exception> callback)
 	{
-		Callback<Func<int, T1, TValue, TValue>> currentCallback = new((_, p1, v) => throw callback(p1, v));
+		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, TValue v)
+		{
+			throw callback(p1, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1}.When(Func{int, bool})" />
@@ -488,28 +578,46 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => callback());
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{T1, T2})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2> callback)
 	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, _) => callback(p1, p2));
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			callback(p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
 	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, v) => callback(p1, p2, v));
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, TValue v)
+		{
+			callback(p1, p2, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
@@ -525,28 +633,46 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => callback());
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, TValue newValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<TValue> callback)
 	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, v) => callback(v));
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, TValue v)
+		{
+			callback(v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
 	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, p1, p2, v) => callback(p1, p2, v));
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, TValue v)
+		{
+			callback(p1, p2, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
@@ -601,85 +727,137 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Returns(TValue)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue)
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new((_, _, _, _) => returnValue);
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Returns(Func{TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue> callback)
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new((_, _, _, _) => callback());
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Returns(Func{T1, T2, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback)
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new((_, p1, p2, _) => callback(p1, p2));
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			return callback(p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Returns(Func{T1, T2, TValue, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue, TValue> callback)
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new((_, p1, p2, v) => callback(p1, p2, v));
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue v)
+		{
+			return callback(p1, p2, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Throws{TException}()" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new((_, _, _, _) => throw new TException());
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Throws(Exception)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Exception exception)
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new((_, _, _, _) => throw exception);
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Throws(Func{Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new((_, _, _, _) => throw callback());
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Throws(Func{T1, T2, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback =
-			new((_, p1, p2, _) => throw callback(p1, p2));
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue currentValue)
+		{
+			throw callback(p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Throws(Func{T1, T2, TValue, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, TValue, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback =
-			new((_, p1, p2, v) => throw callback(p1, p2, v));
+		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, TValue v)
+		{
+			throw callback(p1, p2, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" />
@@ -848,30 +1026,48 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3> callback)
 	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, _) => callback(p1, p2, p3));
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			callback(p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3, TValue> callback)
 	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, v) => callback(p1, p2, p3, v));
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, TValue v)
+		{
+			callback(p1, p2, p3, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
@@ -887,29 +1083,47 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, TValue newValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(Action<TValue> callback)
 	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, v) => callback(v));
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, TValue v)
+		{
+			callback(v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3, TValue> callback)
 	{
-		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, p1, p2, p3, v) => callback(p1, p2, p3, v));
+		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, TValue v)
+		{
+			callback(p1, p2, p3, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
@@ -964,89 +1178,137 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Returns(TValue)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue)
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new((_, _, _, _, _) => returnValue);
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Returns(Func{TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Returns(Func{T1, T2, T3, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback =
-			new((_, p1, p2, p3, _) => callback(p1, p2, p3));
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			return callback(p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Returns(Func{T1, T2, T3, TValue, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue, TValue> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback =
-			new((_, p1, p2, p3, v) => callback(p1, p2, p3, v));
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue v)
+		{
+			return callback(p1, p2, p3, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Throws{TException}()" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback =
-			new((_, _, _, _, _) => throw new TException());
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Throws(Exception)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Exception exception)
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new((_, _, _, _, _) => throw exception);
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Throws(Func{Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>>
-			currentCallback = new((_, _, _, _, _) => throw callback());
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback =
-			new((_, p1, p2, p3, _) => throw callback(p1, p2, p3));
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue currentValue)
+		{
+			throw callback(p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Throws(Func{T1, T2, T3, TValue, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, TValue, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback =
-			new((_, p1, p2, p3, v) => throw callback(p1, p2, p3, v));
+		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, TValue v)
+		{
+			throw callback(p1, p2, p3, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
@@ -1222,32 +1484,48 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback =
-			new((_, p1, p2, p3, p4, _) => callback(p1, p2, p3, p4));
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			callback(p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4, TValue> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback =
-			new((_, p1, p2, p3, p4, v) => callback(p1, p2, p3, p4, v));
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue v)
+		{
+			callback(p1, p2, p3, p4, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
@@ -1263,31 +1541,48 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue newValue)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<TValue> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, v) => callback(v));
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue v)
+		{
+			callback(v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4, TValue> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback =
-			new((_, p1, p2, p3, p4, v) => callback(p1, p2, p3, p4, v));
+		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue v)
+		{
+			callback(p1, p2, p3, p4, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
@@ -1342,92 +1637,137 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Returns(TValue)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, _, _, _, _, _) => returnValue);
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			return returnValue;
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Returns(Func{TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, _, _, _, _, _) => callback());
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			return callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, p1, p2, p3, p4, _) => callback(p1, p2, p3, p4));
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			return callback(p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TValue, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue, TValue> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, p1, p2, p3, p4, v) => callback(p1, p2, p3, p4, v));
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue v)
+		{
+			return callback(p1, p2, p3, p4, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Throws{TException}()" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, _, _, _, _, _) => throw new TException());
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Throws(Exception)" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Exception exception)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, _, _, _, _, _) => throw exception);
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Throws(Func{Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, _, _, _, _, _) => throw callback());
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, p1, p2, p3, p4, _) => throw callback(p1, p2, p3, p4));
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+		{
+			throw callback(p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, TValue, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, TValue, Exception> callback)
 	{
-		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback =
-			new((_, p1, p2, p3, p4, v) => throw callback(p1, p2, p3, p4, v));
+		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		TValue Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4, TValue v)
+		{
+			throw callback(p1, p2, p3, p4, v);
+		}
 	}
 
 	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />

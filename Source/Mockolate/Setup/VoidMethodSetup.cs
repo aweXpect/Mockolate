@@ -33,10 +33,16 @@ public class VoidMethodSetup(string name)
 	/// <inheritdoc cref="IVoidMethodSetup.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder Do(Action callback)
 	{
-		Callback<Action<int>> currentCallback = new(_ => callback());
+		Callback<Action<int>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Do(Action{int})" />
@@ -51,38 +57,61 @@ public class VoidMethodSetup(string name)
 	/// <inheritdoc cref="IVoidMethodSetup.DoesNotThrow()" />
 	public IVoidMethodSetup DoesNotThrow()
 	{
-		Callback<Action<int>> currentCallback = new(_ => { });
+		Callback<Action<int>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _)
+		{
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Action<int>> currentCallback = new(_ => throw new TException());
+		Callback<Action<int>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder Throws(Exception exception)
 	{
-		Callback<Action<int>> currentCallback = new(_ => throw exception);
+		Callback<Action<int>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder Throws(Func<Exception> callback)
 	{
-		Callback<Action<int>> currentCallback = new(_ => throw callback());
+		Callback<Action<int>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder.InParallel()" />
@@ -144,8 +173,7 @@ public class VoidMethodSetup(string name)
 		{
 			Callback<Action<int>> callback =
 				_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-			if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount)))
+			if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 			{
 				wasInvoked = true;
 			}
@@ -155,11 +183,16 @@ public class VoidMethodSetup(string name)
 		{
 			Callback<Action<int>> returnCallback =
 				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-				    => @delegate(invocationCount)))
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
 			{
 				return;
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int> @delegate)
+		{
+			@delegate(invocationCount);
 		}
 	}
 
@@ -235,19 +268,31 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder<T1> Do(Action callback)
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, _) => callback());
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action{T1})" />
 	public IVoidMethodSetupCallbackBuilder<T1> Do(Action<T1> callback)
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, p1) => callback(p1));
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+			callback(p1);
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action{int, T1})" />
@@ -262,47 +307,76 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.DoesNotThrow()" />
 	public IVoidMethodSetup<T1> DoesNotThrow()
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, _) => { });
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder<T1> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, _) => throw new TException());
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder<T1> Throws(Exception exception)
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, _) => throw exception);
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1> Throws(Func<Exception> callback)
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, _) => throw callback());
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Func{T1, Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1> Throws(Func<T1, Exception> callback)
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, p1) => throw callback(p1));
+		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1)
+		{
+			throw callback(p1);
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1}.InParallel()" />
@@ -365,8 +439,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 			{
 				Callback<Action<int, T1>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1)))
+				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 				{
 					wasInvoked = true;
 				}
@@ -376,12 +449,17 @@ public class VoidMethodSetup<T1> : MethodSetup,
 			{
 				Callback<Action<int, T1>> returnCallback =
 					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1)))
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
 				{
 					return;
 				}
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T1> @delegate)
+		{
+			@delegate(invocationCount, p1);
 		}
 	}
 
@@ -475,19 +553,31 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => callback());
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action{T1, T2})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<T1, T2> callback)
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => callback(p1, p2));
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+			callback(p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action{int, T1, T2})" />
@@ -502,47 +592,76 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.DoesNotThrow()" />
 	public IVoidMethodSetup<T1, T2> DoesNotThrow()
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => { });
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder<T1, T2> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => throw new TException());
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Exception exception)
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => throw exception);
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<Exception> callback)
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => throw callback());
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Func{T1, T2, Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, p1, p2) => throw callback(p1, p2));
+		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2)
+		{
+			throw callback(p1, p2);
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2}.InParallel()" />
@@ -606,8 +725,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2)))
+				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 				{
 					wasInvoked = true;
 				}
@@ -617,12 +735,17 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2>> returnCallback =
 					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2)))
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
 				{
 					return;
 				}
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T1, T2> @delegate)
+		{
+			@delegate(invocationCount, p1, p2);
 		}
 	}
 
@@ -722,19 +845,31 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action{T1, T2, T3})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<T1, T2, T3> callback)
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => callback(p1, p2, p3));
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			callback(p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
@@ -749,47 +884,76 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.DoesNotThrow()" />
 	public IVoidMethodSetup<T1, T2, T3> DoesNotThrow()
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => { });
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => throw new TException());
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Exception exception)
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => throw exception);
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<Exception> callback)
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => throw callback());
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, p1, p2, p3) => throw callback(p1, p2, p3));
+		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3)
+		{
+			throw callback(p1, p2, p3);
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3}.InParallel()" />
@@ -856,8 +1020,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3)))
+				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 				{
 					wasInvoked = true;
 				}
@@ -867,12 +1030,17 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3>> returnCallback =
 					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3)))
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
 				{
 					return;
 				}
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T1, T2, T3> @delegate)
+		{
+			@delegate(invocationCount, p1, p2, p3);
 		}
 	}
 
@@ -975,19 +1143,31 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action)" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => callback());
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
 	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, p1, p2, p3, p4) => callback(p1, p2, p3, p4));
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			callback(p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
@@ -1002,48 +1182,76 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.DoesNotThrow()" />
 	public IVoidMethodSetup<T1, T2, T3, T4> DoesNotThrow()
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => { });
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws{TException}()" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new()
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => throw new TException());
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			throw new TException();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Exception)" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Exception exception)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => throw exception);
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			throw exception;
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Func{Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<Exception> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => throw callback());
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			throw callback();
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
 	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback =
-			new((_, p1, p2, p3, p4) => throw callback(p1, p2, p3, p4));
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
+
+		[DebuggerNonUserCode]
+		void Delegate(int _, T1 p1, T2 p2, T3 p3, T4 p4)
+		{
+			throw callback(p1, p2, p3, p4);
+		}
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3, T4}.InParallel()" />
@@ -1112,8 +1320,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3, T4>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4)))
+				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
 				{
 					wasInvoked = true;
 				}
@@ -1123,12 +1330,17 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3, T4>> returnCallback =
 					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4)))
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
 				{
 					return;
 				}
 			}
+		}
+
+		[DebuggerNonUserCode]
+		void Callback(int invocationCount, Action<int, T1, T2, T3, T4> @delegate)
+		{
+			@delegate(invocationCount, p1, p2, p3, p4);
 		}
 	}
 
