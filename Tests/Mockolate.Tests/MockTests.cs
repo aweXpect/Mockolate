@@ -230,6 +230,19 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task GenericMethodWithWhereClause_ShouldWork()
+	{
+		IMyServiceWithGenericMethodsWithWhereClause sut = IMyServiceWithGenericMethodsWithWhereClause.CreateMock();
+
+		sut.Mock.Setup.MyMethod<IChocolateDispenser>(It.IsTrue()).Returns(3);
+
+		int result = sut.MyMethod<IChocolateDispenser>(true);
+
+		await That(result).IsEqualTo(3);
+		await That(sut.Mock.Verify.MyMethod<IChocolateDispenser>(It.IsTrue())).Once();
+	}
+
+	[Fact]
 	public async Task ToString_ShouldReturnImplementedType()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
@@ -370,6 +383,11 @@ public sealed partial class MockTests
 
 		// ReSharper disable once UnassignedGetOnlyAutoProperty
 		public int Number { get; }
+	}
+
+	public interface IMyServiceWithGenericMethodsWithWhereClause
+	{
+		int MyMethod<T>(bool flag) where T : IChocolateDispenser;
 	}
 
 	public sealed class Nested

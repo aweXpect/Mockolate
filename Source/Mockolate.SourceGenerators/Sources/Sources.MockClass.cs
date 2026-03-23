@@ -1850,14 +1850,6 @@ internal static partial class Sources
 			sb.Append(")");
 		}
 
-		if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
-		{
-			foreach (GenericParameter gp in method.GenericParameters.Value)
-			{
-				gp.AppendWhereConstraint(sb, "\t\t\t");
-			}
-		}
-
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
 		if (method.ReturnType != Type.Void)
@@ -2252,14 +2244,6 @@ internal static partial class Sources
 		}
 
 		sb.Append(")");
-		if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
-		{
-			foreach (GenericParameter gp in method.GenericParameters.Value)
-			{
-				gp.AppendWhereConstraint(sb, "\t\t\t");
-			}
-		}
-
 		sb.AppendLine();
 
 		sb.Append("\t\t\t=> this.Registrations.Method<").Append(verifyName).Append(">(this, ");
