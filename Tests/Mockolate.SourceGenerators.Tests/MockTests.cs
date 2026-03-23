@@ -3,6 +3,62 @@
 public sealed partial class MockTests
 {
 	[Fact]
+	public async Task DeeplyNestedClass_ShouldSetupAndVerifyForAllInheritedTypes()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using System.Collections.Generic;
+			     using System.Threading.Tasks;
+			     using Mockolate;
+			     
+			     namespace MyCode;
+			     
+			     public interface INestedInterface
+			     {
+			     	int NestedValue { get; }
+			     }
+			     public interface IParentInterface : INestedInterface
+			     {
+			     	int ParentValue { get; }
+			     }
+			     public interface IDirectInterface
+			     {
+			     	int DirectValue { get; }
+			     }
+			     public abstract class BaseClass : IParentInterface
+			     {
+			     	public virtual int BaseClassValue { get; } = 1;
+			     	int IParentInterface.ParentValue { get; } = 2;
+			     	int INestedInterface.NestedValue { get; } = 3;
+			     }
+			     public class OuterClass : BaseClass, IDirectInterface
+			     {
+			     	public virtual int OuterValue { get; } = 4;
+			     	int IDirectInterface.DirectValue { get; } = 5;
+			     }
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = OuterClass.CreateMock();
+			         }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("Mock.OuterClass.g.cs").WhoseValue
+			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.OuterValue").And
+			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.BaseClassValue").And
+			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.DirectValue").And
+			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.ParentValue").And
+			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.NestedValue").And
+			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.OuterValue").And
+			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.BaseClassValue").And
+			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.DirectValue").And
+			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.ParentValue").And
+			.Contains("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.NestedValue");
+	}
+	[Fact]
 	public async Task ForTypesWithAdditionalConstructorsWithParameters_ShouldWorkForAllNonPrivateConstructors()
 	{
 		GeneratorResult result = Generator

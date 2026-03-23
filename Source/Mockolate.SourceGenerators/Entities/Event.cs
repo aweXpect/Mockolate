@@ -1,15 +1,17 @@
+using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
+[DebuggerDisplay("{ContainingType}.{Name}")]
 internal record Event
 {
 	public Event(IEventSymbol eventSymbol, IMethodSymbol delegateInvokeMethod, List<Event>? alreadyDefinedEvents)
 	{
 		Accessibility = eventSymbol.DeclaredAccessibility;
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
-		Name = eventSymbol.Name;
+		Name = eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name;
 		Type = new Type(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Delegate = new Method(delegateInvokeMethod, null);

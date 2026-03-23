@@ -1,9 +1,11 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
+[DebuggerDisplay("{DisplayString}")]
 internal record Class
 {
 	private readonly IAssemblySymbol _sourceAssembly;
@@ -37,25 +39,25 @@ internal record Class
 		List<Method> methods = ToListExcept(type.GetMembers().OfType<IMethodSymbol>()
 			// Exclude getter/setter methods
 			.Where(x => x.AssociatedSymbol is null && !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
+			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract || x.ExplicitInterfaceImplementations.Length > 0)
 			.Where(x => x.MethodKind == MethodKind.Ordinary)
-			.Where(x => ShouldIncludeMember(x))
+			.Where(x => ShouldIncludeMember(x, x.ExplicitInterfaceImplementations.Length))
 			.Select(x => new Method(x, alreadyDefinedMethods))
 			.Distinct(), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);
 		Methods = new EquatableArray<Method>(methods.ToArray());
 
 		List<Property> properties = ToListExcept(type.GetMembers().OfType<IPropertySymbol>()
 			.Where(x => !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-			.Where(x => ShouldIncludeMember(x))
+			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract || x.ExplicitInterfaceImplementations.Length > 0)
+			.Where(x => ShouldIncludeMember(x, x.ExplicitInterfaceImplementations.Length))
 			.Select(x => new Property(x, alreadyDefinedProperties))
 			.Distinct(), exceptProperties, Property.ContainingTypeIndependentEqualityComparer);
 		Properties = new EquatableArray<Property>(properties.ToArray());
 
 		List<Event> events = ToListExcept(type.GetMembers().OfType<IEventSymbol>()
 			.Where(x => !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-			.Where(x => ShouldIncludeMember(x))
+			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract || x.ExplicitInterfaceImplementations.Length > 0)
+			.Where(x => ShouldIncludeMember(x, x.ExplicitInterfaceImplementations.Length))
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
 			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, alreadyDefinedEvents))
@@ -88,9 +90,9 @@ internal record Class
 						exceptEvents))
 				.ToArray());
 
-		bool ShouldIncludeMember(ISymbol member)
+		bool ShouldIncludeMember(ISymbol member, int explicitInterfaceImplementations)
 		{
-			if (IsInterface || member.IsAbstract)
+			if (IsInterface || member.IsAbstract || explicitInterfaceImplementations > 0)
 			{
 				return true;
 			}
@@ -227,16 +229,28 @@ internal record Class
 		}
 	}
 
+	private List<Property>? _allProperties;
 	public IEnumerable<Property> AllProperties()
-		=> AllClasses().SelectMany(c => c.Properties).Distinct(Property.EqualityComparer);
+	{
+		_allProperties ??= AllClasses().SelectMany(c => c.Properties).Distinct(Property.EqualityComparer).ToList();
+		return _allProperties;
+	}
 
+	private List<Method>? _allMethods;
 	public IEnumerable<Method> AllMethods()
-		=> AllClasses().SelectMany(c => c.Methods).Distinct(Method.EqualityComparer);
+	{
+		_allMethods ??= AllClasses().SelectMany(c => c.Methods).Distinct(Method.EqualityComparer).ToList();
+		return _allMethods;
+	}
 
+	private List<Event>? _allEvents;
 	public IEnumerable<Event> AllEvents()
-		=> AllClasses().SelectMany(c => c.Events).Distinct(Event.EqualityComparer);
+	{
+		_allEvents ??= AllClasses().SelectMany(c => c.Events).Distinct(Event.EqualityComparer).ToList();
+		return _allEvents;
+	}
 
-	public IEnumerable<Class> AllClasses()
+	private IEnumerable<Class> AllClasses()
 	{
 		yield return this;
 		foreach (Class inherited in InheritedTypes)
