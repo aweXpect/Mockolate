@@ -332,16 +332,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock that also implements ").Append(string.Join(", ", additionalInterfaces.Select(x => x.Class.DisplayString))).Append("\";").AppendLine();
 		sb.AppendLine();
 
-		if (@class.IsInterface)
-		{
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(fileName).Append("\" />").AppendLine();
-			sb.Append("\t\tpublic ").Append(fileName).Append("(global::Mockolate.MockRegistry mockRegistry)").AppendLine();
-			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = mockRegistry;").AppendLine();
-			sb.Append("\t\t}").AppendLine();
-			sb.AppendLine();
-		}
-		else if (constructors is not null)
+		if (!@class.IsInterface && constructors is not null)
 		{
 			foreach (Method constructor in constructors)
 			{

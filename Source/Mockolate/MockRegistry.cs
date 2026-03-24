@@ -6,6 +6,9 @@ namespace Mockolate;
 /// <summary>
 ///     Registry for mock behavior, setups and interactions.
 /// </summary>
+/// <remarks>
+///     It also gives access to constructor parameters and the wrapped instance.
+/// </remarks>
 [DebuggerDisplay("{Interactions} | {Setup}")]
 [DebuggerNonUserCode]
 public partial class MockRegistry
@@ -41,7 +44,7 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Wraps =  registry.Wraps;
+		Wraps = registry.Wraps;
 		Interactions = interactions;
 	}
 
