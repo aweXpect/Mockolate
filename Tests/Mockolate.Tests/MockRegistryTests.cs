@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Mockolate.Tests;
 
-public sealed class MockRegistrationTests
+public sealed class MockRegistryTests
 {
 	[Fact]
 	public async Task ImplicitConversionFromMockBehavior()

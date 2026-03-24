@@ -161,7 +161,7 @@ namespace Mockolate
             public Mockolate.MockBehavior WithDefaultValueFor<T>(System.Func<T> factory) { }
         }
     }
-    [System.Diagnostics.DebuggerDisplay("{ToString()}")]
+    [System.Diagnostics.DebuggerDisplay("{Interactions} | {Setup}")]
     public class MockRegistry
     {
         public MockRegistry(Mockolate.MockBehavior behavior) { }
@@ -189,7 +189,6 @@ namespace Mockolate
         public void SetupMethod(Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
-        public override string ToString() { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName) { }
         public static Mockolate.MockRegistry op_Implicit(Mockolate.MockBehavior behavior) { }
     }
@@ -553,7 +552,7 @@ namespace Mockolate.Interactions
         public Mockolate.Parameters.NamedParameterValue[] Parameters { get; }
         public override string ToString() { }
     }
-    [System.Diagnostics.DebuggerDisplay("{_interactions}")]
+    [System.Diagnostics.DebuggerDisplay("{_interactions.Count} interactions")]
     public class MockInteractions : Mockolate.Interactions.IMockInteractions
     {
         public MockInteractions() { }
@@ -1741,19 +1740,19 @@ namespace Mockolate.Verify
     }
     public class VerificationEventResult<TSubject>
     {
-        public VerificationEventResult(TSubject subject, Mockolate.MockRegistry registrations, string name) { }
+        public VerificationEventResult(TSubject subject, Mockolate.MockRegistry mockRegistry, string name) { }
         public Mockolate.Verify.VerificationResult<TSubject> Subscribed() { }
         public Mockolate.Verify.VerificationResult<TSubject> Unsubscribed() { }
     }
     public class VerificationIndexerResult<TSubject, TParameter>
     {
-        public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry registrations, params Mockolate.Parameters.NamedParameter[] parameters) { }
+        public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<TSubject> Got() { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter>? value) { }
     }
     public class VerificationPropertyResult<TSubject, TParameter>
     {
-        public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry registrations, string propertyName) { }
+        public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry mockRegistry, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> Got() { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter>? value) { }
     }

@@ -179,9 +179,9 @@ public partial class MockRegistry
 	{
 		List<ISetup> unusedSetups =
 		[
-			.._indexerSetups.EnumerateUnusedSetupsBy(interactions),
-			.._propertySetups.EnumerateUnusedSetupsBy(interactions),
-			.._methodSetups.EnumerateUnusedSetupsBy(interactions),
+			..Setup.Indexers.EnumerateUnusedSetupsBy(interactions),
+			..Setup.Properties.EnumerateUnusedSetupsBy(interactions),
+			..Setup.Methods.EnumerateUnusedSetupsBy(interactions),
 		];
 		return unusedSetups;
 	}

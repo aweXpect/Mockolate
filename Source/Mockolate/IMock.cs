@@ -1,7 +1,7 @@
 namespace Mockolate;
 
 /// <summary>
-///     The mock interface gives access to the constructor parameters and the mock registrations of a mock instance.
+///     The mock interface gives access to the constructor parameters and the mock registry of a mock instance.
 /// </summary>
 public interface IMock
 {

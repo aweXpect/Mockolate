@@ -10,7 +10,7 @@ namespace Mockolate.Interactions;
 /// <summary>
 ///     Keeps track of the interactions on the mock and its verifications.
 /// </summary>
-[DebuggerDisplay("{_interactions}")]
+[DebuggerDisplay("{_interactions.Count} interactions")]
 [DebuggerNonUserCode]
 public class MockInteractions : IMockInteractions
 {
