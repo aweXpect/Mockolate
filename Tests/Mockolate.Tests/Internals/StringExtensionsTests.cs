@@ -7,7 +7,7 @@ public sealed class StringExtensionsTests
 	[Fact]
 	public async Task SubstringAfterLast_WhenNameContainsNoDot_ShouldIncludeFullName()
 	{
-		MockRegistration registration = new(MockBehavior.Default, "");
+		MockRegistration registration = new(MockBehavior.Default);
 
 		VerificationResult<int> result = registration.Property(0, "SomeNameWithoutADot");
 
@@ -18,7 +18,7 @@ public sealed class StringExtensionsTests
 	[Fact]
 	public async Task SubstringAfterLast_WhenNameStartsWithDot_ShouldOmitDot()
 	{
-		MockRegistration registration = new(MockBehavior.Default, "");
+		MockRegistration registration = new(MockBehavior.Default);
 
 		VerificationResult<int> result = registration.Property(0, ".bar");
 

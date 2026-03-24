@@ -22,18 +22,16 @@ namespace Mockolate;
 public partial class MockRegistration
 {
 	/// <inheritdoc cref="MockRegistration" />
-	public MockRegistration(MockBehavior behavior, string prefix)
+	public MockRegistration(MockBehavior behavior)
 	{
 		Behavior = behavior;
-		Prefix = prefix;
 		Interactions = new MockInteractions();
 	}
 
 	/// <inheritdoc cref="MockRegistration" />
-	public MockRegistration(MockBehavior behavior, string prefix, MockInteractions interactions)
+	public MockRegistration(MockBehavior behavior, MockInteractions interactions)
 	{
 		Behavior = behavior;
-		Prefix = prefix;
 		Interactions = interactions;
 	}
 
@@ -43,14 +41,17 @@ public partial class MockRegistration
 	public MockBehavior Behavior { get; }
 
 	/// <summary>
-	///     Gets the prefix string used to identify or categorize items within the context.
-	/// </summary>
-	public string Prefix { get; }
-
-	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
 	public MockInteractions Interactions { get; }
+
+	/// <summary>
+	///     Implicitly converts a <see cref="MockBehavior" /> to a <see cref="MockRegistration" /> with the given behavior and an empty interaction collection.
+	/// </summary>
+	public static implicit operator MockRegistration(MockBehavior behavior)
+	{
+		return new MockRegistration(behavior);
+	}
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
