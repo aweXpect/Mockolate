@@ -172,8 +172,12 @@ internal static partial class Sources
 			sb.Append("\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, constructorParameters);").AppendLine();
 		}
 
-		sb.AppendLine();
+		sb.Append("\t\t\treturn CreateMockInstance(mockRegistry, constructorParameters, setup);").AppendLine();
+		sb.Append("\t\t}").AppendLine();
 
+		sb.AppendLine();
+		sb.Append("\t\tprivate static ").Append(@class.ClassFullName).Append(" CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, ").Append(setupType).Append("? setup)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
 		if (!@class.IsInterface && constructors?.Count > 0)
 		{
 			sb.Append("\t\t\tif (constructorParameters is null || constructorParameters.Length == 0)").AppendLine();
@@ -225,7 +229,7 @@ internal static partial class Sources
 						.Append("(constructorParameters, ")
 						.Append(constructorParameterIndex++)
 						.Append(parameter.HasExplicitDefaultValue ? $", {parameter.ExplicitDefaultValue}" : "")
-						.Append(", mockBehavior, out ").Append(parameter.Type.Fullname).Append(" c")
+						.Append(", mockRegistry.Behavior, out ").Append(parameter.Type.Fullname).Append(" c")
 						.Append(constructorIndex)
 						.Append('p')
 						.Append(constructorParameterIndex).Append(")");
@@ -309,20 +313,17 @@ internal static partial class Sources
 
 		#endregion CreateMock
 
-		if (@class.IsInterface)
-		{
-			sb.AppendXmlSummary("Create a mock that wraps the given <paramref name=\"instance\" />.");
-			sb.AppendXmlRemarks("All interactions are forwarded to the <paramref name=\"instance\" />.");
-			sb.Append("\t\tpublic ").Append(@class.ClassFullName).Append(" Wrapping(").Append(@class.ClassFullName).Append(" instance)").AppendLine();
-			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tif (mock is global::Mockolate.IMock mockInterface)").AppendLine();
-			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn new global::Mockolate.Mock.").Append(name).Append("(new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance));").AppendLine();
-			sb.Append("\t\t\t}").AppendLine();
-			sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");").AppendLine();
-			sb.Append("\t\t}").AppendLine();
-			sb.AppendLine();
-		}
+		sb.AppendXmlSummary("Create a mock that wraps the given <paramref name=\"instance\" />.");
+		sb.AppendXmlRemarks("All interactions are forwarded to the <paramref name=\"instance\" />.");
+		sb.Append("\t\tpublic ").Append(@class.ClassFullName).Append(" Wrapping(").Append(@class.ClassFullName).Append(" instance)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tif (mock is global::Mockolate.IMock mockInterface)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\treturn CreateMockInstance(new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance), mockInterface.MockRegistry.ConstructorParameters, null);").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
 
 		sb.Append("\t}").AppendLine();
 
@@ -1059,33 +1060,26 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("\t\t{");
-		if (isClassInterface && !explicitInterfaceImplementation && @event.ExplicitImplementation is null)
+		bool supportsWrapping = @event is { IsStatic: false, IsProtected: false, ExplicitImplementation: null, } && !explicitInterfaceImplementation;
+		if (supportsWrapping)
 		{
 			sb.Append("\t\t\tadd").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t").Append(mockRegistry).Append(".AddEvent(").Append(@event.GetUniqueNameString())
 				.Append(", value?.Target, value?.Method);").AppendLine();
-			if (!@event.IsStatic)
-			{
-				sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
-				sb.Append("\t\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" += value;").AppendLine();
-				sb.Append("\t\t\t\t}").AppendLine();
-			}
-
+			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" += value;").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\tremove").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t").Append(mockRegistry).Append(".RemoveEvent(").Append(@event.GetUniqueNameString())
 				.Append(", value?.Target, value?.Method);").AppendLine();
-			if (!@event.IsStatic)
-			{
-				sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
-				sb.Append("\t\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" -= value;").AppendLine();
-				sb.Append("\t\t\t\t}").AppendLine();
-			}
-
+			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" -= value;").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 		}
 		else
@@ -1225,9 +1219,21 @@ internal static partial class Sources
 						.AppendLine(");");
 					sb.Append("\t\t\t\tif (!").Append(indexerResultVarName).Append(".SkipBaseClass)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tvar ").Append(baseResultVarName).Append(" = base[")
-						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
-						.AppendLine();
+					if (!property.IsProtected)
+					{
+						sb.Append("\t\t\t\t\tvar ").Append(baseResultVarName).Append(" = this.").Append(mockRegistryName)
+							.Append(".Wraps is ").Append(className).Append(" wraps ? wraps[")
+							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("] : base[")
+							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
+							.AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\t\tvar ").Append(baseResultVarName).Append(" = base[")
+							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
+							.AppendLine();
+					}
+
 					sb.Append("\t\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
 						.Append(baseResultVarName).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
@@ -1241,8 +1247,17 @@ internal static partial class Sources
 					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
 						.AppendTypeOrWrapper(property.Type).Append(">(")
 						.Append(property.GetUniqueNameString()).Append(", () => ")
-						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue")
-						.Append(", () => base.").Append(property.Name).Append(");").AppendLine();
+						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
+					if (property is { IsStatic: false, IsProtected: false })
+					{
+						sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.").Append(property.Name);
+					}
+					else
+					{
+						sb.Append(", () => base.").Append(property.Name);
+					}
+
+					sb.Append(");").AppendLine();
 				}
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
@@ -1316,9 +1331,28 @@ internal static partial class Sources
 						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value)).Append("))")
 						.AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tbase[")
-						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
-						.AppendLine("] = value;");
+					if (!property.IsProtected)
+					{
+						sb.Append("\t\t\t\t\tif (this.").Append(mockRegistryName).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\twraps[")
+							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
+							.AppendLine("] = value;");
+						sb.Append("\t\t\t\t\t}").AppendLine();
+						sb.Append("\t\t\t\t\telse").AppendLine();
+						sb.Append("\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\tbase[")
+							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
+							.AppendLine("] = value;");
+						sb.Append("\t\t\t\t\t}").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\t\tbase[")
+							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
+							.AppendLine("] = value;");
+					}
+
 					sb.Append("\t\t\t\t}").AppendLine();
 				}
 				else
@@ -1337,7 +1371,22 @@ internal static partial class Sources
 					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty(").Append(property.GetUniqueNameString())
 						.Append(", value))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
+					if (property is { IsStatic: false, IsProtected: false })
+					{
+						sb.Append("\t\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\twraps.").Append(property.Name).Append(" = value;").AppendLine();
+						sb.Append("\t\t\t\t\t}").AppendLine();
+						sb.Append("\t\t\t\t\telse").AppendLine();
+						sb.Append("\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
+						sb.Append("\t\t\t\t\t}").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\t\tbase.").Append(property.Name).Append(" = value;").AppendLine();
+					}
+
 					sb.Append("\t\t\t\t}").AppendLine();
 				}
 				else
@@ -1545,9 +1594,22 @@ internal static partial class Sources
 					sb.Append("\t\t\t\t#endif").AppendLine();
 				}
 
-				sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name).Append('(')
-					.Append(FormatMethodParametersWithRefKind(method.Parameters))
-					.Append(");").AppendLine();
+				if (method is { IsStatic: false, IsProtected: false })
+				{
+					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = ").Append(mockRegistry)
+						.Append(".Wraps is ").Append(className).Append(" wraps ? wraps.").Append(method.Name).Append('(')
+						.Append(FormatMethodParametersWithRefKind(method.Parameters))
+						.Append(") : base.").Append(method.Name).Append('(')
+						.Append(FormatMethodParametersWithRefKind(method.Parameters))
+						.Append(");").AppendLine();
+				}
+				else
+				{
+					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name).Append('(')
+						.Append(FormatMethodParametersWithRefKind(method.Parameters))
+						.Append(");").AppendLine();
+				}
+
 				AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
 					$"{mockRegistry}.Behavior.DefaultValue");
 
@@ -1572,8 +1634,25 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\t\tbase.").Append(method.Name).Append('(')
-					.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+				if (method is { IsStatic: false, IsProtected: false })
+				{
+					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+					sb.Append("\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\twraps.").Append(method.Name).Append('(')
+						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+					sb.Append("\t\t\t\t}").AppendLine();
+					sb.Append("\t\t\t\telse").AppendLine();
+					sb.Append("\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\tbase.").Append(method.Name).Append('(')
+						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+					sb.Append("\t\t\t\t}").AppendLine();
+				}
+				else
+				{
+					sb.Append("\t\t\t\tbase.").Append(method.Name).Append('(')
+						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+				}
+
 				sb.Append("\t\t\t}").AppendLine();
 				foreach (MethodParameter parameter in method.Parameters)
 				{

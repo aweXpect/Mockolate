@@ -166,7 +166,7 @@ public sealed partial class MockTests
 					          				var indexerResult = this.MockRegistry.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index));
 					          				if (!indexerResult.SkipBaseClass)
 					          				{
-					          					var baseResult = base[index];
+					          					var baseResult = this.MockRegistry.Wraps is global::MyCode.MyService wraps ? wraps[index] : base[index];
 					          					return indexerResult.GetResult(baseResult);
 					          				}
 					          				return indexerResult.GetResult(() => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!));
@@ -175,7 +175,14 @@ public sealed partial class MockTests
 					          			{
 					          				if (!this.MockRegistry.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue("index", index)))
 					          				{
-					          					base[index] = value;
+					          					if (this.MockRegistry.Wraps is global::MyCode.MyService wraps)
+					          					{
+					          						wraps[index] = value;
+					          					}
+					          					else
+					          					{
+					          						base[index] = value;
+					          					}
 					          				}
 					          			}
 					          		}
