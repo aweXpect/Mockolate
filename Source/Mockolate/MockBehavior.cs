@@ -12,7 +12,7 @@ namespace Mockolate;
 [DebuggerNonUserCode]
 public record MockBehavior : IMockBehaviorAccess
 {
-	private ConcurrentStack<IConstructorParameters> _constructorParameters = [];
+	private ConcurrentStack<IConstructorParameters>? _constructorParameters;
 	private ConcurrentStack<object?>? _values;
 
 	/// <inheritdoc cref="MockBehavior" />
@@ -73,7 +73,7 @@ public record MockBehavior : IMockBehaviorAccess
 	/// <inheritdoc cref="IMockBehaviorAccess.TryGetConstructorParameters{T}(out object?[])" />
 	bool IMockBehaviorAccess.TryGetConstructorParameters<T>([NotNullWhen(true)] out object?[]? parameters)
 	{
-		if (_constructorParameters.FirstOrDefault(i => i is ConstructorParameters<T>)
+		if (_constructorParameters?.FirstOrDefault(i => i is ConstructorParameters<T>)
 		    is not ConstructorParameters<T> constructorParameters)
 		{
 			parameters = null;
@@ -94,7 +94,7 @@ public record MockBehavior : IMockBehaviorAccess
 	{
 		MockBehavior behavior = this with
 		{
-			_constructorParameters = new ConcurrentStack<IConstructorParameters>(_constructorParameters),
+			_constructorParameters = new ConcurrentStack<IConstructorParameters>(_constructorParameters ?? []),
 		};
 		behavior._constructorParameters.Push(new ConstructorParameters<T>(parameters));
 		return behavior;
@@ -110,7 +110,7 @@ public record MockBehavior : IMockBehaviorAccess
 	{
 		MockBehavior behavior = this with
 		{
-			_constructorParameters = new ConcurrentStack<IConstructorParameters>(_constructorParameters),
+			_constructorParameters = new ConcurrentStack<IConstructorParameters>(_constructorParameters ?? []),
 		};
 		behavior._constructorParameters.Push(new ConstructorParameters<T>(() => parameters));
 		return behavior;
@@ -127,6 +127,33 @@ public record MockBehavior : IMockBehaviorAccess
 		};
 		return behavior;
 	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		string baseString = (ThrowWhenNotSetup, SkipBaseClass) switch
+		{
+			(true, false) => nameof(MockBehaviorExtensions.ThrowingWhenNotSetup),
+			(false, true) => nameof(MockBehaviorExtensions.SkippingBaseClass),
+			(true, true) => $"{nameof(MockBehaviorExtensions.ThrowingWhenNotSetup)} and {nameof(MockBehaviorExtensions.SkippingBaseClass)}",
+			_ => "Default",
+		};
+
+		int? constructorParameterCount = _constructorParameters?.Count;
+		if (constructorParameterCount > 0)
+		{
+			baseString += $" with {constructorParameterCount} constructor parameter registrations";
+		}
+
+		int? valuesCount = _values?.Count;
+		if (valuesCount > 0)
+		{
+			baseString += $" with {valuesCount} setup registrations";
+		}
+
+		return baseString;
+	}
+
 	private interface IConstructorParameters;
 
 #pragma warning disable S2326

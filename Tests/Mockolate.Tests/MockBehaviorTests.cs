@@ -42,6 +42,75 @@ public sealed partial class MockBehaviorTests
 		await That(sut.DefaultValue.Generate(0)).IsEqualTo(0);
 	}
 
+	[Fact]
+	public async Task ToString_Default_ShouldReturnDefault()
+	{
+		MockBehavior sut = MockBehavior.Default;
+
+		string result = sut.ToString();
+
+		await That(result).IsEqualTo("Default");
+	}
+
+	[Fact]
+	public async Task ToString_SkippingBaseClass_ShouldReturnExpectedValue()
+	{
+		MockBehavior sut = MockBehavior.Default.SkippingBaseClass();
+
+		string result = sut.ToString();
+
+		await That(result).IsEqualTo("SkippingBaseClass");
+	}
+
+	[Fact]
+	public async Task ToString_SkippingBaseClassAndThrowingWhenNotSetup_ShouldReturnExpectedValue()
+	{
+		MockBehavior sut = MockBehavior.Default with
+		{
+			SkipBaseClass = true,
+			ThrowWhenNotSetup = true,
+		};
+
+		string result = sut.ToString();
+
+		await That(result).IsEqualTo("ThrowingWhenNotSetup and SkippingBaseClass");
+	}
+
+	[Fact]
+	public async Task ToString_ThrowingWhenNotSetup_ShouldReturnExpectedValue()
+	{
+		MockBehavior sut = MockBehavior.Default.ThrowingWhenNotSetup();
+
+		string result = sut.ToString();
+
+		await That(result).IsEqualTo("ThrowingWhenNotSetup");
+	}
+
+	[Fact]
+	public async Task ToString_WithSetups_ShouldReturnExpectedValue()
+	{
+		MockBehavior sut = MockBehavior.Default.SkippingBaseClass()
+			.UseConstructorParametersFor<MyServiceBase>(1)
+			.UseConstructorParametersFor<IChocolateDispenser>("foo", "bar")
+			.Initialize<IChocolateDispenser>(_ => { });
+
+		string result = sut.ToString();
+
+		await That(result).IsEqualTo("SkippingBaseClass with 2 constructor parameter registrations with 1 setup registrations");
+	}
+
+	[Fact]
+	public async Task ToString_WithUseConstructorParametersFor_ShouldReturnExpectedValue()
+	{
+		MockBehavior sut = MockBehavior.Default
+			.UseConstructorParametersFor<MyServiceBase>(1)
+			.UseConstructorParametersFor<IChocolateDispenser>("foo", "bar");
+
+		string result = sut.ToString();
+
+		await That(result).IsEqualTo("Default with 2 constructor parameter registrations");
+	}
+
 	private sealed class MyDefaultValueGenerator : IDefaultValueGenerator
 	{
 		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(Type, object?[])" />

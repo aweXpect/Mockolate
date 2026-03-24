@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using Mockolate.Exceptions;
 using Mockolate.Setup;
 using Mockolate.Web;
 
@@ -23,5 +24,50 @@ public class HttpClientTests
 		await That(response.StatusCode).IsEqualTo(HttpStatusCode.Accepted);
 		await That(client1.Mock.VerifySetup(setup)).Once();
 		await That(client2.Mock.VerifySetup(setup)).Once();
+	}
+
+	[Fact]
+	public async Task WithDifferentBehavior_ShouldThrow()
+	{
+		MockBehavior behavior1 = MockBehavior.Default.SkippingBaseClass();
+		MockBehavior behavior2 = MockBehavior.Default.ThrowingWhenNotSetup();
+		HttpMessageHandler handler = HttpMessageHandler.CreateMock(behavior1);
+
+		void Act()
+		{
+			_ = HttpClient.CreateMock([handler,], behavior2);
+		}
+
+		await That(Act).Throws<MockException>().WithMessage(
+			"Mock of type 'System.Net.Http.HttpClient' cannot be created with behavior 'ThrowingWhenNotSetup' because it shares its mock registry with a mock of type 'System.Net.Http.HttpMessageHandler' that has behavior 'SkippingBaseClass'.");
+	}
+
+	[Fact]
+	public async Task WithoutBehavior_ShouldSucceed()
+	{
+		MockBehavior behavior1 = MockBehavior.Default.SkippingBaseClass();
+		HttpMessageHandler handler = HttpMessageHandler.CreateMock(behavior1);
+
+		void Act()
+		{
+			_ = HttpClient.CreateMock([handler,]);
+		}
+
+		await That(Act).DoesNotThrow();
+	}
+
+	[Fact]
+	public async Task WithSameBehavior_ShouldSucceed()
+	{
+		MockBehavior behavior1 = MockBehavior.Default.SkippingBaseClass();
+		MockBehavior behavior2 = MockBehavior.Default.SkippingBaseClass();
+		HttpMessageHandler handler = HttpMessageHandler.CreateMock(behavior1);
+
+		void Act()
+		{
+			_ = HttpClient.CreateMock([handler,], behavior2);
+		}
+
+		await That(Act).DoesNotThrow();
 	}
 }
