@@ -844,6 +844,7 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
+	#pragma warning disable S107 // Methods should not have too many parameters
 	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name, bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents)
 	{
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -933,6 +934,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.").Append(mockRegistryName).Append(".Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistry(this.").Append(mockRegistryName).Append(".Behavior, interactions)));").AppendLine();
 		sb.AppendLine();
 	}
+	#pragma warning restore S107 // Methods should not have too many parameters
 
 	#region Mock Helpers
 

@@ -308,6 +308,17 @@ public sealed partial class MockTests
 		await That(mock.ConstructorParameters).IsEmpty();
 	}
 
+	[Fact]
+	public async Task TypeWithMockRegistryMembers_ShouldUseUniqueName()
+	{
+		IServiceWithMockRegistryMembers sut = IServiceWithMockRegistryMembers.CreateMock();
+		sut.Mock.Setup.MockRegistry_1.Returns("foo");
+
+		string result = sut.MockRegistry_1;
+
+		await That(result).IsEqualTo("foo");
+	}
+
 	public interface MyInterfaceWithMockProperty
 	{
 		int Mock { get; }
@@ -388,6 +399,14 @@ public sealed partial class MockTests
 	public interface IMyServiceWithGenericMethodsWithWhereClause
 	{
 		int MyMethod<T>(bool flag) where T : IChocolateDispenser;
+	}
+
+	public interface IServiceWithMockRegistryMembers
+	{
+		event EventHandler MockRegistry;
+		int MockolateMockRegistry(bool value);
+		// ReSharper disable once InconsistentNaming
+		string MockRegistry_1 { get; }
 	}
 
 	public sealed class Nested

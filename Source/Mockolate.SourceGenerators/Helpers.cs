@@ -88,12 +88,10 @@ internal static class Helpers
 				return name;
 			}
 
-			foreach (var alternative in alternatives)
+			string? alternative = alternatives.FirstOrDefault(a => !HasName(a));
+			if (alternative is not null)
 			{
-				if (!HasName(alternative))
-				{
-					return alternative;
-				}
+				return alternative;
 			}
 
 			int index = 1;
