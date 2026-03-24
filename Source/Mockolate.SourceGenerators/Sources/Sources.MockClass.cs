@@ -128,7 +128,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t\tglobal::Mockolate.MockRegistration registrations = new global::Mockolate.MockRegistration(mockBehavior, \"").Append(@class.ClassFullName).Append("\");").AppendLine();
+		sb.Append("\t\t\tglobal::Mockolate.MockRegistration registrations = new global::Mockolate.MockRegistration(mockBehavior);").AppendLine();
 		if (@class is { ClassFullName: "global::System.Net.Http.HttpClient", })
 		{
 			sb.Append("\t\t\tif (constructorParameters is null)").AppendLine();
@@ -867,7 +867,7 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> IMockFor").Append(name).Append(".Monitor()").AppendLine();
-		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.Registrations.Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistration(this.Registrations.Behavior, this.Registrations.Prefix, interactions)));").AppendLine();
+		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.Registrations.Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistration(this.Registrations.Behavior, interactions)));").AppendLine();
 		sb.AppendLine();
 	}
 

@@ -8,7 +8,7 @@ public sealed class MockRegistrationTests
 	[Fact]
 	public async Task RegisterInteraction_ShouldBeThreadSafe()
 	{
-		MockRegistration sut = new(MockBehavior.Default, "");
+		MockRegistration sut = new(MockBehavior.Default);
 		Task[] tasks = new Task[50];
 		for (int i = 0; i < 50; i++)
 		{

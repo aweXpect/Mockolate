@@ -164,11 +164,10 @@ namespace Mockolate
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MockRegistration
     {
-        public MockRegistration(Mockolate.MockBehavior behavior, string prefix) { }
-        public MockRegistration(Mockolate.MockBehavior behavior, string prefix, Mockolate.Interactions.MockInteractions interactions) { }
+        public MockRegistration(Mockolate.MockBehavior behavior) { }
+        public MockRegistration(Mockolate.MockBehavior behavior, Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.MockBehavior Behavior { get; }
         public Mockolate.Interactions.MockInteractions Interactions { get; }
-        public string Prefix { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public void ClearAllInteractions() { }
         public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult>(params Mockolate.Parameters.NamedParameterValue[] parameters) { }
@@ -192,6 +191,7 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
         public override string ToString() { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName) { }
+        public static Mockolate.MockRegistration op_Implicit(Mockolate.MockBehavior behavior) { }
     }
     public static class ParameterExtensions
     {
