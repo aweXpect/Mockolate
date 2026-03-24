@@ -5,7 +5,7 @@ namespace Mockolate.Tests;
 
 public sealed partial class MockTests
 {
-	public sealed class WrapTests
+	public sealed class WrappingInterfaceTests
 	{
 		[Fact]
 		public async Task Wrap_Events_ForwardEventsFromWrappedInstance()

@@ -435,7 +435,14 @@ public sealed partial class MockTests
 					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.MyService.MyMethod1", new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("value1", value1), new global::Mockolate.Parameters.NamedParameterValue("flag", null));
 					          			if (!methodExecution.SkipBaseClass)
 					          			{
-					          				base.MyMethod1(index, ref value1, out flag);
+					          				if (this.MockRegistry.Wraps is global::MyCode.MyService wraps)
+					          				{
+					          					wraps.MyMethod1(index, ref value1, out flag);
+					          				}
+					          				else
+					          				{
+					          					base.MyMethod1(index, ref value1, out flag);
+					          				}
 					          			}
 					          			methodExecution.TriggerCallbacks(index, value1, flag);
 

@@ -111,8 +111,8 @@ wrappedDispenser.Mock.Verify.Dispense(It.Is("Dark"), It.Is(5)).Once();
 
 **Notes:**
 
-- Only interface types can be wrapped.
-- All calls are forwarded to the wrapped instance.
+- Both interface and class types can be wrapped.
+- All public calls are forwarded to the wrapped instance.
 - You can still set up custom behavior that overrides the wrapped instance's behavior.
-- You cannot override protected members of the wrapped instance.
+- Protected members are not forwarded to the wrapped instance; the base class implementation is used instead.
 - Verification works the same as with regular mocks.

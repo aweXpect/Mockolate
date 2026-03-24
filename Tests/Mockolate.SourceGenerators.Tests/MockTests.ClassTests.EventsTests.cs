@@ -286,8 +286,22 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.MyService.SomeEvent" />
 					          		public override event global::System.EventHandler? SomeEvent
 					          		{
-					          			add => this.MockRegistry.AddEvent("global::MyCode.MyService.SomeEvent", value?.Target, value?.Method);
-					          			remove => this.MockRegistry.RemoveEvent("global::MyCode.MyService.SomeEvent", value?.Target, value?.Method);
+					          			add
+					          			{
+					          				this.MockRegistry.AddEvent("global::MyCode.MyService.SomeEvent", value?.Target, value?.Method);
+					          				if (this.MockRegistry.Wraps is global::MyCode.MyService wraps)
+					          				{
+					          					wraps.SomeEvent += value;
+					          				}
+					          			}
+					          			remove
+					          			{
+					          				this.MockRegistry.RemoveEvent("global::MyCode.MyService.SomeEvent", value?.Target, value?.Method);
+					          				if (this.MockRegistry.Wraps is global::MyCode.MyService wraps)
+					          				{
+					          					wraps.SomeEvent -= value;
+					          				}
+					          			}
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.DoesNotContain("SomeOtherEvent").Because("The event is not virtual!").And

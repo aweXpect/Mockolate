@@ -192,7 +192,7 @@ public sealed partial class MockTests
 		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
 			.Contains("""
 			          			if (constructorParameters.Length == 1
-			          			    && TryCast(constructorParameters, 0, mockBehavior, out int c1p1))
+			          			    && TryCast(constructorParameters, 0, mockRegistry.Behavior, out int c1p1))
 			          			{
 			          				global::Mockolate.Mock.MyBaseClass.MockRegistryProvider.Value = mockRegistry;
 			          				global::Mockolate.MockExtensionsForMyBaseClass.MockSetup? setupTarget = null;
@@ -206,8 +206,8 @@ public sealed partial class MockTests
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
 			          			if (constructorParameters.Length == 2
-			          			    && TryCast(constructorParameters, 0, mockBehavior, out int c2p1)
-			          			    && TryCast(constructorParameters, 1, mockBehavior, out bool c2p2))
+			          			    && TryCast(constructorParameters, 0, mockRegistry.Behavior, out int c2p1)
+			          			    && TryCast(constructorParameters, 1, mockRegistry.Behavior, out bool c2p2))
 			          			{
 			          				global::Mockolate.Mock.MyBaseClass.MockRegistryProvider.Value = mockRegistry;
 			          				global::Mockolate.MockExtensionsForMyBaseClass.MockSetup? setupTarget = null;
