@@ -91,6 +91,17 @@ public sealed class ProtectedMockTests
 		await That(result2).IsTrue();
 	}
 
+	[Fact]
+	public async Task SupportProtectedAccessInConstructorSetups()
+	{
+		MyProtectedClass sut = MyProtectedClass.CreateMock(setup => setup.Protected.MyProtectedProperty.InitializeWith(42));
+
+		int result = sut.GetMyProtectedProperty();
+
+		await That(sut.Mock.VerifyProtected.MyProtectedProperty.Got()).Once();
+		await That(result).IsEqualTo(42);
+	}
+
 	public abstract class OnlyProtectedVirtualMembersService
 	{
 		public bool DoValidate(int value)

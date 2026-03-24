@@ -79,6 +79,38 @@ internal static class Helpers
 		}
 	}
 
+	extension(Class @class)
+	{
+		public string GetUniqueName(string name, params string[] alternatives)
+		{
+			if (!HasName(name))
+			{
+				return name;
+			}
+
+			foreach (var alternative in alternatives)
+			{
+				if (!HasName(alternative))
+				{
+					return alternative;
+				}
+			}
+
+			int index = 1;
+			while (HasName($"{name}_{index}"))
+			{
+				index++;
+			}
+
+			return $"{name}_{index}";
+
+			bool HasName(string candidate)
+				=> @class.AllProperties().Any(p => p.Name == candidate) ||
+				   @class.AllMethods().Any(m => m.Name == candidate) ||
+				   @class.AllEvents().Any(e => e.Name == candidate);
+		}
+	}
+
 	extension(ImmutableArray<AttributeData> attributes)
 	{
 		public EquatableArray<Attribute>? ToAttributeArray()
