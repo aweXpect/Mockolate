@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -14,44 +12,12 @@ using Mockolate.Setup;
 
 namespace Mockolate;
 
-/// <summary>
-///     The registration class for mocks.
-/// </summary>
-[DebuggerDisplay("{ToString()}")]
-[DebuggerNonUserCode]
-public partial class MockRegistration
+public partial class MockRegistry
 {
-	/// <inheritdoc cref="MockRegistration" />
-	public MockRegistration(MockBehavior behavior)
-	{
-		Behavior = behavior;
-		Interactions = new MockInteractions();
-	}
-
-	/// <inheritdoc cref="MockRegistration" />
-	public MockRegistration(MockBehavior behavior, MockInteractions interactions)
-	{
-		Behavior = behavior;
-		Interactions = interactions;
-	}
-
-	/// <summary>
-	///     Gets the behavior settings used by this mock instance.
-	/// </summary>
-	public MockBehavior Behavior { get; }
-
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
 	public MockInteractions Interactions { get; }
-
-	/// <summary>
-	///     Implicitly converts a <see cref="MockBehavior" /> to a <see cref="MockRegistration" /> with the given behavior and an empty interaction collection.
-	/// </summary>
-	public static implicit operator MockRegistration(MockBehavior behavior)
-	{
-		return new MockRegistration(behavior);
-	}
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
@@ -176,7 +142,7 @@ public partial class MockRegistration
 
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
 		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
-			_indexerSetups.UpdateValue);
+			Setup.Indexers.UpdateValue);
 	}
 
 	/// <summary>
@@ -190,7 +156,7 @@ public partial class MockRegistration
 		IndexerSetterAccess interaction = new(Interactions.GetNextIndex(), parameters, value);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
-		_indexerSetups.UpdateValue(parameters, value);
+		Setup.Indexers.UpdateValue(parameters, value);
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
 		matchingSetup?.InvokeSetter(interaction, value, Behavior);
 		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
@@ -201,7 +167,7 @@ public partial class MockRegistration
 	/// </summary>
 	public void Raise(string eventName, params object?[] parameters)
 	{
-		foreach ((object? target, MethodInfo method) in GetEventHandlers(eventName))
+		foreach ((object? target, MethodInfo method) in GetEventHandlers())
 		{
 			try
 			{
@@ -210,6 +176,19 @@ public partial class MockRegistration
 			catch (TargetInvocationException ex) when (ex.InnerException is not null)
 			{
 				ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+			}
+		}
+
+		IEnumerable<(object?, MethodInfo)> GetEventHandlers()
+		{
+			foreach ((object? target, MethodInfo method, string name) in Setup.Events.Enumerate())
+			{
+				if (name != eventName)
+				{
+					continue;
+				}
+
+				yield return (target, method);
 			}
 		}
 	}
@@ -227,7 +206,7 @@ public partial class MockRegistration
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(Interactions.GetNextIndex(), name,
 			target, method));
-		_eventHandlers.Add(target, method, name);
+		Setup.Events.Add(target, method, name);
 	}
 
 	/// <summary>
@@ -243,54 +222,6 @@ public partial class MockRegistration
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(Interactions.GetNextIndex(), name,
 			target, method));
-		_eventHandlers.Remove(target, method, name);
-	}
-
-	/// <inheritdoc cref="object.ToString()" />
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public override string ToString()
-	{
-		StringBuilder sb = new();
-		if (_methodSetups.Count > 0)
-		{
-			sb.Append(_methodSetups.Count).Append(_methodSetups.Count == 1 ? " method, " : " methods, ");
-		}
-
-		if (_propertySetups.Count > 0)
-		{
-			sb.Append(_propertySetups.Count).Append(_propertySetups.Count == 1 ? " property, " : " properties, ");
-		}
-
-		if (_eventHandlers.Count > 0)
-		{
-			sb.Append(_eventHandlers.Count).Append(_eventHandlers.Count == 1 ? " event, " : " events, ");
-		}
-
-		if (_indexerSetups.Count > 0)
-		{
-			sb.Append(_indexerSetups.Count).Append(_indexerSetups.Count == 1 ? " indexer, " : " indexers, ");
-		}
-
-		if (sb.Length == 0)
-		{
-			return "(none)";
-		}
-
-		sb.Length -= 2;
-		return sb.ToString();
-	}
-
-
-	private IEnumerable<(object?, MethodInfo)> GetEventHandlers(string eventName)
-	{
-		foreach ((object? target, MethodInfo method, string name) in _eventHandlers.Enumerate())
-		{
-			if (name != eventName)
-			{
-				continue;
-			}
-
-			yield return (target, method);
-		}
+		Setup.Events.Remove(target, method, name);
 	}
 }

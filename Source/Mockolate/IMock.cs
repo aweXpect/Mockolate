@@ -1,7 +1,7 @@
 namespace Mockolate;
 
 /// <summary>
-///     The mock interface gives access to the constructor parameters and the mock registrations of a mock instance.
+///     The mock interface gives access to the constructor parameters and the mock registry of a mock instance.
 /// </summary>
 public interface IMock
 {
@@ -11,9 +11,9 @@ public interface IMock
 	object?[] ConstructorParameters { get; }
 
 	/// <summary>
-	///     The mock registrations to store setups and interactions with the mock.
+	///     The mock registry to store setups and interactions with the mock.
 	/// </summary>
-	MockRegistration Registrations { get; }
+	MockRegistry MockRegistry { get; }
 
 	/// <summary>
 	///     A string representation of the mock, which includes the type of the mocked object and any additional interfaces it implements.

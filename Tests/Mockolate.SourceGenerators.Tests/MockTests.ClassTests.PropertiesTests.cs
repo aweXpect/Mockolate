@@ -80,11 +80,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyService.SomeProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.SomeProperty);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyService.SomeProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.SomeProperty);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyService.SomeProperty", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyService.SomeProperty", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomeProperty = value;
@@ -98,7 +98,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<bool?>("global::MyCode.IMyService.SomeReadOnlyProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(bool?)!), this.Wraps is null ? null : () => this.Wraps.SomeReadOnlyProperty);
+					          				return this.MockRegistry.GetProperty<bool?>("global::MyCode.IMyService.SomeReadOnlyProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool?)!), this.Wraps is null ? null : () => this.Wraps.SomeReadOnlyProperty);
 					          			}
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -108,7 +108,7 @@ public sealed partial class MockTests
 					          		{
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyService.SomeWriteOnlyProperty", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyService.SomeWriteOnlyProperty", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomeWriteOnlyProperty = value;
@@ -122,11 +122,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyService.SomeInternalProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.SomeInternalProperty);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyService.SomeInternalProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.SomeInternalProperty);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyService.SomeInternalProperty", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyService.SomeInternalProperty", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomeInternalProperty = value;
@@ -140,11 +140,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyService.SomePrivateProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.SomePrivateProperty);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyService.SomePrivateProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.SomePrivateProperty);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyService.SomePrivateProperty", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyService.SomePrivateProperty", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomePrivateProperty = value;
@@ -158,11 +158,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyService.SomePrivateProtectedProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.SomePrivateProtectedProperty);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyService.SomePrivateProtectedProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.SomePrivateProtectedProperty);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyService.SomePrivateProtectedProperty", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyService.SomePrivateProtectedProperty", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomePrivateProtectedProperty = value;
@@ -217,11 +217,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyService.MyDirectProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.MyDirectProperty);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyService.MyDirectProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.MyDirectProperty);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyService.MyDirectProperty", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyService.MyDirectProperty", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyDirectProperty = value;
@@ -235,11 +235,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyServiceBase1.MyBaseProperty1", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.MyBaseProperty1);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyServiceBase1.MyBaseProperty1", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.MyBaseProperty1);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyServiceBase1.MyBaseProperty1", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyServiceBase1.MyBaseProperty1", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseProperty1 = value;
@@ -253,11 +253,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyServiceBase2.MyBaseProperty2", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.MyBaseProperty2);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyServiceBase2.MyBaseProperty2", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.MyBaseProperty2);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyServiceBase2.MyBaseProperty2", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyServiceBase2.MyBaseProperty2", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseProperty2 = value;
@@ -271,11 +271,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyServiceBase3.MyBaseProperty3", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.MyBaseProperty3);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyServiceBase3.MyBaseProperty3", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.Wraps is null ? null : () => this.Wraps.MyBaseProperty3);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyServiceBase3.MyBaseProperty3", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyServiceBase3.MyBaseProperty3", value);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseProperty3 = value;
@@ -331,11 +331,11 @@ public sealed partial class MockTests
 					          		{
 					          			protected get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.MyService.SomeProperty1", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), () => base.SomeProperty1);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.MyService.SomeProperty1", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), () => base.SomeProperty1);
 					          			}
 					          			set
 					          			{
-					          				if (!this.Registrations.SetProperty("global::MyCode.MyService.SomeProperty1", value))
+					          				if (!this.MockRegistry.SetProperty("global::MyCode.MyService.SomeProperty1", value))
 					          				{
 					          					base.SomeProperty1 = value;
 					          				}
@@ -348,11 +348,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.MyService.SomeProperty2", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), () => base.SomeProperty2);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.MyService.SomeProperty2", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), () => base.SomeProperty2);
 					          			}
 					          			protected set
 					          			{
-					          				if (!this.Registrations.SetProperty("global::MyCode.MyService.SomeProperty2", value))
+					          				if (!this.MockRegistry.SetProperty("global::MyCode.MyService.SomeProperty2", value))
 					          				{
 					          					base.SomeProperty2 = value;
 					          				}
@@ -365,7 +365,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<bool?>("global::MyCode.MyService.SomeReadOnlyProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(bool?)!), () => base.SomeReadOnlyProperty);
+					          				return this.MockRegistry.GetProperty<bool?>("global::MyCode.MyService.SomeReadOnlyProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool?)!), () => base.SomeReadOnlyProperty);
 					          			}
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -375,7 +375,7 @@ public sealed partial class MockTests
 					          		{
 					          			set
 					          			{
-					          				if (!this.Registrations.SetProperty("global::MyCode.MyService.SomeWriteOnlyProperty", value))
+					          				if (!this.MockRegistry.SetProperty("global::MyCode.MyService.SomeWriteOnlyProperty", value))
 					          				{
 					          					base.SomeWriteOnlyProperty = value;
 					          				}
@@ -389,11 +389,11 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.Registrations.GetProperty<int>("global::MyCode.IMyOtherService.SomeAdditionalProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(int)!), null);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyOtherService.SomeAdditionalProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), null);
 					          			}
 					          			set
 					          			{
-					          				this.Registrations.SetProperty("global::MyCode.IMyOtherService.SomeAdditionalProperty", value);
+					          				this.MockRegistry.SetProperty("global::MyCode.IMyOtherService.SomeAdditionalProperty", value);
 					          			}
 					          		}
 					          """).IgnoringNewlineStyle();

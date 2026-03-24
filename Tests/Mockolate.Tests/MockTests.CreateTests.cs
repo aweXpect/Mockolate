@@ -14,7 +14,7 @@ public sealed partial class MockTests
 
 			MyServiceBase sut = MyServiceBase.CreateMock(behavior).Implementing<IMyService>();
 
-			await That(((IMock)sut).Registrations.Behavior).IsSameAs(behavior);
+			await That(((IMock)sut).MockRegistry.Behavior).IsSameAs(behavior);
 		}
 
 		[Fact]
@@ -32,13 +32,13 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With2Arguments_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
 		{
-			MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
 					["foo",],
 					MockBehavior.Default,
 					setup => setup.VirtualMethod().Returns("bar"))
 				.Implementing<IMyService>();
 
-			string result = mock.VirtualMethod();
+			string result = sut.VirtualMethod();
 
 			await That(result).IsEqualTo("bar");
 		}
@@ -46,14 +46,14 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With2Arguments_WithSetups_ShouldApplySetups()
 		{
-			IMyService mock = IMyService.CreateMock(
+			IMyService sut = IMyService.CreateMock(
 				setup => setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2),
 				setup => setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4),
 				setup => setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8));
 
-			int result1 = mock.Multiply(1, null);
-			int result2 = mock.Multiply(2, null);
-			int result3 = mock.Multiply(3, null);
+			int result1 = sut.Multiply(1, null);
+			int result2 = sut.Multiply(2, null);
+			int result3 = sut.Multiply(3, null);
 
 			await That(result1).IsEqualTo(2);
 			await That(result2).IsEqualTo(4);

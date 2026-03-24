@@ -1015,7 +1015,7 @@ sut.Mock.VerifyStatic.AbstractStaticEvent.Subscribed().Once();
 
 **Notes:**
 
-- Static member scoping is implemented via `AsyncLocal<MockRegistration>`. When you call
+- Static member scoping is implemented via `AsyncLocal<MockRegistry>`. When you call
   `sut.Mock.SetupStatic.Method()`, it creates an async-flow scope that routes static member invocations to that
   specific mock instance.
 - Each mock instance has an independent static member context, so parallel tests will not interfere with each other.

@@ -10,14 +10,14 @@ namespace Mockolate.Verify;
 public class VerificationPropertyResult<TSubject, TParameter>
 {
 	private readonly string _propertyName;
-	private readonly MockRegistration _registrations;
+	private readonly MockRegistry _mockRegistry;
 	private readonly TSubject _subject;
 
 	/// <inheritdoc cref="VerificationPropertyResult{TSubject, TParameter}" />
-	public VerificationPropertyResult(TSubject subject, MockRegistration registrations, string propertyName)
+	public VerificationPropertyResult(TSubject subject, MockRegistry mockRegistry, string propertyName)
 	{
 		_subject = subject;
-		_registrations = registrations;
+		_mockRegistry = mockRegistry;
 		_propertyName = propertyName;
 	}
 
@@ -25,11 +25,11 @@ public class VerificationPropertyResult<TSubject, TParameter>
 	///     Verifies the property read access on the mock.
 	/// </summary>
 	public VerificationResult<TSubject> Got()
-		=> _registrations.Property(_subject, _propertyName);
+		=> _mockRegistry.Property(_subject, _propertyName);
 
 	/// <summary>
 	///     Verifies the property write access on the mock with the given <paramref name="value" />.
 	/// </summary>
 	public VerificationResult<TSubject> Set(IParameter<TParameter>? value)
-		=> _registrations.Property(_subject, _propertyName, (IParameter)(value ?? It.IsNull<TParameter>()));
+		=> _mockRegistry.Property(_subject, _propertyName, (IParameter)(value ?? It.IsNull<TParameter>()));
 }

@@ -194,14 +194,14 @@ public sealed partial class MockTests
 			          			if (constructorParameters.Length == 1
 			          			    && TryCast(constructorParameters, 0, mockBehavior, out int c1p1))
 			          			{
-			          				global::Mockolate.Mock.MyBaseClass.MockRegistrationsProvider.Value = registrations;
+			          				global::Mockolate.Mock.MyBaseClass.MockRegistryProvider.Value = mockRegistry;
 			          				global::Mockolate.MockExtensionsForMyBaseClass.MockSetup? setupTarget = null;
 			          				foreach (var setup in setups)
 			          				{
-			          					setupTarget ??= new(registrations);
+			          					setupTarget ??= new(mockRegistry);
 			          					setup.Invoke(setupTarget);
 			          				}
-			          				return new global::Mockolate.Mock.MyBaseClass(registrations, c1p1);
+			          				return new global::Mockolate.Mock.MyBaseClass(mockRegistry, c1p1);
 			          			}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
@@ -209,14 +209,14 @@ public sealed partial class MockTests
 			          			    && TryCast(constructorParameters, 0, mockBehavior, out int c2p1)
 			          			    && TryCast(constructorParameters, 1, mockBehavior, out bool c2p2))
 			          			{
-			          				global::Mockolate.Mock.MyBaseClass.MockRegistrationsProvider.Value = registrations;
+			          				global::Mockolate.Mock.MyBaseClass.MockRegistryProvider.Value = mockRegistry;
 			          				global::Mockolate.MockExtensionsForMyBaseClass.MockSetup? setupTarget = null;
 			          				foreach (var setup in setups)
 			          				{
-			          					setupTarget ??= new(registrations);
+			          					setupTarget ??= new(mockRegistry);
 			          					setup.Invoke(setupTarget);
 			          				}
-			          				return new global::Mockolate.Mock.MyBaseClass(registrations, c2p1, c2p2);
+			          				return new global::Mockolate.Mock.MyBaseClass(mockRegistry, c2p1, c2p2);
 			          			}
 			          """.TrimStart()).IgnoringNewlineStyle().And
 			.Contains("""
@@ -226,19 +226,19 @@ public sealed partial class MockTests
 			          			}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public MyBaseClass(global::Mockolate.MockRegistration registrations, int value)
+			          		public MyBaseClass(global::Mockolate.MockRegistry mockRegistry, int value)
 			          			: base(value)
 			          		{
 			          			this.ConstructorParameters = new object?[] { value };
-			          			this.Registrations = registrations;
+			          			this.MockRegistry = mockRegistry;
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public MyBaseClass(global::Mockolate.MockRegistration registrations, int value, bool flag)
+			          		public MyBaseClass(global::Mockolate.MockRegistry mockRegistry, int value, bool flag)
 			          			: base(value, flag)
 			          		{
 			          			this.ConstructorParameters = new object?[] { value, flag };
-			          			this.Registrations = registrations;
+			          			this.MockRegistry = mockRegistry;
 			          		}
 			          """).IgnoringNewlineStyle();
 	}
@@ -439,7 +439,7 @@ public sealed partial class MockTests
 			          		global::Mockolate.Setup.IVoidMethodSetup<int> global::Mockolate.Mock.IMockSetupForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
 			          		{
 			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>("global::MyCode.IMyService.DoSomething", new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>())));
-			          			this.Registrations.SetupMethod(methodSetup);
+			          			this.MockRegistry.SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}
 			          """).IgnoringNewlineStyle().And
@@ -449,21 +449,21 @@ public sealed partial class MockTests
 			          			get
 			          			{
 			          				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(parameter1 ?? global::Mockolate.It.IsNull<int>())));
-			          				this.Registrations.SetupIndexer(indexerSetup);
+			          				this.MockRegistry.SetupIndexer(indexerSetup);
 			          				return indexerSetup;
 			          			}
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		global::Mockolate.Verify.VerificationResult<IMockVerifyForIMyService> IMockVerifyForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
-			          			=> this.Registrations.Method<IMockVerifyForIMyService>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.IMyService.DoSomething", [ new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>())), ]));
+			          			=> this.MockRegistry.Method<IMockVerifyForIMyService>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.IMyService.DoSomething", [ new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>())), ]));
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string> IMockVerifyForIMyService.this[global::Mockolate.Parameters.IParameter<int>? @true]
 			          		{
 			          			get
 			          			{
-			          				return new global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>(this, this.Registrations, [ new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(@true ?? global::Mockolate.It.IsNull<int>())), ]);
+			          				return new global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>(this, this.MockRegistry, [ new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(@true ?? global::Mockolate.It.IsNull<int>())), ]);
 			          			}
 			          		}
 			          """).IgnoringNewlineStyle();
@@ -619,7 +619,7 @@ public sealed partial class MockTests
 			.Contains("""
 			          		public void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15)
 			          		{
-			          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.Registrations.InvokeMethod("global::MyCode.IMyService.MyMethod", new global::Mockolate.Parameters.NamedParameterValue("v1", v1), new global::Mockolate.Parameters.NamedParameterValue("v2", v2), new global::Mockolate.Parameters.NamedParameterValue("v3", v3), new global::Mockolate.Parameters.NamedParameterValue("v4", v4), new global::Mockolate.Parameters.NamedParameterValue("v5", v5), new global::Mockolate.Parameters.NamedParameterValue("v6", v6), new global::Mockolate.Parameters.NamedParameterValue("v7", v7), new global::Mockolate.Parameters.NamedParameterValue("v8", v8), new global::Mockolate.Parameters.NamedParameterValue("v9", v9), new global::Mockolate.Parameters.NamedParameterValue("v10", v10), new global::Mockolate.Parameters.NamedParameterValue("v11", v11), new global::Mockolate.Parameters.NamedParameterValue("v12", v12), new global::Mockolate.Parameters.NamedParameterValue("v13", v13), new global::Mockolate.Parameters.NamedParameterValue("v14", v14), new global::Mockolate.Parameters.NamedParameterValue("v15", v15));
+			          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod", new global::Mockolate.Parameters.NamedParameterValue("v1", v1), new global::Mockolate.Parameters.NamedParameterValue("v2", v2), new global::Mockolate.Parameters.NamedParameterValue("v3", v3), new global::Mockolate.Parameters.NamedParameterValue("v4", v4), new global::Mockolate.Parameters.NamedParameterValue("v5", v5), new global::Mockolate.Parameters.NamedParameterValue("v6", v6), new global::Mockolate.Parameters.NamedParameterValue("v7", v7), new global::Mockolate.Parameters.NamedParameterValue("v8", v8), new global::Mockolate.Parameters.NamedParameterValue("v9", v9), new global::Mockolate.Parameters.NamedParameterValue("v10", v10), new global::Mockolate.Parameters.NamedParameterValue("v11", v11), new global::Mockolate.Parameters.NamedParameterValue("v12", v12), new global::Mockolate.Parameters.NamedParameterValue("v13", v13), new global::Mockolate.Parameters.NamedParameterValue("v14", v14), new global::Mockolate.Parameters.NamedParameterValue("v15", v15));
 			          			if (this.Wraps is not null)
 			          			{
 			          				this.Wraps.MyMethod(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);

@@ -3,14 +3,14 @@ using System.Threading;
 
 namespace Mockolate.Tests;
 
-public sealed class MockRegistrationTests
+public sealed class MockRegistryTests
 {
 	[Fact]
 	public async Task ImplicitConversionFromMockBehavior()
 	{
 		MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
 
-		MockRegistration result = behavior;
+		MockRegistry result = behavior;
 
 		await That(result.Behavior).IsSameAs(behavior);
 		await That(result.Interactions.Interactions).IsEmpty();
@@ -19,7 +19,7 @@ public sealed class MockRegistrationTests
 	[Fact]
 	public async Task RegisterInteraction_ShouldBeThreadSafe()
 	{
-		MockRegistration sut = new(MockBehavior.Default);
+		MockRegistry sut = new(MockBehavior.Default);
 		Task[] tasks = new Task[50];
 		for (int i = 0; i < 50; i++)
 		{

@@ -10,7 +10,7 @@ using Mockolate.Verify;
 
 namespace Mockolate;
 
-public partial class MockRegistration
+public partial class MockRegistry
 {
 	/// <summary>
 	///     Counts the invocations of methods matching the <paramref name="methodSetup" /> on the <paramref name="subject" />.
@@ -179,9 +179,9 @@ public partial class MockRegistration
 	{
 		List<ISetup> unusedSetups =
 		[
-			.._indexerSetups.EnumerateUnusedSetupsBy(interactions),
-			.._propertySetups.EnumerateUnusedSetupsBy(interactions),
-			.._methodSetups.EnumerateUnusedSetupsBy(interactions),
+			..Setup.Indexers.EnumerateUnusedSetupsBy(interactions),
+			..Setup.Properties.EnumerateUnusedSetupsBy(interactions),
+			..Setup.Methods.EnumerateUnusedSetupsBy(interactions),
 		];
 		return unusedSetups;
 	}

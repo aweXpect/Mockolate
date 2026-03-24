@@ -39,7 +39,7 @@ public static partial class HttpClientExtensions
 					new("global::System.Net.Http.HttpMessageHandler.SendAsync",
 						new NamedParameter("request", (IParameter)request),
 						new NamedParameter("cancellationToken", (IParameter)It.IsAny<CancellationToken>()));
-				httpMessageHandlerMock.Registrations.SetupMethod(methodSetup);
+				httpMessageHandlerMock.MockRegistry.SetupMethod(methodSetup);
 				return methodSetup;
 			}
 
@@ -64,7 +64,7 @@ public static partial class HttpClientExtensions
 					throw new MockException("The setup is not verifiable.");
 				}
 
-				return httpMessageHandlerMock.Registrations.Method(httpClient,
+				return httpMessageHandlerMock.MockRegistry.Method(httpClient,
 					verifiableMethodSetup.GetMatch());
 			}
 

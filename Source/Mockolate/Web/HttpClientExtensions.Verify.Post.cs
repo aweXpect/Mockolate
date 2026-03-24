@@ -54,7 +54,7 @@ public static partial class HttpClientExtensions
 			if (verify is HttpClient httpClient and IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
-				return httpMessageHandlerMock.Registrations.Method(
+				return httpMessageHandlerMock.MockRegistry.Method(
 						httpClientMock.ConstructorParameters[0],
 						new MethodParameterMatch("global::System.Net.Http.HttpMessageHandler.SendAsync", [
 							new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Post,
@@ -82,7 +82,7 @@ public static partial class HttpClientExtensions
 			if (verify is HttpClient httpClient and IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
-				return httpMessageHandlerMock.Registrations.Method(
+				return httpMessageHandlerMock.MockRegistry.Method(
 						httpClientMock.ConstructorParameters[0],
 						new MethodParameterMatch("global::System.Net.Http.HttpMessageHandler.SendAsync", [
 							new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Post,

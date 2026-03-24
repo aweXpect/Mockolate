@@ -11,7 +11,7 @@ public class MockVerifyTests
 	public async Task GetUnverifiedInteractions_ShouldBeSorted()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockInteractions interactions = ((IMock)sut).Registrations.Interactions;
+		MockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
 
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Dark", 2);
@@ -29,7 +29,7 @@ public class MockVerifyTests
 	public async Task GetUnverifiedInteractions_WhenVerified_ShouldBeSorted()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockInteractions interactions = ((IMock)sut).Registrations.Interactions;
+		MockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
 
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Dark", 2);

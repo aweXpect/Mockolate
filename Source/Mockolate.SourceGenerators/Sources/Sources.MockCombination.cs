@@ -61,7 +61,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			if (constructors.Value.Any(m => m.Parameters.Count == 0))
 			{
-				sb.Append("\t\t\t\tvalue = new global::Mockolate.Mock.").Append(fileName).Append("(x.Registrations);").AppendLine();
+				sb.Append("\t\t\t\tvalue = new global::Mockolate.Mock.").Append(fileName).Append("(x.MockRegistry);").AppendLine();
 			}
 			else
 			{
@@ -97,7 +97,7 @@ internal static partial class Sources
 						.Append("(x.ConstructorParameters, ")
 						.Append(constructorParameterIndex++)
 						.Append(parameter.HasExplicitDefaultValue ? $", {parameter.ExplicitDefaultValue}" : "")
-						.Append(", x.Registrations.Behavior, out ").Append(parameter.Type.Fullname).Append(" c")
+						.Append(", x.MockRegistry.Behavior, out ").Append(parameter.Type.Fullname).Append(" c")
 						.Append(constructorIndex)
 						.Append('p')
 						.Append(constructorParameterIndex).Append(")");
@@ -106,7 +106,7 @@ internal static partial class Sources
 				sb.Append(")").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
 				sb.Append("\t\t\t\tvalue = new global::Mockolate.Mock.").Append(fileName)
-					.Append("(x.Registrations");
+					.Append("(x.MockRegistry");
 				for (int j = 1; j <= constructorParameters.Count; j++)
 				{
 					sb.Append(", ").Append('c').Append(constructorIndex).Append('p').Append(j);
@@ -126,10 +126,10 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tvalue = new global::Mockolate.Mock.").Append(fileName).Append("(x.Registrations);").AppendLine();
+			sb.Append("\t\t\tvalue = new global::Mockolate.Mock.").Append(fileName).Append("(x.MockRegistry);").AppendLine();
 		}
 
-		sb.Append("\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)x.Registrations.Behavior;").AppendLine();
+		sb.Append("\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)x.MockRegistry.Behavior;").AppendLine();
 		sb.Append("\t\t\tif (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(lastInterface.Name).Append(">[]?>(out var additionalSetups))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tif (setups.Length > 0)").AppendLine();
@@ -310,12 +310,14 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
 		sb.Append("\t\tobject?[] global::Mockolate.IMock.ConstructorParameters => this.ConstructorParameters;").AppendLine();
 		sb.Append("\t\tprivate object?[] ConstructorParameters { get; }").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.MockRegistration global::Mockolate.IMock.Registrations => this.Registrations;").AppendLine();
-		sb.Append("\t\tprivate global::Mockolate.MockRegistration Registrations { get; }").AppendLine();
+		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.MockRegistry global::Mockolate.IMock.MockRegistry => this.MockRegistry;").AppendLine();
+		sb.Append("\t\tprivate global::Mockolate.MockRegistry MockRegistry { get; }").AppendLine();
 		sb.AppendLine();
 
 		ImplementMockForInterface(sb, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents);
@@ -337,10 +339,10 @@ internal static partial class Sources
 		if (@class.IsInterface)
 		{
 			sb.Append("\t\t/// <inheritdoc cref=\"").Append(fileName).Append("\" />").AppendLine();
-			sb.Append("\t\tpublic ").Append(fileName).Append("(global::Mockolate.MockRegistration registrations, ")
+			sb.Append("\t\tpublic ").Append(fileName).Append("(global::Mockolate.MockRegistry mockRegistry, ")
 				.Append(@class.ClassFullName).Append("? wraps = null)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tthis.Registrations = registrations;").AppendLine();
+			sb.Append("\t\t\tthis.MockRegistry = mockRegistry;").AppendLine();
 			sb.Append("\t\t\tthis.Wraps = wraps;").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -355,11 +357,11 @@ internal static partial class Sources
 		else
 		{
 			sb.Append("\t\t/// <inheritdoc cref=\"").Append(fileName).Append("\" />").AppendLine();
-			sb.Append("\t\tpublic ").Append(fileName).Append("(global::Mockolate.MockRegistration registrations)")
+			sb.Append("\t\tpublic ").Append(fileName).Append("(global::Mockolate.MockRegistry mockRegistry)")
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tthis.ConstructorParameters = new object?[0];").AppendLine();
-			sb.Append("\t\t\tthis.Registrations = registrations;").AppendLine();
+			sb.Append("\t\t\tthis.MockRegistry = mockRegistry;").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
 		}

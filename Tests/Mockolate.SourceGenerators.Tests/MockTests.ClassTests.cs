@@ -28,7 +28,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-				.Contains("MethodSetupResult<int> methodExecution = MockRegistrations.InvokeMethod<int>(")
+				.Contains("MethodSetupResult<int> methodExecution = MockRegistry.InvokeMethod<int>(")
 				.IgnoringNewlineStyle().And
 				.Contains("if (methodExecution.SkipBaseClass)")
 				.IgnoringNewlineStyle().And

@@ -70,9 +70,9 @@ internal static partial class Sources
 			.Append(name).Append(">[] setups)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
-		sb.Append("\t\t\tvar registrations = new global::Mockolate.MockRegistration(mockBehavior);").AppendLine();
+		sb.Append("\t\t\tvar mockRegistry = new global::Mockolate.MockRegistry(mockBehavior);").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Mock.").Append(name).Append(" mockTarget = new global::Mockolate.Mock.")
-			.Append(name).Append("(registrations);")
+			.Append(name).Append("(mockRegistry);")
 			.AppendLine();
 		sb.Append("\t\t\tif (setups.Length > 0)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
@@ -106,17 +106,19 @@ internal static partial class Sources
 		sb.Append("\t\tglobal::Mockolate.IMock").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
 		sb.Append("\t\tobject?[] global::Mockolate.IMock.ConstructorParameters => [];").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.MockRegistration global::Mockolate.IMock.Registrations => this.Registrations;").AppendLine();
-		sb.Append("\t\tprivate global::Mockolate.MockRegistration Registrations { get; }").AppendLine();
+		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.MockRegistry global::Mockolate.IMock.MockRegistry => this.MockRegistry;").AppendLine();
+		sb.Append("\t\tprivate global::Mockolate.MockRegistry MockRegistry { get; }").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
-		sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockRegistration registrations)").AppendLine();
+		sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tRegistrations = registrations;").AppendLine();
+		sb.Append("\t\t\tthis.MockRegistry = mockRegistry;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.AppendXmlSummary("Returns the actual delegate with the mock as target.");
@@ -134,16 +136,16 @@ internal static partial class Sources
 		if (delegateMethod.ReturnType != Type.Void)
 		{
 			string parameterVarName = Helpers.GetUniqueLocalVariableName("p", delegateMethod.Parameters);
-			sb.Append("\t\t\tvar ").Append(resultVarName).Append(" = this.Registrations.InvokeMethod<")
+			sb.Append("\t\t\tvar ").Append(resultVarName).Append(" = this.MockRegistry.InvokeMethod<")
 				.Append(delegateMethod.ReturnType.Fullname)
 				.Append(">(").Append(delegateMethod.GetUniqueNameString());
 			sb.Append(", ").Append(parameterVarName).Append(" => ")
 				.AppendDefaultValueGeneratorFor(delegateMethod.ReturnType,
-					"this.Registrations.Behavior.DefaultValue", $", {parameterVarName}");
+					"this.MockRegistry.Behavior.DefaultValue", $", {parameterVarName}");
 		}
 		else
 		{
-			sb.Append("\t\t\tvar ").Append(resultVarName).Append(" = this.Registrations.InvokeMethod(")
+			sb.Append("\t\t\tvar ").Append(resultVarName).Append(" = this.MockRegistry.InvokeMethod(")
 				.Append(delegateMethod.GetUniqueNameString());
 		}
 
@@ -160,7 +162,7 @@ internal static partial class Sources
 		sb.AppendLine(");");
 
 		AppendOutRefParameterHandling(sb, "\t\t\t", delegateMethod.Parameters, resultVarName,
-			"this.Registrations.Behavior.DefaultValue");
+			"this.MockRegistry.Behavior.DefaultValue");
 
 		sb.Append("\t\t\t").Append(resultVarName).Append(".TriggerCallbacks(")
 			.Append(string.Join(", ", delegateMethod.Parameters.Select(p => p.Name))).Append(");").AppendLine();
@@ -191,34 +193,34 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<IMockVerifyFor").Append(name).Append("> IMockFor").Append(name).Append(".VerifySetup(global::Mockolate.Setup.IMethodSetup setup)").AppendLine();
-		sb.Append("\t\t\t=> this.Registrations.Method<IMockVerifyFor").Append(name).Append(">(this, setup);").AppendLine();
+		sb.Append("\t\t\t=> this.MockRegistry.Method<IMockVerifyFor").Append(name).Append(">(this, setup);").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tbool IMockFor").Append(name).Append(".VerifyThatAllInteractionsAreVerified()").AppendLine();
-		sb.Append("\t\t\t=> this.Registrations.Interactions.GetUnverifiedInteractions().Count == 0;").AppendLine();
+		sb.Append("\t\t\t=> this.MockRegistry.Interactions.GetUnverifiedInteractions().Count == 0;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tbool IMockFor").Append(name).Append(".VerifyThatAllSetupsAreUsed()").AppendLine();
-		sb.Append("\t\t\t=> this.Registrations.GetUnusedSetups(this.Registrations.Interactions).Count == 0;").AppendLine();
+		sb.Append("\t\t\t=> this.MockRegistry.GetUnusedSetups(this.MockRegistry.Interactions).Count == 0;").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tvoid IMockFor").Append(name).Append(".ClearAllInteractions()").AppendLine();
-		sb.Append("\t\t\t=> this.Registrations.ClearAllInteractions();").AppendLine();
+		sb.Append("\t\t\t=> this.MockRegistry.ClearAllInteractions();").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> IMockFor").Append(name).Append(".Monitor()").AppendLine();
-		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.Registrations.Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistration(this.Registrations.Behavior, interactions)));").AppendLine();
+		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.MockRegistry.Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistry(this.MockRegistry.Behavior, interactions)));").AppendLine();
 		sb.AppendLine("\t}");
 
 		sb.AppendLine();
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
-		sb.Append("\tprivate sealed class VerifyMonitor").Append(name).Append("(global::Mockolate.MockRegistration registrations) : global::Mockolate.Mock.IMockVerifyFor").Append(name).AppendLine();
+		sb.Append("\tprivate sealed class VerifyMonitor").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyFor").Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\tprivate global::Mockolate.MockRegistration Registrations { get; } = registrations;").AppendLine();
+		sb.Append("\t\tprivate global::Mockolate.MockRegistry MockRegistry { get; } = mockRegistry;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();

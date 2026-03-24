@@ -8,7 +8,7 @@ public sealed partial class RaiseTests
 	public async Task AddEvent_WithoutMethod_ShouldThrowMockException()
 	{
 		IRaiseEvent sut = IRaiseEvent.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		void Act()
 		{
@@ -23,7 +23,7 @@ public sealed partial class RaiseTests
 	public async Task RemoveEvent_WithoutMethod_ShouldThrowMockException()
 	{
 		IRaiseEvent sut = IRaiseEvent.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		void Act()
 		{

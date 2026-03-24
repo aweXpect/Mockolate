@@ -9,14 +9,14 @@ namespace Mockolate.Verify;
 public class VerificationEventResult<TSubject>
 {
 	private readonly string _name;
-	private readonly MockRegistration _registrations;
+	private readonly MockRegistry _mockRegistry;
 	private readonly TSubject _subject;
 
 	/// <inheritdoc cref="VerificationEventResult{TSubject}" />
-	public VerificationEventResult(TSubject subject, MockRegistration registrations, string name)
+	public VerificationEventResult(TSubject subject, MockRegistry mockRegistry, string name)
 	{
 		_subject = subject;
-		_registrations = registrations;
+		_mockRegistry = mockRegistry;
 		_name = name;
 	}
 
@@ -24,11 +24,11 @@ public class VerificationEventResult<TSubject>
 	///     Verifies the subscriptions for the event.
 	/// </summary>
 	public VerificationResult<TSubject> Subscribed()
-		=> _registrations.SubscribedTo(_subject, _name);
+		=> _mockRegistry.SubscribedTo(_subject, _name);
 
 	/// <summary>
 	///     Verifies the unsubscriptions from the event.
 	/// </summary>
 	public VerificationResult<TSubject> Unsubscribed()
-		=> _registrations.UnsubscribedFrom(_subject, _name);
+		=> _mockRegistry.UnsubscribedFrom(_subject, _name);
 }

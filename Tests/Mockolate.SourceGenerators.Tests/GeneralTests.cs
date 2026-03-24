@@ -73,7 +73,7 @@ public class GeneralTests
 
 			         public class MyClass
 			         {
-			             public MyClass(int registrations)
+			             public MyClass(int mockRegistry)
 			             {
 			             }
 			         }
@@ -85,11 +85,11 @@ public class GeneralTests
 		await That(result.Sources).ContainsKey("Mock.MyClass.g.cs")
 			.WhoseValue
 			.Contains("""
-			          		public MyClass(global::Mockolate.MockRegistration registrations_1, int registrations)
-			          			: base(registrations)
+			          		public MyClass(global::Mockolate.MockRegistry mockRegistry_1, int mockRegistry)
+			          			: base(mockRegistry)
 			          		{
-			          			this.ConstructorParameters = new object?[] { registrations };
-			          			this.Registrations = registrations_1;
+			          			this.ConstructorParameters = new object?[] { mockRegistry };
+			          			this.MockRegistry = mockRegistry_1;
 			          		}
 			          """);
 	}
@@ -464,11 +464,11 @@ public class GeneralTests
 			.ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
 			.Contains("""
 			          		[global::System.Obsolete]
-			          		public MyBaseClass(global::Mockolate.MockRegistration registrations)
+			          		public MyBaseClass(global::Mockolate.MockRegistry mockRegistry)
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		[global::System.Obsolete("This constructor is obsolete")]
-			          		public MyBaseClass(global::Mockolate.MockRegistration registrations, int value)
+			          		public MyBaseClass(global::Mockolate.MockRegistry mockRegistry, int value)
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		[global::System.Obsolete("This event is obsolete")]
@@ -698,11 +698,11 @@ public class GeneralTests
 			          		{
 			          			get
 			          			{
-			          				return this.Registrations.GetProperty<string>("global::MyCode.IMyService.SomeProperty", () => this.Registrations.Behavior.DefaultValue.Generate(default(string)!), this.Wraps is null ? null : () => this.Wraps.SomeProperty);
+			          				return this.MockRegistry.GetProperty<string>("global::MyCode.IMyService.SomeProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!), this.Wraps is null ? null : () => this.Wraps.SomeProperty);
 			          			}
 			          			set
 			          			{
-			          				this.Registrations.SetProperty("global::MyCode.IMyService.SomeProperty", value);
+			          				this.MockRegistry.SetProperty("global::MyCode.IMyService.SomeProperty", value);
 			          				if (this.Wraps is not null)
 			          				{
 			          					this.Wraps.SomeProperty = value;
@@ -715,7 +715,7 @@ public class GeneralTests
 			          		[global::System.ComponentModel.Localizable(false)]
 			          		public string MyMethod(string message)
 			          		{
-			          			global::Mockolate.Setup.MethodSetupResult<string> methodExecution = this.Registrations.InvokeMethod<string>("global::MyCode.IMyService.MyMethod", p => this.Registrations.Behavior.DefaultValue.Generate(default(string)!, p), new global::Mockolate.Parameters.NamedParameterValue("message", message));
+			          			global::Mockolate.Setup.MethodSetupResult<string> methodExecution = this.MockRegistry.InvokeMethod<string>("global::MyCode.IMyService.MyMethod", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!, p), new global::Mockolate.Parameters.NamedParameterValue("message", message));
 			          			if (this.Wraps is not null)
 			          			{
 			          				var baseResult = this.Wraps.MyMethod(message);
@@ -736,7 +736,7 @@ public class GeneralTests
 			          		{
 			          			add
 			          			{
-			          				this.Registrations.AddEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          				this.MockRegistry.AddEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
 			          				if (this.Wraps is not null)
 			          				{
 			          					this.Wraps.MyEvent += value;
@@ -744,7 +744,7 @@ public class GeneralTests
 			          			}
 			          			remove
 			          			{
-			          				this.Registrations.RemoveEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
 			          				if (this.Wraps is not null)
 			          				{
 			          					this.Wraps.MyEvent -= value;

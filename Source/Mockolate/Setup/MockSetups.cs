@@ -1,107 +1,63 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
-using Mockolate.Setup;
 
-namespace Mockolate;
+namespace Mockolate.Setup;
 
-public partial class MockRegistration
+[DebuggerDisplay("{ToString()}")]
+[DebuggerNonUserCode]
+internal class MockSetups
 {
-	private readonly EventSetups _eventHandlers = new();
-	private readonly IndexerSetups _indexerSetups = new();
-	private readonly MethodSetups _methodSetups = new();
-	private readonly PropertySetups _propertySetups = new();
-
-	/// <summary>
-	///     Retrieves the latest method setup that matches the specified <paramref name="methodInvocation" />,
-	///     or returns <see langword="null" /> if no matching setup is found.
-	/// </summary>
-	private MethodSetup? GetMethodSetup(MethodInvocation methodInvocation)
+	internal EventSetups Events { get; } = new();
+	internal IndexerSetups Indexers { get; } = new();
+	internal MethodSetups Methods { get; } = new();
+	internal PropertySetups Properties { get; } = new();
+	
+	/// <inheritdoc cref="object.ToString()" />
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public override string ToString()
 	{
-		return _methodSetups.GetLatestOrDefault(Predicate);
-
-		[DebuggerNonUserCode]
-		bool Predicate(MethodSetup setup)
+		StringBuilder sb = new();
+		if (Methods.Count > 0)
 		{
-			return ((IInteractiveMethodSetup)setup).Matches(methodInvocation);
+			sb.Append(Methods.Count).Append(Methods.Count == 1 ? " method, " : " methods, ");
 		}
+
+		if (Properties.Count > 0)
+		{
+			sb.Append(Properties.Count).Append(Properties.Count == 1 ? " property, " : " properties, ");
+		}
+
+		if (Indexers.Count > 0)
+		{
+			sb.Append(Indexers.Count).Append(Indexers.Count == 1 ? " indexer, " : " indexers, ");
+		}
+
+		if (Events.Count > 0)
+		{
+			sb.Append(Events.Count).Append(Events.Count == 1 ? " event, " : " events, ");
+		}
+
+		if (sb.Length == 0)
+		{
+			return "(none)";
+		}
+
+		sb.Length -= 2;
+		return sb.ToString();
 	}
-
-	/// <summary>
-	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
-	/// </summary>
-	/// <remarks>
-	///     If the specified property name does not have an associated setup, and the mock is configured to throw when not set
-	///     up,
-	///     a <see cref="MockNotSetupException" /> is thrown. Otherwise, a default value is created and stored for future
-	///     retrievals,
-	///     so that getter and setter work in tandem.
-	/// </remarks>
-	[DebuggerNonUserCode]
-	private PropertySetup GetPropertySetup(string propertyName, Func<bool, object?> defaultValueGenerator)
-	{
-		if (!_propertySetups.TryGetValue(propertyName, out PropertySetup? matchingSetup))
-		{
-			if (Behavior.ThrowWhenNotSetup)
-			{
-				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
-			}
-
-			matchingSetup =
-				new PropertySetup.Default(propertyName, defaultValueGenerator.Invoke(Behavior.SkipBaseClass));
-			_propertySetups.Add(matchingSetup);
-		}
-		else
-		{
-			((IInteractivePropertySetup)matchingSetup).InitializeWith(
-				defaultValueGenerator(((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ??
-				                      Behavior.SkipBaseClass));
-		}
-
-		return matchingSetup;
-	}
-
-	/// <summary>
-	///     Retrieves the latest indexer setup that matches the specified <paramref name="interaction" />,
-	///     or returns <see langword="null" /> if no matching setup is found.
-	/// </summary>
-	private IndexerSetup? GetIndexerSetup(IndexerAccess interaction)
-		=> _indexerSetups.GetLastestOrDefault(setup => ((IInteractiveIndexerSetup)setup).Matches(interaction));
-
-	/// <summary>
-	///     Gets the indexer value for the given <paramref name="parameters" />.
-	/// </summary>
-	private TValue GetIndexerValue<TValue>(IInteractiveIndexerSetup? setup, Func<TValue> defaultValueGenerator,
-		NamedParameterValue[] parameters)
-		=> _indexerSetups.GetOrAddValue(parameters, defaultValueGenerator);
-
-	/// <summary>
-	///     Registers the <paramref name="indexerSetup" /> in the mock.
-	/// </summary>
-	public void SetupIndexer(IndexerSetup indexerSetup) => _indexerSetups.Add(indexerSetup);
-
-	/// <summary>
-	///     Registers the <paramref name="methodSetup" /> in the mock.
-	/// </summary>
-	public void SetupMethod(MethodSetup methodSetup) => _methodSetups.Add(methodSetup);
-
-	/// <summary>
-	///     Registers the <paramref name="propertySetup" /> in the mock.
-	/// </summary>
-	public void SetupProperty(PropertySetup propertySetup)
-		=> _propertySetups.Add(propertySetup);
 
 	[DebuggerDisplay("{ToString()}")]
 	[DebuggerNonUserCode]
-	private sealed class MethodSetups
+	internal sealed class MethodSetups
 	{
 		private ConcurrentStack<MethodSetup>? _storage;
 
@@ -158,7 +114,7 @@ public partial class MockRegistration
 
 	[DebuggerDisplay("{ToString()}")]
 	[DebuggerNonUserCode]
-	private sealed class PropertySetups
+	internal sealed class PropertySetups
 	{
 		private ConcurrentDictionary<string, PropertySetup>? _storage;
 
@@ -225,7 +181,7 @@ public partial class MockRegistration
 
 	[DebuggerDisplay("{ToString()}")]
 	[DebuggerNonUserCode]
-	private sealed class IndexerSetups
+	internal sealed class IndexerSetups
 	{
 		private ConcurrentStack<IndexerSetup>? _storage;
 
@@ -348,7 +304,7 @@ public partial class MockRegistration
 
 	[DebuggerDisplay("{ToString()}")]
 	[DebuggerNonUserCode]
-	private sealed class EventSetups
+	internal sealed class EventSetups
 	{
 		/// <summary>
 		///     This value is only needed, to use the <see cref="ConcurrentDictionary{TKey, TValue}" /> as a
