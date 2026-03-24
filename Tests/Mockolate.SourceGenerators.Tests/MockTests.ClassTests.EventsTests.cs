@@ -76,7 +76,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.Registrations.AddEvent("global::MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent("global::MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomeEvent += value;
@@ -84,7 +84,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.Registrations.RemoveEvent("global::MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomeEvent -= value;
@@ -98,7 +98,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.Registrations.AddEvent("global::MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent("global::MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomeOtherEvent += value;
@@ -106,7 +106,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.Registrations.RemoveEvent("global::MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.SomeOtherEvent -= value;
@@ -161,7 +161,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.Registrations.AddEvent("global::MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent("global::MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyDirectEvent += value;
@@ -169,7 +169,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.Registrations.RemoveEvent("global::MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyDirectEvent -= value;
@@ -183,7 +183,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.Registrations.AddEvent("global::MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent("global::MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseEvent1 += value;
@@ -191,7 +191,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.Registrations.RemoveEvent("global::MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseEvent1 -= value;
@@ -205,7 +205,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.Registrations.AddEvent("global::MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent("global::MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseEvent2 += value;
@@ -213,7 +213,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.Registrations.RemoveEvent("global::MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseEvent2 -= value;
@@ -227,7 +227,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.Registrations.AddEvent("global::MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent("global::MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseEvent3 += value;
@@ -235,7 +235,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.Registrations.RemoveEvent("global::MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
 					          				if (this.Wraps is not null)
 					          				{
 					          					this.Wraps.MyBaseEvent3 -= value;
@@ -286,8 +286,8 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.MyService.SomeEvent" />
 					          		public override event global::System.EventHandler? SomeEvent
 					          		{
-					          			add => this.Registrations.AddEvent("global::MyCode.MyService.SomeEvent", value?.Target, value?.Method);
-					          			remove => this.Registrations.RemoveEvent("global::MyCode.MyService.SomeEvent", value?.Target, value?.Method);
+					          			add => this.MockRegistry.AddEvent("global::MyCode.MyService.SomeEvent", value?.Target, value?.Method);
+					          			remove => this.MockRegistry.RemoveEvent("global::MyCode.MyService.SomeEvent", value?.Target, value?.Method);
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.DoesNotContain("SomeOtherEvent").Because("The event is not virtual!").And
@@ -295,8 +295,8 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyOtherService.SomeThirdEvent" />
 					          		event global::System.EventHandler? global::MyCode.IMyOtherService.SomeThirdEvent
 					          		{
-					          			add => this.Registrations.AddEvent("global::MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
-					          			remove => this.Registrations.RemoveEvent("global::MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
+					          			add => this.MockRegistry.AddEvent("global::MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
+					          			remove => this.MockRegistry.RemoveEvent("global::MyCode.IMyOtherService.SomeThirdEvent", value?.Target, value?.Method);
 					          		}
 					          """).IgnoringNewlineStyle();
 			}

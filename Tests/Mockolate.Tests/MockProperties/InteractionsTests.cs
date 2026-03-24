@@ -11,7 +11,7 @@ public sealed class InteractionsTests
 	public async Task MockGot_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 		registration.GetProperty("foo.bar", () => 0, null);
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(sut, "baz.bar");
@@ -23,7 +23,7 @@ public sealed class InteractionsTests
 	public async Task MockGot_WhenNameMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 		registration.GetProperty("foo.bar", () => 0, null);
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(sut, "foo.bar");
@@ -35,7 +35,7 @@ public sealed class InteractionsTests
 	public async Task MockGot_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(sut, "foo.bar");
 
@@ -47,7 +47,7 @@ public sealed class InteractionsTests
 	public async Task MockSet_WhenNameAndValueMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 		registration.SetProperty("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(sut, "foo.bar", (IParameter)It.IsAny<int>());
@@ -59,7 +59,7 @@ public sealed class InteractionsTests
 	public async Task MockSet_WhenOnlyNameMatches_ShouldReturnNever()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 		registration.SetProperty("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result =
@@ -72,7 +72,7 @@ public sealed class InteractionsTests
 	public async Task MockSet_WhenOnlyValueMatches_ShouldReturnNever()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 		registration.SetProperty("foo.bar", 4);
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(sut, "baz.bar", (IParameter)It.IsAny<int>());
@@ -84,7 +84,7 @@ public sealed class InteractionsTests
 	public async Task MockSet_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		VerificationResult<IChocolateDispenser> result = registration.Property(sut, "foo.bar", (IParameter)It.IsAny<int>());
 

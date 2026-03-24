@@ -13,7 +13,7 @@ using Mockolate.Setup;
 
 namespace Mockolate;
 
-public partial class MockRegistration
+public partial class MockRegistry
 {
 	private readonly EventSetups _eventHandlers = new();
 	private readonly IndexerSetups _indexerSetups = new();

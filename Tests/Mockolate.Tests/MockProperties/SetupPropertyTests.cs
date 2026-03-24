@@ -41,7 +41,7 @@ public sealed partial class SetupPropertyTests
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		IPropertyService sut = IPropertyService.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		int result0 = registration.GetProperty("my.other.property", () => 0, null);
 		PropertySetup<int> setup = new("my.property");
@@ -102,7 +102,7 @@ public sealed partial class SetupPropertyTests
 	public async Task ShouldStoreLastValue()
 	{
 		IPropertyService sut = IPropertyService.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		string result0 = registration.GetProperty<string>("my.property", () => "", null);
 		registration.SetProperty("my.property", "foo");

@@ -179,7 +179,7 @@ public sealed partial class SetupIndexerTests
 	public async Task ThreeLevels_WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		int? result0 = sut["foo", 1, 2];
 		registration.SetIndexer(42,
@@ -231,7 +231,7 @@ public sealed partial class SetupIndexerTests
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
 		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue("index", 1));
 		IndexerSetupResult<string> result2 = registration.GetIndexer<string>(new NamedParameterValue("other", 1));
@@ -245,7 +245,7 @@ public sealed partial class SetupIndexerTests
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
 		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue("index", 1));
 		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(new NamedParameterValue("index", 1));

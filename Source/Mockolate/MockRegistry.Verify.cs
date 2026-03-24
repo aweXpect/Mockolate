@@ -10,7 +10,7 @@ using Mockolate.Verify;
 
 namespace Mockolate;
 
-public partial class MockRegistration
+public partial class MockRegistry
 {
 	/// <summary>
 	///     Counts the invocations of methods matching the <paramref name="methodSetup" /> on the <paramref name="subject" />.

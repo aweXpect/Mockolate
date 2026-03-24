@@ -13,7 +13,7 @@ public sealed class MockSetupsTests
 	public async Task ClearAllInteractions_ShouldResetIndex()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockInteractions interactions = ((IMock)sut).Registrations.Interactions;
+		MockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
 
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Light", 2);
@@ -46,26 +46,26 @@ public sealed class MockSetupsTests
 
 		for (int i = 0; i < methodCount; i++)
 		{
-			mock.Registrations.SetupMethod(new ReturnMethodSetup<int>($"my.method{i}"));
+			mock.MockRegistry.SetupMethod(new ReturnMethodSetup<int>($"my.method{i}"));
 		}
 
 		for (int i = 0; i < propertyCount; i++)
 		{
-			mock.Registrations.SetupProperty(new PropertySetup<int>($"my.property{i}"));
+			mock.MockRegistry.SetupProperty(new PropertySetup<int>($"my.property{i}"));
 		}
 
 		for (int i = 0; i < eventCount; i++)
 		{
-			mock.Registrations.AddEvent($"my.event{i}", this, Helper.GetMethodInfo());
+			mock.MockRegistry.AddEvent($"my.event{i}", this, Helper.GetMethodInfo());
 		}
 
 		for (int i = 0; i < indexerCount; i++)
 		{
-			mock.Registrations.SetupIndexer(new IndexerSetup<string, int>(
+			mock.MockRegistry.SetupIndexer(new IndexerSetup<string, int>(
 				new NamedParameter("index1", (IParameter)It.IsAny<int>())));
 		}
 
-		string result = mock.Registrations.ToString();
+		string result = mock.MockRegistry.ToString();
 
 		await That(result).IsEqualTo(expected);
 	}

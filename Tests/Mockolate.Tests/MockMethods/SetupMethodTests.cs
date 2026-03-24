@@ -280,7 +280,7 @@ public sealed partial class SetupMethodTests
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		MethodSetupResult<int> result0 = registration.InvokeMethod("my.method", _ => 0);
 		ReturnMethodSetup<int> setup = new("my.method");
@@ -551,7 +551,7 @@ public sealed partial class SetupMethodTests
 	public async Task VoidMethod_GetReturnValue_ShouldThrowMockException(string methodName, params int[] parameters)
 	{
 		IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		sut.Mock.Setup.Method0();
 		sut.Mock.Setup.Method1(It.IsAny<int>());
@@ -591,7 +591,7 @@ public sealed partial class SetupMethodTests
 	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
 	{
 		IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		sut.Mock.Setup.UniqueMethodWithParameters(Match.AnyParameters());
 

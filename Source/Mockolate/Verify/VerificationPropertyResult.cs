@@ -10,11 +10,11 @@ namespace Mockolate.Verify;
 public class VerificationPropertyResult<TSubject, TParameter>
 {
 	private readonly string _propertyName;
-	private readonly MockRegistration _registrations;
+	private readonly MockRegistry _registrations;
 	private readonly TSubject _subject;
 
 	/// <inheritdoc cref="VerificationPropertyResult{TSubject, TParameter}" />
-	public VerificationPropertyResult(TSubject subject, MockRegistration registrations, string propertyName)
+	public VerificationPropertyResult(TSubject subject, MockRegistry registrations, string propertyName)
 	{
 		_subject = subject;
 		_registrations = registrations;

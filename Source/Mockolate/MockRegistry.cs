@@ -19,17 +19,17 @@ namespace Mockolate;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public partial class MockRegistration
+public partial class MockRegistry
 {
-	/// <inheritdoc cref="MockRegistration" />
-	public MockRegistration(MockBehavior behavior)
+	/// <inheritdoc cref="MockRegistry" />
+	public MockRegistry(MockBehavior behavior)
 	{
 		Behavior = behavior;
 		Interactions = new MockInteractions();
 	}
 
-	/// <inheritdoc cref="MockRegistration" />
-	public MockRegistration(MockBehavior behavior, MockInteractions interactions)
+	/// <inheritdoc cref="MockRegistry" />
+	public MockRegistry(MockBehavior behavior, MockInteractions interactions)
 	{
 		Behavior = behavior;
 		Interactions = interactions;
@@ -46,11 +46,11 @@ public partial class MockRegistration
 	public MockInteractions Interactions { get; }
 
 	/// <summary>
-	///     Implicitly converts a <see cref="MockBehavior" /> to a <see cref="MockRegistration" /> with the given behavior and an empty interaction collection.
+	///     Implicitly converts a <see cref="MockBehavior" /> to a <see cref="MockRegistry" /> with the given behavior and an empty interaction collection.
 	/// </summary>
-	public static implicit operator MockRegistration(MockBehavior behavior)
+	public static implicit operator MockRegistry(MockBehavior behavior)
 	{
-		return new MockRegistration(behavior);
+		return new MockRegistry(behavior);
 	}
 
 	/// <summary>

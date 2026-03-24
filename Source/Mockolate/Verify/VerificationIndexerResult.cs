@@ -10,11 +10,11 @@ namespace Mockolate.Verify;
 public class VerificationIndexerResult<TSubject, TParameter>
 {
 	private readonly NamedParameter[] _parameters;
-	private readonly MockRegistration _registrations;
+	private readonly MockRegistry _registrations;
 	private readonly TSubject _subject;
 
 	/// <inheritdoc cref="VerificationIndexerResult{TSubject, TParameter}" />
-	public VerificationIndexerResult(TSubject subject, MockRegistration registrations, params NamedParameter[] parameters)
+	public VerificationIndexerResult(TSubject subject, MockRegistry registrations, params NamedParameter[] parameters)
 	{
 		_subject = subject;
 		_registrations = registrations;

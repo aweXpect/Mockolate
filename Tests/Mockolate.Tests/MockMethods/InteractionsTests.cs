@@ -12,7 +12,7 @@ public sealed partial class InteractionsTests
 	public async Task Method_WhenNameAndValueMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
@@ -26,7 +26,7 @@ public sealed partial class InteractionsTests
 	public async Task Method_WhenOnlyNameMatches_ShouldReturnNever()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
@@ -40,7 +40,7 @@ public sealed partial class InteractionsTests
 	public async Task Method_WhenOnlyValueMatches_ShouldReturnNever()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
@@ -54,7 +54,7 @@ public sealed partial class InteractionsTests
 	public async Task Method_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistration registration = ((IMock)sut).Registrations;
+		MockRegistry registration = ((IMock)sut).MockRegistry;
 
 		VerificationResult<IChocolateDispenser> result =
 			registration.Method(sut,
