@@ -52,11 +52,11 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (verify is HttpClient httpClient and IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
+			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				return httpMessageHandlerMock.MockRegistry.Method(
-						httpClientMock.ConstructorParameters[0],
+						httpClientMock.MockRegistry.ConstructorParameters[0],
 						new MethodParameterMatch("global::System.Net.Http.HttpMessageHandler.SendAsync", [
 							new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Patch,
 								new HttpStringUriParameter(requestUri),
@@ -80,11 +80,11 @@ public static partial class HttpClientExtensions
 			IParameter<HttpContent?> content,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (verify is HttpClient httpClient and IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
+			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				return httpMessageHandlerMock.MockRegistry.Method(
-						httpClientMock.ConstructorParameters[0],
+						httpClientMock.MockRegistry.ConstructorParameters[0],
 						new MethodParameterMatch("global::System.Net.Http.HttpMessageHandler.SendAsync", [
 							new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Patch,
 								new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),

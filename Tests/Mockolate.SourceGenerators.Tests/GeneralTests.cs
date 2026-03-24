@@ -88,7 +88,6 @@ public class GeneralTests
 			          		public MyClass(global::Mockolate.MockRegistry mockRegistry_1, int mockRegistry)
 			          			: base(mockRegistry)
 			          		{
-			          			this.ConstructorParameters = new object?[] { mockRegistry };
 			          			this.MockRegistry = mockRegistry_1;
 			          		}
 			          """);
@@ -698,14 +697,14 @@ public class GeneralTests
 			          		{
 			          			get
 			          			{
-			          				return this.MockRegistry.GetProperty<string>("global::MyCode.IMyService.SomeProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!), this.Wraps is null ? null : () => this.Wraps.SomeProperty);
+			          				return this.MockRegistry.GetProperty<string>("global::MyCode.IMyService.SomeProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomeProperty);
 			          			}
 			          			set
 			          			{
 			          				this.MockRegistry.SetProperty("global::MyCode.IMyService.SomeProperty", value);
-			          				if (this.Wraps is not null)
+			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
-			          					this.Wraps.SomeProperty = value;
+			          					wraps.SomeProperty = value;
 			          				}
 			          			}
 			          		}
@@ -716,9 +715,9 @@ public class GeneralTests
 			          		public string MyMethod(string message)
 			          		{
 			          			global::Mockolate.Setup.MethodSetupResult<string> methodExecution = this.MockRegistry.InvokeMethod<string>("global::MyCode.IMyService.MyMethod", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!, p), new global::Mockolate.Parameters.NamedParameterValue("message", message));
-			          			if (this.Wraps is not null)
+			          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          			{
-			          				var baseResult = this.Wraps.MyMethod(message);
+			          				var baseResult = wraps.MyMethod(message);
 			          				if (!methodExecution.HasSetupResult)
 			          				{
 			          					methodExecution.TriggerCallbacks(message);
@@ -737,17 +736,17 @@ public class GeneralTests
 			          			add
 			          			{
 			          				this.MockRegistry.AddEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
-			          				if (this.Wraps is not null)
+			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
-			          					this.Wraps.MyEvent += value;
+			          					wraps.MyEvent += value;
 			          				}
 			          			}
 			          			remove
 			          			{
 			          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
-			          				if (this.Wraps is not null)
+			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
-			          					this.Wraps.MyEvent -= value;
+			          					wraps.MyEvent -= value;
 			          				}
 			          			}
 			          		}

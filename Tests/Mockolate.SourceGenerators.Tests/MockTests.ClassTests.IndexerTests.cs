@@ -69,20 +69,20 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				if (this.Wraps is null)
+					          				if (this.MockRegistry.Wraps is not global::MyCode.IMyService wraps)
 					          				{
 					          					return this.MockRegistry.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index)).GetResult(() => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!));
 					          				}
 					          				var indexerResult = this.MockRegistry.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index));
-					          				var baseResult = this.Wraps[index];
+					          				var baseResult = wraps[index];
 					          				return indexerResult.GetResult(baseResult);
 					          			}
 					          			set
 					          			{
 					          				this.MockRegistry.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue("index", index));
-					          				if (this.Wraps is not null)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
-					          					this.Wraps[index] = value;
+					          					wraps[index] = value;
 					          				}
 					          			}
 					          		}
@@ -93,12 +93,12 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				if (this.Wraps is null)
+					          				if (this.MockRegistry.Wraps is not global::MyCode.IMyService wraps)
 					          				{
 					          					return this.MockRegistry.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", isReadOnly)).GetResult(() => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!));
 					          				}
 					          				var indexerResult = this.MockRegistry.GetIndexer<int>(new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", isReadOnly));
-					          				var baseResult = this.Wraps[index, isReadOnly];
+					          				var baseResult = wraps[index, isReadOnly];
 					          				return indexerResult.GetResult(baseResult);
 					          			}
 					          		}
@@ -110,9 +110,9 @@ public sealed partial class MockTests
 					          			set
 					          			{
 					          				this.MockRegistry.SetIndexer<int>(value, new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isWriteOnly", isWriteOnly));
-					          				if (this.Wraps is not null)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
-					          					this.Wraps[index, isWriteOnly] = value;
+					          					wraps[index, isWriteOnly] = value;
 					          				}
 					          			}
 					          		}
