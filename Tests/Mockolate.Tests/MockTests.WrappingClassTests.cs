@@ -147,6 +147,23 @@ public sealed partial class MockTests
 
 		internal class ServiceWithProtectedMembers
 		{
+			public virtual int MyPropertyWithProtectedSetter { get; protected set; } = 10;
+			public virtual int MyPropertyWithProtectedGetter { protected get; set; } = 20;
+
+			public virtual int this[string indexerWithProtectedGetter]
+			{
+				protected get => 30;
+				// ReSharper disable once ValueParameterNotUsed
+				set { }
+			}
+
+			public virtual int this[int indexerWithProtectedSetter]
+			{
+				get => 30;
+				// ReSharper disable once ValueParameterNotUsed
+				protected set { }
+			}
+
 			protected virtual int MyProtectedMethod()
 				=> 42;
 
@@ -191,7 +208,5 @@ public sealed partial class MockTests
 
 			public virtual event ChocolateDispensedDelegate? ChocolateDispensed;
 		}
-
-		public delegate void MyDelegate();
 	}
 }

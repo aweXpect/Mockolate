@@ -1219,7 +1219,7 @@ internal static partial class Sources
 						.AppendLine(");");
 					sb.Append("\t\t\t\tif (!").Append(indexerResultVarName).Append(".SkipBaseClass)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					if (!property.IsProtected)
+					if (property.Getter?.IsProtected != true)
 					{
 						sb.Append("\t\t\t\t\tvar ").Append(baseResultVarName).Append(" = this.").Append(mockRegistryName)
 							.Append(".Wraps is ").Append(className).Append(" wraps ? wraps[")
@@ -1248,7 +1248,7 @@ internal static partial class Sources
 						.AppendTypeOrWrapper(property.Type).Append(">(")
 						.Append(property.GetUniqueNameString()).Append(", () => ")
 						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
-					if (property is { IsStatic: false, IsProtected: false })
+					if (property is { IsStatic: false } && property.Getter?.IsProtected != true)
 					{
 						sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.").Append(property.Name);
 					}
@@ -1331,7 +1331,7 @@ internal static partial class Sources
 						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value)).Append("))")
 						.AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					if (!property.IsProtected)
+					if (property.Setter?.IsProtected != true)
 					{
 						sb.Append("\t\t\t\t\tif (this.").Append(mockRegistryName).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
@@ -1371,7 +1371,7 @@ internal static partial class Sources
 					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty(").Append(property.GetUniqueNameString())
 						.Append(", value))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					if (property is { IsStatic: false, IsProtected: false })
+					if (property is { IsStatic: false } && property.Setter?.IsProtected != true)
 					{
 						sb.Append("\t\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();

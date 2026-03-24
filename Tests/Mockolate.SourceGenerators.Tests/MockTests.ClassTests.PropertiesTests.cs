@@ -331,7 +331,7 @@ public sealed partial class MockTests
 					          		{
 					          			protected get
 					          			{
-					          				return this.MockRegistry.GetProperty<int>("global::MyCode.MyService.SomeProperty1", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is global::MyCode.MyService wraps ? () => wraps.SomeProperty1 : () => base.SomeProperty1);
+					          				return this.MockRegistry.GetProperty<int>("global::MyCode.MyService.SomeProperty1", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), () => base.SomeProperty1);
 					          			}
 					          			set
 					          			{
@@ -361,14 +361,7 @@ public sealed partial class MockTests
 					          			{
 					          				if (!this.MockRegistry.SetProperty("global::MyCode.MyService.SomeProperty2", value))
 					          				{
-					          					if (this.MockRegistry.Wraps is global::MyCode.MyService wraps)
-					          					{
-					          						wraps.SomeProperty2 = value;
-					          					}
-					          					else
-					          					{
-					          						base.SomeProperty2 = value;
-					          					}
+					          					base.SomeProperty2 = value;
 					          				}
 					          			}
 					          		}
