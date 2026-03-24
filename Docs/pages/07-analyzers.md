@@ -27,8 +27,3 @@ sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
 
 Mock arguments must be mockable (interfaces or supported classes).
 This rule will prevent you from using unsupported types (e.g. sealed classes) when using `CreateMock()`.
-
-## Mockolate0003
-
-Wrap type arguments must be interfaces.
-This rule will prevent you from using non-interface types as the type parameter when using `T.CreateMock().Wrapping(instance)`.
