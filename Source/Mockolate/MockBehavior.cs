@@ -139,14 +139,16 @@ public record MockBehavior : IMockBehaviorAccess
 			_ => "Default",
 		};
 
-		if (_constructorParameters?.Count > 0)
+		int? constructorParameterCount = _constructorParameters?.Count;
+		if (constructorParameterCount > 0)
 		{
-			baseString += $" with {_constructorParameters.Count} constructor parameter registrations";
+			baseString += $" with {constructorParameterCount} constructor parameter registrations";
 		}
 
-		if (_values?.Count > 0)
+		int? valuesCount = _values?.Count;
+		if (valuesCount > 0)
 		{
-			baseString += $" with {_values.Count} setup registrations";
+			baseString += $" with {valuesCount} setup registrations";
 		}
 
 		return baseString;
