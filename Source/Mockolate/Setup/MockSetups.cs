@@ -48,7 +48,7 @@ internal class MockSetups
 
 		if (sb.Length == 0)
 		{
-			return "(none)";
+			return "no setups";
 		}
 
 		sb.Length -= 2;

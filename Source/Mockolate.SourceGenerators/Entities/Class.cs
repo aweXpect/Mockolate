@@ -207,7 +207,7 @@ internal record Class
 	public static IEnumerable<ITypeSymbol> GetInheritedTypes(ITypeSymbol type)
 	{
 		ITypeSymbol? current = type;
-		while (current != null)
+		while (current != null && current.SpecialType != SpecialType.System_Object)
 		{
 			if (!SymbolEqualityComparer.Default.Equals(current, type))
 			{

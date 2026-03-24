@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Mockolate.Interactions;
+using Mockolate.Setup;
 
 namespace Mockolate;
 
@@ -19,6 +20,8 @@ public partial class MockRegistry
 		Behavior = behavior;
 		ConstructorParameters = constructorParameters;
 		Interactions = new MockInteractions();
+		Setup = new MockSetups();
+		Wraps = null;
 	}
 
 	/// <inheritdoc cref="MockRegistry" />
@@ -26,8 +29,9 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Wraps = wraps;
 		Interactions = new MockInteractions();
+		Setup = registry.Setup;
+		Wraps = wraps;
 	}
 
 	/// <inheritdoc cref="MockRegistry" />
@@ -35,8 +39,9 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = constructorParameters;
-		Wraps = registry.Wraps;
 		Interactions = registry.Interactions;
+		Setup = registry.Setup;
+		Wraps = registry.Wraps;
 	}
 
 	/// <inheritdoc cref="MockRegistry" />
@@ -44,8 +49,9 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Wraps = registry.Wraps;
 		Interactions = interactions;
+		Setup = registry.Setup;
+		Wraps = registry.Wraps;
 	}
 
 	/// <summary>
