@@ -159,6 +159,10 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tconstructorParameters = [new global::Mockolate.Mock.HttpMessageHandler(mockRegistry),];").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t\telse if (constructorParameters.Length > 0 && constructorParameters[0] is global::Mockolate.IMock httpMessageHandlerMock)").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tmockRegistry = httpMessageHandlerMock.MockRegistry;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
 		}
 
 		sb.AppendLine();
