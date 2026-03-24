@@ -32,8 +32,7 @@ public sealed partial class MockTests
 	public async Task Create_BaseClassWithVirtualCallsInConstructor_AllowExplicitSetup()
 	{
 		MyServiceBaseWithVirtualCallsInConstructor sut =
-			MyServiceBaseWithVirtualCallsInConstructor.CreateMock(setups: setup
-				=> setup.VirtualMethod().Returns([5, 6,]));
+			MyServiceBaseWithVirtualCallsInConstructor.CreateMock(setup => setup.VirtualMethod().Returns([5, 6,]));
 
 		int value = sut.VirtualProperty;
 
@@ -103,7 +102,7 @@ public sealed partial class MockTests
 	{
 		MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
 			["foo",],
-			setups: setup => setup.VirtualMethod().Returns("bar"));
+			setup => setup.VirtualMethod().Returns("bar"));
 
 		string result = mock.VirtualMethod();
 
@@ -177,7 +176,7 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithSetups_ShouldAllowChangingTheSetupSubjectInCallback()
 	{
-		IChocolateDispenser mock = IChocolateDispenser.CreateMock(setups: setup => setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
+		IChocolateDispenser mock = IChocolateDispenser.CreateMock(setup => setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
 			.Do((s, i) => ((IChocolateDispenser)setup)[s] -= i));
 
 		mock["Dark"] = 10;
@@ -190,11 +189,12 @@ public sealed partial class MockTests
 	[Fact]
 	public async Task Create_WithSetups_ShouldApplySetups()
 	{
-		IMyService mock = IMyService.CreateMock(
-			setup => setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2),
-			setup => setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4),
-			setup => setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8)
-		);
+		IMyService mock = IMyService.CreateMock(setup =>
+			{
+				setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2);
+				setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4);
+				setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8);
+			});
 
 		int result1 = mock.Multiply(1, null);
 		int result2 = mock.Multiply(2, null);
@@ -308,6 +308,17 @@ public sealed partial class MockTests
 		await That(mock.ConstructorParameters).IsEmpty();
 	}
 
+	[Fact]
+	public async Task TypeWithMockRegistryMembers_ShouldUseUniqueName()
+	{
+		IServiceWithMockRegistryMembers sut = IServiceWithMockRegistryMembers.CreateMock();
+		sut.Mock.Setup.MockRegistry_1.Returns("foo");
+
+		string result = sut.MockRegistry_1;
+
+		await That(result).IsEqualTo("foo");
+	}
+
 	public interface MyInterfaceWithMockProperty
 	{
 		int Mock { get; }
@@ -388,6 +399,14 @@ public sealed partial class MockTests
 	public interface IMyServiceWithGenericMethodsWithWhereClause
 	{
 		int MyMethod<T>(bool flag) where T : IChocolateDispenser;
+	}
+
+	public interface IServiceWithMockRegistryMembers
+	{
+		event EventHandler MockRegistry;
+		int MockolateMockRegistry(bool value);
+		// ReSharper disable once InconsistentNaming
+		string MockRegistry_1 { get; }
 	}
 
 	public sealed class Nested

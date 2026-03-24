@@ -22,7 +22,7 @@ public sealed partial class MockTests
 		{
 			MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
 				["foo",],
-				setups: setup => setup.VirtualMethod().Returns("bar")).Implementing<IMyService>();
+				setup => setup.VirtualMethod().Returns("bar")).Implementing<IMyService>();
 
 			string result = mock.VirtualMethod();
 
@@ -46,10 +46,12 @@ public sealed partial class MockTests
 		[Fact]
 		public async Task With2Arguments_WithSetups_ShouldApplySetups()
 		{
-			IMyService sut = IMyService.CreateMock(
-				setup => setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2),
-				setup => setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4),
-				setup => setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8));
+			IMyService sut = IMyService.CreateMock(setup =>
+				{
+					setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2);
+					setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4);
+					setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8);
+				});
 
 			int result1 = sut.Multiply(1, null);
 			int result2 = sut.Multiply(2, null);

@@ -196,7 +196,7 @@ public sealed partial class MockTests
 			          			{
 			          				global::Mockolate.Mock.MyBaseClass.MockRegistryProvider.Value = mockRegistry;
 			          				global::Mockolate.MockExtensionsForMyBaseClass.MockSetup? setupTarget = null;
-			          				foreach (var setup in setups)
+			          				if (setup is not null)
 			          				{
 			          					setupTarget ??= new(mockRegistry);
 			          					setup.Invoke(setupTarget);
@@ -211,7 +211,7 @@ public sealed partial class MockTests
 			          			{
 			          				global::Mockolate.Mock.MyBaseClass.MockRegistryProvider.Value = mockRegistry;
 			          				global::Mockolate.MockExtensionsForMyBaseClass.MockSetup? setupTarget = null;
-			          				foreach (var setup in setups)
+			          				if (setup is not null)
 			          				{
 			          					setupTarget ??= new(mockRegistry);
 			          					setup.Invoke(setupTarget);

@@ -10,8 +10,7 @@ public sealed partial class MockBehaviorTests
 			MockBehavior behavior = MockBehavior.Default
 				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() => [5,]);
 
-			MyServiceWithMultipleConstructors mock
-				= MyServiceWithMultipleConstructors.CreateMock([7,], behavior);
+			MyServiceWithMultipleConstructors mock = MyServiceWithMultipleConstructors.CreateMock([7,], behavior);
 
 			int value = mock.Value;
 
