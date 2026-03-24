@@ -12,7 +12,7 @@ public partial class MockRegistry
 	/// <summary>
 	///     The registered setups for the mock, including methods, properties, indexers and events.
 	/// </summary>
-	private MockSetups Setup { get; } = new();
+	internal MockSetups Setup { get; } = new();
 
 	/// <summary>
 	///     Retrieves the latest method setup that matches the specified <paramref name="methodInvocation" />,
