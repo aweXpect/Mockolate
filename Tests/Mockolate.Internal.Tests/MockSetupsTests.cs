@@ -7,7 +7,7 @@ namespace Mockolate.Internal.Tests;
 public class MockSetupsTests
 {
 	[Theory]
-	[InlineData(0, 0, 0, 0, "(none)")]
+	[InlineData(0, 0, 0, 0, "no setups")]
 	[InlineData(1, 0, 0, 0, "1 method")]
 	[InlineData(2, 0, 0, 0, "2 methods")]
 	[InlineData(0, 1, 0, 0, "1 property")]
@@ -18,7 +18,7 @@ public class MockSetupsTests
 	[InlineData(0, 0, 0, 2, "2 indexers")]
 	[InlineData(3, 5, 0, 2, "3 methods, 5 properties, 2 indexers")]
 	[InlineData(3, 5, 8, 2, "3 methods, 5 properties, 2 indexers, 8 events")]
-	public async Task ToString_Empty_ShouldReturnExpectedValue(
+	public async Task ToString_ShouldReturnExpectedValue(
 		int methodCount, int propertyCount, int eventCount, int indexerCount, string expected)
 	{
 		IMyService sut = IMyService.CreateMock();
