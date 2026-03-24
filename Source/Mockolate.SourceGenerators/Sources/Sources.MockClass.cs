@@ -146,23 +146,26 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t\t\t}").AppendLine();
-		sb.Append("\t\t\telse").AppendLine();
-		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\tmockBehavior = global::Mockolate.MockBehavior.Default;").AppendLine();
-		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior);").AppendLine();
 		if (@class is { ClassFullName: "global::System.Net.Http.HttpClient", })
 		{
+			sb.Append("\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior ?? global::Mockolate.MockBehavior.Default, constructorParameters);").AppendLine();
 			sb.Append("\t\t\tif (constructorParameters is null)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tconstructorParameters = [new global::Mockolate.Mock.HttpMessageHandler(mockRegistry),];").AppendLine();
+			sb.Append("\t\t\t\tmockRegistry = new global::Mockolate.MockRegistry(mockRegistry, constructorParameters);").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\telse if (constructorParameters.Length > 0 && constructorParameters[0] is global::Mockolate.IMock httpMessageHandlerMock)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tmockRegistry = httpMessageHandlerMock.MockRegistry;").AppendLine();
+			sb.Append("\t\t\t\tmockRegistry = new global::Mockolate.MockRegistry(httpMessageHandlerMock.MockRegistry, constructorParameters);").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
+		}
+		else
+		{
+			sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
+			sb.Append("\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, constructorParameters);").AppendLine();
 		}
 
 		sb.AppendLine();
@@ -310,7 +313,7 @@ internal static partial class Sources
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tif (mock is global::Mockolate.IMock mockInterface)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn new global::Mockolate.Mock.").Append(name).Append("(mockInterface.MockRegistry, instance);").AppendLine();
+			sb.Append("\t\t\t\treturn new global::Mockolate.Mock.").Append(name).Append("(new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance));").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");").AppendLine();
 			sb.Append("\t\t}").AppendLine();
@@ -447,18 +450,6 @@ internal static partial class Sources
 		sb.Append("\t\tglobal::Mockolate.IMock").AppendLine();
 		sb.Append("\t{").AppendLine();
 
-		if (@class.IsInterface)
-		{
-			sb.AppendXmlSummary("The wrapped instance (if any) of the mocked interface to call the base implementation on.");
-			sb.Append("\t\tprivate ").Append(@class.ClassFullName).Append("? Wraps { get; }").AppendLine();
-			sb.AppendLine();
-		}
-
-		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-		sb.Append("\t\tobject?[] global::Mockolate.IMock.ConstructorParameters => this.ConstructorParameters;").AppendLine();
-		sb.Append("\t\tprivate object?[] ConstructorParameters { get; }").AppendLine();
-		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.MockRegistry global::Mockolate.IMock.MockRegistry => this.").Append(mockRegistryName).Append(';').AppendLine();
@@ -494,17 +485,14 @@ internal static partial class Sources
 		if (@class.IsInterface)
 		{
 			sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
-			sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry, ")
-				.Append(@class.ClassFullName).Append("? wraps = null)").AppendLine();
+			sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tthis.ConstructorParameters = [];").AppendLine();
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = mockRegistry;").AppendLine();
 			if (hasStaticMembers)
 			{
 				sb.Append("\t\t\tMockRegistryProvider.Value = mockRegistry;").AppendLine();
 			}
 
-			sb.Append("\t\t\tthis.Wraps = wraps;").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
 		}
@@ -520,7 +508,6 @@ internal static partial class Sources
 			sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
 			sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry)").AppendLine();
 			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tthis.ConstructorParameters = new object?[0];").AppendLine();
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = mockRegistry;").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -935,7 +922,7 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> IMockFor").Append(name).Append(".Monitor()").AppendLine();
-		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.").Append(mockRegistryName).Append(".Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistry(this.").Append(mockRegistryName).Append(".Behavior, interactions)));").AppendLine();
+		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.").Append(mockRegistryName).Append(".Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistry(this.").Append(mockRegistryName).Append(", interactions)));").AppendLine();
 		sb.AppendLine();
 	}
 	#pragma warning restore S107 // Methods should not have too many parameters
@@ -978,9 +965,6 @@ internal static partial class Sources
 
 		sb.Append(')').AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tthis.ConstructorParameters = new object?[] { ")
-			.Append(string.Join(", ", constructor.Parameters.Select(parameter => parameter.Name))).Append(" };")
-			.AppendLine();
 		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = ").Append(mockRegistry).Append(';').AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1076,9 +1060,9 @@ internal static partial class Sources
 				.Append(", value?.Target, value?.Method);").AppendLine();
 			if (!@event.IsStatic)
 			{
-				sb.Append("\t\t\t\tif (this.Wraps is not null)").AppendLine();
+				sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 				sb.Append("\t\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\t\tthis.Wraps.").Append(@event.Name).Append(" += value;").AppendLine();
+				sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" += value;").AppendLine();
 				sb.Append("\t\t\t\t}").AppendLine();
 			}
 
@@ -1089,9 +1073,9 @@ internal static partial class Sources
 				.Append(", value?.Target, value?.Method);").AppendLine();
 			if (!@event.IsStatic)
 			{
-				sb.Append("\t\t\t\tif (this.Wraps is not null)").AppendLine();
+				sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 				sb.Append("\t\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\t\tthis.Wraps.").Append(@event.Name).Append(" -= value;").AppendLine();
+				sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" -= value;").AppendLine();
 				sb.Append("\t\t\t\t}").AppendLine();
 			}
 
@@ -1184,7 +1168,7 @@ internal static partial class Sources
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
 
-					sb.Append("\t\t\t\tif (this.Wraps is null)").AppendLine();
+					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\treturn ").Append(mockRegistry).Append(".GetIndexer<").AppendTypeOrWrapper(property.Type)
 						.Append(">(").Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
@@ -1196,7 +1180,7 @@ internal static partial class Sources
 						.AppendTypeOrWrapper(property.Type).Append(">(")
 						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.AppendLine(");");
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = this.Wraps[")
+					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps[")
 						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
 						.AppendLine();
 					sb.Append("\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
@@ -1210,7 +1194,7 @@ internal static partial class Sources
 						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 					if (!property.IsStatic)
 					{
-						sb.Append(", this.Wraps is null ? null : () => this.Wraps.").Append(property.Name);
+						sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(className).Append(" wraps ? null : () => wraps.").Append(property.Name);
 					}
 					else
 					{
@@ -1296,9 +1280,9 @@ internal static partial class Sources
 						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.Append(");").AppendLine();
 
-					sb.Append("\t\t\t\tif (this.Wraps is not null)").AppendLine();
+					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(@className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tthis.Wraps[")
+					sb.Append("\t\t\t\t\twraps[")
 						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 						.AppendLine("] = value;");
 					sb.Append("\t\t\t\t}").AppendLine();
@@ -1309,9 +1293,9 @@ internal static partial class Sources
 						.Append(", value);").AppendLine();
 					if (!property.IsStatic)
 					{
-						sb.Append("\t\t\t\tif (this.Wraps is not null)").AppendLine();
+						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(@className).Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t\tthis.Wraps.").Append(property.Name).Append(" = value;").AppendLine();
+						sb.Append("\t\t\t\t\twraps.").Append(property.Name).Append(" = value;").AppendLine();
 						sb.Append("\t\t\t\t}").AppendLine();
 					}
 				}
@@ -1484,18 +1468,18 @@ internal static partial class Sources
 				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
 				if (method.ReturnType != Type.Void)
 				{
-					sb.Append("\t\t\tif (this.Wraps is not null)").AppendLine();
+					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(@className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = this.Wraps").Append(".")
+					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps").Append(".")
 						.Append(method.Name).Append('(')
 						.Append(FormatMethodParametersWithRefKind(method.Parameters))
 						.Append(");").AppendLine();
 				}
 				else
 				{
-					sb.Append("\t\t\tif (this.Wraps is not null)").AppendLine();
+					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(@className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\tthis.Wraps").Append(".")
+					sb.Append("\t\t\t\twraps").Append(".")
 						.Append(method.Name).Append('(')
 						.Append(FormatMethodParametersWithRefKind(method.Parameters))
 						.Append(");").AppendLine();

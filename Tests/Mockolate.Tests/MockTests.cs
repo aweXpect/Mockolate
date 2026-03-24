@@ -295,17 +295,17 @@ public sealed partial class MockTests
 
 		IMock mock = (IMock)sut;
 
-		await That(mock.ConstructorParameters).HasCount(1).And.Contains("foo");
+		await That(mock.MockRegistry.ConstructorParameters).HasCount(1).And.Contains("foo");
 	}
 
 	[Fact]
-	public async Task WithoutConstructorParameters_MockConstructorParametersShouldBeEmpty()
+	public async Task WithoutConstructorParameters_MockConstructorParametersShouldBeNull()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
 		IMock mock = (IMock)sut;
 
-		await That(mock.ConstructorParameters).IsEmpty();
+		await That(mock.MockRegistry.ConstructorParameters).IsNull();
 	}
 
 	[Fact]

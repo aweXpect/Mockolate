@@ -242,9 +242,9 @@ public sealed partial class MockTests
 					          		public bool MyMethod1(int index)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult<bool> methodExecution = this.MockRegistry.InvokeMethod<bool>("global::MyCode.IMyService.MyMethod1", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!, p), new global::Mockolate.Parameters.NamedParameterValue("index", index));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				var baseResult = this.Wraps.MyMethod1(index);
+					          				var baseResult = wraps.MyMethod1(index);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
 					          					methodExecution.TriggerCallbacks(index);
@@ -260,9 +260,9 @@ public sealed partial class MockTests
 					          		public void MyMethod2(int index, bool isReadOnly)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod2", new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", isReadOnly));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				this.Wraps.MyMethod2(index, isReadOnly);
+					          				wraps.MyMethod2(index, isReadOnly);
 					          			}
 					          			methodExecution.TriggerCallbacks(index, isReadOnly);
 					          		}
@@ -313,9 +313,9 @@ public sealed partial class MockTests
 					          		public int MyDirectMethod(int value)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult<int> methodExecution = this.MockRegistry.InvokeMethod<int>("global::MyCode.IMyService.MyDirectMethod", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, p), new global::Mockolate.Parameters.NamedParameterValue("value", value));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				var baseResult = this.Wraps.MyDirectMethod(value);
+					          				var baseResult = wraps.MyDirectMethod(value);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
 					          					methodExecution.TriggerCallbacks(value);
@@ -331,9 +331,9 @@ public sealed partial class MockTests
 					          		public int MyBaseMethod1(int value)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult<int> methodExecution = this.MockRegistry.InvokeMethod<int>("global::MyCode.IMyServiceBase1.MyBaseMethod1", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, p), new global::Mockolate.Parameters.NamedParameterValue("value", value));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				var baseResult = this.Wraps.MyBaseMethod1(value);
+					          				var baseResult = wraps.MyBaseMethod1(value);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
 					          					methodExecution.TriggerCallbacks(value);
@@ -349,9 +349,9 @@ public sealed partial class MockTests
 					          		public int MyBaseMethod2(int value)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult<int> methodExecution = this.MockRegistry.InvokeMethod<int>("global::MyCode.IMyServiceBase2.MyBaseMethod2", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, p), new global::Mockolate.Parameters.NamedParameterValue("value", value));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				var baseResult = this.Wraps.MyBaseMethod2(value);
+					          				var baseResult = wraps.MyBaseMethod2(value);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
 					          					methodExecution.TriggerCallbacks(value);
@@ -367,9 +367,9 @@ public sealed partial class MockTests
 					          		public int MyBaseMethod3(int value)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult<int> methodExecution = this.MockRegistry.InvokeMethod<int>("global::MyCode.IMyServiceBase3.MyBaseMethod3", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, p), new global::Mockolate.Parameters.NamedParameterValue("value", value));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				var baseResult = this.Wraps.MyBaseMethod3(value);
+					          				var baseResult = wraps.MyBaseMethod3(value);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
 					          					methodExecution.TriggerCallbacks(value);
@@ -608,9 +608,9 @@ public sealed partial class MockTests
 					          		public void MyMethod1(ref int index)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod1", new global::Mockolate.Parameters.NamedParameterValue("index", index));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				this.Wraps.MyMethod1(ref index);
+					          				wraps.MyMethod1(ref index);
 					          				if (methodExecution.HasSetupResult == true)
 					          				{
 					          					index = methodExecution.SetRefParameter<int>("index", index);
@@ -626,9 +626,9 @@ public sealed partial class MockTests
 					          		public bool MyMethod2(int index, out bool isReadOnly)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult<bool> methodExecution = this.MockRegistry.InvokeMethod<bool>("global::MyCode.IMyService.MyMethod2", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!, p), new global::Mockolate.Parameters.NamedParameterValue("index", index), new global::Mockolate.Parameters.NamedParameterValue("isReadOnly", null));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				var baseResult = this.Wraps.MyMethod2(index, out isReadOnly);
+					          				var baseResult = wraps.MyMethod2(index, out isReadOnly);
 					          				if (methodExecution.HasSetupResult == true)
 					          				{
 					          					isReadOnly = methodExecution.SetOutParameter<bool>("isReadOnly", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!));
@@ -650,9 +650,9 @@ public sealed partial class MockTests
 					          		public void MyMethod3(in MyReadonlyStruct p1)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod3", new global::Mockolate.Parameters.NamedParameterValue("p1", p1));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				this.Wraps.MyMethod3(in p1);
+					          				wraps.MyMethod3(in p1);
 					          			}
 					          			methodExecution.TriggerCallbacks(p1);
 					          		}
@@ -662,9 +662,9 @@ public sealed partial class MockTests
 					          		public void MyMethod4(ref readonly MyReadonlyStruct p1)
 					          		{
 					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod4", new global::Mockolate.Parameters.NamedParameterValue("p1", p1));
-					          			if (this.Wraps is not null)
+					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
-					          				this.Wraps.MyMethod4(in p1);
+					          				wraps.MyMethod4(in p1);
 					          			}
 					          			methodExecution.TriggerCallbacks(p1);
 					          		}

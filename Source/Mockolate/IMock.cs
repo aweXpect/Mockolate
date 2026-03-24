@@ -6,11 +6,6 @@ namespace Mockolate;
 public interface IMock
 {
 	/// <summary>
-	///     The used constructor parameters to create the mock instance.
-	/// </summary>
-	object?[] ConstructorParameters { get; }
-
-	/// <summary>
 	///     The mock registry to store setups and interactions with the mock.
 	/// </summary>
 	MockRegistry MockRegistry { get; }

@@ -32,8 +32,8 @@ public static partial class HttpClientExtensions
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> SendAsync(
 			IParameter<HttpRequestMessage> request)
 		{
-			if (setup is IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
+			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 					new("global::System.Net.Http.HttpMessageHandler.SendAsync",
@@ -56,8 +56,8 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		public VerificationResult<HttpClient> InvokedSetup(IMethodSetup setup)
 		{
-			if (verify is HttpClient httpClient and IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
+			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				if (setup is not IVerifiableMethodSetup verifiableMethodSetup)
 				{

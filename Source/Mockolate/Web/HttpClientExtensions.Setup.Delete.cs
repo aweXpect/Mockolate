@@ -42,8 +42,8 @@ public static partial class HttpClientExtensions
 			IParameter<string?> requestUri,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (setup is IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
+			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 					new("global::System.Net.Http.HttpMessageHandler.SendAsync",
@@ -67,8 +67,8 @@ public static partial class HttpClientExtensions
 			IParameter<Uri?> requestUri,
 			IParameter<CancellationToken> cancellationToken)
 		{
-			if (setup is IMock { ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.ConstructorParameters[0] is IMock httpMessageHandlerMock)
+			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
+			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 					new("global::System.Net.Http.HttpMessageHandler.SendAsync",

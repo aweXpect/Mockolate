@@ -73,7 +73,6 @@ namespace Mockolate
     public interface IInteractiveMock<out T> { }
     public interface IMock
     {
-        object?[] ConstructorParameters { get; }
         Mockolate.MockRegistry MockRegistry { get; }
         string ToString();
     }
@@ -150,10 +149,14 @@ namespace Mockolate
     [System.Diagnostics.DebuggerDisplay("{Interactions} | {Setup}")]
     public class MockRegistry
     {
-        public MockRegistry(Mockolate.MockBehavior behavior) { }
-        public MockRegistry(Mockolate.MockBehavior behavior, Mockolate.Interactions.MockInteractions interactions) { }
+        public MockRegistry(Mockolate.MockBehavior behavior, object?[]? constructorParameters = null) { }
+        public MockRegistry(Mockolate.MockRegistry registry, Mockolate.Interactions.MockInteractions interactions) { }
+        public MockRegistry(Mockolate.MockRegistry registry, object wraps) { }
+        public MockRegistry(Mockolate.MockRegistry registry, object?[] constructorParameters) { }
         public Mockolate.MockBehavior Behavior { get; }
+        public object?[]? ConstructorParameters { get; }
         public Mockolate.Interactions.MockInteractions Interactions { get; }
+        public object? Wraps { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public void ClearAllInteractions() { }
         public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult>(params Mockolate.Parameters.NamedParameterValue[] parameters) { }

@@ -229,7 +229,6 @@ public sealed partial class MockTests
 			          		public MyBaseClass(global::Mockolate.MockRegistry mockRegistry, int value)
 			          			: base(value)
 			          		{
-			          			this.ConstructorParameters = new object?[] { value };
 			          			this.MockRegistry = mockRegistry;
 			          		}
 			          """).IgnoringNewlineStyle().And
@@ -237,7 +236,6 @@ public sealed partial class MockTests
 			          		public MyBaseClass(global::Mockolate.MockRegistry mockRegistry, int value, bool flag)
 			          			: base(value, flag)
 			          		{
-			          			this.ConstructorParameters = new object?[] { value, flag };
 			          			this.MockRegistry = mockRegistry;
 			          		}
 			          """).IgnoringNewlineStyle();
@@ -620,9 +618,9 @@ public sealed partial class MockTests
 			          		public void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15)
 			          		{
 			          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod", new global::Mockolate.Parameters.NamedParameterValue("v1", v1), new global::Mockolate.Parameters.NamedParameterValue("v2", v2), new global::Mockolate.Parameters.NamedParameterValue("v3", v3), new global::Mockolate.Parameters.NamedParameterValue("v4", v4), new global::Mockolate.Parameters.NamedParameterValue("v5", v5), new global::Mockolate.Parameters.NamedParameterValue("v6", v6), new global::Mockolate.Parameters.NamedParameterValue("v7", v7), new global::Mockolate.Parameters.NamedParameterValue("v8", v8), new global::Mockolate.Parameters.NamedParameterValue("v9", v9), new global::Mockolate.Parameters.NamedParameterValue("v10", v10), new global::Mockolate.Parameters.NamedParameterValue("v11", v11), new global::Mockolate.Parameters.NamedParameterValue("v12", v12), new global::Mockolate.Parameters.NamedParameterValue("v13", v13), new global::Mockolate.Parameters.NamedParameterValue("v14", v14), new global::Mockolate.Parameters.NamedParameterValue("v15", v15));
-			          			if (this.Wraps is not null)
+			          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          			{
-			          				this.Wraps.MyMethod(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
+			          				wraps.MyMethod(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
 			          			}
 			          			methodExecution.TriggerCallbacks(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
 			          		}
