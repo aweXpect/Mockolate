@@ -105,7 +105,7 @@ internal static partial class Sources
 
 			sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
 			sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
-			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters, global::Mockolate.MockBehavior? mockBehavior)").AppendLine();
+			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters, global::Mockolate.MockBehavior mockBehavior)").AppendLine();
 			sb.Append("\t\t\t=> CreateMock(constructorParameters, mockBehavior, null);").AppendLine();
 			sb.AppendLine();
 
