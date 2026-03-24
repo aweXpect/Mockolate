@@ -158,6 +158,10 @@ internal static partial class Sources
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\telse if (constructorParameters.Length > 0 && constructorParameters[0] is global::Mockolate.IMock httpMessageHandlerMock)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tif (mockBehavior is not null && httpMessageHandlerMock.MockRegistry.Behavior != mockBehavior)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"Mock of type 'System.Net.Http.HttpClient' cannot be created with behavior '{mockBehavior}' because it shares its mock registry with a mock of type 'System.Net.Http.HttpMessageHandler' that has behavior '{httpMessageHandlerMock.MockRegistry.Behavior}'.\");").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t\tmockRegistry = new global::Mockolate.MockRegistry(httpMessageHandlerMock.MockRegistry, constructorParameters);").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
@@ -366,6 +370,7 @@ internal static partial class Sources
 			{
 				sb.Append(", global::Mockolate.Mock.IMockProtectedSetupFor").Append(name).Append(", IMockSetupInitializationFor").Append(name);
 			}
+
 			sb.AppendLine();
 			sb.Append("\t{").AppendLine();
 			if (hasProtectedMembers)
@@ -373,6 +378,7 @@ internal static partial class Sources
 				sb.Append("\t\t/// <inheritdoc />").AppendLine();
 				sb.Append("\t\tglobal::Mockolate.Mock.IMockProtectedSetupFor").Append(name).Append(" IMockSetupInitializationFor").Append(name).Append('.').Append(protectedName).Append(" => this;").AppendLine();
 			}
+
 			sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; } = mockRegistry;").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
@@ -387,6 +393,7 @@ internal static partial class Sources
 				ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}", MemberType.Protected);
 				sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 			}
+
 			sb.Append("\t}").AppendLine();
 		}
 
@@ -835,7 +842,7 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	#pragma warning disable S107 // Methods should not have too many parameters
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name, bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents)
 	{
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -925,7 +932,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.").Append(mockRegistryName).Append(".Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistry(this.").Append(mockRegistryName).Append(", interactions)));").AppendLine();
 		sb.AppendLine();
 	}
-	#pragma warning restore S107 // Methods should not have too many parameters
+#pragma warning restore S107 // Methods should not have too many parameters
 
 	#region Mock Helpers
 
@@ -1280,7 +1287,7 @@ internal static partial class Sources
 						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
 						.Append(");").AppendLine();
 
-					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(@className).Append(" wraps)").AppendLine();
+					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\twraps[")
 						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
@@ -1293,7 +1300,7 @@ internal static partial class Sources
 						.Append(", value);").AppendLine();
 					if (!property.IsStatic)
 					{
-						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(@className).Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\twraps.").Append(property.Name).Append(" = value;").AppendLine();
 						sb.Append("\t\t\t\t}").AppendLine();
@@ -1468,7 +1475,7 @@ internal static partial class Sources
 				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
 				if (method.ReturnType != Type.Void)
 				{
-					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(@className).Append(" wraps)").AppendLine();
+					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps").Append(".")
 						.Append(method.Name).Append('(')
@@ -1477,7 +1484,7 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(@className).Append(" wraps)").AppendLine();
+					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\twraps").Append(".")
 						.Append(method.Name).Append('(')

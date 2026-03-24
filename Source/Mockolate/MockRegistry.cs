@@ -44,7 +44,7 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Wraps = registry.Wraps;
+		Wraps =  registry.Wraps;
 		Interactions = interactions;
 	}
 

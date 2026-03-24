@@ -146,6 +146,7 @@ namespace Mockolate
         public Mockolate.IDefaultValueGenerator DefaultValue { get; init; }
         public bool SkipBaseClass { get; init; }
         public bool ThrowWhenNotSetup { get; init; }
+        public override string ToString() { }
         public Mockolate.MockBehavior UseConstructorParametersFor<T>(System.Func<object?[]> parameters) { }
         public Mockolate.MockBehavior UseConstructorParametersFor<T>(params object?[] parameters) { }
         public Mockolate.MockBehavior WithDefaultValueFor(params Mockolate.DefaultValueFactory[] defaultValueFactories) { }
