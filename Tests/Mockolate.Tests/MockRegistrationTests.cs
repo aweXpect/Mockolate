@@ -6,6 +6,17 @@ namespace Mockolate.Tests;
 public sealed class MockRegistrationTests
 {
 	[Fact]
+	public async Task ImplicitConversionFromMockBehavior()
+	{
+		MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
+
+		MockRegistration result = behavior;
+
+		await That(result.Behavior).IsSameAs(behavior);
+		await That(result.Interactions.Interactions).IsEmpty();
+	}
+
+	[Fact]
 	public async Task RegisterInteraction_ShouldBeThreadSafe()
 	{
 		MockRegistration sut = new(MockBehavior.Default);
