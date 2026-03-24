@@ -4,7 +4,7 @@ using Mockolate.Interactions;
 namespace Mockolate;
 
 /// <summary>
-///     The registration class for mocks.
+///     Registry for mock behavior, setups and interactions.
 /// </summary>
 [DebuggerDisplay("{Interactions} | {Setup}")]
 [DebuggerNonUserCode]
