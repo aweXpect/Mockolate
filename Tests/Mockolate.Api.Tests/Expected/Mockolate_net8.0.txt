@@ -494,6 +494,12 @@ namespace Mockolate.Exceptions
     public class MockVerificationException : Mockolate.Exceptions.MockException
     {
         public MockVerificationException(string message) { }
+        public MockVerificationException(string message, System.Exception innerException) { }
+    }
+    public class MockVerificationTimeoutException : Mockolate.Exceptions.MockVerificationException
+    {
+        public MockVerificationTimeoutException(System.TimeSpan? timeout, System.Exception innerException) { }
+        public System.TimeSpan? Timeout { get; }
     }
 }
 namespace Mockolate.Interactions
