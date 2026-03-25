@@ -63,7 +63,7 @@ Both target .NET Standard 2.0. Code fixers provide IDE quick-fixes for diagnosti
 ### How the pieces connect
 
 ```
-User writes:  var sut = IFoo.CreateMock();
+User writes:  IFoo sut = IFoo.CreateMock();
               sut.Mock.Setup.Bar(...).Returns(...);
               sut.Mock.Verify.Bar(...).Once();
 
