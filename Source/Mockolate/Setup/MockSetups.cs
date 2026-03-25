@@ -20,30 +20,34 @@ internal class MockSetups
 	internal IndexerSetups Indexers { get; } = new();
 	internal MethodSetups Methods { get; } = new();
 	internal PropertySetups Properties { get; } = new();
-	
+
 	/// <inheritdoc cref="object.ToString()" />
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public override string ToString()
 	{
 		StringBuilder sb = new();
-		if (Methods.Count > 0)
+		int methodCount = Methods.Count;
+		if (methodCount > 0)
 		{
-			sb.Append(Methods.Count).Append(Methods.Count == 1 ? " method, " : " methods, ");
+			sb.Append(methodCount).Append(methodCount == 1 ? " method, " : " methods, ");
 		}
 
-		if (Properties.Count > 0)
+		int propertyCount = Properties.Count;
+		if (propertyCount > 0)
 		{
-			sb.Append(Properties.Count).Append(Properties.Count == 1 ? " property, " : " properties, ");
+			sb.Append(propertyCount).Append(propertyCount == 1 ? " property, " : " properties, ");
 		}
 
-		if (Indexers.Count > 0)
+		int indexerCount = Indexers.Count;
+		if (indexerCount > 0)
 		{
-			sb.Append(Indexers.Count).Append(Indexers.Count == 1 ? " indexer, " : " indexers, ");
+			sb.Append(indexerCount).Append(indexerCount == 1 ? " indexer, " : " indexers, ");
 		}
 
-		if (Events.Count > 0)
+		int eventCount = Events.Count;
+		if (eventCount > 0)
 		{
-			sb.Append(Events.Count).Append(Events.Count == 1 ? " event, " : " events, ");
+			sb.Append(eventCount).Append(eventCount == 1 ? " event, " : " events, ");
 		}
 
 		if (sb.Length == 0)
