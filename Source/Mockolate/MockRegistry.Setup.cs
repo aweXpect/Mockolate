@@ -40,7 +40,8 @@ public partial class MockRegistry
 	///     so that getter and setter work in tandem.
 	/// </remarks>
 	[DebuggerNonUserCode]
-	private PropertySetup GetPropertySetup(string propertyName, Func<bool, object?> defaultValueGenerator)
+	private PropertySetup GetPropertySetup(string propertyName, Func<bool, object?> defaultValueGenerator,
+		bool hasBaseAccessor = false)
 	{
 		if (!Setup.Properties.TryGetValue(propertyName, out PropertySetup? matchingSetup))
 		{
@@ -53,7 +54,7 @@ public partial class MockRegistry
 				new PropertySetup.Default(propertyName, defaultValueGenerator.Invoke(Behavior.SkipBaseClass));
 			Setup.Properties.Add(matchingSetup);
 		}
-		else
+		else if (hasBaseAccessor || !matchingSetup.IsValueInitialized)
 		{
 			((IInteractivePropertySetup)matchingSetup).InitializeWith(
 				defaultValueGenerator(((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ??
