@@ -6,7 +6,7 @@ using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.HappyCaseBenchmarks.IMyInterface))]
+[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.HappyCaseBenchmarks.IMyMethodInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -20,9 +20,9 @@ public partial class HappyCaseBenchmarks
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
 	[Benchmark]
-	public void Simple_Mockolate()
+	public void Method_Mockolate()
 	{
-		IMyInterface sut = IMyInterface.CreateMock();
+		IMyMethodInterface sut = IMyMethodInterface.CreateMock();
 		sut.Mock.Setup.MyFunc(It.IsAny<int>()).Returns(true);
 
 		sut.MyFunc(42);
@@ -34,9 +34,9 @@ public partial class HappyCaseBenchmarks
 	///     <see href="https://github.com/devlooped/moq" />
 	/// </summary>
 	[Benchmark]
-	public void Simple_Moq()
+	public void Method_Moq()
 	{
-		Moq.Mock<IMyInterface> mock = new();
+		Moq.Mock<IMyMethodInterface> mock = new();
 		mock.Setup(x => x.MyFunc(Moq.It.IsAny<int>())).Returns(true);
 
 		mock.Object.MyFunc(42);
@@ -48,9 +48,9 @@ public partial class HappyCaseBenchmarks
 	///     <see href="https://nsubstitute.github.io/" />
 	/// </summary>
 	[Benchmark]
-	public void Simple_NSubstitute()
+	public void Method_NSubstitute()
 	{
-		IMyInterface mock = Substitute.For<IMyInterface>();
+		IMyMethodInterface mock = Substitute.For<IMyMethodInterface>();
 		mock.MyFunc(Arg.Any<int>()).Returns(true);
 
 		mock.MyFunc(42);
@@ -62,9 +62,9 @@ public partial class HappyCaseBenchmarks
 	///     <see href="https://fakeiteasy.github.io/" />
 	/// </summary>
 	[Benchmark]
-	public void Simple_FakeItEasy()
+	public void Method_FakeItEasy()
 	{
-		IMyInterface mock = A.Fake<IMyInterface>();
+		IMyMethodInterface mock = A.Fake<IMyMethodInterface>();
 		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).Returns(true);
 
 		mock.MyFunc(42);
@@ -76,9 +76,9 @@ public partial class HappyCaseBenchmarks
 	///     <see href="https://github.com/themidnightgospel/Imposter" />
 	/// </summary>
 	[Benchmark]
-	public void Simple_Imposter()
+	public void Method_Imposter()
 	{
-		IMyInterfaceImposter imposter = IMyInterface.Imposter();
+		IMyMethodInterfaceImposter imposter = IMyMethodInterface.Imposter();
 		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Returns(true);
 
 		imposter.Instance().MyFunc(42);
@@ -90,9 +90,9 @@ public partial class HappyCaseBenchmarks
 	///     <see href="https://github.com/thomhurst/TUnit/" />
 	/// </summary>
 	[Benchmark]
-	public void Simple_TUnitMocks()
+	public void Method_TUnitMocks()
 	{
-		TUnit.Mocks.Mock<IMyInterface> mock = TUnit.Mocks.Mock.Of<IMyInterface>();
+		TUnit.Mocks.Mock<IMyMethodInterface> mock = TUnit.Mocks.Mock.Of<IMyMethodInterface>();
 		mock.MyFunc(Any<int>()).Returns(true);
 
 		mock.Object.MyFunc(42);
@@ -100,7 +100,7 @@ public partial class HappyCaseBenchmarks
 		mock.MyFunc(Any<int>()).WasCalled();
 	}
 
-	public interface IMyInterface
+	public interface IMyMethodInterface
 	{
 		bool MyFunc(int value);
 	}
