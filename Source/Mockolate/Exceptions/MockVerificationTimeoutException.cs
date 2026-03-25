@@ -5,7 +5,7 @@ namespace Mockolate.Exceptions;
 /// <summary>
 ///     Represents a verification timeout error on the mock.
 /// </summary>
-internal class MockVerificationTimeoutException : MockException
+public class MockVerificationTimeoutException : MockVerificationException
 {
 	/// <inheritdoc cref="MockVerificationException" />
 	public MockVerificationTimeoutException(TimeSpan? timeout, Exception innerException)
