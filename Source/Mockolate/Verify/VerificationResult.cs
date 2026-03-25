@@ -19,18 +19,6 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	private readonly Func<IInteraction, bool> _predicate;
 	private readonly TVerify _verify;
 
-	/// <inheritdoc cref="VerificationResult{TMock}" />
-	public VerificationResult(TVerify verify,
-		MockInteractions interactions,
-		Func<IInteraction, bool> predicate,
-		string expectation)
-	{
-		_verify = verify;
-		_interactions = interactions;
-		_predicate = predicate;
-		_expectationFactory = () => expectation;
-	}
-
 	internal VerificationResult(TVerify verify,
 		MockInteractions interactions,
 		Func<IInteraction, bool> predicate,

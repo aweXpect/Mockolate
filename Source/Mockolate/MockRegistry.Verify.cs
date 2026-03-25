@@ -52,7 +52,7 @@ public partial class MockRegistry
 		return new VerificationResult<T>(subject,
 			Interactions,
 			Predicate,
-			$"got property {propertyName.SubstringAfterLast('.')}");
+			() => $"got property {propertyName.SubstringAfterLast('.')}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
@@ -72,7 +72,7 @@ public partial class MockRegistry
 		return new VerificationResult<T>(subject,
 			Interactions,
 			Predicate,
-			$"set property {propertyName.SubstringAfterLast('.')} to value {value}");
+			() => $"set property {propertyName.SubstringAfterLast('.')} to value {value}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
@@ -93,7 +93,7 @@ public partial class MockRegistry
 		return new VerificationResult<T>(subject,
 			Interactions,
 			Predicate,
-			() => $"got indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}]");
+			() => $"got indexer [{string.Join(", ", parameters.Select(x => x.Parameter))}]");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
@@ -120,7 +120,7 @@ public partial class MockRegistry
 		return new VerificationResult<T>(subject,
 			Interactions,
 			Predicate,
-			() => $"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}] to value {value}");
+			() => $"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter))}] to value {value}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
