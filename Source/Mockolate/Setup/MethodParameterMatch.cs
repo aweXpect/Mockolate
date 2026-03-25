@@ -20,17 +20,21 @@ public readonly struct MethodParameterMatch(string methodName, NamedParameter[] 
 	/// <inheritdoc cref="IMethodMatch.Matches(MethodInvocation)" />
 	public bool Matches(MethodInvocation methodInvocation)
 	{
-		return methodInvocation.Name.Equals(methodName) &&
-		       methodInvocation.Parameters.Length == parameters.Length &&
-		       !parameters
-			       .Where(Predicate)
-			       .Any();
-
-		[DebuggerNonUserCode]
-		bool Predicate(NamedParameter parameter, int i)
+		if (!methodInvocation.Name.Equals(methodName) ||
+		    methodInvocation.Parameters.Length != parameters.Length)
 		{
-			return !parameter.Matches(methodInvocation.Parameters[i]);
+			return false;
 		}
+
+		for (int i = 0; i < parameters.Length; i++)
+		{
+			if (!parameters[i].Matches(methodInvocation.Parameters[i]))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
