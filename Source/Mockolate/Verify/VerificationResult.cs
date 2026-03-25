@@ -14,7 +14,7 @@ namespace Mockolate.Verify;
 [DebuggerNonUserCode]
 public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult
 {
-	private readonly string _expectation;
+	private readonly Func<string> _expectationFactory;
 	private readonly MockInteractions _interactions;
 	private readonly Func<IInteraction, bool> _predicate;
 	private readonly TVerify _verify;
@@ -28,7 +28,18 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		_verify = verify;
 		_interactions = interactions;
 		_predicate = predicate;
-		_expectation = expectation;
+		_expectationFactory = () => expectation;
+	}
+
+	internal VerificationResult(TVerify verify,
+		MockInteractions interactions,
+		Func<IInteraction, bool> predicate,
+		Func<string> expectation)
+	{
+		_verify = verify;
+		_interactions = interactions;
+		_predicate = predicate;
+		_expectationFactory = expectation;
 	}
 
 	#region IVerificationResult<TVerify>
@@ -40,7 +51,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	#endregion
 
 	internal VerificationResult<T> Map<T>(T mock)
-		=> new(mock, _interactions, _predicate, _expectation);
+		=> new(mock, _interactions, _predicate, _expectationFactory);
 
 	/// <summary>
 	///     Makes the verification result awaitable, using the specified <paramref name="timeout" /> to wait for the expected
@@ -70,7 +81,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		///     expected interactions to occur.
 		/// </summary>
 		public Awaitable(VerificationResult<TVerify> inner, TimeSpan timeout) : base(inner._verify, inner._interactions,
-			inner._predicate, inner._expectation)
+			inner._predicate, inner._expectationFactory)
 		{
 			_timeout = timeout;
 		}
@@ -81,7 +92,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		///     expected interactions to occur.
 		/// </summary>
 		public Awaitable(VerificationResult<TVerify> inner, CancellationToken cancellationToken) : base(inner._verify,
-			inner._interactions, inner._predicate, inner._expectation)
+			inner._interactions, inner._predicate, inner._expectationFactory)
 		{
 			_cancellationToken = cancellationToken;
 		}
@@ -201,7 +212,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	/// <inheritdoc cref="IVerificationResult.Expectation" />
 	string IVerificationResult.Expectation
-		=> _expectation;
+		=> _expectationFactory();
 
 	/// <inheritdoc cref="IVerificationResult.MockInteractions" />
 	MockInteractions IVerificationResult.MockInteractions
