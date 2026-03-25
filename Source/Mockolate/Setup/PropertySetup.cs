@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -18,6 +19,11 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	///     The property name.
 	/// </summary>
 	public abstract string Name { get; }
+
+	/// <summary>
+	///     Gets whether the property has already been initialized with a value.
+	/// </summary>
+	internal abstract bool IsValueInitialized { get; }
 
 	/// <inheritdoc cref="IInteractivePropertySetup.InvokeSetter(IInteraction, object?, MockBehavior)" />
 	void IInteractivePropertySetup.InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
@@ -73,6 +79,9 @@ public abstract class PropertySetup : IInteractivePropertySetup
 		/// <inheritdoc cref="PropertySetup.Name" />
 		public override string Name => name;
 
+		/// <inheritdoc cref="PropertySetup.IsValueInitialized" />
+		internal override bool IsValueInitialized => true;
+
 		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
 		protected override void InitializeValue(object? value)
 		{
@@ -114,20 +123,23 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>,
 	IPropertyGetterSetup<T>, IPropertySetterSetup<T>
 {
-	private readonly List<Callback<Action<int, T>>> _getterCallbacks = [];
-	private readonly List<Callback<Func<int, T, T>>> _returnCallbacks = [];
-	private readonly List<Callback<Action<int, T>>> _setterCallbacks = [];
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
 	private int _currentSetterCallbacksIndex;
+	private List<Callback<Action<int, T>>>? _getterCallbacks;
 	private bool _isInitialized;
+	private List<Callback<Func<int, T, T>>>? _returnCallbacks;
+	private List<Callback<Action<int, T>>>? _setterCallbacks;
 	private bool? _skipBaseClass;
 	private T _value = default!;
 
 	/// <inheritdoc cref="PropertySetup.Name" />
 	public override string Name => name;
+
+	/// <inheritdoc cref="PropertySetup.IsValueInitialized" />
+	internal override bool IsValueInitialized => _isInitialized;
 
 	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" />
 	IPropertySetupCallbackWhenBuilder<T> IPropertySetupCallbackBuilder<T>.When(Func<int, bool> predicate)
@@ -185,28 +197,39 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
 	protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
 	{
-		bool wasInvoked = false;
-		int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
-		for (int i = 0; i < _getterCallbacks.Count; i++)
+		if (_getterCallbacks is not null)
 		{
-			Callback<Action<int, T>> getterCallback =
-				_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-			if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, Callback))
+			bool wasInvoked = false;
+			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+			for (int i = 0; i < _getterCallbacks.Count; i++)
 			{
-				wasInvoked = true;
+				Callback<Action<int, T>> getterCallback =
+					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, Callback))
+				{
+					wasInvoked = true;
+				}
 			}
 		}
 
-		foreach (Callback<Func<int, T, T>> _ in _returnCallbacks)
+		if (_returnCallbacks is not null)
 		{
-			Callback<Func<int, T, T>> returnCallback =
-				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, ReturnCallback, out T? newValue))
+			foreach (Callback<Func<int, T, T>> _ in _returnCallbacks)
 			{
-				_value = newValue;
-				_isInitialized = true;
-				break;
+				Callback<Func<int, T, T>> returnCallback =
+					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, ReturnCallback, out T? newValue))
+				{
+					_value = newValue;
+					_isInitialized = true;
+					break;
+				}
 			}
+		}
+
+		if (typeof(TResult) == typeof(T))
+		{
+			return Unsafe.As<T, TResult>(ref _value);
 		}
 
 		if (!TryCast(_value, out TResult result))
@@ -219,10 +242,15 @@ public class PropertySetup<T>(string name) : PropertySetup,
 
 		[DebuggerNonUserCode]
 		void Callback(int invocationCount, Action<int, T> @delegate)
-			=> @delegate(invocationCount, _value);
+		{
+			@delegate(invocationCount, _value);
+		}
+
 		[DebuggerNonUserCode]
 		T ReturnCallback(int invocationCount, Func<int, T, T> @delegate)
-			=> @delegate(invocationCount, _value);
+		{
+			return @delegate(invocationCount, _value);
+		}
 	}
 
 	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
@@ -234,15 +262,18 @@ public class PropertySetup<T>(string name) : PropertySetup,
 				$"The property value only supports '{typeof(T).FormatType()}', but is '{value.GetType().FormatType()}'.");
 		}
 
-		bool wasInvoked = false;
-		int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
-		for (int i = 0; i < _setterCallbacks.Count; i++)
+		if (_setterCallbacks is not null)
 		{
-			Callback<Action<int, T>> setterCallback =
-				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, Callback))
+			bool wasInvoked = false;
+			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+			for (int i = 0; i < _setterCallbacks.Count; i++)
 			{
-				wasInvoked = true;
+				Callback<Action<int, T>> setterCallback =
+					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, Callback))
+				{
+					wasInvoked = true;
+				}
 			}
 		}
 
@@ -319,7 +350,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Action<int, T>> item = new(Delegate);
 		_currentCallback = item;
-		_getterCallbacks.Add(item);
+		(_getterCallbacks ??= []).Add(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -334,7 +365,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Action<int, T>> item = new(Delegate);
 		_currentCallback = item;
-		_getterCallbacks.Add(item);
+		(_getterCallbacks ??= []).Add(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -349,7 +380,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Action<int, T>> item = new(callback);
 		_currentCallback = item;
-		_getterCallbacks.Add(item);
+		(_getterCallbacks ??= []).Add(item);
 		return this;
 	}
 
@@ -362,7 +393,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Action<int, T>> item = new(Delegate);
 		_currentCallback = item;
-		_setterCallbacks.Add(item);
+		(_setterCallbacks ??= []).Add(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -377,7 +408,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Action<int, T>> item = new(Delegate);
 		_currentCallback = item;
-		_setterCallbacks.Add(item);
+		(_setterCallbacks ??= []).Add(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -392,7 +423,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Action<int, T>> item = new(callback);
 		_currentCallback = item;
-		_setterCallbacks.Add(item);
+		(_setterCallbacks ??= []).Add(item);
 		return this;
 	}
 
@@ -401,7 +432,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		(_returnCallbacks ??= []).Add(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -416,7 +447,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		(_returnCallbacks ??= []).Add(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -431,7 +462,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		(_returnCallbacks ??= []).Add(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -447,7 +478,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		(_returnCallbacks ??= []).Add(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -462,7 +493,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		(_returnCallbacks ??= []).Add(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -477,7 +508,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		(_returnCallbacks ??= []).Add(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -492,7 +523,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
 		_currentReturnCallback = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		(_returnCallbacks ??= []).Add(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]

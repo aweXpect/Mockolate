@@ -97,7 +97,7 @@ public partial class MockRegistry
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
 				propertyName));
-		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, DefaultValueGenerator);
+		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, DefaultValueGenerator, baseValueAccessor is not null);
 		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
 
 		[DebuggerNonUserCode]
