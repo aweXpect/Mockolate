@@ -68,7 +68,7 @@ public partial class MockRegistry
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	private IndexerSetup? GetIndexerSetup(IndexerAccess interaction)
-		=> Setup.Indexers.GetLastestOrDefault(setup => ((IInteractiveIndexerSetup)setup).Matches(interaction));
+		=> Setup.Indexers.GetLatestOrDefault(setup => ((IInteractiveIndexerSetup)setup).Matches(interaction));
 
 	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters" />.

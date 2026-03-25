@@ -20,7 +20,7 @@ internal class MockSetups
 	internal IndexerSetups Indexers { get; } = new();
 	internal MethodSetups Methods { get; } = new();
 	internal PropertySetups Properties { get; } = new();
-	
+
 	/// <inheritdoc cref="object.ToString()" />
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public override string ToString()
@@ -59,35 +59,60 @@ internal class MockSetups
 	[DebuggerNonUserCode]
 	internal sealed class MethodSetups
 	{
-		private ConcurrentStack<MethodSetup>? _storage;
+		private readonly List<MethodSetup> _list = new();
+		private readonly object _lock = new();
 
 		public int Count
-			=> _storage?.Count ?? 0;
+		{
+			get { lock (_lock) { return _list.Count; } }
+		}
 
 		public void Add(MethodSetup setup)
 		{
-			_storage ??= new ConcurrentStack<MethodSetup>();
-			_storage.Push(setup);
+			lock (_lock)
+			{
+				_list.Add(setup);
+			}
 		}
 
 		public MethodSetup? GetLatestOrDefault(Func<MethodSetup, bool> predicate)
 		{
-			if (_storage is null)
+			MethodSetup[] snapshot;
+			lock (_lock)
 			{
-				return null;
+				if (_list.Count == 0)
+				{
+					return null;
+				}
+
+				snapshot = _list.ToArray();
 			}
 
-			return _storage.FirstOrDefault(predicate);
+			for (int i = snapshot.Length - 1; i >= 0; i--)
+			{
+				if (predicate(snapshot[i]))
+				{
+					return snapshot[i];
+				}
+			}
+
+			return null;
 		}
 
 		internal IEnumerable<MethodSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
-			if (_storage is null)
+			MethodSetup[] snapshot;
+			lock (_lock)
 			{
-				return [];
+				if (_list.Count == 0)
+				{
+					return [];
+				}
+
+				snapshot = _list.ToArray();
 			}
 
-			return _storage.Where(methodSetup => interactions.Interactions.OfType<MethodInvocation>()
+			return snapshot.Where(methodSetup => interactions.Interactions.OfType<MethodInvocation>()
 				.All(methodInvocation => !((IInteractiveMethodSetup)methodSetup).Matches(methodInvocation)));
 		}
 
@@ -95,14 +120,20 @@ internal class MockSetups
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			if (_storage is null || _storage.IsEmpty)
+			MethodSetup[] snapshot;
+			lock (_lock)
 			{
-				return "0 methods";
+				if (_list.Count == 0)
+				{
+					return "0 methods";
+				}
+
+				snapshot = _list.ToArray();
 			}
 
 			StringBuilder sb = new();
-			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " method:" : " methods:").AppendLine();
-			foreach (MethodSetup methodSetup in _storage)
+			sb.Append(snapshot.Length).Append(snapshot.Length == 1 ? " method:" : " methods:").AppendLine();
+			foreach (MethodSetup methodSetup in snapshot)
 			{
 				sb.Append(methodSetup).AppendLine();
 			}
@@ -116,37 +147,78 @@ internal class MockSetups
 	[DebuggerNonUserCode]
 	internal sealed class PropertySetups
 	{
-		private ConcurrentDictionary<string, PropertySetup>? _storage;
+		private volatile PropertySetup[] _storage = [];
+		private readonly object _writeLock = new();
+		private volatile int _count;
 
-		public int Count { get; private set; }
+		public int Count => _count;
 
 		public void Add(PropertySetup setup)
 		{
-			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
-			_storage.AddOrUpdate(setup.Name, setup, (_, _) => setup);
-			Count = _storage.Count(NotDefaultPredicate);
-
-			[DebuggerNonUserCode]
-			static bool NotDefaultPredicate(KeyValuePair<string, PropertySetup> x)
+			lock (_writeLock)
 			{
-				return x.Value is not PropertySetup.Default;
+				PropertySetup[] current = _storage;
+				for (int i = 0; i < current.Length; i++)
+				{
+					if (current[i].Name != setup.Name)
+					{
+						continue;
+					}
+
+					PropertySetup[] updated = new PropertySetup[current.Length];
+					current.CopyTo(updated, 0);
+					bool wasDefault = current[i] is PropertySetup.Default;
+					bool isDefault = setup is PropertySetup.Default;
+					updated[i] = setup;
+					_storage = updated;
+					if (wasDefault && !isDefault)
+					{
+						_count++;
+					}
+					else if (!wasDefault && isDefault)
+					{
+						_count--;
+					}
+
+					return;
+				}
+
+				PropertySetup[] next = new PropertySetup[current.Length + 1];
+				current.CopyTo(next, 0);
+				next[current.Length] = setup;
+				_storage = next;
+				if (setup is not PropertySetup.Default)
+				{
+					_count++;
+				}
 			}
 		}
 
 		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out PropertySetup? setup)
 		{
-			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
-			return _storage.TryGetValue(propertyName, out setup);
+			PropertySetup[] snapshot = _storage;
+			for (int i = 0; i < snapshot.Length; i++)
+			{
+				if (snapshot[i].Name == propertyName)
+				{
+					setup = snapshot[i];
+					return true;
+				}
+			}
+
+			setup = null;
+			return false;
 		}
 
 		internal IEnumerable<PropertySetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
-			if (_storage is null)
+			PropertySetup[] snapshot = _storage;
+			if (snapshot.Length == 0)
 			{
 				return [];
 			}
 
-			return _storage.Values.Where(propertySetup => interactions.Interactions.OfType<PropertyAccess>()
+			return snapshot.Where(propertySetup => interactions.Interactions.OfType<PropertyAccess>()
 				.All(propertyAccess => !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)));
 		}
 
@@ -154,24 +226,34 @@ internal class MockSetups
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			if (_storage is null || _storage.IsEmpty)
+			PropertySetup[] snapshot;
+			lock (_writeLock)
 			{
-				return "0 properties";
+				snapshot = _storage;
 			}
 
-			List<KeyValuePair<string, PropertySetup>> setups =
-				_storage.Where(x => x.Value is not PropertySetup.Default).ToList();
+			int count = 0;
+			foreach (PropertySetup setup in snapshot)
+			{
+				if (setup is not PropertySetup.Default)
+				{
+					count++;
+				}
+			}
 
-			if (setups.Count == 0)
+			if (count == 0)
 			{
 				return "0 properties";
 			}
 
 			StringBuilder sb = new();
-			sb.Append(setups.Count).Append(setups.Count == 1 ? " property:" : " properties:").AppendLine();
-			foreach (KeyValuePair<string, PropertySetup> item in setups)
+			sb.Append(count).Append(count == 1 ? " property:" : " properties:").AppendLine();
+			foreach (PropertySetup setup in snapshot)
 			{
-				sb.Append(item.Value).Append(' ').Append(item.Key).AppendLine();
+				if (setup is not PropertySetup.Default)
+				{
+					sb.Append(setup).Append(' ').Append(setup.Name).AppendLine();
+				}
 			}
 
 			sb.Length -= Environment.NewLine.Length;
@@ -183,34 +265,58 @@ internal class MockSetups
 	[DebuggerNonUserCode]
 	internal sealed class IndexerSetups
 	{
-		private ConcurrentStack<IndexerSetup>? _storage;
+		private readonly List<IndexerSetup> _list = new();
+		private readonly object _lock = new();
 
 		private ValueStorage? _valueStorage;
 
-		public int Count => _storage?.Count ?? 0;
-
-		public IndexerSetup? GetLastestOrDefault(Func<IndexerSetup, bool> predicate)
+		public int Count
 		{
-			if (_storage is null)
+			get { lock (_lock) { return _list.Count; } }
+		}
+
+		public IndexerSetup? GetLatestOrDefault(Func<IndexerSetup, bool> predicate)
+		{
+			IndexerSetup[] snapshot;
+			lock (_lock)
 			{
-				return null;
+				if (_list.Count == 0)
+				{
+					return null;
+				}
+
+				snapshot = _list.ToArray();
 			}
 
-			return _storage.FirstOrDefault(predicate);
+			for (int i = snapshot.Length - 1; i >= 0; i--)
+			{
+				if (predicate(snapshot[i]))
+				{
+					return snapshot[i];
+				}
+			}
+
+			return null;
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			if (_storage is null || Count == 0)
+			IndexerSetup[] snapshot;
+			lock (_lock)
 			{
-				return "0 indexers";
+				if (_list.Count == 0)
+				{
+					return "0 indexers";
+				}
+
+				snapshot = _list.ToArray();
 			}
 
 			StringBuilder sb = new();
-			sb.Append(Count).Append(Count == 1 ? " indexer:" : " indexers:").AppendLine();
-			foreach (IndexerSetup indexerSetup in _storage)
+			sb.Append(snapshot.Length).Append(snapshot.Length == 1 ? " indexer:" : " indexers:").AppendLine();
+			foreach (IndexerSetup indexerSetup in snapshot)
 			{
 				sb.Append(indexerSetup).AppendLine();
 			}
@@ -221,8 +327,10 @@ internal class MockSetups
 
 		internal void Add(IndexerSetup setup)
 		{
-			_storage ??= new ConcurrentStack<IndexerSetup>();
-			_storage.Push(setup);
+			lock (_lock)
+			{
+				_list.Add(setup);
+			}
 		}
 
 		internal TValue GetOrAddValue<TValue>(NamedParameterValue[] parameters, Func<TValue> valueGenerator)
@@ -258,12 +366,18 @@ internal class MockSetups
 
 		internal IEnumerable<IndexerSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
-			if (_storage is null)
+			IndexerSetup[] snapshot;
+			lock (_lock)
 			{
-				return [];
+				if (_list.Count == 0)
+				{
+					return [];
+				}
+
+				snapshot = _list.ToArray();
 			}
 
-			return _storage.Where(indexerSetup => interactions.Interactions.OfType<IndexerAccess>()
+			return snapshot.Where(indexerSetup => interactions.Interactions.OfType<IndexerAccess>()
 				.All(indexerAccess => !((IInteractiveIndexerSetup)indexerSetup).Matches(indexerAccess)));
 		}
 
@@ -306,56 +420,82 @@ internal class MockSetups
 	[DebuggerNonUserCode]
 	internal sealed class EventSetups
 	{
-		/// <summary>
-		///     This value is only needed, to use the <see cref="ConcurrentDictionary{TKey, TValue}" /> as a
-		///     thread-safe collection of keys, because .NET does not have a thread-safe <see cref="HashSet{T}" />.
-		/// </summary>
-		private const bool Value = true;
-
-		private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _storage;
+		private readonly List<(object? Target, MethodInfo Method, string Name)> _list = new();
+		private readonly object _lock = new();
 
 		public int Count
-			=> _storage?.Count ?? 0;
-
-		public IEnumerable<(object?, MethodInfo, string)> Enumerate()
 		{
-			if (_storage is null)
-			{
-				yield break;
-			}
+			get { lock (_lock) { return _list.Count; } }
+		}
 
-			foreach ((object?, MethodInfo, string) item in _storage.Keys)
+		public (object? Target, MethodInfo Method, string Name)[] Enumerate()
+		{
+			lock (_lock)
 			{
-				yield return item;
+				return _list.ToArray();
 			}
 		}
 
 		public void Add(object? target, MethodInfo method, string eventName)
 		{
-			_storage ??= new ConcurrentDictionary<(object?, MethodInfo, string), bool>();
-			_storage.TryAdd((target, method, eventName), Value);
+			lock (_lock)
+			{
+				foreach ((object? Target, MethodInfo Method, string Name) entry in _list)
+				{
+					if (Matches(entry, target, method, eventName))
+					{
+						return;
+					}
+				}
+
+				_list.Add((target, method, eventName));
+			}
 		}
 
 		public void Remove(object? target, MethodInfo method, string eventName)
 		{
-			_storage ??= new ConcurrentDictionary<(object?, MethodInfo, string), bool>();
-			_storage.TryRemove((target, method, eventName), out _);
+			lock (_lock)
+			{
+				for (int i = 0; i < _list.Count; i++)
+				{
+					if (Matches(_list[i], target, method, eventName))
+					{
+						_list.RemoveAt(i);
+						return;
+					}
+				}
+			}
 		}
+
+		private static bool Matches(
+			(object? Target, MethodInfo Method, string Name) entry,
+			object? target,
+			MethodInfo method,
+			string eventName)
+			=> EqualityComparer<object?>.Default.Equals(entry.Target, target)
+			   && entry.Method.Equals(method)
+			   && entry.Name == eventName;
 
 		/// <inheritdoc cref="object.ToString()" />
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			if (_storage is null || _storage.IsEmpty)
+			(object? Target, MethodInfo Method, string Name)[] snapshot;
+			lock (_lock)
 			{
-				return "0 events";
+				if (_list.Count == 0)
+				{
+					return "0 events";
+				}
+
+				snapshot = _list.ToArray();
 			}
 
 			StringBuilder sb = new();
-			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " event:" : " events:").AppendLine();
-			foreach ((object?, MethodInfo, string) item in _storage.Keys)
+			sb.Append(snapshot.Length).Append(snapshot.Length == 1 ? " event:" : " events:").AppendLine();
+			foreach ((object? _, MethodInfo _, string name) in snapshot)
 			{
-				sb.Append(item.Item3).AppendLine();
+				sb.Append(name).AppendLine();
 			}
 
 			sb.Length -= Environment.NewLine.Length;
