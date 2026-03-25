@@ -181,13 +181,8 @@ public partial class MockRegistry
 
 		IEnumerable<(object?, MethodInfo)> GetEventHandlers()
 		{
-			foreach ((object? target, MethodInfo method, string name) in Setup.Events.Enumerate())
+			foreach ((object? target, MethodInfo method) in Setup.Events.Enumerate(eventName))
 			{
-				if (name != eventName)
-				{
-					continue;
-				}
-
 				yield return (target, method);
 			}
 		}

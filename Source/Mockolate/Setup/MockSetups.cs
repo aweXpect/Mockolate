@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 
@@ -193,7 +194,7 @@ internal class MockSetups
 
 		public int Count => _storage?.Count ?? 0;
 
-		public IndexerSetup? GetLastestOrDefault(Func<IndexerSetup, bool> predicate)
+		public IndexerSetup? GetLatestOrDefault(Func<IndexerSetup, bool> predicate)
 		{
 			if (_storage is null)
 			{
@@ -310,60 +311,148 @@ internal class MockSetups
 	[DebuggerNonUserCode]
 	internal sealed class EventSetups
 	{
-		/// <summary>
-		///     This value is only needed, to use the <see cref="ConcurrentDictionary{TKey, TValue}" /> as a
-		///     thread-safe collection of keys, because .NET does not have a thread-safe <see cref="HashSet{T}" />.
-		/// </summary>
-		private const bool Value = true;
-
-		private ConcurrentDictionary<(object?, MethodInfo, string), bool>? _storage;
+		private Storage? _storage;
 
 		public int Count
-			=> _storage?.Count ?? 0;
-
-		public IEnumerable<(object?, MethodInfo, string)> Enumerate()
 		{
-			if (_storage is null)
+			get
 			{
-				yield break;
+				Storage? storage = _storage;
+				if (storage is null)
+				{
+					return 0;
+				}
+
+				lock (storage)
+				{
+					return storage.List.Count;
+				}
+			}
+		}
+
+		public IEnumerable<(object? Target, MethodInfo Method)> Enumerate(string eventName)
+		{
+			Storage? storage = _storage;
+			if (storage is null)
+			{
+				return [];
 			}
 
-			foreach ((object?, MethodInfo, string) item in _storage.Keys)
+			lock (storage)
 			{
-				yield return item;
+				List<(object? Target, MethodInfo Method, string Name)> list = storage.List;
+				if (list.Count == 0)
+				{
+					return [];
+				}
+
+				List<(object?, MethodInfo)> result = [];
+				foreach ((object? target, MethodInfo method, string name) in list)
+				{
+					if (name == eventName)
+					{
+						result.Add((target, method));
+					}
+				}
+
+				return result;
 			}
 		}
 
 		public void Add(object? target, MethodInfo method, string eventName)
 		{
-			_storage ??= new ConcurrentDictionary<(object?, MethodInfo, string), bool>();
-			_storage.TryAdd((target, method, eventName), Value);
+			Storage storage = GetOrCreateStorage();
+			lock (storage)
+			{
+				foreach ((object? Target, MethodInfo Method, string Name) entry in storage.List)
+				{
+					if (Matches(entry, target, method, eventName))
+					{
+						return;
+					}
+				}
+
+				storage.List.Add((target, method, eventName));
+			}
 		}
 
 		public void Remove(object? target, MethodInfo method, string eventName)
 		{
-			_storage ??= new ConcurrentDictionary<(object?, MethodInfo, string), bool>();
-			_storage.TryRemove((target, method, eventName), out _);
+			Storage? storage = _storage;
+			if (storage is null)
+			{
+				return;
+			}
+
+			lock (storage)
+			{
+				List<(object? Target, MethodInfo Method, string Name)> list = storage.List;
+				for (int i = 0; i < list.Count; i++)
+				{
+					if (Matches(list[i], target, method, eventName))
+					{
+						list.RemoveAt(i);
+						return;
+					}
+				}
+			}
 		}
+
+		private Storage GetOrCreateStorage()
+		{
+			if (_storage is null)
+			{
+				Interlocked.CompareExchange(ref _storage, new Storage(), null);
+			}
+
+			return _storage!;
+		}
+
+		private static bool Matches(
+			(object? Target, MethodInfo Method, string Name) entry,
+			object? target,
+			MethodInfo method,
+			string eventName)
+			=> EqualityComparer<object?>.Default.Equals(entry.Target, target)
+			   && entry.Method.Equals(method)
+			   && entry.Name == eventName;
 
 		/// <inheritdoc cref="object.ToString()" />
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			if (_storage is null || _storage.IsEmpty)
+			Storage? storage = _storage;
+			if (storage is null)
 			{
 				return "0 events";
 			}
 
-			StringBuilder sb = new();
-			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " event:" : " events:").AppendLine();
-			foreach ((object?, MethodInfo, string) item in _storage.Keys)
+			(object? Target, MethodInfo Method, string Name)[] snapshot;
+			lock (storage)
 			{
-				sb.Append(item.Item3).AppendLine();
+				List<(object? Target, MethodInfo Method, string Name)> list = storage.List;
+				if (list.Count == 0)
+				{
+					return "0 events";
+				}
+
+				snapshot = list.ToArray();
+			}
+
+			StringBuilder sb = new();
+			sb.Append(snapshot.Length).Append(snapshot.Length == 1 ? " event:" : " events:").AppendLine();
+			foreach ((object? _, MethodInfo _, string name) in snapshot)
+			{
+				sb.Append(name).AppendLine();
 			}
 
 			sb.Length -= Environment.NewLine.Length;
 			return sb.ToString();
+		}
+
+		private sealed class Storage
+		{
+			internal readonly List<(object? Target, MethodInfo Method, string Name)> List = [];
 		}
 	}
 }
