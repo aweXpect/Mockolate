@@ -98,15 +98,21 @@ public partial class MockRegistry
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
 		{
-			return interaction is IndexerGetterAccess indexer &&
-			       indexer.Parameters.Length == parameters.Length &&
-			       !parameters.Where(ParameterPredicate).Any();
-
-			[DebuggerNonUserCode]
-			bool ParameterPredicate(NamedParameter parameter, int i)
+			if (interaction is not IndexerGetterAccess indexer ||
+			    indexer.Parameters.Length != parameters.Length)
 			{
-				return !parameter.Matches(indexer.Parameters[i]);
+				return false;
 			}
+
+			for (int i = 0; i < parameters.Length; i++)
+			{
+				if (!parameters[i].Matches(indexer.Parameters[i]))
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 	}
 
@@ -125,16 +131,22 @@ public partial class MockRegistry
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
 		{
-			return interaction is IndexerSetterAccess indexer &&
-			       indexer.Parameters.Length == parameters.Length &&
-			       value.Matches(indexer.Value) &&
-			       !parameters.Where(ParameterPredicate).Any();
-
-			[DebuggerNonUserCode]
-			bool ParameterPredicate(NamedParameter parameter, int i)
+			if (interaction is not IndexerSetterAccess indexer ||
+			    indexer.Parameters.Length != parameters.Length ||
+			    !value.Matches(indexer.Value))
 			{
-				return !parameter.Matches(indexer.Parameters[i]);
+				return false;
 			}
+
+			for (int i = 0; i < parameters.Length; i++)
+			{
+				if (!parameters[i].Matches(indexer.Parameters[i]))
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 	}
 
