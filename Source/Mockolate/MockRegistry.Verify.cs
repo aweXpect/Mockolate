@@ -34,7 +34,7 @@ public partial class MockRegistry
 			subject,
 			Interactions,
 			Predicate,
-			$"invoked method {methodMatch}");
+			() => $"invoked method {methodMatch}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
@@ -93,7 +93,7 @@ public partial class MockRegistry
 		return new VerificationResult<T>(subject,
 			Interactions,
 			Predicate,
-			$"got indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}]");
+			() => $"got indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}]");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
@@ -120,7 +120,7 @@ public partial class MockRegistry
 		return new VerificationResult<T>(subject,
 			Interactions,
 			Predicate,
-			$"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}] to value {value}");
+			() => $"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter.ToString()))}] to value {value}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
@@ -145,7 +145,7 @@ public partial class MockRegistry
 	{
 		return new VerificationResult<T>(subject, Interactions,
 			Predicate,
-			$"subscribed to event {eventName.SubstringAfterLast('.')}");
+			() => $"subscribed to event {eventName.SubstringAfterLast('.')}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
@@ -162,7 +162,7 @@ public partial class MockRegistry
 	{
 		return new VerificationResult<T>(subject, Interactions,
 			Predicate,
-			$"unsubscribed from event {eventName.SubstringAfterLast('.')}");
+			() => $"unsubscribed from event {eventName.SubstringAfterLast('.')}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
