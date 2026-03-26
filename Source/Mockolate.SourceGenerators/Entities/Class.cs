@@ -275,9 +275,9 @@ internal record Class
 				case ',':
 				case '.':
 				case '<':
-				case '>':
 					sb.Append('_');
 					break;
+				case '>':
 				case ' ':
 					break;
 				default:
