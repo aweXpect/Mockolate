@@ -346,16 +346,17 @@ internal class MockSetups
 					return [];
 				}
 
-				List<(object?, MethodInfo)> result = [];
+				List<(object?, MethodInfo)>? result = null;
 				foreach ((object? target, MethodInfo method, string name) in list)
 				{
 					if (name == eventName)
 					{
+						result ??= [];
 						result.Add((target, method));
 					}
 				}
 
-				return result;
+				return result ?? [];
 			}
 		}
 
