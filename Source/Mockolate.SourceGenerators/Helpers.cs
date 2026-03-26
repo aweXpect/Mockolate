@@ -127,7 +127,7 @@ internal static class Helpers
 			static bool IsNullableAttribute(INamedTypeSymbol attribute)
 			{
 				return attribute.Name is "NullableContextAttribute" or "NullableAttribute" &&
-				       attribute.ContainingNamespace.ToDisplayString() == "System.Runtime.CompilerServices";
+				       attribute.ContainingNamespace is { ContainingNamespace: { ContainingNamespace.Name: "System", Name: "Runtime", }, Name: "CompilerServices", };
 			}
 		}
 	}

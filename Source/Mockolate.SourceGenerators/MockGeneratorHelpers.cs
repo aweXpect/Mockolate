@@ -175,7 +175,8 @@ internal static class MockGeneratorHelpers
 			ITypeSymbol currentType = typesToProcess.Dequeue();
 
 			// When using HttpClient as a mock, we also have to create a mock of the HttpMessageHandler, that can be used as constructor parameter.
-			if (currentType.Name == "HttpClient" && currentType.ToDisplayString() == "System.Net.Http.HttpClient")
+			if (currentType.Name == "HttpClient" &&
+			    currentType.ContainingNamespace is { ContainingNamespace: { ContainingNamespace.Name: "System", Name: "Net", }, Name: "Http", })
 			{
 				ITypeSymbol httpMessageHandlerType = currentType.GetMembers()
 					.OfType<IMethodSymbol>()
