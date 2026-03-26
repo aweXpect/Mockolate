@@ -71,7 +71,7 @@ public sealed partial class InteractionsTests
 		MethodInvocation interaction = new(3, "SomeMethod", [
 			new NamedParameterValue("p1", 1),
 			new NamedParameterValue("p2", null),
-			new NamedParameterValue("p3", 90.Seconds()),
+			new NamedParameterValue("p3", (TimeSpan)90.Seconds()),
 		]);
 		string expectedValue = "[3] invoke method SomeMethod(1, null, 00:01:30)";
 

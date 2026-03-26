@@ -13,7 +13,7 @@ public sealed class InteractionsTests
 			new NamedParameterValue("p1", "SomeProperty"),
 			new NamedParameterValue("p2", 4),
 			new NamedParameterValue("p3", null),
-			new NamedParameterValue("p4", 150.Seconds()),
+			new NamedParameterValue("p4", (TimeSpan)150.Seconds()),
 		]);
 		string expectedValue = "[4] get indexer [SomeProperty, 4, null, 00:02:30]";
 
@@ -27,7 +27,7 @@ public sealed class InteractionsTests
 			new NamedParameterValue("p1", "SomeProperty"),
 			new NamedParameterValue("p2", 4),
 			new NamedParameterValue("p3", null),
-			new NamedParameterValue("p4", 150.Seconds()),
+			new NamedParameterValue("p4", (TimeSpan)150.Seconds()),
 		], 6);
 		string expectedValue = "[4] set indexer [SomeProperty, 4, null, 00:02:30] to 6";
 
@@ -41,7 +41,7 @@ public sealed class InteractionsTests
 			new NamedParameterValue("p1", "SomeProperty"),
 			new NamedParameterValue("p2", 4),
 			new NamedParameterValue("p3", null),
-			new NamedParameterValue("p4", 150.Seconds()),
+			new NamedParameterValue("p4", (TimeSpan)150.Seconds()),
 		], null);
 		string expectedValue = "[4] set indexer [SomeProperty, 4, null, 00:02:30] to null";
 
