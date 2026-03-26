@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
@@ -35,7 +36,8 @@ internal record Class
 		}
 
 		IsInterface = type.TypeKind == TypeKind.Interface;
-		List<Method> methods = ToListExcept(type.GetMembers().OfType<IMethodSymbol>()
+		ImmutableArray<ISymbol> members = type.GetMembers();
+		List<Method> methods = ToListExcept(members.OfType<IMethodSymbol>()
 			// Exclude getter/setter methods
 			.Where(x => x.MethodKind is MethodKind.Ordinary)
 			.Where(x => !x.IsSealed)
@@ -45,7 +47,7 @@ internal record Class
 			.Distinct(), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);
 		Methods = new EquatableArray<Method>(methods.ToArray());
 
-		List<Property> properties = ToListExcept(type.GetMembers().OfType<IPropertySymbol>()
+		List<Property> properties = ToListExcept(members.OfType<IPropertySymbol>()
 			.Where(x => !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 			.Where(ShouldIncludeMember)
@@ -53,7 +55,7 @@ internal record Class
 			.Distinct(), exceptProperties, Property.ContainingTypeIndependentEqualityComparer);
 		Properties = new EquatableArray<Property>(properties.ToArray());
 
-		List<Event> events = ToListExcept(type.GetMembers().OfType<IEventSymbol>()
+		List<Event> events = ToListExcept(members.OfType<IEventSymbol>()
 			.Where(x => !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 			.Where(ShouldIncludeMember)
@@ -64,19 +66,19 @@ internal record Class
 		Events = new EquatableArray<Event>(events.ToArray());
 
 		exceptProperties ??= new List<Property>();
-		exceptProperties.AddRange(type.GetMembers().OfType<IPropertySymbol>()
+		exceptProperties.AddRange(members.OfType<IPropertySymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => new Property(x, null))
 			.Distinct());
 
 		exceptMethods ??= new List<Method>();
-		exceptMethods.AddRange(type.GetMembers().OfType<IMethodSymbol>()
+		exceptMethods.AddRange(members.OfType<IMethodSymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => new Method(x, null))
 			.Distinct());
 
 		exceptEvents ??= new List<Event>();
-		exceptEvents.AddRange(type.GetMembers().OfType<IEventSymbol>()
+		exceptEvents.AddRange(members.OfType<IEventSymbol>()
 			.Where(x => x.IsSealed)
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)

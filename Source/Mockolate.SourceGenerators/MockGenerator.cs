@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Mockolate.SourceGenerators.Entities;
 using Type = Mockolate.SourceGenerators.Entities.Type;
@@ -26,7 +25,7 @@ public class MockGenerator : IIncrementalGenerator
 
 		IncrementalValueProvider<ImmutableArray<MockClass>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
-				static (s, _) => s is InvocationExpressionSyntax,
+				static (s, _) => s.IsCreateMethodInvocation(),
 				(ctx, _) => ctx.Node.ExtractMockOrMockFactoryCreateSyntaxOrDefault(ctx.SemanticModel))
 			.SelectMany(static (mocks, _) => mocks)
 			.Collect();
