@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -167,7 +166,7 @@ public partial class MockRegistry
 	/// </summary>
 	public void Raise(string eventName, params object?[] parameters)
 	{
-		foreach ((object? target, MethodInfo method) in GetEventHandlers())
+		foreach ((object? target, MethodInfo method) in Setup.Events.Enumerate(eventName))
 		{
 			try
 			{
@@ -176,19 +175,6 @@ public partial class MockRegistry
 			catch (TargetInvocationException ex) when (ex.InnerException is not null)
 			{
 				ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-			}
-		}
-
-		IEnumerable<(object?, MethodInfo)> GetEventHandlers()
-		{
-			foreach ((object? target, MethodInfo method, string name) in Setup.Events.Enumerate())
-			{
-				if (name != eventName)
-				{
-					continue;
-				}
-
-				yield return (target, method);
 			}
 		}
 	}
