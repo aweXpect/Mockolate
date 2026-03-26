@@ -9,23 +9,42 @@ namespace Mockolate.SourceGenerators;
 internal static class MockGeneratorHelpers
 {
 	internal static bool IsCreateMethodInvocation(this SyntaxNode node)
-		=> node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax, };
-
-	private static bool IsCreateInvocationOnMockOrMockFactory(this SymbolInfo symbolInfo)
-	{
-		ISymbol? symbol = symbolInfo.Symbol;
-		if (symbol != null)
+		=> node is InvocationExpressionSyntax
 		{
-			return symbol.GetAttributes().Any(a =>
-				a.AttributeClass?.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
-				a.AttributeClass.ContainingNamespace.Name == "Mockolate" &&
-				a.AttributeClass.Name is "MockGeneratorImplementingAttribute");
+			Expression: MemberAccessExpressionSyntax
+			{
+				Name: IdentifierNameSyntax { Identifier.ValueText: "CreateMock", }
+				or GenericNameSyntax { Identifier.ValueText: "Implementing", },
+			},
+		};
+
+	private static bool IsInGlobalMockolateNamespace(ISymbol symbol)
+		=> symbol.ContainingNamespace is { Name: "Mockolate", ContainingNamespace.IsGlobalNamespace: true, };
+
+	private static bool IsCreateMockMethod(IMethodSymbol methodSymbol)
+		=> methodSymbol.Name == "CreateMock" && IsInGlobalMockolateNamespace(methodSymbol);
+
+	private static bool IsImplementingMethod(IMethodSymbol methodSymbol)
+		=> methodSymbol.Name == "Implementing" && IsInGlobalMockolateNamespace(methodSymbol);
+
+	private static bool IsCreateMockInvocation(this SymbolInfo symbolInfo)
+	{
+		if (symbolInfo.Symbol is IMethodSymbol methodSymbol)
+		{
+			return IsCreateMockMethod(methodSymbol);
 		}
 
-		return symbolInfo.CandidateSymbols.Any(s => s.GetAttributes().Any(a =>
-			a.AttributeClass?.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
-			a.AttributeClass.ContainingNamespace.Name == "Mockolate" &&
-			a.AttributeClass.Name is "MockGeneratorImplementingAttribute"));
+		return symbolInfo.CandidateSymbols.OfType<IMethodSymbol>().Any(IsCreateMockMethod);
+	}
+
+	private static bool IsImplementingInvocation(this SymbolInfo symbolInfo)
+	{
+		if (symbolInfo.Symbol is IMethodSymbol methodSymbol)
+		{
+			return IsImplementingMethod(methodSymbol);
+		}
+
+		return symbolInfo.CandidateSymbols.OfType<IMethodSymbol>().Any(IsImplementingMethod);
 	}
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
@@ -39,14 +58,10 @@ internal static class MockGeneratorHelpers
 		{
 			SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(invocation);
 			IMethodSymbol? methodSymbol = symbolInfo.Symbol as IMethodSymbol ?? symbolInfo.CandidateSymbols.OfType<IMethodSymbol>().FirstOrDefault();
-			if (methodSymbol is { IsStatic: true, } &&
-			    methodSymbol.GetAttributes().Any(a =>
-				    a.AttributeClass?.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
-				    a.AttributeClass.ContainingNamespace.Name == "Mockolate" &&
-				    a.AttributeClass.Name is "MockGeneratorAttribute"))
+			if (methodSymbol is not null && symbolInfo.IsCreateMockInvocation())
 			{
 				ITypeSymbol? type = methodSymbol.ContainingType.ExtensionParameter?.Type;
-				if (type is not null && IsMockable(type) && !type.ContainingNamespace.IsGlobalNamespace)
+				if (type is not null && IsMockable(type))
 				{
 					yield return new MockClass([type,], sourceAssembly);
 					foreach (MockClass? additionalMockClass in DiscoverMockableTypes([type,], sourceAssembly))
@@ -54,7 +69,7 @@ internal static class MockGeneratorHelpers
 						yield return additionalMockClass;
 					}
 				}
-				else if (IsMockable(methodSymbol.ReturnType) && !methodSymbol.ReturnType.ContainingNamespace.IsGlobalNamespace)
+				else if (IsMockable(methodSymbol.ReturnType))
 				{
 					ImmutableArray<ITypeParameterSymbol> genericParameters = methodSymbol.TypeParameters;
 					// If the method has generic parameters, and the return type does not match the first generic type parameter, use return type as main type and all generic types as additional implementations
@@ -94,10 +109,7 @@ internal static class MockGeneratorHelpers
 			}
 			else if (syntaxNode is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: GenericNameSyntax, }, } invocationSyntax &&
 			         methodSymbol is { IsGenericMethod: true, } &&
-			         methodSymbol.GetAttributes().Any(a =>
-				         a.AttributeClass?.ContainingNamespace.ContainingNamespace.IsGlobalNamespace == true &&
-				         a.AttributeClass.ContainingNamespace.Name == "Mockolate" &&
-				         a.AttributeClass.Name is "MockGeneratorImplementingAttribute"))
+			         symbolInfo.IsImplementingInvocation())
 			{
 				List<ITypeSymbol> collectedTypes = [];
 				ExpressionSyntax? chainRootExpression = null;
@@ -109,7 +121,7 @@ internal static class MockGeneratorHelpers
 					methodSymbol = symbolInfo.Symbol as IMethodSymbol
 					               ?? symbolInfo.CandidateSymbols.OfType<IMethodSymbol>().FirstOrDefault();
 
-					if (methodSymbol is { Name: "Implementing", } && symbolInfo.IsCreateInvocationOnMockOrMockFactory())
+					if (methodSymbol is { Name: "Implementing", } && symbolInfo.IsImplementingInvocation())
 					{
 						// Collect concrete generic args from each chained call, e.g. Implementing<IMyInterface>()
 						foreach (ITypeSymbol typeArgument in methodSymbol.TypeArguments)
@@ -151,10 +163,7 @@ internal static class MockGeneratorHelpers
 				// We traversed from outermost to innermost, so reverse to get natural order
 				collectedTypes.Reverse();
 
-				if (IsMockable(rootType) &&
-				    !(rootType.Name == "MockGenerator" &&
-				      rootType.ContainingNamespace.Name == "Mockolate" &&
-				      rootType.ContainingNamespace.ContainingNamespace.IsGlobalNamespace))
+				if (IsMockable(rootType))
 				{
 					yield return new MockClass([rootType, ..collectedTypes,], sourceAssembly);
 				}
@@ -200,7 +209,7 @@ internal static class MockGeneratorHelpers
 			   DeclaredAccessibility: not Accessibility.Private and not Accessibility.ProtectedAndInternal and not Accessibility.ProtectedAndFriend,
 			   IsRecord: false,
 			   IsReadOnly: false,
-			   ContainingNamespace: not null,
+			   ContainingNamespace.IsGlobalNamespace: false,
 			   TypeKind: TypeKind.Interface or TypeKind.Class or TypeKind.Delegate,
 		   } and INamedTypeSymbol namedTypeSymbol &&
 		   // Ignore open generic types

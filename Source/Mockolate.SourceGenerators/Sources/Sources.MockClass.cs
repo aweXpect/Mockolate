@@ -70,27 +70,23 @@ internal static partial class Sources
 		#region CreateMock
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
-		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock()").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, null);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(").Append(setupType).Append(" setup)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, setup);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
-		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, null);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, ").Append(setupType).Append(" setup)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, setup);").AppendLine();
 		sb.AppendLine();
@@ -98,20 +94,17 @@ internal static partial class Sources
 		if (!@class.IsInterface)
 		{
 			sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" />.");
-			sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters)").AppendLine();
 			sb.Append("\t\t\t=> CreateMock(constructorParameters, null, null);").AppendLine();
 			sb.AppendLine();
 
 			sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
-			sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters, global::Mockolate.MockBehavior mockBehavior)").AppendLine();
 			sb.Append("\t\t\t=> CreateMock(constructorParameters, mockBehavior, null);").AppendLine();
 			sb.AppendLine();
 
 			sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" />.");
 			sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-			sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters, ").Append(setupType).Append(" setup)").AppendLine();
 			sb.Append("\t\t\t=> CreateMock(constructorParameters, null, setup);").AppendLine();
 			sb.AppendLine();
@@ -119,7 +112,6 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\t").Append(@class.IsInterface ? "private" : "public").Append(" static ").Append(@class.ClassFullName).Append(" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior, ").Append(setupType).Append("? setup)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (mockBehavior is not null)").AppendLine();

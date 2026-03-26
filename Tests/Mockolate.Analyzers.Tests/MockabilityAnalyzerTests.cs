@@ -190,45 +190,6 @@ public class MockabilityAnalyzerTests
 		);
 
 	[Fact]
-	public async Task WhenMockingMockGeneratorWithoutAttributes_ShouldNotBeFlagged() => await Verifier
-		.VerifyAnalyzerAsync(
-			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
-
-			  namespace MyNamespace
-			  {
-			  	public class MyClass
-			  	{
-			  		public void MyTest()
-			  		{
-			  			Mockolate.MyMock.Create();
-			  		}
-			  	}
-			  }
-			  namespace Mockolate
-			  {
-			      public interface IGlobalInterface
-			      {
-			      	void DoSomething();
-			      }
-
-			      [AttributeUsage(AttributeTargets.Method)]
-			      internal class MockGeneratorAttribute : Attribute
-			      {
-			      }
-			      
-			      public static class MyMock
-			      {
-			          [MockGenerator]
-			          public static IGlobalInterface Create() => default!;
-			      }
-			  }
-			  """
-		);
-
-	[Fact]
 	public async Task WhenMockingRecord_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""

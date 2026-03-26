@@ -65,7 +65,6 @@ public class MockGeneratorTests
 		await That(result.Sources.Keys).IsEqualTo([
 			"Mock.g.cs",
 			"MockBehaviorExtensions.g.cs",
-			"MockGeneratorAttribute.g.cs",
 			"Mock.IMyInterface1.g.cs",
 			"Mock.IMyInterface2.g.cs",
 			"Mock.MyService.g.cs",
@@ -288,77 +287,6 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
-	public async Task WhenStaticNonGenericMethodWithMockGeneratorAttribute_ShouldGenerateMockForReturnType()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using Mockolate;
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			                 var instance = MyMockFactory.CreateMyInterface();
-			             }
-			         }
-
-			         public interface IMyInterface { }
-
-			         public static class MyMockFactory
-			         {
-			             [MockGenerator]
-			             public static IMyInterface CreateMyInterface() => null!;
-			         }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
-	}
-
-	[Fact]
-	public async Task WhenUsingCustomMockGeneratorAttribute_ShouldNotBeIncluded()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using System.Threading;
-			     using System.Threading.Tasks;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			_ = Mock.Create<IMyInterface>();
-			             }
-			         }
-
-			         public interface IMyInterface { }
-
-			         public class Mock
-			         {
-			     		[Mockolate.MockGenerator]
-			     		public static T Create<T>() => default(T)!;
-			         }
-			     }
-			     """);
-
-		await ThatAll(
-			That(result.Sources.Keys).IsEqualTo([
-				"Mock.g.cs",
-				"MockBehaviorExtensions.g.cs",
-				"Mock.IMyInterface.g.cs",
-				"MockGeneratorAttribute.g.cs",
-			]).InAnyOrder().IgnoringCase(),
-			That(result.Diagnostics).IsEmpty()
-		);
-	}
-
-	[Fact]
 	public async Task WhenUsingIncorrectMockGeneratorAttribute_ShouldNotBeIncluded()
 	{
 		GeneratorResult result = Generator
@@ -399,7 +327,6 @@ public class MockGeneratorTests
 			That(result.Sources.Keys).IsEqualTo([
 				"Mock.g.cs",
 				"MockBehaviorExtensions.g.cs",
-				"MockGeneratorAttribute.g.cs",
 			]).InAnyOrder().IgnoringCase(),
 			That(result.Diagnostics).IsEmpty()
 		);
@@ -431,7 +358,7 @@ public class MockGeneratorTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(HttpResponseMessage));
 
-		await That(result.Sources).HasCount().AtLeast(4);
+		await That(result.Sources).HasCount().AtLeast(3);
 		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
 	}
 
@@ -468,7 +395,6 @@ public class MockGeneratorTests
 		await That(result.Sources.Keys).IsEqualTo([
 			"Mock.g.cs",
 			"MockBehaviorExtensions.g.cs",
-			"MockGeneratorAttribute.g.cs",
 			"Mock.IMyInterface1.g.cs",
 		]).InAnyOrder();
 	}
@@ -497,5 +423,46 @@ public class MockGeneratorTests
 
 		await That(result.Sources).ContainsKey("Mock.HttpMessageHandler.g.cs").And
 			.ContainsKey("Mock.HttpClient.g.cs");
+	}
+
+	[Fact]
+	public async Task WhenUsingCreateMockFromNonMockolateNamespace_ShouldNotBeIncluded()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using MockolateExtensions;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			                 _ = new MyService().CreateMock();
+			             }
+			         }
+
+			         public class MyService { }
+			     }
+
+			     namespace MockolateExtensions
+			     {
+			         public static class MockExtensions
+			         {
+			             public static T CreateMock<T>(this T value)
+			                 where T : class
+			                 => value;
+			         }
+			     }
+			     """);
+
+		await ThatAll(
+			That(result.Sources.Keys).IsEqualTo([
+				"Mock.g.cs",
+				"MockBehaviorExtensions.g.cs",
+			]).InAnyOrder().IgnoringCase(),
+			That(result.Diagnostics).IsEmpty()
+		);
 	}
 }

@@ -49,14 +49,12 @@ internal static partial class Sources
 		#region CreateMock
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
-		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock()").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, []);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlRemarks("All provided <paramref name=\"setups\" /> are immediately applied to the mock.");
-		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(name).Append(">[] setups)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, setups);").AppendLine();
 		sb.AppendLine();
@@ -64,7 +62,6 @@ internal static partial class Sources
 		sb.AppendXmlSummary(
 			$"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("All provided <paramref name=\"setups\" /> are immediately applied to the mock.");
-		sb.Append("\t\t[global::Mockolate.MockGenerator]").AppendLine();
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 			.Append(
 				" CreateMock(global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Mock.IMockSetupFor")
