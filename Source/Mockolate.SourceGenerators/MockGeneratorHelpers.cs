@@ -9,13 +9,7 @@ namespace Mockolate.SourceGenerators;
 internal static class MockGeneratorHelpers
 {
 	internal static bool IsCreateMethodInvocation(this SyntaxNode node)
-		=> node is InvocationExpressionSyntax
-		{
-			Expression: MemberAccessExpressionSyntax
-			{
-				Name: GenericNameSyntax { Arity: > 0, },
-			},
-		};
+		=> node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax, };
 
 	private static bool IsCreateInvocationOnMockOrMockFactory(this SymbolInfo symbolInfo)
 	{
@@ -115,7 +109,7 @@ internal static class MockGeneratorHelpers
 					methodSymbol = symbolInfo.Symbol as IMethodSymbol
 					               ?? symbolInfo.CandidateSymbols.OfType<IMethodSymbol>().FirstOrDefault();
 
-					if (methodSymbol != null && symbolInfo.IsCreateInvocationOnMockOrMockFactory())
+					if (methodSymbol is { Name: "Implementing", } && symbolInfo.IsCreateInvocationOnMockOrMockFactory())
 					{
 						// Collect concrete generic args from each chained call, e.g. Implementing<IMyInterface>()
 						foreach (ITypeSymbol typeArgument in methodSymbol.TypeArguments)
