@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Threading;
+using aweXpect.Chronology;
 using Mockolate.Exceptions;
 using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
@@ -18,8 +19,8 @@ public sealed partial class VerificationResultTests
 			void Act()
 			{
 				sut.Mock.Verify.Dispense(Match.AnyParameters())
-					.Within(TimeSpan.FromMilliseconds(100))
-					.Within(TimeSpan.FromMilliseconds(200))
+					.Within(100.Milliseconds())
+					.Within(200.Milliseconds())
 					.AtLeastOnce();
 			}
 
@@ -36,7 +37,7 @@ public sealed partial class VerificationResultTests
 			sut.Dispense("Dark", 2);
 
 			VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result = sut.Mock.Verify.Dispense(Match.AnyParameters())
-				.Within(TimeSpan.FromMilliseconds(500));
+				.Within(500.Milliseconds());
 
 			await That(((IAsyncVerificationResult)result).VerifyAsync(l => l.Length > 0)).IsTrue();
 		}
@@ -47,7 +48,7 @@ public sealed partial class VerificationResultTests
 			IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
 			VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result = sut.Mock.Verify.Dispense(Match.AnyParameters())
-				.Within(TimeSpan.FromSeconds(30));
+				.Within(30.Seconds());
 			using CancellationTokenSource cts = new();
 			CancellationToken token = cts.Token;
 
@@ -90,7 +91,7 @@ public sealed partial class VerificationResultTests
 			void Act()
 			{
 				sut.Mock.Verify.Dispense(Match.AnyParameters())
-					.Within(TimeSpan.FromMilliseconds(30000))
+					.Within(30000.Milliseconds())
 					.WithCancellation(token)
 					.AtLeastOnce();
 			}
@@ -110,7 +111,7 @@ public sealed partial class VerificationResultTests
 			void Act()
 			{
 				sut.Mock.Verify.Dispense(Match.AnyParameters())
-					.Within(TimeSpan.FromMilliseconds(50))
+					.Within(50.Milliseconds())
 					.WithCancellation(token)
 					.AtLeastOnce();
 			}
@@ -158,13 +159,13 @@ public sealed partial class VerificationResultTests
 			}, token);
 
 			Stopwatch sw = Stopwatch.StartNew();
-			sut.Mock.Verify.Dispense(Match.AnyParameters()).Within(TimeSpan.FromMilliseconds(500))
+			sut.Mock.Verify.Dispense(Match.AnyParameters()).Within(2.Seconds())
 				.AtLeastOnce();
 			sw.Stop();
 			cts.Cancel();
 			await backgroundTask;
 
-			await That(sw.Elapsed).IsLessThan(TimeSpan.FromSeconds(2));
+			await That(sw.Elapsed).IsLessThan(5.Seconds());
 		}
 
 		[Fact]
@@ -174,7 +175,7 @@ public sealed partial class VerificationResultTests
 
 			void Act()
 			{
-				sut.Mock.Verify.Dispense(Match.AnyParameters()).Within(TimeSpan.FromMilliseconds(100))
+				sut.Mock.Verify.Dispense(Match.AnyParameters()).Within(100.Milliseconds())
 					.AtLeastOnce();
 			}
 
@@ -189,7 +190,7 @@ public sealed partial class VerificationResultTests
 			IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 
 			VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result = sut.Mock.Verify.Dispense(Match.AnyParameters())
-				.Within(TimeSpan.FromMilliseconds(100));
+				.Within(100.Milliseconds());
 
 			await That(result).Is<IAsyncVerificationResult>();
 		}
@@ -208,7 +209,7 @@ public sealed partial class VerificationResultTests
 					}
 				}, CancellationToken.None);
 
-			sut.Mock.Verify.Dispense(Match.AnyParameters()).Within(TimeSpan.FromSeconds(30)).AtLeast(8);
+			sut.Mock.Verify.Dispense(Match.AnyParameters()).Within(30.Seconds()).AtLeast(8);
 
 			await backgroundTask;
 		}

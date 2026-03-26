@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using aweXpect.Chronology;
 using Mockolate.Parameters;
 using Mockolate.Verify;
 
@@ -60,7 +61,7 @@ public sealed partial class ItTests
 			void Act()
 			{
 				sut.Mock.Verify.DoSomethingWithString(
-					It.Matches("F[aeiou]+o").AsRegex(timeout: TimeSpan.FromSeconds(0))).AtLeastOnce();
+					It.Matches("F[aeiou]+o").AsRegex(timeout: 0.Seconds())).AtLeastOnce();
 			}
 
 			await That(Act)
@@ -168,9 +169,9 @@ public sealed partial class ItTests
 		public async Task ToString_AsRegex_WithOptionsAndTimeout_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.Matches("F[aeiou]+o")
-				.AsRegex(RegexOptions.Compiled, TimeSpan.FromMilliseconds(400));
+				.AsRegex(RegexOptions.Compiled, 400.Milliseconds());
 			string expectedValue =
-				"It.Matches(\"F[aeiou]+o\").AsRegex(RegexOptions.Compiled, TimeSpan.FromMilliseconds(400))";
+				"It.Matches(\"F[aeiou]+o\").AsRegex(RegexOptions.Compiled, 400.Milliseconds())";
 
 			string? result = sut.ToString();
 
@@ -180,8 +181,8 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_WithTimeout_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex(timeout: TimeSpan.FromSeconds(2));
-			string expectedValue = "It.Matches(\"F[aeiou]+o\").AsRegex(timeout: TimeSpan.FromSeconds(2))";
+			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex(timeout: 2.Seconds());
+			string expectedValue = "It.Matches(\"F[aeiou]+o\").AsRegex(timeout: 2.Seconds())";
 
 			string? result = sut.ToString();
 

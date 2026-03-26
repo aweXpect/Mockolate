@@ -1,3 +1,4 @@
+using aweXpect.Chronology;
 using Mockolate.Exceptions;
 
 namespace Mockolate.Internal.Tests;
@@ -19,9 +20,9 @@ public class MockVerificationTimeoutExceptionTests
 	public async Task WithTimeout_ShouldIncludeTimeoutInMessage()
 	{
 		Exception exception = new("foo");
-		MockVerificationTimeoutException sut = new(TimeSpan.FromSeconds(30), exception);
+		MockVerificationTimeoutException sut = new(30.Seconds(), exception);
 
-		await That(sut.Timeout).IsEqualTo(TimeSpan.FromSeconds(30));
+		await That(sut.Timeout).IsEqualTo(30.Seconds());
 		await That(sut.Message).IsEqualTo("it timed out after 00:00:30");
 		await That(sut.InnerException).IsSameAs(exception);
 	}

@@ -42,6 +42,7 @@
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="aweXpect"/>
+		<PackageReference Include="aweXpect.Chronology"/>
 		<PackageReference Include="aweXpect.Mockolate"/>
 	</ItemGroup>
 
