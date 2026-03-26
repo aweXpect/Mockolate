@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Internals;
 
@@ -10,6 +11,10 @@ namespace Mockolate.SourceGenerators.Entities;
 internal record Class
 {
 	private readonly IAssemblySymbol _sourceAssembly;
+	private List<Event>? _allEvents;
+	private List<Method>? _allMethods;
+	private List<Property>? _allProperties;
+	private string? _classNameWithoutDots;
 
 	public Class(ITypeSymbol type,
 		IAssemblySymbol sourceAssembly,
@@ -228,21 +233,18 @@ internal record Class
 		}
 	}
 
-	private List<Property>? _allProperties;
 	public IEnumerable<Property> AllProperties()
 	{
 		_allProperties ??= AllClasses().SelectMany(c => c.Properties).Distinct(Property.EqualityComparer).ToList();
 		return _allProperties;
 	}
 
-	private List<Method>? _allMethods;
 	public IEnumerable<Method> AllMethods()
 	{
 		_allMethods ??= AllClasses().SelectMany(c => c.Methods).Distinct(Method.EqualityComparer).ToList();
 		return _allMethods;
 	}
 
-	private List<Event>? _allEvents;
 	public IEnumerable<Event> AllEvents()
 	{
 		_allEvents ??= AllClasses().SelectMany(c => c.Events).Distinct(Event.EqualityComparer).ToList();
@@ -259,12 +261,33 @@ internal record Class
 	}
 
 	public string GetClassNameWithoutDots()
-		=> ClassName
-			.Replace(",", "_")
-			.Replace(".", "_")
-			.Replace(" ", "")
-			.Replace("<", "_")
-			.Replace(">", "");
+	{
+		if (_classNameWithoutDots is not null)
+		{
+			return _classNameWithoutDots;
+		}
+
+		StringBuilder sb = new(ClassName.Length);
+		foreach (char c in ClassName)
+		{
+			switch (c)
+			{
+				case ',':
+				case '.':
+				case '<':
+				case '>':
+					sb.Append('_');
+					break;
+				case ' ':
+					break;
+				default:
+					sb.Append(c);
+					break;
+			}
+		}
+
+		return _classNameWithoutDots = sb.ToString();
+	}
 
 	private sealed class ClassEqualityComparer : IEqualityComparer<Class>
 	{
