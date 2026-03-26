@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using aweXpect.Chronology;
 using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
@@ -303,7 +304,7 @@ public sealed partial class ItExtensionsTests
 				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.Mock.Setup
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c
-						.WithStringMatching("F[A-Z]*").AsRegex(timeout: TimeSpan.FromSeconds(0))))
+						.WithStringMatching("F[A-Z]*").AsRegex(timeout: 0.Seconds())))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				Task Act()
