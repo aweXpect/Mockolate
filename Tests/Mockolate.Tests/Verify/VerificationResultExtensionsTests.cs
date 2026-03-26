@@ -1,3 +1,4 @@
+using aweXpect.Chronology;
 using Mockolate.Exceptions;
 using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
@@ -34,7 +35,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).AtLeast(5);
+				.Within(20.Milliseconds()).AtLeast(5);
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -70,7 +71,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).AtLeastOnce();
+				.Within(20.Milliseconds()).AtLeastOnce();
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -106,7 +107,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).AtLeastTwice();
+				.Within(20.Milliseconds()).AtLeastTwice();
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -143,7 +144,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).AtMost(4);
+				.Within(20.Milliseconds()).AtMost(4);
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -180,7 +181,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).AtMostOnce();
+				.Within(20.Milliseconds()).AtMostOnce();
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -217,7 +218,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).AtMostTwice();
+				.Within(20.Milliseconds()).AtMostTwice();
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -264,7 +265,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).Between(3, 5);
+				.Within(20.Milliseconds()).Between(3, 5);
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -330,7 +331,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).Exactly(3);
+				.Within(20.Milliseconds()).Exactly(3);
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -367,7 +368,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).Never();
+				.Within(20.Milliseconds()).Never();
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -403,7 +404,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).Once();
+				.Within(20.Milliseconds()).Once();
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -513,7 +514,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).Times(_ => false);
+				.Within(20.Milliseconds()).Times(_ => false);
 		}
 
 		await That(Act).Throws<MockVerificationException>()
@@ -640,7 +641,7 @@ public class VerificationResultExtensionsTests
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.IsAny<int>())
-				.Within(TimeSpan.FromMilliseconds(20)).Twice();
+				.Within(20.Milliseconds()).Twice();
 		}
 
 		await That(Act).Throws<MockVerificationException>()
