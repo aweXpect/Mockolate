@@ -28,6 +28,6 @@ sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
 Mocked types must be mockable. This rule will prevent you from using unsupported types:
 
 - `CreateMock()`  
-  Type must be an interface, a delegate or a supported class (not sealed, with accessible constructor)
+  Type must be an interface, a delegate or a supported class (e.g. not sealed)
 - `Implementing<T>()`  
   Type must be an interface

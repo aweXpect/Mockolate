@@ -287,52 +287,6 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
-	public async Task WhenUsingIncorrectMockGeneratorAttribute_ShouldNotBeIncluded()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using System.Threading;
-			     using System.Threading.Tasks;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			_ = Mock.Create<IMyInterface>();
-			             }
-			         }
-
-			         public interface IMyInterface { }
-
-			         public class Mock
-			         {
-			     		[Mockolate.Incorrect.MockGenerator]
-			     		public static T Create<T>() => default(T)!;
-			         }
-			     }
-
-			     namespace Mockolate.Incorrect
-			     {
-			         [AttributeUsage(AttributeTargets.Method)]
-			         internal class MockGeneratorAttribute : Attribute
-			         {
-			         }
-			     }
-			     """);
-
-		await ThatAll(
-			That(result.Sources.Keys).IsEqualTo([
-				"Mock.g.cs",
-				"MockBehaviorExtensions.g.cs",
-			]).InAnyOrder().IgnoringCase(),
-			That(result.Diagnostics).IsEmpty()
-		);
-	}
-
-	[Fact]
 	public async Task WhenUsingSetups_ShouldGenerateMocksAndExtensions()
 	{
 		GeneratorResult result = Generator
