@@ -21,8 +21,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PostAsync(
-			IParameter<string?> requestUri,
-			IParameter<HttpContent?>? content = null)
+			ParameterMatcher<string?> requestUri,
+			ParameterMatcher<HttpContent?>? content = null)
 			=> setup.PostAsync(
 				requestUri,
 				content ?? It.IsAny<HttpContent?>(),
@@ -34,8 +34,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PostAsync(
-			IParameter<Uri?> requestUri,
-			IParameter<HttpContent?>? content = null)
+			ParameterMatcher<Uri?> requestUri,
+			ParameterMatcher<HttpContent?>? content = null)
 			=> setup.PostAsync(
 				requestUri,
 				content ?? It.IsAny<HttpContent?>(),
@@ -47,9 +47,9 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PostAsync(
-			IParameter<string?> requestUri,
-			IParameter<HttpContent?> content,
-			IParameter<CancellationToken> cancellationToken)
+			ParameterMatcher<string?> requestUri,
+			ParameterMatcher<HttpContent?> content,
+			ParameterMatcher<CancellationToken> cancellationToken)
 		{
 			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
@@ -74,9 +74,9 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PostAsync(
-			IParameter<Uri?> requestUri,
-			IParameter<HttpContent?> content,
-			IParameter<CancellationToken> cancellationToken)
+			ParameterMatcher<Uri?> requestUri,
+			ParameterMatcher<HttpContent?> content,
+			ParameterMatcher<CancellationToken> cancellationToken)
 		{
 			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)

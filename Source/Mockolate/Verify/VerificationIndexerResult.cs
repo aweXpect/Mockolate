@@ -30,6 +30,6 @@ public class VerificationIndexerResult<TSubject, TParameter>
 	/// <summary>
 	///     Verifies the indexer write access on the mock with the given <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<TSubject> Set(IParameter<TParameter>? value)
+	public VerificationResult<TSubject> Set(ParameterMatcher<TParameter>? value)
 		=> _mockRegistry.Indexer(_subject, (IParameter)(value ?? It.IsNull<TParameter>()), _parameters);
 }

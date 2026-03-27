@@ -14,7 +14,7 @@ public partial class It
 		=> new TrueParameterMatch();
 
 	[DebuggerNonUserCode]
-	private sealed class TrueParameterMatch : TypedMatch<bool>
+	private sealed class TrueParameterMatch : ParameterMatcher<bool>
 	{
 		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
 		protected override bool Matches(bool value) => value;

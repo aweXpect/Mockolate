@@ -55,9 +55,9 @@ public static partial class ItExtensions
 		: IHttpRequestMessageParameter<TParameter>, IParameter
 	{
 		private List<Action<HttpRequestMessage>>? _callbacks;
-		private IParameter<HttpContent?>? _contentParameter;
+		private ParameterMatcher<HttpContent?>? _contentParameter;
 		private HttpHeadersMatcher? _headers;
-		private IParameter<Uri?>? _uriParameter;
+		private ParameterMatcher<Uri?>? _uriParameter;
 
 		/// <summary>
 		///     Returns <c>this</c> typed as <typeparamref name="TParameter" /> for fluent API.
@@ -72,7 +72,7 @@ public static partial class ItExtensions
 		}
 
 		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
-		public IParameter<HttpRequestMessage> Do(Action<HttpRequestMessage> callback)
+		public ParameterMatcher<HttpRequestMessage> Do(Action<HttpRequestMessage> callback)
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);

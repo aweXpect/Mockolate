@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Mockolate.Parameters;
 
 namespace Mockolate;
 
@@ -21,14 +18,6 @@ public partial class It
 	private It()
 	{
 		// Prevent instantiation.
-	}
-
-	/// <summary>
-	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
-	/// </summary>
-	[DebuggerNonUserCode]
-	private abstract class TypedMatch<T> : ParameterMatcher<T>
-	{
 	}
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members

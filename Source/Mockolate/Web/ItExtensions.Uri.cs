@@ -142,7 +142,7 @@ public static partial class ItExtensions
 			}
 		}
 
-		public IParameter<Uri?> Do(Action<Uri?> callback)
+		public ParameterMatcher<Uri?> Do(Action<Uri?> callback)
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);

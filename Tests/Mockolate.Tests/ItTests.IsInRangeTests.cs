@@ -37,7 +37,7 @@ public sealed partial class ItTests
 			bool expectFound)
 		{
 			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
-			It.IInRangeParameter<int> range = It.IsInRange(minimum, maximum);
+			It.InRangeMatch<int> range = It.IsInRange(minimum, maximum);
 			range.Exclusive();
 
 			sut.DoSomethingWithInt(5);
@@ -67,7 +67,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_Exclusive_ShouldReturnExpectedValue()
 		{
-			IParameter<double> sut = It.IsInRange(1.1, 4.1).Exclusive();
+			var sut =It.IsInRange(1.1, 4.1).Exclusive();
 			string expectedValue = "It.IsInRange(1.1, 4.1).Exclusive()";
 
 			string? result = sut.ToString();
@@ -78,7 +78,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_Inclusive_ShouldReturnExpectedValue()
 		{
-			IParameter<int> sut = It.IsInRange(1, 4);
+			var sut =It.IsInRange(1, 4);
 			string expectedValue = "It.IsInRange(1, 4)";
 
 			string? result = sut.ToString();

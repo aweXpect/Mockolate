@@ -16,7 +16,7 @@ public partial class It
 		=> new AnyParameterMatch<T>();
 
 	[DebuggerNonUserCode]
-	private sealed class AnyParameterMatch<T> : TypedMatch<T>
+	private sealed class AnyParameterMatch<T> : ParameterMatcher<T>
 	{
 		protected override bool Matches(T value) => true;
 

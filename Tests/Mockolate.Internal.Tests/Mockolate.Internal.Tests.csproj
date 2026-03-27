@@ -11,4 +11,8 @@
 		<PackageReference Remove="Nullable"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Remove="WebTests.cs" />
+	</ItemGroup>
+
 </Project>

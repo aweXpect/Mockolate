@@ -7,5 +7,5 @@ namespace Mockolate.Parameters;
 ///     Matches a method parameter of type <see cref="System.Span{T}" /> of <typeparamref name="T" /> against an
 ///     expectation.
 /// </summary>
-public interface ISpanParameter<T> : IParameter<SpanWrapper<T>>;
+public interface ISpanParameter<T>;
 #endif

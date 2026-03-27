@@ -12,10 +12,10 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task Matches_WhenParameterCountDoesNotMatch_ShouldNotInvokeParameterCallbacks()
 	{
-		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
+		ParameterMatcher<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
 
 		bool result = MyIndexerSetup.DoesMatch([
-			new NamedParameter("foo", (IParameter)parameter),
+			new NamedParameter("foo", parameter),
 		], [
 			new NamedParameterValue("foo", 4),
 			new NamedParameterValue("bar", 5),
@@ -28,10 +28,10 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task Matches_WhenParameterCountMatches_ShouldInvokeParameterCallbacks()
 	{
-		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
+		ParameterMatcher<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
 
 		bool result = MyIndexerSetup.DoesMatch([
-			new NamedParameter("foo", (IParameter)parameter),
+			new NamedParameter("foo", parameter),
 		], [
 			new NamedParameterValue("foo", 4),
 		]);
@@ -98,9 +98,9 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task Parameter_Do_ShouldExecuteCallback()
 	{
-		List<string> capturedValues = [];
+		List<string?> capturedValues = [];
 		IIndexerService sut = IIndexerService.CreateMock();
-		sut.Mock.Setup[It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)]
+		sut.Mock.Setup[It.IsAny<string?>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)]
 			.InitializeWith(42);
 
 		_ = sut["foo", 1, 2];
@@ -112,9 +112,9 @@ public sealed partial class SetupIndexerTests
 	[Fact]
 	public async Task Parameter_Do_ShouldOnlyExecuteCallbackWhenAllParametersMatch()
 	{
-		List<string> capturedValues = [];
+		List<string?> capturedValues = [];
 		IIndexerService sut = IIndexerService.CreateMock();
-		sut.Mock.Setup[It.IsAny<string>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)]
+		sut.Mock.Setup[It.IsAny<string?>().Do(v => capturedValues.Add(v)), It.Is(1), It.Is(2)]
 			.InitializeWith(42);
 
 		_ = sut["foo", 1, 2];
@@ -166,7 +166,7 @@ public sealed partial class SetupIndexerTests
 	public async Task ThreeLevels_ShouldUseInitializedValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
-		sut.Mock.Setup[It.Is("foo"), It.Is(1), It.Is(2)].InitializeWith(42);
+		sut.Mock.Setup["foo", It.Is(1), It.Is(2)].InitializeWith(42);
 
 		int? result1 = sut["foo", 1, 2];
 		int? result2 = sut["bar", 1, 2];

@@ -30,7 +30,7 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="request" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> SendAsync(
-			IParameter<HttpRequestMessage> request)
+			ParameterMatcher<HttpRequestMessage> request)
 		{
 			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
@@ -109,7 +109,7 @@ public static partial class HttpClientExtensions
 
 	private sealed class HttpRequestMessageParameter<T>(
 		Func<HttpRequestMessage, T> valueSelector,
-		IParameter<T> parameter)
+		ParameterMatcher<T> parameter)
 		: IHttpRequestMessageParameter
 	{
 		public bool Matches(HttpRequestMessage value)
@@ -131,24 +131,19 @@ public static partial class HttpClientExtensions
 		}
 	}
 
-	private sealed class HttpStringUriParameter(IParameter<string?> parameter)
+	private sealed class HttpStringUriParameter(ParameterMatcher<string?> parameter)
 		: IHttpRequestMessageParameter
 	{
 		public bool Matches(HttpRequestMessage value)
 		{
-			if (parameter is not IParameter invokableParameter)
-			{
-				return true;
-			}
-
 			if (value.RequestUri is null)
 			{
 				return false;
 			}
 
 			string requestUri1 = value.RequestUri.ToString();
-			return invokableParameter.Matches(requestUri1) ||
-			       (requestUri1.EndsWith('/') && invokableParameter.Matches(requestUri1.TrimEnd('/')));
+			return parameter.Matches(requestUri1) ||
+			       (requestUri1.EndsWith('/') && parameter.Matches(requestUri1.TrimEnd('/')));
 		}
 
 		public void InvokeCallbacks(HttpRequestMessage value)

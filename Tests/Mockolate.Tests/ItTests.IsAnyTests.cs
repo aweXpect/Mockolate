@@ -12,7 +12,7 @@ public sealed partial class ItTests
 		[InlineData("foo")]
 		public async Task ShouldAlwaysMatch(string? value)
 		{
-			IParameter<string> sut = It.IsAny<string>();
+			var sut =It.IsAny<string>();
 
 			bool result = ((IParameter)sut).Matches(value);
 
@@ -22,7 +22,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.IsAny<string>();
+			var sut =It.IsAny<string>();
 			string expectedValue = "It.IsAny<string>()";
 
 			string? result = sut.ToString();

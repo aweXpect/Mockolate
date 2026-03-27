@@ -29,7 +29,7 @@ public partial class It
 
 	[DebuggerNonUserCode]
 	private sealed class ReadOnlySpanParameterMatch<T>(Func<T[], bool>? predicate, string? predicateExpression = null)
-		: TypedMatch<ReadOnlySpanWrapper<T>>, IVerifyReadOnlySpanParameter<T>
+		: ParameterMatcher<ReadOnlySpanWrapper<T>>, IVerifyReadOnlySpanParameter<T>
 	{
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()

@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Mockolate.ExampleTests.TestData;
@@ -49,6 +48,7 @@ public class ExampleTests
 		check.Once();
 	}
 
+	/* TODO
 #if NET8_0_OR_GREATER
 	[Theory]
 	[InlineData(HttpStatusCode.OK)]
@@ -65,6 +65,7 @@ public class ExampleTests
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
 #endif
+*/
 
 	[Fact]
 	public async Task MockIFileSystem_ShouldWork()

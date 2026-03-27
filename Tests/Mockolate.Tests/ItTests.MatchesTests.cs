@@ -90,7 +90,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ShouldFreezeValuesOnFirstMatch()
 		{
-			It.IParameterMatches match = It.Matches("F*o");
+			var match = It.Matches("F*o");
 			match.CaseSensitive();
 			IParameter parameter = (IParameter)match;
 
@@ -123,7 +123,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_CaseSensitive_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F\"[aeiou]+o").AsRegex().CaseSensitive();
+			var sut =It.Matches("F\"[aeiou]+o").AsRegex().CaseSensitive();
 			string expectedValue = "It.Matches(\"F\\\"[aeiou]+o\").AsRegex().CaseSensitive()";
 
 			string? result = sut.ToString();
@@ -134,7 +134,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F\"[aeiou]+o").AsRegex();
+			var sut =It.Matches("F\"[aeiou]+o").AsRegex();
 			string expectedValue = "It.Matches(\"F\\\"[aeiou]+o\").AsRegex()";
 
 			string? result = sut.ToString();
@@ -145,7 +145,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_WithInfiniteMatchTimeout_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex(timeout: Regex.InfiniteMatchTimeout);
+			var sut =It.Matches("F[aeiou]+o").AsRegex(timeout: Regex.InfiniteMatchTimeout);
 			string expectedValue = "It.Matches(\"F[aeiou]+o\").AsRegex()";
 
 			string? result = sut.ToString();
@@ -156,7 +156,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_WithOptions_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex(RegexOptions.Compiled | RegexOptions.ECMAScript);
+			var sut =It.Matches("F[aeiou]+o").AsRegex(RegexOptions.Compiled | RegexOptions.ECMAScript);
 			string expectedValue =
 				"It.Matches(\"F[aeiou]+o\").AsRegex(RegexOptions.Compiled | RegexOptions.ECMAScript)";
 
@@ -168,7 +168,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_WithOptionsAndTimeout_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F[aeiou]+o")
+			var sut =It.Matches("F[aeiou]+o")
 				.AsRegex(RegexOptions.Compiled, 400.Milliseconds());
 			string expectedValue =
 				"It.Matches(\"F[aeiou]+o\").AsRegex(RegexOptions.Compiled, 400.Milliseconds())";
@@ -181,7 +181,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_AsRegex_WithTimeout_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("F[aeiou]+o").AsRegex(timeout: 2.Seconds());
+			var sut =It.Matches("F[aeiou]+o").AsRegex(timeout: 2.Seconds());
 			string expectedValue = "It.Matches(\"F[aeiou]+o\").AsRegex(timeout: 2.Seconds())";
 
 			string? result = sut.ToString();
@@ -192,7 +192,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_CaseSensitive_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("f*\"oo").CaseSensitive();
+			var sut =It.Matches("f*\"oo").CaseSensitive();
 			string expectedValue = "It.Matches(\"f*\\\"oo\").CaseSensitive()";
 
 			string? result = sut.ToString();
@@ -203,7 +203,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.Matches("f*\"oo");
+			var sut =It.Matches("f*\"oo");
 			string expectedValue = "It.Matches(\"f*\\\"oo\")";
 
 			string? result = sut.ToString();

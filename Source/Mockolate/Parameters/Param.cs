@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Mockolate.Parameters;
 
@@ -28,18 +29,8 @@ public readonly struct Param<T>
 
 	/// <summary>
 	///     Implicitly converts a typed <see cref="ParameterMatcher{T}" /> to a <see cref="Param{T}" />.
-	///     This is preferred over the non-generic conversion when the type parameter matches,
-	///     which resolves overload ambiguity for indexers and generic methods.
 	/// </summary>
 	public static implicit operator Param<T>(ParameterMatcher<T> matcher)
-		=> new(matcher);
-
-	/// <summary>
-	///     Implicitly converts any <see cref="ParameterMatcher" /> to a <see cref="Param{T}" />.
-	///     This uses the non-generic base class to allow any matcher (regardless of its generic type parameter)
-	///     to be accepted, enabling scenarios like covariant matching.
-	/// </summary>
-	public static implicit operator Param<T>(ParameterMatcher matcher)
 		=> new(matcher);
 }
 

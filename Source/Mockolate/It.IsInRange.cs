@@ -12,7 +12,7 @@ public partial class It
 	/// <summary>
 	///     Matches any parameter that is within the specified range.
 	/// </summary>
-	public static ParameterMatcher<T> IsInRange<T>(T minimum, T maximum,
+	public static InRangeMatch<T> IsInRange<T>(T minimum, T maximum,
 		[CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
 		where T : IComparable<T>
@@ -21,24 +21,8 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> to be in a given range.
 	/// </summary>
-	public interface IInRangeParameter<out T> : IParameter<T>
-	{
-		/// <summary>
-		///     Exclude the minimum and maximum of the range.
-		/// </summary>
-		IParameter<T> Exclusive();
-
-		/// <summary>
-		///     Include the minimum and maximum of the range.
-		/// </summary>
-		/// <remarks>
-		///     This is the default behavior.
-		/// </remarks>
-		IParameter<T> Inclusive();
-	}
-
 	[DebuggerNonUserCode]
-	private sealed class InRangeMatch<T> : TypedMatch<T>, IInRangeParameter<T>
+	public class InRangeMatch<T> : ParameterMatcher<T>
 		where T : IComparable<T>
 	{
 		private readonly T _maximum;
@@ -47,6 +31,7 @@ public partial class It
 		private readonly string _minimumExpression;
 		private bool _includeBounds = true;
 
+		/// <inheritdoc cref="InRangeMatch{T}" />
 		public InRangeMatch(T minimum, T maximum, string minimumExpression, string maximumExpression)
 		{
 			if (minimum.CompareTo(maximum) > 0)
@@ -62,20 +47,28 @@ public partial class It
 			_maximumExpression = maximumExpression;
 		}
 
-		/// <inheritdoc cref="IInRangeParameter{T}.Exclusive()" />
-		public IParameter<T> Exclusive()
+		/// <summary>
+		///     Exclude the minimum and maximum of the range.
+		/// </summary>
+		public InRangeMatch<T> Exclusive()
 		{
 			_includeBounds = false;
 			return this;
 		}
 
-		/// <inheritdoc cref="IInRangeParameter{T}.Inclusive()" />
-		public IParameter<T> Inclusive()
+		/// <summary>
+		///     Include the minimum and maximum of the range.
+		/// </summary>
+		/// <remarks>
+		///     This is the default behavior.
+		/// </remarks>
+		public InRangeMatch<T> Inclusive()
 		{
 			_includeBounds = true;
 			return this;
 		}
 
+		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
 		protected override bool Matches(T value)
 		{
 			if (_includeBounds)

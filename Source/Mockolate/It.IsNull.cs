@@ -15,7 +15,7 @@ public partial class It
 		=> new NullParameterMatch<T>();
 
 	[DebuggerNonUserCode]
-	private sealed class NullParameterMatch<T> : TypedMatch<T>
+	private sealed class NullParameterMatch<T> : ParameterMatcher<T>
 	{
 		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
 		protected override bool Matches(T value) => value is null;

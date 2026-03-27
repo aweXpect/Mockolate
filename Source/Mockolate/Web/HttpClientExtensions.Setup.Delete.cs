@@ -21,7 +21,7 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
-			IParameter<string?> requestUri)
+			ParameterMatcher<string?> requestUri)
 			=> setup.DeleteAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
@@ -30,7 +30,7 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
-			IParameter<Uri?> requestUri)
+			ParameterMatcher<Uri?> requestUri)
 			=> setup.DeleteAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
@@ -39,8 +39,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
-			IParameter<string?> requestUri,
-			IParameter<CancellationToken> cancellationToken)
+			ParameterMatcher<string?> requestUri,
+			ParameterMatcher<CancellationToken> cancellationToken)
 		{
 			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
@@ -64,8 +64,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
-			IParameter<Uri?> requestUri,
-			IParameter<CancellationToken> cancellationToken)
+			ParameterMatcher<Uri?> requestUri,
+			ParameterMatcher<CancellationToken> cancellationToken)
 		{
 			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)

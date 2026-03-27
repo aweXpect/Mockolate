@@ -13,30 +13,22 @@ public partial class It
 	/// <summary>
 	///     Matches a parameter that is equal to one of the <paramref name="values" />.
 	/// </summary>
-	public static ParameterMatcher<T> IsOneOf<T>(params T[] values)
-		=> new ParameterIsOneOfMatch<T>(values);
+	public static ParameterIsOneOfMatch<T> IsOneOf<T>(params T[] values)
+		=> new(values);
 
 	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison of a collection of alternatives.
 	/// </summary>
-	public interface IIsOneOfParameter<out T> : IParameter<T>
-	{
-		/// <summary>
-		///     Use the specified comparer to determine equality.
-		/// </summary>
-		IIsOneOfParameter<T> Using(IEqualityComparer<T> comparer,
-			[CallerArgumentExpression(nameof(comparer))]
-			string doNotPopulateThisValue = "");
-	}
-
 	[DebuggerNonUserCode]
-	private sealed class ParameterIsOneOfMatch<T>(T[] values) : TypedMatch<T>, IIsOneOfParameter<T>
+	public class ParameterIsOneOfMatch<T>(T[] values) : ParameterMatcher<T>
 	{
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
 
-		/// <inheritdoc cref="IIsParameter{T}.Using(IEqualityComparer{T}, string)" />
-		public IIsOneOfParameter<T> Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue = "")
+		/// <summary>
+		///     Use the specified comparer to determine equality.
+		/// </summary>
+		public ParameterIsOneOfMatch<T> Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue = "")
 		{
 			_comparer = comparer;
 			_comparerExpression = doNotPopulateThisValue;

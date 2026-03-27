@@ -22,7 +22,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.IsNull<string>();
+			var sut =It.IsNull<string>();
 			string expectedValue = "It.IsNull<string>()";
 
 			string? result = sut.ToString();
@@ -36,7 +36,7 @@ public sealed partial class ItTests
 		[InlineData("foo", false)]
 		public async Task WithValue_Nullable_ShouldMatchWhenEqual(string? value, bool expectMatch)
 		{
-			IParameter<string?> sut = It.IsNull<string?>();
+			var sut =It.IsNull<string?>();
 
 			bool result = ((IParameter)sut).Matches(value);
 

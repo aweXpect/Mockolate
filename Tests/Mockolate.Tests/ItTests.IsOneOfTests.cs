@@ -17,7 +17,7 @@ public sealed partial class ItTests
 		[InlineData(42, false)]
 		public async Task ShouldMatchWhenEqualToAny(int value, bool expectMatch)
 		{
-			IParameter<int> sut = It.IsOneOf(5, 6, 7);
+			var sut =It.IsOneOf(5, 6, 7);
 
 			bool result = ((IParameter)sut).Matches(value);
 
@@ -31,7 +31,7 @@ public sealed partial class ItTests
 			MyImplementation value1 = new();
 			MyImplementation value2 = new();
 			MyOtherImplementation other1 = new();
-			sut.Mock.Setup.DoSomething(It.IsOneOf(value1, value2))
+			sut.Mock.Setup.DoSomething(It.IsOneOf(value1, value2).As<IMyBase>())
 				.Returns(3);
 
 			int result1 = sut.DoSomething(value1);
@@ -45,7 +45,7 @@ public sealed partial class ItTests
 		public async Task ShouldSupportCovarianceInVerify()
 		{
 			IMyService sut = IMyService.CreateMock();
-			sut.Mock.Setup.DoSomething(It.Satisfies<MyImplementation>(_ => true))
+			sut.Mock.Setup.DoSomething(It.Satisfies<MyImplementation>(_ => true).As<IMyBase>())
 				.Do(d => d.DoWork())
 				.Returns(3);
 			MyImplementation value1 = new();
@@ -55,16 +55,16 @@ public sealed partial class ItTests
 
 			int result1 = sut.DoSomething(value1);
 
-			await That(sut.Mock.Verify.DoSomething(It.IsOneOf(value1, value2))).Once();
+			await That(sut.Mock.Verify.DoSomething(It.IsOneOf(value1, value2).As<IMyBase>())).Once();
 			await That(value1.Progress).IsEqualTo(1);
 			await That(result1).IsEqualTo(3);
-			await That(sut.Mock.Verify.DoSomething(It.IsOneOf(other1, other2))).Never();
+			await That(sut.Mock.Verify.DoSomething(It.IsOneOf(other1, other2).As<IMyBase>())).Never();
 		}
 
 		[Fact]
 		public async Task ToString_Using_ShouldReturnExpectedValue()
 		{
-			IParameter<int> sut = It.IsOneOf(3, 5).Using(new AllEqualComparer());
+			var sut =It.IsOneOf(3, 5).Using(new AllEqualComparer());
 			string expectedValue = "It.IsOneOf(3, 5).Using(new AllEqualComparer())";
 
 			string? result = sut.ToString();
@@ -75,7 +75,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_WithNullableIntValues_ShouldReturnExpectedValue()
 		{
-			IParameter<int?> sut = It.IsOneOf<int?>(3, null, 5);
+			var sut =It.IsOneOf<int?>(3, null, 5);
 			string expectedValue = "It.IsOneOf(3, null, 5)";
 
 			string? result = sut.ToString();
@@ -86,7 +86,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_WithStringValues_ShouldReturnExpectedValue()
 		{
-			IParameter<string> sut = It.IsOneOf("foo", "bar");
+			var sut =It.IsOneOf("foo", "bar");
 			string expectedValue = "It.IsOneOf(\"foo\", \"bar\")";
 
 			string? result = sut.ToString();
@@ -100,7 +100,7 @@ public sealed partial class ItTests
 		[InlineData(-42)]
 		public async Task WithComparer_ShouldUseComparer(int value)
 		{
-			IParameter<int> sut = It.IsOneOf(4, 5, 6).Using(new AllEqualComparer());
+			var sut =It.IsOneOf(4, 5, 6).Using(new AllEqualComparer());
 
 			bool result = ((IParameter)sut).Matches(value);
 

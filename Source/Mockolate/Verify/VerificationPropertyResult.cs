@@ -30,6 +30,6 @@ public class VerificationPropertyResult<TSubject, TParameter>
 	/// <summary>
 	///     Verifies the property write access on the mock with the given <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<TSubject> Set(IParameter<TParameter>? value)
+	public VerificationResult<TSubject> Set(ParameterMatcher<TParameter>? value)
 		=> _mockRegistry.Property(_subject, _propertyName, (IParameter)(value ?? It.IsNull<TParameter>()));
 }

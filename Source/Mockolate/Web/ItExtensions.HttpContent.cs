@@ -102,7 +102,7 @@ public static partial class ItExtensions
 		}
 
 		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
-		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
+		public ParameterMatcher<HttpContent?> Do(Action<HttpContent?> callback)
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);
@@ -255,7 +255,7 @@ public static partial class ItExtensions
 		IHttpRequestMessagePropertyParameter<HttpContent?>, IParameter
 	{
 		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
-		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
+		public ParameterMatcher<HttpContent?> Do(Action<HttpContent?> callback)
 			=> parameter.Do(callback);
 
 		/// <inheritdoc cref="IHttpHeaderParameter{T}.WithHeaders" />

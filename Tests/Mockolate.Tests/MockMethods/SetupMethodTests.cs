@@ -26,12 +26,12 @@ public sealed partial class SetupMethodTests
 	public async Task GenericMethod_SetupShouldWork()
 	{
 		IMethodService sut = IMethodService.CreateMock();
-		sut.Mock.Setup.MyGenericMethod(It.Is(0), It.Is("foo")).Returns(42);
+		sut.Mock.Setup.MyGenericMethod<int, string>(It.Is(0), It.Is("foo")).Returns(42);
 
 		int result1 = sut.MyGenericMethod(0, "foo");
 		int result2 = sut.MyGenericMethod(0L, "foo");
 
-		await That(sut.Mock.Verify.MyGenericMethod(It.IsAny<long>(), It.IsAny<string>())).Once();
+		await That(sut.Mock.Verify.MyGenericMethod<long, string>(It.IsAny<long>(), It.IsAny<string>())).Once();
 		await That(result1).IsEqualTo(42);
 		await That(result2).IsEqualTo(0);
 	}
@@ -508,7 +508,7 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task TriggerCallbacks_WhenParameterCountDoesNotMatch_ShouldNotInvokeParameterCallbacks()
 	{
-		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
+		var parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
 		MyMethodSetup.DoTriggerCallbacks([
 			new NamedParameter("foo", (IParameter)parameter),
 		], [4, 5,]);
@@ -519,7 +519,7 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task TriggerCallbacks_WhenParameterCountMatches_ShouldInvokeParameterCallbacks()
 	{
-		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
+		var parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
 		MyMethodSetup.DoTriggerCallbacks([
 			new NamedParameter("foo", (IParameter)parameter),
 		], [4,]);

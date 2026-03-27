@@ -22,7 +22,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IParameter<bool> sut = It.IsFalse();
+			var sut =It.IsFalse();
 			string expectedValue = "It.IsFalse()";
 
 			string? result = sut.ToString();

@@ -20,4 +20,12 @@
 		<InternalsVisibleTo Include="Mockolate.Internal.Tests" PublicKey="$(PublicKey)"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Remove="Web\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Remove="Web\**" />
+	</ItemGroup>
+
 </Project>

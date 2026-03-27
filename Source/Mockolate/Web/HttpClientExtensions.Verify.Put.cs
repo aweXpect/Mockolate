@@ -21,8 +21,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public VerificationResult<HttpClient> PutAsync(
-			IParameter<string?> requestUri,
-			IParameter<HttpContent?>? content = null)
+			ParameterMatcher<string?> requestUri,
+			ParameterMatcher<HttpContent?>? content = null)
 			=> verify.PutAsync(
 				requestUri,
 				content ?? It.IsAny<HttpContent?>(),
@@ -34,8 +34,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public VerificationResult<HttpClient> PutAsync(
-			IParameter<Uri?> requestUri,
-			IParameter<HttpContent?>? content = null)
+			ParameterMatcher<Uri?> requestUri,
+			ParameterMatcher<HttpContent?>? content = null)
 			=> verify.PutAsync(
 				requestUri,
 				content ?? It.IsAny<HttpContent?>(),
@@ -47,9 +47,9 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public VerificationResult<HttpClient> PutAsync(
-			IParameter<string?> requestUri,
-			IParameter<HttpContent?> content,
-			IParameter<CancellationToken> cancellationToken)
+			ParameterMatcher<string?> requestUri,
+			ParameterMatcher<HttpContent?> content,
+			ParameterMatcher<CancellationToken> cancellationToken)
 		{
 			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
@@ -75,9 +75,9 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public VerificationResult<HttpClient> PutAsync(
-			IParameter<Uri?> requestUri,
-			IParameter<HttpContent?> content,
-			IParameter<CancellationToken> cancellationToken)
+			ParameterMatcher<Uri?> requestUri,
+			ParameterMatcher<HttpContent?> content,
+			ParameterMatcher<CancellationToken> cancellationToken)
 		{
 			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)

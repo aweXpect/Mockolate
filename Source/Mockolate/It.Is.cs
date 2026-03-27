@@ -12,40 +12,25 @@ public partial class It
 	/// <summary>
 	///     Matches a parameter that is equal to <paramref name="value" />.
 	/// </summary>
-	public static ParameterMatcher<T> Is<T>(T value,
+	public static ParameterEqualsMatch<T> Is<T>(T value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
-		=> new ParameterEqualsMatch<T>(value, doNotPopulateThisValue);
+		=> new(value, doNotPopulateThisValue);
+
 
 	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison.
 	/// </summary>
-	public interface IIsParameter<out T> : IParameter<T>
-	{
-		/// <summary>
-		///     Use the specified comparer to determine equality.
-		/// </summary>
-		IIsParameter<T> Using(IEqualityComparer<T> comparer,
-			[CallerArgumentExpression(nameof(comparer))]
-			string doNotPopulateThisValue = "");
-	}
-
 	[DebuggerNonUserCode]
-	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>
+	public class ParameterEqualsMatch<T>(T value, string valueExpression) : ParameterMatcher<T>
 	{
-		private readonly T _value;
-		private readonly string _valueExpression;
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
 
-		public ParameterEqualsMatch(T value, string valueExpression)
-		{
-			_value = value;
-			_valueExpression = valueExpression;
-		}
-
-		/// <inheritdoc cref="IIsParameter{T}.Using(IEqualityComparer{T}, string)" />
-		public IIsParameter<T> Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue = "")
+		/// <summary>
+		///     Use the specified comparer to determine equality.
+		/// </summary>
+		public ParameterEqualsMatch<T> Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue = "")
 		{
 			_comparer = comparer;
 			_comparerExpression = doNotPopulateThisValue;
@@ -53,14 +38,14 @@ public partial class It
 		}
 
 		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
-		protected override bool Matches(T value)
+		protected override bool Matches(T value1)
 		{
 			if (_comparer is not null)
 			{
-				return _comparer.Equals(value, _value);
+				return _comparer.Equals(value1, value);
 			}
 
-			return EqualityComparer<T>.Default.Equals(value, _value);
+			return EqualityComparer<T>.Default.Equals(value1, value);
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -68,10 +53,10 @@ public partial class It
 		{
 			if (_comparer is not null)
 			{
-				return $"It.Is({_valueExpression}).Using({_comparerExpression})";
+				return $"It.Is({valueExpression}).Using({_comparerExpression})";
 			}
 
-			return _valueExpression;
+			return valueExpression;
 		}
 	}
 }

@@ -21,7 +21,7 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public VerificationResult<HttpClient> DeleteAsync(
-			IParameter<string?> requestUri)
+			ParameterMatcher<string?> requestUri)
 			=> verify.DeleteAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
@@ -30,7 +30,7 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" />.
 		/// </summary>
 		public VerificationResult<HttpClient> DeleteAsync(
-			IParameter<Uri?> requestUri)
+			ParameterMatcher<Uri?> requestUri)
 			=> verify.DeleteAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
@@ -39,8 +39,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public VerificationResult<HttpClient> DeleteAsync(
-			IParameter<string?> requestUri,
-			IParameter<CancellationToken> cancellationToken)
+			ParameterMatcher<string?> requestUri,
+			ParameterMatcher<CancellationToken> cancellationToken)
 		{
 			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
@@ -65,8 +65,8 @@ public static partial class HttpClientExtensions
 		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
 		public VerificationResult<HttpClient> DeleteAsync(
-			IParameter<Uri?> requestUri,
-			IParameter<CancellationToken> cancellationToken)
+			ParameterMatcher<Uri?> requestUri,
+			ParameterMatcher<CancellationToken> cancellationToken)
 		{
 			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)

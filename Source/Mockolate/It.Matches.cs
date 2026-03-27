@@ -16,33 +16,16 @@ public partial class It
 	/// </summary>
 	/// <remarks>
 	///     Default comparison is case-insensitive.
-	///     Use <see cref="IParameterMatches.CaseSensitive(bool)" /> to change this behavior.
+	///     Use <see cref="MatchesAsWildcardMatch.CaseSensitive(bool)" /> to change this behavior.
 	/// </remarks>
-	public static ParameterMatcher<string> Matches(string pattern)
-		=> new MatchesAsWildcardMatch(pattern);
+	public static MatchesAsWildcardMatch Matches(string pattern)
+		=> new(pattern);
 
 	/// <summary>
 	///     A string parameter that matches against a pattern.
 	/// </summary>
-	public interface IParameterMatches : IParameter<string>
-	{
-		/// <summary>
-		///     Enables case-sensitive matching of the pattern when specified.
-		/// </summary>
-		IParameterMatches CaseSensitive(bool caseSensitive = true);
-
-		/// <summary>
-		///     Matches the pattern directly as a regular expression.
-		/// </summary>
-		IParameterMatches AsRegex(
-			RegexOptions options = RegexOptions.None,
-			TimeSpan? timeout = null,
-			[CallerArgumentExpression("options")] string doNotPopulateThisValue1 = "",
-			[CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "");
-	}
-
 	[DebuggerNonUserCode]
-	private sealed class MatchesAsWildcardMatch(string pattern) : TypedMatch<string>, IParameterMatches
+	public class MatchesAsWildcardMatch(string pattern) : ParameterMatcher<string>
 	{
 		private bool _caseSensitive;
 		private Regex? _regex;
@@ -51,15 +34,19 @@ public partial class It
 		private TimeSpan _timeout = Regex.InfiniteMatchTimeout;
 		private string? _timeoutExpression;
 
-		/// <inheritdoc cref="IParameterMatches.CaseSensitive" />
-		public IParameterMatches CaseSensitive(bool caseSensitive = true)
+		/// <summary>
+		///     Enables case-sensitive matching of the pattern when specified.
+		/// </summary>
+		public MatchesAsWildcardMatch CaseSensitive(bool caseSensitive = true)
 		{
 			_caseSensitive = caseSensitive;
 			return this;
 		}
 
-		/// <inheritdoc cref="IParameterMatches.AsRegex(RegexOptions, TimeSpan?, string, string)" />
-		public IParameterMatches AsRegex(RegexOptions options = RegexOptions.None,
+		/// <summary>
+		///     Matches the pattern directly as a regular expression.
+		/// </summary>
+		public MatchesAsWildcardMatch AsRegex(RegexOptions options = RegexOptions.None,
 			TimeSpan? timeout = null,
 			[CallerArgumentExpression("options")] string doNotPopulateThisValue1 = "",
 			[CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "")

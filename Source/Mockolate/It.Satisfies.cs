@@ -19,7 +19,7 @@ public partial class It
 		=> new SatisfiesPredicateMatch<T>(predicate, doNotPopulateThisValue);
 
 	[DebuggerNonUserCode]
-	private sealed class SatisfiesPredicateMatch<T>(Func<T, bool> predicate, string predicateExpression) : TypedMatch<T>
+	private sealed class SatisfiesPredicateMatch<T>(Func<T, bool> predicate, string predicateExpression) : ParameterMatcher<T>
 	{
 		protected override bool Matches(T value) => predicate(value);
 		public override string ToString() => $"It.Satisfies<{typeof(T).FormatType()}>({predicateExpression})";

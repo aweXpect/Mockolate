@@ -41,7 +41,7 @@ public abstract class ParameterMatcher : IParameter
 ///     Extends <see cref="ParameterMatcher" /> and implements <see cref="IParameter{T}" />.
 /// </summary>
 [DebuggerNonUserCode]
-public abstract class ParameterMatcher<T> : ParameterMatcher, IParameter<T>
+public abstract class ParameterMatcher<T> : ParameterMatcher
 {
 	private List<Action<T>>? _callbacks;
 
@@ -66,7 +66,7 @@ public abstract class ParameterMatcher<T> : ParameterMatcher, IParameter<T>
 	}
 
 	/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
-	public IParameter<T> Do(Action<T> callback)
+	public ParameterMatcher<T> Do(Action<T> callback)
 	{
 		_callbacks ??= [];
 		_callbacks.Add(callback);
@@ -77,5 +77,10 @@ public abstract class ParameterMatcher<T> : ParameterMatcher, IParameter<T>
 	///     Verifies the expectation for the <paramref name="value" />.
 	/// </summary>
 	protected abstract bool Matches(T value);
+
+	public Param<TSub> As<TSub>()
+	{
+		return new Param<TSub>(this);
+	}
 }
 
