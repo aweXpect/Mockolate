@@ -47,7 +47,6 @@ namespace Mockolate
         }
         extension(Mockolate.Verify.IMockVerify<System.Net.Http.HttpClient> verify)
         {
-            public Mockolate.Verify.VerificationResult<System.Net.Http.HttpClient> InvokedSetup(Mockolate.Setup.IMethodSetup setup) { }
             public Mockolate.Verify.VerificationResult<System.Net.Http.HttpClient> DeleteAsync(Mockolate.Parameters.IParameter<string?> requestUri) { }
             public Mockolate.Verify.VerificationResult<System.Net.Http.HttpClient> DeleteAsync(Mockolate.Parameters.IParameter<System.Uri?> requestUri) { }
             public Mockolate.Verify.VerificationResult<System.Net.Http.HttpClient> DeleteAsync(Mockolate.Parameters.IParameter<string?> requestUri, Mockolate.Parameters.IParameter<System.Threading.CancellationToken> cancellationToken) { }

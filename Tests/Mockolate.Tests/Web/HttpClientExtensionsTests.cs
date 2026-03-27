@@ -62,38 +62,6 @@ public sealed partial class HttpClientExtensionsTests
 	}
 
 	[Fact]
-	public async Task InvokedSetup_WhenSubjectIsMockedWithoutConstructorParameters_ShouldThrowMockException()
-	{
-		HttpClient sut = HttpClient.CreateMock(constructorParameters: []);
-		IMockVerify<HttpClient> verify = sut.Mock.Verify;
-		IMethodSetup setup = sut.Mock.Setup.SendAsync(Match.AnyParameters());
-
-		void Act()
-		{
-			verify.InvokedSetup(setup).Never();
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
-	}
-
-	[Fact]
-	public async Task InvokedSetup_WhenSubjectIsNoMock_ShouldThrowMockException()
-	{
-		HttpClient sut = HttpClient.CreateMock();
-		IMockVerify<HttpClient> verify = new MyMockVerify<HttpClient>();
-		IMethodSetup setup = sut.Mock.Setup.SendAsync(Match.AnyParameters());
-
-		void Act()
-		{
-			verify.InvokedSetup(setup).Never();
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
-	}
-
-	[Fact]
 	public async Task NullUri_ShouldReturnFalse()
 	{
 		HttpClient httpClient = HttpClient.CreateMock();
@@ -115,7 +83,7 @@ public sealed partial class HttpClientExtensionsTests
 	[Fact]
 	public async Task SendAsync_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
 	{
-		HttpClient httpClient = HttpClient.CreateMock(constructorParameters: []);
+		HttpClient httpClient = HttpClient.CreateMock([]);
 
 		void Act()
 		{

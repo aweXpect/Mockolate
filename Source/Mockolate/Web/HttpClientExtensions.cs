@@ -48,30 +48,6 @@ public static partial class HttpClientExtensions
 		}
 	}
 
-	/// <inheritdoc cref="HttpClientExtensions" />
-	extension(IMockVerify<HttpClient> verify)
-	{
-		/// <summary>
-		///     Verifies the method invocations for the <paramref name="setup" /> on the mock.
-		/// </summary>
-		public VerificationResult<HttpClient> InvokedSetup(IMethodSetup setup)
-		{
-			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
-			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
-			{
-				if (setup is not IVerifiableMethodSetup verifiableMethodSetup)
-				{
-					throw new MockException("The setup is not verifiable.");
-				}
-
-				return httpMessageHandlerMock.MockRegistry.Method(httpClient,
-					verifiableMethodSetup.GetMatch());
-			}
-
-			throw new MockException("Cannot verify HttpClient when it is not mocked with a mockable HttpMessageHandler.");
-		}
-	}
-
 	private sealed class HttpRequestMessageParameters(
 		HttpMethod method,
 		params IHttpRequestMessageParameter[] parameters)
