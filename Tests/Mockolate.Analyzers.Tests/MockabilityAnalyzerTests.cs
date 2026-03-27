@@ -7,6 +7,35 @@ namespace Mockolate.Analyzers.Tests;
 public class MockabilityAnalyzerTests
 {
 	[Fact]
+	public async Task WhenImplementingAClass_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.IMyInterface", true)}}
+
+			  namespace MyNamespace
+			  {
+			  	public interface IMyInterface
+			  	{
+			  	}
+			  	public class MyImplementingClass
+			  	{
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			IMyInterface.CreateMock().Implementing<{|#0:MyImplementingClass|}>();
+			  		}
+			  	}
+			  }
+			  """,
+			Verifier.Diagnostic(Rules.MockabilityRule)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.MyImplementingClass", "You can only implement additional interfaces")
+		);
+
+	[Fact]
 	public async Task WhenMockingADelegate_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -29,7 +58,7 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingArray_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  {{GeneratedPrefix("MyNamespace.IMyInterface", includeImplementing: true)}}
+			  {{GeneratedPrefix("MyNamespace.IMyInterface", true)}}
 
 			  namespace MyNamespace
 			  {
@@ -259,31 +288,31 @@ public class MockabilityAnalyzerTests
 		if (includeImplementing)
 		{
 			return $$"""
-				namespace Mockolate
-				{
-					internal static partial class MockExtensionsFor{{simpleName}}
-					{
-						extension({{fullyQualifiedTypeName}} mock)
-						{
-							public static {{fullyQualifiedTypeName}} CreateMock() => default!;
-							public {{fullyQualifiedTypeName}} Implementing<TInterface>() => default!;
-						}
-					}
-				}
-				""";
+			         namespace Mockolate
+			         {
+			         	internal static partial class MockExtensionsFor{{simpleName}}
+			         	{
+			         		extension({{fullyQualifiedTypeName}} mock)
+			         		{
+			         			public static {{fullyQualifiedTypeName}} CreateMock() => default!;
+			         			public {{fullyQualifiedTypeName}} Implementing<TInterface>() => default!;
+			         		}
+			         	}
+			         }
+			         """;
 		}
 
 		return $$"""
-			namespace Mockolate
-			{
-				internal static partial class MockExtensionsFor{{simpleName}}
-				{
-					extension({{fullyQualifiedTypeName}} mock)
-					{
-						public static {{fullyQualifiedTypeName}} CreateMock() => default!;
-					}
-				}
-			}
-			""";
+		         namespace Mockolate
+		         {
+		         	internal static partial class MockExtensionsFor{{simpleName}}
+		         	{
+		         		extension({{fullyQualifiedTypeName}} mock)
+		         		{
+		         			public static {{fullyQualifiedTypeName}} CreateMock() => default!;
+		         		}
+		         	}
+		         }
+		         """;
 	}
 }
