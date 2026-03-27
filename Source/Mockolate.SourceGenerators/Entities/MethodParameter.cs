@@ -18,7 +18,13 @@ internal readonly record struct MethodParameter
 		if (HasExplicitDefaultValue)
 		{
 			string? explicitDefaultValue = SymbolDisplay.FormatPrimitive(parameterSymbol.ExplicitDefaultValue, true, false);
-			if (parameterSymbol.Type.TypeKind == TypeKind.Enum)
+			if (explicitDefaultValue == "null"
+			    && parameterSymbol.Type.IsValueType
+			    && parameterSymbol.Type is not INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T, })
+			{
+				ExplicitDefaultValue = "default";
+			}
+			else if (parameterSymbol.Type.TypeKind == TypeKind.Enum)
 			{
 				string enumTypeName = parameterSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 				ExplicitDefaultValue = "(" + enumTypeName + ")" + explicitDefaultValue;

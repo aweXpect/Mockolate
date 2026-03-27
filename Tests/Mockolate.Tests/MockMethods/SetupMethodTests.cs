@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -1246,6 +1247,22 @@ public sealed partial class SetupMethodTests
 		}
 	}
 
+	public class MethodWithDefaultParameter
+	{
+		[Fact]
+		public async Task ParametersWithDefaultAsDefaultValue_ShouldNotHaveAnyErrors()
+		{
+			IMethodSetupWithDefaultParameter sut = IMethodSetupWithDefaultParameter.CreateMock();
+
+			sut.Mock.Setup.MethodWithDefaultParameter(It.IsAny<int>()).Returns(4);
+
+			int result = sut.MethodWithDefaultParameter(2, CancellationToken.None);
+
+			await That(result).IsEqualTo(4);
+			await That(sut.Mock.Verify.MethodWithDefaultParameter(It.IsAny<int>())).Once();
+		}
+	}
+
 	public class MyMethodSetup() : MethodSetup(new MethodParameterMatch("", []))
 	{
 		public static void DoTriggerCallbacks(NamedParameter?[] namedParameters, object?[] values)
@@ -1296,6 +1313,11 @@ public sealed partial class SetupMethodTests
 	{
 		int MethodWithInParameter(in MyReadonlyStruct p1);
 		int MethodWithRefReadonlyParameter(ref readonly MyReadonlyStruct p1);
+	}
+
+	public interface IMethodSetupWithDefaultParameter
+	{
+		int MethodWithDefaultParameter(int value, CancellationToken cancellationToken = default);
 	}
 
 	public readonly struct MyReadonlyStruct(int value)
