@@ -24,21 +24,6 @@ internal static class AnalyzerHelpers
 	}
 
 	/// <summary>
-	///     Check if a method has the MockGeneratorAttribute.
-	/// </summary>
-	public static bool HasMockGeneratorAttribute(IMethodSymbol method)
-		=> method.GetAttributes().Any(a =>
-			a.AttributeClass is
-			{
-				Name: "MockGeneratorAttribute",
-				ContainingNamespace:
-				{
-					Name: "Mockolate",
-					ContainingNamespace.IsGlobalNamespace: true,
-				},
-			});
-
-	/// <summary>
 	///     Check if a type is an open generic.
 	/// </summary>
 	public static bool IsOpenGeneric(ITypeSymbol typeSymbol)

@@ -282,6 +282,106 @@ public class MockabilityAnalyzerTests
 				.WithArguments("MyNamespace.MyStruct", "type is a struct")
 		);
 
+	[Fact]
+	public async Task WhenInvocationIsNotMemberAccess_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			namespace MyNamespace
+			{
+				public class MyClass
+				{
+					public void MyTest()
+					{
+						System.Action action = () => { };
+						action();
+					}
+				}
+			}
+			"""
+		);
+
+	[Fact]
+	public async Task WhenMethodNameIsUnrelated_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			namespace MyNamespace
+			{
+				public class MyClass
+				{
+					public static int Helper() => 0;
+
+					public void MyTest()
+					{
+						MyClass.Helper();
+					}
+				}
+			}
+			"""
+		);
+
+	[Fact]
+	public async Task WhenCreateMockIsNotInMockolateNamespace_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			namespace OtherNamespace
+			{
+				internal static class MockExtensions
+				{
+					public static MyNamespace.IMyInterface CreateMock(
+						this MyNamespace.IMyInterface mock) => default!;
+				}
+			}
+
+			namespace MyNamespace
+			{
+				public interface IMyInterface
+				{
+				}
+
+				public class MyClass
+				{
+					public void MyTest()
+					{
+						IMyInterface sut = null!;
+						sut.CreateMock();
+					}
+				}
+			}
+			"""
+		);
+
+	[Fact]
+	public async Task WhenMockingOpenGenericClass_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			namespace Mockolate
+			{
+				internal static partial class MockExtensionsForIGenericInterface
+				{
+					extension<T>(MyNamespace.IGenericInterface<T> mock)
+					{
+						public static MyNamespace.IGenericInterface<T> CreateMock() => default!;
+					}
+				}
+			}
+
+			namespace MyNamespace
+			{
+				public interface IGenericInterface<T>
+				{
+				}
+
+				public class MyClass<T>
+				{
+					public void MyTest()
+					{
+						IGenericInterface<T>.CreateMock();
+					}
+				}
+			}
+			"""
+		);
+
 	private static string GeneratedPrefix(string fullyQualifiedTypeName, bool includeImplementing = false)
 	{
 		string simpleName = fullyQualifiedTypeName.Split('.')[^1];
