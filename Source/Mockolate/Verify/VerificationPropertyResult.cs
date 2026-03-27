@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
 namespace Mockolate.Verify;
@@ -9,8 +10,8 @@ namespace Mockolate.Verify;
 [DebuggerNonUserCode]
 public class VerificationPropertyResult<TSubject, TParameter>
 {
-	private readonly string _propertyName;
 	private readonly MockRegistry _mockRegistry;
+	private readonly string _propertyName;
 	private readonly TSubject _subject;
 
 	/// <inheritdoc cref="VerificationPropertyResult{TSubject, TParameter}" />
@@ -30,6 +31,13 @@ public class VerificationPropertyResult<TSubject, TParameter>
 	/// <summary>
 	///     Verifies the property write access on the mock with the given <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<TSubject> Set(IParameter<TParameter>? value)
-		=> _mockRegistry.Property(_subject, _propertyName, (IParameter)(value ?? It.IsNull<TParameter>()));
+	public VerificationResult<TSubject> Set(IParameter<TParameter> value)
+		=> _mockRegistry.Property(_subject, _propertyName, (IParameter)value);
+
+	/// <summary>
+	///     Verifies the property write access on the mock with the given <paramref name="value" />.
+	/// </summary>
+	[OverloadResolutionPriority(1)]
+	public VerificationResult<TSubject> Set(TParameter value, [CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
+		=> _mockRegistry.Property(_subject, _propertyName, (IParameter)It.Is(value, doNotPopulateThisValue));
 }

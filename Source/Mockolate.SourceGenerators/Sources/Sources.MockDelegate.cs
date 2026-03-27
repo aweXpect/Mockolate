@@ -179,10 +179,42 @@ internal static partial class Sources
 			AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", true, "Setup");
 		}
 
+		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
+		{
+			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
+			{
+				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", valueFlags);
+			}
+		}
+		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
+		{
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			if (allValueFlags.Any(f => f))
+			{
+				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", allValueFlags);
+			}
+		}
+
 		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
 			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true, "Verify");
+		}
+
+		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
+		{
+			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
+			{
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
+			}
+		}
+		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
+		{
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			if (allValueFlags.Any(f => f))
+			{
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
+			}
 		}
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -222,6 +254,22 @@ internal static partial class Sources
 		if (delegateMethod.Parameters.Count > 0)
 		{
 			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true, "Verify");
+		}
+
+		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
+		{
+			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
+			{
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
+			}
+		}
+		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
+		{
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			if (allValueFlags.Any(f => f))
+			{
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
+			}
 		}
 
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
@@ -268,6 +316,22 @@ internal static partial class Sources
 			AppendMethodSetupDefinition(sb, @class, delegateMethod, true, "Setup");
 		}
 
+		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
+		{
+			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
+			{
+				AppendMethodSetupDefinition(sb, @class, delegateMethod, false, "Setup", valueFlags);
+			}
+		}
+		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
+		{
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			if (allValueFlags.Any(f => f))
+			{
+				AppendMethodSetupDefinition(sb, @class, delegateMethod, false, "Setup", allValueFlags);
+			}
+		}
+
 		sb.Append("\t}").AppendLine();
 
 		#endregion IMockSetupForXXX
@@ -283,6 +347,22 @@ internal static partial class Sources
 		if (delegateMethod.Parameters.Count > 0)
 		{
 			AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", true, "Verify");
+		}
+
+		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
+		{
+			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
+			{
+				AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
+			}
+		}
+		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
+		{
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			if (allValueFlags.Any(f => f))
+			{
+				AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
+			}
 		}
 
 		sb.Append("\t}").AppendLine();

@@ -1698,13 +1698,15 @@ namespace Mockolate.Verify
     {
         public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<TSubject> Got() { }
-        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter>? value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
     }
     public class VerificationPropertyResult<TSubject, TParameter>
     {
         public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry mockRegistry, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> Got() { }
-        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter>? value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
     }
     public static class VerificationResultExtensions
     {

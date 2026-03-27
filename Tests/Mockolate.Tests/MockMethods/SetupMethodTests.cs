@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Mockolate.Exceptions;
@@ -27,7 +27,7 @@ public sealed partial class SetupMethodTests
 	public async Task GenericMethod_SetupShouldWork()
 	{
 		IMethodService sut = IMethodService.CreateMock();
-		sut.Mock.Setup.MyGenericMethod(It.Is(0), It.Is("foo")).Returns(42);
+		sut.Mock.Setup.MyGenericMethod(It.Is(0), "foo").Returns(42);
 
 		int result1 = sut.MyGenericMethod(0, "foo");
 		int result2 = sut.MyGenericMethod(0L, "foo");
@@ -667,6 +667,20 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task WithParamsParameters_ExplicitArrayArgument_ShouldUseReferenceEquality()
+	{
+		IMyService sut = IMyService.CreateMock();
+		bool[] flags = [true, false,];
+		sut.Mock.Setup.MyMethodWithParams(1, flags).Returns(true);
+
+		bool result1 = sut.MyMethodWithParams(1, flags);
+		bool result2 = sut.MyMethodWithParams(1, true, false);
+
+		await That(result1).IsTrue();
+		await That(result2).IsFalse();
+	}
+
+	[Fact]
 	public async Task WithParamsParameters_ShouldSupportParams()
 	{
 		IMyService sut = IMyService.CreateMock();
@@ -787,6 +801,21 @@ public sealed partial class SetupMethodTests
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
 		}
+
+		[Fact]
+		public async Task WithExplicitParameter_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method1(1)
+				.Returns("foo");
+
+			string result1 = sut.Method1(1);
+			string result2 = sut.Method1(2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
 	}
 
 	public class ReturnMethodWith2Parameters
@@ -841,6 +870,53 @@ public sealed partial class SetupMethodTests
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter1_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method2(1, It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method2(1, 10);
+			string result2 = sut.Method2(2, 10);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method2(It.IsAny<int>(), 1)
+				.Returns("foo");
+
+			string result1 = sut.Method2(10, 1);
+			string result2 = sut.Method2(10, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method2(1, 2)
+				.Returns("foo");
+
+			string result1 = sut.Method2(1, 2);
+			string result2 = sut.Method2(1, 10);
+			string result3 = sut.Method2(10, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
 		}
 	}
 
@@ -897,6 +973,121 @@ public sealed partial class SetupMethodTests
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter1_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(1, It.IsAny<int>(), It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method3(1, 10, 20);
+			string result2 = sut.Method3(2, 10, 20);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(It.IsAny<int>(), 1, It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method3(10, 1, 20);
+			string result2 = sut.Method3(10, 2, 20);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), 1)
+				.Returns("foo");
+
+			string result1 = sut.Method3(10, 20, 1);
+			string result2 = sut.Method3(10, 20, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(1, 2, 3)
+				.Returns("foo");
+
+			string result1 = sut.Method3(1, 2, 3);
+			string result2 = sut.Method3(1, 10, 20);
+			string result3 = sut.Method3(10, 2, 20);
+			string result4 = sut.Method3(10, 20, 3);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+			await That(result4).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters1And2_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(1, 2, It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method3(1, 2, 20);
+			string result2 = sut.Method3(1, 10, 20);
+			string result3 = sut.Method3(10, 2, 20);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters1And3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(1, It.IsAny<int>(), 2)
+				.Returns("foo");
+
+			string result1 = sut.Method3(1, 20, 2);
+			string result2 = sut.Method3(1, 20, 10);
+			string result3 = sut.Method3(10, 20, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters2And3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(It.IsAny<int>(), 1, 2)
+				.Returns("foo");
+
+			string result1 = sut.Method3(20, 1, 2);
+			string result2 = sut.Method3(20, 1, 10);
+			string result3 = sut.Method3(20, 10, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
 		}
 	}
 
@@ -956,6 +1147,265 @@ public sealed partial class SetupMethodTests
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter1_2And3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, 2, 3, It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 2, 3, 40);
+			string result2 = sut.Method4(10, 2, 3, 40);
+			string result3 = sut.Method4(1, 20, 3, 40);
+			string result4 = sut.Method4(1, 2, 30, 40);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+			await That(result4).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter1_2And4_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, 2, It.IsAny<int>(), 4)
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 2, 30, 4);
+			string result2 = sut.Method4(10, 2, 30, 4);
+			string result3 = sut.Method4(1, 20, 30, 4);
+			string result4 = sut.Method4(1, 2, 30, 40);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+			await That(result4).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter1_3And4_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, It.IsAny<int>(), 3, 4)
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 20, 3, 4);
+			string result2 = sut.Method4(10, 20, 3, 4);
+			string result3 = sut.Method4(1, 20, 3, 40);
+			string result4 = sut.Method4(1, 20, 30, 4);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+			await That(result4).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter1_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 10, 20, 30);
+			string result2 = sut.Method4(2, 10, 20, 30);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_3And4_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(It.IsAny<int>(), 2, 3, 4)
+				.Returns("foo");
+
+			string result1 = sut.Method4(10, 2, 3, 4);
+			string result2 = sut.Method4(10, 2, 3, 40);
+			string result3 = sut.Method4(10, 20, 3, 4);
+			string result4 = sut.Method4(10, 2, 30, 4);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+			await That(result4).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(It.IsAny<int>(), 1, It.IsAny<int>(), It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method4(10, 1, 20, 30);
+			string result2 = sut.Method4(10, 2, 20, 30);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), 1, It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method4(10, 20, 1, 30);
+			string result2 = sut.Method4(10, 20, 2, 30);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter4_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), 1)
+				.Returns("foo");
+
+			string result1 = sut.Method4(10, 20, 30, 1);
+			string result2 = sut.Method4(10, 20, 30, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, 2, 3, 4)
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 2, 3, 4);
+			string result2 = sut.Method4(1, 10, 20, 30);
+			string result3 = sut.Method4(10, 2, 20, 30);
+			string result4 = sut.Method4(10, 20, 3, 30);
+			string result5 = sut.Method4(10, 20, 30, 4);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+			await That(result4).IsEmpty();
+			await That(result5).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters1And2_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, 2, It.IsAny<int>(), It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 2, 20, 30);
+			string result2 = sut.Method4(1, 10, 20, 30);
+			string result3 = sut.Method4(10, 2, 20, 30);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters1And3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, It.IsAny<int>(), 2, It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 20, 2, 30);
+			string result2 = sut.Method4(1, 20, 10, 30);
+			string result3 = sut.Method4(10, 20, 2, 30);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters1And4_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, It.IsAny<int>(), It.IsAny<int>(), 2)
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 20, 30, 2);
+			string result2 = sut.Method4(1, 20, 30, 10);
+			string result3 = sut.Method4(10, 20, 30, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters2And3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(It.IsAny<int>(), 1, 2, It.IsAny<int>())
+				.Returns("foo");
+
+			string result1 = sut.Method4(20, 1, 2, 30);
+			string result2 = sut.Method4(20, 1, 10, 30);
+			string result3 = sut.Method4(20, 10, 2, 30);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters2And4_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(It.IsAny<int>(), 1, It.IsAny<int>(), 2)
+				.Returns("foo");
+
+			string result1 = sut.Method4(10, 1, 20, 2);
+			string result2 = sut.Method4(10, 1, 20, 10);
+			string result3 = sut.Method4(10, 10, 20, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters3And4_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), 1, 2)
+				.Returns("foo");
+
+			string result1 = sut.Method4(10, 20, 1, 2);
+			string result2 = sut.Method4(10, 20, 1, 10);
+			string result3 = sut.Method4(10, 20, 10, 2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
 		}
 	}
 
@@ -1017,6 +1467,31 @@ public sealed partial class SetupMethodTests
 
 			await That(callCount).IsEqualTo(1);
 			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method5(1, 2, 3, 4, 5)
+				.Returns("foo");
+
+			string result1 = sut.Method5(1, 2, 3, 4, 5);
+			string result2 = sut.Method5(10, 2, 3, 4, 5);
+			string result3 = sut.Method5(1, 20, 3, 4, 5);
+			string result4 = sut.Method5(1, 2, 30, 4, 5);
+			string result5 = sut.Method5(1, 2, 3, 40, 5);
+			string result6 = sut.Method5(1, 2, 3, 4, 50);
+			string result7 = sut.Method5(10, 20, 30, 40, 50);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+			await That(result4).IsEmpty();
+			await That(result5).IsEmpty();
+			await That(result6).IsEmpty();
+			await That(result7).IsEmpty();
 		}
 	}
 

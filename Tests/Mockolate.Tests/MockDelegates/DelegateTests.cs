@@ -86,6 +86,31 @@ public class DelegateTests
 	}
 
 	[Fact]
+	public async Task WithCustomDelegateWithInts_SetupWithExplicitParameter_ShouldWork()
+	{
+		DoSomethingWithInts sut = DoSomethingWithInts.CreateMock();
+		sut.Mock.Setup(1, It.IsAny<int>(), It.IsAny<int>()).Returns(42);
+
+		int result1 = sut(1, 10, 20);
+		int result2 = sut(2, 10, 20);
+
+		await That(result1).IsEqualTo(42);
+		await That(result2).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task WithCustomDelegateWithInts_VerifyWithExplicitParameter_ShouldWork()
+	{
+		DoSomethingWithInts sut = DoSomethingWithInts.CreateMock();
+
+		_ = sut(1, 10, 20);
+		_ = sut(2, 10, 20);
+
+		await That(sut.Mock.Verify(1, It.IsAny<int>(), It.IsAny<int>())).Once();
+		await That(sut.Mock.Verify(3, It.IsAny<int>(), It.IsAny<int>())).Never();
+	}
+
+	[Fact]
 	public async Task WithCustomDelegateWithRefAndOut_SetupShouldWork()
 	{
 		DoSomethingWithRefAndOut sut = DoSomethingWithRefAndOut.CreateMock();
@@ -146,4 +171,6 @@ public class DelegateTests
 	internal delegate int DoGeneric<T1, T2>(T1 x, T2 y)
 		where T1 : struct
 		where T2 : class;
+
+	internal delegate int DoSomethingWithInts(int a, int b, int c);
 }

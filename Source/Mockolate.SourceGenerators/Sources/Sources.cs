@@ -124,6 +124,22 @@ internal static partial class Sources
 	}
 
 	/// <summary>
+	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>.
+	/// </summary>
+	private static void AppendNamedValueParameter(StringBuilder sb, MethodParameter parameter)
+		=> AppendNamedValueParameter(sb, parameter, parameter.Name);
+
+	/// <summary>
+	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>, using the given variable reference name.
+	/// </summary>
+	private static void AppendNamedValueParameter(StringBuilder sb, MethodParameter parameter, string paramRef)
+	{
+		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name)
+			.Append("\", (global::Mockolate.Parameters.IParameter)global::Mockolate.It.Is<")
+			.Append(parameter.ToNullableType()).Append(">(").Append(paramRef).Append("))");
+	}
+
+	/// <summary>
 	///     Generates code to set an out parameter.
 	/// </summary>
 	private static void AppendSetOutParameter(StringBuilder sb, string indent, MethodParameter parameter,
