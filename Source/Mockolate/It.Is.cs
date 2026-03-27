@@ -12,7 +12,7 @@ public partial class It
 	/// <summary>
 	///     Matches a parameter that is equal to <paramref name="value" />.
 	/// </summary>
-	public static IIsParameter<T> Is<T>(T value,
+	public static ParameterMatcher<T> Is<T>(T value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
 		=> new ParameterEqualsMatch<T>(value, doNotPopulateThisValue);
@@ -52,7 +52,7 @@ public partial class It
 			return this;
 		}
 
-		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
+		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
 		protected override bool Matches(T value)
 		{
 			if (_comparer is not null)

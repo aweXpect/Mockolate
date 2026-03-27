@@ -106,7 +106,7 @@ public partial class It
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 		{
-			if (TryCast(value, out T typedValue) && _callbacks is not null)
+			if (ParameterMatcher.TryCast(value, out T typedValue) && _callbacks is not null)
 			{
 				_callbacks.ForEach(a => a.Invoke(typedValue));
 			}

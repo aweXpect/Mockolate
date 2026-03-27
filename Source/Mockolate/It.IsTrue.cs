@@ -10,13 +10,13 @@ public partial class It
 	/// <summary>
 	///     Matches any boolean parameter that is <see langword="true" />.
 	/// </summary>
-	public static IParameter<bool> IsTrue()
+	public static ParameterMatcher<bool> IsTrue()
 		=> new TrueParameterMatch();
 
 	[DebuggerNonUserCode]
 	private sealed class TrueParameterMatch : TypedMatch<bool>
 	{
-		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
+		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
 		protected override bool Matches(bool value) => value;
 
 		/// <inheritdoc cref="object.ToString()" />

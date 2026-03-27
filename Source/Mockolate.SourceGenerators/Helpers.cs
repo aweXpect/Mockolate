@@ -239,8 +239,8 @@ internal static class Helpers
 				(RefKind.Out, _) => "global::Mockolate.Parameters.IVerifyOutParameter<",
 				(_, SpecialGenericType.Span) => "global::Mockolate.Parameters.IVerifySpanParameter<",
 				(_, SpecialGenericType.ReadOnlySpan) => "global::Mockolate.Parameters.IVerifyReadOnlySpanParameter<",
-				(_, _) => "global::Mockolate.Parameters.IParameter<",
-			});
+			(_, _) => "global::Mockolate.Parameters.Param<",
+		});
 			sb.Append((parameter.Type.SpecialGenericType,
 					parameter.IsNullableAnnotated && !parameter.Type.Fullname.EndsWith("?")) switch
 				{
@@ -292,7 +292,7 @@ internal static class Helpers
 				(_, SpecialGenericType.Span) => $"global::Mockolate.Parameters.ISpanParameter<{GetMethodParameterType(parameter)}>",
 				(_, SpecialGenericType.ReadOnlySpan) =>
 					$"global::Mockolate.Parameters.IReadOnlySpanParameter<{GetMethodParameterType(parameter)}>",
-				(_, _) => $"global::Mockolate.Parameters.IParameter<{GetMethodParameterType(parameter)}>",
+				(_, _) => $"global::Mockolate.Parameters.Param<{GetMethodParameterType(parameter)}>",
 			};
 
 			static string GetMethodParameterType(MethodParameter parameter)

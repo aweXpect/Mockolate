@@ -1913,8 +1913,9 @@ internal static partial class Sources
 
 			sb.Append(">(").Append(string.Join(", ",
 					indexer.IndexerParameters.Value.Select((p, i)
-						=> $"new global::Mockolate.Parameters.NamedParameter(\"{p.Name}\", (global::Mockolate.Parameters.IParameter)(parameter{i + 1}{
-							(p.CanBeNullable() ? $" ?? global::Mockolate.It.IsNull<{p.ToNullableType()}>()" : "")}))")))
+						=> p.CanBeNullable()
+							? $"new global::Mockolate.Parameters.NamedParameter(\"{p.Name}\", parameter{i + 1}.HasValue ? parameter{i + 1}.Value.ToParameter() : (global::Mockolate.Parameters.IParameter)global::Mockolate.It.IsNull<{p.ToNullableType()}>())"
+							: $"new global::Mockolate.Parameters.NamedParameter(\"{p.Name}\", (global::Mockolate.Parameters.IParameter)(parameter{i + 1}))")))
 				.Append(");").AppendLine();
 			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupIndexer(indexerSetup);").AppendLine();
 			sb.Append("\t\t\t\treturn indexerSetup;").AppendLine();

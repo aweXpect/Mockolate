@@ -11,13 +11,13 @@ public partial class It
 	/// <summary>
 	///     Matches any parameter that is <see langword="null" />.
 	/// </summary>
-	public static IParameter<T> IsNull<T>()
+	public static ParameterMatcher<T> IsNull<T>()
 		=> new NullParameterMatch<T>();
 
 	[DebuggerNonUserCode]
 	private sealed class NullParameterMatch<T> : TypedMatch<T>
 	{
-		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
+		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
 		protected override bool Matches(T value) => value is null;
 
 		/// <inheritdoc cref="object.ToString()" />

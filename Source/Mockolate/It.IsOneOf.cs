@@ -13,7 +13,7 @@ public partial class It
 	/// <summary>
 	///     Matches a parameter that is equal to one of the <paramref name="values" />.
 	/// </summary>
-	public static IIsOneOfParameter<T> IsOneOf<T>(params T[] values)
+	public static ParameterMatcher<T> IsOneOf<T>(params T[] values)
 		=> new ParameterIsOneOfMatch<T>(values);
 
 	/// <summary>
@@ -43,7 +43,7 @@ public partial class It
 			return this;
 		}
 
-		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
+		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
 		protected override bool Matches(T value)
 		{
 			IEqualityComparer<T> comparer = _comparer ?? EqualityComparer<T>.Default;

@@ -18,7 +18,7 @@ public partial class It
 	///     Default comparison is case-insensitive.
 	///     Use <see cref="IParameterMatches.CaseSensitive(bool)" /> to change this behavior.
 	/// </remarks>
-	public static IParameterMatches Matches(string pattern)
+	public static ParameterMatcher<string> Matches(string pattern)
 		=> new MatchesAsWildcardMatch(pattern);
 
 	/// <summary>
@@ -76,7 +76,7 @@ public partial class It
 		}
 
 #pragma warning disable S3218
-		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
+		/// <inheritdoc cref="ParameterMatcher{T}.Matches(T)" />
 		protected override bool Matches(string value)
 		{
 			_regex ??= (_regexOptionsExpression is not null, _caseSensitive) switch

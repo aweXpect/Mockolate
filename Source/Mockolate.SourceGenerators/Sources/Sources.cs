@@ -105,22 +105,31 @@ internal static partial class Sources
 	private static void AppendNamedParameter(StringBuilder sb, MethodParameter parameter)
 	{
 		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name)
-			.Append("\", (global::Mockolate.Parameters.IParameter)(");
-		sb.Append(parameter.Name);
+			.Append("\", ");
 		if (parameter.CanBeNullable())
 		{
+			// Parameter type is Param<T>? — use ternary to extract IParameter or fall back
+			sb.Append(parameter.Name).Append(".HasValue ? ").Append(parameter.Name)
+				.Append(".Value.ToParameter() : ");
 			if (parameter.HasExplicitDefaultValue)
 			{
-				sb.Append(" ?? global::Mockolate.It.Is<").Append(parameter.ToNullableType()).Append(">(")
+				sb.Append("(global::Mockolate.Parameters.IParameter)global::Mockolate.It.Is<")
+					.Append(parameter.ToNullableType()).Append(">(")
 					.Append(parameter.ExplicitDefaultValue).Append(")");
 			}
 			else
 			{
-				sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType()).Append(">()");
+				sb.Append("(global::Mockolate.Parameters.IParameter)global::Mockolate.It.IsNull<")
+					.Append(parameter.ToNullableType()).Append(">()");
 			}
 		}
+		else
+		{
+			// Parameter type is IRefParameter<T>, IOutParameter<T>, etc. — cast directly
+			sb.Append("(global::Mockolate.Parameters.IParameter)(").Append(parameter.Name).Append(")");
+		}
 
-		sb.Append("))");
+		sb.Append(")");
 	}
 
 	/// <summary>

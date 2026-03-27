@@ -12,7 +12,7 @@ public partial class It
 	/// <summary>
 	///     Matches any parameter that is within the specified range.
 	/// </summary>
-	public static IInRangeParameter<T> IsInRange<T>(T minimum, T maximum,
+	public static ParameterMatcher<T> IsInRange<T>(T minimum, T maximum,
 		[CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
 		where T : IComparable<T>

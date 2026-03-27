@@ -12,7 +12,7 @@ public partial class It
 	///     Matches any parameter of type <typeparamref name="T" />.
 	/// </summary>
 	/// <remarks>Also matches, if the method parameter is <see langword="null" />.</remarks>
-	public static IParameter<T> IsAny<T>()
+	public static ParameterMatcher<T> IsAny<T>()
 		=> new AnyParameterMatch<T>();
 
 	[DebuggerNonUserCode]
