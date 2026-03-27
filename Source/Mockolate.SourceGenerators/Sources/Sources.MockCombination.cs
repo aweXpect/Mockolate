@@ -47,7 +47,6 @@ internal static partial class Sources
 
 		(string Name, Class Class) lastInterface = additionalInterfaces[additionalInterfaces.Length - 1];
 		sb.AppendXmlSummary($"Create a mock that also implements <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
-		sb.Append("\t\t[global::Mockolate.MockGeneratorImplementing]").AppendLine();
 		sb.Append("\t\tpublic ").Append(@class.ClassFullName).Append(" Implementing<TInterface>(params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(lastInterface.Name).Append(">[] setups)").AppendLine();
 		sb.Append("\t\t\twhere TInterface : ").Append(lastInterface.Class.ClassFullName).AppendLine();
 		sb.Append("\t\t{").AppendLine();

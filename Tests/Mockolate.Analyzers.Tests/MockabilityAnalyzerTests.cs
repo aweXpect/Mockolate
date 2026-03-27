@@ -7,20 +7,47 @@ namespace Mockolate.Analyzers.Tests;
 public class MockabilityAnalyzerTests
 {
 	[Fact]
+	public async Task WhenImplementingAClass_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.IMyInterface", true)}}
+
+			  namespace MyNamespace
+			  {
+			  	public interface IMyInterface
+			  	{
+			  	}
+			  	public class MyImplementingClass
+			  	{
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			IMyInterface.CreateMock().Implementing<{|#0:MyImplementingClass|}>();
+			  		}
+			  	}
+			  }
+			  """,
+			Verifier.Diagnostic(Rules.MockabilityRule)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.MyImplementingClass", "You can only implement additional interfaces")
+		);
+
+	[Fact]
 	public async Task WhenMockingADelegate_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
+			  {{GeneratedPrefix("System.Action")}}
 
-			  {{GeneratedPrefix}}
-			    
 			  namespace MyNamespace
 			  {
 			  	public class MyClass
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mock.Create<System.Action>();
+			  			System.Action.CreateMock();
 			  		}
 			  	}
 			  }
@@ -31,9 +58,7 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingArray_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
+			  {{GeneratedPrefix("MyNamespace.IMyInterface", true)}}
 
 			  namespace MyNamespace
 			  {
@@ -45,7 +70,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.Mock.Create<{|#0:IMyInterface[]|}>();
+			  			IMyInterface.CreateMock().Implementing<{|#0:IMyInterface[]|}>();
 			  		}
 			  	}
 			  }
@@ -59,9 +84,7 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingClass_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
+			  {{GeneratedPrefix("MyNamespace.MyBaseClass")}}
 
 			  namespace MyNamespace
 			  {
@@ -74,7 +97,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.MyBaseClass.CreateMock();
+			  			MyBaseClass.CreateMock();
 			  		}
 			  	}
 			  }
@@ -85,9 +108,7 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingDelegate_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
+			  {{GeneratedPrefix("MyNamespace.MyDelegate")}}
 
 			  namespace MyNamespace
 			  {
@@ -97,7 +118,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.MyDelegate.CreateMock();
+			  			MyDelegate.CreateMock();
 			  		}
 			  	}
 			  }
@@ -108,9 +129,7 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingEnum_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
+			  {{GeneratedPrefix("MyNamespace.MyEnum")}}
 
 			  namespace MyNamespace
 			  {
@@ -124,7 +143,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.Mock.Create<{|#0:MyEnum|}>();
+			  			{|#0:MyEnum|}.CreateMock();
 			  		}
 			  	}
 			  }
@@ -138,9 +157,7 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingGlobalNamespaceType_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
+			  {{GeneratedPrefix("IGlobalInterface")}}
 
 			  public interface IGlobalInterface
 			  {
@@ -153,7 +170,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.Mock.Create<{|#0:IGlobalInterface|}>();
+			  			{|#0:IGlobalInterface|}.CreateMock();
 			  		}
 			  	}
 			  }
@@ -167,10 +184,8 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingInterface_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
+			  {{GeneratedPrefix("MyNamespace.IMyInterface")}}
 
-			  {{GeneratedPrefix}}
-			    
 			  namespace MyNamespace
 			  {
 			  	public interface IMyInterface
@@ -190,52 +205,11 @@ public class MockabilityAnalyzerTests
 		);
 
 	[Fact]
-	public async Task WhenMockingMockGeneratorWithoutAttributes_ShouldNotBeFlagged() => await Verifier
-		.VerifyAnalyzerAsync(
-			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
-
-			  namespace MyNamespace
-			  {
-			  	public class MyClass
-			  	{
-			  		public void MyTest()
-			  		{
-			  			Mockolate.MyMock.Create();
-			  		}
-			  	}
-			  }
-			  namespace Mockolate
-			  {
-			      public interface IGlobalInterface
-			      {
-			      	void DoSomething();
-			      }
-
-			      [AttributeUsage(AttributeTargets.Method)]
-			      internal class MockGeneratorAttribute : Attribute
-			      {
-			      }
-			      
-			      public static class MyMock
-			      {
-			          [MockGenerator]
-			          public static IGlobalInterface Create() => default!;
-			      }
-			  }
-			  """
-		);
-
-	[Fact]
 	public async Task WhenMockingRecord_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
+			  {{GeneratedPrefix("MyNamespace.MyRecord")}}
 
-			  {{GeneratedPrefix}}
-			    
 			  namespace MyNamespace
 			  {
 			  	public record MyRecord(int Value);
@@ -244,7 +218,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.Mock.Create<{|#0:MyRecord|}>();
+			  			{|#0:MyRecord|}.CreateMock();
 			  		}
 			  	}
 			  }
@@ -258,9 +232,7 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingSealedClass_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
+			  {{GeneratedPrefix("MyNamespace.MySealedClass")}}
 
 			  namespace MyNamespace
 			  {
@@ -273,7 +245,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.Mock.Create<{|#0:MySealedClass|}>();
+			  			{|#0:MySealedClass|}.CreateMock();
 			  		}
 			  	}
 			  }
@@ -287,10 +259,7 @@ public class MockabilityAnalyzerTests
 	public async Task WhenMockingStruct_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
-			  using System;
-
-			  {{GeneratedPrefix}}
-
+			  {{GeneratedPrefix("MyNamespace.MyStruct")}}
 
 			  namespace MyNamespace
 			  {
@@ -303,7 +272,7 @@ public class MockabilityAnalyzerTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			Mockolate.Mock.Create<{|#0:MyStruct|}>();
+			  			{|#0:MyStruct|}.CreateMock();
 			  		}
 			  	}
 			  }
@@ -313,18 +282,37 @@ public class MockabilityAnalyzerTests
 				.WithArguments("MyNamespace.MyStruct", "type is a struct")
 		);
 
-	private const string GeneratedPrefix =
-		"""
-		namespace Mockolate
+	private static string GeneratedPrefix(string fullyQualifiedTypeName, bool includeImplementing = false)
+	{
+		string simpleName = fullyQualifiedTypeName.Split('.')[^1];
+		if (includeImplementing)
 		{
-			public static class Mock
-			{
-				[MockGenerator]
-				public static T Create<T>() => default!;
-			}
-			
-			[AttributeUsage(AttributeTargets.Method)]
-			public class MockGeneratorAttribute : Attribute { }
+			return $$"""
+			         namespace Mockolate
+			         {
+			         	internal static partial class MockExtensionsFor{{simpleName}}
+			         	{
+			         		extension({{fullyQualifiedTypeName}} mock)
+			         		{
+			         			public static {{fullyQualifiedTypeName}} CreateMock() => default!;
+			         			public {{fullyQualifiedTypeName}} Implementing<TInterface>() => default!;
+			         		}
+			         	}
+			         }
+			         """;
 		}
-		""";
+
+		return $$"""
+		         namespace Mockolate
+		         {
+		         	internal static partial class MockExtensionsFor{{simpleName}}
+		         	{
+		         		extension({{fullyQualifiedTypeName}} mock)
+		         		{
+		         			public static {{fullyQualifiedTypeName}} CreateMock() => default!;
+		         		}
+		         	}
+		         }
+		         """;
+	}
 }
