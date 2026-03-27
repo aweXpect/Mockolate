@@ -31,8 +31,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 
 	private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context)
 	{
-		if (context.Node is not InvocationExpressionSyntax invocation ||
-		    invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
+		if (context.Node is not InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax memberAccess, } invocation)
 		{
 			return;
 		}
@@ -103,7 +102,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		}
 
 		Location typeArgumentLocation = AnalyzerHelpers.GetTypeArgumentLocation(invocation, typeArgument) ??
-		                               invocation.GetLocation();
+		                                invocation.GetLocation();
 
 		if (!IsMockable(typeArgument, out string? reason))
 		{

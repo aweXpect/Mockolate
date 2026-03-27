@@ -49,6 +49,90 @@ public class UseVerificationAnalyzerTests
 		);
 
 	[Fact]
+	public async Task WhenPassedAsArgument_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			using Mockolate;
+			using Mockolate.Verify;
+
+			public class MyClass
+			{
+			    public void MyTest()
+			    {
+			        ConsumeResult(VerifySomething());
+			    }
+
+				public static void ConsumeResult(
+					VerificationResult<MockVerify<int, Mock<int>>> result) { }
+
+				public static VerificationResult<MockVerify<int, Mock<int>>> VerifySomething()
+					=> null!;
+			}
+			"""
+		);
+
+	[Fact]
+	public async Task WhenReturnedFromMethod_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			using Mockolate;
+			using Mockolate.Verify;
+
+			public class MyClass
+			{
+			    public static VerificationResult<MockVerify<int, Mock<int>>> MyTest()
+			    {
+			        return VerifySomething();
+			    }
+
+				public static VerificationResult<MockVerify<int, Mock<int>>> VerifySomething()
+					=> null!;
+			}
+			"""
+		);
+
+	[Fact]
+	public async Task WhenUsedAsVariableInitializer_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			using Mockolate;
+			using Mockolate.Verify;
+
+			public class MyClass
+			{
+			    public void MyTest()
+			    {
+			        VerificationResult<MockVerify<int, Mock<int>>> result = VerifySomething();
+			        _ = result;
+			    }
+
+				public static VerificationResult<MockVerify<int, Mock<int>>> VerifySomething()
+					=> null!;
+			}
+			"""
+		);
+
+	[Fact]
+	public async Task WhenUsedInConditional_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			using Mockolate;
+			using Mockolate.Verify;
+
+			public class MyClass
+			{
+			    public void MyTest(bool condition)
+			    {
+			        _ = condition ? VerifySomething() : VerifySomething();
+			    }
+
+				public static VerificationResult<MockVerify<int, Mock<int>>> VerifySomething()
+					=> null!;
+			}
+			"""
+		);
+
+	[Fact]
 	public async Task WhenUsedInMethod_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			"""
