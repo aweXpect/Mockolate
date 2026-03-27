@@ -89,7 +89,7 @@ public sealed class InteractionsTests
 		VerificationResult<IChocolateDispenser> result = registration.Property(sut, "foo.bar", (IParameter)It.IsAny<int>());
 
 		await That(result).Never();
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to value It.IsAny<int>()");
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("set property bar to It.IsAny<int>()");
 	}
 
 	[Fact]

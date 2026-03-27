@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
 namespace Mockolate.Verify;
@@ -9,8 +10,8 @@ namespace Mockolate.Verify;
 [DebuggerNonUserCode]
 public class VerificationIndexerResult<TSubject, TParameter>
 {
-	private readonly NamedParameter[] _parameters;
 	private readonly MockRegistry _mockRegistry;
+	private readonly NamedParameter[] _parameters;
 	private readonly TSubject _subject;
 
 	/// <inheritdoc cref="VerificationIndexerResult{TSubject, TParameter}" />
@@ -30,6 +31,13 @@ public class VerificationIndexerResult<TSubject, TParameter>
 	/// <summary>
 	///     Verifies the indexer write access on the mock with the given <paramref name="value" />.
 	/// </summary>
-	public VerificationResult<TSubject> Set(IParameter<TParameter>? value)
-		=> _mockRegistry.Indexer(_subject, (IParameter)(value ?? It.IsNull<TParameter>()), _parameters);
+	public VerificationResult<TSubject> Set(IParameter<TParameter> value)
+		=> _mockRegistry.Indexer(_subject, (IParameter)value, _parameters);
+
+	/// <summary>
+	///     Verifies the indexer write access on the mock with the given <paramref name="value" />.
+	/// </summary>
+	[OverloadResolutionPriority(1)]
+	public VerificationResult<TSubject> Set(TParameter value, [CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
+		=> _mockRegistry.Indexer(_subject, (IParameter)It.Is(value, doNotPopulateThisValue), _parameters);
 }

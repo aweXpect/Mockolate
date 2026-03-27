@@ -286,6 +286,66 @@ public sealed partial class SetupIndexerTests
 			.WithMessage("The indexer [null, 1, 2] was accessed without prior setup.");
 	}
 
+	public class IndexerWith1Parameter
+	{
+		[Fact]
+		public async Task WithExplicitParameter_ShouldWork()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[1].InitializeWith("foo");
+
+			string result1 = sut[1];
+			string result2 = sut[2];
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+	}
+
+	public class IndexerWith2Parameters
+	{
+		[Fact]
+		public async Task WithExplicitParameter1_ShouldWork()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[1, It.IsAny<int>()].InitializeWith("foo");
+
+			string result1 = sut[1, 10];
+			string result2 = sut[2, 10];
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_ShouldWork()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), 1].InitializeWith("foo");
+
+			string result1 = sut[10, 1];
+			string result2 = sut[10, 2];
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[1, 2].InitializeWith("foo");
+
+			string result1 = sut[1, 2];
+			string result2 = sut[1, 10];
+			string result3 = sut[10, 2];
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEmpty();
+			await That(result3).IsEmpty();
+		}
+	}
+
 	public class MyIndexerSetup : IndexerSetup
 	{
 		public static bool DoesMatch(NamedParameter[] namedParameters, NamedParameterValue[] values)

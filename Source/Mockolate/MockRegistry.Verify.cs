@@ -72,7 +72,7 @@ public partial class MockRegistry
 		return new VerificationResult<T>(subject,
 			Interactions,
 			Predicate,
-			() => $"set property {propertyName.SubstringAfterLast('.')} to value {value}");
+			() => $"set property {propertyName.SubstringAfterLast('.')} to {value}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)
@@ -126,7 +126,7 @@ public partial class MockRegistry
 		return new VerificationResult<T>(subject,
 			Interactions,
 			Predicate,
-			() => $"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter))}] to value {value}");
+			() => $"set indexer [{string.Join(", ", parameters.Select(x => x.Parameter))}] to {value}");
 
 		[DebuggerNonUserCode]
 		bool Predicate(IInteraction interaction)

@@ -1,4 +1,4 @@
-﻿using Mockolate.Tests.TestHelpers;
+using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests.MockIndexers;
 
@@ -33,5 +33,52 @@ public sealed partial class VerifyGotIndexerTests
 		await That(sut.Mock.Verify[It.Is(1), It.Is(2)].Got()).Once();
 		await That(sut.Mock.Verify[It.Satisfies<int>(i => i != 1), It.Is(2)].Got()).Never();
 		await That(sut.Mock.Verify[It.Is(1), It.Satisfies<int>(i => i != 2)].Got()).Never();
+	}
+
+	public class IndexerWith1Parameter
+	{
+		[Fact]
+		public async Task WithExplicitParameter_ShouldWork()
+		{
+			IMyService sut = IMyService.CreateMock();
+			_ = sut[1];
+
+			await That(sut.Mock.Verify[1].Got()).Once();
+			await That(sut.Mock.Verify[2].Got()).Never();
+		}
+	}
+
+	public class IndexerWith2Parameters
+	{
+		[Fact]
+		public async Task WithExplicitParameter1_ShouldWork()
+		{
+			IMyService sut = IMyService.CreateMock();
+			_ = sut[1, 10];
+
+			await That(sut.Mock.Verify[1, It.IsAny<int>()].Got()).Once();
+			await That(sut.Mock.Verify[2, It.IsAny<int>()].Got()).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_ShouldWork()
+		{
+			IMyService sut = IMyService.CreateMock();
+			_ = sut[10, 1];
+
+			await That(sut.Mock.Verify[It.IsAny<int>(), 1].Got()).Once();
+			await That(sut.Mock.Verify[It.IsAny<int>(), 2].Got()).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IMyService sut = IMyService.CreateMock();
+			_ = sut[1, 2];
+
+			await That(sut.Mock.Verify[1, 2].Got()).Once();
+			await That(sut.Mock.Verify[1, 10].Got()).Never();
+			await That(sut.Mock.Verify[10, 2].Got()).Never();
+		}
 	}
 }

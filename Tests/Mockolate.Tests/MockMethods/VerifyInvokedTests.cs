@@ -190,4 +190,194 @@ public sealed partial class VerifyInvokedTests
 
 		await That(result).IsEqualTo(default(int));
 	}
+
+	public class ReturnMethodWith1Parameters
+	{
+		[Fact]
+		public async Task WithExplicitParameter_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method1(1);
+
+			await That(sut.Mock.Verify.Method1(1)).Once();
+			await That(sut.Mock.Verify.Method1(2)).Never();
+		}
+
+		[Fact]
+		public async Task WithIParameterOverload_ShouldStillWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method1(5);
+
+			await That(sut.Mock.Verify.Method1(It.Satisfies<int>(x => x > 0))).Once();
+			await That(sut.Mock.Verify.Method1(It.Satisfies<int>(x => x > 10))).Never();
+		}
+	}
+
+	public class ReturnMethodWith2Parameters
+	{
+		[Fact]
+		public async Task WithExplicitParameter1_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method2(1, 10);
+
+			await That(sut.Mock.Verify.Method2(1, It.IsAny<int>())).Once();
+			await That(sut.Mock.Verify.Method2(2, It.IsAny<int>())).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method2(10, 1);
+
+			await That(sut.Mock.Verify.Method2(It.IsAny<int>(), 1)).Once();
+			await That(sut.Mock.Verify.Method2(It.IsAny<int>(), 2)).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method2(1, 2);
+
+			await That(sut.Mock.Verify.Method2(1, 2)).Once();
+			await That(sut.Mock.Verify.Method2(1, 10)).Never();
+			await That(sut.Mock.Verify.Method2(10, 2)).Never();
+		}
+	}
+
+	public class ReturnMethodWith3Parameters
+	{
+		[Fact]
+		public async Task WithExplicitParameter1_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method3(1, 10, 20);
+
+			await That(sut.Mock.Verify.Method3(1, It.IsAny<int>(), It.IsAny<int>())).Once();
+			await That(sut.Mock.Verify.Method3(2, It.IsAny<int>(), It.IsAny<int>())).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method3(10, 1, 20);
+
+			await That(sut.Mock.Verify.Method3(It.IsAny<int>(), 1, It.IsAny<int>())).Once();
+			await That(sut.Mock.Verify.Method3(It.IsAny<int>(), 2, It.IsAny<int>())).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method3(10, 20, 1);
+
+			await That(sut.Mock.Verify.Method3(It.IsAny<int>(), It.IsAny<int>(), 1)).Once();
+			await That(sut.Mock.Verify.Method3(It.IsAny<int>(), It.IsAny<int>(), 2)).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method3(1, 2, 3);
+
+			await That(sut.Mock.Verify.Method3(1, 2, 3)).Once();
+			await That(sut.Mock.Verify.Method3(1, 10, 20)).Never();
+			await That(sut.Mock.Verify.Method3(10, 2, 20)).Never();
+			await That(sut.Mock.Verify.Method3(10, 20, 3)).Never();
+		}
+	}
+
+	public class ReturnMethodWith5Parameters
+	{
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method5(1, 2, 3, 4, 5);
+
+			await That(sut.Mock.Verify.Method5(1, 2, 3, 4, 5)).Once();
+			await That(sut.Mock.Verify.Method5(10, 2, 3, 4, 5)).Never();
+			await That(sut.Mock.Verify.Method5(1, 20, 3, 4, 5)).Never();
+			await That(sut.Mock.Verify.Method5(1, 2, 30, 4, 5)).Never();
+			await That(sut.Mock.Verify.Method5(1, 2, 3, 40, 5)).Never();
+			await That(sut.Mock.Verify.Method5(1, 2, 3, 4, 50)).Never();
+		}
+	}
+
+	public class ReturnMethodWith4Parameters
+	{
+		[Fact]
+		public async Task WithExplicitParameter1_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method4(1, 10, 20, 30);
+
+			await That(sut.Mock.Verify.Method4(1, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Once();
+			await That(sut.Mock.Verify.Method4(2, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter2_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method4(10, 1, 20, 30);
+
+			await That(sut.Mock.Verify.Method4(It.IsAny<int>(), 1, It.IsAny<int>(), It.IsAny<int>())).Once();
+			await That(sut.Mock.Verify.Method4(It.IsAny<int>(), 2, It.IsAny<int>(), It.IsAny<int>())).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter3_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method4(10, 20, 1, 30);
+
+			await That(sut.Mock.Verify.Method4(It.IsAny<int>(), It.IsAny<int>(), 1, It.IsAny<int>())).Once();
+			await That(sut.Mock.Verify.Method4(It.IsAny<int>(), It.IsAny<int>(), 2, It.IsAny<int>())).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameter4_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method4(10, 20, 30, 1);
+
+			await That(sut.Mock.Verify.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), 1)).Once();
+			await That(sut.Mock.Verify.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), 2)).Never();
+		}
+
+		[Fact]
+		public async Task WithExplicitParameters_ShouldWork()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method4(1, 2, 3, 4);
+
+			await That(sut.Mock.Verify.Method4(1, 2, 3, 4)).Once();
+			await That(sut.Mock.Verify.Method4(1, 10, 20, 30)).Never();
+			await That(sut.Mock.Verify.Method4(10, 2, 20, 30)).Never();
+			await That(sut.Mock.Verify.Method4(10, 20, 3, 30)).Never();
+			await That(sut.Mock.Verify.Method4(10, 20, 30, 4)).Never();
+		}
+	}
 }
