@@ -5,7 +5,7 @@ using Mockolate.Interactions;
 namespace Mockolate.Verify;
 
 /// <summary>
-///     The result of a verification containing the matching interactions, that allows ignoring the explicit parameters.
+///     Represents the result of a verification that contains the matching interactions and allows ignoring explicit parameters.
 /// </summary>
 [DebuggerNonUserCode]
 public class VerificationResultParameterIgnorer<TVerify> : VerificationResult<TVerify>

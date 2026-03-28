@@ -233,7 +233,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 {
 	private readonly List<Callback<Action<int, T1>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
-	private readonly IParameters? _matches;
+	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
@@ -431,7 +431,8 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1}.AnyParameters()" />
 	public IVoidMethodSetup<T1> AnyParameters()
 	{
-		MethodMatch = new MethodParametersMatch(_name, Match.AnyParameters());
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
 		return this;
 	}
 
@@ -524,7 +525,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	private readonly List<Callback<Action<int, T1, T2>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
 	private readonly NamedParameter? _match2;
-	private readonly IParameters? _matches;
+	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
@@ -723,7 +724,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2}.AnyParameters()" />
 	public IVoidMethodSetup<T1, T2> AnyParameters()
 	{
-		MethodMatch = new MethodParametersMatch(_name, Match.AnyParameters());
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
 		return this;
 	}
 
@@ -818,7 +820,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	private readonly NamedParameter? _match1;
 	private readonly NamedParameter? _match2;
 	private readonly NamedParameter? _match3;
-	private readonly IParameters? _matches;
+	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
@@ -1024,7 +1026,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3}.AnyParameters()" />
 	public IVoidMethodSetup<T1, T2, T3> AnyParameters()
 	{
-		MethodMatch = new MethodParametersMatch(_name, Match.AnyParameters());
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
 		return this;
 	}
 
@@ -1121,7 +1124,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	private readonly NamedParameter? _match2;
 	private readonly NamedParameter? _match3;
 	private readonly NamedParameter? _match4;
-	private readonly IParameters? _matches;
+	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
@@ -1330,7 +1333,8 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3, T4}.AnyParameters()" />
 	public IVoidMethodSetup<T1, T2, T3, T4> AnyParameters()
 	{
-		MethodMatch = new MethodParametersMatch(_name, Match.AnyParameters());
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
 		return this;
 	}
 

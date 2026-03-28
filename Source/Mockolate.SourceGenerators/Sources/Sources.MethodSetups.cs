@@ -271,7 +271,7 @@ internal static partial class Sources
 			.Append(">>> _returnCallbacks = [];")
 			.AppendLine();
 		sb.Append("\t\tprivate readonly string _name;").AppendLine();
-		sb.Append("\t\tprivate readonly global::Mockolate.Parameters.IParameters? _matches;").AppendLine();
+		sb.Append("\t\tprivate global::Mockolate.Parameters.IParameters? _matches;").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append("\t\tprivate readonly global::Mockolate.Parameters.NamedParameter? _match").Append(i).Append(";").AppendLine();
@@ -520,7 +520,8 @@ internal static partial class Sources
 			.Append(typeParams)
 			.Append(">.AnyParameters()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tMethodMatch = new global::Mockolate.Setup.MethodParametersMatch(_name, global::Mockolate.Match.AnyParameters());").AppendLine();
+		sb.Append("\t\t\t_matches = global::Mockolate.Match.AnyParameters();").AppendLine();
+		sb.Append("\t\t\tMethodMatch = new global::Mockolate.Setup.MethodParametersMatch(_name, _matches);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -834,7 +835,7 @@ internal static partial class Sources
 			.Append(", TReturn>>> _returnCallbacks = [];")
 			.AppendLine();
 		sb.Append("\t\tprivate readonly string _name;").AppendLine();
-		sb.Append("\t\tprivate readonly global::Mockolate.Parameters.IParameters? _matches;").AppendLine();
+		sb.Append("\t\tprivate global::Mockolate.Parameters.IParameters? _matches;").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append("\t\tprivate readonly global::Mockolate.Parameters.NamedParameter? _match").Append(i).Append(";").AppendLine();
@@ -1113,7 +1114,8 @@ internal static partial class Sources
 			.Append(typeParams)
 			.Append(">.AnyParameters()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tMethodMatch = new global::Mockolate.Setup.MethodParametersMatch(_name, global::Mockolate.Match.AnyParameters());").AppendLine();
+		sb.Append("\t\t\t_matches = global::Mockolate.Match.AnyParameters();").AppendLine();
+		sb.Append("\t\t\tMethodMatch = new global::Mockolate.Setup.MethodParametersMatch(_name, _matches);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
