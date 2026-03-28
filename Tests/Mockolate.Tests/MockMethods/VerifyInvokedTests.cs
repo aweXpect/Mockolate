@@ -194,6 +194,18 @@ public sealed partial class VerifyInvokedTests
 	public class ReturnMethodWith1Parameters
 	{
 		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method1(1);
+			sut.Method1(2);
+			sut.Method2(1, 2);
+
+			await That(sut.Mock.Verify.Method1(1).AnyParameters()).Twice();
+		}
+
+		[Fact]
 		public async Task WithExplicitParameter_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -218,6 +230,17 @@ public sealed partial class VerifyInvokedTests
 
 	public class ReturnMethodWith2Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method2(1, 2);
+			sut.Method2(3, 4);
+
+			await That(sut.Mock.Verify.Method2(1, 2).AnyParameters()).Twice();
+		}
+
 		[Fact]
 		public async Task WithExplicitParameter1_ShouldWork()
 		{
@@ -255,6 +278,17 @@ public sealed partial class VerifyInvokedTests
 
 	public class ReturnMethodWith3Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method3(1, 2, 3);
+			sut.Method3(4, 5, 6);
+
+			await That(sut.Mock.Verify.Method3(1, 2, 3).AnyParameters()).Twice();
+		}
+
 		[Fact]
 		public async Task WithExplicitParameter1_ShouldWork()
 		{
@@ -305,6 +339,17 @@ public sealed partial class VerifyInvokedTests
 	public class ReturnMethodWith5Parameters
 	{
 		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method5(1, 2, 3, 4, 5);
+			sut.Method5(6, 7, 8, 9, 10);
+
+			await That(sut.Mock.Verify.Method5(1, 2, 3, 4, 5).AnyParameters()).Twice();
+		}
+
+		[Fact]
 		public async Task WithExplicitParameters_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -322,6 +367,17 @@ public sealed partial class VerifyInvokedTests
 
 	public class ReturnMethodWith4Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Method4(1, 2, 3, 4);
+			sut.Method4(5, 6, 7, 8);
+
+			await That(sut.Mock.Verify.Method4(1, 2, 3, 4).AnyParameters()).Twice();
+		}
+
 		[Fact]
 		public async Task WithExplicitParameter1_ShouldWork()
 		{
@@ -378,6 +434,76 @@ public sealed partial class VerifyInvokedTests
 			await That(sut.Mock.Verify.Method4(10, 2, 20, 30)).Never();
 			await That(sut.Mock.Verify.Method4(10, 20, 3, 30)).Never();
 			await That(sut.Mock.Verify.Method4(10, 20, 30, 4)).Never();
+		}
+	}
+
+	public class VoidMethodWith1Parameters
+	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Method1(1);
+			sut.Method1(2);
+
+			await That(sut.Mock.Verify.Method1(1).AnyParameters()).Twice();
+		}
+	}
+
+	public class VoidMethodWith2Parameters
+	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Method2(1, 2);
+			sut.Method2(3, 4);
+
+			await That(sut.Mock.Verify.Method2(1, 2).AnyParameters()).Twice();
+		}
+	}
+
+	public class VoidMethodWith3Parameters
+	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Method3(1, 2, 3);
+			sut.Method3(4, 5, 6);
+
+			await That(sut.Mock.Verify.Method3(1, 2, 3).AnyParameters()).Twice();
+		}
+	}
+
+	public class VoidMethodWith4Parameters
+	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Method4(1, 2, 3, 4);
+			sut.Method4(5, 6, 7, 8);
+
+			await That(sut.Mock.Verify.Method4(1, 2, 3, 4).AnyParameters()).Twice();
+		}
+	}
+
+	public class VoidMethodWith5Parameters
+	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Method5(1, 2, 3, 4, 5);
+			sut.Method5(6, 7, 8, 9, 10);
+
+			await That(sut.Mock.Verify.Method5(1, 2, 3, 4, 5).AnyParameters()).Twice();
 		}
 	}
 }

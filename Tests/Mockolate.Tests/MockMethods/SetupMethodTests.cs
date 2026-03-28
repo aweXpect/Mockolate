@@ -752,6 +752,21 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith1Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method1(1).AnyParameters()
+				.Returns("foo");
+
+			string result1 = sut.Method1(1);
+			string result2 = sut.Method1(2);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEqualTo("foo");
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -820,6 +835,21 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith2Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method2(1, 2).AnyParameters()
+				.Returns("foo");
+
+			string result1 = sut.Method2(1, 2);
+			string result2 = sut.Method2(2, 3);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEqualTo("foo");
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -922,6 +952,21 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith3Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(1, 2, 3).AnyParameters()
+				.Returns("foo");
+
+			string result1 = sut.Method3(1, 2, 3);
+			string result2 = sut.Method3(2, 3, 4);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEqualTo("foo");
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -1093,6 +1138,21 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith4Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, 2, 3, 4).AnyParameters()
+				.Returns("foo");
+
+			string result1 = sut.Method4(1, 2, 3, 4);
+			string result2 = sut.Method4(2, 3, 4, 5);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEqualTo("foo");
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -1411,6 +1471,21 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith5Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method5(1, 2, 3, 4, 5).AnyParameters()
+				.Returns("foo");
+
+			string result1 = sut.Method5(1, 2, 3, 4, 5);
+			string result2 = sut.Method5(2, 3, 4, 5, 6);
+
+			await That(result1).IsEqualTo("foo");
+			await That(result2).IsEqualTo("foo");
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -1521,6 +1596,21 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith1Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			int callCount = 0;
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method1(1).AnyParameters()
+				.Do(() => callCount++);
+
+			sut.Method1(1);
+			sut.Method1(2);
+
+			await That(callCount).IsEqualTo(2);
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -1558,6 +1648,21 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith2Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			int callCount = 0;
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method2(1, 2).AnyParameters()
+				.Do(() => callCount++);
+
+			sut.Method2(1, 2);
+			sut.Method2(2, 3);
+
+			await That(callCount).IsEqualTo(2);
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -1597,6 +1702,21 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith3Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			int callCount = 0;
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method3(1, 2, 3).AnyParameters()
+				.Do(() => callCount++);
+
+			sut.Method3(1, 2, 3);
+			sut.Method3(2, 3, 4);
+
+			await That(callCount).IsEqualTo(2);
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -1637,6 +1757,21 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith4Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			int callCount = 0;
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method4(1, 2, 3, 4).AnyParameters()
+				.Do(() => callCount++);
+
+			sut.Method4(1, 2, 3, 4);
+			sut.Method4(2, 3, 4, 5);
+
+			await That(callCount).IsEqualTo(2);
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -1680,6 +1815,21 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith5Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
+		{
+			int callCount = 0;
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method5(1, 2, 3, 4, 5).AnyParameters()
+				.Do(() => callCount++);
+
+			sut.Method5(1, 2, 3, 4, 5);
+			sut.Method5(2, 3, 4, 5, 6);
+
+			await That(callCount).IsEqualTo(2);
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]

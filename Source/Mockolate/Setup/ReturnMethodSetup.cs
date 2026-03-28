@@ -266,7 +266,7 @@ public class ReturnMethodSetup<TReturn>(string name)
 /// </summary>
 [DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>, IReturnMethodSetupParameterIgnorer<TReturn, T1>
 {
 	private readonly List<Callback<Action<int, T1>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
@@ -498,6 +498,13 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1}.AnyParameters()" />
+	public IReturnMethodSetup<TReturn, T1> AnyParameters()
+	{
+		MethodMatch = new MethodParametersMatch(_name, Match.AnyParameters());
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -606,7 +613,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 /// </summary>
 [DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
@@ -842,6 +849,13 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2}.AnyParameters()" />
+	public IReturnMethodSetup<TReturn, T1, T2> AnyParameters()
+	{
+		MethodMatch = new MethodParametersMatch(_name, Match.AnyParameters());
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -957,7 +971,7 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 /// </summary>
 [DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
@@ -1200,6 +1214,13 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2, T3}.AnyParameters()" />
+	public IReturnMethodSetup<TReturn, T1, T2, T3> AnyParameters()
+	{
+		MethodMatch = new MethodParametersMatch(_name, Match.AnyParameters());
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -1323,7 +1344,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 /// </summary>
 [DebuggerNonUserCode]
 public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
@@ -1571,6 +1592,13 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		Only(int times)
 	{
 		_currentReturnCallback?.Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2, T3, T4}.AnyParameters()" />
+	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> AnyParameters()
+	{
+		MethodMatch = new MethodParametersMatch(_name, Match.AnyParameters());
 		return this;
 	}
 

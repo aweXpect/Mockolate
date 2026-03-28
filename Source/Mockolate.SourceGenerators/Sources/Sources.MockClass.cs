@@ -1857,8 +1857,18 @@ internal static partial class Sources
 		sb.Append("\t\t/// </summary>").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<")
-				.AppendTypeOrWrapper(method.ReturnType);
+			if (valueFlags?.All(x => x) == true)
+			{
+				sb.Append("\t\t#if NET10_0_OR_GREATER").AppendLine();
+				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
+				sb.Append("\t\t#endif").AppendLine();
+				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer");
+			}
+			else
+			{
+				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
+			}
+			sb.Append('<').AppendTypeOrWrapper(method.ReturnType);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -1869,7 +1879,17 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+			if (valueFlags?.All(x => x) == true)
+			{
+				sb.Append("\t\t#if NET10_0_OR_GREATER").AppendLine();
+				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
+				sb.Append("\t\t#endif").AppendLine();
+				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer");
+			}
+			else
+			{
+				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+			}
 			if (method.Parameters.Count > 0)
 			{
 				sb.Append('<');
@@ -2054,7 +2074,10 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<").AppendTypeOrWrapper(method.ReturnType);
+			sb.Append(valueFlags?.All(x => x) == true
+				? "\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer"
+				: "\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
+			sb.Append('<').AppendTypeOrWrapper(method.ReturnType);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -2065,7 +2088,9 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+			sb.Append(valueFlags?.All(x => x) == true
+				? "\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer"
+				: "\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
 			if (method.Parameters.Count > 0)
 			{
 				sb.Append('<');
@@ -2623,8 +2648,18 @@ internal static partial class Sources
 
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(methodName)
-			.Append("(");
+		if (valueFlags?.All(x => x) == true)
+		{
+			sb.Append("\t\t#if NET10_0_OR_GREATER").AppendLine();
+			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
+			sb.Append("\t\t#endif").AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<").Append(verifyName).Append("> ").Append(methodName).Append("(");
+		}
+		else
+		{
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(methodName).Append("(");
+		}
+
 		if (useParameters)
 		{
 			sb.Append("global::Mockolate.Parameters.IParameters parameters");
@@ -2799,7 +2834,10 @@ internal static partial class Sources
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(methodName).Append("(");
+		sb.Append(valueFlags?.All(x => x) == true
+			? "\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<"
+			: "\t\tglobal::Mockolate.Verify.VerificationResult<");
+		sb.Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(methodName).Append("(");
 		if (useParameters)
 		{
 			sb.Append("global::Mockolate.Parameters.IParameters parameters");
@@ -2865,7 +2903,15 @@ internal static partial class Sources
 			sb.Append(']');
 		}
 
-		sb.AppendLine("));");
+		if (!useParameters && valueFlags?.All(x => x) == true)
+		{
+			sb.Append("), ").Append(method.GetUniqueNameString()).AppendLine(");");
+		}
+		else
+		{
+			sb.AppendLine("));");
+		}
+
 		sb.AppendLine();
 	}
 

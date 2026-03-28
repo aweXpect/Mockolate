@@ -245,6 +245,16 @@ internal static partial class Sources
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
+		sb.AppendXmlSummary("Allows ignoring the provided parameters.", "\t");
+		sb.Append("\tinternal interface IVoidMethodSetupParameterIgnorer<").Append(typeParams)
+			.Append("> : global::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams).Append(">")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.AppendXmlSummary("Replaces the explicit parameter matcher with <see cref=\"Match.AnyParameters()\" />.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams).Append("> AnyParameters();").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
 		sb.AppendXmlSummary(
 			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <see langword=\"void\" />.",
 			"");
@@ -252,7 +262,8 @@ internal static partial class Sources
 		sb.Append("internal class VoidMethodSetup<").Append(typeParams)
 			.Append("> : global::Mockolate.Setup.MethodSetup,").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupCallbackBuilder<").Append(typeParams).Append(">,").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupReturnBuilder<").Append(typeParams).Append(">").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupReturnBuilder<").Append(typeParams).Append(">,").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.Append("\t\tprivate readonly global::System.Collections.Generic.List<global::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>> _callbacks = [];")
 			.AppendLine();
@@ -500,6 +511,16 @@ internal static partial class Sources
 			.Append(">.Only(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback?.Only(times);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer{").Append(typeParams).Append("}.AnyParameters()\" />").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams).Append("> global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<")
+			.Append(typeParams)
+			.Append(">.AnyParameters()").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tMethodMatch = new global::Mockolate.Setup.MethodParametersMatch(_name, global::Mockolate.Match.AnyParameters());").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -787,6 +808,16 @@ internal static partial class Sources
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
+		sb.AppendXmlSummary("Allows ignoring the provided parameters.", "\t");
+		sb.Append("\tinternal interface IReturnMethodSetupParameterIgnorer<TReturn, ").Append(typeParams)
+			.Append("> : global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.AppendXmlSummary("Replaces the explicit parameter matcher with <see cref=\"Match.AnyParameters()\" />.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> AnyParameters();").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
 		sb.AppendXmlSummary(
 			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" />.",
 			"\t");
@@ -794,7 +825,8 @@ internal static partial class Sources
 		sb.Append("\tinternal class ReturnMethodSetup<TReturn, ").Append(typeParams)
 			.Append("> : global::Mockolate.Setup.MethodSetup,").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append(">,").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append(">").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append(">,").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tprivate readonly global::System.Collections.Generic.List<global::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>> _callbacks = [];")
 			.AppendLine();
@@ -1072,6 +1104,16 @@ internal static partial class Sources
 			.Append(">.Only(int times)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentReturnCallback?.Only(times);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer{TReturn, ").Append(typeParams).Append("}.AnyParameters()\" />").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, ")
+			.Append(typeParams)
+			.Append(">.AnyParameters()").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tMethodMatch = new global::Mockolate.Setup.MethodParametersMatch(_name, global::Mockolate.Match.AnyParameters());").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
