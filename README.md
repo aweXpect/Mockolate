@@ -457,9 +457,11 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
 *Note:*  
-You can also directly use a value (equivalent to wrapping it in `It.Is<T>(value)`). For methods and indexers with up to 4 parameters, you can mix matchers with direct values. For methods and indexers with more parameters you can only use one or the other.
-
-```csharp
+You can also directly use a value (equivalent to wrapping it in `It.Is<T>(value)`). For methods and indexers with
+up to 4 parameters, you can freely mix matchers with direct values in any position. For members with more than
+4 parameters, Mockolate still supports explicit values, but limits arbitrary per-parameter mixing to avoid a
+combinatorial explosion of overloads. You may need to use direct values for all explicit-value-capable parameters
+and wrap the remaining ones, or use matchers for all parameters.
 
 **String Matching**
 
@@ -1421,6 +1423,7 @@ sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).AtLeastOnce();
 ### Mockolate0002
 
 Mocked types must be mockable. This rule will prevent you from using unsupported types:
+
 - `CreateMock()`  
   Type must be an interface, a delegate or a supported class (e.g. not sealed)
 - `Implementing<T>()`  
