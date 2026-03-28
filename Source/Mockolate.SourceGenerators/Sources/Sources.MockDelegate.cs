@@ -167,12 +167,12 @@ internal static partial class Sources
 
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
-		
+
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
 		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock\";").AppendLine();
 		sb.AppendLine();
-		
+
 		AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup");
 		if (delegateMethod.Parameters.Count > 0)
 		{
@@ -343,17 +343,17 @@ internal static partial class Sources
 		sb.AppendXmlSummary($"Verify interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\tinternal interface IMockVerifyFor").Append(name).Append(" : global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
-		AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", false, "Verify");
+		AppendMethodVerifyDefinition(sb, delegateMethod, $"IMockVerifyFor{name}", false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", true, "Verify");
+			AppendMethodVerifyDefinition(sb, delegateMethod, $"IMockVerifyFor{name}", true, "Verify");
 		}
 
 		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
 		{
 			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
 			{
-				AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
+				AppendMethodVerifyDefinition(sb, delegateMethod, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
 			}
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
@@ -361,7 +361,7 @@ internal static partial class Sources
 			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
-				AppendMethodVerifyDefinition(sb, @class, delegateMethod, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
+				AppendMethodVerifyDefinition(sb, delegateMethod, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
 			}
 		}
 
