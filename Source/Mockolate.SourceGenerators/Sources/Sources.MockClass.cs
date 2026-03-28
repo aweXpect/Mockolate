@@ -11,7 +11,7 @@ namespace Mockolate.SourceGenerators.Sources;
 internal static partial class Sources
 {
 	private const int MaxExplicitParameters = 4;
-	
+
 	public static string MockClass(string name, Class @class)
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
@@ -1754,12 +1754,12 @@ internal static partial class Sources
 			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
-			AppendIndexerSetupDefinition(sb, @class, indexer);
+			AppendIndexerSetupDefinition(sb, indexer);
 			if (indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters)
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerSetupDefinition(sb, @class, indexer, valueFlags);
+					AppendIndexerSetupDefinition(sb, indexer, valueFlags);
 				}
 			}
 			else
@@ -1767,7 +1767,7 @@ internal static partial class Sources
 				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanBeExplicitValue()).ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerSetupDefinition(sb, @class, indexer, allValueFlags);
+					AppendIndexerSetupDefinition(sb, indexer, allValueFlags);
 				}
 			}
 		}
@@ -2004,7 +2004,7 @@ internal static partial class Sources
 
 		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
 		                                               method.MemberType == memberType;
-		
+
 		List<IGrouping<string, Method>> methodGroups = @class.AllMethods().Where(methodPredicate).GroupBy(m => m.Name).ToList();
 		foreach (IGrouping<string, Method>? methodGroup in methodGroups)
 		{
@@ -2016,6 +2016,7 @@ internal static partial class Sources
 					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, true);
 				}
 			}
+
 			foreach (Method? method in methodGroup)
 			{
 				if (method.Parameters.Count == 0)
@@ -2193,7 +2194,7 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendIndexerSetupDefinition(StringBuilder sb, Class @class, Property indexer, bool[]? valueFlags = null)
+	private static void AppendIndexerSetupDefinition(StringBuilder sb, Property indexer, bool[]? valueFlags = null)
 	{
 		sb.AppendXmlSummary(
 			$"Setup for the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />");
@@ -2320,7 +2321,7 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendIndexerVerifyDefinition(StringBuilder sb, Class @class, Property indexer, string verifyName, bool[]? valueFlags = null)
+	private static void AppendIndexerVerifyDefinition(StringBuilder sb, Property indexer, string verifyName, bool[]? valueFlags = null)
 	{
 		sb.AppendXmlSummary(
 			$"Verify interactions with the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />.");
@@ -2431,7 +2432,7 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		foreach (var @event in @class.AllEvents()
+		foreach (Event @event in @class.AllEvents()
 			         .Where(predicate)
 			         .GroupBy(m => m.Name)
 			         .Where(g => g.Count() == 1)
@@ -2519,12 +2520,12 @@ internal static partial class Sources
 			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
-			AppendIndexerVerifyDefinition(sb, @class, indexer, verifyName);
+			AppendIndexerVerifyDefinition(sb, indexer, verifyName);
 			if (indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters)
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerVerifyDefinition(sb, @class, indexer, verifyName, valueFlags);
+					AppendIndexerVerifyDefinition(sb, indexer, verifyName, valueFlags);
 				}
 			}
 			else
@@ -2532,7 +2533,7 @@ internal static partial class Sources
 				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanBeExplicitValue()).ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerVerifyDefinition(sb, @class, indexer, verifyName, allValueFlags);
+					AppendIndexerVerifyDefinition(sb, indexer, verifyName, allValueFlags);
 				}
 			}
 		}
@@ -2552,7 +2553,7 @@ internal static partial class Sources
 				Method? method = methodGroup.Single();
 				if (method.Parameters.Count > 0)
 				{
-					AppendMethodVerifyDefinition(sb, @class, method, verifyName, true);
+					AppendMethodVerifyDefinition(sb, method, verifyName, true);
 				}
 			}
 
@@ -2560,16 +2561,16 @@ internal static partial class Sources
 			{
 				if (method.Parameters.Count == 0)
 				{
-					AppendMethodVerifyDefinition(sb, @class, method, verifyName, false);
+					AppendMethodVerifyDefinition(sb, method, verifyName, false);
 				}
 				else
 				{
-					AppendMethodVerifyDefinition(sb, @class, method, verifyName, false);
+					AppendMethodVerifyDefinition(sb, method, verifyName, false);
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
-							AppendMethodVerifyDefinition(sb, @class, method, verifyName, false, valueFlags: valueFlags);
+							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: valueFlags);
 						}
 					}
 					else
@@ -2577,7 +2578,7 @@ internal static partial class Sources
 						bool[] allValueFlags = method.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
 						if (allValueFlags.Any(f => f))
 						{
-							AppendMethodVerifyDefinition(sb, @class, method, verifyName, false, valueFlags: allValueFlags);
+							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: allValueFlags);
 						}
 					}
 				}
@@ -2590,7 +2591,7 @@ internal static partial class Sources
 
 		Func<Event, bool> eventPredicate = @event => @event.ExplicitImplementation is null &&
 		                                             @event.MemberType == memberType;
-		foreach (var @event in @class.AllEvents().Where(eventPredicate))
+		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
 		{
 			sb.AppendXmlSummary($"Verify subscriptions on the {@event.Name} event of <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append("> ").Append(@event.Name).Append(" { get; }").AppendLine();
@@ -2600,7 +2601,7 @@ internal static partial class Sources
 		#endregion
 	}
 
-	private static void AppendMethodVerifyDefinition(StringBuilder sb, Class @class, Method method, string verifyName,
+	private static void AppendMethodVerifyDefinition(StringBuilder sb, Method method, string verifyName,
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null)
 	{
 		string methodName = methodNameOverride ?? method.Name;
