@@ -26,12 +26,24 @@ public class MockGenerator : IIncrementalGenerator
 			.SelectMany(static (mocks, _) => mocks)
 			.Collect();
 
-		context.RegisterSourceOutput(expectationsToRegister,
-			(spc, source) => Execute([..source.Distinct(),], spc));
+		IncrementalValueProvider<bool> hasOverloadResolutionPriority = context.CompilationProvider
+			.Select(static (compilation, _) => HasAttribute(compilation, "System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute"));
+
+		context.RegisterSourceOutput(expectationsToRegister.Combine(hasOverloadResolutionPriority),
+			(spc, source) => Execute([..source.Left.Distinct(),], source.Right, spc));
+
+		static bool HasAttribute(Compilation c, string attributeName)
+		{
+			INamedTypeSymbol? attributeSymbol = c.GetTypeByMetadataName(attributeName);
+			return attributeSymbol != null &&
+			       (attributeSymbol.DeclaredAccessibility == Accessibility.Public ||
+			        (attributeSymbol.DeclaredAccessibility == Accessibility.Internal &&
+			         SymbolEqualityComparer.Default.Equals(attributeSymbol.ContainingAssembly, c.Assembly)));
+		}
 	}
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, SourceProductionContext context)
+	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, bool hasOverloadResolutionPriority, SourceProductionContext context)
 	{
 		IEnumerable<(string FileName, string Name, Class Class, (string Name, Class Class)[]? AdditionalClasses)> namedMocksToGenerate = CreateNames(mocksToGenerate);
 
@@ -46,7 +58,7 @@ public class MockGenerator : IIncrementalGenerator
 			else if (mockToGenerate.AdditionalClasses is null)
 			{
 				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
-					SourceText.From(Sources.Sources.MockClass(mockToGenerate.Name, mockToGenerate.Class), Encoding.UTF8));
+					SourceText.From(Sources.Sources.MockClass(mockToGenerate.Name, mockToGenerate.Class, hasOverloadResolutionPriority), Encoding.UTF8));
 			}
 			else
 			{

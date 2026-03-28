@@ -312,54 +312,6 @@ public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1>
 }
 
 /// <summary>
-///     Allows ignoring the provided parameters.
-/// </summary>
-public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1>
-	: IReturnMethodSetup<TReturn, T1>
-{
-	/// <summary>
-	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
-	/// </summary>
-	IReturnMethodSetup<TReturn, T1> AnyParameters();
-}
-
-/// <summary>
-///     Allows ignoring the provided parameters.
-/// </summary>
-public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2>
-	: IReturnMethodSetup<TReturn, T1, T2>
-{
-	/// <summary>
-	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
-	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2> AnyParameters();
-}
-
-/// <summary>
-///     Allows ignoring the provided parameters.
-/// </summary>
-public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, out T3>
-	: IReturnMethodSetup<TReturn, T1, T2, T3>
-{
-	/// <summary>
-	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
-	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3> AnyParameters();
-}
-
-/// <summary>
-///     Allows ignoring the provided parameters.
-/// </summary>
-public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, out T3, out T4>
-	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
-{
-	/// <summary>
-	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
-	/// </summary>
-	IReturnMethodSetup<TReturn, T1, T2, T3, T4> AnyParameters();
-}
-
-/// <summary>
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
@@ -430,6 +382,18 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1>
 	///     ).
 	/// </remarks>
 	IReturnMethodSetup<TReturn, T1> Only(int times);
+}
+
+/// <summary>
+///     Allows ignoring the provided parameters.
+/// </summary>
+public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1>
+	: IReturnMethodSetup<TReturn, T1>
+{
+	/// <summary>
+	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
+	/// </summary>
+	IReturnMethodSetup<TReturn, T1> AnyParameters();
 }
 
 /// <summary>
@@ -594,6 +558,18 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2>
 }
 
 /// <summary>
+///     Allows ignoring the provided parameters.
+/// </summary>
+public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2>
+	: IReturnMethodSetup<TReturn, T1, T2>
+{
+	/// <summary>
+	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
+	/// </summary>
+	IReturnMethodSetup<TReturn, T1, T2> AnyParameters();
+}
+
+/// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMethodSetup
@@ -752,6 +728,18 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 	///     ).
 	/// </remarks>
 	IReturnMethodSetup<TReturn, T1, T2, T3> Only(int times);
+}
+
+/// <summary>
+///     Allows ignoring the provided parameters.
+/// </summary>
+public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, out T3>
+	: IReturnMethodSetup<TReturn, T1, T2, T3>
+{
+	/// <summary>
+	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
+	/// </summary>
+	IReturnMethodSetup<TReturn, T1, T2, T3> AnyParameters();
 }
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
@@ -914,6 +902,18 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 	///     ).
 	/// </remarks>
 	IReturnMethodSetup<TReturn, T1, T2, T3, T4> Only(int times);
+}
+
+/// <summary>
+///     Allows ignoring the provided parameters.
+/// </summary>
+public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, out T3, out T4>
+	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
+	/// </summary>
+	IReturnMethodSetup<TReturn, T1, T2, T3, T4> AnyParameters();
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters
 
@@ -1198,6 +1198,18 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1>
 }
 
 /// <summary>
+///     Allows ignoring the provided parameters.
+/// </summary>
+public interface IVoidMethodSetupParameterIgnorer<out T1>
+	: IVoidMethodSetup<T1>
+{
+	/// <summary>
+	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
+	/// </summary>
+	IVoidMethodSetup<T1> AnyParameters();
+}
+
+/// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetup<out T1, out T2> : IMethodSetup
@@ -1342,6 +1354,18 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2>
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1, T2> Only(int times);
+}
+
+/// <summary>
+///     Allows ignoring the provided parameters.
+/// </summary>
+public interface IVoidMethodSetupParameterIgnorer<out T1, out T2>
+	: IVoidMethodSetup<T1, T2>
+{
+	/// <summary>
+	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
+	/// </summary>
+	IVoidMethodSetup<T1, T2> AnyParameters();
 }
 
 /// <summary>
@@ -1492,6 +1516,18 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3>
 }
 
 /// <summary>
+///     Allows ignoring the provided parameters.
+/// </summary>
+public interface IVoidMethodSetupParameterIgnorer<out T1, out T2, out T3>
+	: IVoidMethodSetup<T1, T2, T3>
+{
+	/// <summary>
+	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
+	/// </summary>
+	IVoidMethodSetup<T1, T2, T3> AnyParameters();
+}
+
+/// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : IMethodSetup
@@ -1636,42 +1672,6 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3, out T
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1, T2, T3, T4> Only(int times);
-}
-
-/// <summary>
-///     Allows ignoring the provided parameters.
-/// </summary>
-public interface IVoidMethodSetupParameterIgnorer<out T1>
-	: IVoidMethodSetup<T1>
-{
-	/// <summary>
-	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
-	/// </summary>
-	IVoidMethodSetup<T1> AnyParameters();
-}
-
-/// <summary>
-///     Allows ignoring the provided parameters.
-/// </summary>
-public interface IVoidMethodSetupParameterIgnorer<out T1, out T2>
-	: IVoidMethodSetup<T1, T2>
-{
-	/// <summary>
-	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
-	/// </summary>
-	IVoidMethodSetup<T1, T2> AnyParameters();
-}
-
-/// <summary>
-///     Allows ignoring the provided parameters.
-/// </summary>
-public interface IVoidMethodSetupParameterIgnorer<out T1, out T2, out T3>
-	: IVoidMethodSetup<T1, T2, T3>
-{
-	/// <summary>
-	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
-	/// </summary>
-	IVoidMethodSetup<T1, T2, T3> AnyParameters();
 }
 
 /// <summary>
