@@ -43,9 +43,9 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    IChocolateDispenser sut = IChocolateDispenser.CreateMock();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   sut.Mock.Setup[It.Is("Dark")].InitializeWith(10);
+   sut.Mock.Setup["Dark"].InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>())
+   sut.Mock.Setup.Dispense("Dark", It.IsAny<int>())
        .Returns((type, amount) =>
        {
            int current = sut[type];
@@ -71,7 +71,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    bool gotChoc3 = sut.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Exactly(3);
+   sut.Mock.Verify.Dispense("Dark", It.IsAny<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
@@ -456,6 +456,11 @@ Mockolate provides flexible parameter matching for method setups and verificatio
   minimum and maximum value.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
+*Note:*  
+You can also directly use a value (equivalent to wrapping it in `It.Is<T>(value)`). For methods and indexers with up to 4 parameters, you can mix matchers with direct values. For methods and indexers with more parameters you can only use one or the other.
+
+```csharp
+
 **String Matching**
 
 - `It.Matches(pattern)`: Matches strings using wildcard patterns (`*` and `?`).
@@ -510,7 +515,7 @@ sut.Increment(ref value);
 - `It.IsReadOnlySpan<T>(predicate)`: Matches `ReadOnlySpan<T>` parameters that satisfy the predicate.
 - `It.IsAnyReadOnlySpan<T>()`: Matches any `ReadOnlySpan<T>` parameter.
 
-**Note:**  
+*Note:*  
 As `ref struct` types cannot be stored directly, it is converted to an array internally and the `predicate` receives
 this array for evaluation.
 

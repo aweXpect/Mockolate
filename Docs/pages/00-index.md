@@ -39,9 +39,9 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    IChocolateDispenser sut = IChocolateDispenser.CreateMock();
    
    // Setup: Initial stock of 10 for Dark chocolate
-   sut.Mock.Setup[It.Is("Dark")].InitializeWith(10);
+   sut.Mock.Setup["Dark"].InitializeWith(10);
    // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   sut.Mock.Setup.Dispense(It.Is("Dark"), It.IsAny<int>())
+   sut.Mock.Setup.Dispense("Dark", It.IsAny<int>())
        .Returns((type, amount) =>
        {
            int current = sut[type];
@@ -67,7 +67,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    bool gotChoc3 = sut.Dispense("Dark", 6); // false
    
    // Verify: Check interactions
-   sut.Mock.Verify.Dispense(It.Is("Dark"), It.IsAny<int>()).Exactly(3);
+   sut.Mock.Verify.Dispense("Dark", It.IsAny<int>()).Exactly(3);
    
    // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
    Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
