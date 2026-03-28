@@ -13,6 +13,11 @@ namespace Mockolate.Setup;
 [DebuggerNonUserCode]
 public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethodSetup, IVerifiableMethodSetup
 {
+	/// <summary>
+	///     The method match associated with this method setup.
+	/// </summary>
+	protected IMethodMatch MethodMatch { get; set; } = methodMatch;
+
 	/// <inheritdoc cref="IInteractiveMethodSetup.HasReturnCalls()" />
 	bool IInteractiveMethodSetup.HasReturnCalls()
 		=> HasReturnCalls();
@@ -27,7 +32,7 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.Matches(MethodInvocation)" />
 	bool IInteractiveMethodSetup.Matches(MethodInvocation methodInvocation)
-		=> methodMatch.Matches(methodInvocation);
+		=> MethodMatch.Matches(methodInvocation);
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.SkipBaseClass()" />
 	bool? IInteractiveMethodSetup.SkipBaseClass()
@@ -52,7 +57,7 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 
 	/// <inheritdoc cref="IVerifiableMethodSetup.GetMatch()" />
 	public IMethodMatch GetMatch()
-		=> methodMatch;
+		=> MethodMatch;
 
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be skipped.

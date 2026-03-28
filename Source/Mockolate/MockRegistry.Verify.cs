@@ -45,6 +45,27 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Counts the invocations of methods matching the <paramref name="methodMatch" /> on the <paramref name="subject" />,
+	///     allowing to ignore the explicit parameters via <see cref="Verify.VerificationResultParameterIgnorer{T}.AnyParameters()" />.
+	/// </summary>
+	public VerificationResultParameterIgnorer<T> Method<T>(T subject, IMethodMatch methodMatch, string methodName)
+	{
+		return new Verify.VerificationResultParameterIgnorer<T>(
+			subject,
+			Interactions,
+			Predicate,
+			() => $"invoked method {methodMatch}",
+			() => Method(subject, new MethodParametersMatch(methodName, Match.AnyParameters())));
+
+		[DebuggerNonUserCode]
+		bool Predicate(IInteraction interaction)
+		{
+			return interaction is MethodInvocation method &&
+			       methodMatch.Matches(method);
+		}
+	}
+
+	/// <summary>
 	///     Counts the getter accesses of property <paramref name="propertyName" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Property<T>(T subject, string propertyName)

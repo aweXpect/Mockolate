@@ -229,11 +229,11 @@ public class VoidMethodSetup(string name)
 /// </summary>
 [DebuggerNonUserCode]
 public class VoidMethodSetup<T1> : MethodSetup,
-	IVoidMethodSetupCallbackBuilder<T1>, IVoidMethodSetupReturnBuilder<T1>
+	IVoidMethodSetupCallbackBuilder<T1>, IVoidMethodSetupReturnBuilder<T1>, IVoidMethodSetupParameterIgnorer<T1>
 {
 	private readonly List<Callback<Action<int, T1>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
-	private readonly IParameters? _matches;
+	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
@@ -428,6 +428,14 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1}.AnyParameters()" />
+	public IVoidMethodSetup<T1> AnyParameters()
+	{
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -512,12 +520,12 @@ public class VoidMethodSetup<T1> : MethodSetup,
 /// </summary>
 [DebuggerNonUserCode]
 public class VoidMethodSetup<T1, T2> : MethodSetup,
-	IVoidMethodSetupCallbackBuilder<T1, T2>, IVoidMethodSetupReturnBuilder<T1, T2>
+	IVoidMethodSetupCallbackBuilder<T1, T2>, IVoidMethodSetupReturnBuilder<T1, T2>, IVoidMethodSetupParameterIgnorer<T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
 	private readonly NamedParameter? _match2;
-	private readonly IParameters? _matches;
+	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
@@ -713,6 +721,14 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2}.AnyParameters()" />
+	public IVoidMethodSetup<T1, T2> AnyParameters()
+	{
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -798,13 +814,13 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 /// </summary>
 [DebuggerNonUserCode]
 public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3>, IVoidMethodSetupReturnBuilder<T1, T2, T3>
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3>, IVoidMethodSetupReturnBuilder<T1, T2, T3>, IVoidMethodSetupParameterIgnorer<T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
 	private readonly NamedParameter? _match2;
 	private readonly NamedParameter? _match3;
-	private readonly IParameters? _matches;
+	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
@@ -1007,6 +1023,14 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3}.AnyParameters()" />
+	public IVoidMethodSetup<T1, T2, T3> AnyParameters()
+	{
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
+		return this;
+	}
+
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
@@ -1093,14 +1117,14 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 /// </summary>
 [DebuggerNonUserCode]
 public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>, IVoidMethodSetupParameterIgnorer<T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
 	private readonly NamedParameter? _match2;
 	private readonly NamedParameter? _match3;
 	private readonly NamedParameter? _match4;
-	private readonly IParameters? _matches;
+	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
@@ -1303,6 +1327,14 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>.Only(int times)
 	{
 		_currentReturnCallback?.Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3, T4}.AnyParameters()" />
+	public IVoidMethodSetup<T1, T2, T3, T4> AnyParameters()
+	{
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
 		return this;
 	}
 

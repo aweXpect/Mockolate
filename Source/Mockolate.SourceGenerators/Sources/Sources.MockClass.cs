@@ -12,7 +12,7 @@ internal static partial class Sources
 {
 	private const int MaxExplicitParameters = 4;
 
-	public static string MockClass(string name, Class @class)
+	public static string MockClass(string name, Class @class, bool hasOverloadResolutionPriority = false)
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
@@ -724,7 +724,7 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t{").AppendLine();
-		DefineSetupInterface(sb, @class, MemberType.Public);
+		DefineSetupInterface(sb, @class, MemberType.Public, hasOverloadResolutionPriority);
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -733,7 +733,7 @@ internal static partial class Sources
 			sb.AppendXmlSummary($"Set up protected members for the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 			sb.Append("\tinternal interface IMockProtectedSetupFor").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineSetupInterface(sb, @class, MemberType.Protected);
+			DefineSetupInterface(sb, @class, MemberType.Protected, hasOverloadResolutionPriority);
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
 		}
@@ -743,7 +743,7 @@ internal static partial class Sources
 			sb.AppendXmlSummary($"Set up static members for the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 			sb.Append("\tinternal interface IMockStaticSetupFor").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineSetupInterface(sb, @class, MemberType.Static);
+			DefineSetupInterface(sb, @class, MemberType.Static, hasOverloadResolutionPriority);
 			sb.Append("\t}").AppendLine();
 			sb.AppendLine();
 		}
@@ -806,7 +806,7 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t{").AppendLine();
-		DefineVerifyInterface(sb, @class, $"IMockVerifyFor{name}", MemberType.Public);
+		DefineVerifyInterface(sb, @class, $"IMockVerifyFor{name}", MemberType.Public, hasOverloadResolutionPriority);
 		sb.Append("\t}").AppendLine();
 
 		if (hasProtectedMembers || hasProtectedEvents)
@@ -815,7 +815,7 @@ internal static partial class Sources
 			sb.AppendXmlSummary($"Verify protected interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 			sb.Append("\tinternal interface IMockProtectedVerifyFor").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineVerifyInterface(sb, @class, $"IMockProtectedVerifyFor{name}", MemberType.Protected);
+			DefineVerifyInterface(sb, @class, $"IMockProtectedVerifyFor{name}", MemberType.Protected, hasOverloadResolutionPriority);
 			sb.Append("\t}").AppendLine();
 		}
 
@@ -825,7 +825,7 @@ internal static partial class Sources
 			sb.AppendXmlSummary($"Verify static interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 			sb.Append("\tinternal interface IMockStaticVerifyFor").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineVerifyInterface(sb, @class, $"IMockStaticVerifyFor{name}", MemberType.Static);
+			DefineVerifyInterface(sb, @class, $"IMockStaticVerifyFor{name}", MemberType.Static, hasOverloadResolutionPriority);
 			sb.Append("\t}").AppendLine();
 		}
 
@@ -1731,7 +1731,7 @@ internal static partial class Sources
 		return result;
 	}
 
-	private static void DefineSetupInterface(StringBuilder sb, Class @class, MemberType memberType)
+	private static void DefineSetupInterface(StringBuilder sb, Class @class, MemberType memberType, bool hasOverloadResolutionPriority)
 	{
 		#region Properties
 
@@ -1787,7 +1787,7 @@ internal static partial class Sources
 				Method? method = methodGroup.Single();
 				if (method.Parameters.Count > 0)
 				{
-					AppendMethodSetupDefinition(sb, @class, method, true);
+					AppendMethodSetupDefinition(sb, @class, method, true, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 			}
 
@@ -1795,16 +1795,16 @@ internal static partial class Sources
 			{
 				if (method.Parameters.Count == 0)
 				{
-					AppendMethodSetupDefinition(sb, @class, method, false);
+					AppendMethodSetupDefinition(sb, @class, method, false, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 				else
 				{
-					AppendMethodSetupDefinition(sb, @class, method, false);
+					AppendMethodSetupDefinition(sb, @class, method, false, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
-							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: valueFlags);
+							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: valueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 						}
 					}
 					else
@@ -1812,7 +1812,7 @@ internal static partial class Sources
 						bool[] allValueFlags = method.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
 						if (allValueFlags.Any(f => f))
 						{
-							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: allValueFlags);
+							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 						}
 					}
 				}
@@ -1823,7 +1823,7 @@ internal static partial class Sources
 	}
 
 	private static void AppendMethodSetupDefinition(StringBuilder sb, Class @class, Method method,
-		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null)
+		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <summary>").AppendLine();
@@ -1857,8 +1857,21 @@ internal static partial class Sources
 		sb.Append("\t\t/// </summary>").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<")
-				.AppendTypeOrWrapper(method.ReturnType);
+			if (valueFlags?.All(x => x) == true)
+			{
+				if (hasOverloadResolutionPriority)
+				{
+					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
+				}
+
+				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer");
+			}
+			else
+			{
+				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
+			}
+
+			sb.Append('<').AppendTypeOrWrapper(method.ReturnType);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -1869,7 +1882,20 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+			if (valueFlags?.All(x => x) == true)
+			{
+				if (hasOverloadResolutionPriority)
+				{
+					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
+				}
+
+				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer");
+			}
+			else
+			{
+				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+			}
+
 			if (method.Parameters.Count > 0)
 			{
 				sb.Append('<');
@@ -2055,7 +2081,10 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<").AppendTypeOrWrapper(method.ReturnType);
+			sb.Append(valueFlags?.All(x => x) == true
+				? "\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer"
+				: "\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
+			sb.Append('<').AppendTypeOrWrapper(method.ReturnType);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -2066,7 +2095,9 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+			sb.Append(valueFlags?.All(x => x) == true
+				? "\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer"
+				: "\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
 			if (method.Parameters.Count > 0)
 			{
 				sb.Append('<');
@@ -2497,7 +2528,7 @@ internal static partial class Sources
 
 	#region Verify Helpers
 
-	private static void DefineVerifyInterface(StringBuilder sb, Class @class, string verifyName, MemberType memberType)
+	private static void DefineVerifyInterface(StringBuilder sb, Class @class, string verifyName, MemberType memberType, bool hasOverloadResolutionPriority)
 	{
 		#region Properties
 
@@ -2553,7 +2584,7 @@ internal static partial class Sources
 				Method? method = methodGroup.Single();
 				if (method.Parameters.Count > 0)
 				{
-					AppendMethodVerifyDefinition(sb, method, verifyName, true);
+					AppendMethodVerifyDefinition(sb, method, verifyName, true, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 			}
 
@@ -2561,16 +2592,16 @@ internal static partial class Sources
 			{
 				if (method.Parameters.Count == 0)
 				{
-					AppendMethodVerifyDefinition(sb, method, verifyName, false);
+					AppendMethodVerifyDefinition(sb, method, verifyName, false, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 				else
 				{
-					AppendMethodVerifyDefinition(sb, method, verifyName, false);
+					AppendMethodVerifyDefinition(sb, method, verifyName, false, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
-							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: valueFlags);
+							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: valueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 						}
 					}
 					else
@@ -2578,7 +2609,7 @@ internal static partial class Sources
 						bool[] allValueFlags = method.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
 						if (allValueFlags.Any(f => f))
 						{
-							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: allValueFlags);
+							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 						}
 					}
 				}
@@ -2602,7 +2633,7 @@ internal static partial class Sources
 	}
 
 	private static void AppendMethodVerifyDefinition(StringBuilder sb, Method method, string verifyName,
-		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null)
+		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <summary>").AppendLine();
@@ -2623,8 +2654,20 @@ internal static partial class Sources
 
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(methodName)
-			.Append("(");
+		if (valueFlags?.All(x => x) == true)
+		{
+			if (hasOverloadResolutionPriority)
+			{
+				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
+			}
+
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<").Append(verifyName).Append("> ").Append(methodName).Append("(");
+		}
+		else
+		{
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(methodName).Append("(");
+		}
+
 		if (useParameters)
 		{
 			sb.Append("global::Mockolate.Parameters.IParameters parameters");
@@ -2799,7 +2842,10 @@ internal static partial class Sources
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(methodName).Append("(");
+		sb.Append(valueFlags?.All(x => x) == true
+			? "\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<"
+			: "\t\tglobal::Mockolate.Verify.VerificationResult<");
+		sb.Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(methodName).Append("(");
 		if (useParameters)
 		{
 			sb.Append("global::Mockolate.Parameters.IParameters parameters");
@@ -2865,7 +2911,15 @@ internal static partial class Sources
 			sb.Append(']');
 		}
 
-		sb.AppendLine("));");
+		if (!useParameters && valueFlags?.All(x => x) == true)
+		{
+			sb.Append("), ").Append(method.GetUniqueNameString()).AppendLine(");");
+		}
+		else
+		{
+			sb.AppendLine("));");
+		}
+
 		sb.AppendLine();
 	}
 
