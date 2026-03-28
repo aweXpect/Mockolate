@@ -15,6 +15,13 @@ Mockolate provides flexible parameter matching for method setups and verificatio
   minimum and maximum value.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
+**Note:**  
+You can also directly use a value (equivalent to wrapping it in `It.Is<T>(value)`). For methods and indexers with
+up to 4 parameters, you can freely mix matchers with direct values in any position. For members with more than
+4 parameters, Mockolate still supports explicit values, but limits arbitrary per-parameter mixing to avoid a
+combinatorial explosion of overloads. You may need to use direct values for all explicit-value-capable parameters
+and wrap the remaining ones, or use matchers for all parameters.
+
 ### String Matching
 
 - `It.Matches(pattern)`: Matches strings using wildcard patterns (`*` and `?`).
