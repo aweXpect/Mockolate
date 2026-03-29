@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -55,7 +56,7 @@ public class MockSetupsTests
 	{
 		MockSetups.IndexerSetups setups = new();
 
-		Parallel.For(0, 100, i => setups.Add(new FakeIndexerSetup(false)));
+		Parallel.For(0, 100, _ => setups.Add(new FakeIndexerSetup(false)));
 
 		await That(setups.Count).IsEqualTo(100);
 	}
@@ -210,7 +211,7 @@ public class MockSetupsTests
 		protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value, MockBehavior behavior) { }
 		protected override bool? GetSkipBaseClass() => null;
 
-		protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, NamedParameterValue[] parameters, out T value)
+		protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, NamedParameterValue[] parameters, [NotNullWhen(true)] out T value)
 			=> value = defaultValueGenerator();
 	}
 
