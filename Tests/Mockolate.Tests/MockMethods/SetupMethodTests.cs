@@ -278,6 +278,32 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
+	public async Task ParameterExplicitMixWithNull_ShouldWork()
+	{
+		IMethodService sut = IMethodService.CreateMock();
+		MyMethodServiceType value = new(5);
+		sut.Mock.Setup.Combine(value, null).Returns(4);
+
+		int result = sut.Combine(value, null!);
+
+		await That(result).IsEqualTo(4);
+		await That(sut.Mock.Verify.Combine(value, null)).Once();
+	}
+
+	[Fact]
+	public async Task ParameterMixWithNull_ShouldWork()
+	{
+		IMethodService sut = IMethodService.CreateMock();
+		MyMethodServiceType value = new(5);
+		sut.Mock.Setup.Combine(It.IsAny<MyMethodServiceType>(), null).Returns(4);
+
+		int result = sut.Combine(value, null!);
+
+		await That(result).IsEqualTo(4);
+		await That(sut.Mock.Verify.Combine(It.IsAny<MyMethodServiceType>(), null)).Once();
+	}
+
+	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
@@ -1960,8 +1986,14 @@ public sealed partial class SetupMethodTests
 		string MethodWithSingleParameter(int p1);
 	}
 
+	public class MyMethodServiceType(int value)
+	{
+		public int Value { get; } = value;
+	}
+
 	public interface IMethodService
 	{
+		int Combine(MyMethodServiceType service1, MyMethodServiceType service2);
 		void MyVoidMethodWithoutParameters();
 		void MyVoidMethodWithParameters(int x, string y);
 		int MyIntMethodWithoutParameters();

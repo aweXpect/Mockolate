@@ -1859,15 +1859,15 @@ internal static partial class Sources
 		{
 			if (valueFlags?.All(x => x) == true)
 			{
-				if (hasOverloadResolutionPriority)
-				{
-					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
-				}
-
 				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer");
 			}
 			else
 			{
+				if (hasOverloadResolutionPriority)
+				{
+					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+				}
+
 				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
 			}
 
@@ -1893,6 +1893,11 @@ internal static partial class Sources
 			}
 			else
 			{
+				if (hasOverloadResolutionPriority)
+				{
+					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+				}
+
 				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
 			}
 
@@ -2656,15 +2661,15 @@ internal static partial class Sources
 		sb.Append("\t\t/// </summary>").AppendLine();
 		if (valueFlags?.All(x => x) == true)
 		{
-			if (hasOverloadResolutionPriority)
-			{
-				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
-			}
-
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<").Append(verifyName).Append("> ").Append(methodName).Append("(");
 		}
 		else
 		{
+			if (hasOverloadResolutionPriority)
+			{
+				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+			}
+
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(methodName).Append("(");
 		}
 
