@@ -9,7 +9,7 @@ namespace Mockolate.Benchmarks;
 [Config(typeof(Config))]
 [MarkdownExporterAttribute.GitHub]
 [MemoryDiagnoser]
-public partial class HappyCaseBenchmarks
+public abstract class BenchmarksBase
 {
 	private readonly Consumer _consumer = new();
 
