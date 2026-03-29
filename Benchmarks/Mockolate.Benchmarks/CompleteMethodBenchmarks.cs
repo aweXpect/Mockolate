@@ -20,7 +20,7 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
-	[Benchmark]
+	[Benchmark(Baseline = true)]
 	public void Method_Mockolate()
 	{
 		IMyMethodInterface sut = IMyMethodInterface.CreateMock();

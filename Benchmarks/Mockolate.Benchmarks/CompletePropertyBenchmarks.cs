@@ -14,12 +14,12 @@ namespace Mockolate.Benchmarks;
 ///     In this benchmark we check the case of an interface mock with a property, setup the property and verify
 ///     the getter was called once.
 /// </summary>
-public class CompletePropertyBenchmarks
+public class CompletePropertyBenchmarks : BenchmarksBase
 {
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
-	[Benchmark]
+	[Benchmark(Baseline = true)]
 	public void Property_Mockolate()
 	{
 		IMyPropertyInterface sut = IMyPropertyInterface.CreateMock();

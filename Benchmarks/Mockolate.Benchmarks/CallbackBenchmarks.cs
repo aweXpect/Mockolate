@@ -18,7 +18,7 @@ public class CallbackBenchmarks : BenchmarksBase
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
-	[Benchmark]
+	[Benchmark(Baseline = true)]
 	public int Callback_Mockolate()
 	{
 		int count = 0;
