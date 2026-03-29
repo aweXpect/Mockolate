@@ -5,7 +5,7 @@ using Mockolate.Verify;
 using NSubstitute;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.PropertyBenchmarks.IMyPropertyInterface))]
+[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.CompletePropertyBenchmarks.IMyPropertyInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -13,7 +13,7 @@ namespace Mockolate.Benchmarks;
 ///     In this benchmark we check the case of an interface mock with a property, setup the property and verify
 ///     the getter was called once.<br />
 /// </summary>
-public class PropertyBenchmarks
+public class CompletePropertyBenchmarks
 {
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
@@ -91,7 +91,7 @@ public class PropertyBenchmarks
 	[Benchmark]
 	public void Property_TUnitMocks()
 	{
-		TUnit.Mocks.Mock<IMyPropertyInterface> mock = TUnit.Mocks.Mock.Of<IMyPropertyInterface>();
+		Mock<IMyPropertyInterface> mock = TUnit.Mocks.Mock.Of<IMyPropertyInterface>();
 		mock.Counter.Returns(42);
 
 		_ = mock.Object.Counter;

@@ -6,7 +6,7 @@ using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.EventBenchmarks.IMyEventInterface))]
+[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.CompleteEventBenchmarks.IMyEventInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -14,7 +14,7 @@ namespace Mockolate.Benchmarks;
 ///     In this benchmark we check the case of an interface mock with an event, subscribe to the event and verify
 ///     the subscription was recorded once.<br />
 /// </summary>
-public class EventBenchmarks : BenchmarksBase
+public class CompleteEventBenchmarks : BenchmarksBase
 {
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
@@ -95,7 +95,7 @@ public class EventBenchmarks : BenchmarksBase
 	[Benchmark]
 	public void Event_TUnitMocks()
 	{
-		TUnit.Mocks.Mock<IMyEventInterface> mock = TUnit.Mocks.Mock.Of<IMyEventInterface>();
+		Mock<IMyEventInterface> mock = TUnit.Mocks.Mock.Of<IMyEventInterface>();
 		EventHandler handler = (_, _) => { };
 
 		mock.Object.SomeEvent += handler;

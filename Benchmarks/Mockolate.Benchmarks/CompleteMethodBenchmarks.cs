@@ -6,7 +6,7 @@ using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.MethodBenchmarks.IMyMethodInterface))]
+[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.CompleteMethodBenchmarks.IMyMethodInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -14,7 +14,7 @@ namespace Mockolate.Benchmarks;
 ///     In this benchmark we check the simple case of an interface mock, setup a single method that gets called and
 ///     verified to be called once.<br />
 /// </summary>
-public class MethodBenchmarks : BenchmarksBase
+public class CompleteMethodBenchmarks : BenchmarksBase
 {
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
@@ -92,7 +92,7 @@ public class MethodBenchmarks : BenchmarksBase
 	[Benchmark]
 	public void Method_TUnitMocks()
 	{
-		TUnit.Mocks.Mock<IMyMethodInterface> mock = TUnit.Mocks.Mock.Of<IMyMethodInterface>();
+		Mock<IMyMethodInterface> mock = TUnit.Mocks.Mock.Of<IMyMethodInterface>();
 		mock.MyFunc(Any<int>()).Returns(true);
 
 		mock.Object.MyFunc(42);
