@@ -62,6 +62,45 @@ public sealed partial class HttpClientExtensionsTests
 	}
 
 	[Fact]
+	public async Task NullRequestUri_ShouldInvokeCallbackWithNull()
+	{
+		// ReSharper disable once VariableCanBeNotNullable
+		string? callbackUri = "initialized";
+		HttpClient httpClient = HttpClient.CreateMock();
+		IMethodSetup setup = httpClient
+			.Mock.Setup
+			.GetAsync(It.Matches("*").Do(uri => callbackUri = uri))
+			.ReturnsAsync(HttpStatusCode.OK);
+		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
+
+		interactiveSetup.TriggerCallbacks([
+			new HttpRequestMessage(),
+			CancellationToken.None,
+		]);
+
+		await That(callbackUri).IsNull();
+	}
+
+	[Fact]
+	public async Task NullRequestUri_ShouldReturnFalse()
+	{
+		HttpClient httpClient = HttpClient.CreateMock();
+		IMethodSetup setup = httpClient
+			.Mock.Setup
+			.GetAsync(It.Matches("*"))
+			.ReturnsAsync(HttpStatusCode.OK);
+		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
+
+		bool result = interactiveSetup.Matches(new MethodInvocation("global::System.Net.Http.HttpMessageHandler.SendAsync",
+		[
+			new NamedParameterValue("request", new HttpRequestMessage()),
+			new NamedParameterValue("cancellationToken", CancellationToken.None),
+		]));
+
+		await That(result).IsFalse();
+	}
+
+	[Fact]
 	public async Task NullUri_ShouldReturnFalse()
 	{
 		HttpClient httpClient = HttpClient.CreateMock();
@@ -159,14 +198,5 @@ public sealed partial class HttpClientExtensionsTests
 
 	private sealed class MyMethodSetup : IMethodSetup
 	{
-	}
-
-	private sealed class MyMockVerify<T> : IMockVerify<T>
-	{
-		public bool ThatAllInteractionsAreVerified()
-			=> throw new NotSupportedException();
-
-		public bool ThatAllSetupsAreUsed()
-			=> throw new NotSupportedException();
 	}
 }
