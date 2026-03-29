@@ -1,17 +1,18 @@
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using Imposter.Abstractions;
+using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.CompletePropertyBenchmarks.IMyPropertyInterface))]
+[assembly: GenerateImposter(typeof(CompletePropertyBenchmarks.IMyPropertyInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the case of an interface mock with a property, setup the property and verify
-///     the getter was called once.<br />
+///     the getter was called once.
 /// </summary>
 public class CompletePropertyBenchmarks
 {

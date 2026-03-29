@@ -1,18 +1,19 @@
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using Imposter.Abstractions;
+using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.CompleteEventBenchmarks.IMyEventInterface))]
+[assembly: GenerateImposter(typeof(CompleteEventBenchmarks.IMyEventInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the case of an interface mock with an event, subscribe to the event and verify
-///     the subscription was recorded once.<br />
+///     the subscription was recorded once.
 /// </summary>
 public class CompleteEventBenchmarks : BenchmarksBase
 {

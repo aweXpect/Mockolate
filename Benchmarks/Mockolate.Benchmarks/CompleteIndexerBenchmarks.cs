@@ -1,18 +1,19 @@
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using Imposter.Abstractions;
+using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.CompleteIndexerBenchmarks.IMyIndexerInterface))]
+[assembly: GenerateImposter(typeof(CompleteIndexerBenchmarks.IMyIndexerInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the case of an interface mock with an indexer, setup the indexer and verify
-///     the getter was called once.<br />
+///     the getter was called once.
 /// </summary>
 public class CompleteIndexerBenchmarks : BenchmarksBase
 {

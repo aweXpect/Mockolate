@@ -2,18 +2,16 @@ using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using Imposter.Abstractions;
 using Mockolate.Benchmarks;
-using Mockolate.Verify;
 using NSubstitute;
 using Arg = NSubstitute.Arg;
-using Times = Moq.Times;
 
 [assembly: GenerateImposter(typeof(CallbackBenchmarks.IMyCallbackInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
-///     In this benchmark we check the case of an interface mock with an event, subscribe to the event and verify
-///     the subscription was recorded once.<br />
+///     In this benchmark we measure the case of an interface mock with a method callback: configure a callback on a
+///     method invocation and invoke it twice.
 /// </summary>
 public class CallbackBenchmarks : BenchmarksBase
 {
@@ -21,15 +19,14 @@ public class CallbackBenchmarks : BenchmarksBase
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
 	[Benchmark]
-	public int Method_Mockolate()
+	public int Callback_Mockolate()
 	{
 		int count = 0;
 		IMyCallbackInterface sut = IMyCallbackInterface.CreateMock();
 		sut.Mock.Setup.MyFunc(It.IsAny<int>()).Do(() => count++);
 
-		sut.MyFunc(42);
-
-		sut.Mock.Verify.MyFunc(It.IsAny<int>()).Once();
+		sut.MyFunc(1);
+		sut.MyFunc(2);
 		return count;
 	}
 
@@ -37,15 +34,14 @@ public class CallbackBenchmarks : BenchmarksBase
 	///     <see href="https://github.com/devlooped/moq" />
 	/// </summary>
 	[Benchmark]
-	public int Method_Moq()
+	public int Callback_Moq()
 	{
 		int count = 0;
 		Moq.Mock<IMyCallbackInterface> mock = new();
 		mock.Setup(x => x.MyFunc(Moq.It.IsAny<int>())).Callback(() => count++);
 
-		mock.Object.MyFunc(42);
-
-		mock.Verify(x => x.MyFunc(Moq.It.IsAny<int>()), Times.Once());
+		mock.Object.MyFunc(1);
+		mock.Object.MyFunc(2);
 		return count;
 	}
 
@@ -53,15 +49,14 @@ public class CallbackBenchmarks : BenchmarksBase
 	///     <see href="https://nsubstitute.github.io/" />
 	/// </summary>
 	[Benchmark]
-	public int Method_NSubstitute()
+	public int Callback_NSubstitute()
 	{
 		int count = 0;
 		IMyCallbackInterface mock = Substitute.For<IMyCallbackInterface>();
 		mock.When(x => x.MyFunc(Arg.Any<int>())).Do(_ => count++);
 
-		mock.MyFunc(42);
-
-		mock.Received(1).MyFunc(Arg.Any<int>());
+		mock.MyFunc(1);
+		mock.MyFunc(2);
 		return count;
 	}
 
@@ -69,15 +64,14 @@ public class CallbackBenchmarks : BenchmarksBase
 	///     <see href="https://fakeiteasy.github.io/" />
 	/// </summary>
 	[Benchmark]
-	public int Method_FakeItEasy()
+	public int Callback_FakeItEasy()
 	{
 		int count = 0;
 		IMyCallbackInterface mock = A.Fake<IMyCallbackInterface>();
 		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).Invokes(() => count++);
 
-		mock.MyFunc(42);
-
-		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).MustHaveHappened(1, FakeItEasy.Times.Exactly);
+		mock.MyFunc(1);
+		mock.MyFunc(2);
 		return count;
 	}
 
@@ -85,15 +79,14 @@ public class CallbackBenchmarks : BenchmarksBase
 	///     <see href="https://github.com/themidnightgospel/Imposter" />
 	/// </summary>
 	[Benchmark]
-	public int Method_Imposter()
+	public int Callback_Imposter()
 	{
 		int count = 0;
 		IMyCallbackInterfaceImposter imposter = IMyCallbackInterface.Imposter();
 		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Callback(_ => count++);
 
-		imposter.Instance().MyFunc(42);
-
-		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Once());
+		imposter.Instance().MyFunc(1);
+		imposter.Instance().MyFunc(2);
 		return count;
 	}
 
