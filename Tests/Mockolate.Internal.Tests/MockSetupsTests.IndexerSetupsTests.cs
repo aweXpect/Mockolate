@@ -1,4 +1,3 @@
-using System.Threading;
 using Mockolate.Internal.Tests.TestHelpers;
 using Mockolate.Setup;
 
@@ -40,29 +39,23 @@ public partial class MockSetupsTests
 		public async Task ThreadSafety_ConcurrentAddsAndQueries_ShouldReturnConsistentMatches()
 		{
 			MockSetups.IndexerSetups setups = new();
-			// ReSharper disable once RedundantAssignment
-			FakeIndexerSetup? lastMatching = null;
 			FakeIndexerSetup initialMatch = new(true);
 			setups.Add(initialMatch);
-			lastMatching = initialMatch;
 			Parallel.For(0, 200, i =>
 			{
 				bool shouldMatch = i % 2 == 0;
 				FakeIndexerSetup setup = new(shouldMatch);
 				setups.Add(setup);
-				if (shouldMatch)
-				{
-					Interlocked.Exchange(ref lastMatching, setup);
-				}
-
 				FakeIndexerAccess access = new();
 				_ = setups.GetLatestOrDefault(access);
 			});
+			FakeIndexerSetup finalMatch = new(true);
+			setups.Add(finalMatch);
 			FakeIndexerAccess finalAccess = new();
 
 			IndexerSetup? result = setups.GetLatestOrDefault(finalAccess);
 
-			await That(result).IsEqualTo(lastMatching);
+			await That(result).IsEqualTo(finalMatch);
 		}
 
 		[Fact]
