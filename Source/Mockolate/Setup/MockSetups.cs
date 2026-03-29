@@ -121,66 +121,130 @@ internal class MockSetups
 	[DebuggerNonUserCode]
 	internal sealed class PropertySetups
 	{
-		private ConcurrentDictionary<string, PropertySetup>? _storage;
+		private int _count;
+		private List<PropertySetup>? _storage;
 
-		public int Count { get; private set; }
+		// ReSharper disable once InconsistentlySynchronizedField
+		public int Count => Volatile.Read(ref _count);
+
+		private List<PropertySetup> GetOrCreateStorage()
+		{
+			if (_storage is null)
+			{
+				Interlocked.CompareExchange(ref _storage, [], null);
+			}
+
+			return _storage!;
+		}
 
 		public void Add(PropertySetup setup)
 		{
-			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
-			_storage.AddOrUpdate(setup.Name, setup, (_, _) => setup);
-			Count = _storage.Count(NotDefaultPredicate);
-
-			[DebuggerNonUserCode]
-			static bool NotDefaultPredicate(KeyValuePair<string, PropertySetup> x)
+			List<PropertySetup> storage = GetOrCreateStorage();
+			lock (storage)
 			{
-				return x.Value is not PropertySetup.Default;
+				for (int i = 0; i < storage.Count; i++)
+				{
+					if (string.Equals(storage[i].Name, setup.Name, StringComparison.Ordinal))
+					{
+						bool wasDefault = storage[i] is PropertySetup.Default;
+						bool isDefault = setup is PropertySetup.Default;
+						storage[i] = setup;
+						if (wasDefault && !isDefault)
+						{
+							Volatile.Write(ref _count, _count + 1);
+						}
+						else if (!wasDefault && isDefault)
+						{
+							Volatile.Write(ref _count, _count - 1);
+						}
+
+						return;
+					}
+				}
+
+				storage.Add(setup);
+				if (setup is not PropertySetup.Default)
+				{
+					Volatile.Write(ref _count, _count + 1);
+				}
 			}
 		}
 
 		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out PropertySetup? setup)
 		{
-			_storage ??= new ConcurrentDictionary<string, PropertySetup>();
-			return _storage.TryGetValue(propertyName, out setup);
+			List<PropertySetup>? storage = _storage;
+			if (storage is not null)
+			{
+				lock (storage)
+				{
+					for (int i = 0; i < storage.Count; i++)
+					{
+						if (string.Equals(storage[i].Name, propertyName, StringComparison.Ordinal))
+						{
+							setup = storage[i];
+							return true;
+						}
+					}
+				}
+			}
+
+			setup = null;
+			return false;
 		}
 
 		internal IEnumerable<PropertySetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
-			if (_storage is null)
+			List<PropertySetup>? storage = _storage;
+			if (storage is null)
 			{
 				return [];
 			}
 
-			return _storage.Values.Where(propertySetup => interactions.Interactions.OfType<PropertyAccess>()
-				.All(propertyAccess => !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)));
+			lock (storage)
+			{
+				return storage.Where(propertySetup => interactions.Interactions.OfType<PropertyAccess>()
+						.All(propertyAccess => !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)))
+					.ToList();
+			}
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			if (_storage is null || _storage.IsEmpty)
+			List<PropertySetup>? storage = _storage;
+			if (storage is null || storage.Count == 0)
 			{
 				return "0 properties";
 			}
 
-			List<KeyValuePair<string, PropertySetup>> setups =
-				_storage.Where(x => x.Value is not PropertySetup.Default).ToList();
-
-			if (setups.Count == 0)
+			lock (storage)
 			{
-				return "0 properties";
-			}
+				List<PropertySetup>? setups = null;
+				foreach (PropertySetup setup in storage)
+				{
+					if (setup is not PropertySetup.Default)
+					{
+						setups ??= [];
+						setups.Add(setup);
+					}
+				}
 
-			StringBuilder sb = new();
-			sb.Append(setups.Count).Append(setups.Count == 1 ? " property:" : " properties:").AppendLine();
-			foreach (KeyValuePair<string, PropertySetup> item in setups)
-			{
-				sb.Append(item.Value).Append(' ').Append(item.Key).AppendLine();
-			}
+				if (setups is null || setups.Count == 0)
+				{
+					return "0 properties";
+				}
 
-			sb.Length -= Environment.NewLine.Length;
-			return sb.ToString();
+				StringBuilder sb = new();
+				sb.Append(setups.Count).Append(setups.Count == 1 ? " property:" : " properties:").AppendLine();
+				foreach (PropertySetup item in setups)
+				{
+					sb.Append(item).Append(' ').Append(item.Name).AppendLine();
+				}
+
+				sb.Length -= Environment.NewLine.Length;
+				return sb.ToString();
+			}
 		}
 	}
 
@@ -188,24 +252,52 @@ internal class MockSetups
 	[DebuggerNonUserCode]
 	internal sealed class IndexerSetups
 	{
-		private ConcurrentStack<IndexerSetup>? _storage;
-
+		private List<IndexerSetup>? _storage;
 		private ValueStorage? _valueStorage;
 
-		public int Count => _storage?.Count ?? 0;
+		public int Count
+		{
+			get
+			{
+				List<IndexerSetup>? storage = _storage;
+				if (storage is null)
+				{
+					return 0;
+				}
+
+				lock (storage)
+				{
+					return storage.Count;
+				}
+			}
+		}
+
+		private List<IndexerSetup> GetOrCreateStorage()
+		{
+			if (_storage is null)
+			{
+				Interlocked.CompareExchange(ref _storage, [], null);
+			}
+
+			return _storage!;
+		}
 
 		public IndexerSetup? GetLatestOrDefault(IndexerAccess interaction)
 		{
-			if (_storage is null)
+			List<IndexerSetup>? storage = _storage;
+			if (storage is null)
 			{
 				return null;
 			}
 
-			foreach (IndexerSetup setup in _storage)
+			lock (storage)
 			{
-				if (((IInteractiveIndexerSetup)setup).Matches(interaction))
+				for (int i = storage.Count - 1; i >= 0; i--)
 				{
-					return setup;
+					if (((IInteractiveIndexerSetup)storage[i]).Matches(interaction))
+					{
+						return storage[i];
+					}
 				}
 			}
 
@@ -216,26 +308,34 @@ internal class MockSetups
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			if (_storage is null || Count == 0)
+			List<IndexerSetup>? storage = _storage;
+			if (storage is null || storage.Count == 0)
 			{
 				return "0 indexers";
 			}
 
-			StringBuilder sb = new();
-			sb.Append(Count).Append(Count == 1 ? " indexer:" : " indexers:").AppendLine();
-			foreach (IndexerSetup indexerSetup in _storage)
+			lock (storage)
 			{
-				sb.Append(indexerSetup).AppendLine();
-			}
+				int count = storage.Count;
+				StringBuilder sb = new();
+				sb.Append(count).Append(count == 1 ? " indexer:" : " indexers:").AppendLine();
+				foreach (IndexerSetup indexerSetup in storage)
+				{
+					sb.Append(indexerSetup).AppendLine();
+				}
 
-			sb.Length -= Environment.NewLine.Length;
-			return sb.ToString();
+				sb.Length -= Environment.NewLine.Length;
+				return sb.ToString();
+			}
 		}
 
 		internal void Add(IndexerSetup setup)
 		{
-			_storage ??= new ConcurrentStack<IndexerSetup>();
-			_storage.Push(setup);
+			List<IndexerSetup> storage = GetOrCreateStorage();
+			lock (storage)
+			{
+				storage.Add(setup);
+			}
 		}
 
 		internal TValue GetOrAddValue<TValue>(NamedParameterValue[] parameters, Func<TValue> valueGenerator)
@@ -271,47 +371,48 @@ internal class MockSetups
 
 		internal IEnumerable<IndexerSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
-			if (_storage is null)
+			List<IndexerSetup>? storage = _storage;
+			if (storage is null)
 			{
 				return [];
 			}
 
-			return _storage.Where(indexerSetup => interactions.Interactions.OfType<IndexerAccess>()
-				.All(indexerAccess => !((IInteractiveIndexerSetup)indexerSetup).Matches(indexerAccess)));
+			lock (storage)
+			{
+				return storage.Where(indexerSetup => interactions.Interactions.OfType<IndexerAccess>()
+						.All(indexerAccess => !((IInteractiveIndexerSetup)indexerSetup).Matches(indexerAccess)))
+					.ToList();
+			}
 		}
 
 		[DebuggerNonUserCode]
 		private sealed class ValueStorage
 		{
-			private ConcurrentDictionary<NamedParameterValue, ValueStorage>? _storage;
+			private readonly List<(NamedParameterValue Key, ValueStorage Value)> _storage = [];
 
 			public object? Value { get; set; }
 
 			public ValueStorage GetOrAdd(NamedParameterValue key, Func<ValueStorage> valueGenerator)
 			{
-				_storage ??=
-					new ConcurrentDictionary<NamedParameterValue, ValueStorage>(NamedParameterValueComparer.Instance);
-				return _storage.GetOrAdd(key, _ => valueGenerator());
+				lock (_storage)
+				{
+					foreach ((NamedParameterValue existingKey, ValueStorage existingValue) in _storage)
+					{
+						if (KeyEquals(existingKey, key))
+						{
+							return existingValue;
+						}
+					}
+
+					ValueStorage newValue = valueGenerator();
+					_storage.Add((key, newValue));
+					return newValue;
+				}
 			}
-		}
 
-		[ExcludeFromCodeCoverage]
-		[DebuggerNonUserCode]
-		private sealed class NamedParameterValueComparer : IEqualityComparer<NamedParameterValue>
-		{
-			public static readonly NamedParameterValueComparer Instance = new();
-
-			public bool Equals(NamedParameterValue x, NamedParameterValue y)
+			private static bool KeyEquals(NamedParameterValue x, NamedParameterValue y)
 				=> string.Equals(x.Name, y.Name, StringComparison.Ordinal)
 				   && (ReferenceEquals(x.Value, y.Value) || (x.Value?.Equals(y.Value) ?? y.Value is null));
-
-			public int GetHashCode(NamedParameterValue obj)
-			{
-				int hash = 17;
-				hash = (hash * 31) + (obj.Name is not null ? StringComparer.Ordinal.GetHashCode(obj.Name) : 0);
-				hash = (hash * 31) + (obj.Value?.GetHashCode() ?? 0);
-				return hash;
-			}
 		}
 	}
 
