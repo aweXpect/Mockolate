@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
@@ -27,41 +26,6 @@ public partial class MockRegistry
 		{
 			return ((IInteractiveMethodSetup)setup).Matches(methodInvocation);
 		}
-	}
-
-	/// <summary>
-	///     Retrieves the setup configuration for the specified property name, creating a default setup if none exists.
-	/// </summary>
-	/// <remarks>
-	///     If the specified property name does not have an associated setup, and the mock is configured to throw when not set
-	///     up,
-	///     a <see cref="MockNotSetupException" /> is thrown. Otherwise, a default value is created and stored for future
-	///     retrievals,
-	///     so that getter and setter work in tandem.
-	/// </remarks>
-	[DebuggerNonUserCode]
-	private PropertySetup GetPropertySetup(string propertyName, Func<bool, object?> defaultValueGenerator,
-		bool hasBaseAccessor = false)
-	{
-		if (!Setup.Properties.TryGetValue(propertyName, out PropertySetup? matchingSetup))
-		{
-			if (Behavior.ThrowWhenNotSetup)
-			{
-				throw new MockNotSetupException($"The property '{propertyName}' was accessed without prior setup.");
-			}
-
-			matchingSetup =
-				new PropertySetup.Default(propertyName, defaultValueGenerator.Invoke(Behavior.SkipBaseClass));
-			Setup.Properties.Add(matchingSetup);
-		}
-		else if (hasBaseAccessor || !matchingSetup.IsValueInitialized)
-		{
-			((IInteractivePropertySetup)matchingSetup).InitializeWith(
-				defaultValueGenerator(((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ??
-				                      Behavior.SkipBaseClass));
-		}
-
-		return matchingSetup;
 	}
 
 	/// <summary>

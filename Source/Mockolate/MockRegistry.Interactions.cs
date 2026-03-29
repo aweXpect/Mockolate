@@ -94,26 +94,38 @@ public partial class MockRegistry
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(propertyName));
 
-		// Fast path: setup exists and is fully initialized with no base accessor — avoids closure allocation
-		if (baseValueAccessor is null &&
-		    Setup.Properties.TryGetValue(propertyName, out PropertySetup? fastSetup) &&
-		    fastSetup.IsValueInitialized)
+		PropertySetup matchingSetup;
+		if (!Setup.Properties.TryGetValue(propertyName, out PropertySetup? existingSetup))
 		{
-			return ((IInteractivePropertySetup)fastSetup).InvokeGetter(interaction, Behavior,
-				defaultValueGenerator);
-		}
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The property '{propertyName}' was accessed without prior setup.");
+			}
 
-		// Slow path: needs default value generator closure for initialization
-		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, DefaultValueGenerator, baseValueAccessor is not null);
-		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
-
-		[DebuggerNonUserCode]
-		object? DefaultValueGenerator(bool skipBase)
-		{
-			return skipBase || baseValueAccessor is null
+			object? defaultValue = Behavior.SkipBaseClass || baseValueAccessor is null
 				? defaultValueGenerator()
 				: baseValueAccessor.Invoke();
+			matchingSetup = new PropertySetup.Default(propertyName, defaultValue);
+			Setup.Properties.Add(matchingSetup);
 		}
+		else if (baseValueAccessor is not null || !existingSetup.IsValueInitialized)
+		{
+			bool skipBase = ((IInteractivePropertySetup)existingSetup).SkipBaseClass() ??
+			                Behavior.SkipBaseClass;
+			object? defaultValue = skipBase || baseValueAccessor is null
+				? defaultValueGenerator()
+				: baseValueAccessor.Invoke();
+			((IInteractivePropertySetup)existingSetup).InitializeWith(defaultValue);
+			matchingSetup = existingSetup;
+		}
+		else
+		{
+			matchingSetup = existingSetup;
+		}
+
+		return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
+			defaultValueGenerator);
 	}
 
 	/// <summary>
@@ -127,15 +139,31 @@ public partial class MockRegistry
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(propertyName, value));
-		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, NoDefaultValue);
-		matchingSetup.InvokeSetter(interaction, value, Behavior);
-		return matchingSetup.SkipBaseClass() ?? Behavior.SkipBaseClass;
 
-		[DebuggerNonUserCode]
-		static object? NoDefaultValue(bool _)
+		PropertySetup matchingSetup;
+		if (!Setup.Properties.TryGetValue(propertyName, out PropertySetup? existingSetup))
 		{
-			return null;
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The property '{propertyName}' was accessed without prior setup.");
+			}
+
+			matchingSetup = new PropertySetup.Default(propertyName, null);
+			Setup.Properties.Add(matchingSetup);
 		}
+		else
+		{
+			if (!existingSetup.IsValueInitialized)
+			{
+				((IInteractivePropertySetup)existingSetup).InitializeWith(null);
+			}
+
+			matchingSetup = existingSetup;
+		}
+
+		((IInteractivePropertySetup)matchingSetup).InvokeSetter(interaction, value, Behavior);
+		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
 
 	/// <summary>
