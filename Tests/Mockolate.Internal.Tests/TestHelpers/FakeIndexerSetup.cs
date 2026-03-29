@@ -7,10 +7,9 @@ namespace Mockolate.Internal.Tests.TestHelpers;
 
 internal sealed class FakeIndexerSetup : IndexerSetup
 {
-	internal FakeIndexerSetup(bool match) { ShouldMatch = match; }
-	internal bool ShouldMatch { get; }
-
-	protected override bool IsMatch(NamedParameterValue[] parameters) => ShouldMatch;
+	private readonly bool _match;
+	internal FakeIndexerSetup(bool match) { _match = match; }
+	protected override bool IsMatch(NamedParameterValue[] parameters) => _match;
 	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value, MockBehavior behavior) => value;
 	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value, MockBehavior behavior) { }
 	protected override bool? GetSkipBaseClass() => null;

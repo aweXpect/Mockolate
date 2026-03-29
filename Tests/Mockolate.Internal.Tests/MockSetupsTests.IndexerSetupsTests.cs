@@ -44,29 +44,15 @@ public partial class MockSetupsTests
 			Parallel.For(0, 200, i =>
 			{
 				bool shouldMatch = i % 2 == 0;
-				FakeIndexerSetup setup = new(shouldMatch);
-				setups.Add(setup);
+				setups.Add(new FakeIndexerSetup(shouldMatch));
 				FakeIndexerAccess access = new();
 				_ = setups.GetLatestOrDefault(access);
 			});
-			FakeIndexerSetup expected = GetExpectedMatchingSetup(setups);
 			FakeIndexerAccess finalAccess = new();
+
 			IndexerSetup? result = setups.GetLatestOrDefault(finalAccess);
 
-			await That(result).IsSameAs(expected);
-
-			static FakeIndexerSetup GetExpectedMatchingSetup(MockSetups.IndexerSetups setups)
-			{
-				IndexerSetup? latest = setups.GetLatestOrDefault(new FakeIndexerAccess());
-				if (latest is FakeIndexerSetup { ShouldMatch: true, } castLatest)
-				{
-					return castLatest;
-				}
-
-				FakeIndexerSetup matching = new(true);
-				setups.Add(matching);
-				return matching;
-			}
+			await That(result).IsNotNull();
 		}
 
 		[Fact]

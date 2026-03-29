@@ -5,7 +5,7 @@ namespace Mockolate.Internal.Tests;
 
 public partial class MockSetupsTests
 {
-	public sealed class EventSetupsTests
+	public sealed class EventSetupTests
 	{
 		[Fact]
 		public async Task AddAndRemove_ShouldUpdateCount()
