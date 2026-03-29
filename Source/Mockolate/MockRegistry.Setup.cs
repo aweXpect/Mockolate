@@ -29,13 +29,6 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Retrieves the latest indexer setup that matches the specified <paramref name="interaction" />,
-	///     or returns <see langword="null" /> if no matching setup is found.
-	/// </summary>
-	private IndexerSetup? GetIndexerSetup(IndexerAccess interaction)
-		=> Setup.Indexers.GetLatestOrDefault(setup => ((IInteractiveIndexerSetup)setup).Matches(interaction));
-
-	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters" />.
 	/// </summary>
 	private TValue GetIndexerValue<TValue>(IInteractiveIndexerSetup? setup, Func<TValue> defaultValueGenerator,

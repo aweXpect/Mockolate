@@ -174,7 +174,7 @@ public partial class MockRegistry
 		IndexerGetterAccess interaction = new(parameters);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
-		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
+		IndexerSetup? matchingSetup = Setup.Indexers.GetLatestMatching(interaction);
 		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
 			Setup.Indexers.UpdateValue);
 	}
@@ -191,7 +191,7 @@ public partial class MockRegistry
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 		Setup.Indexers.UpdateValue(parameters, value);
-		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
+		IndexerSetup? matchingSetup = Setup.Indexers.GetLatestMatching(interaction);
 		matchingSetup?.InvokeSetter(interaction, value, Behavior);
 		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
