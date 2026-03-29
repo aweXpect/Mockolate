@@ -48,10 +48,15 @@ public class MockInteractions : IMockInteractions
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{
+		if (interaction is not ISettableInteraction settableInteraction)
+		{
+			throw new ArgumentException("Only settable interactions can be registered.", nameof(interaction));
+		}
+
 		lock (_lock)
 		{
 			_missingVerification?.Add(interaction);
-			((ISettableInteraction)interaction).SetIndex(++_index);
+			settableInteraction.SetIndex(++_index);
 			_interactions.Add(interaction);
 		}
 
