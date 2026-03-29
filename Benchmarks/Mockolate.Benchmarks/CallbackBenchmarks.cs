@@ -40,8 +40,9 @@ public class CallbackBenchmarks : BenchmarksBase
 		Moq.Mock<IMyCallbackInterface> mock = new();
 		mock.Setup(x => x.MyFunc(Moq.It.IsAny<int>())).Callback(() => count++);
 
-		mock.Object.MyFunc(1);
-		mock.Object.MyFunc(2);
+		IMyCallbackInterface instance = mock.Object;
+		instance.MyFunc(1);
+		instance.MyFunc(2);
 		return count;
 	}
 
@@ -85,8 +86,9 @@ public class CallbackBenchmarks : BenchmarksBase
 		IMyCallbackInterfaceImposter imposter = IMyCallbackInterface.Imposter();
 		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Callback(_ => count++);
 
-		imposter.Instance().MyFunc(1);
-		imposter.Instance().MyFunc(2);
+		IMyCallbackInterface instance = imposter.Instance();
+		instance.MyFunc(1);
+		instance.MyFunc(2);
 		return count;
 	}
 
