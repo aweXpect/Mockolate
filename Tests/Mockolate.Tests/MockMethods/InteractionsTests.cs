@@ -66,13 +66,27 @@ public sealed partial class InteractionsTests
 	}
 
 	[Fact]
+	public async Task MethodInvocation_SetIndexTwice_ShouldRemainUnchanged()
+	{
+		MethodInvocation interaction = new("SomeMethod", [])
+		{
+			Index = 1,
+		};
+
+		interaction.Index = 2;
+
+		await That(interaction.Index).IsEqualTo(1);
+	}
+
+	[Fact]
 	public async Task MethodInvocation_ToString_ShouldReturnExpectedValue()
 	{
-		MethodInvocation interaction = new(3, "SomeMethod", [
+		MethodInvocation interaction = new("SomeMethod", [
 			new NamedParameterValue("p1", 1),
 			new NamedParameterValue("p2", null),
 			new NamedParameterValue("p3", (TimeSpan)90.Seconds()),
 		]);
+		interaction.Index = 3;
 		string expectedValue = "[3] invoke method SomeMethod(1, null, 00:01:30)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);

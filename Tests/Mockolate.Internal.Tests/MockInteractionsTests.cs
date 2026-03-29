@@ -9,7 +9,7 @@ public class MockInteractionsTests
 	{
 		int interactionCount = 0;
 		MockInteractions sut = new();
-		MethodInvocation interaction = new(0, "foo", []);
+		MethodInvocation interaction = new("foo", []);
 		sut.InteractionAdded += OnInteractionAdded;
 
 		((IMockInteractions)sut).RegisterInteraction(interaction);
@@ -28,7 +28,7 @@ public class MockInteractionsTests
 	public async Task RegisterInteraction_ShouldRegisterInteraction()
 	{
 		MockInteractions sut = new();
-		MethodInvocation interaction = new(0, "foo", []);
+		MethodInvocation interaction = new("foo", []);
 
 		MethodInvocation registeredInteraction = ((IMockInteractions)sut).RegisterInteraction(interaction);
 

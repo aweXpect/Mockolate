@@ -7,7 +7,7 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public class PropertySetterAccess(int index, string propertyName, object? value) : PropertyAccess(index, propertyName)
+public class PropertySetterAccess(string propertyName, object? value) : PropertyAccess(propertyName)
 {
 	/// <summary>
 	///     The value the property was being set to.

@@ -18,7 +18,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo", Array.Empty<NamedParameterValue>());
+				MethodInvocation invocation = new("foo", Array.Empty<NamedParameterValue>());
 
 				void Act()
 				{
@@ -60,6 +60,7 @@ public sealed partial class SetupMethodTests
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
+				// ReSharper disable once UnusedMethodReturnValue.Local
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
@@ -72,7 +73,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int> setup = new("foo");
 				setup.Returns(x => 3 * x);
-				MethodInvocation invocation = new(0, "foo", [new NamedParameterValue("p1", "b"),]);
+				MethodInvocation invocation = new("foo", [new NamedParameterValue("p1", "b"),]);
 
 				void Act()
 				{
@@ -91,7 +92,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(x => 3 * x);
-				MethodInvocation invocation = new(0, "foo", [new NamedParameterValue("p1", 2),]);
+				MethodInvocation invocation = new("foo", [new NamedParameterValue("p1", 2),]);
 
 				void Act()
 				{
@@ -177,7 +178,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
 
-				sut.Mock.Setup.Method1WithRefParameter(It.IsRef<int>(v => 3))
+				sut.Mock.Setup.Method1WithRefParameter(It.IsRef<int>(_ => 3))
 					.Do(v =>
 					{
 						callCount++;
@@ -221,6 +222,7 @@ public sealed partial class SetupMethodTests
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
+				// ReSharper disable once UnusedMethodReturnValue.Local
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
@@ -232,8 +234,8 @@ public sealed partial class SetupMethodTests
 			public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
-				setup.Returns((x, y) => 3 * x);
-				MethodInvocation invocation = new(0, "foo",
+				setup.Returns((x, _) => 3 * x);
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", "a"),
 					new NamedParameterValue("p2", 2),
@@ -254,8 +256,8 @@ public sealed partial class SetupMethodTests
 			public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int> setup = new("foo");
-				setup.Returns((x, y) => 3 * x);
-				MethodInvocation invocation = new(0, "foo",
+				setup.Returns((x, _) => 3 * x);
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", "b"),
@@ -278,7 +280,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int, int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 2),
 					new NamedParameterValue("p2", 3),
@@ -431,6 +433,7 @@ public sealed partial class SetupMethodTests
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
+				// ReSharper disable once UnusedMethodReturnValue.Local
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
@@ -442,8 +445,8 @@ public sealed partial class SetupMethodTests
 			public async Task GetReturnValue_InvalidInputType1_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
-				setup.Returns((x, y, z) => 3 * x);
-				MethodInvocation invocation = new(0, "foo",
+				setup.Returns((x, _, _) => 3 * x);
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", "a"),
 					new NamedParameterValue("p2", 2),
@@ -465,8 +468,8 @@ public sealed partial class SetupMethodTests
 			public async Task GetReturnValue_InvalidInputType2_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
-				setup.Returns((x, y, z) => 3 * x);
-				MethodInvocation invocation = new(0, "foo",
+				setup.Returns((x, _, _) => 3 * x);
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", "b"),
@@ -488,8 +491,8 @@ public sealed partial class SetupMethodTests
 			public async Task GetReturnValue_InvalidInputType3_ShouldThrowMockException()
 			{
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
-				setup.Returns((x, y, z) => 3 * x);
-				MethodInvocation invocation = new(0, "foo",
+				setup.Returns((x, _, _) => 3 * x);
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -513,7 +516,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int, int, int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -687,6 +690,7 @@ public sealed partial class SetupMethodTests
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
+				// ReSharper disable once UnusedMethodReturnValue.Local
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
@@ -699,7 +703,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", "a"),
 					new NamedParameterValue("p2", 2),
@@ -723,7 +727,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", "b"),
@@ -747,7 +751,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -771,7 +775,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -796,7 +800,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int, int, int, int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -991,6 +995,7 @@ public sealed partial class SetupMethodTests
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
+				// ReSharper disable once UnusedMethodReturnValue.Local
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
@@ -1003,7 +1008,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", "a"),
 					new NamedParameterValue("p2", 2),
@@ -1028,7 +1033,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", "b"),
@@ -1053,7 +1058,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -1078,7 +1083,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -1103,7 +1108,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -1129,7 +1134,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int, int, int, int, int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new(0, "foo",
+				MethodInvocation invocation = new("foo",
 				[
 					new NamedParameterValue("p1", 1),
 					new NamedParameterValue("p2", 2),
@@ -1346,6 +1351,7 @@ public sealed partial class SetupMethodTests
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
 
+				// ReSharper disable once UnusedMethodReturnValue.Local
 				public T GetReturnValue<T>(MethodInvocation invocation)
 					=> base.GetReturnValue<T>(invocation, MockBehavior.Default, () => default!);
 			}
@@ -1457,7 +1463,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
 
-				sut.Mock.Setup.Method1WithRefParameter(It.IsRef<int>(v => 3))
+				sut.Mock.Setup.Method1WithRefParameter(It.IsRef<int>(_ => 3))
 					.Do(v =>
 					{
 						callCount++;
@@ -1501,16 +1507,6 @@ public sealed partial class SetupMethodTests
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
-			}
-
-			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -1650,16 +1646,6 @@ public sealed partial class SetupMethodTests
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
-			}
-
-			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -1819,16 +1805,6 @@ public sealed partial class SetupMethodTests
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
-			}
-
-			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -2008,16 +1984,6 @@ public sealed partial class SetupMethodTests
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
-			}
-
-			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int, int>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 
@@ -2218,16 +2184,6 @@ public sealed partial class SetupMethodTests
 
 				public T SetRefParameter<T>(string parameterName, T value)
 					=> base.SetRefParameter(parameterName, value, MockBehavior.Default);
-			}
-
-			private class MyVoidMethodSetupWithParameters(string name)
-				: VoidMethodSetup<string, long, int, int, int>(name, Match.AnyParameters())
-			{
-				public TValue HiddenSetOutParameter<TValue>(string parameterName, Func<TValue> defaultValueGenerator)
-					=> SetOutParameter<TValue>(parameterName, defaultValueGenerator);
-
-				public TValue HiddenSetRefParameter<TValue>(string parameterName, TValue value, MockBehavior behavior)
-					=> SetRefParameter(parameterName, value, behavior);
 			}
 		}
 	}

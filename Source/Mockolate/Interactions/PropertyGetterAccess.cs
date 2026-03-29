@@ -7,7 +7,7 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public class PropertyGetterAccess(int index, string propertyName) : PropertyAccess(index, propertyName)
+public class PropertyGetterAccess(string propertyName) : PropertyAccess(propertyName)
 {
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString() => $"[{Index}] get property {Name}";

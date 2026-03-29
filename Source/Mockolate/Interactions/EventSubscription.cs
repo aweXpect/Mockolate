@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -7,7 +8,7 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public class EventSubscription(int index, string name, object? target, MethodInfo method) : IInteraction
+public class EventSubscription(string name, object? target, MethodInfo method) : IInteraction
 {
 	/// <summary>
 	///     The name of the event.
@@ -25,7 +26,11 @@ public class EventSubscription(int index, string name, object? target, MethodInf
 	public MethodInfo Method { get; } = method;
 
 	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index { get; } = index;
+	public int? Index
+	{
+		get;
+		set => field ??= value;
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString() => $"[{Index}] subscribe to event {Name}";

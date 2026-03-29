@@ -21,6 +21,6 @@ public sealed class MockSetupsTests
 		sut.Dispense("Milk", 5);
 		IReadOnlyCollection<IInteraction> result = interactions.GetUnverifiedInteractions();
 
-		await That(result.Select(x => x.Index)).IsEqualTo([0, 1, 2,]);
+		await That(result.Select(x => x.Index!.Value)).IsEqualTo([0, 1, 2,]);
 	}
 }
