@@ -90,6 +90,7 @@ public class MockInteractions : IMockInteractions
 	{
 		lock (_lock)
 		{
+			_missingVerification = null;
 			_interactions.Clear();
 			_index = -1;
 		}
