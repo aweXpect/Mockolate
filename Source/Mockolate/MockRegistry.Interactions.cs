@@ -93,6 +93,17 @@ public partial class MockRegistry
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(propertyName));
+
+		// Fast path: setup exists and is fully initialized with no base accessor — avoids closure allocation
+		if (baseValueAccessor is null &&
+		    Setup.Properties.TryGetValue(propertyName, out PropertySetup? fastSetup) &&
+		    fastSetup.IsValueInitialized)
+		{
+			return ((IInteractivePropertySetup)fastSetup).InvokeGetter(interaction, Behavior,
+				defaultValueGenerator);
+		}
+
+		// Slow path: needs default value generator closure for initialization
 		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, DefaultValueGenerator, baseValueAccessor is not null);
 		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
 
