@@ -35,16 +35,25 @@ partial class Build
 		.After(BenchmarkDotNet)
 		.Executes(async () =>
 		{
-			if (!File.Exists(ArtifactsDirectory / "Benchmarks" / "results" /
-															 "Mockolate.Benchmarks.HappyCaseBenchmarks-report-github.md"))
+			if (!Directory.Exists(ArtifactsDirectory / "Benchmarks" / "results"))
+			{
+				Log.Information("Skip benchmark result, because no results directory was generated.");
+				return;
+			}
+
+			string[] files = Directory.GetFiles(ArtifactsDirectory / "Benchmarks" / "results", "*-report-github.md");
+			if (files.Length == 0)
 			{
 				Log.Information("Skip benchmark result, because no report file was generated.");
 				return;
 			}
 
-			string fileContent = await File.ReadAllTextAsync(ArtifactsDirectory / "Benchmarks" / "results" /
-			                                                 "Mockolate.Benchmarks.HappyCaseBenchmarks-report-github.md");
-			Log.Information("Report:\n {FileContent}", fileContent);
+			foreach (string file in files)
+			{
+				string fileContent = await File.ReadAllTextAsync(file);
+				Log.Information("Report ({FileName}):\n {FileContent}", Path.GetFileName(file), fileContent);
+			}
+
 			if (GitHubActions?.IsPullRequest == true)
 			{
 				File.WriteAllText(ArtifactsDirectory / "PR.txt", GitHubActions.PullRequestNumber.ToString());
@@ -55,8 +64,14 @@ partial class Build
 		.Executes(async () =>
 		{
 			await "Benchmarks".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
-			if (!File.Exists(ArtifactsDirectory / "Benchmarks" / "results" /
-															 "Mockolate.Benchmarks.HappyCaseBenchmarks-report-github.md"))
+			if (!Directory.Exists(ArtifactsDirectory / "Benchmarks" / "results"))
+			{
+				Log.Information("Skip benchmark comment, because no results directory was generated.");
+				return;
+			}
+
+			string[] files = Directory.GetFiles(ArtifactsDirectory / "Benchmarks" / "results", "*-report-github.md");
+			if (files.Length == 0)
 			{
 				Log.Information("Skip benchmark comment, because no report file was generated.");
 				return;
@@ -69,7 +84,7 @@ partial class Build
 			}
 
 			string prNumber = File.ReadAllText(ArtifactsDirectory / "PR.txt");
-			string body = CreateBenchmarkCommentBody();
+			string body = CreateBenchmarkCommentBody(files);
 			Log.Debug("Pull request number: {PullRequestId}", prNumber);
 			if (int.TryParse(prNumber, out int prId))
 			{
@@ -106,41 +121,44 @@ partial class Build
 		.DependsOn(BenchmarkDotNet)
 		.DependsOn(BenchmarkResult);
 
-	string CreateBenchmarkCommentBody()
+	string CreateBenchmarkCommentBody(string[] files)
 	{
-		string[] fileContent = File.ReadAllLines(ArtifactsDirectory / "Benchmarks" / "results" /
-		                                         "Mockolate.Benchmarks.HappyCaseBenchmarks-report-github.md");
 		StringBuilder sb = new();
 		sb.AppendLine("## :rocket: Benchmark Results");
-		sb.AppendLine("<details>");
-		sb.AppendLine("<summary>Details</summary>");
-		int count = 0;
-		foreach (string line in fileContent)
+		foreach (string file in files)
 		{
-			if (line.StartsWith("```"))
+			int count = 0;
+			string[] lines = File.ReadAllLines(file);
+			sb.AppendLine();
+			sb.AppendLine("<details>");
+			sb.AppendLine("<summary>Details</summary>");
+			foreach (string line in lines)
 			{
-				count++;
-				if (count == 1)
+				if (line.StartsWith("```"))
 				{
-					sb.AppendLine("<pre>");
+					count++;
+					if (count == 1)
+					{
+						sb.AppendLine("<pre>");
+					}
+					else if (count == 2)
+					{
+						sb.AppendLine("</pre>");
+						sb.AppendLine("</details>");
+						sb.AppendLine();
+					}
+
+					continue;
 				}
-				else if (count == 2)
+
+				if (line.StartsWith('|') && line.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase) && line.EndsWith('|'))
 				{
-					sb.AppendLine("</pre>");
-					sb.AppendLine("</details>");
-					sb.AppendLine();
+					MakeLineBold(sb, line);
+					continue;
 				}
 
-				continue;
+				sb.AppendLine(line);
 			}
-
-			if (line.StartsWith('|') && line.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase) && line.EndsWith('|'))
-			{
-				MakeLineBold(sb, line);
-				continue;
-			}
-
-			sb.AppendLine(line);
 		}
 
 		string body = sb.ToString();
