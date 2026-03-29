@@ -194,7 +194,7 @@ internal class MockSetups
 
 		public int Count => _storage?.Count ?? 0;
 
-		public IndexerSetup? GetLatestMatching(IndexerAccess interaction)
+		public IndexerSetup? GetLatestOrDefault(IndexerAccess interaction)
 		{
 			if (_storage is null)
 			{
