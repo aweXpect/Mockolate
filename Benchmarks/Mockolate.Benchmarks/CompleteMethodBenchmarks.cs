@@ -1,25 +1,26 @@
 using BenchmarkDotNet.Attributes;
 using FakeItEasy;
 using Imposter.Abstractions;
+using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.CompleteMethodBenchmarks.IMyMethodInterface))]
+[assembly: GenerateImposter(typeof(CompleteMethodBenchmarks.IMyMethodInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the simple case of an interface mock, setup a single method that gets called and
-///     verified to be called once.<br />
+///     verified to be called once.
 /// </summary>
 public class CompleteMethodBenchmarks : BenchmarksBase
 {
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
-	[Benchmark]
+	[Benchmark(Baseline = true)]
 	public void Method_Mockolate()
 	{
 		IMyMethodInterface sut = IMyMethodInterface.CreateMock();
