@@ -1884,11 +1884,6 @@ internal static partial class Sources
 		{
 			if (valueFlags?.All(x => x) == true)
 			{
-				if (hasOverloadResolutionPriority)
-				{
-					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
-				}
-
 				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer");
 			}
 			else
