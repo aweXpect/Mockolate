@@ -29,9 +29,9 @@ public partial class MockSetupsTests
 			setups.Add(setup1);
 			setups.Add(setup2);
 
-			MethodSetup? result = setups.GetLatestOrDefault(s => s == setup1);
+			MethodSetup? result = setups.GetLatestOrDefault(_ => true);
 
-			await That(result).IsEqualTo(setup1);
+			await That(result).IsEqualTo(setup2);
 		}
 
 		[Fact]

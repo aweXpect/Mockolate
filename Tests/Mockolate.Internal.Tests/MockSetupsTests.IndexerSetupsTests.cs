@@ -39,8 +39,8 @@ public partial class MockSetupsTests
 		public async Task ThreadSafety_ConcurrentAddsAndQueries_ShouldReturnConsistentMatches()
 		{
 			MockSetups.IndexerSetups setups = new();
-			FakeIndexerSetup matchSetup = new(true);
-			setups.Add(matchSetup);
+			FakeIndexerSetup initialMatch = new(true);
+			setups.Add(initialMatch);
 			Parallel.For(0, 200, i =>
 			{
 				bool shouldMatch = i % 2 == 0;
@@ -49,24 +49,13 @@ public partial class MockSetupsTests
 				FakeIndexerAccess access = new();
 				_ = setups.GetLatestOrDefault(access);
 			});
-			FakeIndexerSetup expected = GetExpectedMatchingSetup(setups);
+			FakeIndexerSetup finalMatch = new(true);
+			setups.Add(finalMatch);
 			FakeIndexerAccess finalAccess = new();
+
 			IndexerSetup? result = setups.GetLatestOrDefault(finalAccess);
 
-			await That(result).IsSameAs(expected);
-
-			static FakeIndexerSetup GetExpectedMatchingSetup(MockSetups.IndexerSetups setups)
-			{
-				IndexerSetup? latest = setups.GetLatestOrDefault(new FakeIndexerAccess());
-				if (latest is FakeIndexerSetup { ShouldMatch: true, } castLatest)
-				{
-					return castLatest;
-				}
-
-				FakeIndexerSetup matching = new(true);
-				setups.Add(matching);
-				return matching;
-			}
+			await That(result).IsEqualTo(finalMatch);
 		}
 
 		[Fact]
