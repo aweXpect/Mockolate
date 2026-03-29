@@ -7,49 +7,23 @@ namespace Mockolate.Tests.MockEvents;
 public sealed class InteractionsTests
 {
 	[Fact]
-	public async Task EventSubscription_SetIndexTwice_ShouldRemainUnchanged()
-	{
-		EventSubscription interaction = new("SomeEvent", this, Helper.GetMethodInfo())
-		{
-			Index = 1,
-		};
-
-		interaction.Index = 2;
-
-		await That(interaction.Index).IsEqualTo(1);
-	}
-
-	[Fact]
 	public async Task EventSubscription_ToString_ShouldReturnExpectedValue()
 	{
-		EventSubscription interaction = new("SomeEvent", this, Helper.GetMethodInfo())
-		{
-			Index = 3,
-		};
-		string expectedValue = "[3] subscribe to event SomeEvent";
+		MockInteractions interactions = new();
+		EventSubscription interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new EventSubscription("SomeEvent", this, Helper.GetMethodInfo()));
+		string expectedValue = "[0] subscribe to event SomeEvent";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
 	[Fact]
-	public async Task EventUnsubscription_SetIndexTwice_ShouldRemainUnchanged()
-	{
-		EventUnsubscription interaction = new("SomeEvent", this, Helper.GetMethodInfo())
-		{
-			Index = 1,
-		};
-
-		interaction.Index = 2;
-
-		await That(interaction.Index).IsEqualTo(1);
-	}
-
-	[Fact]
 	public async Task EventUnsubscription_ToString_ShouldReturnExpectedValue()
 	{
-		EventUnsubscription interaction = new("SomeEvent", this, Helper.GetMethodInfo());
-		interaction.Index = 3;
-		string expectedValue = "[3] unsubscribe from event SomeEvent";
+		MockInteractions interactions = new();
+		EventUnsubscription interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new EventUnsubscription("SomeEvent", this, Helper.GetMethodInfo()));
+		string expectedValue = "[0] unsubscribe from event SomeEvent";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}

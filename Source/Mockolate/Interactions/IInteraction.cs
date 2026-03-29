@@ -8,5 +8,5 @@ public interface IInteraction
 	/// <summary>
 	///     The index of the interaction.
 	/// </summary>
-	int? Index { get; set; }
+	int Index { get; }
 }

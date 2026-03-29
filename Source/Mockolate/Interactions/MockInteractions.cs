@@ -51,7 +51,7 @@ public class MockInteractions : IMockInteractions
 		lock (_lock)
 		{
 			_missingVerification?.Add(interaction);
-			interaction.Index = ++_index;
+			((ISettableInteraction)interaction).SetIndex(++_index);
 			_interactions.Add(interaction);
 		}
 

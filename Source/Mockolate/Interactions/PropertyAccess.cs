@@ -8,17 +8,16 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public abstract class PropertyAccess(string propertyName) : IInteraction
+public abstract class PropertyAccess(string propertyName) : IInteraction, ISettableInteraction
 {
+	private int? _index;
 	/// <summary>
 	///     The name of the property.
 	/// </summary>
 	public string Name { get; } = propertyName;
 
 	/// <inheritdoc cref="IInteraction.Index" />
-	public int? Index
-	{
-		get;
-		set => field ??= value;
-	}
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
 }

@@ -84,7 +84,7 @@ public abstract class MockMonitor
 			foreach (IInteraction interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
 			{
 				((IMockInteractions)Interactions).RegisterInteraction(interaction);
-				_monitoringStart = interaction.Index!.Value + 1;
+				_monitoringStart = interaction.Index + 1;
 			}
 		}
 	}

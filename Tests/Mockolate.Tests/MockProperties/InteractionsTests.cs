@@ -95,11 +95,9 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task PropertyGetterAccess_ToString_ShouldReturnExpectedValue()
 	{
-		PropertyGetterAccess interaction = new("SomeProperty")
-		{
-			Index = 3,
-		};
-		string expectedValue = "[3] get property SomeProperty";
+		MockInteractions interactions = new();
+		PropertyGetterAccess interaction = ((IMockInteractions)interactions).RegisterInteraction(new PropertyGetterAccess("SomeProperty"));
+		string expectedValue = "[0] get property SomeProperty";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
@@ -107,11 +105,9 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task PropertySetterAccess_ToString_ShouldReturnExpectedValue()
 	{
-		PropertySetterAccess interaction = new("SomeProperty", 5)
-		{
-			Index = 3,
-		};
-		string expectedValue = "[3] set property SomeProperty to 5";
+		MockInteractions interactions = new();
+		PropertySetterAccess interaction = ((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess("SomeProperty", 5));
+		string expectedValue = "[0] set property SomeProperty to 5";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
@@ -119,11 +115,9 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task PropertySetterAccess_ToString_WithNull_ShouldReturnExpectedValue()
 	{
-		PropertySetterAccess interaction = new("SomeProperty", null)
-		{
-			Index = 4,
-		};
-		string expectedValue = "[4] set property SomeProperty to null";
+		MockInteractions interactions = new();
+		PropertySetterAccess interaction = ((IMockInteractions)interactions).RegisterInteraction(new PropertySetterAccess("SomeProperty", null));
+		string expectedValue = "[0] set property SomeProperty to null";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
