@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -64,56 +63,110 @@ internal class MockSetups
 	[DebuggerNonUserCode]
 	internal sealed class MethodSetups
 	{
-		private ConcurrentStack<MethodSetup>? _storage;
+		private List<MethodSetup>? _storage;
 
 		public int Count
-			=> _storage?.Count ?? 0;
+		{
+			get
+			{
+				List<MethodSetup>? storage = _storage;
+				if (storage is null)
+				{
+					return 0;
+				}
+
+				lock (storage)
+				{
+					return storage.Count;
+				}
+			}
+		}
+
+		private List<MethodSetup> GetOrCreateStorage()
+		{
+			if (_storage is null)
+			{
+				Interlocked.CompareExchange(ref _storage, [], null);
+			}
+
+			return _storage!;
+		}
 
 		public void Add(MethodSetup setup)
 		{
-			_storage ??= new ConcurrentStack<MethodSetup>();
-			_storage.Push(setup);
+			List<MethodSetup> storage = GetOrCreateStorage();
+			lock (storage)
+			{
+				storage.Add(setup);
+			}
 		}
 
 		public MethodSetup? GetLatestOrDefault(Func<MethodSetup, bool> predicate)
 		{
-			if (_storage is null)
+			List<MethodSetup>? storage = _storage;
+			if (storage is null)
 			{
 				return null;
 			}
 
-			return _storage.FirstOrDefault(predicate);
+			lock (storage)
+			{
+				for (int i = storage.Count - 1; i >= 0; i--)
+				{
+					if (predicate(storage[i]))
+					{
+						return storage[i];
+					}
+				}
+			}
+
+			return null;
 		}
 
 		internal IEnumerable<MethodSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
-			if (_storage is null)
+			List<MethodSetup>? storage = _storage;
+			if (storage is null)
 			{
 				return [];
 			}
 
-			return _storage.Where(methodSetup => interactions.Interactions.OfType<MethodInvocation>()
-				.All(methodInvocation => !((IInteractiveMethodSetup)methodSetup).Matches(methodInvocation)));
+			lock (storage)
+			{
+				return storage.Where(methodSetup => interactions.Interactions.OfType<MethodInvocation>()
+						.All(methodInvocation => !((IInteractiveMethodSetup)methodSetup).Matches(methodInvocation)))
+					.ToList();
+			}
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			if (_storage is null || _storage.IsEmpty)
+			List<MethodSetup>? storage = _storage;
+			if (storage is null)
 			{
 				return "0 methods";
 			}
 
-			StringBuilder sb = new();
-			sb.Append(_storage.Count).Append(_storage.Count == 1 ? " method:" : " methods:").AppendLine();
-			foreach (MethodSetup methodSetup in _storage)
+			lock (storage)
 			{
-				sb.Append(methodSetup).AppendLine();
-			}
+				int count = storage.Count;
+				if (count == 0)
+				{
+					return "0 methods";
+				}
 
-			sb.Length -= Environment.NewLine.Length;
-			return sb.ToString();
+				StringBuilder sb = new();
+				sb.Append(count).Append(count == 1 ? " method:" : " methods:").AppendLine();
+				foreach (MethodSetup methodSetup in storage)
+				{
+					sb.Append(methodSetup).AppendLine();
+				}
+
+				sb.Length -= Environment.NewLine.Length;
+				return sb.ToString();
+			}
 		}
 	}
 
