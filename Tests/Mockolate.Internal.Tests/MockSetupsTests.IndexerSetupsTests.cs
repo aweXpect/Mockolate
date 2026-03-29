@@ -1,3 +1,4 @@
+using System.Threading;
 using Mockolate.Internal.Tests.TestHelpers;
 using Mockolate.Setup;
 
@@ -39,34 +40,29 @@ public partial class MockSetupsTests
 		public async Task ThreadSafety_ConcurrentAddsAndQueries_ShouldReturnConsistentMatches()
 		{
 			MockSetups.IndexerSetups setups = new();
-			FakeIndexerSetup matchSetup = new(true);
-			setups.Add(matchSetup);
+			// ReSharper disable once RedundantAssignment
+			FakeIndexerSetup? lastMatching = null;
+			FakeIndexerSetup initialMatch = new(true);
+			setups.Add(initialMatch);
+			lastMatching = initialMatch;
 			Parallel.For(0, 200, i =>
 			{
 				bool shouldMatch = i % 2 == 0;
 				FakeIndexerSetup setup = new(shouldMatch);
 				setups.Add(setup);
+				if (shouldMatch)
+				{
+					Interlocked.Exchange(ref lastMatching, setup);
+				}
+
 				FakeIndexerAccess access = new();
 				_ = setups.GetLatestOrDefault(access);
 			});
-			FakeIndexerSetup expected = GetExpectedMatchingSetup(setups);
 			FakeIndexerAccess finalAccess = new();
+
 			IndexerSetup? result = setups.GetLatestOrDefault(finalAccess);
 
-			await That(result).IsSameAs(expected);
-
-			static FakeIndexerSetup GetExpectedMatchingSetup(MockSetups.IndexerSetups setups)
-			{
-				IndexerSetup? latest = setups.GetLatestOrDefault(new FakeIndexerAccess());
-				if (latest is FakeIndexerSetup { ShouldMatch: true, } castLatest)
-				{
-					return castLatest;
-				}
-
-				FakeIndexerSetup matching = new(true);
-				setups.Add(matching);
-				return matching;
-			}
+			await That(result).IsEqualTo(lastMatching);
 		}
 
 		[Fact]
