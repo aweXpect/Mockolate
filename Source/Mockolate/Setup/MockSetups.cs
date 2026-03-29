@@ -194,14 +194,22 @@ internal class MockSetups
 
 		public int Count => _storage?.Count ?? 0;
 
-		public IndexerSetup? GetLatestOrDefault(Func<IndexerSetup, bool> predicate)
+		public IndexerSetup? GetLatestOrDefault(IndexerAccess interaction)
 		{
 			if (_storage is null)
 			{
 				return null;
 			}
 
-			return _storage.FirstOrDefault(predicate);
+			foreach (IndexerSetup setup in _storage)
+			{
+				if (((IInteractiveIndexerSetup)setup).Matches(interaction))
+				{
+					return setup;
+				}
+			}
+
+			return null;
 		}
 
 		/// <inheritdoc cref="object.ToString()" />

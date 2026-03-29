@@ -93,16 +93,13 @@ public partial class MockRegistry
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(propertyName));
-		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, DefaultValueGenerator, baseValueAccessor is not null);
-		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
 
-		[DebuggerNonUserCode]
-		object? DefaultValueGenerator(bool skipBase)
-		{
-			return skipBase || baseValueAccessor is null
-				? defaultValueGenerator()
-				: baseValueAccessor.Invoke();
-		}
+		PropertySetup matchingSetup = ResolvePropertySetup(
+			propertyName, defaultValueGenerator, baseValueAccessor,
+			baseValueAccessor is not null);
+
+		return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
+			defaultValueGenerator);
 	}
 
 	/// <summary>
@@ -116,15 +113,56 @@ public partial class MockRegistry
 	{
 		IInteraction interaction =
 			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(propertyName, value));
-		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, NoDefaultValue);
-		matchingSetup.InvokeSetter(interaction, value, Behavior);
-		return matchingSetup.SkipBaseClass() ?? Behavior.SkipBaseClass;
 
-		[DebuggerNonUserCode]
-		static object? NoDefaultValue(bool _)
+		PropertySetup matchingSetup = ResolvePropertySetup<object>(propertyName, null, null, false);
+
+		((IInteractivePropertySetup)matchingSetup).InvokeSetter(interaction, value, Behavior);
+		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	private PropertySetup ResolvePropertySetup<TResult>(
+		string propertyName,
+		Func<TResult>? defaultValueGenerator,
+		Func<TResult>? baseValueAccessor,
+		bool forceReinitWhenFound)
+	{
+		if (!Setup.Properties.TryGetValue(propertyName, out PropertySetup? existingSetup))
 		{
-			return null;
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The property '{propertyName}' was accessed without prior setup.");
+			}
+
+			object? initialValue = defaultValueGenerator is null
+				? null
+				: Behavior.SkipBaseClass || baseValueAccessor is null
+					? defaultValueGenerator()
+					: baseValueAccessor.Invoke();
+			PropertySetup setup = new PropertySetup.Default(propertyName, initialValue);
+			Setup.Properties.Add(setup);
+			return setup;
 		}
+
+		if (forceReinitWhenFound || !existingSetup.IsValueInitialized)
+		{
+			object? initialValue;
+			if (defaultValueGenerator is null)
+			{
+				initialValue = null;
+			}
+			else
+			{
+				bool skipBase = ((IInteractivePropertySetup)existingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
+				initialValue = skipBase || baseValueAccessor is null
+					? defaultValueGenerator()
+					: baseValueAccessor.Invoke();
+			}
+
+			((IInteractivePropertySetup)existingSetup).InitializeWith(initialValue);
+		}
+
+		return existingSetup;
 	}
 
 	/// <summary>
@@ -135,7 +173,7 @@ public partial class MockRegistry
 		IndexerGetterAccess interaction = new(parameters);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
-		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
+		IndexerSetup? matchingSetup = Setup.Indexers.GetLatestOrDefault(interaction);
 		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
 			Setup.Indexers.UpdateValue);
 	}
@@ -152,7 +190,7 @@ public partial class MockRegistry
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 		Setup.Indexers.UpdateValue(parameters, value);
-		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
+		IndexerSetup? matchingSetup = Setup.Indexers.GetLatestOrDefault(interaction);
 		matchingSetup?.InvokeSetter(interaction, value, Behavior);
 		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
