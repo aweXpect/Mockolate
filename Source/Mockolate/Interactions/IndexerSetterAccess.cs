@@ -9,7 +9,7 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public class IndexerSetterAccess(int index, NamedParameterValue[] parameters, object? value) : IndexerAccess(index, parameters)
+public class IndexerSetterAccess(NamedParameterValue[] parameters, object? value) : IndexerAccess(parameters)
 {
 	/// <summary>
 	///     The value the indexer was being set to.

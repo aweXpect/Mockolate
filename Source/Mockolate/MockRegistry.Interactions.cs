@@ -33,8 +33,7 @@ public partial class MockRegistry
 		params NamedParameterValue[] parameters)
 	{
 		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
-				methodName, parameters));
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
 
 		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null)
@@ -73,8 +72,7 @@ public partial class MockRegistry
 	public MethodSetupResult InvokeMethod(string methodName, params NamedParameterValue[] parameters)
 	{
 		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(Interactions.GetNextIndex(),
-				methodName, parameters));
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
 
 		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
 		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
@@ -94,8 +92,7 @@ public partial class MockRegistry
 		Func<TResult>? baseValueAccessor)
 	{
 		IInteraction interaction =
-			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(Interactions.GetNextIndex(),
-				propertyName));
+			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(propertyName));
 		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, DefaultValueGenerator, baseValueAccessor is not null);
 		return matchingSetup.InvokeGetter(interaction, Behavior, defaultValueGenerator);
 
@@ -118,8 +115,7 @@ public partial class MockRegistry
 	public bool SetProperty(string propertyName, object? value)
 	{
 		IInteraction interaction =
-			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(Interactions.GetNextIndex(),
-				propertyName, value));
+			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(propertyName, value));
 		IInteractivePropertySetup matchingSetup = GetPropertySetup(propertyName, NoDefaultValue);
 		matchingSetup.InvokeSetter(interaction, value, Behavior);
 		return matchingSetup.SkipBaseClass() ?? Behavior.SkipBaseClass;
@@ -136,7 +132,7 @@ public partial class MockRegistry
 	/// </summary>
 	public IndexerSetupResult<TResult> GetIndexer<TResult>(params NamedParameterValue[] parameters)
 	{
-		IndexerGetterAccess interaction = new(Interactions.GetNextIndex(), parameters);
+		IndexerGetterAccess interaction = new(parameters);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 		IndexerSetup? matchingSetup = GetIndexerSetup(interaction);
@@ -152,7 +148,7 @@ public partial class MockRegistry
 	/// </remarks>
 	public bool SetIndexer<TResult>(TResult value, params NamedParameterValue[] parameters)
 	{
-		IndexerSetterAccess interaction = new(Interactions.GetNextIndex(), parameters, value);
+		IndexerSetterAccess interaction = new(parameters, value);
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 		Setup.Indexers.UpdateValue(parameters, value);
@@ -190,8 +186,7 @@ public partial class MockRegistry
 			throw new MockException("The method of an event subscription may not be null.");
 		}
 
-		((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(Interactions.GetNextIndex(), name,
-			target, method));
+		((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
 		Setup.Events.Add(target, method, name);
 	}
 
@@ -206,8 +201,7 @@ public partial class MockRegistry
 			throw new MockException("The method of an event unsubscription may not be null.");
 		}
 
-		((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(Interactions.GetNextIndex(), name,
-			target, method));
+		((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
 		Setup.Events.Remove(target, method, name);
 	}
 }

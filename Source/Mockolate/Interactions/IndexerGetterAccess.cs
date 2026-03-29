@@ -9,7 +9,7 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public class IndexerGetterAccess(int index, NamedParameterValue[] parameters) : IndexerAccess(index, parameters)
+public class IndexerGetterAccess(NamedParameterValue[] parameters) : IndexerAccess(parameters)
 {
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()

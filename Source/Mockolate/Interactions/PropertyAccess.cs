@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Mockolate.Interactions;
@@ -7,13 +8,16 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public abstract class PropertyAccess(int index, string propertyName) : IInteraction
+public abstract class PropertyAccess(string propertyName) : IInteraction, ISettableInteraction
 {
+	private int? _index;
 	/// <summary>
 	///     The name of the property.
 	/// </summary>
 	public string Name { get; } = propertyName;
 
 	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index { get; } = index;
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
 }

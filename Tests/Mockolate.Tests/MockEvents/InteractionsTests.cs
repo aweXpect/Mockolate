@@ -9,8 +9,10 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task EventSubscription_ToString_ShouldReturnExpectedValue()
 	{
-		EventSubscription interaction = new(3, "SomeEvent", this, Helper.GetMethodInfo());
-		string expectedValue = "[3] subscribe to event SomeEvent";
+		MockInteractions interactions = new();
+		EventSubscription interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new EventSubscription("SomeEvent", this, Helper.GetMethodInfo()));
+		string expectedValue = "[0] subscribe to event SomeEvent";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
@@ -18,8 +20,10 @@ public sealed class InteractionsTests
 	[Fact]
 	public async Task EventUnsubscription_ToString_ShouldReturnExpectedValue()
 	{
-		EventUnsubscription interaction = new(3, "SomeEvent", this, Helper.GetMethodInfo());
-		string expectedValue = "[3] unsubscribe from event SomeEvent";
+		MockInteractions interactions = new();
+		EventUnsubscription interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new EventUnsubscription("SomeEvent", this, Helper.GetMethodInfo()));
+		string expectedValue = "[0] unsubscribe from event SomeEvent";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}

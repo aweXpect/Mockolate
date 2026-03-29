@@ -9,7 +9,7 @@ public class MockInteractionsTests
 	{
 		int interactionCount = 0;
 		MockInteractions sut = new();
-		MethodInvocation interaction = new(0, "foo", []);
+		MethodInvocation interaction = new("foo", []);
 		sut.InteractionAdded += OnInteractionAdded;
 
 		((IMockInteractions)sut).RegisterInteraction(interaction);
@@ -25,13 +25,34 @@ public class MockInteractionsTests
 	}
 
 	[Fact]
+	public async Task RegisterInteraction_NotSettable_ShouldThrowArgumentException()
+	{
+		MockInteractions sut = new();
+		IInteraction interaction = new MyInteraction();
+
+		void Act()
+		{
+			_ = ((IMockInteractions)sut).RegisterInteraction(interaction);
+		}
+
+		await That(Act).Throws<ArgumentException>()
+			.WithParamName("interaction").And
+			.WithMessage("Only settable interactions can be registered*").AsWildcard();
+	}
+
+	[Fact]
 	public async Task RegisterInteraction_ShouldRegisterInteraction()
 	{
 		MockInteractions sut = new();
-		MethodInvocation interaction = new(0, "foo", []);
+		MethodInvocation interaction = new("foo", []);
 
 		MethodInvocation registeredInteraction = ((IMockInteractions)sut).RegisterInteraction(interaction);
 
 		await That(registeredInteraction).IsSameAs(interaction);
+	}
+
+	private class MyInteraction : IInteraction
+	{
+		public int Index { get; } = 1;
 	}
 }

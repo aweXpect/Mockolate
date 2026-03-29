@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 
 namespace Mockolate.Interactions;
 
@@ -14,7 +12,8 @@ namespace Mockolate.Interactions;
 [DebuggerNonUserCode]
 public class MockInteractions : IMockInteractions
 {
-	private readonly ConcurrentQueue<IInteraction> _interactions = [];
+	private readonly List<IInteraction> _interactions = [];
+	private readonly object _lock = new();
 	private int _index = -1;
 	private List<IInteraction>? _missingVerification;
 
@@ -22,7 +21,15 @@ public class MockInteractions : IMockInteractions
 	///     The number of interactions contained in the collection.
 	/// </summary>
 	public int Count
-		=> _interactions.Count;
+	{
+		get
+		{
+			lock (_lock)
+			{
+				return _interactions.Count;
+			}
+		}
+	}
 
 	/// <summary>
 	///     The registered interactions of the mock.
@@ -31,12 +38,9 @@ public class MockInteractions : IMockInteractions
 	{
 		get
 		{
-			return _interactions.OrderBy(IndexSelector);
-
-			[DebuggerNonUserCode]
-			int IndexSelector(IInteraction x)
+			lock (_lock)
 			{
-				return x.Index;
+				return _interactions.ToList();
 			}
 		}
 	}
@@ -44,8 +48,18 @@ public class MockInteractions : IMockInteractions
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{
-		_missingVerification?.Add(interaction);
-		_interactions.Enqueue(interaction);
+		if (interaction is not ISettableInteraction settableInteraction)
+		{
+			throw new ArgumentException("Only settable interactions can be registered.", nameof(interaction));
+		}
+
+		lock (_lock)
+		{
+			_missingVerification?.Add(interaction);
+			settableInteraction.SetIndex(++_index);
+			_interactions.Add(interaction);
+		}
+
 		InteractionAdded?.Invoke(this, EventArgs.Empty);
 		return interaction;
 	}
@@ -55,41 +69,37 @@ public class MockInteractions : IMockInteractions
 	/// </summary>
 	public IReadOnlyCollection<IInteraction> GetUnverifiedInteractions()
 	{
-		_missingVerification ??= _interactions.OrderBy(IndexSelector).ToList();
-		return _missingVerification;
-
-		[DebuggerNonUserCode]
-		int IndexSelector(IInteraction x)
+		lock (_lock)
 		{
-			return x.Index;
+			_missingVerification ??= _interactions.ToList();
+			return _missingVerification;
 		}
 	}
 
 	internal event EventHandler? InteractionAdded;
 	internal event EventHandler? OnClearing;
 
-	internal int GetNextIndex()
-		=> Interlocked.Increment(ref _index);
-
 	internal void Verified(IEnumerable<IInteraction> interactions)
 	{
-		_missingVerification ??= _interactions.OrderBy(IndexSelector).ToList();
-		foreach (IInteraction interaction in interactions)
+		lock (_lock)
 		{
-			_missingVerification.Remove(interaction);
-		}
-
-		[DebuggerNonUserCode]
-		int IndexSelector(IInteraction x)
-		{
-			return x.Index;
+			_missingVerification ??= _interactions.ToList();
+			foreach (IInteraction interaction in interactions)
+			{
+				_missingVerification.Remove(interaction);
+			}
 		}
 	}
 
 	internal void Clear()
 	{
-		_interactions.Clear();
+		lock (_lock)
+		{
+			_missingVerification = null;
+			_interactions.Clear();
+			_index = -1;
+		}
+
 		OnClearing?.Invoke(this, EventArgs.Empty);
-		_index = -1;
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
 using Mockolate.Parameters;
@@ -9,8 +10,9 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public class MethodInvocation(int index, string name, NamedParameterValue[] parameters) : IInteraction
+public class MethodInvocation(string name, NamedParameterValue[] parameters) : IInteraction, ISettableInteraction
 {
+	private int? _index;
 	/// <summary>
 	///     The name of the method.
 	/// </summary>
@@ -22,7 +24,9 @@ public class MethodInvocation(int index, string name, NamedParameterValue[] para
 	public NamedParameterValue[] Parameters { get; } = parameters;
 
 	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index { get; } = index;
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Mockolate.Parameters;
 
@@ -7,13 +8,16 @@ namespace Mockolate.Interactions;
 ///     An access of an indexer.
 /// </summary>
 [DebuggerNonUserCode]
-public abstract class IndexerAccess(int index, NamedParameterValue[] parameters) : IInteraction
+public abstract class IndexerAccess(NamedParameterValue[] parameters) : IInteraction, ISettableInteraction
 {
+	private int? _index;
 	/// <summary>
 	///     The parameters of the indexer.
 	/// </summary>
 	public NamedParameterValue[] Parameters { get; } = parameters;
 
 	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index { get; } = index;
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
 }
