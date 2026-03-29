@@ -6,7 +6,7 @@ using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.HappyCaseBenchmarks.IMyMethodInterface))]
+[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.MethodBenchmarks.IMyMethodInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -14,7 +14,7 @@ namespace Mockolate.Benchmarks;
 ///     In this benchmark we check the simple case of an interface mock, setup a single method that gets called and
 ///     verified to be called once.<br />
 /// </summary>
-public partial class HappyCaseBenchmarks
+public class MethodBenchmarks : BenchmarksBase
 {
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />

@@ -6,7 +6,7 @@ using NSubstitute;
 using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.HappyCaseBenchmarks.IMyIndexerInterface))]
+[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.IndexerBenchmarks.IMyIndexerInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -14,12 +14,12 @@ namespace Mockolate.Benchmarks;
 ///     In this benchmark we check the case of an interface mock with an indexer, setup the indexer and verify
 ///     the getter was called once.<br />
 /// </summary>
-public partial class HappyCaseBenchmarks
+public class IndexerBenchmarks : BenchmarksBase
 {
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
-	[Benchmark]
+	[Benchmark(Baseline = true)]
 	public void Indexer_Mockolate()
 	{
 		IMyIndexerInterface sut = IMyIndexerInterface.CreateMock();

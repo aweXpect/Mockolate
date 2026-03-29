@@ -5,7 +5,7 @@ using Mockolate.Verify;
 using NSubstitute;
 using Times = Moq.Times;
 
-[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.HappyCaseBenchmarks.IMyPropertyInterface))]
+[assembly: GenerateImposter(typeof(Mockolate.Benchmarks.PropertyBenchmarks.IMyPropertyInterface))]
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
@@ -13,7 +13,7 @@ namespace Mockolate.Benchmarks;
 ///     In this benchmark we check the case of an interface mock with a property, setup the property and verify
 ///     the getter was called once.<br />
 /// </summary>
-public partial class HappyCaseBenchmarks
+public class PropertyBenchmarks
 {
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
