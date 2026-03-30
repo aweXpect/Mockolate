@@ -51,13 +51,19 @@ public sealed partial class MockTests
 				int subscriberCount = 20;
 				int eventsPerSubscriber = 10;
 				Task[] tasks = new Task[subscriberCount * 3];
+				EventHandler[] handlers = new EventHandler[subscriberCount];
 				for (int i = 0; i < subscriberCount; i++)
 				{
+					handlers[i] = (_, _) => Interlocked.Increment(ref handlerCallCount);
+				}
+
+				for (int i = 0; i < subscriberCount; i++)
+				{
+					int handlerIdx = i;
 					tasks[i] = Task.Run(() =>
 					{
-						EventHandler handler = (_, _) => Interlocked.Increment(ref handlerCallCount);
 						barrier.Wait();
-						sut.MyEvent += handler;
+						sut.MyEvent += handlers[handlerIdx];
 					}, CancellationToken.None);
 				}
 
@@ -77,11 +83,11 @@ public sealed partial class MockTests
 				for (int i = 0; i < subscriberCount; i++)
 				{
 					int idx = (subscriberCount * 2) + i;
+					int handlerIdx = i;
 					tasks[idx] = Task.Run(() =>
 					{
-						EventHandler handler = (_, _) => Interlocked.Increment(ref handlerCallCount);
 						barrier.Wait();
-						sut.MyEvent -= handler;
+						sut.MyEvent -= handlers[handlerIdx];
 					}, CancellationToken.None);
 				}
 
@@ -90,11 +96,14 @@ public sealed partial class MockTests
 
 				await That(sut.Mock.Verify.MyEvent.Subscribed()).AtLeast(subscriberCount);
 				await That(sut.Mock.Verify.MyEvent.Unsubscribed()).AtLeast(subscriberCount);
+				await That(handlerCallCount).IsGreaterThanOrEqualTo(0);
+
+				ValidateInteractionIndices(sut);
 			}
 		}
 
 		[Fact]
-		public async Task Indexer_ManyKeysWithCallbackSequence_ShouldBeThreadSafe()
+		public async Task Indexer_ManyKeys_ShouldBeThreadSafe()
 		{
 			for (int round = 0; round < 5; round++)
 			{
@@ -260,6 +269,8 @@ public sealed partial class MockTests
 				int expectedCalls = taskCount * iterationsPerTask;
 				await That(values).All().Satisfy(v => v == 42);
 				await That(sut.Mock.Verify.MyMethod(It.IsAny<int>())).Exactly(expectedCalls);
+
+				ValidateInteractionIndices(sut);
 			}
 		}
 
@@ -324,6 +335,8 @@ public sealed partial class MockTests
 				int expectedReads = taskCount * iterationsPerTask;
 				await That(values).All().Satisfy(v => v == "test-value");
 				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly(expectedReads);
+
+				ValidateInteractionIndices(sut);
 			}
 		}
 
