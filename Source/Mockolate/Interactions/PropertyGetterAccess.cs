@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Mockolate.Internals;
 
 namespace Mockolate.Interactions;
 
@@ -10,5 +11,5 @@ namespace Mockolate.Interactions;
 public class PropertyGetterAccess(string propertyName) : PropertyAccess(propertyName)
 {
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"[{Index}] get property {Name}";
+	public override string ToString() => $"[{Index}] get property {Name.SubstringAfterLast('.')}";
 }

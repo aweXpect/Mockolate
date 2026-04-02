@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Mockolate.Internals;
 
 namespace Mockolate.Interactions;
 
@@ -15,5 +16,5 @@ public class PropertySetterAccess(string propertyName, object? value) : Property
 	public object? Value { get; } = value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"[{Index}] set property {Name} to {Value ?? "null"}";
+	public override string ToString() => $"[{Index}] set property {Name.SubstringAfterLast('.')} to {Value ?? "null"}";
 }

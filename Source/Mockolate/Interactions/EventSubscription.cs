@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using Mockolate.Internals;
 
 namespace Mockolate.Interactions;
 /// <summary>
@@ -32,5 +33,5 @@ public class EventSubscription(string name, object? target, MethodInfo method) :
 	void ISettableInteraction.SetIndex(int value) => _index ??= value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"[{Index}] subscribe to event {Name}";
+	public override string ToString() => $"[{Index}] subscribe to event {Name.SubstringAfterLast('.')}";
 }
