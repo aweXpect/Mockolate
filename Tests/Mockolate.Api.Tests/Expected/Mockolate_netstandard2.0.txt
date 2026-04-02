@@ -521,7 +521,7 @@ namespace Mockolate.Interactions
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{_interactions.Count} interactions")]
-    public class MockInteractions : Mockolate.Interactions.IMockInteractions, System.Collections.Generic.IEnumerable<Mockolate.Interactions.IInteraction>, System.Collections.IEnumerable
+    public class MockInteractions : Mockolate.Interactions.IMockInteractions, System.Collections.Generic.IEnumerable<Mockolate.Interactions.IInteraction>, System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction>, System.Collections.IEnumerable
     {
         public MockInteractions() { }
         public int Count { get; }
