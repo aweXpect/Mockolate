@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Internals;
 using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
@@ -116,6 +117,12 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	protected abstract void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		NamedParameterValue[] parameters,
 		[NotNullWhen(true)] out T value);
+
+	/// <summary>
+	///     Returns a formatted string representation of the given <paramref name="type" />.
+	/// </summary>
+	protected static string FormatType(Type type)
+		=> type.FormatType();
 }
 
 /// <summary>
@@ -469,6 +476,10 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 		_currentReturnCallback?.Only(times);
 		return this;
 	}
+	
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"{FormatType(typeof(TValue))} this[{match1}]";
 
 	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
 	protected override bool? GetSkipBaseClass()
@@ -910,6 +921,10 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 		_currentReturnCallback?.Only(times);
 		return this;
 	}
+	
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}]";
 
 	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
 	protected override bool? GetSkipBaseClass()
@@ -1362,6 +1377,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		_currentReturnCallback?.Only(times);
 		return this;
 	}
+	
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}, {match3}]";
 
 	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
 	protected override bool? GetSkipBaseClass()
@@ -1823,6 +1842,10 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		_currentReturnCallback?.Only(times);
 		return this;
 	}
+	
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}, {match3}, {match4}]";
 
 	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
 	protected override bool? GetSkipBaseClass()

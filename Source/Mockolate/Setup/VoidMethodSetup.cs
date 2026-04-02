@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Internals;
 using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
@@ -221,7 +222,7 @@ public class VoidMethodSetup(string name)
 		=> value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"void {name}()";
+	public override string ToString() => $"void {name.SubstringAfterLast('.')}()";
 }
 
 /// <summary>
@@ -510,8 +511,8 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> _matches is not null
-			? $"void {_name}({_matches})"
-			: $"void {_name}({_match1})";
+			? $"void {_name.SubstringAfterLast('.')}({_matches})"
+			: $"void {_name.SubstringAfterLast('.')}({_match1})";
 }
 
 /// <summary>
@@ -804,8 +805,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> _matches is not null
-			? $"void {_name}({_matches})"
-			: $"void {_name}({_match1}, {_match2})";
+			? $"void {_name.SubstringAfterLast('.')}({_matches})"
+			: $"void {_name.SubstringAfterLast('.')}({_match1}, {_match2})";
 }
 
 /// <summary>
@@ -1107,8 +1108,8 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> _matches is not null
-			? $"void {_name}({_matches})"
-			: $"void {_name}({_match1}, {_match2}, {_match3})";
+			? $"void {_name.SubstringAfterLast('.')}({_matches})"
+			: $"void {_name.SubstringAfterLast('.')}({_match1}, {_match2}, {_match3})";
 }
 
 /// <summary>
@@ -1417,6 +1418,6 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> _matches is not null
-			? $"void {_name}({_matches})"
-			: $"void {_name}({_match1}, {_match2}, {_match3}, {_match4})";
+			? $"void {_name.SubstringAfterLast('.')}({_matches})"
+			: $"void {_name.SubstringAfterLast('.')}({_match1}, {_match2}, {_match3}, {_match4})";
 }

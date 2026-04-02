@@ -30,8 +30,13 @@ internal record Type
 		}
 
 		SpecialGenericType = typeSymbol.GetSpecialType();
+		SpecialType = typeSymbol.SpecialType;
+		CanBeNullable = typeSymbol.NullableAnnotation == NullableAnnotation.Annotated ||
+		                typeSymbol is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T };
 	}
 
+	public bool CanBeNullable { get; }
+	public SpecialType SpecialType { get; }
 	public SpecialGenericType SpecialGenericType { get; }
 	public EquatableArray<Type>? TupleTypes { get; }
 	public EquatableArray<Type>? GenericTypeParameters { get; }

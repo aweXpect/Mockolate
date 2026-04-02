@@ -35,7 +35,7 @@ public sealed partial class VerificationResultTests
 		VerificationResult<Mock.IMockVerifyForVerificationResultTests_IIndexerVerificationService> result = sut.Mock.Verify[It.IsAny<string>(), null].Got();
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("got indexer [It.IsAny<string>(), It.IsNull<int?>()]");
+			.IsEqualTo("got indexer [It.IsAny<string>(), null]");
 	}
 
 	[Fact]
@@ -111,7 +111,7 @@ public sealed partial class VerificationResultTests
 		VerificationResult<Mock.IMockVerifyForVerificationResultTests_IIndexerVerificationService> result = sut.Mock.Verify[It.Is("foo"), null].Set(It.Is<int?>(5));
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("set indexer [\"foo\", It.IsNull<int?>()] to 5");
+			.IsEqualTo("set indexer [\"foo\", null] to 5");
 	}
 
 	[Fact]
@@ -122,7 +122,7 @@ public sealed partial class VerificationResultTests
 		VerificationResult<Mock.IMockVerifyForVerificationResultTests_IIndexerVerificationService> result = sut.Mock.Verify[It.Is("foo"), null].Set(null);
 
 		await That(((IVerificationResult)result).Expectation)
-			.IsEqualTo("set indexer [\"foo\", It.IsNull<int?>()] to null");
+			.IsEqualTo("set indexer [\"foo\", null] to null");
 	}
 
 	[Fact]

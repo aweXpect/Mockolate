@@ -2335,7 +2335,7 @@ internal static partial class Sources
 				sb.Append($"new global::Mockolate.Parameters.NamedParameter(\"{parameter.Name}\", (global::Mockolate.Parameters.IParameter)({paramRef}");
 				if (parameter.CanBeNullable())
 				{
-					sb.Append($" ?? global::Mockolate.It.IsNull<{parameter.ToNullableType()}>()");
+					sb.Append($" ?? global::Mockolate.It.IsNull<{parameter.ToNullableType()}>(\"null\")");
 				}
 
 				sb.Append("))");

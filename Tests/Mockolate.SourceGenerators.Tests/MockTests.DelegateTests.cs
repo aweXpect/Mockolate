@@ -30,7 +30,7 @@ public sealed partial class MockTests
 				.Contains("""
 				          		global::Mockolate.Setup.IReturnMethodSetup<int, int, int, bool> global::Mockolate.Mock.IMockSetupForProgram_DoSomething.Setup(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IParameter<int>? y, global::Mockolate.Parameters.IOutParameter<bool> success)
 				          		{
-				          			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, int, bool>("global::MyCode.Program.DoSomething.Invoke", new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("success", (global::Mockolate.Parameters.IParameter)(success)));
+				          			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, int, bool>("global::MyCode.Program.DoSomething.Invoke", new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>("null"))), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y ?? global::Mockolate.It.IsNull<int>("null"))), new global::Mockolate.Parameters.NamedParameter("success", (global::Mockolate.Parameters.IParameter)(success)));
 				          			this.MockRegistry.SetupMethod(methodSetup);
 				          			return methodSetup;
 				          		}
@@ -45,7 +45,7 @@ public sealed partial class MockTests
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		global::Mockolate.Verify.VerificationResult<IMockVerifyForProgram_DoSomething> IMockVerifyForProgram_DoSomething.Verify(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IParameter<int>? y, global::Mockolate.Parameters.IVerifyOutParameter<bool> success)
-				          			=> this.MockRegistry.Method<IMockVerifyForProgram_DoSomething>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.Program.DoSomething.Invoke", [ new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("success", (global::Mockolate.Parameters.IParameter)(success)), ]));
+				          			=> this.MockRegistry.Method<IMockVerifyForProgram_DoSomething>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.Program.DoSomething.Invoke", [ new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>("null"))), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y ?? global::Mockolate.It.IsNull<int>("null"))), new global::Mockolate.Parameters.NamedParameter("success", (global::Mockolate.Parameters.IParameter)(success)), ]));
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		global::Mockolate.Verify.VerificationResult<IMockVerifyForProgram_DoSomething> IMockVerifyForProgram_DoSomething.Verify(global::Mockolate.Parameters.IParameters parameters)
@@ -126,7 +126,7 @@ public sealed partial class MockTests
 				.Contains("""
 				          		global::Mockolate.Setup.IVoidMethodSetup<int, int, int> global::Mockolate.Mock.IMockSetupForProgram_DoSomething.Setup(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IRefParameter<int> y, global::Mockolate.Parameters.IOutParameter<int> z)
 				          		{
-				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, int>("global::MyCode.Program.DoSomething.Invoke", new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y)), new global::Mockolate.Parameters.NamedParameter("z", (global::Mockolate.Parameters.IParameter)(z)));
+				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, int>("global::MyCode.Program.DoSomething.Invoke", new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>("null"))), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y)), new global::Mockolate.Parameters.NamedParameter("z", (global::Mockolate.Parameters.IParameter)(z)));
 				          			this.MockRegistry.SetupMethod(methodSetup);
 				          			return methodSetup;
 				          		}
@@ -141,7 +141,7 @@ public sealed partial class MockTests
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		global::Mockolate.Verify.VerificationResult<IMockVerifyForProgram_DoSomething> IMockVerifyForProgram_DoSomething.Verify(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IVerifyRefParameter<int> y, global::Mockolate.Parameters.IVerifyOutParameter<int> z)
-				          			=> this.MockRegistry.Method<IMockVerifyForProgram_DoSomething>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.Program.DoSomething.Invoke", [ new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>())), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y)), new global::Mockolate.Parameters.NamedParameter("z", (global::Mockolate.Parameters.IParameter)(z)), ]));
+				          			=> this.MockRegistry.Method<IMockVerifyForProgram_DoSomething>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.Program.DoSomething.Invoke", [ new global::Mockolate.Parameters.NamedParameter("x", (global::Mockolate.Parameters.IParameter)(x ?? global::Mockolate.It.IsNull<int>("null"))), new global::Mockolate.Parameters.NamedParameter("y", (global::Mockolate.Parameters.IParameter)(y)), new global::Mockolate.Parameters.NamedParameter("z", (global::Mockolate.Parameters.IParameter)(z)), ]));
 				          """).IgnoringNewlineStyle().And
 				.Contains("""
 				          		global::Mockolate.Verify.VerificationResult<IMockVerifyForProgram_DoSomething> IMockVerifyForProgram_DoSomething.Verify(global::Mockolate.Parameters.IParameters parameters)

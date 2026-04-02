@@ -289,6 +289,19 @@ public sealed partial class SetupIndexerTests
 	public class IndexerWith1Parameter
 	{
 		[Fact]
+		public async Task ToString_ShouldIncludeParameterValue()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[1].Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string this[1]");
+		}
+
+		[Fact]
 		public async Task WithExplicitParameter_ShouldWork()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -304,6 +317,19 @@ public sealed partial class SetupIndexerTests
 
 	public class IndexerWith2Parameters
 	{
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[1, 2].Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string this[1, 2]");
+		}
+
 		[Fact]
 		public async Task WithExplicitParameter1_ShouldWork()
 		{
@@ -343,6 +369,54 @@ public sealed partial class SetupIndexerTests
 			await That(result1).IsEqualTo("foo");
 			await That(result2).IsEmpty();
 			await That(result3).IsEmpty();
+		}
+	}
+
+	public class IndexerWith3Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[1, 2, 3].Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3]");
+		}
+	}
+
+	public class IndexerWith4Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[1, 2, 3, 4].Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3, 4]");
+		}
+	}
+
+	public class IndexerWith5Parameters
+	{
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			sut.Mock.Setup[1, 2, 3, 4, 5].Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3, 4, 5]");
 		}
 	}
 

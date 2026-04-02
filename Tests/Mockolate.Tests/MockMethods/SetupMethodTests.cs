@@ -625,7 +625,8 @@ public sealed partial class SetupMethodTests
 		void Act()
 		{
 			registration.InvokeMethod(
-				"global::Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters", _ => 0,
+				"global::Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters",
+				_ => 0,
 				new NamedParameterValue("p1", 1),
 				new NamedParameterValue("p2", 2));
 		}
@@ -817,6 +818,19 @@ public sealed partial class SetupMethodTests
 		}
 
 		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method1(1).Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string Method1(1)");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string> setup = new("Foo",
@@ -898,6 +912,19 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
+		}
+
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method2(1, 2).Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string Method2(1, 2)");
 		}
 
 		[Fact]
@@ -1015,6 +1042,19 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
+		}
+
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method3(1, 2, 3).Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string Method3(1, 2, 3)");
 		}
 
 		[Fact]
@@ -1201,6 +1241,19 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
+		}
+
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method4(1, 2, 3, 4).Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string Method4(1, 2, 3, 4)");
 		}
 
 		[Fact]
@@ -1537,6 +1590,19 @@ public sealed partial class SetupMethodTests
 		}
 
 		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method5(1, 2, 3, 4, 5).Returns("foo");
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("string Method5(1, 2, 3, 4, 5)");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo",
@@ -1661,6 +1727,19 @@ public sealed partial class SetupMethodTests
 		}
 
 		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method1(1).DoesNotThrow();
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("void Method1(1)");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string> setup = new("Foo",
@@ -1711,6 +1790,19 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
+		}
+
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method2(1, 2).DoesNotThrow();
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("void Method2(1, 2)");
 		}
 
 		[Fact]
@@ -1765,6 +1857,19 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
+		}
+
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method3(1, 2, 3).DoesNotThrow();
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("void Method3(1, 2, 3)");
 		}
 
 		[Fact]
@@ -1823,6 +1928,19 @@ public sealed partial class SetupMethodTests
 		}
 
 		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method4(1, 2, 3, 4).DoesNotThrow();
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("void Method4(1, 2, 3, 4)");
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int> setup = new("Foo",
@@ -1878,6 +1996,19 @@ public sealed partial class SetupMethodTests
 			string result = setup.ToString();
 
 			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
+		}
+
+		[Fact]
+		public async Task ToString_ShouldIncludeParameterValues()
+		{
+			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+			sut.Mock.Setup.Method5(1, 2, 3, 4, 5).DoesNotThrow();
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+			ISetup setup = await That(result).HasSingle();
+			await That(setup.ToString()).IsEqualTo("void Method5(1, 2, 3, 4, 5)");
 		}
 
 		[Fact]

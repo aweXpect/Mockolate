@@ -763,6 +763,12 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
+		sb.Append("\t\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
+		sb.Append("\t\tpublic override string ToString()").AppendLine();
+		sb.Append("\t\t\t=> $\"{FormatType(typeof(TValue))} this[").Append(string.Join(", ",
+			Enumerable.Range(1, numberOfParameters).Select(i => $"{{match{i}}}"))).Append("]\";").AppendLine();
+		sb.AppendLine();
+
 		sb.Append("\t\t/// <inheritdoc cref=\"IndexerSetup.GetSkipBaseClass()\" />").AppendLine();
 		sb.Append("\t\tprotected override bool? GetSkipBaseClass()").AppendLine();
 		sb.Append("\t\t\t=> _skipBaseClass;").AppendLine();

@@ -642,12 +642,21 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (_matches is not null)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn $\"void {_name}({_matches})\";").AppendLine();
+		sb.Append("\t\t\t\treturn $\"void {SubstringAfterLast(_name, '.')}({_matches})\";").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\treturn $\"void {_name}(")
+		sb.Append("\t\t\treturn $\"void {SubstringAfterLast(_name, '.')}(")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{_match{x}}}")))
 			.Append(")\";").AppendLine();
+		sb.Append("\t\t\tstatic string SubstringAfterLast(string name, char c)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tint index = name.LastIndexOf(c);").AppendLine();
+		sb.Append("\t\t\t\tif (index >= 0)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\treturn name.Substring(index + 1);").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\treturn name;").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -1263,12 +1272,21 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (_matches is not null)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn $\"{FormatType(typeof(TReturn))} {_name}({_matches})\";").AppendLine();
+		sb.Append("\t\t\t\treturn $\"{FormatType(typeof(TReturn))} {SubstringAfterLast(_name, '.')}({_matches})\";").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\treturn $\"{FormatType(typeof(TReturn))} {_name}(")
+		sb.Append("\t\t\treturn $\"{FormatType(typeof(TReturn))} {SubstringAfterLast(_name, '.')}(")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{_match{x}}}")))
 			.Append(")\";").AppendLine();
+		sb.Append("\t\t\tstatic string SubstringAfterLast(string name, char c)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tint index = name.LastIndexOf(c);").AppendLine();
+		sb.Append("\t\t\t\tif (index >= 0)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\treturn name.Substring(index + 1);").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\treturn name;").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();

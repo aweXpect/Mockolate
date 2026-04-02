@@ -436,7 +436,7 @@ public sealed partial class MockTests
 			.Contains("""
 			          		global::Mockolate.Setup.IVoidMethodSetup<int> global::Mockolate.Mock.IMockSetupForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
 			          		{
-			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>("global::MyCode.IMyService.DoSomething", new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>())));
+			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>("global::MyCode.IMyService.DoSomething", new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>("null"))));
 			          			this.MockRegistry.SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}
@@ -446,7 +446,7 @@ public sealed partial class MockTests
 			          		{
 			          			get
 			          			{
-			          				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(parameter1 ?? global::Mockolate.It.IsNull<int>())));
+			          				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(parameter1 ?? global::Mockolate.It.IsNull<int>("null"))));
 			          				this.MockRegistry.SetupIndexer(indexerSetup);
 			          				return indexerSetup;
 			          			}
@@ -454,14 +454,14 @@ public sealed partial class MockTests
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		global::Mockolate.Verify.VerificationResult<IMockVerifyForIMyService> IMockVerifyForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
-			          			=> this.MockRegistry.Method<IMockVerifyForIMyService>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.IMyService.DoSomething", [ new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>())), ]));
+			          			=> this.MockRegistry.Method<IMockVerifyForIMyService>(this, new global::Mockolate.Setup.MethodParameterMatch("global::MyCode.IMyService.DoSomething", [ new global::Mockolate.Parameters.NamedParameter("@event", (global::Mockolate.Parameters.IParameter)(@event ?? global::Mockolate.It.IsNull<int>("null"))), ]));
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string> IMockVerifyForIMyService.this[global::Mockolate.Parameters.IParameter<int>? @true]
 			          		{
 			          			get
 			          			{
-			          				return new global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>(this, this.MockRegistry, [ new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(@true ?? global::Mockolate.It.IsNull<int>())), ]);
+			          				return new global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>(this, this.MockRegistry, [ new global::Mockolate.Parameters.NamedParameter("@true", (global::Mockolate.Parameters.IParameter)(@true ?? global::Mockolate.It.IsNull<int>("null"))), ]);
 			          			}
 			          		}
 			          """).IgnoringNewlineStyle();

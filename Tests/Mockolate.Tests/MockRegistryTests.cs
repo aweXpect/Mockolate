@@ -1,10 +1,53 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Mockolate.Interactions;
+using Mockolate.Setup;
+using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
 
 public sealed class MockRegistryTests
 {
+	[Fact]
+	public async Task GetUnusedSetups_IndexerSetup_ShouldHaveCorrectString()
+	{
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		sut.Mock.Setup["Dark"].Returns(5);
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+
+		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+		ISetup setup = await That(result).HasSingle();
+		await That(setup.ToString()).IsEqualTo("int this[\"Dark\"]");
+	}
+
+	[Fact]
+	public async Task GetUnusedSetups_MethodSetup_ShouldHaveCorrectString()
+	{
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.DoSomething(null, It.IsAny<bool>(), null).DoesNotThrow();
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+
+		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+		ISetup setup = await That(result).HasSingle();
+		await That(setup.ToString()).IsEqualTo("void DoSomething(null, It.IsAny<bool>(), null)");
+	}
+
+	[Fact]
+	public async Task GetUnusedSetups_PropertySetup_ShouldHaveCorrectString()
+	{
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		sut.Mock.Setup.TotalDispensed.InitializeWith(4);
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+
+		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+		ISetup setup = await That(result).HasSingle();
+		await That(setup.ToString()).IsEqualTo("int TotalDispensed");
+	}
+
 	[Fact]
 	public async Task ImplicitConversionFromMockBehavior()
 	{
