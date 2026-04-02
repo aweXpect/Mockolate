@@ -89,5 +89,10 @@ public static partial class ItExtensions
 
 		public void IncludingRequestHeaders()
 			=> IncludeRequestHeaders = true;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> (_requiredHeaders.Count == 1 ? "header " : "headers ")
+			   + string.Join(", ", _requiredHeaders.Select(header => $"\"{header.Name}: {header.Value}\""));
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Mockolate.Parameters;
 
@@ -46,12 +47,12 @@ public static partial class ItExtensions
 		/// <summary>
 		///     Expects the content to have a string body that satisfies the <paramref name="predicate" />.
 		/// </summary>
-		IHttpContentParameter WithString(Func<string, bool> predicate);
+		IHttpContentParameter WithString(Func<string, bool> predicate, [CallerArgumentExpression(nameof(predicate))] string doNotPopulateThisValue = "");
 
 		/// <summary>
 		///     Expects the binary content to satisfy the <paramref name="predicate" />.
 		/// </summary>
-		IHttpContentParameter WithBytes(Func<byte[], bool> predicate);
+		IHttpContentParameter WithBytes(Func<byte[], bool> predicate, [CallerArgumentExpression(nameof(predicate))] string doNotPopulateThisValue = "");
 
 		/// <summary>
 		///     Expects the <see cref="HttpContent" /> to have the given <paramref name="mediaType" />.
@@ -74,16 +75,16 @@ public static partial class ItExtensions
 			return this;
 		}
 
-		public IHttpContentParameter WithString(Func<string, bool> predicate)
+		public IHttpContentParameter WithString(Func<string, bool> predicate, [CallerArgumentExpression(nameof(predicate))] string doNotPopulateThisValue = "")
 		{
 			_stringContentMatcher ??= new PredicateStringMatcher();
-			_stringContentMatcher.AddPredicate(predicate);
+			_stringContentMatcher.AddPredicate(predicate, doNotPopulateThisValue);
 			return this;
 		}
 
-		public IHttpContentParameter WithBytes(Func<byte[], bool> predicate)
+		public IHttpContentParameter WithBytes(Func<byte[], bool> predicate, [CallerArgumentExpression(nameof(predicate))] string doNotPopulateThisValue = "")
 		{
-			_binaryContentMatcher ??= new BinaryMatcher(predicate);
+			_binaryContentMatcher ??= new BinaryMatcher(predicate, doNotPopulateThisValue);
 			return this;
 		}
 
@@ -157,6 +158,47 @@ public static partial class ItExtensions
 			}
 		}
 
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			StringBuilder sb = new();
+			if (_stringContentMatcher is not null)
+			{
+				sb.Append("string content ").Append(_stringContentMatcher);
+			}
+
+			if (_binaryContentMatcher is not null)
+			{
+				if (_stringContentMatcher is not null)
+				{
+					sb.Append(" and ");
+				}
+
+				sb.Append("binary content ").Append(_binaryContentMatcher);
+			}
+			else if (_stringContentMatcher is null)
+			{
+				sb.Append("Http content");
+			}
+
+			AppendAdditionalDescription(sb);
+
+			return sb.ToString();
+		}
+
+		internal void AppendAdditionalDescription(StringBuilder sb)
+		{
+			if (_mediaType is not null)
+			{
+				sb.Append(" with media type \"").Append(_mediaType).Append('"');
+			}
+
+			if (_headers is not null)
+			{
+				sb.Append(" with ").Append(_headers);
+			}
+		}
+
 		private interface IContentMatcher
 		{
 			bool Matches(HttpContent content, HttpRequestMessage? message);
@@ -164,7 +206,7 @@ public static partial class ItExtensions
 
 		private sealed class PredicateStringMatcher : IContentMatcher
 		{
-			private readonly List<Func<string, bool>> _predicates = [];
+			private readonly List<(Func<string, bool> Predicate, string Description)> _predicates = [];
 
 			public bool Matches(HttpContent content, HttpRequestMessage? message)
 			{
@@ -208,14 +250,18 @@ public static partial class ItExtensions
 					stream.Position = position;
 				}
 #endif
-				return _predicates.All(predicate => predicate.Invoke(stringContent));
+				return _predicates.All(predicate => predicate.Predicate.Invoke(stringContent));
 			}
 
-			public void AddPredicate(Func<string, bool> predicate)
-				=> _predicates.Add(predicate);
+			public void AddPredicate(Func<string, bool> predicate, string predicateExpression)
+				=> _predicates.Add((predicate, predicateExpression));
+
+			/// <inheritdoc cref="object.ToString()" />
+			public override string ToString()
+				=> string.Join(" and ", _predicates.Select(p => p.Description));
 		}
 
-		private sealed class BinaryMatcher(Func<byte[], bool> predicate) : IContentMatcher
+		private sealed class BinaryMatcher(Func<byte[], bool> predicate, string predicateExpression) : IContentMatcher
 		{
 			public bool Matches(HttpContent content, HttpRequestMessage? message)
 			{
@@ -245,13 +291,17 @@ public static partial class ItExtensions
 #endif
 				return predicate.Invoke(bytes);
 			}
+
+			/// <inheritdoc cref="object.ToString()" />
+			public override string ToString()
+				=> predicateExpression;
 		}
 	}
 
 	/// <summary>
 	///     An abstract wrapper base class for <see cref="IHttpContentParameter" />.
 	/// </summary>
-	public abstract class HttpContentParameterWrapper(IHttpContentParameter parameter) : IHttpContentParameter,
+	public abstract class HttpContentParameterWrapper(IHttpContentParameter parameter, Func<string> parameterString) : IHttpContentParameter,
 		IHttpRequestMessagePropertyParameter<HttpContent?>, IParameter
 	{
 		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
@@ -263,13 +313,13 @@ public static partial class ItExtensions
 			params IEnumerable<(string Name, HttpHeaderValue Value)> headers)
 			=> parameter.WithHeaders(headers);
 
-		/// <inheritdoc cref="IHttpContentParameter.WithString(Func{string, bool})" />
-		public IHttpContentParameter WithString(Func<string, bool> predicate)
-			=> parameter.WithString(predicate);
+		/// <inheritdoc cref="IHttpContentParameter.WithString(Func{string, bool}, string)" />
+		public IHttpContentParameter WithString(Func<string, bool> predicate, [CallerArgumentExpression(nameof(predicate))] string doNotPopulateThisValue = "")
+			=> parameter.WithString(predicate, doNotPopulateThisValue);
 
-		/// <inheritdoc cref="IHttpContentParameter.WithBytes(Func{byte[], bool})" />
-		public IHttpContentParameter WithBytes(Func<byte[], bool> predicate)
-			=> parameter.WithBytes(predicate);
+		/// <inheritdoc cref="IHttpContentParameter.WithBytes(Func{byte[], bool}, string)" />
+		public IHttpContentParameter WithBytes(Func<byte[], bool> predicate, [CallerArgumentExpression(nameof(predicate))] string doNotPopulateThisValue = "")
+			=> parameter.WithBytes(predicate, doNotPopulateThisValue);
 
 		/// <inheritdoc cref="IHttpContentParameter.WithMediaType(string)" />
 		public IHttpContentParameter WithMediaType(string? mediaType)
@@ -293,6 +343,10 @@ public static partial class ItExtensions
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 			=> ((IParameter)parameter).InvokeCallbacks(value);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> parameterString();
 	}
 }
 #pragma warning restore S2325 // Methods and properties that don't access instance data should be static

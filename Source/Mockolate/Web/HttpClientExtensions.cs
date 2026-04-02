@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Mockolate.Exceptions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
-using Mockolate.Verify;
 using Mockolate.Web;
 #if NETSTANDARD2_0
 using Mockolate.Internals.Polyfills;
@@ -74,6 +73,18 @@ public static partial class HttpClientExtensions
 				}
 			}
 		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			string prefix = $"{method.Method}-Request";
+			if (parameters.Length == 0)
+			{
+				return prefix;
+			}
+
+			return $"{prefix} with {string.Join(" and ", parameters.Select(p => p.ToString()))}";
+		}
 	}
 
 	private interface IHttpRequestMessageParameter
@@ -105,6 +116,10 @@ public static partial class HttpClientExtensions
 				invokableParameter.InvokeCallbacks(valueSelector(value));
 			}
 		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> parameter.ToString() ?? string.Empty;
 	}
 
 	private sealed class HttpStringUriParameter(IParameter<string?> parameter)
@@ -134,5 +149,9 @@ public static partial class HttpClientExtensions
 				invokableParameter.InvokeCallbacks(value.RequestUri?.ToString());
 			}
 		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"Uri matching {parameter}";
 	}
 }

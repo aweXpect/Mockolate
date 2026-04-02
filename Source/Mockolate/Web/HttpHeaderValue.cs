@@ -26,4 +26,8 @@ public class HttpHeaderValue
 	{
 		return new HttpHeaderValue(value);
 	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> _value;
 }
