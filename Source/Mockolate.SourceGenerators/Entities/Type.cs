@@ -32,9 +32,13 @@ internal record Type
 		SpecialGenericType = typeSymbol.GetSpecialType();
 		SpecialType = typeSymbol.SpecialType;
 		CanBeNullable = typeSymbol.NullableAnnotation == NullableAnnotation.Annotated ||
-		                typeSymbol is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T };
+		                typeSymbol is INamedTypeSymbol{ OriginalDefinition.SpecialType: SpecialType.System_Nullable_T, };
+		IsFormattable = typeSymbol.AllInterfaces.Any(i => i.ContainingNamespace.ContainingNamespace.IsGlobalNamespace &&
+		                                                  i.ContainingNamespace.Name == "System" &&
+		                                                  i.Name == "IFormattable");
 	}
 
+	public bool IsFormattable { get; }
 	public bool CanBeNullable { get; }
 	public SpecialType SpecialType { get; }
 	public SpecialGenericType SpecialGenericType { get; }

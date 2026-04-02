@@ -26,13 +26,13 @@ public sealed class MockRegistryTests
 	public async Task GetUnusedSetups_MethodSetup_ShouldHaveCorrectString()
 	{
 		IMyService sut = IMyService.CreateMock();
-		sut.Mock.Setup.DoSomething(null, It.IsAny<bool>(), null).DoesNotThrow();
+		sut.Mock.Setup.DoSomething(null, 3.5, It.IsAny<string>()).DoesNotThrow();
 		MockRegistry registry = ((IMock)sut).MockRegistry;
 
 		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
 
 		ISetup setup = await That(result).HasSingle();
-		await That(setup.ToString()).IsEqualTo("void DoSomething(null, It.IsAny<bool>(), null)");
+		await That(setup.ToString()).IsEqualTo("void DoSomething(null, 3.5, It.IsAny<string>())");
 	}
 
 	[Fact]

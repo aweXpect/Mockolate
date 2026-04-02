@@ -144,7 +144,15 @@ internal static partial class Sources
 		}
 		else if (parameter.Type.CanBeNullable)
 		{
-			sb.Append(paramRef).Append("?.ToString() ?? \"null\"");
+			sb.Append(paramRef).Append(" is null ? \"null\" : ").Append(paramRef)
+				.Append(parameter.Type.IsFormattable
+					? ".ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)"
+					: ".ToString()");
+		}
+		else if (parameter.Type.IsFormattable)
+		{
+			sb.Append("((global::System.IFormattable)").Append(paramRef)
+				.Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
 		}
 		else
 		{
