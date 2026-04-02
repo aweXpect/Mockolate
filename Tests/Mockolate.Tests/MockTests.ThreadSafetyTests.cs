@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Xunit.Sdk;
@@ -51,50 +50,46 @@ public sealed partial class MockTests
 				ManualResetEventSlim barrier = new(false);
 				int subscriberCount = 20;
 				int eventsPerSubscriber = 10;
-				using (CancellationTokenSource cts = new(TimeSpan.FromSeconds(5)))
+				Task[] tasks = new Task[subscriberCount * 3];
+				for (int i = 0; i < subscriberCount; i++)
 				{
-					Task[] tasks = new Task[subscriberCount * 3];
-					for (int i = 0; i < subscriberCount; i++)
+					tasks[i] = Task.Run(() =>
 					{
-						tasks[i] = Task.Run(() =>
-						{
-							EventHandler handler = (_, _) => Interlocked.Increment(ref handlerCallCount);
-							barrier.Wait();
-							sut.MyEvent += handler;
-						}, cts.Token);
-					}
-
-					for (int i = 0; i < subscriberCount; i++)
-					{
-						int idx = subscriberCount + i;
-						tasks[idx] = Task.Run(() =>
-						{
-							barrier.Wait();
-							for (int j = 0; j < eventsPerSubscriber; j++)
-							{
-								sut.Mock.Raise.MyEvent(this, EventArgs.Empty);
-							}
-						}, cts.Token);
-					}
-
-					for (int i = 0; i < subscriberCount; i++)
-					{
-						int idx = (subscriberCount * 2) + i;
-						tasks[idx] = Task.Run(() =>
-						{
-							EventHandler handler = (_, _) => Interlocked.Increment(ref handlerCallCount);
-							barrier.Wait();
-							sut.MyEvent -= handler;
-						}, cts.Token);
-					}
-
-					barrier.Set();
-					await Task.WhenAll(tasks);
+						EventHandler handler = (_, _) => Interlocked.Increment(ref handlerCallCount);
+						barrier.Wait();
+						sut.MyEvent += handler;
+					}, CancellationToken.None);
 				}
+
+				for (int i = 0; i < subscriberCount; i++)
+				{
+					int idx = subscriberCount + i;
+					tasks[idx] = Task.Run(() =>
+					{
+						barrier.Wait();
+						for (int j = 0; j < eventsPerSubscriber; j++)
+						{
+							sut.Mock.Raise.MyEvent(this, EventArgs.Empty);
+						}
+					}, CancellationToken.None);
+				}
+
+				for (int i = 0; i < subscriberCount; i++)
+				{
+					int idx = (subscriberCount * 2) + i;
+					tasks[idx] = Task.Run(() =>
+					{
+						EventHandler handler = (_, _) => Interlocked.Increment(ref handlerCallCount);
+						barrier.Wait();
+						sut.MyEvent -= handler;
+					}, CancellationToken.None);
+				}
+
+				barrier.Set();
+				await Task.WhenAll(tasks);
 
 				await That(sut.Mock.Verify.MyEvent.Subscribed()).AtLeast(subscriberCount);
 				await That(sut.Mock.Verify.MyEvent.Unsubscribed()).AtLeast(subscriberCount);
-				await That(handlerCallCount).IsGreaterThanOrEqualTo(0);
 			}
 		}
 
@@ -110,51 +105,66 @@ public sealed partial class MockTests
 					sut.Mock.Setup[k].InitializeWith($"key-{k}");
 				}
 
-				ConcurrentDictionary<int, List<string>> valuesByKey = [];
+				ConcurrentDictionary<int, ConcurrentQueue<string>> valuesByKey = [];
 				ManualResetEventSlim barrier = new(false);
 				int readerCount = 30;
 				int iterationsPerReader = 10;
 				int writerCount = 8;
 				int iterationsPerWriter = 10;
-				using (CancellationTokenSource cts = new(TimeSpan.FromSeconds(10)))
+				Task[] tasks = new Task[readerCount + writerCount];
+				Random random = new(42 + round);
+
+				int[][] readerKeys = new int[readerCount][];
+				for (int i = 0; i < readerCount; i++)
 				{
-					Task[] tasks = new Task[readerCount + writerCount];
-					Random random = new(42 + round);
-
-					for (int i = 0; i < readerCount; i++)
+					readerKeys[i] = new int[iterationsPerReader];
+					for (int j = 0; j < iterationsPerReader; j++)
 					{
-						tasks[i] = Task.Run(() =>
-						{
-							barrier.Wait();
-							for (int j = 0; j < iterationsPerReader; j++)
-							{
-								int key = random.Next(keyCount);
-								string value = sut[key];
-								valuesByKey.AddOrUpdate(key, [value,], (_, list) =>
-								{
-									list.Add(value);
-									return list;
-								});
-							}
-						}, cts.Token);
+						readerKeys[i][j] = random.Next(keyCount);
 					}
-
-					for (int i = 0; i < writerCount; i++)
-					{
-						tasks[readerCount + i] = Task.Run(() =>
-						{
-							barrier.Wait();
-							for (int j = 0; j < iterationsPerWriter; j++)
-							{
-								int key = random.Next(keyCount);
-								sut[key] = $"key-{key}";
-							}
-						}, cts.Token);
-					}
-
-					barrier.Set();
-					await Task.WhenAll(tasks);
 				}
+
+				int[][] writerKeys = new int[writerCount][];
+				for (int i = 0; i < writerCount; i++)
+				{
+					writerKeys[i] = new int[iterationsPerWriter];
+					for (int j = 0; j < iterationsPerWriter; j++)
+					{
+						writerKeys[i][j] = random.Next(keyCount);
+					}
+				}
+
+				for (int i = 0; i < readerCount; i++)
+				{
+					int[] keys = readerKeys[i];
+					tasks[i] = Task.Run(() =>
+					{
+						barrier.Wait();
+						for (int j = 0; j < iterationsPerReader; j++)
+						{
+							int key = keys[j];
+							string value = sut[key];
+							valuesByKey.GetOrAdd(key, _ => new ConcurrentQueue<string>()).Enqueue(value);
+						}
+					}, CancellationToken.None);
+				}
+
+				for (int i = 0; i < writerCount; i++)
+				{
+					int[] keys = writerKeys[i];
+					tasks[readerCount + i] = Task.Run(() =>
+					{
+						barrier.Wait();
+						for (int j = 0; j < iterationsPerWriter; j++)
+						{
+							int key = keys[j];
+							sut[key] = $"key-{key}";
+						}
+					}, CancellationToken.None);
+				}
+
+				barrier.Set();
+				await Task.WhenAll(tasks);
 
 				// Verify all reads returned expected values (no corruption)
 				await That(valuesByKey).All().Satisfy(kvp =>
@@ -162,13 +172,6 @@ public sealed partial class MockTests
 					string expectedValue = $"key-{kvp.Key}";
 					return kvp.Value.All(v => v == expectedValue);
 				});
-
-				// Verify interaction counts
-				for (int k = 0; k < keyCount; k++)
-				{
-					await That(sut.Mock.Verify[k].Got()).AtLeast(0);
-					await That(sut.Mock.Verify[k].Set(It.IsAny<string>())).AtLeast(0);
-				}
 
 				ValidateInteractionIndices(sut);
 			}
@@ -238,24 +241,21 @@ public sealed partial class MockTests
 				ManualResetEventSlim barrier = new(false);
 				int taskCount = 60;
 				int iterationsPerTask = 20;
-				using (CancellationTokenSource cts = new(TimeSpan.FromSeconds(5)))
+				Task[] tasks = new Task[taskCount];
+				for (int i = 0; i < taskCount; i++)
 				{
-					Task[] tasks = new Task[taskCount];
-					for (int i = 0; i < taskCount; i++)
+					tasks[i] = Task.Run(() =>
 					{
-						tasks[i] = Task.Run(() =>
+						barrier.Wait();
+						for (int j = 0; j < iterationsPerTask; j++)
 						{
-							barrier.Wait();
-							for (int j = 0; j < iterationsPerTask; j++)
-							{
-								values.Enqueue(sut.MyMethod(j));
-							}
-						}, cts.Token);
-					}
-
-					barrier.Set();
-					await Task.WhenAll(tasks);
+							values.Enqueue(sut.MyMethod(j));
+						}
+					}, CancellationToken.None);
 				}
+
+				barrier.Set();
+				await Task.WhenAll(tasks);
 
 				int expectedCalls = taskCount * iterationsPerTask;
 				await That(values).All().Satisfy(v => v == 42);
@@ -305,24 +305,21 @@ public sealed partial class MockTests
 				ManualResetEventSlim barrier = new(false);
 				int taskCount = 60;
 				int iterationsPerTask = 20;
-				using (CancellationTokenSource cts = new(TimeSpan.FromSeconds(5)))
+				Task[] tasks = new Task[taskCount];
+				for (int i = 0; i < taskCount; i++)
 				{
-					Task[] tasks = new Task[taskCount];
-					for (int i = 0; i < taskCount; i++)
+					tasks[i] = Task.Run(() =>
 					{
-						tasks[i] = Task.Run(() =>
+						barrier.Wait();
+						for (int j = 0; j < iterationsPerTask; j++)
 						{
-							barrier.Wait();
-							for (int j = 0; j < iterationsPerTask; j++)
-							{
-								values.Enqueue(sut.MyStringProperty);
-							}
-						}, cts.Token);
-					}
-
-					barrier.Set();
-					await Task.WhenAll(tasks);
+							values.Enqueue(sut.MyStringProperty);
+						}
+					}, CancellationToken.None);
 				}
+
+				barrier.Set();
+				await Task.WhenAll(tasks);
 
 				int expectedReads = taskCount * iterationsPerTask;
 				await That(values).All().Satisfy(v => v == "test-value");
