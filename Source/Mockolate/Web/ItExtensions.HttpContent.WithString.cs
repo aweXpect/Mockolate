@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using Mockolate.Internals;
 #if NETSTANDARD2_0
@@ -121,6 +122,22 @@ public static partial class ItExtensions
 		public void IgnoringCase()
 			=> _ignoringCase = true;
 
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> (_bodyMatchType, _exactly, _ignoringCase) switch
+			{
+				(BodyMatchType.Wildcard, _, false) => $"matching pattern \"{value}\"",
+				(BodyMatchType.Wildcard, _, true) => $"matching pattern \"{value}\" ignoring case",
+				(BodyMatchType.Regex, _, false) when _regexOptions is RegexOptions.None => $"matching regex pattern \"{value}\"",
+				(BodyMatchType.Regex, _, false) => $"matching regex pattern \"{value}\" with options {_regexOptions}",
+				(BodyMatchType.Regex, _, true) when _regexOptions is RegexOptions.None => $"matching regex pattern \"{value}\" ignoring case",
+				(BodyMatchType.Regex, _, true) => $"matching regex pattern \"{value}\" ignoring case with options {_regexOptions}",
+				(BodyMatchType.Exact, true, false) => $"equal to \"{value}\"",
+				(BodyMatchType.Exact, true, true) => $"equal to \"{value}\" ignoring case",
+				(_, _, true) => $"containing \"{value}\" ignoring case",
+				(_, _, _) => $"containing \"{value}\"",
+			};
+
 		private enum BodyMatchType
 		{
 			Exact,
@@ -133,7 +150,18 @@ public static partial class ItExtensions
 	{
 		private readonly StringMatcher _data;
 
-		public StringContentParameter(IHttpContentParameter parameter, StringMatcher data) : base(parameter)
+		public StringContentParameter(IHttpContentParameter parameter, StringMatcher data) : base(parameter, () =>
+		{
+			StringBuilder sb = new();
+			sb.Append("string content ").Append(data);
+
+			if (parameter is HttpContentParameter httpContentParameter)
+			{
+				httpContentParameter.AppendAdditionalDescription(sb);
+			}
+
+			return sb.ToString();
+		})
 		{
 			_data = data;
 			parameter.WithString(data.Matches);

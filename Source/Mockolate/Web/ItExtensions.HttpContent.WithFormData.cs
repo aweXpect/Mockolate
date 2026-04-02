@@ -81,6 +81,13 @@ public static partial class ItExtensions
 		public void Exactly()
 			=> _isExactly = true;
 
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			string parameters = string.Join(", ", _requiredFormDataParameters.Select(p => $"\"{p.Name}={p.Value}\""));
+			return _isExactly ? $"exactly {parameters}" : parameters;
+		}
+
 		internal static IEnumerable<(string Key, string Value)> ParseFormDataParameters(string input)
 			=> input.TrimStart('?')
 				.Split('&')
@@ -126,7 +133,8 @@ public static partial class ItExtensions
 	{
 		private readonly FormDataMatcher _data;
 
-		public FormDataContentParameter(IHttpContentParameter parameter, FormDataMatcher data) : base(parameter)
+		public FormDataContentParameter(IHttpContentParameter parameter, FormDataMatcher data)
+			: base(parameter, () => $"form data content {data}")
 		{
 			_data = data;
 			parameter.WithString(data.Matches);

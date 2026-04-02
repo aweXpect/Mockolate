@@ -21,6 +21,10 @@ public class HttpFormDataValue
 	public virtual bool Matches(string parameterValue)
 		=> _value.Equals(parameterValue, StringComparison.Ordinal);
 
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> _value;
+
 	/// <summary>
 	///     Implicitly converts a string to an <see cref="HttpFormDataValue" />.
 	/// </summary>

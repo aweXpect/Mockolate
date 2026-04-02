@@ -48,5 +48,9 @@ public static partial class ItExtensions
 						pair.Length == 2 ? WebUtility.UrlDecode(pair[1]) : ""
 					)
 				);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> string.Join(", ", _requiredQueryParameters.Select(p => $"\"{p.Name}={p.Value}\""));
 	}
 }

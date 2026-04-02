@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using Mockolate.Parameters;
 
@@ -150,6 +151,28 @@ public static partial class ItExtensions
 
 			return true;
 		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			List<string?> parts = [];
+			if (_uriParameter is not null)
+			{
+				parts.Add(_uriParameter.ToString());
+			}
+
+			if (_contentParameter is not null)
+			{
+				parts.Add(_contentParameter.ToString());
+			}
+
+			if (_headers is not null)
+			{
+				parts.Add(_headers.ToString());
+			}
+
+			return string.Join(" and ", parts.Where(p => !string.IsNullOrEmpty(p)));
+		}
 	}
 
 	private sealed class HttpRequestMessageParameter(HttpMethod? method)
@@ -167,6 +190,19 @@ public static partial class ItExtensions
 			}
 
 			return base.Matches(value);
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			string prefix = method is null ? "a Http-Request" : $"{method}-Request";
+			string parameterString = base.ToString();
+			if (string.IsNullOrEmpty(parameterString))
+			{
+				return prefix;
+			}
+
+			return $"{prefix} with {parameterString}";
 		}
 	}
 }

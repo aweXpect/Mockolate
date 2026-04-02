@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 #if NETSTANDARD2_0
@@ -79,7 +80,7 @@ public static partial class ItExtensions
 		private List<Action<Uri?>>? _callbacks;
 		private string? _hostPattern;
 		private string? _pathPattern;
-		private Func<int, bool>? _portPredicate;
+		private int? _port;
 		private HttpQueryMatcher? _query;
 		private string? _scheme;
 
@@ -108,7 +109,7 @@ public static partial class ItExtensions
 				return false;
 			}
 
-			if (_portPredicate?.Invoke(uri.Port) == false)
+			if (_port is not null && _port != uri.Port)
 			{
 				return false;
 			}
@@ -169,7 +170,7 @@ public static partial class ItExtensions
 
 		public IUriParameter WithPort(int port)
 		{
-			_portPredicate = p => p == port;
+			_port = port;
 			return this;
 		}
 
@@ -198,6 +199,48 @@ public static partial class ItExtensions
 			_query ??= new HttpQueryMatcher();
 			_query.AddRequiredQueryParameter(parameters);
 			return this;
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+		{
+			StringBuilder sb = new();
+			if (_scheme is not null)
+			{
+				sb.Append($"{_scheme} Uri");
+			}
+			else
+			{
+				sb.Append("Uri");
+			}
+
+			if (pattern is not null)
+			{
+				sb.Append(" matching \"").Append(pattern).Append('"');
+			}
+
+			if (_hostPattern is not null)
+			{
+				sb.Append(" with host matching \"").Append(_hostPattern).Append('"');
+			}
+
+			if (_port is not null)
+			{
+				sb.Append(" with port ").Append(_port.Value);
+			}
+
+			if (_pathPattern is not null)
+			{
+				sb.Append(" with path matching \"").Append(_pathPattern).Append('"');
+			}
+
+			if (_query is not null)
+			{
+				sb.Append(" with query containing ").Append(_query);
+			}
+
+			string result = sb.ToString();
+			return result == "Uri" ? "any Uri" : result;
 		}
 	}
 }
