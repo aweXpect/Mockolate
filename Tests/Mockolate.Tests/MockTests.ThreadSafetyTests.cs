@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
-using Xunit.Sdk;
 
 namespace Mockolate.Tests;
 
@@ -36,8 +35,7 @@ public sealed partial class MockTests
 
 			await That(sut.Mock.Verify.MyEvent.Subscribed()).Exactly(taskCount * iterationsPerTask);
 			await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Exactly(taskCount * iterationsPerTask);
-
-			ValidateInteractionIndices(sut);
+			await ValidateInteractionIndices(sut);
 		}
 
 		[Fact]
@@ -51,13 +49,19 @@ public sealed partial class MockTests
 				int subscriberCount = 20;
 				int eventsPerSubscriber = 10;
 				Task[] tasks = new Task[subscriberCount * 3];
+				EventHandler[] handlers = new EventHandler[subscriberCount];
 				for (int i = 0; i < subscriberCount; i++)
 				{
+					handlers[i] = (_, _) => Interlocked.Increment(ref handlerCallCount);
+				}
+
+				for (int i = 0; i < subscriberCount; i++)
+				{
+					int handlerIdx = i;
 					tasks[i] = Task.Run(() =>
 					{
-						EventHandler handler = (_, _) => Interlocked.Increment(ref handlerCallCount);
 						barrier.Wait();
-						sut.MyEvent += handler;
+						sut.MyEvent += handlers[handlerIdx];
 					}, CancellationToken.None);
 				}
 
@@ -77,24 +81,26 @@ public sealed partial class MockTests
 				for (int i = 0; i < subscriberCount; i++)
 				{
 					int idx = (subscriberCount * 2) + i;
+					int handlerIdx = i;
 					tasks[idx] = Task.Run(() =>
 					{
-						EventHandler handler = (_, _) => Interlocked.Increment(ref handlerCallCount);
 						barrier.Wait();
-						sut.MyEvent -= handler;
+						sut.MyEvent -= handlers[handlerIdx];
 					}, CancellationToken.None);
 				}
 
 				barrier.Set();
 				await Task.WhenAll(tasks);
 
-				await That(sut.Mock.Verify.MyEvent.Subscribed()).AtLeast(subscriberCount);
-				await That(sut.Mock.Verify.MyEvent.Unsubscribed()).AtLeast(subscriberCount);
+				await That(sut.Mock.Verify.MyEvent.Subscribed()).Exactly(subscriberCount);
+				await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Exactly(subscriberCount);
+				await That(handlerCallCount).IsLessThanOrEqualTo(subscriberCount * eventsPerSubscriber * subscriberCount);
+				await ValidateInteractionIndices(sut);
 			}
 		}
 
 		[Fact]
-		public async Task Indexer_ManyKeysWithCallbackSequence_ShouldBeThreadSafe()
+		public async Task Indexer_ManyKeys_ShouldBeThreadSafe()
 		{
 			for (int round = 0; round < 5; round++)
 			{
@@ -172,8 +178,7 @@ public sealed partial class MockTests
 					string expectedValue = $"key-{kvp.Key}";
 					return kvp.Value.All(v => v == expectedValue);
 				});
-
-				ValidateInteractionIndices(sut);
+				await ValidateInteractionIndices(sut);
 			}
 		}
 
@@ -223,11 +228,8 @@ public sealed partial class MockTests
 			await That(sut.Mock.Verify[1].Got()).Exactly(readerCount * iterationsPerReader);
 			await That(sut.Mock.Verify[0].Set(It.IsAny<string>())).Exactly(writerCount * iterationsPerWriter);
 			await That(sut.Mock.Verify[1].Set(It.IsAny<string>())).Exactly(writerCount * iterationsPerWriter);
-
-			await That(values).Contains("hello")
-				.Exactly(readerCount * iterationsPerReader * 2);
-
-			ValidateInteractionIndices(sut);
+			await That(values).Contains("hello").Exactly(readerCount * iterationsPerReader * 2);
+			await ValidateInteractionIndices(sut);
 		}
 
 		[Fact]
@@ -260,6 +262,7 @@ public sealed partial class MockTests
 				int expectedCalls = taskCount * iterationsPerTask;
 				await That(values).All().Satisfy(v => v == 42);
 				await That(sut.Mock.Verify.MyMethod(It.IsAny<int>())).Exactly(expectedCalls);
+				await ValidateInteractionIndices(sut);
 			}
 		}
 
@@ -290,8 +293,7 @@ public sealed partial class MockTests
 
 			await That(sut.Mock.Verify.MyMethod(It.IsAny<int>())).Exactly(taskCount * iterationsPerTask);
 			await That(values).Contains(42).Exactly(taskCount * iterationsPerTask);
-
-			ValidateInteractionIndices(sut);
+			await ValidateInteractionIndices(sut);
 		}
 
 		[Fact]
@@ -324,6 +326,7 @@ public sealed partial class MockTests
 				int expectedReads = taskCount * iterationsPerTask;
 				await That(values).All().Satisfy(v => v == "test-value");
 				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly(expectedReads);
+				await ValidateInteractionIndices(sut);
 			}
 		}
 
@@ -375,44 +378,24 @@ public sealed partial class MockTests
 				.Exactly(readerCount * iterationsPerReader);
 			await That(sut.Mock.Verify.MyGuidProperty.Got())
 				.Exactly(readerCount * iterationsPerReader);
-
 			await That(sut.Mock.Verify.MyStringProperty.Set(It.IsAny<string>()))
 				.Exactly(writerCount * iterationsPerWriter);
 			await That(sut.Mock.Verify.MyGuidProperty.Set(It.IsAny<Guid>()))
 				.Exactly(writerCount * iterationsPerWriter);
-
-			await That(stringValues).All()
-				.Satisfy(v => v == "hello");
-			await That(guidValues).All()
-				.Satisfy(v => v == expectedGuid);
-
-			ValidateInteractionIndices(sut);
+			await That(stringValues).All().Satisfy(v => v == "hello");
+			await That(guidValues).All().Satisfy(v => v == expectedGuid);
+			await ValidateInteractionIndices(sut);
 		}
 
-		private static void ValidateInteractionIndices(IMyThreadSafetyService sut)
+		private static async Task ValidateInteractionIndices(IMyThreadSafetyService sut)
 		{
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 			int[] indices = registry.Interactions.Interactions
 				.Select(i => i.Index)
 				.ToArray();
 
-			// Verify indices are strictly ascending
-			for (int i = 1; i < indices.Length; i++)
-			{
-				if (indices[i] <= indices[i - 1])
-				{
-					throw new XunitException(
-						$"Interaction indices not strictly ascending at position {i}: {indices[i - 1]} -> {indices[i]}");
-				}
-			}
-
-			// Verify all indices are unique
-			int uniqueCount = indices.Distinct().Count();
-			if (uniqueCount != indices.Length)
-			{
-				throw new XunitException(
-					$"Interaction indices not all unique: {indices.Length} total, {uniqueCount} unique");
-			}
+			await That(indices).AreAllUnique();
+			await That(indices).IsInAscendingOrder();
 		}
 
 		internal interface IMyThreadSafetyService
