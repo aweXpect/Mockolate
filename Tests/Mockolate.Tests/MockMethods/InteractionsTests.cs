@@ -69,11 +69,12 @@ public sealed partial class InteractionsTests
 	public async Task MethodInvocation_ToString_ShouldReturnExpectedValue()
 	{
 		MockInteractions interactions = new();
-		MethodInvocation interaction = ((IMockInteractions)interactions).RegisterInteraction(new MethodInvocation("SomeMethod", [
-			new NamedParameterValue("p1", 1),
-			new NamedParameterValue("p2", null),
-			new NamedParameterValue("p3", (TimeSpan)90.Seconds()),
-		]));
+		MethodInvocation interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation("global::Mockolate.InteractionsTests.SomeMethod", [
+				new NamedParameterValue("p1", 1),
+				new NamedParameterValue("p2", null),
+				new NamedParameterValue("p3", (TimeSpan)90.Seconds()),
+			]));
 		string expectedValue = "[0] invoke method SomeMethod(1, null, 00:01:30)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);

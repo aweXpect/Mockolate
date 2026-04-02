@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Mockolate.Internals;
 using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
@@ -30,5 +31,5 @@ public class MethodInvocation(string name, NamedParameterValue[] parameters) : I
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"[{Index}] invoke method {Name}({string.Join(", ", Parameters.Select(p => p.Value?.ToString() ?? "null"))})";
+		=> $"[{Index}] invoke method {Name.SubstringAfterLast('.')}({string.Join(", ", Parameters.Select(p => p.Value?.ToString() ?? "null"))})";
 }

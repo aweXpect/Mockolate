@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using Mockolate.Internals;
 
 namespace Mockolate.Interactions;
 
@@ -33,5 +34,5 @@ public class EventUnsubscription(string name, object? target, MethodInfo method)
 	void ISettableInteraction.SetIndex(int value) => _index ??= value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"[{Index}] unsubscribe from event {Name}";
+	public override string ToString() => $"[{Index}] unsubscribe from event {Name.SubstringAfterLast('.')}";
 }
