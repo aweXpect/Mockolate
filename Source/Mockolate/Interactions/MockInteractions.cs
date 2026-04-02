@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,9 +11,11 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{_interactions.Count} interactions")]
 [DebuggerNonUserCode]
-public class MockInteractions : IMockInteractions
+public class MockInteractions : IEnumerable<IInteraction>, IMockInteractions
 {
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private readonly List<IInteraction> _interactions = [];
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private readonly object _lock = new();
 	private int _index = -1;
 	private List<IInteraction>? _missingVerification;
@@ -31,19 +34,13 @@ public class MockInteractions : IMockInteractions
 		}
 	}
 
-	/// <summary>
-	///     The registered interactions of the mock.
-	/// </summary>
-	public IEnumerable<IInteraction> Interactions
-	{
-		get
-		{
-			lock (_lock)
-			{
-				return _interactions.ToList();
-			}
-		}
-	}
+	/// <inheritdoc cref="IEnumerable{IInteraction}.GetEnumerator()" />
+	public IEnumerator<IInteraction> GetEnumerator()
+		=> _interactions.GetEnumerator();
+
+	/// <inheritdoc cref="IEnumerable.GetEnumerator()" />
+	IEnumerator IEnumerable.GetEnumerator()
+		=> GetEnumerator();
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)

@@ -13,7 +13,7 @@ public sealed class MockRegistryTests
 		MockRegistry result = behavior;
 
 		await That(result.Behavior).IsSameAs(behavior);
-		await That(result.Interactions.Interactions).IsEmpty();
+		await That(result.Interactions).IsEmpty();
 	}
 
 	[Fact]
@@ -36,7 +36,7 @@ public sealed class MockRegistryTests
 		await Task.WhenAll(tasks);
 
 		await That(sut.Interactions.Count).IsEqualTo(1000);
-		await That(sut.Interactions.Interactions).IsInAscendingOrder(x => x.Index);
-		await That(sut.Interactions.Interactions.Select(i => i.Index)).AreAllUnique();
+		await That(sut.Interactions).IsInAscendingOrder(x => x.Index);
+		await That(sut.Interactions.Select(i => i.Index)).AreAllUnique();
 	}
 }

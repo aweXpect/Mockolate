@@ -17,13 +17,13 @@ namespace Mockolate.Monitor;
 [DebuggerNonUserCode]
 public abstract class MockMonitor
 {
-	private readonly MockInteractions _monitoredInvocations;
+	private readonly MockInteractions _monitoredInteractions;
 	private int _monitoringStart = -1;
 
 	/// <inheritdoc cref="MockMonitor" />
 	protected MockMonitor(MockInteractions mockInteractions)
 	{
-		_monitoredInvocations = mockInteractions;
+		_monitoredInteractions = mockInteractions;
 		Interactions = new MockInteractions();
 	}
 
@@ -49,8 +49,8 @@ public abstract class MockMonitor
 				"Monitoring is already running. Dispose the previous scope before starting a new one.");
 		}
 
-		_monitoringStart = _monitoredInvocations.Count;
-		_monitoredInvocations.OnClearing += OnClearing;
+		_monitoringStart = _monitoredInteractions.Count;
+		_monitoredInteractions.OnClearing += OnClearing;
 		return new MonitorScope(Stop);
 	}
 
@@ -58,13 +58,13 @@ public abstract class MockMonitor
 	{
 		if (_monitoringStart >= 0)
 		{
-			foreach (IInteraction interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
+			foreach (IInteraction interaction in _monitoredInteractions.Skip(_monitoringStart))
 			{
 				((IMockInteractions)Interactions).RegisterInteraction(interaction);
 			}
 		}
 
-		_monitoredInvocations.OnClearing -= OnClearing;
+		_monitoredInteractions.OnClearing -= OnClearing;
 		_monitoringStart = -1;
 	}
 
@@ -81,7 +81,7 @@ public abstract class MockMonitor
 	{
 		if (_monitoringStart >= 0)
 		{
-			foreach (IInteraction interaction in _monitoredInvocations.Interactions.Skip(_monitoringStart))
+			foreach (IInteraction interaction in _monitoredInteractions.Skip(_monitoringStart))
 			{
 				((IMockInteractions)Interactions).RegisterInteraction(interaction);
 				_monitoringStart = interaction.Index + 1;
