@@ -319,19 +319,13 @@ internal static class Helpers
 			return parameter.Type.Fullname;
 		}
 
-		public bool CanBeNullable()
+		/// <summary>
+		///     Returns true if the parameter can be used as an explicit value in a T overload.
+		///     Ambiguity with the <c>IParameter&lt;T&gt;?</c> overload when <c>null</c> is passed is
+		///     resolved via the OverloadResolutionPriorityAttribute.
+		/// </summary>
+		public bool CanUseNullableParameterOverload()
 			=> parameter.RefKind is not RefKind.Ref and not RefKind.Out and not RefKind.RefReadOnlyParameter &&
 			   parameter.Type.SpecialGenericType is not (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
-
-		/// <summary>
-		///     Returns true if the parameter can be used as an explicit value in a T overload without creating
-		///     ambiguity with the existing <c>IParameter&lt;T&gt;?</c> overload when <c>null</c> is passed.
-		///     Nullable types (annotated reference types and nullable value types) are excluded because <c>null</c>
-		///     would be ambiguous between <c>IParameter&lt;T&gt;?</c> and <c>T?</c>.
-		/// </summary>
-		public bool CanBeExplicitValue()
-			=> parameter.CanBeNullable() &&
-			   !parameter.IsNullableAnnotated &&
-			   !parameter.Type.Fullname.EndsWith("?");
 	}
 }

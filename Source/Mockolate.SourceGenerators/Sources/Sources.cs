@@ -107,7 +107,7 @@ internal static partial class Sources
 		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name)
 			.Append("\", (global::Mockolate.Parameters.IParameter)(");
 		sb.Append(parameter.Name);
-		if (parameter.CanBeNullable())
+		if (parameter.CanUseNullableParameterOverload())
 		{
 			if (parameter.HasExplicitDefaultValue)
 			{
@@ -144,7 +144,16 @@ internal static partial class Sources
 		}
 		else if (parameter.Type.CanBeNullable)
 		{
-			sb.Append(paramRef).Append("?.ToString() ?? \"null\"");
+			sb.Append(paramRef).Append(" is null ? \"null\" : ");
+			if (parameter.Type.IsFormattable)
+				sb.Append("((global::System.IFormattable)").Append(paramRef).Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
+			else
+				sb.Append(paramRef).Append(".ToString()");
+		}
+		else if (parameter.Type.IsFormattable)
+		{
+			sb.Append("((global::System.IFormattable)").Append(paramRef)
+				.Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
 		}
 		else
 		{

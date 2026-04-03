@@ -52,7 +52,6 @@ internal static class MockGeneratorHelpers
 		this SyntaxNode syntaxNode, SemanticModel semanticModel)
 	{
 		IAssemblySymbol sourceAssembly = semanticModel.Compilation.Assembly;
-
 		// Static extension methods
 		if (syntaxNode is InvocationExpressionSyntax invocation)
 		{

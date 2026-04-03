@@ -14,7 +14,8 @@ internal interface IMyService
 
 	void DoSomething(int value);
 	void DoSomething(int value, bool flag);
-	void DoSomething(int? value, bool flag, string? message);
+	void DoSomething(DateTime? value1, double? value2);
+	void DoSomething(int? value1, double value2, string? message);
 	bool IsValid(int id);
 
 	string DoSomethingAndReturn(int value);

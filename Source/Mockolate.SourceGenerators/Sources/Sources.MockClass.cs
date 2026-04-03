@@ -1685,7 +1685,7 @@ internal static partial class Sources
 	{
 		int[] valueableIndices = parameters
 			.Select((p, i) => (p, i))
-			.Where(x => x.p.CanBeExplicitValue())
+			.Where(x => x.p.CanUseNullableParameterOverload())
 			.Select(x => x.i)
 			.ToArray();
 		int valueableCount = valueableIndices.Length;
@@ -1754,20 +1754,20 @@ internal static partial class Sources
 			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
-			AppendIndexerSetupDefinition(sb, indexer);
+			AppendIndexerSetupDefinition(sb, indexer, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 			if (indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters)
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerSetupDefinition(sb, indexer, valueFlags);
+					AppendIndexerSetupDefinition(sb, indexer, valueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 			}
 			else
 			{
-				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanBeExplicitValue()).ToArray();
+				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerSetupDefinition(sb, indexer, allValueFlags);
+					AppendIndexerSetupDefinition(sb, indexer, allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 			}
 		}
@@ -1809,7 +1809,7 @@ internal static partial class Sources
 					}
 					else
 					{
-						bool[] allValueFlags = method.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 						if (allValueFlags.Any(f => f))
 						{
 							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
@@ -1941,7 +1941,7 @@ internal static partial class Sources
 				else
 				{
 					sb.Append(parameter.ToParameter());
-					if (parameter.CanBeNullable())
+					if (parameter.CanUseNullableParameterOverload())
 					{
 						sb.Append('?');
 					}
@@ -2016,7 +2016,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanBeExplicitValue()).ToArray();
+				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 				if (allValueFlags.Any(f => f))
 				{
 					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, allValueFlags);
@@ -2061,7 +2061,7 @@ internal static partial class Sources
 					}
 					else
 					{
-						bool[] allValueFlags = method.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 						if (allValueFlags.Any(f => f))
 						{
 							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false, valueFlags: allValueFlags);
@@ -2140,7 +2140,7 @@ internal static partial class Sources
 				else
 				{
 					sb.Append(parameter.ToParameter());
-					if (parameter.CanBeNullable())
+					if (parameter.CanUseNullableParameterOverload())
 					{
 						sb.Append('?');
 					}
@@ -2225,10 +2225,15 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendIndexerSetupDefinition(StringBuilder sb, Property indexer, bool[]? valueFlags = null)
+	private static void AppendIndexerSetupDefinition(StringBuilder sb, Property indexer, bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
 	{
 		sb.AppendXmlSummary(
 			$"Setup for the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />");
+		if (hasOverloadResolutionPriority)
+		{
+			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+		}
+
 		sb.Append("\t\tglobal::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(indexer.Type);
 		foreach (MethodParameter parameter in indexer.IndexerParameters!)
 		{
@@ -2252,7 +2257,7 @@ internal static partial class Sources
 			else
 			{
 				sb.Append(parameter.ToParameter());
-				if (parameter.CanBeNullable())
+				if (parameter.CanUseNullableParameterOverload())
 				{
 					sb.Append('?');
 				}
@@ -2294,7 +2299,7 @@ internal static partial class Sources
 			else
 			{
 				sb.Append(parameter.ToParameter());
-				if (parameter.CanBeNullable())
+				if (parameter.CanUseNullableParameterOverload())
 				{
 					sb.Append('?');
 				}
@@ -2333,7 +2338,7 @@ internal static partial class Sources
 			else
 			{
 				sb.Append($"new global::Mockolate.Parameters.NamedParameter(\"{parameter.Name}\", (global::Mockolate.Parameters.IParameter)({paramRef}");
-				if (parameter.CanBeNullable())
+				if (parameter.CanUseNullableParameterOverload())
 				{
 					sb.Append($" ?? global::Mockolate.It.IsNull<{parameter.ToNullableType()}>(\"null\")");
 				}
@@ -2352,10 +2357,15 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendIndexerVerifyDefinition(StringBuilder sb, Property indexer, string verifyName, bool[]? valueFlags = null)
+	private static void AppendIndexerVerifyDefinition(StringBuilder sb, Property indexer, string verifyName, bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
 	{
 		sb.AppendXmlSummary(
 			$"Verify interactions with the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />.");
+		if (hasOverloadResolutionPriority)
+		{
+			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+		}
+
 		sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ").AppendTypeOrWrapper(indexer.Type).Append("> this[");
 		int i = 0;
 		foreach (MethodParameter parameter in indexer.IndexerParameters!.Value)
@@ -2373,7 +2383,7 @@ internal static partial class Sources
 			else
 			{
 				sb.Append(parameter.ToParameter());
-				if (parameter.CanBeNullable())
+				if (parameter.CanUseNullableParameterOverload())
 				{
 					sb.Append('?');
 				}
@@ -2409,7 +2419,7 @@ internal static partial class Sources
 			else
 			{
 				sb.Append(parameter.ToParameter());
-				if (parameter.CanBeNullable())
+				if (parameter.CanUseNullableParameterOverload())
 				{
 					sb.Append('?');
 				}
@@ -2551,20 +2561,20 @@ internal static partial class Sources
 			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
-			AppendIndexerVerifyDefinition(sb, indexer, verifyName);
+			AppendIndexerVerifyDefinition(sb, indexer, verifyName, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 			if (indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters)
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerVerifyDefinition(sb, indexer, verifyName, valueFlags);
+					AppendIndexerVerifyDefinition(sb, indexer, verifyName, valueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 			}
 			else
 			{
-				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanBeExplicitValue()).ToArray();
+				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerVerifyDefinition(sb, indexer, verifyName, allValueFlags);
+					AppendIndexerVerifyDefinition(sb, indexer, verifyName, allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 			}
 		}
@@ -2606,7 +2616,7 @@ internal static partial class Sources
 					}
 					else
 					{
-						bool[] allValueFlags = method.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 						if (allValueFlags.Any(f => f))
 						{
 							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
@@ -2693,7 +2703,7 @@ internal static partial class Sources
 				else
 				{
 					sb.AppendVerifyParameter(parameter);
-					if (parameter.CanBeNullable())
+					if (parameter.CanUseNullableParameterOverload())
 					{
 						sb.Append('?');
 					}
@@ -2760,7 +2770,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanBeExplicitValue()).ToArray();
+				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 				if (allValueFlags.Any(f => f))
 				{
 					AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName, allValueFlags);
@@ -2804,7 +2814,7 @@ internal static partial class Sources
 					}
 					else
 					{
-						bool[] allValueFlags = method.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 						if (allValueFlags.Any(f => f))
 						{
 							AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false, valueFlags: allValueFlags);
@@ -2868,7 +2878,7 @@ internal static partial class Sources
 				else
 				{
 					sb.AppendVerifyParameter(parameter);
-					if (parameter.CanBeNullable())
+					if (parameter.CanUseNullableParameterOverload())
 					{
 						sb.Append('?');
 					}

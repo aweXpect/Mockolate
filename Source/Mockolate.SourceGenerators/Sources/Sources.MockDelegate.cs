@@ -188,7 +188,7 @@ internal static partial class Sources
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
 		{
-			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
 				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", allValueFlags);
@@ -210,7 +210,7 @@ internal static partial class Sources
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
 		{
-			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
 				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
@@ -265,7 +265,7 @@ internal static partial class Sources
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
 		{
-			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
 				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
@@ -325,7 +325,7 @@ internal static partial class Sources
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
 		{
-			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
 				AppendMethodSetupDefinition(sb, @class, delegateMethod, false, "Setup", allValueFlags);
@@ -358,7 +358,7 @@ internal static partial class Sources
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
 		{
-			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanBeExplicitValue()).ToArray();
+			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
 				AppendMethodVerifyDefinition(sb, delegateMethod, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
