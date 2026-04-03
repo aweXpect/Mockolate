@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
+using Mockolate.Internals;
 using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
@@ -258,7 +259,7 @@ public class ReturnMethodSetup<TReturn>(string name)
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{FormatType(typeof(TReturn))} {name}()";
+		=> $"{FormatType(typeof(TReturn))} {name.SubstringAfterLast('.')}()";
 }
 
 /// <summary>
@@ -604,8 +605,8 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> _matches is not null
-			? $"{FormatType(typeof(TReturn))} {_name}({_matches})"
-			: $"{FormatType(typeof(TReturn))} {_name}({_match1})";
+			? $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_matches})"
+			: $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_match1})";
 }
 
 /// <summary>
@@ -963,8 +964,8 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> _matches is not null
-			? $"{FormatType(typeof(TReturn))} {_name}({_matches})"
-			: $"{FormatType(typeof(TReturn))} {_name}({_match1}, {_match2})";
+			? $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_matches})"
+			: $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_match1}, {_match2})";
 }
 
 /// <summary>
@@ -1336,8 +1337,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> _matches is not null
-			? $"{FormatType(typeof(TReturn))} {_name}({_matches})"
-			: $"{FormatType(typeof(TReturn))} {_name}({_match1}, {_match2}, {_match3})";
+			? $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_matches})"
+			: $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_match1}, {_match2}, {_match3})";
 }
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
@@ -1727,7 +1728,7 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> _matches is not null
-			? $"{FormatType(typeof(TReturn))} {_name}({_matches})"
-			: $"{FormatType(typeof(TReturn))} {_name}({_match1}, {_match2}, {_match3}, {_match4})";
+			? $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_matches})"
+			: $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_match1}, {_match2}, {_match3}, {_match4})";
 }
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters

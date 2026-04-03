@@ -11,17 +11,17 @@ public partial class It
 	/// <summary>
 	///     Matches any parameter that is <see langword="null" />.
 	/// </summary>
-	public static IParameter<T> IsNull<T>()
-		=> new NullParameterMatch<T>();
+	public static IParameter<T> IsNull<T>(string? toString = null)
+		=> new NullParameterMatch<T>(toString);
 
 	[DebuggerNonUserCode]
-	private sealed class NullParameterMatch<T> : TypedMatch<T>
+	private sealed class NullParameterMatch<T>(string? toString) : TypedMatch<T>
 	{
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(T value) => value is null;
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"It.IsNull<{typeof(T).FormatType()}>()";
+		public override string ToString() => toString ?? $"It.IsNull<{typeof(T).FormatType()}>()";
 	}
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members

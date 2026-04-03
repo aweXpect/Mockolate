@@ -116,7 +116,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType()).Append(">()");
+				sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType()).Append(">(\"null\")");
 			}
 		}
 
@@ -130,13 +130,28 @@ internal static partial class Sources
 		=> AppendNamedValueParameter(sb, parameter, parameter.Name);
 
 	/// <summary>
-	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>, using the given variable reference name.
+	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>, using the given variable reference
+	///     name.
 	/// </summary>
 	private static void AppendNamedValueParameter(StringBuilder sb, MethodParameter parameter, string paramRef)
 	{
 		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name)
 			.Append("\", (global::Mockolate.Parameters.IParameter)global::Mockolate.It.Is<")
-			.Append(parameter.ToNullableType()).Append(">(").Append(paramRef).Append("))");
+			.Append(parameter.ToNullableType()).Append(">(").Append(paramRef).Append(", ");
+		if (parameter.Type.SpecialType == SpecialType.System_String)
+		{
+			sb.Append("$\"\\\"{").Append(paramRef).Append("}\\\"\"");
+		}
+		else if (parameter.Type.CanBeNullable)
+		{
+			sb.Append(paramRef).Append("?.ToString() ?? \"null\"");
+		}
+		else
+		{
+			sb.Append(paramRef).Append(".ToString()");
+		}
+
+		sb.Append("))");
 	}
 
 	/// <summary>

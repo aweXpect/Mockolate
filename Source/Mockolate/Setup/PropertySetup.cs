@@ -307,7 +307,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{typeof(T).FormatType()} {name}";
+		=> $"{typeof(T).FormatType()} {name.SubstringAfterLast('.')}";
 
 	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
 	{
