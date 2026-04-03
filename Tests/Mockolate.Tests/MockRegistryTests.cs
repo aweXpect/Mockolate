@@ -49,6 +49,19 @@ public sealed class MockRegistryTests
 	}
 
 	[Fact]
+	public async Task GetUnusedSetups_WithNullableDouble_ShouldHaveCorrectString()
+	{
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.DoSomething(new DateTime(2026, 4, 1, 12, 0, 0), 3.5).DoesNotThrow();
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+
+		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+
+		ISetup setup = await That(result).HasSingle();
+		await That(setup.ToString()).IsEqualTo("void DoSomething(04/01/2026 12:00:00, 3.5)");
+	}
+
+	[Fact]
 	public async Task ImplicitConversionFromMockBehavior()
 	{
 		MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
