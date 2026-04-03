@@ -87,7 +87,7 @@ internal partial class MockSetups
 
 			lock (storage)
 			{
-				return storage.Where(methodSetup => interactions.Interactions.OfType<MethodInvocation>()
+				return storage.Where(methodSetup => interactions.OfType<MethodInvocation>()
 						.All(methodInvocation => !((IInteractiveMethodSetup)methodSetup).Matches(methodInvocation)))
 					.ToList();
 			}

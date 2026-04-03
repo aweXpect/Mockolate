@@ -15,7 +15,4 @@
 		<PackageReference Include="PublicApiGenerator"/>
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Expected\"/>
-	</ItemGroup>
 </Project>

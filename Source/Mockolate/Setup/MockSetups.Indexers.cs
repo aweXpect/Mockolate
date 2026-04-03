@@ -145,7 +145,7 @@ internal partial class MockSetups
 
 			lock (storage)
 			{
-				return storage.Where(indexerSetup => interactions.Interactions.OfType<IndexerAccess>()
+				return storage.Where(indexerSetup => interactions.OfType<IndexerAccess>()
 						.All(indexerAccess => !((IInteractiveIndexerSetup)indexerSetup).Matches(indexerAccess)))
 					.ToList();
 			}

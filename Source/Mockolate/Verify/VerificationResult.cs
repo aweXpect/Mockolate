@@ -100,7 +100,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
 		bool IVerificationResult.Verify(Func<IInteraction[], bool> predicate)
 		{
-			IInteraction[] matchingInteractions = _interactions.Interactions.Where(_predicate).ToArray();
+			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
 			_interactions.Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
 			if (result)
@@ -114,7 +114,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		/// <inheritdoc cref="IAsyncVerificationResult.VerifyAsync(Func{IInteraction[], Boolean})" />
 		public async Task<bool> VerifyAsync(Func<IInteraction[], bool> predicate)
 		{
-			IInteraction[] matchingInteractions = _interactions.Interactions.Where(_predicate).ToArray();
+			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
 			_interactions.Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
 			if (result)
@@ -151,7 +151,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 					_interactions.InteractionAdded += OnInteractionAdded;
 					do
 					{
-						matchingInteractions = _interactions.Interactions.Where(_predicate).ToArray();
+						matchingInteractions = _interactions.Where(_predicate).ToArray();
 						_interactions.Verified(matchingInteractions);
 						if (predicate(matchingInteractions))
 						{
@@ -221,7 +221,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
 	bool IVerificationResult.Verify(Func<IInteraction[], bool> predicate)
 	{
-		IInteraction[] matchingInteractions = _interactions.Interactions.Where(_predicate).ToArray();
+		IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
 		_interactions.Verified(matchingInteractions);
 		return predicate(matchingInteractions);
 	}

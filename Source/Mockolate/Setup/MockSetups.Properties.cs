@@ -98,7 +98,7 @@ internal partial class MockSetups
 
 			lock (storage)
 			{
-				return storage.Where(propertySetup => interactions.Interactions.OfType<PropertyAccess>()
+				return storage.Where(propertySetup => interactions.OfType<PropertyAccess>()
 						.All(propertyAccess => !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)))
 					.ToList();
 			}

@@ -390,7 +390,7 @@ public sealed partial class MockTests
 		private static async Task ValidateInteractionIndices(IMyThreadSafetyService sut)
 		{
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			int[] indices = registry.Interactions.Interactions
+			int[] indices = registry.Interactions
 				.Select(i => i.Index)
 				.ToArray();
 
