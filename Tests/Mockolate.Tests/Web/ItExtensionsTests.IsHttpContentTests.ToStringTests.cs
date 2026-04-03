@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
@@ -111,11 +112,14 @@ public sealed partial class ItExtensionsTests
 			public async Task WithHeaders_Multiple_ShouldReturnExpectedValue()
 			{
 				ItExtensions.IHttpContentParameter sut =
-					It.IsHttpContent().WithHeaders(("x-my-header", "my-value"), ("x-my-other-header", "my-other-value"));
+					It.IsHttpContent()
+						.WithHeaders(("x-my-header", "my-value"), ("x-my-other-header", "my-other-value"));
 
 				string? result = sut.ToString();
 
-				await That(result).IsEqualTo("Http content with headers \"x-my-header: my-value\", \"x-my-other-header: my-other-value\"");
+				await That(result)
+					.IsEqualTo(
+						"Http content with headers \"x-my-header: my-value\", \"x-my-other-header: my-other-value\"");
 			}
 
 			[Fact]
@@ -162,6 +166,17 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Fact]
+			public async Task WithString_Exactly_IgnoringCase_ShouldReturnExpectedValue()
+			{
+				ItExtensions.IStringContentBodyParameter sut = It.IsHttpContent().WithString("foo").Exactly()
+					.IgnoringCase();
+
+				string? result = sut.ToString();
+
+				await That(result).IsEqualTo("string content equal to \"foo\" ignoring case");
+			}
+
+			[Fact]
 			public async Task WithString_Exactly_ShouldReturnExpectedValue()
 			{
 				ItExtensions.IStringContentBodyParameter sut = It.IsHttpContent().WithString("foo").Exactly();
@@ -193,6 +208,29 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Fact]
+			public async Task WithStringMatching_AsRegex_IgnoringCase_ShouldReturnExpectedValue()
+			{
+				ItExtensions.IStringContentBodyParameter sut =
+					It.IsHttpContent().WithStringMatching("^foo").AsRegex().IgnoringCase();
+
+				string? result = sut.ToString();
+
+				await That(result).IsEqualTo("string content matching regex pattern \"^foo\" ignoring case");
+			}
+
+			[Fact]
+			public async Task WithStringMatching_AsRegex_IgnoringCase_WithOptions_ShouldReturnExpectedValue()
+			{
+				ItExtensions.IStringContentBodyParameter sut =
+					It.IsHttpContent().WithStringMatching("^foo").AsRegex(RegexOptions.Multiline).IgnoringCase();
+
+				string? result = sut.ToString();
+
+				await That(result)
+					.IsEqualTo("string content matching regex pattern \"^foo\" ignoring case with options Multiline");
+			}
+
+			[Fact]
 			public async Task WithStringMatching_AsRegex_ShouldReturnExpectedValue()
 			{
 				ItExtensions.IStringContentBodyParameter sut =
@@ -201,6 +239,28 @@ public sealed partial class ItExtensionsTests
 				string? result = sut.ToString();
 
 				await That(result).IsEqualTo("string content matching regex pattern \"^foo\"");
+			}
+
+			[Fact]
+			public async Task WithStringMatching_AsRegex_WithOptions_ShouldReturnExpectedValue()
+			{
+				ItExtensions.IStringContentBodyParameter sut =
+					It.IsHttpContent().WithStringMatching("^foo").AsRegex(RegexOptions.Multiline);
+
+				string? result = sut.ToString();
+
+				await That(result).IsEqualTo("string content matching regex pattern \"^foo\" with options Multiline");
+			}
+
+			[Fact]
+			public async Task WithStringMatching_IgnoringCase_ShouldReturnExpectedValue()
+			{
+				ItExtensions.IStringContentBodyParameter sut =
+					It.IsHttpContent().WithStringMatching("*foo*").IgnoringCase();
+
+				string? result = sut.ToString();
+
+				await That(result).IsEqualTo("string content matching pattern \"*foo*\" ignoring case");
 			}
 
 			[Fact]
