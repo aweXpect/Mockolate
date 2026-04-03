@@ -76,15 +76,9 @@ public static partial class HttpClientExtensions
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-		{
-			string prefix = $"{method.Method}-Request";
-			if (parameters.Length == 0)
-			{
-				return prefix;
-			}
-
-			return $"{prefix} with {string.Join(" and ", parameters.Select(p => p.ToString()))}";
-		}
+			// At least one parameter is always present: all construction sites in HttpClientExtensions
+			// (GetAsync, PostAsync, PutAsync, PatchAsync, DeleteAsync) pass at least one IHttpRequestMessageParameter.
+			=> $"{method.Method}-Request with {string.Join(" and ", parameters.Select(p => p.ToString()))}";
 	}
 
 	private interface IHttpRequestMessageParameter
@@ -118,8 +112,8 @@ public static partial class HttpClientExtensions
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString()
-			=> parameter.ToString() ?? string.Empty;
+		public override string? ToString()
+			=> parameter.ToString();
 	}
 
 	private sealed class HttpStringUriParameter(IParameter<string?> parameter)
