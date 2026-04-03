@@ -476,7 +476,7 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 		_currentReturnCallback?.Only(times);
 		return this;
 	}
-	
+
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"{FormatType(typeof(TValue))} this[{match1}]";
@@ -921,7 +921,7 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 		_currentReturnCallback?.Only(times);
 		return this;
 	}
-	
+
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}]";
@@ -1377,7 +1377,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		_currentReturnCallback?.Only(times);
 		return this;
 	}
-	
+
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}, {match3}]";
@@ -1842,7 +1842,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		_currentReturnCallback?.Only(times);
 		return this;
 	}
-	
+
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}, {match3}, {match4}]";
