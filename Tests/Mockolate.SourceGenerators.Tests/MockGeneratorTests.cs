@@ -5,6 +5,42 @@ namespace Mockolate.SourceGenerators.Tests;
 public class MockGeneratorTests
 {
 	[Fact]
+	public async Task SameMethodDifferingOnlyByNullability_ShouldUseExplicitImplementationForConflictingInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     #nullable enable
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IInterface1.CreateMock().Implementing<IInterface2>();
+			         }
+			     }
+
+			     public interface IInterface1
+			     {
+			         void Method(string? value);
+			     }
+
+			     public interface IInterface2
+			     {
+			         void Method(string value);
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources).ContainsKey("Mock.IInterface1__IInterface2.g.cs").WhoseValue
+			.Contains("public void Method(string? value)").And
+			.Contains("void global::MyCode.IInterface2.Method(string value)");
+	}
+
+	[Fact]
 	public async Task SealedClass_ShouldNotBeIncluded()
 	{
 		GeneratorResult result = Generator
@@ -71,6 +107,84 @@ public class MockGeneratorTests
 			"Mock.MyService__IMyInterface1.g.cs",
 			"Mock.MyService__IMyInterface1__IMyInterface2.g.cs",
 		]).InAnyOrder();
+	}
+
+	[Fact]
+	public async Task WhenImplementingAdditionalInterface_WithBaseClassHavingOptionalConstructorParameter_ShouldGenerateTryCastWithDefaultValue()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock().Implementing<IMyInterface>();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(int value = 0) { }
+			     }
+
+			     public interface IMyInterface
+			     {
+			         void DoWork();
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs").WhoseValue
+			.Contains("static bool TryCastWithDefaultValue<TValue>(object?[] values, int index, TValue defaultValue, global::Mockolate.MockBehavior behavior, out TValue result)")
+			.IgnoringNewlineStyle().And
+			.Contains("mock.MockRegistry.ConstructorParameters.Length >= 0 && mock.MockRegistry.ConstructorParameters.Length <= 1")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenImplementingAdditionalInterface_WithBaseClassHavingRequiredConstructorParameter_ShouldGenerateTryCast()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock([42]).Implementing<IMyInterface>();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(int value) { }
+			     }
+
+			     public interface IMyInterface
+			     {
+			         void DoWork();
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs").WhoseValue
+			.Contains("static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)")
+			.IgnoringNewlineStyle().And
+			.Contains("No parameterless constructor found for 'MyCode.MyService'")
+			.IgnoringNewlineStyle().And
+			.Contains("mock.MockRegistry.ConstructorParameters.Length == 1")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("TryCastWithDefaultValue")
+			.IgnoringNewlineStyle();
 	}
 
 	[Fact]
@@ -287,6 +401,47 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WhenUsingCreateMockFromNonMockolateNamespace_ShouldNotBeIncluded()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using MockolateExtensions;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			                 _ = new MyService().CreateMock();
+			             }
+			         }
+
+			         public class MyService { }
+			     }
+
+			     namespace MockolateExtensions
+			     {
+			         public static class MockExtensions
+			         {
+			             public static T CreateMock<T>(this T value)
+			                 where T : class
+			                 => value;
+			         }
+			     }
+			     """);
+
+		await ThatAll(
+			That(result.Sources.Keys).IsEqualTo([
+				"Mock.g.cs",
+				"MockBehaviorExtensions.g.cs",
+			]).InAnyOrder().IgnoringCase(),
+			That(result.Diagnostics).IsEmpty()
+		);
+	}
+
+	[Fact]
 	public async Task WhenUsingSetups_ShouldGenerateMocksAndExtensions()
 	{
 		GeneratorResult result = Generator
@@ -377,46 +532,5 @@ public class MockGeneratorTests
 
 		await That(result.Sources).ContainsKey("Mock.HttpMessageHandler.g.cs").And
 			.ContainsKey("Mock.HttpClient.g.cs");
-	}
-
-	[Fact]
-	public async Task WhenUsingCreateMockFromNonMockolateNamespace_ShouldNotBeIncluded()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using MockolateExtensions;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			                 _ = new MyService().CreateMock();
-			             }
-			         }
-
-			         public class MyService { }
-			     }
-
-			     namespace MockolateExtensions
-			     {
-			         public static class MockExtensions
-			         {
-			             public static T CreateMock<T>(this T value)
-			                 where T : class
-			                 => value;
-			         }
-			     }
-			     """);
-
-		await ThatAll(
-			That(result.Sources.Keys).IsEqualTo([
-				"Mock.g.cs",
-				"MockBehaviorExtensions.g.cs",
-			]).InAnyOrder().IgnoringCase(),
-			That(result.Diagnostics).IsEmpty()
-		);
 	}
 }
