@@ -234,6 +234,120 @@ public sealed class SetupEventTests
 	}
 
 	[Fact]
+	public async Task OnUnsubscribed_For_RepeatsCallbackNTimes()
+	{
+		int count1 = 0;
+		int count2 = 0;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+		sut.Mock.Setup.ChocolateDispensed
+			.OnUnsubscribed.Do(() => { count1++; }).For(2)
+			.OnUnsubscribed.Do(() => { count2++; });
+
+		void Handler(string type, int amount) { }
+		sut.ChocolateDispensed += Handler;
+		sut.ChocolateDispensed -= Handler;
+		sut.ChocolateDispensed -= Handler;
+		sut.ChocolateDispensed -= Handler;
+
+		await That(count1).IsEqualTo(2);
+		await That(count2).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task OnUnsubscribed_Forever_Extension_RepeatsIndefinitely()
+	{
+		int callCount = 0;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+		sut.Mock.Setup.ChocolateDispensed
+			.OnUnsubscribed.Do(() => { callCount++; }).For(1).Forever();
+
+		void Handler(string type, int amount) { }
+		sut.ChocolateDispensed += Handler;
+		for (int i = 0; i < 10; i++)
+		{
+			sut.ChocolateDispensed -= Handler;
+		}
+
+		await That(callCount).IsEqualTo(10);
+	}
+
+	[Fact]
+	public async Task OnUnsubscribed_InParallel_RunsAlongsideNextCallback()
+	{
+		int count1 = 0;
+		int count2 = 0;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+		sut.Mock.Setup.ChocolateDispensed
+			.OnUnsubscribed.Do(() => { count1++; }).InParallel()
+			.OnUnsubscribed.Do(() => { count2++; });
+
+		void Handler(string type, int amount) { }
+		sut.ChocolateDispensed += Handler;
+		sut.ChocolateDispensed -= Handler;
+		sut.ChocolateDispensed -= Handler;
+
+		await That(count1).IsEqualTo(2);
+		await That(count2).IsEqualTo(2);
+	}
+
+	[Fact]
+	public async Task OnUnsubscribed_Only_StopsAfterNInvocations()
+	{
+		int callCount = 0;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+		sut.Mock.Setup.ChocolateDispensed.OnUnsubscribed.Do(() => { callCount++; }).Only(2);
+
+		void Handler(string type, int amount) { }
+		sut.ChocolateDispensed += Handler;
+		sut.ChocolateDispensed -= Handler;
+		sut.ChocolateDispensed -= Handler;
+		sut.ChocolateDispensed -= Handler;
+		sut.ChocolateDispensed -= Handler;
+
+		await That(callCount).IsEqualTo(2);
+	}
+
+	[Fact]
+	public async Task OnUnsubscribed_OnlyOnce_Extension_StopsAfterSingleInvocation()
+	{
+		int callCount = 0;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+		sut.Mock.Setup.ChocolateDispensed.OnUnsubscribed.Do(() => { callCount++; }).OnlyOnce();
+
+		void Handler(string type, int amount) { }
+		sut.ChocolateDispensed += Handler;
+		sut.ChocolateDispensed -= Handler;
+		sut.ChocolateDispensed -= Handler;
+		sut.ChocolateDispensed -= Handler;
+
+		await That(callCount).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task OnUnsubscribed_When_OnlyFires_WhenPredicateMatches()
+	{
+		int callCount = 0;
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+		sut.Mock.Setup.ChocolateDispensed.OnUnsubscribed.Do(() => { callCount++; }).When(n => n % 2 == 0);
+
+		void Handler(string type, int amount) { }
+		sut.ChocolateDispensed += Handler;
+		for (int i = 0; i < 6; i++)
+		{
+			sut.ChocolateDispensed -= Handler;
+		}
+
+		// unsubscriptions at index 0, 2, 4 pass the predicate
+		await That(callCount).IsEqualTo(3);
+	}
+
+	[Fact]
 	public async Task SetupDoesNotInterfereWithVerification()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
