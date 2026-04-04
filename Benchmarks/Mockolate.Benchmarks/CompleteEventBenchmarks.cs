@@ -27,6 +27,7 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		EventHandler handler = (_, _) => { };
 
 		sut.SomeEvent += handler;
+		sut.Mock.Raise.SomeEvent(null, EventArgs.Empty);
 
 		sut.Mock.Verify.SomeEvent.Subscribed().Once();
 	}
@@ -42,6 +43,7 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		EventHandler handler = (_, _) => { };
 
 		mock.Object.SomeEvent += handler;
+		mock.Raise(m => m.SomeEvent += null, null!, EventArgs.Empty);
 
 		mock.VerifyAdd(m => m.SomeEvent += Moq.It.IsAny<EventHandler>(), Times.Once());
 	}
@@ -56,6 +58,7 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		EventHandler handler = (_, _) => { };
 
 		mock.SomeEvent += handler;
+		mock.SomeEvent += NSubstitute.Raise.EventWith(null, EventArgs.Empty);
 
 		mock.Received(1).SomeEvent += Arg.Any<EventHandler>();
 	}
@@ -70,10 +73,12 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		EventHandler handler = (_, _) => { };
 
 		mock.SomeEvent += handler;
+		mock.SomeEvent += FakeItEasy.Raise.FreeForm.With(null, EventArgs.Empty);
 
 		A.CallTo(mock)
 			.Where(call => call.Method.Name == "add_SomeEvent")
-			.MustHaveHappened(1, FakeItEasy.Times.Exactly);
+			// Expect 2, because raising an event in FakeItEasy is implemented as a call to the add accessor of the event.
+			.MustHaveHappened(2, FakeItEasy.Times.Exactly);
 	}
 
 	/// <summary>
@@ -86,6 +91,7 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		EventHandler handler = (_, _) => { };
 
 		imposter.Instance().SomeEvent += handler;
+		imposter.SomeEvent.Raise(null!, EventArgs.Empty);
 
 		imposter.SomeEvent.Subscribed(handler, Count.Once());
 	}
@@ -100,6 +106,7 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		EventHandler handler = (_, _) => { };
 
 		mock.Object.SomeEvent += handler;
+		mock.RaiseSomeEvent(EventArgs.Empty);
 
 		_ = mock.Events.SomeEvent.SubscriberCount;
 	}
