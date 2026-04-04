@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.ExceptionServices;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -196,24 +195,6 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Raises the event with <paramref name="eventName" /> and the given <paramref name="parameters" />.
-	/// </summary>
-	public void Raise(string eventName, params object?[] parameters)
-	{
-		foreach ((object? target, MethodInfo method) in Setup.Events.Enumerate(eventName))
-		{
-			try
-			{
-				method.Invoke(target, parameters);
-			}
-			catch (TargetInvocationException ex) when (ex.InnerException is not null)
-			{
-				ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-			}
-		}
-	}
-
-	/// <summary>
 	///     Associates the specified event <paramref name="method" /> on the <paramref name="target" /> with the event
 	///     identified by the given <paramref name="name" />.
 	/// </summary>
@@ -225,7 +206,6 @@ public partial class MockRegistry
 		}
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
-		Setup.Events.Add(target, method, name);
 	}
 
 	/// <summary>
@@ -240,6 +220,5 @@ public partial class MockRegistry
 		}
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
-		Setup.Events.Remove(target, method, name);
 	}
 }

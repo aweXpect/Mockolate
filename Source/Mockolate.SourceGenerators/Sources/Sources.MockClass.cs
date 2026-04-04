@@ -1019,6 +1019,21 @@ internal static partial class Sources
 		bool explicitInterfaceImplementation, bool isClassInterface)
 	{
 		string mockRegistry = @event.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
+		string backingFieldName = @event.GetBackingFieldName();
+		string backingFieldAccess;
+		if (@event.IsStatic)
+		{
+			sb.Append("\t\tprivate static readonly global::System.Threading.AsyncLocal<").Append(@event.Type.Fullname.TrimEnd('?'))
+				.Append("?> ").Append(backingFieldName).Append(" = new global::System.Threading.AsyncLocal<")
+				.Append(@event.Type.Fullname.TrimEnd('?')).Append("?>();").AppendLine();
+			backingFieldAccess = $"{backingFieldName}.Value";
+		}
+		else
+		{
+			sb.Append("\t\tprivate ").Append(@event.Type.Fullname.TrimEnd('?'))
+				.Append("? ").Append(backingFieldName).Append(';').AppendLine();
+			backingFieldAccess = $"this.{backingFieldName}";
+		}
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(@event.ContainingType.EscapeForXmlDoc()).Append('.')
 			.Append(@event.Name.EscapeForXmlDoc()).AppendLine("\" />");
 		sb.Append(@event.Attributes, "\t\t");
@@ -1061,6 +1076,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t").Append(mockRegistry).Append(".AddEvent(").Append(@event.GetUniqueNameString())
 				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" += value;").AppendLine();
 			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" += value;").AppendLine();
@@ -1070,6 +1086,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t").Append(mockRegistry).Append(".RemoveEvent(").Append(@event.GetUniqueNameString())
 				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" -= value;").AppendLine();
 			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" -= value;").AppendLine();
@@ -1078,10 +1095,18 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tadd => ").Append(mockRegistry).Append(".AddEvent(").Append(@event.GetUniqueNameString())
+			sb.Append("\t\t\tadd").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t").Append(mockRegistry).Append(".AddEvent(").Append(@event.GetUniqueNameString())
 				.Append(", value?.Target, value?.Method);").AppendLine();
-			sb.Append("\t\t\tremove => ").Append(mockRegistry).Append(".RemoveEvent(").Append(@event.GetUniqueNameString())
+			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" += value;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t\tremove").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t").Append(mockRegistry).Append(".RemoveEvent(").Append(@event.GetUniqueNameString())
 				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" -= value;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
 		}
 
 		sb.AppendLine("\t\t}");
@@ -2493,15 +2518,16 @@ internal static partial class Sources
 		                                        @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
+			string backingFieldAccess = @event.IsStatic ? $"{@event.GetBackingFieldName()}.Value" : $"this.{@event.GetBackingFieldName()}";
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
 			sb.Append("\t\tvoid ").Append(raiseOnName).Append('.').Append(@event.Name).Append("(")
 				.Append(FormatParametersWithTypeAndName(@event.Delegate.Parameters))
 				.Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\t").Append(mockRegistry).Append(".Raise(").Append(@event.GetUniqueNameString());
+			sb.Append("\t\t\t").Append(backingFieldAccess).Append("?.Invoke(");
 			if (@event.Delegate.Parameters.Count > 0)
 			{
-				sb.Append(", ").Append(FormatParametersAsNames(@event.Delegate.Parameters));
+				sb.Append(FormatParametersAsNames(@event.Delegate.Parameters));
 			}
 
 			sb.Append(");").AppendLine();
@@ -2516,16 +2542,17 @@ internal static partial class Sources
 			         .Select(g => g.Single())
 			         .Where(m => m.Delegate.Parameters.Count > 0))
 		{
+			string backingFieldAccess = @event.IsStatic ? $"{@event.GetBackingFieldName()}.Value" : $"this.{@event.GetBackingFieldName()}";
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
 			sb.Append("\t\tvoid ").Append(raiseOnName).Append('.').Append(@event.Name).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters)")
 				.AppendLine();
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tglobal::Mockolate.MockBehavior mockBehavior = ").Append(mockRegistry).Append(".Behavior;").AppendLine();
-			sb.Append("\t\t\t").Append(mockRegistry).Append(".Raise(").Append(@event.GetUniqueNameString());
+			sb.Append("\t\t\t").Append(backingFieldAccess).Append("?.Invoke(");
 
 			if (@event.Delegate.Parameters.Count > 0)
 			{
-				sb.Append(", ").Append(string.Join(", ", @event.Delegate.Parameters.Select(p => $"mockBehavior.DefaultValue.Generate(default({p.Type.Fullname.TrimEnd('?')}))")));
+				sb.Append(string.Join(", ", @event.Delegate.Parameters.Select(p => $"mockBehavior.DefaultValue.Generate(default({p.Type.Fullname.TrimEnd('?')}))")));
 			}
 
 			sb.Append(");").AppendLine();

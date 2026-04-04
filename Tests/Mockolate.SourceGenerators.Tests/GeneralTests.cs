@@ -729,6 +729,7 @@ public class GeneralTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
+			          		private global::System.EventHandler<int>? _mockolateEvent_global__MyCode_IMyService_MyEvent;
 			          		/// <inheritdoc cref="global::MyCode.IMyService.MyEvent" />
 			          		[global::MyCode.CustomAttributeWithWrongName(true, (byte)42, 'X', 3.14, 2.71F, 100, 999L, (sbyte)-10, (short)500, "test", 123u, 456uL, (ushort)789, typeof(string), (global::MyCode.MyEnum)2, new int[]{1, 2, 3}, null, BoolParam = false, ByteParam = (byte)99, CharParam = 'Y', DoubleParam = 1.23, FloatParam = 4.56F, IntParam = 200, LongParam = 888L, SByteParam = (sbyte)-5, ShortParam = (short)300, StringParam = "named", UIntParam = 111u, ULongParam = 222uL, UShortParam = (ushort)333, ObjectParam = 42, TypeParam = typeof(int), EnumParam = (global::MyCode.MyFlagEnum)3, ArrayParam = new string[]{"a", "b"}, OptionalIntParam = null)]
 			          		public event global::System.EventHandler<int>? MyEvent
@@ -736,6 +737,7 @@ public class GeneralTests
 			          			add
 			          			{
 			          				this.MockRegistry.AddEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          				this._mockolateEvent_global__MyCode_IMyService_MyEvent += value;
 			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
 			          					wraps.MyEvent += value;
@@ -744,6 +746,7 @@ public class GeneralTests
 			          			remove
 			          			{
 			          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          				this._mockolateEvent_global__MyCode_IMyService_MyEvent -= value;
 			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
 			          					wraps.MyEvent -= value;
