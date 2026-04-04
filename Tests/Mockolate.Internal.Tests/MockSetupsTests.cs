@@ -6,17 +6,29 @@ namespace Mockolate.Internal.Tests;
 
 public partial class MockSetupsTests
 {
+	[Fact]
+	public async Task EventSetup_ToString_ShouldReturnEventName()
+	{
+		EventSetup setup = new("global::MyCode.IMyService.SomeEvent");
+
+		string result = setup.ToString();
+
+		await That(result).IsEqualTo("SomeEvent");
+	}
+
 	[Theory]
-	[InlineData(0, 0, 0, "no setups")]
-	[InlineData(1, 0, 0, "1 method")]
-	[InlineData(2, 0, 0, "2 methods")]
-	[InlineData(0, 1, 0, "1 property")]
-	[InlineData(0, 2, 0, "2 properties")]
-	[InlineData(0, 0, 1, "1 indexer")]
-	[InlineData(0, 0, 2, "2 indexers")]
-	[InlineData(3, 5, 2, "3 methods, 5 properties, 2 indexers")]
+	[InlineData(0, 0, 0, 0, "no setups")]
+	[InlineData(1, 0, 0, 0, "1 method")]
+	[InlineData(2, 0, 0, 0, "2 methods")]
+	[InlineData(0, 1, 0, 0, "1 property")]
+	[InlineData(0, 2, 0, 0, "2 properties")]
+	[InlineData(0, 0, 1, 0, "1 indexer")]
+	[InlineData(0, 0, 2, 0, "2 indexers")]
+	[InlineData(0, 0, 0, 1, "1 event")]
+	[InlineData(0, 0, 0, 2, "2 events")]
+	[InlineData(3, 5, 2, 1, "3 methods, 5 properties, 2 indexers, 1 event")]
 	public async Task ToString_ShouldReturnExpectedValue(
-		int methodCount, int propertyCount, int indexerCount, string expected)
+		int methodCount, int propertyCount, int indexerCount, int eventCount, string expected)
 	{
 		IMyService sut = IMyService.CreateMock();
 		IMock mock = (IMock)sut;
@@ -35,6 +47,11 @@ public partial class MockSetupsTests
 		{
 			mock.MockRegistry.SetupIndexer(new IndexerSetup<string, int>(
 				new NamedParameter("index1", (IParameter)It.IsAny<int>())));
+		}
+
+		for (int i = 0; i < eventCount; i++)
+		{
+			mock.MockRegistry.SetupEvent(new EventSetup($"my.event{i}"));
 		}
 
 		string result = mock.MockRegistry.Setup.ToString();

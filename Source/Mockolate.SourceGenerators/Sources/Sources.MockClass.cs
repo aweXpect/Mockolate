@@ -1772,6 +1772,19 @@ internal static partial class Sources
 
 		#endregion
 
+		#region Events
+
+		Func<Event, bool> eventPredicate = @event
+			=> @event.ExplicitImplementation is null && @event.MemberType == memberType;
+		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
+		{
+			sb.AppendXmlSummary($"Setup for the event <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name.EscapeForXmlDoc()}\" />.");
+			sb.Append("\t\tglobal::Mockolate.Setup.EventSetup ").Append(@event.Name).Append(" { get; }").AppendLine();
+			sb.AppendLine();
+		}
+
+		#endregion
+
 		#region Indexers
 
 		Func<Property, bool> indexerPredicate =
@@ -2017,6 +2030,30 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupProperty(propertySetup);").AppendLine();
 			sb.Append("\t\t\t\treturn propertySetup;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t}").AppendLine();
+			sb.AppendLine();
+		}
+
+		#endregion
+
+		#region Events
+
+		Func<Event, bool> eventSetupPredicate = @event
+			=> @event.ExplicitImplementation is null && @event.MemberType == memberType;
+		foreach (Event @event in @class.AllEvents().Where(eventSetupPredicate))
+		{
+			sb.Append("\t\t/// <inheritdoc />").AppendLine();
+			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Setup.EventSetup global::Mockolate.Mock.")
+				.Append(setupName).Append('.').Append(@event.Name).AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\tget").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tglobal::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(")
+				.Append(@event.GetUniqueNameString()).Append(");").AppendLine();
+			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupEvent(eventSetup);").AppendLine();
+			sb.Append("\t\t\t\treturn eventSetup;").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();

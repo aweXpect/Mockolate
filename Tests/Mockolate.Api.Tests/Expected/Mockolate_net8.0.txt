@@ -187,6 +187,7 @@ namespace Mockolate
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public bool SetIndexer<TResult>(TResult value, params Mockolate.Parameters.NamedParameterValue[] parameters) { }
         public bool SetProperty(string propertyName, object? value) { }
+        public void SetupEvent(Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
         public void SetupMethod(Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
@@ -271,6 +272,11 @@ namespace Mockolate
             where T :  notnull
         {
             public Mockolate.Setup.IPropertySetup<T> OnlyOnce() { }
+        }
+        extension(Mockolate.Setup.IEventSetupCallbackWhenBuilder setup)
+        {
+            public void Forever() { }
+            public Mockolate.Setup.IEventSetup OnlyOnce() { }
         }
         extension<TValue, T1>(Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1> setup)
             where TValue :  notnull
@@ -677,6 +683,40 @@ namespace Mockolate.Setup
         public bool Invoke(ref int index, System.Action<int, TDelegate> callback) { }
         public bool Invoke(bool wasInvoked, ref int index, System.Action<int, TDelegate> callback) { }
         public bool Invoke<TReturn>(ref int index, System.Func<int, TDelegate, TReturn> callback, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TReturn? returnValue) { }
+    }
+    [System.Diagnostics.DebuggerDisplay("{ToString()}")]
+    public class EventSetup : Mockolate.Setup.IEventSetup, Mockolate.Setup.IEventSetupCallbackBuilder, Mockolate.Setup.IEventSetupCallbackWhenBuilder, Mockolate.Setup.IEventSubscriptionSetup, Mockolate.Setup.IEventUnsubscriptionSetup
+    {
+        public EventSetup(string name) { }
+        public string Name { get; }
+        public Mockolate.Setup.IEventSubscriptionSetup OnSubscribed { get; }
+        public Mockolate.Setup.IEventUnsubscriptionSetup OnUnsubscribed { get; }
+        public override string ToString() { }
+    }
+    public interface IEventSetup
+    {
+        Mockolate.Setup.IEventSubscriptionSetup OnSubscribed { get; }
+        Mockolate.Setup.IEventUnsubscriptionSetup OnUnsubscribed { get; }
+    }
+    public interface IEventSetupCallbackBuilder : Mockolate.Setup.IEventSetup, Mockolate.Setup.IEventSetupCallbackWhenBuilder
+    {
+        Mockolate.Setup.IEventSetupCallbackWhenBuilder InParallel();
+        Mockolate.Setup.IEventSetupCallbackWhenBuilder When(System.Func<int, bool> predicate);
+    }
+    public interface IEventSetupCallbackWhenBuilder : Mockolate.Setup.IEventSetup
+    {
+        Mockolate.Setup.IEventSetupCallbackWhenBuilder For(int times);
+        Mockolate.Setup.IEventSetup Only(int times);
+    }
+    public interface IEventSubscriptionSetup
+    {
+        Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action callback);
+        Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action<object?, System.Reflection.MethodInfo> callback);
+    }
+    public interface IEventUnsubscriptionSetup
+    {
+        Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action callback);
+        Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action<object?, System.Reflection.MethodInfo> callback);
     }
     public interface IIndexerGetterSetup<TValue, out T1>
     {

@@ -30,7 +30,13 @@ internal partial class MockSetups
 		{
 			sb.Append(indexerCount).Append(indexerCount == 1 ? " indexer, " : " indexers, ");
 		}
-		
+
+		int eventCount = Events.Count;
+		if (eventCount > 0)
+		{
+			sb.Append(eventCount).Append(eventCount == 1 ? " event, " : " events, ");
+		}
+
 		if (sb.Length == 0)
 		{
 			return "no setups";

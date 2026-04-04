@@ -46,6 +46,51 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task ShouldGenerateEventSetupInSetupInterface()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using System;
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         event EventHandler SomeEvent;
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+					.Contains("""
+					          		/// <summary>
+					          		///     Setup for the event <see cref="global::MyCode.IMyService.SomeEvent" />.
+					          		/// </summary>
+					          		global::Mockolate.Setup.EventSetup SomeEvent { get; }
+					          """).IgnoringNewlineStyle().And
+					.Contains("""
+					          		/// <inheritdoc />
+					          		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+					          		global::Mockolate.Setup.EventSetup global::Mockolate.Mock.IMockSetupForIMyService.SomeEvent
+					          		{
+					          			get
+					          			{
+					          				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup("global::MyCode.IMyService.SomeEvent");
+					          				this.MockRegistry.SetupEvent(eventSetup);
+					          				return eventSetup;
+					          			}
+					          		}
+					          """).IgnoringNewlineStyle();
+			}
+
+			[Fact]
 			public async Task ShouldImplementAllEventsFromInterfaces()
 			{
 				GeneratorResult result = Generator
