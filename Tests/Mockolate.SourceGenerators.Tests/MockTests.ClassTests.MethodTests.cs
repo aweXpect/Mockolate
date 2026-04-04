@@ -6,6 +6,43 @@ public sealed partial class MockTests
 	{
 		public sealed class MethodTests
 		{
+			[Fact]
+			public async Task ExplicitInterfaceImplementation_WithUnconstrainedGeneric_ShouldHaveDefaultConstraint()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using System.Threading.Tasks;
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock().Implementing<IMyOtherService>();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         void MyMethod();
+					     }
+
+					     public interface IMyOtherService
+					     {
+					         Task<T?> DoSomethingAsync<T>();
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.IMyService__IMyOtherService.g.cs").WhoseValue
+					.Contains("""
+					          		/// <inheritdoc cref="global::MyCode.IMyOtherService.DoSomethingAsync{T}()" />
+					          		global::System.Threading.Tasks.Task<T?> global::MyCode.IMyOtherService.DoSomethingAsync<T>()
+					          			where T : default
+					          		{
+					          """).IgnoringNewlineStyle();
+			}
+
 			[Theory]
 			[InlineData("class, T")]
 			[InlineData("struct")]

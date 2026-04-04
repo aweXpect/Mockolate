@@ -33,11 +33,24 @@ internal readonly record struct GenericParameter
 	public bool IsClass { get; }
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-	public void AppendWhereConstraint(StringBuilder sb, string prefix)
+	public void AppendWhereConstraint(StringBuilder sb, string prefix, bool isExplicitInterfaceImpl = false)
 	{
-		if (!ConstraintTypes.Any() && !IsStruct && !IsClass && !IsNotNull && !IsUnmanaged && !HasConstructor &&
-		    !AllowsRefStruct)
+		bool isUnconstrained = !ConstraintTypes.Any() && !IsStruct && !IsClass && !IsNotNull && !IsUnmanaged &&
+		                       !HasConstructor && !AllowsRefStruct;
+
+		if (isUnconstrained)
 		{
+			if (isExplicitInterfaceImpl)
+			{
+				sb.AppendLine().Append(prefix).Append("where ").Append(Name).Append(" : default");
+			}
+
+			return;
+		}
+
+		if (isExplicitInterfaceImpl)
+		{
+			// Constrained type parameters are inherited in explicit interface implementations (CS0460)
 			return;
 		}
 

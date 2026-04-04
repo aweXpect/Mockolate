@@ -152,7 +152,7 @@ public sealed partial class MockTests
 	{
 		void Act()
 		{
-			_ = MyBaseClassWithConstructor.CreateMock(constructorParameters: []);
+			_ = MyBaseClassWithConstructor.CreateMock([]);
 		}
 
 		await That(Act).Throws<MockException>()
@@ -190,11 +190,11 @@ public sealed partial class MockTests
 	public async Task Create_WithSetups_ShouldApplySetups()
 	{
 		IMyService mock = IMyService.CreateMock(setup =>
-			{
-				setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2);
-				setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4);
-				setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8);
-			});
+		{
+			setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2);
+			setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4);
+			setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8);
+		});
 
 		int result1 = mock.Multiply(1, null);
 		int result2 = mock.Multiply(2, null);
@@ -243,6 +243,21 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task GenericMethodWithWhereClause_WhenImplementingAdditionalInterface_ShouldWork()
+	{
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock()
+			.Implementing<IMyServiceWithGenericMethodsWithWhereClause>();
+		IMyServiceWithGenericMethodsWithWhereClause service = (IMyServiceWithGenericMethodsWithWhereClause)sut;
+
+		sut.Mock.As<IMyServiceWithGenericMethodsWithWhereClause>().Setup.MyMethod<IChocolateDispenser>(It.IsTrue()).Returns(3);
+
+		int result = service.MyMethod<IChocolateDispenser>(true);
+
+		await That(result).IsEqualTo(3);
+		await That(sut.Mock.As<IMyServiceWithGenericMethodsWithWhereClause>().Verify.MyMethod<IChocolateDispenser>(It.IsTrue())).Once();
+	}
+
+	[Fact]
 	public async Task ToString_ShouldReturnImplementedType()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
@@ -260,6 +275,17 @@ public sealed partial class MockTests
 		string result = ((IMock)sut).ToString();
 
 		await That(result).IsEqualTo("Mockolate.Tests.TestHelpers.IChocolateDispenser mock that also implements Mockolate.Tests.MockTests.IMyService");
+	}
+
+	[Fact]
+	public async Task TypeWithMockRegistryMembers_ShouldUseUniqueName()
+	{
+		IServiceWithMockRegistryMembers sut = IServiceWithMockRegistryMembers.CreateMock();
+		sut.Mock.Setup.MockRegistry_1.Returns("foo");
+
+		string result = sut.MockRegistry_1;
+
+		await That(result).IsEqualTo("foo");
 	}
 
 	[Fact]
@@ -306,17 +332,6 @@ public sealed partial class MockTests
 		IMock mock = (IMock)sut;
 
 		await That(mock.MockRegistry.ConstructorParameters).IsNull();
-	}
-
-	[Fact]
-	public async Task TypeWithMockRegistryMembers_ShouldUseUniqueName()
-	{
-		IServiceWithMockRegistryMembers sut = IServiceWithMockRegistryMembers.CreateMock();
-		sut.Mock.Setup.MockRegistry_1.Returns("foo");
-
-		string result = sut.MockRegistry_1;
-
-		await That(result).IsEqualTo("foo");
 	}
 
 	public interface MyInterfaceWithMockProperty
@@ -403,10 +418,10 @@ public sealed partial class MockTests
 
 	public interface IServiceWithMockRegistryMembers
 	{
-		event EventHandler MockRegistry;
-		int MockolateMockRegistry(bool value);
 		// ReSharper disable once InconsistentNaming
 		string MockRegistry_1 { get; }
+		event EventHandler MockRegistry;
+		int MockolateMockRegistry(bool value);
 	}
 
 	public sealed class Nested

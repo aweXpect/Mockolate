@@ -1034,6 +1034,7 @@ internal static partial class Sources
 				.Append("? ").Append(backingFieldName).Append(';').AppendLine();
 			backingFieldAccess = $"this.{backingFieldName}";
 		}
+
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(@event.ContainingType.EscapeForXmlDoc()).Append('.')
 			.Append(@event.Name.EscapeForXmlDoc()).AppendLine("\" />");
 		sb.Append(@event.Attributes, "\t\t");
@@ -1499,7 +1500,7 @@ internal static partial class Sources
 		{
 			foreach (GenericParameter gp in method.GenericParameters.Value)
 			{
-				gp.AppendWhereConstraint(sb, "\t\t\t");
+				gp.AppendWhereConstraint(sb, "\t\t\t", explicitInterfaceImplementation);
 			}
 		}
 
@@ -1797,7 +1798,7 @@ internal static partial class Sources
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerSetupDefinition(sb, indexer, valueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendIndexerSetupDefinition(sb, indexer, valueFlags, hasOverloadResolutionPriority);
 				}
 			}
 			else
@@ -1805,7 +1806,7 @@ internal static partial class Sources
 				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerSetupDefinition(sb, indexer, allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendIndexerSetupDefinition(sb, indexer, allValueFlags, hasOverloadResolutionPriority);
 				}
 			}
 		}
@@ -2214,6 +2215,14 @@ internal static partial class Sources
 			}
 
 			sb.Append(")");
+		}
+
+		if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+		{
+			foreach (GenericParameter gp in method.GenericParameters.Value)
+			{
+				gp.AppendWhereConstraint(sb, "\t\t\t", true);
+			}
 		}
 
 		sb.AppendLine();
@@ -2630,7 +2639,7 @@ internal static partial class Sources
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerVerifyDefinition(sb, indexer, verifyName, valueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendIndexerVerifyDefinition(sb, indexer, verifyName, valueFlags, hasOverloadResolutionPriority);
 				}
 			}
 			else
@@ -2638,7 +2647,7 @@ internal static partial class Sources
 				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerVerifyDefinition(sb, indexer, verifyName, allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendIndexerVerifyDefinition(sb, indexer, verifyName, allValueFlags, hasOverloadResolutionPriority);
 				}
 			}
 		}
@@ -2955,6 +2964,14 @@ internal static partial class Sources
 		}
 
 		sb.Append(")");
+		if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+		{
+			foreach (GenericParameter gp in method.GenericParameters.Value)
+			{
+				gp.AppendWhereConstraint(sb, "\t\t\t", true);
+			}
+		}
+
 		sb.AppendLine();
 
 		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".Method<").Append(verifyName).Append(">(this, ");
