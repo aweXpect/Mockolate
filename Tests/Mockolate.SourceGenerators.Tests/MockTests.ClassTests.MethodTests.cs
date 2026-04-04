@@ -207,6 +207,67 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task MethodWithEnumDefaultValue_ShouldGenerateCastExpression()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IService.CreateMock();
+					         }
+					     }
+
+					     public enum Status { Active = 0, Inactive = 1 }
+
+					     public interface IService
+					     {
+					         void Process(Status status = Status.Inactive);
+					     }
+					     """);
+
+				await That(result.Sources)
+					.ContainsKey("Mock.IService.g.cs").WhoseValue
+					.Contains("(global::MyCode.Status)1")
+					.IgnoringNewlineStyle();
+			}
+
+			[Fact]
+			public async Task MethodWithStructDefaultValue_ShouldGenerateDefaultKeyword()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using System;
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IService.CreateMock();
+					         }
+					     }
+
+					     public interface IService
+					     {
+					         void Process(DateTime time = default);
+					     }
+					     """, typeof(DateTime));
+
+				await That(result.Sources)
+					.ContainsKey("Mock.IService.g.cs").WhoseValue
+					.Contains("DateTime time = default")
+					.IgnoringNewlineStyle();
+			}
+
+			[Fact]
 			public async Task MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 			{
 				GeneratorResult result = Generator

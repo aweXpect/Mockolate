@@ -175,6 +175,64 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task DelegateWithMoreThanMaxParameters_ShouldGenerateSingleAllValueFlagsOverload()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = ProcessAll.CreateMock();
+				         }
+
+				         public delegate int ProcessAll(int a, int b, int c, int d, int e);
+				     }
+				     """);
+
+			await That(result.Sources)
+				.ContainsKey("Mock.Program_ProcessAll.g.cs").WhoseValue
+				.Contains("Setup(int a, int b, int c, int d, int e)")
+				.IgnoringNewlineStyle().And
+				.Contains("Verify(int a, int b, int c, int d, int e)")
+				.IgnoringNewlineStyle().And
+				.DoesNotContain("Setup(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<int>? c, global::Mockolate.Parameters.IParameter<int>? d, global::Mockolate.Parameters.IParameter<int>? e, global::Mockolate.Parameters.IParameter<int>?")
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task DelegateWithMoreThanMaxParametersAllOut_ShouldNotGenerateValueFlagsOverload()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = ProcessAll.CreateMock();
+				         }
+
+				         public delegate void ProcessAll(out int a, out int b, out int c, out int d, out int e);
+				     }
+				     """);
+
+			await That(result.Sources)
+				.ContainsKey("Mock.Program_ProcessAll.g.cs").WhoseValue
+				.Contains("global::Mockolate.Parameters.IOutParameter<int> a, global::Mockolate.Parameters.IOutParameter<int> b, global::Mockolate.Parameters.IOutParameter<int> c, global::Mockolate.Parameters.IOutParameter<int> d, global::Mockolate.Parameters.IOutParameter<int> e")
+				.IgnoringNewlineStyle().And
+				.DoesNotContain("int? a")
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
 		public async Task DelegateWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
 		{
 			GeneratorResult result = Generator

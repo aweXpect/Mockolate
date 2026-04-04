@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -70,35 +69,7 @@ internal static class MockGeneratorHelpers
 				}
 				else if (IsMockable(methodSymbol.ReturnType))
 				{
-					ImmutableArray<ITypeParameterSymbol> genericParameters = methodSymbol.TypeParameters;
-					// If the method has generic parameters, and the return type does not match the first generic type parameter, use return type as main type and all generic types as additional implementations
-					if (genericParameters.Length > 0)
-					{
-						ITypeSymbol[] genericTypeSymbols = genericParameters
-							.Select(tp => methodSymbol.TypeArguments.Length > tp.Ordinal ? methodSymbol.TypeArguments[tp.Ordinal] : null)
-							.Where(t => t != null)
-							.Cast<ITypeSymbol>()
-							.ToArray();
-						if (SymbolEqualityComparer.Default.Equals(methodSymbol.ReturnType, genericTypeSymbols[0]))
-						{
-							if (genericTypeSymbols.Length == 1)
-							{
-								yield return new MockClass([methodSymbol.ReturnType,], sourceAssembly);
-							}
-							else
-							{
-								yield return new MockClass(genericTypeSymbols, sourceAssembly);
-							}
-						}
-						else
-						{
-							yield return new MockClass([methodSymbol.ReturnType, ..genericTypeSymbols,], sourceAssembly);
-						}
-					}
-					else
-					{
-						yield return new MockClass([methodSymbol.ReturnType,], sourceAssembly);
-					}
+					yield return new MockClass([methodSymbol.ReturnType,], sourceAssembly);
 
 					foreach (MockClass? additionalMockClass in DiscoverMockableTypes([methodSymbol.ReturnType,], sourceAssembly))
 					{
