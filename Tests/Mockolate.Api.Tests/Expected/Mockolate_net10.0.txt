@@ -185,7 +185,6 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResultParameterIgnorer<T> Method<T>(T subject, Mockolate.Setup.IMethodMatch methodMatch, string methodName) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName) { }
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName, Mockolate.Parameters.IParameter value) { }
-        public void Raise(string eventName, params object?[] parameters) { }
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public bool SetIndexer<TResult>(TResult value, params Mockolate.Parameters.NamedParameterValue[] parameters) { }
         public bool SetProperty(string propertyName, object? value) { }

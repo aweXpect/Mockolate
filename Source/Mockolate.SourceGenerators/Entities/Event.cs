@@ -57,6 +57,12 @@ internal record Event
 	internal string GetUniqueNameString()
 		=> $"\"{ContainingType}.{Name}\"";
 
+	internal string GetBackingFieldName()
+	{
+		char[] sanitized = ContainingType.Select(c => char.IsLetterOrDigit(c) ? c : '_').ToArray();
+		return $"_mockolateEvent_{new string(sanitized)}_{Name}";
+	}
+
 	private sealed class EventEqualityComparer : IEqualityComparer<Event>
 	{
 		public bool Equals(Event? x, Event? y)
