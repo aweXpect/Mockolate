@@ -40,6 +40,24 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
+	///     Extensions for event callback setups.
+	/// </summary>
+	extension(IEventSetupCallbackWhenBuilder setup)
+	{
+		/// <summary>
+		///     Repeats the callback forever.
+		/// </summary>
+		public void Forever()
+			=> setup.For(int.MaxValue);
+
+		/// <summary>
+		///     Executes the callback only once.
+		/// </summary>
+		public IEventSetup OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
 	///     Extensions for indexer setups with one parameter.
 	/// </summary>
 	extension<TValue, T1>(IIndexerSetupReturnWhenBuilder<TValue, T1> setup)

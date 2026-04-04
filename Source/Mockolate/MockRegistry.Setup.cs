@@ -50,4 +50,10 @@ public partial class MockRegistry
 	/// </summary>
 	public void SetupProperty(PropertySetup propertySetup)
 		=> Setup.Properties.Add(propertySetup);
+
+	/// <summary>
+	///     Registers the <paramref name="eventSetup" /> in the mock.
+	/// </summary>
+	public void SetupEvent(EventSetup eventSetup)
+		=> Setup.Events.Add(eventSetup);
 }

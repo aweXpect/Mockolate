@@ -206,6 +206,10 @@ public partial class MockRegistry
 		}
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
+		foreach (EventSetup setup in Setup.Events.GetByName(name))
+		{
+			setup.InvokeSubscribed(target, method);
+		}
 	}
 
 	/// <summary>
@@ -220,5 +224,9 @@ public partial class MockRegistry
 		}
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
+		foreach (EventSetup setup in Setup.Events.GetByName(name))
+		{
+			setup.InvokeUnsubscribed(target, method);
+		}
 	}
 }
