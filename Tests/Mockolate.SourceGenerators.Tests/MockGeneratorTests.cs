@@ -11,6 +11,7 @@ public class MockGeneratorTests
 			.Run("""
 			     using Mockolate;
 
+			     #nullable enable
 			     namespace MyCode;
 
 			     public class Program
@@ -23,20 +24,20 @@ public class MockGeneratorTests
 
 			     public interface IInterface1
 			     {
-			         void Method(int? value);
+			         void Method(string? value);
 			     }
 
 			     public interface IInterface2
 			     {
-			         void Method(int value);
+			         void Method(string value);
 			     }
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
 
 		await That(result.Sources).ContainsKey("Mock.IInterface1__IInterface2.g.cs").WhoseValue
-			.Contains("void Method(")
-			.IgnoringNewlineStyle();
+			.Contains("public void Method(string? value)").And
+			.Contains("void global::MyCode.IInterface2.Method(string value)");
 	}
 
 	[Fact]
