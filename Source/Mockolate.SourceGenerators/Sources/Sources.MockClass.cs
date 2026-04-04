@@ -40,6 +40,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Mock extensions for <see cref=\"{escapedClassName}\" />.", "");
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+		sb.Append("[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("internal static partial class MockExtensionsFor").Append(name).AppendLine();
 		sb.Append("{").AppendLine();
 
@@ -360,6 +361,7 @@ internal static partial class Sources
 
 			sb.AppendLine();
 			sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+			sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 			sb.Append("\tinternal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupFor").Append(name);
 			if (hasProtectedMembers)
 			{
@@ -407,6 +409,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary($"A mock implementation for <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").AppendLine();
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("\tinternal class ").Append(name).Append(" :").AppendLine();
 		sb.Append("\t\t").Append(@class.ClassFullName);
 		sb.Append(", IMockFor").Append(name).Append(", IMockSetupFor").Append(name);
@@ -616,6 +619,7 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("\tprivate sealed class VerifyMonitor").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyFor").Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; } = mockRegistry;").AppendLine();
