@@ -101,8 +101,10 @@ namespace Mockolate
         public static Mockolate.Parameters.IParameter<bool> IsFalse() { }
         public static Mockolate.It.IInRangeParameter<T> IsInRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
             where T : System.IComparable<T> { }
+        public static Mockolate.Parameters.IParameter<T> IsNotNull<T>(string? toString = null) { }
+        public static Mockolate.It.IIsNotOneOfParameter<T> IsNotOneOf<T>(System.Collections.Generic.IEnumerable<T> values) { }
         public static Mockolate.Parameters.IParameter<T> IsNull<T>(string? toString = null) { }
-        public static Mockolate.It.IIsOneOfParameter<T> IsOneOf<T>(params T[] values) { }
+        public static Mockolate.It.IIsOneOfParameter<T> IsOneOf<T>(System.Collections.Generic.IEnumerable<T> values) { }
         public static Mockolate.Parameters.IVerifyOutParameter<T> IsOut<T>() { }
         public static Mockolate.Parameters.IOutParameter<T> IsOut<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> IsReadOnlySpan<T>(System.Func<T[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
@@ -118,6 +120,10 @@ namespace Mockolate
         {
             Mockolate.Parameters.IParameter<T> Exclusive();
             Mockolate.Parameters.IParameter<T> Inclusive();
+        }
+        public interface IIsNotOneOfParameter<out T> : Mockolate.Parameters.IParameter<T>
+        {
+            Mockolate.It.IIsNotOneOfParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
         }
         public interface IIsOneOfParameter<out T> : Mockolate.Parameters.IParameter<T>
         {

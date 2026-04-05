@@ -11,32 +11,32 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a parameter that is equal to one of the <paramref name="values" />.
+	///     Matches a parameter that is not equal to one of the <paramref name="values" />.
 	/// </summary>
-	public static IIsOneOfParameter<T> IsOneOf<T>(params IEnumerable<T> values)
-		=> new ParameterIsOneOfMatch<T>(values.ToArray());
+	public static IIsNotOneOfParameter<T> IsNotOneOf<T>(params IEnumerable<T> values)
+		=> new ParameterIsNotOneOfMatch<T>(values.ToArray());
 
 	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison of a collection of alternatives.
 	/// </summary>
-	public interface IIsOneOfParameter<out T> : IParameter<T>
+	public interface IIsNotOneOfParameter<out T> : IParameter<T>
 	{
 		/// <summary>
 		///     Use the specified comparer to determine equality.
 		/// </summary>
-		IIsOneOfParameter<T> Using(IEqualityComparer<T> comparer,
+		IIsNotOneOfParameter<T> Using(IEqualityComparer<T> comparer,
 			[CallerArgumentExpression(nameof(comparer))]
 			string doNotPopulateThisValue = "");
 	}
 
 	[DebuggerNonUserCode]
-	private sealed class ParameterIsOneOfMatch<T>(T[] values) : TypedMatch<T>, IIsOneOfParameter<T>
+	private sealed class ParameterIsNotOneOfMatch<T>(T[] values) : TypedMatch<T>, IIsNotOneOfParameter<T>
 	{
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
 
 		/// <inheritdoc cref="IIsParameter{T}.Using(IEqualityComparer{T}, string)" />
-		public IIsOneOfParameter<T> Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue = "")
+		public IIsNotOneOfParameter<T> Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue = "")
 		{
 			_comparer = comparer;
 			_comparerExpression = doNotPopulateThisValue;
@@ -47,14 +47,14 @@ public partial class It
 		protected override bool Matches(T value)
 		{
 			IEqualityComparer<T> comparer = _comparer ?? EqualityComparer<T>.Default;
-			return values.Any(v => comparer.Equals(value, v));
+			return values.All(v => !comparer.Equals(value, v));
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
 			string result =
-				$"It.IsOneOf({string.Join(", ", values.Select(v => v is string ? $"\"{v}\"" : v?.ToString() ?? "null"))})";
+				$"It.IsNotOneOf({string.Join(", ", values.Select(v => v is string ? $"\"{v}\"" : v?.ToString() ?? "null"))})";
 			if (_comparer is not null)
 			{
 				result += $".Using({_comparerExpression})";
