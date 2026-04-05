@@ -14,7 +14,7 @@ public partial class It
 	///     Matches a parameter that is not equal to one of the <paramref name="values" />.
 	/// </summary>
 	public static IIsNotOneOfParameter<T> IsNotOneOf<T>(params IEnumerable<T> values)
-		=> new ParameterIsNotOneOfMatch<T>(values);
+		=> new ParameterIsNotOneOfMatch<T>(values.ToArray());
 
 	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison of a collection of alternatives.
@@ -30,7 +30,7 @@ public partial class It
 	}
 
 	[DebuggerNonUserCode]
-	private sealed class ParameterIsNotOneOfMatch<T>(IEnumerable<T> values) : TypedMatch<T>, IIsNotOneOfParameter<T>
+	private sealed class ParameterIsNotOneOfMatch<T>(T[] values) : TypedMatch<T>, IIsNotOneOfParameter<T>
 	{
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;

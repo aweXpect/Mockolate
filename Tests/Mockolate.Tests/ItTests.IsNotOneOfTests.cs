@@ -103,11 +103,11 @@ public sealed partial class ItTests
 			await That(result).IsFalse();
 		}
 
-		public abstract class MyBaseIsNotOneOf { }
+		public abstract class MyBaseIsNotOneOf;
 
-		public class MyImplementationIsNotOneOf : MyBaseIsNotOneOf { }
+		public class MyImplementationIsNotOneOf : MyBaseIsNotOneOf;
 
-		public class MyOtherImplementationIsNotOneOf : MyBaseIsNotOneOf { }
+		public class MyOtherImplementationIsNotOneOf : MyBaseIsNotOneOf;
 
 		public interface IMyServiceIsNotOneOf
 		{

@@ -14,7 +14,7 @@ public partial class It
 	///     Matches a parameter that is equal to one of the <paramref name="values" />.
 	/// </summary>
 	public static IIsOneOfParameter<T> IsOneOf<T>(params IEnumerable<T> values)
-		=> new ParameterIsOneOfMatch<T>(values);
+		=> new ParameterIsOneOfMatch<T>(values.ToArray());
 
 	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison of a collection of alternatives.
@@ -30,7 +30,7 @@ public partial class It
 	}
 
 	[DebuggerNonUserCode]
-	private sealed class ParameterIsOneOfMatch<T>(IEnumerable<T> values) : TypedMatch<T>, IIsOneOfParameter<T>
+	private sealed class ParameterIsOneOfMatch<T>(T[] values) : TypedMatch<T>, IIsOneOfParameter<T>
 	{
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
