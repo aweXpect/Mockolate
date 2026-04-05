@@ -1,0 +1,117 @@
+using Mockolate.Parameters;
+
+namespace Mockolate.Tests;
+
+public sealed partial class ItTests
+{
+	public sealed class IsNotOneOfTests
+	{
+		[Theory]
+		[InlineData(1, true)]
+		[InlineData(4, true)]
+		[InlineData(5, false)]
+		[InlineData(6, false)]
+		[InlineData(7, false)]
+		[InlineData(8, true)]
+		[InlineData(-5, true)]
+		[InlineData(42, true)]
+		public async Task ShouldMatchWhenNotEqualToAny(int value, bool expectMatch)
+		{
+			IParameter<int> sut = It.IsNotOneOf(5, 6, 7);
+
+			bool result = ((IParameter)sut).Matches(value);
+
+			await That(result).IsEqualTo(expectMatch);
+		}
+
+		[Fact]
+		public async Task ShouldSupportCovarianceInSetup()
+		{
+			IMyServiceIsNotOneOf sut = IMyServiceIsNotOneOf.CreateMock();
+			MyBaseIsNotOneOf value1 = new MyImplementationIsNotOneOf();
+			MyBaseIsNotOneOf value2 = new MyImplementationIsNotOneOf();
+			MyBaseIsNotOneOf other = new MyOtherImplementationIsNotOneOf();
+			sut.Mock.Setup.DoSomething(It.IsNotOneOf(value1, value2))
+				.Returns(3);
+
+			int result1 = sut.DoSomething(other);
+			int result2 = sut.DoSomething(value1);
+
+			await That(result1).IsEqualTo(3);
+			await That(result2).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task ShouldSupportCovarianceInVerify()
+		{
+			IMyServiceIsNotOneOf sut = IMyServiceIsNotOneOf.CreateMock();
+			MyImplementationIsNotOneOf value1 = new();
+			MyImplementationIsNotOneOf value2 = new();
+			MyImplementationIsNotOneOf other = new();
+
+			sut.DoSomething(other);
+
+			// 'other' is not in [value1, value2], so the match is found once
+			await That(sut.Mock.Verify.DoSomething(It.IsNotOneOf(value1, value2))).Once();
+			// 'other' IS in [other], so no match
+			await That(sut.Mock.Verify.DoSomething(It.IsNotOneOf(other))).Never();
+		}
+
+		[Fact]
+		public async Task ToString_Using_ShouldReturnExpectedValue()
+		{
+			IParameter<int> sut = It.IsNotOneOf(3, 5).Using(new AllEqualComparer());
+			string expectedValue = "It.IsNotOneOf(3, 5).Using(new AllEqualComparer())";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task ToString_WithNullableIntValues_ShouldReturnExpectedValue()
+		{
+			IParameter<int?> sut = It.IsNotOneOf<int?>(3, null, 5);
+			string expectedValue = "It.IsNotOneOf(3, null, 5)";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task ToString_WithStringValues_ShouldReturnExpectedValue()
+		{
+			IParameter<string> sut = It.IsNotOneOf("foo", "bar");
+			string expectedValue = "It.IsNotOneOf(\"foo\", \"bar\")";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Theory]
+		[InlineData(1)]
+		[InlineData(5)]
+		[InlineData(-42)]
+		public async Task WithComparer_ShouldUseComparer(int value)
+		{
+			IParameter<int> sut = It.IsNotOneOf(4, 5, 6).Using(new AllEqualComparer());
+
+			bool result = ((IParameter)sut).Matches(value);
+
+			await That(result).IsFalse();
+		}
+
+		public abstract class MyBaseIsNotOneOf { }
+
+		public class MyImplementationIsNotOneOf : MyBaseIsNotOneOf { }
+
+		public class MyOtherImplementationIsNotOneOf : MyBaseIsNotOneOf { }
+
+		public interface IMyServiceIsNotOneOf
+		{
+			int DoSomething(MyBaseIsNotOneOf value);
+		}
+	}
+}
