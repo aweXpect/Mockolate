@@ -471,7 +471,7 @@ public class GeneralTests
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		[global::System.Obsolete("This event is obsolete")]
-			          		public override event global::System.EventHandler<int>? SomeEvent
+			          		public override event global::System.EventHandler<int> SomeEvent
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		[global::System.Obsolete("This property is obsolete")]
@@ -722,7 +722,7 @@ public class GeneralTests
 			             ArrayParam = new string[] { "a", "b" },
 			             OptionalIntParam = null
 			         )]
-			         event EventHandler<int> MyEvent;
+			         event EventHandler<int>? MyEvent;
 			     }
 
 			     public enum MyEnum

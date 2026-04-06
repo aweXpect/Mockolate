@@ -25,17 +25,17 @@ public sealed partial class MockTests
 
 					     public interface IMyService : IMyServiceBase1
 					     {
-					         new event EventHandler<string> SomeEvent;
+					         new event EventHandler<string>? SomeEvent;
 					     }
 
 					     public interface IMyServiceBase1 : IMyServiceBase2
 					     {
-					         new event EventHandler<int> SomeEvent;
+					         new event EventHandler<int>? SomeEvent;
 					     }
 
 					     public interface IMyServiceBase2
 					     {
-					         event EventHandler<long> SomeEvent;
+					         event EventHandler<long>? SomeEvent;
 					     }
 					     """);
 
@@ -118,7 +118,7 @@ public sealed partial class MockTests
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_SomeEvent;
 					          		/// <inheritdoc cref="global::MyCode.IMyService.SomeEvent" />
-					          		public event global::System.EventHandler? SomeEvent
+					          		public event global::System.EventHandler SomeEvent
 					          		{
 					          			add
 					          			{
@@ -209,7 +209,7 @@ public sealed partial class MockTests
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_MyDirectEvent;
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyDirectEvent" />
-					          		public event global::System.EventHandler? MyDirectEvent
+					          		public event global::System.EventHandler MyDirectEvent
 					          		{
 					          			add
 					          			{
@@ -234,7 +234,7 @@ public sealed partial class MockTests
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyServiceBase1_MyBaseEvent1;
 					          		/// <inheritdoc cref="global::MyCode.IMyServiceBase1.MyBaseEvent1" />
-					          		public event global::System.EventHandler? MyBaseEvent1
+					          		public event global::System.EventHandler MyBaseEvent1
 					          		{
 					          			add
 					          			{
@@ -259,7 +259,7 @@ public sealed partial class MockTests
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyServiceBase2_MyBaseEvent2;
 					          		/// <inheritdoc cref="global::MyCode.IMyServiceBase2.MyBaseEvent2" />
-					          		public event global::System.EventHandler? MyBaseEvent2
+					          		public event global::System.EventHandler MyBaseEvent2
 					          		{
 					          			add
 					          			{
@@ -284,7 +284,7 @@ public sealed partial class MockTests
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyServiceBase3_MyBaseEvent3;
 					          		/// <inheritdoc cref="global::MyCode.IMyServiceBase3.MyBaseEvent3" />
-					          		public event global::System.EventHandler? MyBaseEvent3
+					          		public event global::System.EventHandler MyBaseEvent3
 					          		{
 					          			add
 					          			{
@@ -328,7 +328,7 @@ public sealed partial class MockTests
 
 					     public class MyService
 					     {
-					         public virtual event EventHandler SomeEvent;
+					         public virtual event EventHandler? SomeEvent;
 					         public event EventHandler? SomeOtherEvent;
 					         protected virtual event EventHandler SomeProtectedEvent;
 					     }
@@ -374,7 +374,7 @@ public sealed partial class MockTests
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyOtherService_SomeThirdEvent;
 					          		/// <inheritdoc cref="global::MyCode.IMyOtherService.SomeThirdEvent" />
-					          		event global::System.EventHandler? global::MyCode.IMyOtherService.SomeThirdEvent
+					          		event global::System.EventHandler global::MyCode.IMyOtherService.SomeThirdEvent
 					          		{
 					          			add
 					          			{
