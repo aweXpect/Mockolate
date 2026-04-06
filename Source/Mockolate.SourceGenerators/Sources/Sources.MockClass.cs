@@ -1040,7 +1040,7 @@ internal static partial class Sources
 		}
 
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(@event.ContainingType.EscapeForXmlDoc()).Append('.')
-			.Append(@event.Name.EscapeForXmlDoc()).AppendLine("\" />");
+			.Append(@event.Name).AppendLine("\" />");
 		sb.Append(@event.Attributes, "\t\t");
 		if (explicitInterfaceImplementation)
 		{
@@ -1123,9 +1123,8 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(property.ContainingType.EscapeForXmlDoc()).Append('.').Append(
 				property.IndexerParameters is not null
 					? property.Name.Replace("[]",
-							$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname}"))}]")
-						.EscapeForXmlDoc()
-					: property.Name.EscapeForXmlDoc())
+						$"[{string.Join(", ", property.IndexerParameters.Value.Select(p => $"{p.Type.Fullname.EscapeForXmlDoc()}"))}]")
+					: property.Name)
 			.AppendLine("\" />");
 		sb.Append(property.Attributes, "\t\t");
 		if (explicitInterfaceImplementation)
@@ -1769,7 +1768,7 @@ internal static partial class Sources
 			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
-			sb.AppendXmlSummary($"Setup for the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name.EscapeForXmlDoc()}\" />.");
+			sb.AppendXmlSummary($"Setup for the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name}\" />.");
 			sb.Append("\t\tglobal::Mockolate.Setup.PropertySetup<").Append(property.Type.Fullname).Append("> ").Append(property.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
@@ -1782,7 +1781,7 @@ internal static partial class Sources
 			=> @event.ExplicitImplementation is null && @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
 		{
-			sb.AppendXmlSummary($"Setup for the event <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name.EscapeForXmlDoc()}\" />.");
+			sb.AppendXmlSummary($"Setup for the event <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
 			sb.Append("\t\tglobal::Mockolate.Setup.EventSetup ").Append(@event.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
@@ -2542,7 +2541,7 @@ internal static partial class Sources
 		                                        @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
-			sb.AppendXmlSummary($"Raise the <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name.EscapeForXmlDoc()}\"/> event.");
+			sb.AppendXmlSummary($"Raise the <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\"/> event.");
 			sb.Append("\t\tvoid ").Append(@event.Name).Append("(").Append(FormatParametersWithTypeAndName(@event.Delegate.Parameters)).Append(");").AppendLine();
 			sb.AppendLine();
 		}
@@ -2554,7 +2553,7 @@ internal static partial class Sources
 			         .Select(g => g.Single())
 			         .Where(m => m.Delegate.Parameters.Count > 0))
 		{
-			sb.AppendXmlSummary($"Raise the <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name.EscapeForXmlDoc()}\"/> event.");
+			sb.AppendXmlSummary($"Raise the <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\"/> event.");
 			sb.Append("\t\tvoid ").Append(@event.Name).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters);").AppendLine();
 			sb.AppendLine();
 		}
@@ -2623,7 +2622,7 @@ internal static partial class Sources
 			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
-			sb.AppendXmlSummary($"Verify interactions with the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name.EscapeForXmlDoc()}\" />.");
+			sb.AppendXmlSummary($"Verify interactions with the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name}\" />.");
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ").Append(property.Type.Fullname).Append("> ").Append(property.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
@@ -2723,12 +2722,22 @@ internal static partial class Sources
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <summary>").AppendLine();
-		sb.Append("\t\t///     Verify invocations for the method <see cref=\"")
-			.Append(method.ContainingType.EscapeForXmlDoc())
-			.Append(".").Append(methodName.EscapeForXmlDoc()).Append("(");
-		sb.Append(string.Join(", ",
-			method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())));
-		sb.Append(")\"/>").Append(method.Parameters.Count > 0 ? " with the given " : "");
+		if (methodNameOverride is null)
+		{
+			sb.Append("\t\t///     Verify invocations for the method <see cref=\"")
+				.Append(method.ContainingType.EscapeForXmlDoc())
+				.Append(".").Append(methodName.EscapeForXmlDoc()).Append("(");
+			sb.Append(string.Join(", ",
+				method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc())));
+			sb.Append(")\"/>");
+		}
+		else
+		{
+			sb.Append("\t\t///     Verify invocations for the delegate <see cref=\"")
+				.Append(method.ContainingType.EscapeForXmlDoc()).Append("\"/>");
+		}
+
+		sb.Append(method.Parameters.Count > 0 ? " with the given " : "");
 		if (useParameters)
 		{
 			sb.Append("<paramref name=\"parameters\"/>");
