@@ -1044,8 +1044,7 @@ internal static partial class Sources
 		sb.Append(@event.Attributes, "\t\t");
 		if (explicitInterfaceImplementation)
 		{
-			sb.Append(@event.IsStatic ? "\t\tstatic event " : "\t\tevent ").Append(@event.Type.Fullname.TrimEnd('?'))
-				.Append("? ").Append(className).Append('.').Append(@event.Name).AppendLine();
+			sb.Append(@event.IsStatic ? "\t\tstatic event " : "\t\tevent ").Append(@event.Type.Fullname).Append(' ').Append(className).Append('.').Append(@event.Name).AppendLine();
 		}
 		else
 		{
@@ -1062,11 +1061,11 @@ internal static partial class Sources
 					sb.Append("override ");
 				}
 
-				sb.Append("event ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ");
+				sb.Append("event ").Append(@event.Type.Fullname).Append(' ');
 			}
 			else
 			{
-				sb.Append(@event.IsStatic ? "\t\tstatic event " : "\t\tevent ").Append(@event.Type.Fullname.TrimEnd('?')).Append("? ")
+				sb.Append(@event.IsStatic ? "\t\tstatic event " : "\t\tevent ").Append(@event.Type.Fullname).Append(' ')
 					.Append(@event.ExplicitImplementation).Append('.');
 			}
 
