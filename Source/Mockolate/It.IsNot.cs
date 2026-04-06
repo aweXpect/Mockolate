@@ -62,7 +62,7 @@ public partial class It
 
 			return !EqualityComparer<T>.Default.Equals(value, _value);
 		}
-		
+
 		public override bool Matches(object? value)
 		{
 			if (value is T typedValue)
@@ -70,7 +70,7 @@ public partial class It
 				return Matches(typedValue);
 			}
 
-			return Matches(default!);
+			return value is not null || Matches(default!);
 		}
 
 		/// <inheritdoc cref="object.ToString()" />

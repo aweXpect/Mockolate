@@ -21,6 +21,21 @@ public sealed partial class ItTests
 			await That(result2).IsEqualTo(0);
 		}
 
+		[Fact]
+		public async Task ShouldCorrectlyHandleNullWithCovariance()
+		{
+			IMyService sut = IMyService.CreateMock();
+			MyOtherImplementation value1 = new();
+			sut.Mock.Setup.DoSomething(It.IsNot<MyImplementation>(null!))
+				.Returns(3);
+
+			int result1 = sut.DoSomething(value1);
+			int result2 = sut.DoSomething(null!);
+
+			await That(result1).IsEqualTo(3);
+			await That(result2).IsEqualTo(0);
+		}
+
 		[Theory]
 		[InlineData(1, true)]
 		[InlineData(5, false)]
