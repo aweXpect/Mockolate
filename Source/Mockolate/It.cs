@@ -56,7 +56,7 @@ public partial class It
 		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
 		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
 		/// </returns>
-		public bool Matches(object? value)
+		public virtual bool Matches(object? value)
 		{
 			if (value is T typedValue)
 			{
